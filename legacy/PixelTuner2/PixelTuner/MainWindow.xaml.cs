@@ -12,7 +12,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using PixelTuner.Properties;
-using DockingLibrary;
+using AvalonDock.Layout;
+using System.Diagnostics;
 
 namespace PixelTuner
 {
@@ -21,8 +22,8 @@ namespace PixelTuner
     /// </summary>
     public partial class MainWindow : Window
     {
-        ListWindow _projectList = new ListWindow();
-        ListWindow _deviceList = new ListWindow();
+        //ListWindow _projectList = new ListWindow();
+        //ListWindow _deviceList = new ListWindow();
         string _layoutString = Settings.Default.LayoutString;
 
         public MainWindow()
@@ -48,23 +49,23 @@ namespace PixelTuner
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            dockManager.ParentWindow = this;
+            //dockManager.ParentWindow = this;
 
-            if (!string.IsNullOrEmpty(_layoutString))
-                dockManager.RestoreLayoutFromXml(_layoutString, ExtractListWindow);
-            else
+            //if (!string.IsNullOrEmpty(_layoutString))
+            //    dockManager.RestoreLayoutFromXml(_layoutString, ExtractListWindow);
+            //else
             {
-                _projectList.Title = (string)Application.Current.FindResource("Menu_Window_Projects");
-                _projectList.DockManager = dockManager;
-                _projectList.Name = "ProjectList";
-                _projectList.Show(Dock.Left);
-                (_projectList.ContainerPane as DockingLibrary.DockablePane).AutoHide();
+                //_projectList.Title = (string)Application.Current.FindResource("Menu_Window_Projects");
+                //_projectList.DockManager = dockManager;
+                //_projectList.Name = "ProjectList";
+                //_projectList.Show(Dock.Left);
+                //(_projectList.ContainerPane as DockingLibrary.DockablePane).AutoHide();
 
-                _deviceList.Title = (string)Application.Current.FindResource("Menu_Window_Devices");
-                _deviceList.DockManager = dockManager;
-                _deviceList.Name = "DeviceList";
-                _deviceList.Show(Dock.Left);
-                (_deviceList.ContainerPane as DockingLibrary.DockablePane).AutoHide();
+                //_deviceList.Title = (string)Application.Current.FindResource("Menu_Window_Devices");
+                //_deviceList.DockManager = dockManager;
+                //_deviceList.Name = "DeviceList";
+                //_deviceList.Show(Dock.Left);
+                //(_deviceList.ContainerPane as DockingLibrary.DockablePane).AutoHide();
             }
         }
 
@@ -80,28 +81,39 @@ namespace PixelTuner
 
         private void ShowDeviceList(object sender, RoutedEventArgs e)
         {
-            _deviceList.Show();
+        //    _deviceList.DockManager = this.dockManager;
+        //    _deviceList.Show();
         }
 
         private void ShowProjectList(object sender, RoutedEventArgs e)
         {
-            _projectList.Show();
+            //_projectList.DockManager = this.dockManager;
+            //_projectList.Show();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            Settings.Default.LayoutString = dockManager.GetLayoutAsXml();
+            //Settings.Default.LayoutString = dockManager.GetLayoutAsXml();
             
             Settings.Default.Save();
         }
 
-        private DockableContent ExtractListWindow(System.Xml.XmlNode type)
+        private void LayoutRoot_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            ListWindow lw = new ListWindow();
-            lw.Title = type.Attributes["Title"].Value;
-            lw.Name = type.Attributes["Name"].Value;
-            lw.DockManager = dockManager;
-            return lw;
+            var activeContent = ((LayoutRoot)sender).ActiveContent;
+            if (e.PropertyName == "ActiveContent" && activeContent != null)
+            {
+                Debug.WriteLine(string.Format("ActiveContent-> {0}", activeContent));
+            }
         }
+
+        //private DockableContent ExtractListWindow(System.Xml.XmlNode type)
+        //{
+        //    ListWindow lw = new ListWindow();
+        //    lw.Title = type.Attributes["Title"].Value;
+        //    lw.Name = type.Attributes["Name"].Value;
+        //    lw.DockManager = dockManager;
+        //    return lw;
+        //}
     }
 }

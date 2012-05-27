@@ -2,11 +2,20 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="PixelTuner" Height="484" Width="898" WindowStyle="SingleBorderWindow" 
-        xmlns:my="clr-namespace:TimeLineTool;assembly=TimeLineTool"
+        
         xmlns:PixelTuner="clr-namespace:PixelTuner;assembly=PixelTuner"
-        xmlns:docking="clr-namespace:DockingLibrary;assembly=DockingLibrary" Loaded="Window_Loaded" Closing="Window_Closing">
-    <DockPanel Name="dockPanel" LastChildFill="True">
-        <Menu DockPanel.Dock="Top">
+        xmlns:avalonDock="http://avalondock.codeplex.com"
+        xmlns:my="clr-namespace:TimeLineTool;assembly=TimeLineTool"
+        
+        Loaded="Window_Loaded" Closing="Window_Closing">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="24"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="24"/>
+        </Grid.RowDefinitions>
+        
+        <Menu Padding="0">
             <MenuItem Header="{StaticResource Menu_File}">
                 <MenuItem Header="{StaticResource Menu_File_New}" Click="NewDocument"/>
                 <MenuItem Header="{StaticResource Menu_File_Exit}" Click="ExitApplication"/>
@@ -16,7 +25,38 @@
                 <MenuItem Header="{StaticResource Menu_Window_Devices}" Click="ShowDeviceList"/>
             </MenuItem>
         </Menu>
-        <docking:DockManager Name="dockManager">
-        </docking:DockManager>
-    </DockPanel>
+        
+        <avalonDock:DockingManager Name="dockManager" Grid.Row="1">
+            <avalonDock:DockingManager.Theme>
+                <avalonDock:VS2010Theme/>
+            </avalonDock:DockingManager.Theme>
+
+            <avalonDock:LayoutRoot PropertyChanged="LayoutRoot_PropertyChanged">
+                <avalonDock:LayoutPanel Orientation="Horizontal">
+                    <avalonDock:LayoutDocumentPaneGroup>
+                        <avalonDock:LayoutDocumentPane x:Name="layoutPanel">
+                            
+                        </avalonDock:LayoutDocumentPane>
+                    </avalonDock:LayoutDocumentPaneGroup>
+                    <avalonDock:LayoutAnchorablePaneGroup DockWidth="200">
+                        <avalonDock:LayoutAnchorablePane>
+                            <avalonDock:LayoutAnchorable x:Name="ToolW" Title="{StaticResource Menu_Window_Projects}">
+                                <ListBox></ListBox>
+                            </avalonDock:LayoutAnchorable>
+                            <avalonDock:LayoutAnchorable x:Name="ToolW2" Title="{StaticResource Menu_Window_Devices}">
+                                <ListBox></ListBox>
+                            </avalonDock:LayoutAnchorable>
+                        </avalonDock:LayoutAnchorablePane>
+                    </avalonDock:LayoutAnchorablePaneGroup>
+                </avalonDock:LayoutPanel>
+                
+                
+            </avalonDock:LayoutRoot>
+            
+        </avalonDock:DockingManager>
+
+        <StatusBar Grid.Row="2">
+            <StatusBarItem Content="Pixel Tuner 2.0"/>
+        </StatusBar>
+    </Grid>
 </Window>

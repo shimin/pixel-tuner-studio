@@ -92,10 +92,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Resource>
-    <Page Include="ListWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -103,9 +99,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ListWindow.xaml.cs">
-      <DependentUpon>ListWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -138,9 +131,13 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DockingLibrary\DockingLibrary.csproj">
-      <Project>{FA274CD2-57BB-4EB0-B101-A562ADB1685E}</Project>
-      <Name>DockingLibrary</Name>
+    <ProjectReference Include="..\AvalonDock.Theme.VS2010\AvalonDock.Themes.VS2010.csproj">
+      <Project>{B3FC3E21-5F2D-4581-AEA2-59F671CFFC21}</Project>
+      <Name>AvalonDock.Themes.VS2010</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonDock\AvalonDock.csproj">
+      <Project>{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}</Project>
+      <Name>AvalonDock</Name>
     </ProjectReference>
     <ProjectReference Include="..\TimeLineTool\TimeLineTool.csproj">
       <Project>{7439A26A-46E1-42A0-9D58-2E38289675F6}</Project>
