@@ -38,13 +38,17 @@
                             
                         </avalonDock:LayoutDocumentPane>
                     </avalonDock:LayoutDocumentPaneGroup>
-                    <avalonDock:LayoutAnchorablePaneGroup DockWidth="200">
+                    <avalonDock:LayoutAnchorablePaneGroup DockWidth="260" DockHeight="260" DockMinHeight="240" DockMinWidth="240">
                         <avalonDock:LayoutAnchorablePane>
-                            <avalonDock:LayoutAnchorable x:Name="ToolW" Title="{StaticResource Menu_Window_Projects}">
-                                <ListBox></ListBox>
+                            <avalonDock:LayoutAnchorable x:Name="boxProjectsWindow" Title="{StaticResource Menu_Window_Projects}" 
+                                                         AutoHideMinHeight="240" AutoHideMinWidth="240" 
+                                                         AutoHideHeight="260" AutoHideWidth="260">
+                                <ListBox x:Name="boxProjectsList" MinWidth="240" MinHeight="240"></ListBox>
                             </avalonDock:LayoutAnchorable>
-                            <avalonDock:LayoutAnchorable x:Name="ToolW2" Title="{StaticResource Menu_Window_Devices}">
-                                <ListBox></ListBox>
+                            <avalonDock:LayoutAnchorable x:Name="boxDevicesWindow" Title="{StaticResource Menu_Window_Devices}" 
+                                                         AutoHideMinHeight="240" AutoHideMinWidth="240" 
+                                                         AutoHideHeight="260" AutoHideWidth="260">
+                                <ListBox x:Name="boxDevicesList" MinWidth="240" MinHeight="240"></ListBox>
                             </avalonDock:LayoutAnchorable>
                         </avalonDock:LayoutAnchorablePane>
                     </avalonDock:LayoutAnchorablePaneGroup>

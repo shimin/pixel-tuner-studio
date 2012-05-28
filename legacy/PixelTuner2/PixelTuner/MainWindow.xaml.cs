@@ -14,6 +14,8 @@ using System.Windows.Shapes;
 using PixelTuner.Properties;
 using AvalonDock.Layout;
 using System.Diagnostics;
+using AvalonDock.Layout.Serialization;
+using System.IO;
 
 namespace PixelTuner
 {
@@ -47,9 +49,22 @@ namespace PixelTuner
             InitializeComponent();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private void Window_Loaded(object sender, RoutedEventArgs ev)
         {
             //dockManager.ParentWindow = this;
+
+            if (!string.IsNullOrEmpty(_layoutString))
+            {
+                var layoutSerializer = new XmlLayoutSerializer(dockManager);
+                using (StringReader sr = new StringReader(_layoutString))
+                {
+                    layoutSerializer.LayoutSerializationCallback += (s, args) =>
+                    {
+                        args.Content = Application.Current.MainWindow.FindName(args.Model.ContentId);
+                    };
+                    layoutSerializer.Deserialize(sr);
+                }
+            }
 
             //if (!string.IsNullOrEmpty(_layoutString))
             //    dockManager.RestoreLayoutFromXml(_layoutString, ExtractListWindow);
@@ -94,7 +109,13 @@ namespace PixelTuner
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             //Settings.Default.LayoutString = dockManager.GetLayoutAsXml();
-            
+            var layoutSerializer = new XmlLayoutSerializer(dockManager);
+            StringBuilder sb = new StringBuilder();
+            using (StringWriter sw = new StringWriter(sb))
+            {
+                layoutSerializer.Serialize(sw);
+            }
+            Settings.Default.LayoutString = sb.ToString();
             Settings.Default.Save();
         }
 
