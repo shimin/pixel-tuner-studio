@@ -32,29 +32,44 @@
             </avalonDock:DockingManager.Theme>
 
             <avalonDock:LayoutRoot PropertyChanged="LayoutRoot_PropertyChanged">
+
                 <avalonDock:LayoutPanel Orientation="Horizontal">
-                    <avalonDock:LayoutDocumentPaneGroup>
-                        <avalonDock:LayoutDocumentPane x:Name="layoutPanel">
-                            
-                        </avalonDock:LayoutDocumentPane>
-                    </avalonDock:LayoutDocumentPaneGroup>
-                    <avalonDock:LayoutAnchorablePaneGroup DockWidth="260" DockHeight="260" DockMinHeight="240" DockMinWidth="240">
-                        <avalonDock:LayoutAnchorablePane>
-                            <avalonDock:LayoutAnchorable x:Name="boxProjectsWindow" Title="{StaticResource Menu_Window_Projects}" 
-                                                         AutoHideMinHeight="240" AutoHideMinWidth="240" 
-                                                         AutoHideHeight="260" AutoHideWidth="260">
-                                <ListBox x:Name="boxProjectsList" MinWidth="240" MinHeight="240"></ListBox>
+
+                    <avalonDock:LayoutAnchorablePaneGroup Orientation="Vertical" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120">
+                        <avalonDock:LayoutAnchorablePane DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120">
+                            <avalonDock:LayoutAnchorable x:Name="boxProjectsWindow" Title="{StaticResource Menu_Window_Projects}" IsSelected="True">
+                                <ListBox x:Name="boxProjectsList" MinWidth="120" MinHeight="120"></ListBox>
                             </avalonDock:LayoutAnchorable>
-                            <avalonDock:LayoutAnchorable x:Name="boxDevicesWindow" Title="{StaticResource Menu_Window_Devices}" 
-                                                         AutoHideMinHeight="240" AutoHideMinWidth="240" 
-                                                         AutoHideHeight="260" AutoHideWidth="260">
-                                <ListBox x:Name="boxDevicesList" MinWidth="240" MinHeight="240"></ListBox>
+                        </avalonDock:LayoutAnchorablePane>
+                        <avalonDock:LayoutAnchorablePane DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120">
+                            <avalonDock:LayoutAnchorable x:Name="boxDevicesWindow" Title="{StaticResource Menu_Window_Devices}" IsSelected="True" >
+                                <ListBox x:Name="boxDevicesList" MinWidth="120" MinHeight="120"></ListBox>
                             </avalonDock:LayoutAnchorable>
                         </avalonDock:LayoutAnchorablePane>
                     </avalonDock:LayoutAnchorablePaneGroup>
+
+                    <avalonDock:LayoutPanel Orientation="Vertical" >
+                        
+                        <avalonDock:LayoutDocumentPaneGroup>
+                            <avalonDock:LayoutDocumentPane x:Name="layoutPanel">
+
+                            </avalonDock:LayoutDocumentPane>
+                        </avalonDock:LayoutDocumentPaneGroup>
+
+                        <avalonDock:LayoutAnchorablePaneGroup DockWidth="100" DockHeight="200" DockMinHeight="80" DockMinWidth="80">
+                            <avalonDock:LayoutAnchorablePane>
+                                <avalonDock:LayoutAnchorable x:Name="boxImagesWindow" Title="{StaticResource Menu_Window_Images}">
+                                    <Canvas x:Name="boxCanvas">
+
+                                    </Canvas>
+                                </avalonDock:LayoutAnchorable>
+                            </avalonDock:LayoutAnchorablePane>
+                        </avalonDock:LayoutAnchorablePaneGroup>
+                        
+                    </avalonDock:LayoutPanel>
+                    
                 </avalonDock:LayoutPanel>
-                
-                
+
             </avalonDock:LayoutRoot>
             
         </avalonDock:DockingManager>

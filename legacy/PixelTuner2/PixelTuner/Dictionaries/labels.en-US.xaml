@@ -3,6 +3,7 @@
                     xmlns:system="clr-namespace:System;assembly=mscorlib">    
     <system:String x:Key="Menu_Window_Devices">Devices</system:String>
     <system:String x:Key="Menu_Window_Projects">Projects</system:String>
+    <system:String x:Key="Menu_Window_Images">Images</system:String>
     <system:String x:Key="Menu_Window">Windows</system:String>
     <system:String x:Key="Menu_File_New">New sequence</system:String>
     <system:String x:Key="Menu_File_Exit">Exit</system:String>
