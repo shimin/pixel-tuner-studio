@@ -139,6 +139,10 @@
       <Project>{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}</Project>
       <Name>AvalonDock</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DragDropLibrary\DragDropLibrary.csproj">
+      <Project>{0C6674CC-6D49-414A-9B41-D4E175028FFB}</Project>
+      <Name>DragDropLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ListViewStyle\ListViewStyle.csproj">
       <Project>{93C014DE-3E6E-47A7-92A9-D9B9AA0B9501}</Project>
       <Name>ListViewStyle</Name>
