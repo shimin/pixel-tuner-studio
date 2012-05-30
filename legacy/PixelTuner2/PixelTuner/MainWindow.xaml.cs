@@ -53,6 +53,8 @@ namespace PixelTuner
         {
             //dockManager.ParentWindow = this;
 
+#if (DONT_SAVE_LAYOUT)
+#else
             if (!string.IsNullOrEmpty(_layoutString))
             {
                 var layoutSerializer = new XmlLayoutSerializer(dockManager);
@@ -65,6 +67,7 @@ namespace PixelTuner
                     layoutSerializer.Deserialize(sr);
                 }
             }
+#endif
 
             //if (!string.IsNullOrEmpty(_layoutString))
             //    dockManager.RestoreLayoutFromXml(_layoutString, ExtractListWindow);

@@ -24,7 +24,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;DONT_SAVE_LAYOUT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UICulture>ru-RU</UICulture>
@@ -138,6 +138,10 @@
     <ProjectReference Include="..\AvalonDock\AvalonDock.csproj">
       <Project>{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}</Project>
       <Name>AvalonDock</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ListViewStyle\ListViewStyle.csproj">
+      <Project>{93C014DE-3E6E-47A7-92A9-D9B9AA0B9501}</Project>
+      <Name>ListViewStyle</Name>
     </ProjectReference>
     <ProjectReference Include="..\TimeLineTool\TimeLineTool.csproj">
       <Project>{7439A26A-46E1-42A0-9D58-2E38289675F6}</Project>

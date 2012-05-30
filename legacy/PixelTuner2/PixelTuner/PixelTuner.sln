@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonDock", "..\AvalonDock
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonDock.Themes.VS2010", "..\AvalonDock.Theme.VS2010\AvalonDock.Themes.VS2010.csproj", "{B3FC3E21-5F2D-4581-AEA2-59F671CFFC21}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListViewStyle", "..\ListViewStyle\ListViewStyle.csproj", "{93C014DE-3E6E-47A7-92A9-D9B9AA0B9501}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -129,6 +131,26 @@ Global
 		{B3FC3E21-5F2D-4581-AEA2-59F671CFFC21}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{B3FC3E21-5F2D-4581-AEA2-59F671CFFC21}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{B3FC3E21-5F2D-4581-AEA2-59F671CFFC21}.Release|x86.ActiveCfg = Release|Any CPU
+		{93C014DE-3E6E-47A7-92A9-D9B9AA0B9501}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93C014DE-3E6E-47A7-92A9-D9B9AA0B9501}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93C014DE-3E6E-47A7-92A9-D9B9AA0B9501}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{93C014DE-3E6E-47A7-92A9-D9B9AA0B9501}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{93C014DE-3E6E-47A7-92A9-D9B9AA0B9501}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{93C014DE-3E6E-47A7-92A9-D9B9AA0B9501}.EnDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93C014DE-3E6E-47A7-92A9-D9B9AA0B9501}.EnDebug|Any CPU.Build.0 = Debug|Any CPU
+		{93C014DE-3E6E-47A7-92A9-D9B9AA0B9501}.EnDebug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{93C014DE-3E6E-47A7-92A9-D9B9AA0B9501}.EnDebug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{93C014DE-3E6E-47A7-92A9-D9B9AA0B9501}.EnDebug|x86.ActiveCfg = Debug|Any CPU
+		{93C014DE-3E6E-47A7-92A9-D9B9AA0B9501}.EnRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{93C014DE-3E6E-47A7-92A9-D9B9AA0B9501}.EnRelease|Any CPU.Build.0 = Release|Any CPU
+		{93C014DE-3E6E-47A7-92A9-D9B9AA0B9501}.EnRelease|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{93C014DE-3E6E-47A7-92A9-D9B9AA0B9501}.EnRelease|Mixed Platforms.Build.0 = Release|Any CPU
+		{93C014DE-3E6E-47A7-92A9-D9B9AA0B9501}.EnRelease|x86.ActiveCfg = Release|Any CPU
+		{93C014DE-3E6E-47A7-92A9-D9B9AA0B9501}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93C014DE-3E6E-47A7-92A9-D9B9AA0B9501}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93C014DE-3E6E-47A7-92A9-D9B9AA0B9501}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{93C014DE-3E6E-47A7-92A9-D9B9AA0B9501}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{93C014DE-3E6E-47A7-92A9-D9B9AA0B9501}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
