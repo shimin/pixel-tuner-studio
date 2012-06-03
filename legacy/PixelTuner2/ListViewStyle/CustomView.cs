@@ -28,7 +28,7 @@ namespace PixelTuner.ListViewStyle
 
         protected override object ItemContainerDefaultStyleKey
         {
-            get { return new ComponentResourceKey(GetType(), "ImageViewItem"); }
+            get { return new ComponentResourceKey(GetType(), "ListViewItem"); }
         }
 
         #endregion
@@ -38,7 +38,7 @@ namespace PixelTuner.ListViewStyle
     /// FileCollection is used as ItemsSource of ListView. ListView will show files inside
     /// the collection
     /// </summary>
-    public sealed class FileCollection : ObservableCollection<FileSystemInfo>
+    public sealed class FileCollection : ObservableCollection<ThumbnailFileItem>
     {
         public FileCollection()
         {
@@ -52,14 +52,20 @@ namespace PixelTuner.ListViewStyle
             // put files into collection
 
             //string wallpaperPath = string.Format(@"{0}\Web\Wallpaper", windir);
-            string wallpaperPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content");
-            DirectoryInfo info = new DirectoryInfo(wallpaperPath);
+            string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content");
+            if (!Directory.Exists(sourcePath))
+            {
+                Directory.CreateDirectory(sourcePath);
+            }
+            DirectoryInfo info = new DirectoryInfo(sourcePath);
             FileSystemInfo[] files = info.GetFileSystemInfos();
-            foreach (FileSystemInfo fi in files)
+
+            foreach (FileInfo fi in files)
             {
                 // exlude hidden files 
+                ThumbnailFileItem tfi = new ThumbnailFileItem(fi);
                 if ((fi.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
-                    Add(fi);
+                    Add(tfi);
             }
         }
     }

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using GongSolutions.Wpf.DragDrop.Utilities;
-using System.Windows.Automation.Peers;
 
 namespace GongSolutions.Wpf.DragDrop
 {
@@ -113,6 +113,8 @@ namespace GongSolutions.Wpf.DragDrop
             DependencyProperty.RegisterAttached("IsDropTarget", typeof(bool), typeof(DragDrop),
                 new UIPropertyMetadata(false, IsDropTargetChanged));
 
+        public static readonly DataFormat DataFormat = DataFormats.GetDataFormat("GongSolutions.Wpf.DragDrop");
+
         static void IsDragSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             UIElement uiElement = (UIElement)d;
@@ -159,8 +161,18 @@ namespace GongSolutions.Wpf.DragDrop
 
             if (template != null)
             {
-                UIElement rootElement = (UIElement)Application.Current.MainWindow.Content;
+                UIElement rootElement = null;
+                Window parentWindow = m_DragInfo.VisualSource.GetVisualAncestor<Window>();
                 UIElement adornment = null;
+
+                if (parentWindow != null)
+                {
+                    rootElement = parentWindow.Content as UIElement;
+                }
+                if (rootElement == null)
+                {
+                    rootElement = (UIElement)Application.Current.MainWindow.Content;
+                }
 
                 if (m_DragInfo.Data is IEnumerable && !(m_DragInfo.Data is string))
                 {
@@ -196,19 +208,17 @@ namespace GongSolutions.Wpf.DragDrop
         static bool HitTestScrollBar(object sender, MouseButtonEventArgs e)
         {
             HitTestResult hit = VisualTreeHelper.HitTest((Visual)sender, e.GetPosition((IInputElement)sender));
-            if(hit!=null)
-				return hit.VisualHit.GetVisualAncestor<System.Windows.Controls.Primitives.ScrollBar>() != null;
-			return false;
+            return hit.VisualHit.GetVisualAncestor<System.Windows.Controls.Primitives.ScrollBar>() != null;
         }
 
         static void Scroll(DependencyObject o, DragEventArgs e)
         {
-			ScrollViewer scrollViewer = o.GetVisualAncestor<ScrollViewer>();//o.GetVisualDescendent<ScrollViewer>();
-			
+            ScrollViewer scrollViewer = o.GetVisualDescendent<ScrollViewer>();
+
             if (scrollViewer != null)
             {
                 Point position = e.GetPosition(scrollViewer);
-				double scrollMargin = Math.Min(scrollViewer.FontSize * 4, scrollViewer.ActualHeight / 2);
+                double scrollMargin = Math.Min(scrollViewer.FontSize * 2, scrollViewer.ActualHeight / 2);
 
                 if (position.X >= scrollViewer.ActualWidth - scrollMargin &&
                     scrollViewer.HorizontalOffset < scrollViewer.ExtentWidth - scrollViewer.ViewportWidth)
@@ -220,11 +230,11 @@ namespace GongSolutions.Wpf.DragDrop
                     scrollViewer.LineLeft();
                 }
                 else if (position.Y >= scrollViewer.ActualHeight - scrollMargin &&
-                    scrollViewer.VerticalOffset <= scrollViewer.ExtentHeight - scrollViewer.ViewportHeight)
+                    scrollViewer.VerticalOffset < scrollViewer.ExtentHeight - scrollViewer.ViewportHeight)
                 {
                     scrollViewer.LineDown();
                 }
-                else if (position.Y < scrollMargin && scrollViewer.VerticalOffset >= 0)
+                else if (position.Y < scrollMargin && scrollViewer.VerticalOffset > 0)
                 {
                     scrollViewer.LineUp();
                 }
@@ -249,11 +259,11 @@ namespace GongSolutions.Wpf.DragDrop
 
             if (m_DragInfo.VisualSourceItem != null && itemsControl != null && itemsControl.CanSelectMultipleItems())
             {
-                IEnumerable selectedItems = itemsControl.GetSelectedItems();
+                IEnumerable<object> selectedItems = itemsControl.GetSelectedItems().Cast<object>();
 
-                if (selectedItems.Cast<object>().Contains(m_DragInfo.SourceItem))
+                if (selectedItems.Count() > 1 && selectedItems.Contains(m_DragInfo.SourceItem))
                 {
-					
+                    m_ClickSupressItem = m_DragInfo.SourceItem;
                     e.Handled = true;
                 }
             }
@@ -261,32 +271,33 @@ namespace GongSolutions.Wpf.DragDrop
 
         static void DragSource_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-			//this only fires if we didn't initiate a drag.  So this is where we need to re-raise the 
-			//preview down event.
+            // If we prevented the control's default selection handling in DragSource_PreviewMouseLeftButtonDown
+            // by setting 'e.Handled = true' and a drag was not initiated, manually set the selection here.
+            ItemsControl itemsControl = sender as ItemsControl;
+
+            if (itemsControl != null && m_DragInfo != null && m_ClickSupressItem == m_DragInfo.SourceItem)
+            {
+                if ((Keyboard.Modifiers & ModifierKeys.Control) != 0)
+                {
+                    itemsControl.SetItemSelected(m_DragInfo.SourceItem, false);
+                }
+                else
+                {
+                    itemsControl.SetSelectedItem(m_DragInfo.SourceItem);
+                }
+            }
+
             if (m_DragInfo != null)
             {
-				UIElement uiElement = (UIElement)sender;
-				
-				//Every RoutedEventArgs must have a non-null RoutedEvent associated with it.
-				int ts = new TimeSpan(DateTime.Now.Ticks).Milliseconds;
-				MouseButtonEventArgs mbargs = new MouseButtonEventArgs(Mouse.PrimaryDevice, ts, MouseButton.Left);
-				//mbargs.Source = uiElement;
-				mbargs.RoutedEvent = UIElement.PreviewMouseLeftButtonDownEvent;
-				uiElement.RaiseEvent(mbargs);
-				// TODO: Re-raise the supressed event if the user didn't initiate a drag.
-				
-				/*if (uiElement.PreviewMouseLeftButtonDown != null)
-				{
-					uiElement.PreviewMouseLeftButtonDown(sender, e);
-				}*/
-				
                 m_DragInfo = null;
             }
+
+            m_ClickSupressItem = null;
         }
 
         static void DragSource_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (m_DragInfo != null)
+            if (m_DragInfo != null && !m_DragInProgress)
             {
                 Point dragStart = m_DragInfo.DragStartPosition;
                 Point position = e.GetPosition(null);
@@ -307,8 +318,18 @@ namespace GongSolutions.Wpf.DragDrop
 
                     if (m_DragInfo.Effects != DragDropEffects.None && m_DragInfo.Data != null)
                     {
-                        DataObject data = new DataObject(m_Format.Name, m_DragInfo.Data);
-                        System.Windows.DragDrop.DoDragDrop(m_DragInfo.VisualSource, data, m_DragInfo.Effects);
+                        DataObject data = new DataObject(DataFormat.Name, m_DragInfo.Data);
+
+                        try
+                        {
+                            m_DragInProgress = true;
+                            System.Windows.DragDrop.DoDragDrop(m_DragInfo.VisualSource, data, m_DragInfo.Effects);
+                        }
+                        finally
+                        {
+                            m_DragInProgress = false;
+                        }
+
                         m_DragInfo = null;
                     }
                 }
@@ -322,21 +343,16 @@ namespace GongSolutions.Wpf.DragDrop
 
         static void DropTarget_PreviewDragLeave(object sender, DragEventArgs e)
         {
-			IDropTarget dropHandler = GetDropHandler((UIElement)sender);
-			 DropInfo dropInfo = new DropInfo(sender, e, m_DragInfo, m_Format.Name);
-			if (dropHandler != null)
-			{
-				dropHandler.DragOut(dropInfo);
-			}
             DragAdorner = null;
             DropTargetAdorner = null;
         }
 
         static void DropTarget_PreviewDragOver(object sender, DragEventArgs e)
         {
-            DropInfo dropInfo = new DropInfo(sender, e, m_DragInfo, m_Format.Name);
+            DropInfo dropInfo = new DropInfo(sender, e, m_DragInfo);
             IDropTarget dropHandler = GetDropHandler((UIElement)sender);
-			
+            ItemsControl itemsControl = sender as ItemsControl;
+
             if (dropHandler != null)
             {
                 dropHandler.DragOver(dropInfo);
@@ -366,23 +382,31 @@ namespace GongSolutions.Wpf.DragDrop
             }
 
             // If the target is an ItemsControl then update the drop target adorner.
-            if (sender is ItemsControl)
+            if (itemsControl != null)
             {
-                UIElement adornedElement = ((ItemsControl)sender).GetVisualDescendent<ItemsPresenter>();
+                // Display the adorner in the control's ItemsPresenter. If there is no 
+                // ItemsPresenter provided by the style, try getting hold of a
+                // ScrollContentPresenter and using that.
+                UIElement adornedElement = 
+                    (UIElement)itemsControl.GetVisualDescendent<ItemsPresenter>() ??
+                    (UIElement)itemsControl.GetVisualDescendent<ScrollContentPresenter>();
 
-                if (dropInfo.DropTargetAdorner == null)
+                if (adornedElement != null)
                 {
-                    DropTargetAdorner = null;
-                }
-                else if (!dropInfo.DropTargetAdorner.IsInstanceOfType(DropTargetAdorner))
-                {
-                    DropTargetAdorner = DropTargetAdorner.Create(dropInfo.DropTargetAdorner, adornedElement);
-                }
+                    if (dropInfo.DropTargetAdorner == null)
+                    {
+                        DropTargetAdorner = null;
+                    }
+                    else if (!dropInfo.DropTargetAdorner.IsInstanceOfType(DropTargetAdorner))
+                    {
+                        DropTargetAdorner = DropTargetAdorner.Create(dropInfo.DropTargetAdorner, adornedElement);
+                    }
 
-                if (DropTargetAdorner != null)
-                {
-                    DropTargetAdorner.DropInfo = dropInfo;
-                    DropTargetAdorner.InvalidateVisual();
+                    if (DropTargetAdorner != null)
+                    {
+                        DropTargetAdorner.DropInfo = dropInfo;
+                        DropTargetAdorner.InvalidateVisual();
+                    }
                 }
             }
 
@@ -394,21 +418,14 @@ namespace GongSolutions.Wpf.DragDrop
 
         static void DropTarget_PreviewDrop(object sender, DragEventArgs e)
         {
-            DropInfo dropInfo = new DropInfo(sender, e, m_DragInfo, m_Format.Name);
-            IDropTarget dropHandler = GetDropHandler((UIElement)sender);
+            DropInfo dropInfo = new DropInfo(sender, e, m_DragInfo);
+            IDropTarget dropHandler = GetDropHandler((UIElement)sender) ?? DefaultDropHandler;
+            IDragSource dragHandler = GetDragHandler((UIElement)sender) ?? DefaultDragHandler;
 
             DragAdorner = null;
             DropTargetAdorner = null;
-
-            if (dropHandler != null)
-            {
-                dropHandler.Drop(dropInfo);
-            }
-            else
-            {
-                DefaultDropHandler.Drop(dropInfo);
-            }
-
+            dropHandler.Drop(dropInfo);
+            dragHandler.Dropped(dropInfo);
             e.Handled = true;
         }
 
@@ -444,7 +461,8 @@ namespace GongSolutions.Wpf.DragDrop
         static IDropTarget m_DefaultDropHandler;
         static DragAdorner m_DragAdorner;
         static DragInfo m_DragInfo;
+        static bool m_DragInProgress;
         static DropTargetAdorner m_DropTargetAdorner;
-        static DataFormat m_Format = DataFormats.GetDataFormat("GongSolutions.Wpf.DragDrop");
+        static object m_ClickSupressItem;
     }
 }

@@ -12,8 +12,7 @@ namespace GongSolutions.Wpf.DragDrop
 {
     class DefaultDropHandler : IDropTarget
     {
-		
-        public virtual void DragOver(DropInfo dropInfo)
+        public virtual void DragOver(IDropInfo dropInfo)
         {
             if (CanAcceptData(dropInfo))
             {
@@ -22,7 +21,7 @@ namespace GongSolutions.Wpf.DragDrop
             }
         }
 
-        public virtual void Drop(DropInfo dropInfo)
+        public virtual void Drop(IDropInfo dropInfo)
         {
             int insertIndex = dropInfo.InsertIndex;
             IList destinationList = GetList(dropInfo.TargetCollection);
@@ -54,7 +53,7 @@ namespace GongSolutions.Wpf.DragDrop
             }
         }
 
-        protected static bool CanAcceptData(DropInfo dropInfo)
+        protected static bool CanAcceptData(IDropInfo dropInfo)
         {
             if (dropInfo.DragInfo.SourceCollection == dropInfo.TargetCollection)
             {
@@ -138,42 +137,5 @@ namespace GongSolutions.Wpf.DragDrop
                 return target is IList;
             }
         }
-
-		#region IDropTarget Members
-
-
-		public void DragOut(DropInfo dropInfo)
-		{
-			throw new NotImplementedException();
-		}
-
-		#endregion
-
-		#region IDropTarget Members
-
-
-		public void PauseOver(DropInfo dropInfo)
-		{
-			throw new NotImplementedException();
-		}
-
-		#endregion
-
-		#region IDropTarget Members
-
-
-		public DateTime? _DragOverTime
-		{
-			get
-			{
-				throw new NotImplementedException();
-			}
-			set
-			{
-				throw new NotImplementedException();
-			}
-		}
-
-		#endregion
-	}
+    }
 }

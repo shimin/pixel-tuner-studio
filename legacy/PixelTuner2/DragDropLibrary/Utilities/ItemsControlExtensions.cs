@@ -18,7 +18,7 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
             if (itemsControl is MultiSelector)
             {
                 // The CanSelectMultipleItems property is protected. Use reflection to
-                // get it's value anyway.
+                // get its value anyway.
                 return (bool)itemsControl.GetType()
                     .GetProperty("CanSelectMultipleItems", BindingFlags.Instance | BindingFlags.NonPublic)
                     .GetValue(itemsControl, null);
@@ -58,11 +58,63 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
             return null;
         }
 
+        public static UIElement GetItemContainerAt(this ItemsControl itemsControl, Point position, 
+                                                   Orientation searchDirection)
+        {
+            Type itemContainerType = GetItemContainerType(itemsControl);
+
+            if (itemContainerType != null)
+            {
+                LineGeometry line;
+
+                switch (searchDirection)
+                {
+                    case Orientation.Horizontal:
+                        line = new LineGeometry(new Point(0, position.Y), new Point(itemsControl.RenderSize.Width, position.Y));
+                        break;
+                    case Orientation.Vertical:
+                        line = new LineGeometry(new Point(position.X, 0), new Point(position.X, itemsControl.RenderSize.Height));
+                        break;
+                    default:
+                        throw new ArgumentException("Invalid value for searchDirection");
+                }
+
+                List<DependencyObject> hits = new List<DependencyObject>();
+
+                VisualTreeHelper.HitTest(itemsControl, null,
+                    result =>
+                    {
+                        DependencyObject itemContainer = result.VisualHit.GetVisualAncestor(itemContainerType);
+                        if (itemContainer != null) hits.Add(itemContainer);
+                        return HitTestResultBehavior.Continue;
+                    },
+                    new GeometryHitTestParameters(line));
+
+                return GetClosest(itemsControl, hits, position, searchDirection);
+            }
+
+            return null;
+        }
+
         public static Type GetItemContainerType(this ItemsControl itemsControl)
         {
-            // There is no safe way to get the item container type for an ItemsControl. The
-            // best we can do is to look for the control's ItemsPresenter, get it's child 
-            // panel and the first child of that *should* be an item container.
+            // There is no safe way to get the item container type for an ItemsControl. 
+            // First hard-code the types for the common ItemsControls.
+            if (itemsControl is ListView)
+            {
+                return typeof(ListViewItem);
+            }
+            else if (itemsControl is TreeView)
+            {
+                return typeof(TreeViewItem);
+            }
+            else if (itemsControl is ListBox)
+            {
+                return typeof(ListBoxItem);
+            }
+
+            // Otherwise look for the control's ItemsPresenter, get it's child panel and the first 
+            // child of that *should* be an item container.
             //
             // If the control currently has no items, we're out of luck.
             if (itemsControl.Items.Count > 0)
@@ -72,10 +124,7 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
                 foreach (ItemsPresenter itemsPresenter in itemsPresenters)
                 {
                     DependencyObject panel = VisualTreeHelper.GetChild(itemsPresenter, 0);
-
-					DependencyObject itemContainer = null;
-					if(VisualTreeHelper.GetChildrenCount(panel)>0)
-						itemContainer = VisualTreeHelper.GetChild(panel, 0);
+                    DependencyObject itemContainer = VisualTreeHelper.GetChild(panel, 0);
 
                     // Ensure that this actually *is* an item container by checking it with
                     // ItemContainerGenerator.
@@ -93,18 +142,44 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
         public static Orientation GetItemsPanelOrientation(this ItemsControl itemsControl)
         {
             ItemsPresenter itemsPresenter = itemsControl.GetVisualDescendent<ItemsPresenter>();
-            DependencyObject itemsPanel = VisualTreeHelper.GetChild(itemsPresenter, 0);
-            PropertyInfo orientationProperty = itemsPanel.GetType().GetProperty("Orientation", typeof(Orientation));
 
-            if (orientationProperty != null)
+            if (itemsPresenter != null)
             {
-                return (Orientation)orientationProperty.GetValue(itemsPanel, null);
+                DependencyObject itemsPanel = VisualTreeHelper.GetChild(itemsPresenter, 0);
+                PropertyInfo orientationProperty = itemsPanel.GetType().GetProperty("Orientation", typeof(Orientation));
+
+                if (orientationProperty != null)
+                {
+                    return (Orientation)orientationProperty.GetValue(itemsPanel, null);
+                }
             }
-            else
+
+            // Make a guess!
+            return Orientation.Vertical;
+        }
+
+        public static void SetSelectedItem(this ItemsControl itemsControl, object item)
+        {
+            if (itemsControl is MultiSelector)
             {
-                // Make a guess!
-                return Orientation.Vertical;
+                ((MultiSelector)itemsControl).SelectedItem = null;
+                ((MultiSelector)itemsControl).SelectedItem = item;
             }
+            else if (itemsControl is ListBox)
+            {
+                ((ListBox)itemsControl).SelectedItem = null;
+                ((ListBox)itemsControl).SelectedItem = item;
+            }
+            else if (itemsControl is TreeView)
+            {
+                // TODO: Select the TreeViewItem
+                //((TreeView)itemsControl)
+            }
+            else if (itemsControl is Selector)
+            {
+                ((Selector)itemsControl).SelectedItem = null;
+                ((Selector)itemsControl).SelectedItem = item;            
+            }            
         }
 
         public static IEnumerable GetSelectedItems(this ItemsControl itemsControl)
@@ -138,6 +213,110 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
             {
                 return Enumerable.Empty<object>();
             }
+        }
+
+        public static bool GetItemSelected(this ItemsControl itemsControl, object item)
+        {
+            if (itemsControl is MultiSelector)
+            {
+                return ((MultiSelector)itemsControl).SelectedItems.Contains(item);
+            }
+            else if (itemsControl is ListBox)
+            {
+                return ((ListBox)itemsControl).SelectedItems.Contains(item);
+            }
+            else if (itemsControl is TreeView)
+            {
+                return ((TreeView)itemsControl).SelectedItem == item;
+            }
+            else if (itemsControl is Selector)
+            {
+                return ((Selector)itemsControl).SelectedItem == item;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static void SetItemSelected(this ItemsControl itemsControl, object item, bool value)
+        {
+            if (itemsControl is MultiSelector)
+            {
+                MultiSelector multiSelector = (MultiSelector)itemsControl;
+
+                if (value)
+                {
+                    if (multiSelector.CanSelectMultipleItems())
+                    {
+                        multiSelector.SelectedItems.Add(item);
+                    }
+                    else
+                    {
+                        multiSelector.SelectedItem = item;
+                    }
+                }
+                else
+                {
+                    multiSelector.SelectedItems.Remove(item);
+                }
+            }
+            else if (itemsControl is ListBox)
+            {
+                ListBox listBox = (ListBox)itemsControl;
+
+                if (value)
+                {
+                    if (listBox.SelectionMode != SelectionMode.Single)
+                    {
+                        listBox.SelectedItems.Add(item);
+                    }
+                    else
+                    {
+                        listBox.SelectedItem = item;
+                    }
+                }
+                else
+                {
+                    listBox.SelectedItems.Remove(item);
+                }
+            }
+        }
+
+        static UIElement GetClosest(ItemsControl itemsControl, List<DependencyObject> items, 
+                                    Point position, Orientation searchDirection)
+        {
+            UIElement closest = null;
+            double closestDistance = double.MaxValue;
+
+            foreach (DependencyObject i in items)
+            {
+                UIElement uiElement = i as UIElement;
+
+                if (uiElement != null)
+                {
+                    Point p = uiElement.TransformToAncestor(itemsControl).Transform(new Point(0, 0));
+                    double distance = double.MaxValue;
+
+                    switch (searchDirection)
+                    {
+                        case Orientation.Horizontal:
+                            distance = Math.Abs(position.X - p.X);
+                            break;
+                        case Orientation.Vertical:
+                            distance = Math.Abs(position.Y - p.Y);
+                            break;
+                    }
+
+                    if (distance < closestDistance)
+                    {
+                        closest = uiElement;
+                        closestDistance = distance;
+                    }
+                }
+            }
+
+            return closest;
         }
     }
 }
