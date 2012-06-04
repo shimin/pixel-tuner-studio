@@ -191,27 +191,27 @@ namespace PixelTuner
             TimeLine2.Items = t2Data;
             TimeLine3.Items = t3Data;
 
-            var lb1 = new TempDataType()
-            {
-                Name = "Экземпляр 1"
-            };
-            var lb2 = new TempDataType()
-            {
-                Name = "Экземпляр 2"
-            };
-            var lb3 = new TempDataType()
-            {
-                Name = "Экземпляр 3"
-            };
-            var lb4 = new TempDataType()
-            {
-                Name = "Экземпляр 4"
-            };
-            listboxData.Add(lb1);
-            listboxData.Add(lb2);
-            listboxData.Add(lb3);
-            listboxData.Add(lb4);
-            ListSrc.ItemsSource = listboxData;
+            //var lb1 = new TempDataType()
+            //{
+            //    Name = "Экземпляр 1"
+            //};
+            //var lb2 = new TempDataType()
+            //{
+            //    Name = "Экземпляр 2"
+            //};
+            //var lb3 = new TempDataType()
+            //{
+            //    Name = "Экземпляр 3"
+            //};
+            //var lb4 = new TempDataType()
+            //{
+            //    Name = "Экземпляр 4"
+            //};
+            //listboxData.Add(lb1);
+            //listboxData.Add(lb2);
+            //listboxData.Add(lb3);
+            //listboxData.Add(lb4);
+            //ListSrc.ItemsSource = listboxData;
             Slider_Scale.Value = 25;
         }
 

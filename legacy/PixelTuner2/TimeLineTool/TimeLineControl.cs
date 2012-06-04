@@ -976,9 +976,9 @@ namespace TimeLineTool
 
 
             //place our gridlines
-            DrawDayLines(grid);
-            DrawHourLines(grid);
-            DrawMinuteLines(grid);
+            //DrawDayLines(grid);
+            //DrawHourLines(grid);
+            //DrawMinuteLines(grid);
         }
         private void DrawMinuteLines(Canvas grid)
         {

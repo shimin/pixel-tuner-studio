@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="PixelTuner" Height="484" Width="960" WindowStyle="SingleBorderWindow" 
         
-        xmlns:PixelTuner="clr-namespace:PixelTuner"
         xmlns:avalonDock="http://avalondock.codeplex.com"
         xmlns:tt="clr-namespace:TimeLineTool;assembly=TimeLineTool"
         xmlns:l="clr-namespace:PixelTuner.ListViewStyle;assembly=ListViewStyle"
@@ -132,20 +131,24 @@
                         <avalonDock:LayoutDocumentPaneGroup>
                             <avalonDock:LayoutDocumentPane x:Name="layoutPanel">
                                 <avalonDock:LayoutDocument Title="Sequence 1">
-                                    <Grid Background="White">
+                                    <Grid Background="#262626">
                                         <Grid.RowDefinitions>
+                                            <RowDefinition Height="32"/>
                                             <RowDefinition Height="160"/>
                                             <RowDefinition Height="40"/>
                                             <RowDefinition Height="*"/>
                                         </Grid.RowDefinitions>
-                                        <ItemsControl Grid.Row="0">
+                                        <DockPanel FlowDirection="LeftToRight">
+                                            
+                                        </DockPanel>
+                                        <ItemsControl Grid.Row="1">
                                             <tt:TimeLineControl Height="80"
                                                             ItemTemplate="{StaticResource UsedTemplateProperty}"
                                                             HorizontalAlignment="Left"
                                                             x:Name="TimeLine2"
                                                             UnitSize="20"
                                                             MinimumUnitWidth="20"
-                                                            Background="AntiqueWhite"
+                                                            Background="#4A4A4A"
                                                             DrawTimeGrid="True"
                                                             MinWidth="50"
                                                             SynchedWithSiblings="True" />
@@ -155,14 +158,14 @@
                                                             x:Name="TimeLine3"
                                                             UnitSize="20"
                                                             MinimumUnitWidth="20"
-                                                            Background="Azure"
+                                                            Background="#3c3c3c"
                                                             DrawTimeGrid="True"
                                                             MinWidth="50"
                                                             SynchedWithSiblings="True" />
                                         </ItemsControl>
                                         <Slider x:Name="Slider_Scale" Margin="8" Minimum="1" Maximum="100" 
-                                                Grid.Row="1" ValueChanged="Slider_Scale_ValueChanged" />
-                                        <ListBox x:Name="ListSrc" Grid.Row="2" dd:DragDrop.IsDragSource="True" />
+                                                Grid.Row="2" ValueChanged="Slider_Scale_ValueChanged" />
+                                        <!--<ListBox x:Name="ListSrc" Grid.Row="2" dd:DragDrop.IsDragSource="True" /> -->
                                     </Grid>
                                 </avalonDock:LayoutDocument>
                             </avalonDock:LayoutDocumentPane>
