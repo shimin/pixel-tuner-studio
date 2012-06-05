@@ -106,7 +106,7 @@
         
         <avalonDock:DockingManager Name="dockManager" Grid.Row="1">
             <avalonDock:DockingManager.Theme>
-                <avalonDock:VS2010Theme/>
+                <avalonDock:DefaultTheme/>
             </avalonDock:DockingManager.Theme>
 
             <avalonDock:LayoutRoot PropertyChanged="LayoutRoot_PropertyChanged">
@@ -131,7 +131,7 @@
                         <avalonDock:LayoutDocumentPaneGroup>
                             <avalonDock:LayoutDocumentPane x:Name="layoutPanel">
                                 <avalonDock:LayoutDocument Title="Sequence 1">
-                                    <Grid Background="#262626">
+                                    <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="32"/>
                                             <RowDefinition Height="160"/>
