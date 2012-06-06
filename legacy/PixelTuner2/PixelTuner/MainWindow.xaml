@@ -7,6 +7,7 @@
         xmlns:tt="clr-namespace:TimeLineTool;assembly=TimeLineTool"
         xmlns:l="clr-namespace:PixelTuner.ListViewStyle;assembly=ListViewStyle"
         xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
+        xmlns:local="clr-namespace:PixelTuner"
         
         Loaded="Window_Loaded" Closing="Window_Closing">
     
@@ -70,7 +71,7 @@
         <DataTemplate  DataType="{x:Type tt:TempDataType}"
                        x:Key="UsedTemplateProperty">
             <Border BorderThickness="1"
-                    BorderBrush="Green"
+                    BorderBrush="White"
                     CornerRadius="3"
                     Margin="0,10,0,10"
                     Height="60"
@@ -83,6 +84,8 @@
                 </StackPanel>
             </Border>
         </DataTemplate>
+        <local:ActiveDocumentConverter x:Key="ActiveDocumentConverter"/>
+        <avalonDock:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     </Window.Resources>
     
     
@@ -95,7 +98,8 @@
         
         <Menu Padding="0">
             <MenuItem Header="{StaticResource Menu_File}">
-                <MenuItem Header="{StaticResource Menu_File_New}" Click="NewDocument"/>
+                <MenuItem Header="{StaticResource Menu_File_New}" Command="{Binding NewCommand}"/>
+                <!--<MenuItem Header="{StaticResource Menu_File_New}" Click="NewDocument"/> -->
                 <MenuItem Header="{StaticResource Menu_File_Exit}" Click="ExitApplication"/>
             </MenuItem>
             <MenuItem Header="{StaticResource Menu_Window}">
@@ -103,13 +107,82 @@
                 <MenuItem Header="{StaticResource Menu_Window_Devices}" Click="ShowDeviceList"/>
             </MenuItem>
         </Menu>
-        
-        <avalonDock:DockingManager Name="dockManager" Grid.Row="1">
+
+        <avalonDock:DockingManager Name="dockManager" 
+                                   DocumentsSource="{Binding Files}"
+                                   AnchorablesSource="{Binding Tools}"
+                                   ActiveContent="{Binding ActiveDocument, Mode=TwoWay, Converter={StaticResource ActiveDocumentConverter}}"
+                                   Grid.Row="1">
             <avalonDock:DockingManager.Theme>
                 <avalonDock:DefaultTheme/>
             </avalonDock:DockingManager.Theme>
+            <avalonDock:DockingManager.LayoutItemTemplateSelector>
+                <local:PanesTemplateSelector>
+                    <local:PanesTemplateSelector.FileViewTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="32"/>
+                                    <RowDefinition Height="160"/>
+                                    <RowDefinition Height="40"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <DockPanel FlowDirection="LeftToRight">
 
-            <avalonDock:LayoutRoot PropertyChanged="LayoutRoot_PropertyChanged">
+                                </DockPanel>
+                                <ItemsControl Grid.Row="1">
+                                    <tt:TimeLineControl Height="80"
+                                                            ItemTemplate="{StaticResource UsedTemplateProperty}"
+                                                            HorizontalAlignment="Left"
+                                                            x:Name="TimeLine2"
+                                                            UnitSize="20"
+                                                            MinimumUnitWidth="20"
+                                                            Background="#4A4A4A"
+                                                            DrawTimeGrid="False"
+                                                            MinWidth="50"
+                                                            SynchedWithSiblings="True" />
+                                    <tt:TimeLineControl Height="80"
+                                                            ItemTemplate="{StaticResource UsedTemplateProperty}"
+                                                            HorizontalAlignment="Left"
+                                                            x:Name="TimeLine3"
+                                                            UnitSize="20"
+                                                            MinimumUnitWidth="20"
+                                                            Background="#3c3c3c"
+                                                            DrawTimeGrid="False"
+                                                            MinWidth="50"
+                                                            SynchedWithSiblings="True" />
+                                </ItemsControl>
+                                <Slider x:Name="Slider_Scale" Margin="8" Minimum="1" Maximum="100" 
+                                                Grid.Row="2" ValueChanged="Slider_Scale_ValueChanged" />
+                                <!--<ListBox x:Name="ListSrc" Grid.Row="2" dd:DragDrop.IsDragSource="True" /> -->
+                            </Grid>
+                        </DataTemplate>
+                    </local:PanesTemplateSelector.FileViewTemplate>
+                </local:PanesTemplateSelector>
+            </avalonDock:DockingManager.LayoutItemTemplateSelector>
+            <avalonDock:DockingManager.LayoutItemContainerStyleSelector>
+                <local:PanesStyleSelector>
+                    <local:PanesStyleSelector.ToolStyle>
+                        <Style TargetType="{x:Type avalonDock:LayoutItem}">
+                            <Setter Property="Title" Value="{Binding Model.Title}"/>
+                            <Setter Property="IconSource" Value="{Binding Model.IconSource}"/>
+                            <Setter Property="Visibility" Value="{Binding Model.IsVisible, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Hidden}}"/>
+                            <Setter Property="ContentId" Value="{Binding Model.ContentId}"/>
+                        </Style>
+                    </local:PanesStyleSelector.ToolStyle>
+                    <local:PanesStyleSelector.FileStyle>
+                        <Style TargetType="{x:Type avalonDock:LayoutItem}">
+                            <Setter Property="Title" Value="{Binding Model.Title}"/>
+                            <Setter Property="ToolTip" Value="{Binding Model.FilePath}"/>
+                            <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}"/>
+                            <Setter Property="IconSource" Value="{Binding Model.IconSource}"/>
+                            <Setter Property="ContentId" Value="{Binding Model.ContentId}"/>
+                        </Style>
+                    </local:PanesStyleSelector.FileStyle>
+                </local:PanesStyleSelector>
+            </avalonDock:DockingManager.LayoutItemContainerStyleSelector>
+            
+            <avalonDock:LayoutRoot>
 
                 <avalonDock:LayoutPanel Orientation="Horizontal">
 
@@ -129,59 +202,23 @@
                     <avalonDock:LayoutPanel Orientation="Vertical" >
                         
                         <avalonDock:LayoutDocumentPaneGroup>
-                            <avalonDock:LayoutDocumentPane x:Name="layoutPanel">
-                                <avalonDock:LayoutDocument Title="Sequence 1">
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="32"/>
-                                            <RowDefinition Height="160"/>
-                                            <RowDefinition Height="40"/>
-                                            <RowDefinition Height="*"/>
-                                        </Grid.RowDefinitions>
-                                        <DockPanel FlowDirection="LeftToRight">
-                                            
-                                        </DockPanel>
-                                        <ItemsControl Grid.Row="1">
-                                            <tt:TimeLineControl Height="80"
-                                                            ItemTemplate="{StaticResource UsedTemplateProperty}"
-                                                            HorizontalAlignment="Left"
-                                                            x:Name="TimeLine2"
-                                                            UnitSize="20"
-                                                            MinimumUnitWidth="20"
-                                                            Background="#4A4A4A"
-                                                            DrawTimeGrid="True"
-                                                            MinWidth="50"
-                                                            SynchedWithSiblings="True" />
-                                            <tt:TimeLineControl Height="80"
-                                                            ItemTemplate="{StaticResource UsedTemplateProperty}"
-                                                            HorizontalAlignment="Left"
-                                                            x:Name="TimeLine3"
-                                                            UnitSize="20"
-                                                            MinimumUnitWidth="20"
-                                                            Background="#3c3c3c"
-                                                            DrawTimeGrid="True"
-                                                            MinWidth="50"
-                                                            SynchedWithSiblings="True" />
-                                        </ItemsControl>
-                                        <Slider x:Name="Slider_Scale" Margin="8" Minimum="1" Maximum="100" 
-                                                Grid.Row="2" ValueChanged="Slider_Scale_ValueChanged" />
-                                        <!--<ListBox x:Name="ListSrc" Grid.Row="2" dd:DragDrop.IsDragSource="True" /> -->
-                                    </Grid>
-                                </avalonDock:LayoutDocument>
-                            </avalonDock:LayoutDocumentPane>
+                            <avalonDock:LayoutDocumentPane />
                         </avalonDock:LayoutDocumentPaneGroup>
 
                         <avalonDock:LayoutAnchorablePaneGroup DockWidth="100" DockHeight="100" DockMinHeight="80" DockMinWidth="80">
                             <avalonDock:LayoutAnchorablePane>
-                                <avalonDock:LayoutAnchorable x:Name="boxImagesWindow" Title="{StaticResource Menu_Window_Images}">
-                                    <ListView x:Name="boxThumbnails" SelectionMode="Extended"
-                          dd:DragDrop.IsDragSource="True" dd:DragDrop.DragAdornerTemplate="{StaticResource DragAdorner}">
-                                            <ListView.View>
-                                                <l:ImageView />
-                                            </ListView.View>
-                                            <ListView.ItemsSource>
-                                                <l:FileCollection />
-                                            </ListView.ItemsSource>
+                                <avalonDock:LayoutAnchorable x:Name="boxImagesWindow" 
+                                                             Title="{StaticResource Menu_Window_Images}">
+                                    <ListView x:Name="boxThumbnails" 
+                                              SelectionMode="Extended"
+                                              dd:DragDrop.IsDragSource="True" 
+                                              dd:DragDrop.DragAdornerTemplate="{StaticResource DragAdorner}">
+                                                <ListView.View>
+                                                    <l:ImageView />
+                                                </ListView.View>
+                                                <ListView.ItemsSource>
+                                                    <l:FileCollection />
+                                                </ListView.ItemsSource>
                                     </ListView>
                                 </avalonDock:LayoutAnchorable>
                             </avalonDock:LayoutAnchorablePane>

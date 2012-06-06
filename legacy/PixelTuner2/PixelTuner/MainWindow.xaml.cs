@@ -49,8 +49,8 @@ namespace PixelTuner
             Application.Current.Resources.MergedDictionaries.Clear();
             Application.Current.Resources.MergedDictionaries.Add(d);
             InitializeComponent();
-            
-            TimeLineInit();
+            this.DataContext = Workspace.This;
+            //TimeLineInit();
 
         }
 
@@ -138,8 +138,8 @@ namespace PixelTuner
 
         private void Slider_Scale_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            TimeLine3.UnitSize = Slider_Scale.Value;
-            TimeLine2.UnitSize = Slider_Scale.Value;
+            //TimeLine3.UnitSize = Slider_Scale.Value;
+            //TimeLine2.UnitSize = Slider_Scale.Value;
         }
 
         #region TimeLineTool
@@ -153,13 +153,13 @@ namespace PixelTuner
         {
             var tmp1 = new TempDataType()
             {
-                StartTime = DateTime.Now.AddHours(3),
-                EndTime = DateTime.Now.AddHours(18),
+                StartTime = DateTime.MinValue,
+                EndTime = DateTime.MinValue.AddHours(18),
                 Name = "Temp 1"
             };
             var tmp2 = new TempDataType()
             {
-                StartTime = DateTime.Now.AddHours(18),
+                StartTime = DateTime.MinValue,
                 EndTime = DateTime.Now.AddHours(33),
                 Name = "Temp 2"
             };
@@ -184,12 +184,12 @@ namespace PixelTuner
             t2Data.Add(tmp1);
             t3Data.Add(temp3);
 
-            TimeLine2.Items = data;
-            TimeLine2.StartDate = DateTime.Now;
+            //TimeLine2.Items = data;
+            //TimeLine2.StartDate = DateTime.Now;
 
-            TimeLine3.StartDate = DateTime.Now;
-            TimeLine2.Items = t2Data;
-            TimeLine3.Items = t3Data;
+            //TimeLine3.StartDate = DateTime.Now;
+            //TimeLine2.Items = t2Data;
+            //TimeLine3.Items = t3Data;
 
             //var lb1 = new TempDataType()
             //{
@@ -212,7 +212,7 @@ namespace PixelTuner
             //listboxData.Add(lb3);
             //listboxData.Add(lb4);
             //ListSrc.ItemsSource = listboxData;
-            Slider_Scale.Value = 25;
+            //Slider_Scale.Value = 25;
         }
 
         #endregion

@@ -545,7 +545,6 @@ namespace TimeLineTool
             KeyUp += OnKeyUp;
             MouseEnter += TimeLineControl_MouseEnter;
             MouseLeave += TimeLineControl_MouseLeave;
-            //Items = new ObservableCollection<ITimeLineDataItem>();
 
             DragDrop.AddDragOverHandler(this, TimeLineControl_DragOver);
             DragDrop.AddDropHandler(this, TimeLineControl_Drop);
@@ -556,10 +555,9 @@ namespace TimeLineTool
 
 
             _scrollViewer = GetParentScrollViewer();
-
-
-
+            //Items = new ObservableCollection<ITimeLineDataItem>();
         }
+
         #region control life cycle events
         protected override void OnRender(DrawingContext dc)
         {
@@ -595,6 +593,7 @@ namespace TimeLineTool
             Children.Clear();
         }*/
         #endregion
+
         #region miscellaneous helpers
         private ScrollViewer GetParentScrollViewer()
         {
@@ -976,9 +975,9 @@ namespace TimeLineTool
 
 
             //place our gridlines
-            //DrawDayLines(grid);
-            //DrawHourLines(grid);
-            //DrawMinuteLines(grid);
+            DrawDayLines(grid);
+            DrawHourLines(grid);
+            DrawMinuteLines(grid);
         }
         private void DrawMinuteLines(Canvas grid)
         {
@@ -1264,6 +1263,7 @@ namespace TimeLineTool
                     //the drop event hits twice.
                     //that results in ugly duplicates ending up in the timeline
                     //and it is a mess.
+                    if (Items == null) Items = new ObservableCollection<ITimeLineDataItem>();
                     if (Items.Contains(dropData))
                         return;
                     //create a new timeline item control from this data
