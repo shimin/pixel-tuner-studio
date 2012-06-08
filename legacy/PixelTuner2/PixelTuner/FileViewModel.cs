@@ -6,6 +6,8 @@ using System.IO;
 using System.Windows.Input;
 using Microsoft.Win32;
 using System.Windows;
+using System.Collections.ObjectModel;
+using TimeLineTool;
 
 namespace PixelTuner
 {
@@ -66,7 +68,6 @@ namespace PixelTuner
                 return new Uri("/PixelTuner;component/Images/document.png", UriKind.RelativeOrAbsolute);
             }
         }
-
 
         #region TextContent
 
@@ -186,5 +187,22 @@ namespace PixelTuner
         }
         #endregion
 
+
+        ObservableCollection<TimeLineViewModel> _timeLines = new ObservableCollection<TimeLineViewModel>();
+        public ObservableCollection<TimeLineViewModel> TimeLines
+        {
+            get
+            {
+                if (_timeLines == null)
+                    _timeLines = new ObservableCollection<TimeLineViewModel>(_timeLines);
+
+                 if (_timeLines.Count == 0) _timeLines.Add(new TimeLineViewModel());
+                return _timeLines;
+            }
+            set
+            {
+                _timeLines = value;
+            }
+        }
     }
 }

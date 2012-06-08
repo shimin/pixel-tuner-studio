@@ -60,7 +60,7 @@
                 </StackPanel>
             </Border>
         </DataTemplate>
-        <DataTemplate  DataType="{x:Type tt:TempDataType}">
+        <DataTemplate  DataType="{x:Type l:ThumbnailFileItem}">
             <Border BorderThickness="1"
                     BorderBrush="Blue"
                     CornerRadius="3"
@@ -68,7 +68,7 @@
                 <TextBlock Text="{Binding Path=Name}" />
             </Border>
         </DataTemplate>
-        <DataTemplate  DataType="{x:Type tt:TempDataType}"
+        <DataTemplate  DataType="{x:Type l:ThumbnailFileItem}"
                        x:Key="UsedTemplateProperty">
             <Border BorderThickness="1"
                     BorderBrush="White"
@@ -81,6 +81,27 @@
                     <TextBlock Text="{Binding Path=StartTime}" />
                     <TextBlock Text="{Binding Path=EndTime}" />
                     <TextBlock Text="{Binding Path=Duration}" />
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+        <local:ActiveTimeLineConverter x:Key="ActiveTimeLineConverter"/>
+        <DataTemplate  DataType="{x:Type local:TimeLineViewModel}"
+                       x:Key="TimeLineLayoutTemplate">
+            <Border BorderThickness="1"
+                    BorderBrush="#40ffffff">
+                <StackPanel Orientation="Vertical">
+                    <tt:TimeLineControl Height="80"
+                        Items="{Binding Items, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        ItemTemplate="{StaticResource UsedTemplateProperty}"
+                        HorizontalAlignment="Left"
+                        x:Name="TimeLine"
+                        StartDate="{Binding Start, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        UnitSize="{Binding ElementName=Slider_Scale, Path=Value}"
+                        MinimumUnitWidth="20"
+                        Background="#4A4A4A"
+                        DrawTimeGrid="False"
+                        MinWidth="450"
+                        SynchedWithSiblings="False" />
                 </StackPanel>
             </Border>
         </DataTemplate>
@@ -99,7 +120,6 @@
         <Menu Padding="0">
             <MenuItem Header="{StaticResource Menu_File}">
                 <MenuItem Header="{StaticResource Menu_File_New}" Command="{Binding NewCommand}"/>
-                <!--<MenuItem Header="{StaticResource Menu_File_New}" Click="NewDocument"/> -->
                 <MenuItem Header="{StaticResource Menu_File_Exit}" Click="ExitApplication"/>
             </MenuItem>
             <MenuItem Header="{StaticResource Menu_Window}">
@@ -123,36 +143,17 @@
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="32"/>
-                                    <RowDefinition Height="160"/>
+                                    <RowDefinition Height="320"/>
                                     <RowDefinition Height="40"/>
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
                                 <DockPanel FlowDirection="LeftToRight">
 
                                 </DockPanel>
-                                <ItemsControl Grid.Row="1">
-                                    <tt:TimeLineControl Height="80"
-                                                            ItemTemplate="{StaticResource UsedTemplateProperty}"
-                                                            HorizontalAlignment="Left"
-                                                            x:Name="TimeLine2"
-                                                            UnitSize="20"
-                                                            MinimumUnitWidth="20"
-                                                            Background="#4A4A4A"
-                                                            DrawTimeGrid="False"
-                                                            MinWidth="50"
-                                                            SynchedWithSiblings="True" />
-                                    <tt:TimeLineControl Height="80"
-                                                            ItemTemplate="{StaticResource UsedTemplateProperty}"
-                                                            HorizontalAlignment="Left"
-                                                            x:Name="TimeLine3"
-                                                            UnitSize="20"
-                                                            MinimumUnitWidth="20"
-                                                            Background="#3c3c3c"
-                                                            DrawTimeGrid="False"
-                                                            MinWidth="50"
-                                                            SynchedWithSiblings="True" />
+                                <ItemsControl Grid.Row="1" ItemTemplate="{StaticResource TimeLineLayoutTemplate}"
+                                              ItemsSource="{Binding Path=TimeLines, Mode=TwoWay}">
                                 </ItemsControl>
-                                <Slider x:Name="Slider_Scale" Margin="8" Minimum="1" Maximum="100" 
+                                <Slider x:Name="Slider_Scale" Margin="8" Minimum="1" Maximum="10" Value="6"
                                                 Grid.Row="2" ValueChanged="Slider_Scale_ValueChanged" />
                                 <!--<ListBox x:Name="ListSrc" Grid.Row="2" dd:DragDrop.IsDragSource="True" /> -->
                             </Grid>

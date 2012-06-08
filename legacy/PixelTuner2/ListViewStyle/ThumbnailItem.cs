@@ -6,36 +6,30 @@ using TimeLineTool;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Security.AccessControl;
+using System.ComponentModel;
 
 namespace PixelTuner.ListViewStyle
 {
-    public class ThumbnailFileItem : FileSystemInfo, ITimeLineDataItem
+    public class ThumbnailFileItem : FileSystemInfo, ITimeLineDataItem, INotifyPropertyChanged
     {
-        public ThumbnailFileItem()
-            : base()
-        {
-        }
-
         FileInfo _fi = null;
         public ThumbnailFileItem(FileInfo fi)
         {
             _fi = fi;
         }
 
-        DateTime? _startTime;
+        DateTime? _startTime = DateTime.MinValue;
         public DateTime? StartTime
         {
-            get
-            {
-                return _startTime;
-            }
+            get { return _startTime; }
             set
             {
                 _startTime = value;
+                RaisePropertyChanged("StartTime");
             }
         }
 
-        DateTime? _endTime;
+        DateTime? _endTime = DateTime.MinValue.AddDays(2);
         public DateTime? EndTime
         {
             get
@@ -45,6 +39,7 @@ namespace PixelTuner.ListViewStyle
             set
             {
                 _endTime = value;
+                RaisePropertyChanged("EndTime");
             }
         }
 
@@ -58,6 +53,7 @@ namespace PixelTuner.ListViewStyle
             set
             {
                 _viewExpanded = value;
+                RaisePropertyChanged("TimelineViewExpanded");
             }
         }
 
@@ -108,5 +104,16 @@ namespace PixelTuner.ListViewStyle
         {
             _fi.Refresh();
         }
+
+        #region INotifyPropertyChanged Members
+
+        protected virtual void RaisePropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion
     }
 }

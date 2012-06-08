@@ -68,7 +68,6 @@
     <Compile Include="ITimeLineDataItem.cs" />
     <Compile Include="ITimeLineManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TempDataType.cs" />
     <Compile Include="TimeLineControl.cs" />
     <Compile Include="TimeLineItemControl.cs" />
   </ItemGroup>

@@ -147,42 +147,42 @@ namespace PixelTuner
         ObservableCollection<ITimeLineDataItem> data = new ObservableCollection<ITimeLineDataItem>();
         public ObservableCollection<ITimeLineDataItem> t2Data = new ObservableCollection<ITimeLineDataItem>();
         public ObservableCollection<ITimeLineDataItem> t3Data = new ObservableCollection<ITimeLineDataItem>();
-        ObservableCollection<ITimeLineDataItem> listboxData = new ObservableCollection<ITimeLineDataItem>();
+        //ObservableCollection<ITimeLineDataItem> listboxData = new ObservableCollection<ITimeLineDataItem>();
 
         public void TimeLineInit()
         {
-            var tmp1 = new TempDataType()
-            {
-                StartTime = DateTime.MinValue,
-                EndTime = DateTime.MinValue.AddHours(18),
-                Name = "Temp 1"
-            };
-            var tmp2 = new TempDataType()
-            {
-                StartTime = DateTime.MinValue,
-                EndTime = DateTime.Now.AddHours(33),
-                Name = "Temp 2"
-            };
-            var temp3 = new TempDataType()
-            {
-                StartTime = DateTime.Now.AddHours(44),
-                EndTime = DateTime.Now.AddHours(60),
-                Name = "Temp 3"
-            };
-            var temp4 = new TempDataType()
-            {
-                StartTime = DateTime.Now.AddHours(60),
-                EndTime = DateTime.Now.AddHours(70),
-                Name = "Temp 4"
-            };
+            //var tmp1 = new TempDataType()
+            //{
+            //    StartTime = DateTime.MinValue,
+            //    EndTime = DateTime.MinValue.AddHours(18),
+            //    Name = "Temp 1"
+            //};
+            //var tmp2 = new TempDataType()
+            //{
+            //    StartTime = DateTime.MinValue,
+            //    EndTime = DateTime.Now.AddHours(33),
+            //    Name = "Temp 2"
+            //};
+            //var temp3 = new TempDataType()
+            //{
+            //    StartTime = DateTime.Now.AddHours(44),
+            //    EndTime = DateTime.Now.AddHours(60),
+            //    Name = "Temp 3"
+            //};
+            //var temp4 = new TempDataType()
+            //{
+            //    StartTime = DateTime.Now.AddHours(60),
+            //    EndTime = DateTime.Now.AddHours(70),
+            //    Name = "Temp 4"
+            //};
 
-            data.Add(tmp1);
-            data.Add(tmp2);
-            data.Add(temp3);
-            data.Add(temp4);
+            //data.Add(tmp1);
+            //data.Add(tmp2);
+            //data.Add(temp3);
+            //data.Add(temp4);
 
-            t2Data.Add(tmp1);
-            t3Data.Add(temp3);
+            //t2Data.Add(tmp1);
+            //t3Data.Add(temp3);
 
             //TimeLine2.Items = data;
             //TimeLine2.StartDate = DateTime.Now;

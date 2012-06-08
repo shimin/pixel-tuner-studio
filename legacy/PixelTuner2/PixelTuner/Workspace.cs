@@ -25,7 +25,6 @@ namespace PixelTuner
             get { return _this; }
         }
 
-
         ObservableCollection<FileViewModel> _files = new ObservableCollection<FileViewModel>();
         ReadOnlyObservableCollection<FileViewModel> _readonyFiles = null;
         public ReadOnlyObservableCollection<FileViewModel> Files

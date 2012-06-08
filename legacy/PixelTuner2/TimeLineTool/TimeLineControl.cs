@@ -1378,6 +1378,7 @@ namespace TimeLineTool
             Double s = 0;
             Double w = 0;
             Double e = 0;
+            if (Items == null) Items = new ObservableCollection<ITimeLineDataItem>();
             for (int i = 0; i < Items.Count(); i++)
             {
                 var checker = GetTimeLineItemControlAt(i);
