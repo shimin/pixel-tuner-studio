@@ -57,6 +57,8 @@ namespace PixelTuner.ListViewStyle
             }
         }
 
+        
+
 
         public DirectoryInfo Directory { get { return _fi.Directory; } }
         public string DirectoryName { get { return _fi.DirectoryName; } }
@@ -115,5 +117,14 @@ namespace PixelTuner.ListViewStyle
         public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
+
+        object ICloneable.Clone()
+        {
+            ThumbnailFileItem result = new ThumbnailFileItem(this._fi);
+            result.StartTime = this.StartTime;
+            result.EndTime = this.EndTime;
+            result.TimelineViewExpanded = this.TimelineViewExpanded;
+            return result;
+        }
     }
 }

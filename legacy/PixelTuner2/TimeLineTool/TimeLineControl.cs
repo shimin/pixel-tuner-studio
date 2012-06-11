@@ -1255,7 +1255,7 @@ namespace TimeLineTool
             if (dropper == null)
             {
                 //dropData = e.Data.GetData(typeof(ITimeLineDataItem)) as ITimeLineDataItem;
-                dropData = e.Data.GetData("GongSolutions.Wpf.DragDrop") as ITimeLineDataItem;
+                dropData = (ITimeLineDataItem)(e.Data.GetData("GongSolutions.Wpf.DragDrop") as ITimeLineDataItem).Clone();
                 if (dropData != null)
                 {
                     //I haven't figured out why but
