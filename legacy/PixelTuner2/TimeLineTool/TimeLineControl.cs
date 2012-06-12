@@ -104,7 +104,7 @@ namespace TimeLineTool
 
     }
 
-    public enum TimeLineViewLevel { Minutes, Hours, Days, Weeks, Months, Years };
+    public enum TimeLineViewLevel { Seconds, Minutes, Hours, Days, Weeks, Months, Years };
     //public class TimeLineControl : ListBox
 
 
@@ -1224,7 +1224,7 @@ namespace TimeLineTool
                         Children.Add(_tmpDraggAdornerControl);
                         Canvas.SetLeft(_tmpDraggAdornerControl, -1000000);
                         _tmpDraggAdornerControl.DataContext = d2;
-                        _tmpDraggAdornerControl.StartTime = StartDate;
+                        _tmpDraggAdornerControl.StartTime = StartDate.Add(_tmpDraggAdornerControl.ConvertDistanceToTime((Double)e.GetPosition(this).X));
                         _tmpDraggAdornerControl.InitializeDefaultLength();
                         _tmpDraggAdornerControl.ContentTemplate = ItemTemplate;
 

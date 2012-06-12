@@ -20,6 +20,18 @@ namespace PixelTuner
 
         #endregion
 
+
+        DateTime? _start = DateTime.MinValue.AddHours(1);
+        public DateTime? Start
+        {
+            get { return _start; }
+            set
+            {
+                _start = value;
+                RaisePropertyChanged("Start");
+            }
+        }
+
         ObservableCollection<ITimeLineDataItem> _items = new ObservableCollection<ITimeLineDataItem>();
         public ObservableCollection<ITimeLineDataItem> Items
         {
@@ -43,17 +55,6 @@ namespace PixelTuner
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        DateTime? _start = DateTime.MinValue.AddHours(1);
-
-        public DateTime? Start
-        {
-            get { return _start; }
-            set { 
-                _start = value;
-                RaisePropertyChanged("Start");
-            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

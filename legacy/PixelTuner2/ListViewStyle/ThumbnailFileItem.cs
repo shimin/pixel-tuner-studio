@@ -7,6 +7,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Security.AccessControl;
 using System.ComponentModel;
+using System.Windows;
 
 namespace PixelTuner.ListViewStyle
 {
@@ -26,10 +27,22 @@ namespace PixelTuner.ListViewStyle
             {
                 _startTime = value;
                 RaisePropertyChanged("StartTime");
+                RaisePropertyChanged("Start");
             }
         }
 
-        DateTime? _endTime = DateTime.MinValue.AddDays(2);
+        public string Start
+        {
+            get
+            {
+                return _startTime.HasValue ? String.Format("{0}:{1}:{2}.{3}", _startTime.Value.Hour.ToString("D2"),
+                    _startTime.Value.Minute.ToString("D2"), _startTime.Value.Second.ToString("D2"),
+                    _startTime.Value.Millisecond.ToString("D4")) 
+                    : "";
+            }
+        }
+
+        DateTime? _endTime = null;
         public DateTime? EndTime
         {
             get
@@ -40,6 +53,18 @@ namespace PixelTuner.ListViewStyle
             {
                 _endTime = value;
                 RaisePropertyChanged("EndTime");
+                RaisePropertyChanged("End");
+            }
+        }
+
+        public string End
+        {
+            get
+            {
+                return _endTime.HasValue ? String.Format("{0}:{1}:{2}.{3}", _endTime.Value.Hour.ToString("D2"),
+                    _endTime.Value.Minute.ToString("D2"), _endTime.Value.Second.ToString("D2"),
+                    _endTime.Value.Millisecond.ToString("D4")) 
+                    : "";
             }
         }
 
@@ -57,9 +82,27 @@ namespace PixelTuner.ListViewStyle
             }
         }
 
+        object ICloneable.Clone()
+        {
+            ThumbnailFileItem result = new ThumbnailFileItem(this._fi);
+            result.StartTime = this.StartTime;
+            result.EndTime = this.EndTime;
+            result.TimelineViewExpanded = this.TimelineViewExpanded;
+            return result;
+        }
         
+        #region INotifyPropertyChanged Members
 
+        protected virtual void RaisePropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
 
+        #endregion
+
+        #region Compatibility
         public DirectoryInfo Directory { get { return _fi.Directory; } }
         public string DirectoryName { get { return _fi.DirectoryName; } }
         public override bool Exists { get { return _fi.Exists; } }
@@ -105,26 +148,7 @@ namespace PixelTuner.ListViewStyle
         public void Refresh()
         {
             _fi.Refresh();
-        }
-
-        #region INotifyPropertyChanged Members
-
-        protected virtual void RaisePropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
-        public event PropertyChangedEventHandler PropertyChanged;
-
+        } 
         #endregion
-
-        object ICloneable.Clone()
-        {
-            ThumbnailFileItem result = new ThumbnailFileItem(this._fi);
-            result.StartTime = this.StartTime;
-            result.EndTime = this.EndTime;
-            result.TimelineViewExpanded = this.TimelineViewExpanded;
-            return result;
-        }
     }
 }

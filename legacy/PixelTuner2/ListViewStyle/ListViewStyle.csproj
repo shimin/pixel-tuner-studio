@@ -54,7 +54,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="CustomView.cs" />
-    <Compile Include="ThumbnailItem.cs" />
+    <Compile Include="ThumbnailFileItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TimeLineTool\TimeLineTool.csproj">

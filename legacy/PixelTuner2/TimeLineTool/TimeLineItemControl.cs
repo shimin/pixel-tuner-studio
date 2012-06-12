@@ -229,6 +229,9 @@ namespace TimeLineTool
 			Double value = unitSize;
 			switch (lvl)
 			{
+                case TimeLineViewLevel.Seconds:
+                    value = span.TotalSeconds * unitSize;
+                    break;
 				case TimeLineViewLevel.Minutes:
 					value = span.TotalMinutes * unitSize;
 					break;
@@ -255,15 +258,21 @@ namespace TimeLineTool
 
 		}
 
-		private TimeSpan ConvertDistanceToTime(Double distance)
+		internal TimeSpan ConvertDistanceToTime(Double distance)
 		{
 			
 			TimeLineViewLevel lvl = (TimeLineViewLevel)GetValue(ViewLevelProperty);
 			Double unitSize = (Double)GetValue(UnitSizeProperty);
-			double minutes, hours, days, weeks, months, years, milliseconds = 0;
+			double seconds, minutes, hours, days, weeks, months, years, milliseconds = 0;
 
 			switch (lvl)
 			{
+                case TimeLineViewLevel.Seconds:
+                    //value = span.TotalMinutes * unitSize;
+                    seconds = (distance / unitSize);
+                    //convert to milliseconds
+                    milliseconds = seconds * 1000;
+                    break;
 				case TimeLineViewLevel.Minutes:
 					//value = span.TotalMinutes * unitSize;
 					minutes = (distance / unitSize);
@@ -474,7 +483,7 @@ namespace TimeLineTool
 		/// </summary>
 		internal void InitializeDefaultLength()
 		{
-			TimeSpan duration = ConvertDistanceToTime(10 * (Double)GetValue(UnitSizeProperty));
+			TimeSpan duration = ConvertDistanceToTime(4 * (Double)GetValue(UnitSizeProperty));
 			EndTime = StartTime.Add(duration);
 			Width = CalculateWidth();
 		}
