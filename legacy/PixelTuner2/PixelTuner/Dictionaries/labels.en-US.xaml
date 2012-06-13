@@ -8,4 +8,7 @@
     <system:String x:Key="Menu_File_New">New project</system:String>
     <system:String x:Key="Menu_File_Exit">Exit</system:String>
     <system:String x:Key="Menu_File">File</system:String>
+    <system:String x:Key="Doc_Btn_AddLine">Add line</system:String>
+    <system:String x:Key="Doc_Lbl_Scale">Scale: </system:String>
+    <system:String x:Key="Doc_Hdr_Default">Noname</system:String>
 </ResourceDictionary>

@@ -8,6 +8,7 @@ using Microsoft.Win32;
 using System.Windows;
 using System.Collections.ObjectModel;
 using TimeLineTool;
+using System.Windows.Media;
 
 namespace PixelTuner
 {
@@ -17,12 +18,16 @@ namespace PixelTuner
         {
             FilePath = filePath;
             Title = FileName;
+            _timeLines.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(
+                _timeLines_CollectionChanged);
         }
 
         public FileViewModel()
         {
             IsDirty = true;
             Title = FileName;
+            _timeLines.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(
+               _timeLines_CollectionChanged);
         }
 
         #region FilePath
@@ -49,13 +54,26 @@ namespace PixelTuner
         }
         #endregion
 
+        Brush _darkLineColor = new SolidColorBrush(Color.FromArgb(255, 64, 64, 64));
+        Brush _lightLineColor = new SolidColorBrush(Color.FromArgb(255, 70, 70, 70));
+
+        void _timeLines_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            for (int i = 0; i < _timeLines.Count; i++)
+            {
+                if (i % 2 == 0) _timeLines[i].Background =  _lightLineColor;
+                else _timeLines[i].Background = _darkLineColor;
+                _timeLines[i].Parent = this;
+            }
+        }
 
         public string FileName
         {
             get 
             {
+                ResourceDictionary rd = Application.Current.Resources.MergedDictionaries[0];
                 if (FilePath == null)
-                    return "Noname" + (IsDirty ? "*" : "");
+                    return (String)rd["Doc_Hdr_Default"] + (IsDirty ? " *" : "");
 
                 return System.IO.Path.GetFileName(FilePath) + (IsDirty ? "*" : ""); 
             }
@@ -67,6 +85,11 @@ namespace PixelTuner
             {
                 return new Uri("/PixelTuner;component/Images/document.png", UriKind.RelativeOrAbsolute);
             }
+        }
+
+        public override string ToString()
+        {
+            return String.Format("{0} < {1} >", this.FileName, this.FilePath);
         }
 
         #region TextContent
@@ -187,6 +210,33 @@ namespace PixelTuner
         }
         #endregion
 
+        #region AddLineCommand
+        RelayCommand _addLineCommand = null;
+        public ICommand AddLine
+        {
+            get
+            {
+                if (_addLineCommand == null)
+                {
+                    _addLineCommand = new RelayCommand((p) => OnAddLine(p), (p) => CanAddLine(p));
+                }
+
+                return _addLineCommand;
+            }
+        }
+
+        private bool CanAddLine(object parameter)
+        {
+            return true;
+        }
+
+        private void OnAddLine(object parameter)
+        {
+            Console.WriteLine("ButtonPressed");
+            _timeLines.Add(new TimeLineViewModel());
+        }
+
+        #endregion 
 
         ObservableCollection<TimeLineViewModel> _timeLines = new ObservableCollection<TimeLineViewModel>();
         public ObservableCollection<TimeLineViewModel> TimeLines

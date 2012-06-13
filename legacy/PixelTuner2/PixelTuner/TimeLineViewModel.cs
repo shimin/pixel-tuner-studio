@@ -6,6 +6,7 @@ using TimeLineTool;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace PixelTuner
 {
@@ -33,7 +34,21 @@ namespace PixelTuner
         }
 
         #endregion
-        
+
+        FileViewModel _parent;
+        internal FileViewModel Parent
+        {
+            get { return _parent; }
+            set { _parent = value; }
+        }
+
+        Brush _backGround;
+        public Brush Background
+        {
+            get { return _backGround; }
+            set { _backGround = value; RaisePropertyChanged("Background"); }
+        }
+
         DateTime? _start = DateTime.MinValue.AddHours(1);
         public DateTime? Start
         {
@@ -71,6 +86,115 @@ namespace PixelTuner
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion
+
+        #region Commands
+
+        #region MoveUpCommand
+        RelayCommand _moveUpCommand = null;
+        public ICommand MoveUp
+        {
+            get
+            {
+                if (_moveUpCommand == null)
+                {
+                    _moveUpCommand = new RelayCommand((p) => OnMoveUp(p), (p) => CanMoveUp(p));
+                }
+
+                return _moveUpCommand;
+            }
+        }
+
+        private bool CanMoveUp(object parameter)
+        {
+            if (Parent != null)
+            {
+                int idx = Parent.TimeLines.IndexOf(this);
+                return idx > 0;
+            }
+            return false;
+        }
+
+        private void OnMoveUp(object parameter)
+        {
+            if (Parent != null)
+            {
+                int old = Parent.TimeLines.IndexOf(this);
+                Parent.TimeLines.Move(old, old-1);
+            }
+        }
+
+        #endregion 
+
+        #region MoveDownCommand
+
+        RelayCommand _moveDownCommand = null;
+        public ICommand MoveDown
+        {
+            get
+            {
+                if (_moveDownCommand == null)
+                {
+                    _moveDownCommand = new RelayCommand((p) => OnMoveDown(p), (p) => CanMoveDown(p));
+                }
+
+                return _moveDownCommand;
+            }
+        }
+
+        private bool CanMoveDown(object parameter)
+        {
+            if (Parent != null)
+            {
+                int idx = Parent.TimeLines.IndexOf(this);
+                return idx < Parent.TimeLines.Count - 1;
+            }
+            return false;
+        }
+
+        private void OnMoveDown(object parameter)
+        {
+            if (Parent != null)
+            {
+                int old = Parent.TimeLines.IndexOf(this);
+                Parent.TimeLines.Move(old, old + 1);
+            }
+        }
+
+        #endregion 
+
+        #region DeleteLineCommand
+        RelayCommand _deleteLineCommand = null;
+        public ICommand DeleteLine
+        {
+            get
+            {
+                if (_deleteLineCommand == null)
+                {
+                    _deleteLineCommand = new RelayCommand((p) => OnDeleteLine(p), (p) => CanDeleteLine(p));
+                }
+
+                return _deleteLineCommand;
+            }
+        }
+
+        private bool CanDeleteLine(object parameter)
+        {
+            if (Parent != null)
+            {
+                return Parent.TimeLines.Count > 1;
+            }
+            return false;
+        }
+
+        private void OnDeleteLine(object parameter)
+        {
+            if (Parent != null)
+                Parent.TimeLines.Remove(this);
+        }
+
+        #endregion 
 
         #endregion
     }

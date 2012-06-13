@@ -8,4 +8,7 @@
     <system:String x:Key="Menu_File_New">Новый проект</system:String>
     <system:String x:Key="Menu_File_Exit">Выход</system:String>
     <system:String x:Key="Menu_File">Файл</system:String>
+    <system:String x:Key="Doc_Btn_AddLine">Новая линия</system:String>
+    <system:String x:Key="Doc_Lbl_Scale">Масштаб</system:String>
+    <system:String x:Key="Doc_Hdr_Default">Без имени</system:String>
 </ResourceDictionary>
