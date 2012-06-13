@@ -8,6 +8,8 @@ using System.Runtime.Serialization;
 using System.Security.AccessControl;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Input;
+using System.Collections.ObjectModel;
 
 namespace PixelTuner.ListViewStyle
 {
@@ -90,7 +92,51 @@ namespace PixelTuner.ListViewStyle
             result.TimelineViewExpanded = this.TimelineViewExpanded;
             return result;
         }
-        
+
+        #region DisposeMe
+        RelayCommand _disposeMeCommand = null;
+        public ICommand DisposeMe
+        {
+            get
+            {
+                if (_disposeMeCommand == null)
+                {
+                    _disposeMeCommand = new RelayCommand((p) => OnDisposeMe(p), (p) => CanDisposeMe(p));
+                }
+
+                return _disposeMeCommand;
+            }
+        }
+
+        private bool CanDisposeMe(object parameter)
+        {
+            return true;
+        }
+
+        private void OnDisposeMe(object parameter)
+        {
+            ObservableCollection<ITimeLineDataItem> parentCollection = null;
+            if (_parent != null)
+            {
+                System.Reflection.PropertyInfo pi = _parent.GetType().GetProperty("Items");
+                if (pi != null) parentCollection = 
+                    (ObservableCollection<ITimeLineDataItem>)pi.GetValue(_parent, null);
+            }
+            if (parentCollection != null)
+            {
+                parentCollection.Remove(this);
+            }
+        }
+
+        INotifyPropertyChanged _parent;
+        public INotifyPropertyChanged Parent
+        {
+            get { return _parent; }
+            set { _parent = value; }
+        }
+
+        #endregion 
+
         #region INotifyPropertyChanged Members
 
         protected virtual void RaisePropertyChanged(string propertyName)

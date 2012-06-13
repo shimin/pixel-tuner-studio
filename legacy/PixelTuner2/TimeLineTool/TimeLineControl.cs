@@ -1222,6 +1222,7 @@ namespace TimeLineTool
                         _tmpDraggAdornerControl = new TimeLineItemControl();
                         _tmpDraggAdornerControl.UnitSize = UnitSize;
                         Children.Add(_tmpDraggAdornerControl);
+                        _tmpDraggAdornerControl.Visibility = Visibility.Hidden;
                         Canvas.SetLeft(_tmpDraggAdornerControl, -1000000);
                         _tmpDraggAdornerControl.DataContext = d2;
                         _tmpDraggAdornerControl.StartTime = StartDate.Add(_tmpDraggAdornerControl.ConvertDistanceToTime((Double)e.GetPosition(this).X));

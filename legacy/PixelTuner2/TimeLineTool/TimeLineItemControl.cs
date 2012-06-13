@@ -483,7 +483,7 @@ namespace TimeLineTool
 		/// </summary>
 		internal void InitializeDefaultLength()
 		{
-			TimeSpan duration = ConvertDistanceToTime(4 * (Double)GetValue(UnitSizeProperty));
+			TimeSpan duration = ConvertDistanceToTime(1 * (Double)GetValue(UnitSizeProperty));
 			EndTime = StartTime.Add(duration);
 			Width = CalculateWidth();
 		}

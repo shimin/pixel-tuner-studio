@@ -82,7 +82,7 @@
                             <ColumnDefinition Width="20" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Text="{Binding Path=Start}" />
-                        <Button Grid.Column="1" Margin="0,2,0,0">
+                        <Button Grid.Column="1" Margin="0,2,0,0" Command="{Binding DisposeMe}">
                             <Button.Template>
                                 <ControlTemplate>
                                     <Border Width="16" Height="14">
@@ -193,7 +193,7 @@
                                 <ItemsControl Grid.Row="1" ItemTemplate="{StaticResource TimeLineLayoutTemplate}"
                                               ItemsSource="{Binding Path=TimeLines, Mode=TwoWay}">
                                 </ItemsControl>
-                                <Slider Grid.Row="0" x:Name="Slider_Scale" Margin="8" Minimum="80" Maximum="200" Value="100"/>
+                                <Slider Grid.Row="0" x:Name="Slider_Scale" Margin="8" Minimum="100" Maximum="1000" Value="100"/>
                                 <!--<ListBox x:Name="ListSrc" Grid.Row="2" dd:DragDrop.IsDragSource="True" /> -->
                             </Grid>
                         </DataTemplate>

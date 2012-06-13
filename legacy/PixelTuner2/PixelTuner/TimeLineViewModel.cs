@@ -5,12 +5,26 @@ using System.Text;
 using TimeLineTool;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows.Input;
 
 namespace PixelTuner
 {
     public class TimeLineViewModel
         : ITimeLineManager, INotifyPropertyChanged
     {
+        public TimeLineViewModel() {
+            _items.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(_items_CollectionChanged);
+        }
+
+        void _items_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+            {
+                foreach (ITimeLineDataItem item in e.NewItems)
+                    item.Parent = this;
+            }
+        }
+
         #region ITimeLineManager Members
 
         public bool CanAddToTimeLine(ITimeLineDataItem item)
@@ -19,8 +33,7 @@ namespace PixelTuner
         }
 
         #endregion
-
-
+        
         DateTime? _start = DateTime.MinValue.AddHours(1);
         public DateTime? Start
         {

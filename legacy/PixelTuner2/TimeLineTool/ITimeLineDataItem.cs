@@ -10,6 +10,7 @@ namespace TimeLineTool
 	{
 		DateTime? StartTime { get; set; }
 		DateTime? EndTime { get; set; }
-        Boolean TimelineViewExpanded { get; set; }        
+        Boolean TimelineViewExpanded { get; set; }
+        System.ComponentModel.INotifyPropertyChanged Parent { get; set; }
 	}
 }

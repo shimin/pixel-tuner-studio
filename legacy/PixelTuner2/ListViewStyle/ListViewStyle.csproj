@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="CustomView.cs" />
+    <Compile Include="RelayCommand.cs" />
     <Compile Include="ThumbnailFileItem.cs" />
   </ItemGroup>
   <ItemGroup>
