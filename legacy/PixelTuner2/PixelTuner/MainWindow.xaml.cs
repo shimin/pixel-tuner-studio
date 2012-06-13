@@ -57,7 +57,7 @@ namespace PixelTuner
         private void Window_Loaded(object sender, RoutedEventArgs ev)
         {
             //dockManager.ParentWindow = this;
-
+            
 #if (DONT_SAVE_LAYOUT)
 #else
             if (!string.IsNullOrEmpty(_layoutString))
@@ -216,5 +216,10 @@ namespace PixelTuner
         }
 
         #endregion
+
+        private void MainWnd_Activated(object sender, EventArgs e)
+        {
+            this.Focus();   // без явной установки фокуса не работают горячие клавиши
+        }
     }
 }

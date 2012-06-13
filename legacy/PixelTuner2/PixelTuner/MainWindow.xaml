@@ -10,7 +10,8 @@
         xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
         xmlns:local="clr-namespace:PixelTuner"
         xmlns:math="clr-namespace:IKriv.Wpf"
-        
+
+        Activated="MainWnd_Activated"
         Loaded="Window_Loaded" Closing="Window_Closing">
     
 <Window.Resources>
@@ -154,12 +155,8 @@
         
         <Menu Padding="0">
             <MenuItem Header="{StaticResource Menu_File}">
-                        <MenuItem Header="{StaticResource Menu_File_New}" Command="{Binding NewCommand}" InputGestureText="Ctrl+N">
-                            <MenuItem.InputBindings>
-                                <KeyBinding Gesture="Ctrl+N" Command="{Binding NewCommand}"></KeyBinding>
-                            </MenuItem.InputBindings>
-                        </MenuItem>
-                            <MenuItem Header="{StaticResource Menu_File_Exit}" Click="ExitApplication"/>
+                <MenuItem Header="{StaticResource Menu_File_New}" Command="{Binding NewCommand}" InputGestureText="Ctrl+N"/>
+                <MenuItem Header="{StaticResource Menu_File_Exit}" Click="ExitApplication"/>
             </MenuItem>
             <MenuItem Header="{StaticResource Menu_Window}">
                 <MenuItem Header="{StaticResource Menu_Window_Projects}" Click="ShowProjectList"/>
@@ -275,4 +272,7 @@
             <StatusBarItem Content="Pixel Tuner 2.0"/>
         </StatusBar>
     </Grid>
+    <Window.InputBindings>
+        <KeyBinding Gesture="Ctrl+N" Command="{Binding NewCommand}"></KeyBinding>
+    </Window.InputBindings>
 </Window>
