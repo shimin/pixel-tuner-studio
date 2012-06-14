@@ -73,7 +73,7 @@ namespace TimeLineTool
 		// Using a DependencyProperty as the backing store for ViewLevel.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty ViewLevelProperty =
 			DependencyProperty.Register("ViewLevel", typeof(TimeLineViewLevel), typeof(TimeLineItemControl),
-			new UIPropertyMetadata(TimeLineViewLevel.Hours,
+			new UIPropertyMetadata(TimeLineViewLevel.Seconds,
 				new PropertyChangedCallback(OnViewLevelChanged)));
 		private static void OnViewLevelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{

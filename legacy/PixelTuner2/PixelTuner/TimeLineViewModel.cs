@@ -49,7 +49,8 @@ namespace PixelTuner
             set { _backGround = value; RaisePropertyChanged("Background"); }
         }
 
-        DateTime? _start = DateTime.MinValue.AddHours(1);
+        // for comparasions in TimeLineControl wich all use 'DateTime.MinValue'
+        DateTime? _start = DateTime.MinValue.AddYears(DateTime.Now.Year);
         public DateTime? Start
         {
             get { return _start; }

@@ -20,8 +20,8 @@
                B="255"
                A="180"
                x:Key="BgColor" />
-        <SolidColorBrush Color="{StaticResource BgColor}"
-                         x:Key="BgBrush" />
+        <SolidColorBrush Color="{StaticResource BgColor}" x:Key="BgBrush" />
+        <SolidColorBrush Color="#ffffff" x:Key="TextBrush" />
         <Style TargetType="{x:Type tt:TimeLineItemControl}">
             <Setter Property="Template">
                 <Setter.Value>
@@ -51,6 +51,63 @@
 
                             </ContentPresenter>
                         </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ButtonDownStyle" TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Border Width="16" Height="14">
+                            <Image x:Name="DownImage" Source="/PixelTuner;component/Images/_grey_Arrow-Down.png"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Source" Value="/PixelTuner;component/Images/_grey_Arrow-DownLight.png" TargetName="DownImage"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Source" Value="/PixelTuner;component/Images/_grey_Arrow-DownDisabled.png" TargetName="DownImage"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ButtonUpStyle" TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Border Width="16" Height="14">
+                            <Image x:Name="UpImage" Source="/PixelTuner;component/Images/_grey_Arrow-Up.png"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Source" Value="/PixelTuner;component/Images/_grey_Arrow-UpLight.png" TargetName="UpImage"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Source" Value="/PixelTuner;component/Images/_grey_Arrow-UpDisabled.png" TargetName="UpImage"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ButtonDeleteLineStyle" TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Border Width="16" Height="14">
+                            <Image x:Name="UpImage" Source="/PixelTuner;component/Images/red_cross.png"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Source" Value="/PixelTuner;component/Images/red_crossLight.png" TargetName="UpImage"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Source" Value="/PixelTuner;component/Images/red_crossDisabled.png" TargetName="UpImage"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -120,9 +177,9 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0" Background="#4a4a4a">
-                        <Button MinHeight="20" Margin="4,1,2,1" Command="{Binding MoveUp}"></Button>
-                        <Button MinHeight="20" Margin="4,1,2,1" Command="{Binding MoveDown}"></Button>
-                        <Button MinHeight="20" Margin="4,1,2,1" Command="{Binding DeleteLine}"></Button>
+                        <Button MinHeight="16" Margin="4,3,2,0" Style="{StaticResource ButtonUpStyle}" Command="{Binding MoveUp}"></Button>
+                        <Button MinHeight="16" Margin="4,0,2,1" Style="{StaticResource ButtonDownStyle}" Command="{Binding MoveDown}"></Button>
+                        <Button MinHeight="20" Margin="4,1,2,1" Style="{StaticResource ButtonDeleteLineStyle}" Command="{Binding DeleteLine}"></Button>
                     </StackPanel>
                     <tt:TimeLineControl 
                         Grid.Column="1" 
@@ -150,7 +207,7 @@
                                       ItemTemplate="{StaticResource TimeLineLayoutTemplate}"
                                       ItemsSource="{Binding Path=TimeLines, Mode=TwoWay}" />
         </DataTemplate>
-        <local:ActiveDocumentConverter x:Key="ActiveDocumentConverter"/>
+            <local:ActiveDocumentConverter x:Key="ActiveDocumentConverter"/>
         <avalonDock:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     </Window.Resources>
     <Grid>
@@ -192,15 +249,15 @@
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="80" />
-                                    <ColumnDefinition Width="50" />
+                                    <ColumnDefinition Width="66" />
                                     <ColumnDefinition Width="120" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                     <Button Grid.Row="0" Grid.Column="0" Margin="4,0,0,2" 
                                             Content="{StaticResource Doc_Btn_AddLine}" 
                                             Command="{Binding AddLine}"/>
-                                    <TextBlock Grid.Row="0" Grid.Column="1" Margin="16,4,4,0">Scale:</TextBlock>
-                                    <Slider Grid.Row="0" Grid.Column="2" x:Name="Slider_Scale" Margin="2" Minimum="100" Maximum="1000" Value="100"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" Margin="16,4,4,0" Foreground="{StaticResource TextBrush}" Text="{StaticResource Doc_Lbl_Scale}"/>
+                                    <Slider Grid.Row="0" Grid.Column="2" x:Name="Slider_Scale" Margin="2" Minimum="10" Maximum="100" Value="100"/>
                                     <ScrollViewer Grid.Row="1"
                                                   Grid.ColumnSpan="4"
                                                   Grid.RowSpan="2"
