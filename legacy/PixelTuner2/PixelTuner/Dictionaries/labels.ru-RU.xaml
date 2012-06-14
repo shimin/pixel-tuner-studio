@@ -6,9 +6,13 @@
     <system:String x:Key="Menu_Window_Images">Изображения</system:String>
     <system:String x:Key="Menu_Window">Окна</system:String>
     <system:String x:Key="Menu_File_New">Новый проект</system:String>
+    <system:String x:Key="Menu_File_Open">Открыть проект</system:String>
+    <system:String x:Key="Menu_File_Save">Сохранить</system:String>
     <system:String x:Key="Menu_File_Exit">Выход</system:String>
     <system:String x:Key="Menu_File">Файл</system:String>
     <system:String x:Key="Doc_Btn_AddLine">Новая линия</system:String>
     <system:String x:Key="Doc_Lbl_Scale">Масштаб</system:String>
     <system:String x:Key="Doc_Hdr_Default">Без имени</system:String>
+    <system:String x:Key="Doc_Open_AccessError">Нет доступа к файлу.</system:String>
+    <system:String x:Key="Doc_Open_DeserializeError">Ошибка открытия файла. Возможно файл поврежден.</system:String>
 </ResourceDictionary>

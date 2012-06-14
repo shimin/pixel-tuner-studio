@@ -10,12 +10,18 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
+using System.Xml.Serialization;
 
 namespace PixelTuner.ListViewStyle
 {
     public class ThumbnailFileItem : FileSystemInfo, ITimeLineDataItem, INotifyPropertyChanged
     {
         FileInfo _fi = null;
+        public ThumbnailFileItem()
+        {
+            _fi = new FileInfo("");
+        }
+
         public ThumbnailFileItem(FileInfo fi)
         {
             _fi = fi;
@@ -129,6 +135,7 @@ namespace PixelTuner.ListViewStyle
         }
 
         INotifyPropertyChanged _parent;
+        [XmlIgnore]
         public INotifyPropertyChanged Parent
         {
             get { return _parent; }

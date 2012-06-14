@@ -7,6 +7,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Xml.Serialization;
+using PixelTuner.Serialization;
 
 namespace PixelTuner
 {
@@ -36,6 +38,7 @@ namespace PixelTuner
         #endregion
 
         FileViewModel _parent;
+        [XmlIgnore]
         internal FileViewModel Parent
         {
             get { return _parent; }
@@ -43,6 +46,7 @@ namespace PixelTuner
         }
 
         Brush _backGround;
+        [XmlIgnore]
         public Brush Background
         {
             get { return _backGround; }
@@ -50,7 +54,8 @@ namespace PixelTuner
         }
 
         // for comparasions in TimeLineControl wich all use 'DateTime.MinValue'
-        DateTime? _start = DateTime.MinValue.AddYears(DateTime.Now.Year);
+        DateTime? _start = DateTime.MinValue.AddYears(1);
+        [XmlIgnore]
         public DateTime? Start
         {
             get { return _start; }
@@ -61,7 +66,41 @@ namespace PixelTuner
             }
         }
 
+        List<TimeLineItem> _xmlItems = new List<TimeLineItem>();
+        [XmlArray]
+        [XmlArrayItem(ElementName = "Item")]
+        public List<TimeLineItem> XmlItems
+        {
+            get
+            {
+                _xmlItems = new List<TimeLineItem>();
+                foreach (var v in Items)
+                {
+                    var item = new TimeLineItem();
+                    item.StartTime = v.StartTime;
+                    item.EndTime = v.EndTime;
+                    item.FullName = (v as PixelTuner.ListViewStyle.ThumbnailFileItem).FullName;
+                    _xmlItems.Add(item);
+                }
+                return _xmlItems;
+            }
+            set
+            {
+                _xmlItems = value;
+                //_items = new ObservableCollection<ITimeLineDataItem>();
+                //if (value != null)
+                //    foreach (var item in value)
+                //    {
+                //        var v = new PixelTuner.ListViewStyle.ThumbnailFileItem(new System.IO.FileInfo(item.FullName));
+                //        v.StartTime = item.StartTime;
+                //        v.EndTime = item.EndTime;
+                //        _items.Add(v);
+                //    }
+            }
+        }
+
         ObservableCollection<ITimeLineDataItem> _items = new ObservableCollection<ITimeLineDataItem>();
+        [XmlIgnore]
         public ObservableCollection<ITimeLineDataItem> Items
         {
             get
@@ -198,5 +237,18 @@ namespace PixelTuner
         #endregion 
 
         #endregion
+
+        [XmlIgnore]
+        public static List<Type> ExtraTypes
+        {
+            get
+            {
+                var result = new List<Type>()
+                {
+                    typeof(TimeLineItem)
+                };
+                return result;
+            }
+        }
     }
 }

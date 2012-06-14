@@ -6,9 +6,13 @@
     <system:String x:Key="Menu_Window_Images">Images</system:String>
     <system:String x:Key="Menu_Window">Windows</system:String>
     <system:String x:Key="Menu_File_New">New project</system:String>
+    <system:String x:Key="Menu_File_Open">Open project</system:String>
+    <system:String x:Key="Menu_File_Save">Save</system:String>
     <system:String x:Key="Menu_File_Exit">Exit</system:String>
     <system:String x:Key="Menu_File">File</system:String>
     <system:String x:Key="Doc_Btn_AddLine">Add line</system:String>
     <system:String x:Key="Doc_Lbl_Scale">Scale: </system:String>
     <system:String x:Key="Doc_Hdr_Default">Noname</system:String>
+    <system:String x:Key="Doc_Open_AccessError">File access error.</system:String>
+    <system:String x:Key="Doc_Open_DeserializeError">File open error. It's probably corrupted.</system:String>
 </ResourceDictionary>

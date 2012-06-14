@@ -8,6 +8,8 @@ using Microsoft.Win32;
 using System.IO;
 using System.Windows;
 using AvalonDock.Layout;
+using System.Xml.Serialization;
+using System.Xml;
 
 namespace PixelTuner
 {
@@ -17,6 +19,8 @@ namespace PixelTuner
         { 
         
         }
+
+        XmlSerializer _projectSerializer = new XmlSerializer(typeof(FileViewModel), FileViewModel.ExtraTypes.ToArray());
 
         static Workspace _this = new Workspace();
 
@@ -84,24 +88,19 @@ namespace PixelTuner
 
         private void OnOpen(object parameter)
         {
-            var dlg = new OpenFileDialog();
-            if (dlg.ShowDialog().GetValueOrDefault())
-            {
-                var fileViewModel = Open(dlg.FileName);
-                ActiveDocument = fileViewModel;
-            }
+            Open((string)parameter);
         }
 
-        public FileViewModel Open(string filepath)
-        {
-            var fileViewModel = _files.FirstOrDefault(fm => fm.FilePath == filepath);
-            if (fileViewModel != null)
-                return fileViewModel;
+        //public FileViewModel Open(string filepath)
+        //{
+        //    var fileViewModel = _files.FirstOrDefault(fm => fm.FilePath == filepath);
+        //    if (fileViewModel != null)
+        //        return fileViewModel;
 
-            fileViewModel = new FileViewModel(filepath);
-            _files.Add(fileViewModel);
-            return fileViewModel;
-        }
+        //    fileViewModel = new FileViewModel(filepath);
+        //    _files.Add(fileViewModel);
+        //    return fileViewModel;
+        //}
 
         #endregion 
 
@@ -155,6 +154,32 @@ namespace PixelTuner
 
         #endregion
 
+        #region SaveCommand
+        RelayCommand _saveCommand = null;
+        public ICommand SaveCommand
+        {
+            get
+            {
+                if (_saveCommand == null)
+                {
+                    _saveCommand = new RelayCommand((p) => OnSave(p), (p) => CanSave(p));
+                }
+
+                return _saveCommand;
+            }
+        }
+
+        private bool CanSave(object parameter)
+        {
+            return ActiveDocument != null;
+        }
+
+        private void OnSave(object parameter)
+        {
+            Save(ActiveDocument);
+        }
+
+        #endregion 
 
         internal void Close(FileViewModel fileToClose)
         {
@@ -177,13 +202,80 @@ namespace PixelTuner
             if (fileToSave.FilePath == null || saveAsFlag)
             {
                 var dlg = new SaveFileDialog();
+                dlg.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                dlg.Filter = "PixelTuner project file|*.ptp";
                 if (dlg.ShowDialog().GetValueOrDefault())
                     fileToSave.FilePath = dlg.SafeFileName;
             }
 
-            File.WriteAllText(fileToSave.FilePath, fileToSave.TextContent);
-            ActiveDocument.IsDirty = false;
+            if (fileToSave.FilePath != null)
+            {
+
+                using (XmlTextWriter tw = new XmlTextWriter(fileToSave.FilePath, Encoding.UTF8))
+                {
+                    tw.Formatting = Formatting.Indented;
+                    _projectSerializer.Serialize(tw, fileToSave);
+                }
+                ActiveDocument.IsDirty = false;
+            }
         }
-        
+
+        internal void Open(string path = null)
+        {
+            if (String.IsNullOrEmpty(path))
+            {
+                var dlg = new OpenFileDialog();
+                dlg.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                dlg.Filter = "PixelTuner project file|*.ptp";
+                if (dlg.ShowDialog().GetValueOrDefault())
+                    path = dlg.SafeFileName;
+            }
+
+            if (path != null)
+            {
+                try
+                {
+                    using (XmlTextReader tr = new XmlTextReader(path))
+                    {
+                        try
+                        {
+                            var file = (FileViewModel)_projectSerializer.Deserialize(tr);
+                            this._files.Add(file);
+                            ActiveDocument = file;
+                        }
+                        catch (Exception ex)
+                        {
+                            StringBuilder sb = new StringBuilder();
+                            WriteException(sb, ex);
+                            sb.AppendLine(ex.StackTrace);
+                            try
+                            {
+                                File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LastException.txt"), sb.ToString());
+                            }
+                            catch { }
+
+                            ResourceDictionary rd = Application.Current.Resources.MergedDictionaries[0];
+                            string msg = (String)rd["Doc_Open_DeserializeError"];
+                            MessageBox.Show(msg, Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
+                catch 
+                {
+                    ResourceDictionary rd = Application.Current.Resources.MergedDictionaries[0];
+                    string msg = (String)rd["Doc_Open_AccessError"];
+                    MessageBox.Show(msg, Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                ActiveDocument.IsDirty = false;
+            }
+        }
+
+        private void WriteException(StringBuilder sb, Exception ex)
+        {
+            sb.AppendLine(ex.Message);
+            sb.AppendLine(ex.Source);
+            if (ex.InnerException != null)
+                WriteException(sb, ex.InnerException);
+        }
     }
 }

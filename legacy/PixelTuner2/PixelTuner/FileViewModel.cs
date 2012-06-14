@@ -9,10 +9,11 @@ using System.Windows;
 using System.Collections.ObjectModel;
 using TimeLineTool;
 using System.Windows.Media;
+using System.Xml.Serialization;
 
 namespace PixelTuner
 {
-    class FileViewModel : PaneViewModel
+    public class FileViewModel : PaneViewModel
     {
         public FileViewModel(string filePath)
         {
@@ -32,6 +33,7 @@ namespace PixelTuner
 
         #region FilePath
         private string _filePath = null;
+        [XmlIgnore]
         public string FilePath
         {
             get { return _filePath; }
@@ -46,7 +48,6 @@ namespace PixelTuner
 
                     if (File.Exists(_filePath))
                     {
-                        _textContent = File.ReadAllText(_filePath);
                         ContentId = _filePath;
                     }
                 }
@@ -67,6 +68,7 @@ namespace PixelTuner
             }
         }
 
+        [XmlIgnore]
         public string FileName
         {
             get 
@@ -79,6 +81,7 @@ namespace PixelTuner
             }
         }
 
+        [XmlIgnore]
         public override Uri IconSource
         {
             get
@@ -92,28 +95,10 @@ namespace PixelTuner
             return String.Format("{0} < {1} >", this.FileName, this.FilePath);
         }
 
-        #region TextContent
-
-        private string _textContent = string.Empty;
-        public string TextContent
-        {
-            get { return _textContent; }
-            set
-            {
-                if (_textContent != value)
-                {
-                    _textContent = value;
-                    RaisePropertyChanged("TextContent");
-                    IsDirty = true;
-                }
-            }
-        }
-
-        #endregion
-
         #region IsDirty
 
         private bool _isDirty = false;
+        [XmlIgnore]
         public bool IsDirty
         {
             get { return _isDirty; }
@@ -238,7 +223,22 @@ namespace PixelTuner
 
         #endregion 
 
+        [XmlIgnore]
+        public static List<Type> ExtraTypes
+        {
+            get
+            {
+                var result = new List<Type>()
+                {
+                    typeof(TimeLineViewModel)
+                };
+                result.AddRange(TimeLineViewModel.ExtraTypes);
+                return result;
+            }
+        }
+
         ObservableCollection<TimeLineViewModel> _timeLines = new ObservableCollection<TimeLineViewModel>();
+        [XmlElement(ElementName = "Line")]
         public ObservableCollection<TimeLineViewModel> TimeLines
         {
             get

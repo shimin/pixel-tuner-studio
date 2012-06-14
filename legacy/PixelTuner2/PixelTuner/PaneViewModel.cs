@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace PixelTuner
 {
-    class PaneViewModel : ViewModelBase
+    public class PaneViewModel : ViewModelBase
     {
         public PaneViewModel()
         { }
@@ -14,6 +15,7 @@ namespace PixelTuner
         #region Title
 
         private string _title = null;
+        [XmlIgnore]
         public string Title
         {
             get { return _title; }
@@ -40,6 +42,7 @@ namespace PixelTuner
         #region ContentId
 
         private string _contentId = null;
+        [XmlIgnore]
         public string ContentId
         {
             get { return _contentId; }
