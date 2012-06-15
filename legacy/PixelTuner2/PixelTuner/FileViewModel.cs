@@ -81,6 +81,17 @@ namespace PixelTuner
             }
         }
 
+        Double _unitSize = 100.0;
+        [XmlAttribute]
+        public Double UnitSize
+        {
+            get { return _unitSize; }
+            set { 
+                _unitSize = value;
+                RaisePropertyChanged("UnitSize");
+            }
+        }
+
         [XmlIgnore]
         public override Uri IconSource
         {
@@ -246,7 +257,7 @@ namespace PixelTuner
                 if (_timeLines == null)
                     _timeLines = new ObservableCollection<TimeLineViewModel>(_timeLines);
 
-                 if (_timeLines.Count == 0) _timeLines.Add(new TimeLineViewModel());
+                 //if (_timeLines.Count == 0) _timeLines.Add(new TimeLineViewModel());
                 return _timeLines;
             }
             set

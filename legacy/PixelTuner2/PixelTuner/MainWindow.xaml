@@ -259,7 +259,7 @@
                                             Content="{StaticResource Doc_Btn_AddLine}" 
                                             Command="{Binding AddLine}"/>
                                     <TextBlock Grid.Row="0" Grid.Column="1" Margin="16,4,4,0" Foreground="{StaticResource TextBrush}" Text="{StaticResource Doc_Lbl_Scale}"/>
-                                    <Slider Grid.Row="0" Grid.Column="2" x:Name="Slider_Scale" Margin="2" Minimum="10" Maximum="100" Value="100"/>
+                                    <Slider Grid.Row="0" Grid.Column="2" x:Name="Slider_Scale" Margin="2" Minimum="10" Maximum="200" Value="{Binding UnitSize}"/>
                                     <ScrollViewer Grid.Row="1"
                                                   Grid.ColumnSpan="4"
                                                   Grid.RowSpan="2"
@@ -355,5 +355,7 @@
     </Grid>
     <Window.InputBindings>
         <KeyBinding Gesture="Ctrl+N" Command="{Binding NewCommand}"></KeyBinding>
+        <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenCommand}"></KeyBinding>
+        <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveCommand}"></KeyBinding>
     </Window.InputBindings>
 </Window>

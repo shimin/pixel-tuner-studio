@@ -4,11 +4,15 @@ using System.Linq;
 using System.Text;
 using TimeLineTool;
 using System.Xml.Serialization;
+using PixelTuner.ListViewStyle;
+using System.ComponentModel;
+using System.Text.RegularExpressions;
 
 namespace PixelTuner.Serialization
 {
     public class TimeLineItem
     {
+        Regex timeRx = new Regex(@"(?<h>\d{2}):(?<m>\d{2}):(?<s>\d{2})\.(?<ms>\d{4})");
         public TimeLineItem()
         {
 
@@ -37,10 +41,17 @@ namespace PixelTuner.Serialization
             }
             set
             {
-                var timeString = value;
                 DateTime _time = DateTime.MinValue;
-                DateTime.TryParse(value, out _time);
-                _time.AddYears(1);
+                Match m = timeRx.Match(value);
+                if (m.Groups.Count > 0)
+                {
+                    _time = _time.AddHours(int.Parse(m.Groups["h"].ToString()));
+                    _time = _time.AddMinutes(int.Parse(m.Groups["m"].ToString()));
+                    _time = _time.AddSeconds(int.Parse(m.Groups["s"].ToString()));
+                    _time = _time.AddMilliseconds(int.Parse(m.Groups["ms"].ToString()));
+                }
+                var timeString = value;
+                _time = _time.AddYears(1);
                 _startTime = _time;
             }
         }
@@ -71,10 +82,17 @@ namespace PixelTuner.Serialization
             }
             set
             {
-                var timeString = value;
                 DateTime _time = DateTime.MinValue;
-                DateTime.TryParse(value, out _time);
-                _time.AddYears(1);
+                Match m = timeRx.Match(value);
+                if (m.Groups.Count > 0)
+                {
+                    _time = _time.AddHours(int.Parse(m.Groups["h"].ToString()));
+                    _time = _time.AddMinutes(int.Parse(m.Groups["m"].ToString()));
+                    _time = _time.AddSeconds(int.Parse(m.Groups["s"].ToString()));
+                    _time = _time.AddMilliseconds(int.Parse(m.Groups["ms"].ToString()));
+                }
+                var timeString = value;
+                _time = _time.AddYears(1);
                 _endTime = _time;
             }
         }
@@ -105,6 +123,14 @@ namespace PixelTuner.Serialization
             {
                 _fullName = value;
             }
+        }
+
+        public static implicit operator ThumbnailFileItem(TimeLineItem item)
+        {
+            var v = new PixelTuner.ListViewStyle.ThumbnailFileItem(new System.IO.FileInfo(item.FullName));
+            v.StartTime = item.StartTime;
+            v.EndTime = item.EndTime;
+            return v;
         }
     }
 }

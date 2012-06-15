@@ -87,10 +87,12 @@
     </ApplicationDefinition>
     <Compile Include="ActiveDocumentConverter.cs" />
     <Compile Include="ActiveTimeLineConverter.cs" />
+    <Compile Include="DelegatedList.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="FileStatsViewModel.cs" />
     <Compile Include="MathConverter.cs" />
     <Compile Include="RelayCommand.cs" />
-    <Compile Include="Serialization\TimeLineItem.cs" />
     <Compile Include="TimeLineViewModel.cs" />
     <Compile Include="ToolViewModel.cs" />
     <Compile Include="ViewModelBase.cs" />

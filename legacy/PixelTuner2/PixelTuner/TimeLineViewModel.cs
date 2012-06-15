@@ -9,6 +9,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Serialization;
 using PixelTuner.Serialization;
+using System.Globalization;
+using System.Windows;
+using PixelTuner.ListViewStyle;
 
 namespace PixelTuner
 {
@@ -16,6 +19,7 @@ namespace PixelTuner
         : ITimeLineManager, INotifyPropertyChanged
     {
         public TimeLineViewModel() {
+            _xmlItems = new DelegatedIList(_items);
             _items.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(_items_CollectionChanged);
         }
 
@@ -66,36 +70,17 @@ namespace PixelTuner
             }
         }
 
-        List<TimeLineItem> _xmlItems = new List<TimeLineItem>();
-        [XmlArray]
-        [XmlArrayItem(ElementName = "Item")]
-        public List<TimeLineItem> XmlItems
+        DelegatedIList _xmlItems;
+        [XmlElement(ElementName = "Item", Type = typeof(TimeLineItem))]
+        public DelegatedIList XmlItems
         {
             get
             {
-                _xmlItems = new List<TimeLineItem>();
-                foreach (var v in Items)
-                {
-                    var item = new TimeLineItem();
-                    item.StartTime = v.StartTime;
-                    item.EndTime = v.EndTime;
-                    item.FullName = (v as PixelTuner.ListViewStyle.ThumbnailFileItem).FullName;
-                    _xmlItems.Add(item);
-                }
                 return _xmlItems;
             }
             set
             {
                 _xmlItems = value;
-                //_items = new ObservableCollection<ITimeLineDataItem>();
-                //if (value != null)
-                //    foreach (var item in value)
-                //    {
-                //        var v = new PixelTuner.ListViewStyle.ThumbnailFileItem(new System.IO.FileInfo(item.FullName));
-                //        v.StartTime = item.StartTime;
-                //        v.EndTime = item.EndTime;
-                //        _items.Add(v);
-                //    }
             }
         }
 
@@ -107,7 +92,7 @@ namespace PixelTuner
             {
                 if (_items == null)
                     _items = new ObservableCollection<ITimeLineDataItem>();
-                //if (_items.Count == 0) _items.Add(new PixelTuner.ListViewStyle.ThumbnailFileItem());
+                
                 return _items;
             }
             set

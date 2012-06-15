@@ -126,7 +126,9 @@ namespace PixelTuner
 
         private void OnNew(object parameter)
         {
-            _files.Add(new FileViewModel());
+            var model = new FileViewModel();
+            model.TimeLines.Add(new TimeLineViewModel());
+            _files.Add(model);
             ActiveDocument = _files.Last();
         }
 
@@ -210,7 +212,6 @@ namespace PixelTuner
 
             if (fileToSave.FilePath != null)
             {
-
                 using (XmlTextWriter tw = new XmlTextWriter(fileToSave.FilePath, Encoding.UTF8))
                 {
                     tw.Formatting = Formatting.Indented;

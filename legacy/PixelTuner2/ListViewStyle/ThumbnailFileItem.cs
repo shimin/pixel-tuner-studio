@@ -11,15 +11,15 @@ using System.Windows;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
 using System.Xml.Serialization;
+using PixelTuner.Serialization;
 
 namespace PixelTuner.ListViewStyle
 {
-    public class ThumbnailFileItem : FileSystemInfo, ITimeLineDataItem, INotifyPropertyChanged
+    public class ThumbnailFileItem: FileSystemInfo, ITimeLineDataItemConvertable<TimeLineItem>, INotifyPropertyChanged
     {
         FileInfo _fi = null;
         public ThumbnailFileItem()
         {
-            _fi = new FileInfo("");
         }
 
         public ThumbnailFileItem(FileInfo fi)
@@ -185,23 +185,46 @@ namespace PixelTuner.ListViewStyle
         public void SetAccessControl(FileSecurity fileSecurity) { _fi.SetAccessControl(fileSecurity); }
         public override string ToString() { return _fi.ToString(); }
 
-        public FileAttributes Attributes { get { return _fi.Attributes; } set { _fi.Attributes = value; } }
-        public DateTime CreationTime { get { return _fi.CreationTime; } set { _fi.CreationTime = value; } }
-        public DateTime CreationTimeUtc { get { return _fi.CreationTimeUtc; } set { _fi.CreationTimeUtc = value; } }
-        public string Extension { get { return _fi.Extension; } }
-        public virtual string FullName { get { return _fi.FullName; } }
-        public DateTime LastAccessTime { get { return _fi.LastAccessTime; } set { _fi.LastAccessTime = value; } }
-        public DateTime LastAccessTimeUtc { get { return _fi.LastAccessTimeUtc; } set { _fi.LastAccessTimeUtc = value; } }
-        public DateTime LastWriteTime { get { return _fi.LastWriteTime; } set { _fi.LastWriteTime = value; } }
-        public DateTime LastWriteTimeUtc { get { return _fi.LastWriteTimeUtc; } set { _fi.LastWriteTimeUtc = value; } }
-        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+        public new FileAttributes Attributes { get { return _fi.Attributes; } set { _fi.Attributes = value; } }
+        public new DateTime CreationTime { get { return _fi.CreationTime; } set { _fi.CreationTime = value; } }
+        public new DateTime CreationTimeUtc { get { return _fi.CreationTimeUtc; } set { _fi.CreationTimeUtc = value; } }
+        public new string Extension { get { return _fi.Extension; } }
+        public override string FullName { get { return _fi.FullName; } }
+        public new DateTime LastAccessTime { get { return _fi.LastAccessTime; } set { _fi.LastAccessTime = value; } }
+        public new DateTime LastAccessTimeUtc { get { return _fi.LastAccessTimeUtc; } set { _fi.LastAccessTimeUtc = value; } }
+        public new DateTime LastWriteTime { get { return _fi.LastWriteTime; } set { _fi.LastWriteTime = value; } }
+        public new DateTime LastWriteTimeUtc { get { return _fi.LastWriteTimeUtc; } set { _fi.LastWriteTimeUtc = value; } }
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             _fi.GetObjectData(info, context);
         }
-        public void Refresh()
+        public new void Refresh()
         {
             _fi.Refresh();
         } 
+        #endregion
+
+        public static implicit operator TimeLineItem(ThumbnailFileItem item)
+        {
+            var result = new TimeLineItem();
+            result.StartTime = item.StartTime;
+            result.EndTime = item.EndTime;
+            result.FullName = item.FullName;
+            return result;
+        }
+
+        #region ITimeLineDataItemConvertable<TimeLineItem> Members
+
+        TimeLineItem ITimeLineDataItemConvertable<TimeLineItem>.ConvertTo(ITimeLineDataItem item)
+        {
+            throw new NotImplementedException();
+        }
+
+        ITimeLineDataItem ITimeLineDataItemConvertable<TimeLineItem>.ConvertFrom(TimeLineItem item)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }
