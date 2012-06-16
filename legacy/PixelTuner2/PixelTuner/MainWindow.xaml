@@ -290,7 +290,7 @@
                     </local:PanesStyleSelector.ToolStyle>
                     <local:PanesStyleSelector.FileStyle>
                         <Style TargetType="{x:Type avalonDock:LayoutItem}">
-                            <Setter Property="Title" Value="{Binding Model.Title}"/>
+                            <Setter Property="Title" Value="{Binding Model.FileName, UpdateSourceTrigger=PropertyChanged}"/>
                             <Setter Property="ToolTip" Value="{Binding Model.FilePath}"/>
                             <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}"/>
                             <Setter Property="IconSource" Value="{Binding Model.IconSource}"/>

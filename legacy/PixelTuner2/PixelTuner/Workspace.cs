@@ -196,6 +196,7 @@ namespace PixelTuner
                 }
             }
 
+            _activeDocument = null;
             _files.Remove(fileToClose);
         }
 
@@ -216,6 +217,11 @@ namespace PixelTuner
                 {
                     tw.Formatting = Formatting.Indented;
                     _projectSerializer.Serialize(tw, fileToSave);
+                    ///////////////////////////////
+                    // исправить нотификацию об изменении имени файла.
+                    _files.Remove(fileToSave);
+                    _files.Add(fileToSave);
+                    //RaisePropertyChanged("Files");
                 }
                 ActiveDocument.IsDirty = false;
             }
@@ -229,7 +235,7 @@ namespace PixelTuner
                 dlg.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 dlg.Filter = "PixelTuner project file|*.ptp";
                 if (dlg.ShowDialog().GetValueOrDefault())
-                    path = dlg.SafeFileName;
+                    path = dlg.FileName;
             }
 
             if (path != null)
@@ -241,6 +247,7 @@ namespace PixelTuner
                         try
                         {
                             var file = (FileViewModel)_projectSerializer.Deserialize(tr);
+                            file.FilePath = path;
                             this._files.Add(file);
                             ActiveDocument = file;
                         }
