@@ -269,7 +269,7 @@
                                     MaxValue="100"
                                     MinValue="5"
                                     Step="5"
-                                    Value="{Binding ElementName=NewBtn, Path=DataContext.LineHeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                    Value="{Binding Path=Parent.DataContext.LineHeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                 <ScrollViewer Grid.Row="1"
                                                 Grid.ColumnSpan="6"
                                                 Grid.RowSpan="2"
