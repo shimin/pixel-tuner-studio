@@ -57,6 +57,14 @@ namespace PixelTuner
             set { _backGround = value; RaisePropertyChanged("Background"); }
         }
 
+        Double _defaultLength;
+        [XmlIgnore]
+        public Double DefaultTimeInterval
+        {
+            get { return _defaultLength; }
+            set { _defaultLength = value; RaisePropertyChanged("DefaultTimeInterval"); }
+        }
+
         // for comparasions in TimeLineControl wich all use 'DateTime.MinValue'
         DateTime? _start = DateTime.MinValue.AddYears(1);
         [XmlIgnore]

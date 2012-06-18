@@ -81,7 +81,7 @@ namespace PixelTuner
             }
         }
 
-        Double _unitSize = 100.0;
+        Double _unitSize = 10.0;
         [XmlAttribute]
         public Double UnitSize
         {
@@ -90,6 +90,15 @@ namespace PixelTuner
                 _unitSize = value;
                 RaisePropertyChanged("UnitSize");
             }
+        }
+
+        int _lineHeight = 25;
+        [XmlAttribute]
+        public int LineHeight
+        {
+            get { return _lineHeight; }
+            set { _lineHeight = value; 
+                RaisePropertyChanged("LineHeight"); }
         }
 
         [XmlIgnore]

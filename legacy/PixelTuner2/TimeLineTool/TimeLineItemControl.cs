@@ -14,6 +14,13 @@ namespace TimeLineTool
 	//public class TimeLineItemControl:ContentPresenter
 	public class TimeLineItemControl : Button
 	{
+        Double _defaultTimeInterval;
+        public Double DefaultTimeInterval
+        {
+            get { return _defaultTimeInterval; }
+            set { _defaultTimeInterval = value; }
+        }
+
 		private Boolean _ready = true;
 		internal Boolean ReadyToDraw
 		{
@@ -24,8 +31,6 @@ namespace TimeLineTool
 			}
 		}
 
-
-
         public Boolean IsExpanded
         {
             get { return (Boolean)GetValue(IsExpandedProperty); }
@@ -35,8 +40,6 @@ namespace TimeLineTool
         // Using a DependencyProperty as the backing store for IsExpanded.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty IsExpandedProperty =
             DependencyProperty.Register("IsExpanded", typeof(Boolean), typeof(TimeLineItemControl), new UIPropertyMetadata(false));
-
-
 
 		#region unitsize
 		public Double UnitSize
@@ -470,7 +473,7 @@ namespace TimeLineTool
 
 		internal void MoveToNewStartTime(DateTime start)
 		{
-						DateTime s = (DateTime)GetValue(StartTimeProperty);
+			DateTime s = (DateTime)GetValue(StartTimeProperty);
 			DateTime e = (DateTime)GetValue(EndTimeProperty);
 			TimeSpan duration = e.Subtract(s);
 			StartTime = start;
@@ -483,7 +486,7 @@ namespace TimeLineTool
 		/// </summary>
 		internal void InitializeDefaultLength()
 		{
-			TimeSpan duration = ConvertDistanceToTime(1 * (Double)GetValue(UnitSizeProperty));
+            TimeSpan duration = ConvertDistanceToTime(DefaultTimeInterval * (Double)GetValue(UnitSizeProperty));
 			EndTime = StartTime.Add(duration);
 			Width = CalculateWidth();
 		}

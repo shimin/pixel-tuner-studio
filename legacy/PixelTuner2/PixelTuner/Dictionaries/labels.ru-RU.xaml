@@ -12,6 +12,7 @@
     <system:String x:Key="Menu_File">Файл</system:String>
     <system:String x:Key="Doc_Btn_AddLine">Новая линия</system:String>
     <system:String x:Key="Doc_Lbl_Scale">Масштаб</system:String>
+    <system:String x:Key="Doc_Lbl_Height">Высота</system:String>
     <system:String x:Key="Doc_Hdr_Default">Без имени</system:String>
     <system:String x:Key="Doc_Open_AccessError">Нет доступа к файлу.</system:String>
     <system:String x:Key="Doc_Open_DeserializeError">Ошибка открытия файла. Возможно файл поврежден.</system:String>

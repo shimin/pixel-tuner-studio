@@ -470,6 +470,29 @@ namespace TimeLineTool
         }
         #endregion
 
+        #region DefaultTimeInterval
+        public Double DefaultTimeInterval
+        {
+            get { return (Double)GetValue(DefaultTimeIntervalProperty); }
+            set { SetValue(DefaultTimeIntervalProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for UnitSize.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty DefaultTimeIntervalProperty =
+            DependencyProperty.Register("DefaultTimeInterval", typeof(Double), typeof(TimeLineControl),
+            new UIPropertyMetadata(5.0,
+                    new PropertyChangedCallback(OnDefaultTimeIntervalChanged)));
+
+        private static void OnDefaultTimeIntervalChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            TimeLineItemControl ctrl = d as TimeLineItemControl;
+            if (ctrl != null)
+            {
+                ctrl.PlaceOnCanvas();
+            }
+        }
+        #endregion
+
         #region unitsize
 
 
@@ -722,6 +745,7 @@ namespace TimeLineTool
             adder.PreviewMouseLeftButtonUp += item_PreviewDragButtonUp;
             adder.PreviewMouseLeftButtonDown += item_PreviewDragButtonDown;
             adder.UnitSize = UnitSize;
+            adder.DefaultTimeInterval = DefaultTimeInterval;
             return adder;
         }
         #endregion
@@ -1226,6 +1250,7 @@ namespace TimeLineTool
                         Canvas.SetLeft(_tmpDraggAdornerControl, -1000000);
                         _tmpDraggAdornerControl.DataContext = d2;
                         _tmpDraggAdornerControl.StartTime = StartDate.Add(_tmpDraggAdornerControl.ConvertDistanceToTime((Double)e.GetPosition(this).X));
+                        _tmpDraggAdornerControl.DefaultTimeInterval = DefaultTimeInterval;
                         _tmpDraggAdornerControl.InitializeDefaultLength();
                         _tmpDraggAdornerControl.ContentTemplate = ItemTemplate;
 
