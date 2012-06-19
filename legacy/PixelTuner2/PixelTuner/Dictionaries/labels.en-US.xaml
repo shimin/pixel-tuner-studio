@@ -8,6 +8,8 @@
     <system:String x:Key="Menu_File_New">New project</system:String>
     <system:String x:Key="Menu_File_Open">Open project</system:String>
     <system:String x:Key="Menu_File_Save">Save</system:String>
+    <system:String x:Key="Menu_File_SaveAs">Save as..</system:String>
+    <system:String x:Key="Menu_File_Close">Close</system:String>
     <system:String x:Key="Menu_File_Exit">Exit</system:String>
     <system:String x:Key="Menu_File">File</system:String>
     <system:String x:Key="Doc_Btn_AddLine">Add line</system:String>

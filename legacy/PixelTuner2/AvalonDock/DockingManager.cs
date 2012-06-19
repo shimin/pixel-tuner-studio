@@ -2004,10 +2004,11 @@ namespace AvalonDock
                 //look for active content parent pane
                 anchorablePane = layout.ActiveContent.Parent as LayoutAnchorablePane;
             }
-
+            
             if (anchorablePane == null)
             {
                 //look for a pane on the right side
+                var v = layout.Descendents().OfType<LayoutAnchorablePane>().Where(pane => pane.GetSide() == AnchorSide.Right);
                 anchorablePane = layout.Descendents().OfType<LayoutAnchorablePane>().Where(pane => pane.GetSide() == AnchorSide.Right).FirstOrDefault();
             }
 
@@ -2028,6 +2029,20 @@ namespace AvalonDock
                 _suspendLayoutItemCreation = true;
                 foreach (var anchorableContentToImport in listOfAnchorablesToImport)
                 {
+                    string anchorableContentID = null;
+                    try
+                    {
+                        anchorableContentID = (string)anchorableContentToImport.GetType().GetProperty("ContentId").GetValue(anchorableContentToImport, null);
+                    }
+                    catch {
+                        Console.WriteLine("Pane content id seeking exception.");
+                    }
+                    if (!String.IsNullOrWhiteSpace(anchorableContentID))
+                    {
+                        var p = layout.Descendents().OfType<LayoutAnchorablePane>().Where(pane => pane.TargetContentID == anchorableContentID).FirstOrDefault();
+                        if (p != null) anchorablePane = p;
+                    }
+
                     var anchorableToImport = new LayoutAnchorable()
                     {
                         Content = anchorableContentToImport

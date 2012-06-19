@@ -34,5 +34,17 @@ namespace PixelTuner.Properties {
                 this["LayoutString"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("25")]
+        public int LineHeight {
+            get {
+                return ((int)(this["LineHeight"]));
+            }
+            set {
+                this["LineHeight"] = value;
+            }
+        }
     }
 }

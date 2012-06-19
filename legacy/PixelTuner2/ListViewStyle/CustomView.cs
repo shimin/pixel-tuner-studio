@@ -38,35 +38,35 @@ namespace PixelTuner.ListViewStyle
     /// FileCollection is used as ItemsSource of ListView. ListView will show files inside
     /// the collection
     /// </summary>
-    public sealed class FileCollection : ObservableCollection<ThumbnailFileItem>
-    {
-        public FileCollection()
-        {
-            // put files in %windir%\web\wallpaper into the collection
+    //public sealed class FileCollection : ObservableCollection<ThumbnailFileItem>
+    //{
+    //    public FileCollection()
+    //    {
+    //        // put files in %windir%\web\wallpaper into the collection
 
-            // get %windir%
-            //string windir = Environment.GetEnvironmentVariable("WINDIR");
-            //if (string.IsNullOrEmpty(windir))
-            //    return;
+    //        // get %windir%
+    //        //string windir = Environment.GetEnvironmentVariable("WINDIR");
+    //        //if (string.IsNullOrEmpty(windir))
+    //        //    return;
 
-            // put files into collection
+    //        // put files into collection
 
-            //string wallpaperPath = string.Format(@"{0}\Web\Wallpaper", windir);
-            string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content");
-            if (!Directory.Exists(sourcePath))
-            {
-                Directory.CreateDirectory(sourcePath);
-            }
-            DirectoryInfo info = new DirectoryInfo(sourcePath);
-            FileSystemInfo[] files = info.GetFileSystemInfos();
+    //        //string wallpaperPath = string.Format(@"{0}\Web\Wallpaper", windir);
+    //        string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content");
+    //        if (!Directory.Exists(sourcePath))
+    //        {
+    //            Directory.CreateDirectory(sourcePath);
+    //        }
+    //        DirectoryInfo info = new DirectoryInfo(sourcePath);
+    //        FileSystemInfo[] files = info.GetFileSystemInfos();
 
-            foreach (FileInfo fi in files)
-            {
-                // exlude hidden files 
-                ThumbnailFileItem tfi = new ThumbnailFileItem(fi);
-                if ((fi.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
-                    Add(tfi);
-            }
-        }
-    }
+    //        foreach (FileInfo fi in files)
+    //        {
+    //            // exlude hidden files 
+    //            ThumbnailFileItem tfi = new ThumbnailFileItem(fi);
+    //            if ((fi.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
+    //                Add(tfi);
+    //        }
+    //    }
+    //}
 }

@@ -11,13 +11,13 @@ namespace PixelTuner
         public FileStatsViewModel()
             :base("File Stats")
         {
-            Workspace.This.ActiveDocumentChanged += new EventHandler(OnActiveDocumentChanged);
+            Workspace.This.ActiveDocumentChanged += new PixelTuner.Workspace.DocumentChangedEventHandler(OnActiveDocumentChanged);
             ContentId = ToolContentId;
         }
 
         public const string ToolContentId = "FileStatsTool";
 
-        void OnActiveDocumentChanged(object sender, EventArgs e)
+        void OnActiveDocumentChanged(object sender, PixelTuner.Workspace.DocumentChangedEventArgs e)
         {
             if (Workspace.This.ActiveDocument != null &&
                 Workspace.This.ActiveDocument.FilePath != null &&

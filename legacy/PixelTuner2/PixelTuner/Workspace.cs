@@ -10,14 +10,36 @@ using System.Windows;
 using AvalonDock.Layout;
 using System.Xml.Serialization;
 using System.Xml;
+using PixelTuner.ListViewStyle;
+using PixelTuner.Properties;
 
 namespace PixelTuner
 {
     class Workspace : ViewModelBase
     {
         protected Workspace()
-        { 
-        
+        {
+            RefreshImagesCollection();
+            this.ActiveDocumentChanged +=new DocumentChangedEventHandler(Workspace_ActiveDocumentChanged);
+        }
+
+        void Workspace_ActiveDocumentChanged(object sender, DocumentChangedEventArgs e)
+        {
+            if (_activeDocument == null) RefreshImagesCollection();
+            else
+            {
+                RefreshImagesCollection(_activeDocument.LineHeight);
+                e.NewDocument.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(NewDocument_PropertyChanged);
+                if (e.OldDocument != null)
+                    e.OldDocument.PropertyChanged -= NewDocument_PropertyChanged;
+            }
+        }
+
+        void NewDocument_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "LineHeight") 
+                if (sender is FileViewModel)
+                    RefreshImagesCollection((sender as FileViewModel).LineHeight);
         }
 
         XmlSerializer _projectSerializer = new XmlSerializer(typeof(FileViewModel), FileViewModel.ExtraTypes.ToArray());
@@ -30,15 +52,15 @@ namespace PixelTuner
         }
 
         ObservableCollection<FileViewModel> _files = new ObservableCollection<FileViewModel>();
-        ReadOnlyObservableCollection<FileViewModel> _readonyFiles = null;
+        ReadOnlyObservableCollection<FileViewModel> _readonlyFiles = null;
         public ReadOnlyObservableCollection<FileViewModel> Files
         {
             get
             {
-                if (_readonyFiles == null)
-                    _readonyFiles = new ReadOnlyObservableCollection<FileViewModel>(_files);
+                if (_readonlyFiles == null)
+                    _readonlyFiles = new ReadOnlyObservableCollection<FileViewModel>(_files);
 
-                return _readonyFiles;
+                return _readonlyFiles;
             }
         }
 
@@ -49,7 +71,7 @@ namespace PixelTuner
             get
             {
                 if (_tools == null)
-                    _tools = new ToolViewModel[] { FileStats };
+                    _tools = new ToolViewModel[] { FileStats, DevicesModel, ProjectsModel };
                 return _tools;
             }
         }
@@ -63,6 +85,35 @@ namespace PixelTuner
                     _fileStats = new FileStatsViewModel();
 
                 return _fileStats;
+            }
+        }
+
+        DevicesViewModel _devicesModel = null;
+        public DevicesViewModel DevicesModel
+        {
+            get
+            {
+                if (_devicesModel == null)
+                    _devicesModel = new DevicesViewModel(
+                        (String)Application.Current.TryFindResource("Menu_Window_Devices"));
+
+                return _devicesModel;
+            }
+        }
+
+        ProjectsViewModel _projectsModel = null;
+        public ProjectsViewModel ProjectsModel
+        {
+            get
+            {
+                if (_projectsModel == null)
+                {
+                    _projectsModel = new ProjectsViewModel(
+                        (String)Application.Current.TryFindResource("Menu_Window_Projects"));
+                    _projectsModel.InitializeFilesList(_files);
+                }
+
+                return _projectsModel;
             }
         }
 
@@ -144,15 +195,35 @@ namespace PixelTuner
             {
                 if (_activeDocument != value)
                 {
+                    FileViewModel oldDoc = _activeDocument;     // сохраняю ссылку на предыдущий документ, чтобы иметь к нему доступ в обработчике события
                     _activeDocument = value;
                     RaisePropertyChanged("ActiveDocument");
                     if (ActiveDocumentChanged != null)
-                        ActiveDocumentChanged(this, EventArgs.Empty);
+                        ActiveDocumentChanged(this, new DocumentChangedEventArgs(oldDoc, _activeDocument));
                 }
             }
         }
+        public class DocumentChangedEventArgs : EventArgs
+        {
+            FileViewModel _oldDoc;
+            public FileViewModel OldDocument
+            {
+                get { return _oldDoc; }
+            }
+            FileViewModel _newDoc;
+            public FileViewModel NewDocument
+            {
+                get { return _newDoc; }
+            }
 
-        public event EventHandler ActiveDocumentChanged;
+            public DocumentChangedEventArgs(FileViewModel oldDoc, FileViewModel newDoc)
+            {
+                _oldDoc = oldDoc;
+                _newDoc = newDoc;
+            }
+        }
+        public delegate void DocumentChangedEventHandler(object sender, DocumentChangedEventArgs e);
+        public event DocumentChangedEventHandler ActiveDocumentChanged;
 
         #endregion
 
@@ -183,6 +254,60 @@ namespace PixelTuner
 
         #endregion 
 
+        #region SaveAsCommand
+        RelayCommand _saveAsCommand = null;
+        public ICommand SaveAsCommand
+        {
+            get
+            {
+                if (_saveAsCommand == null)
+                {
+                    _saveAsCommand = new RelayCommand((p) => OnSaveAs(p), (p) => CanSaveAs(p));
+                }
+
+                return _saveAsCommand;
+            }
+        }
+
+        private bool CanSaveAs(object parameter)
+        {
+            return ActiveDocument != null;
+        }
+
+        private void OnSaveAs(object parameter)
+        {
+            Save(ActiveDocument, true);
+        }
+
+        #endregion 
+
+        #region CloseCommand
+        RelayCommand _closeCommand = null;
+        public ICommand CloseCommand
+        {
+            get
+            {
+                if (_closeCommand == null)
+                {
+                    _closeCommand = new RelayCommand((p) => OnClose(p), (p) => CanClose(p));
+                }
+
+                return _closeCommand;
+            }
+        }
+
+        private bool CanClose(object parameter)
+        {
+            return ActiveDocument != null;
+        }
+
+        private void OnClose(object parameter)
+        {
+            Close(ActiveDocument);
+        }
+
+        #endregion 
+
         internal void Close(FileViewModel fileToClose)
         {
             if (fileToClose.IsDirty)
@@ -196,8 +321,12 @@ namespace PixelTuner
                 }
             }
 
-            _activeDocument = null;
+            FileViewModel oldDoc = _activeDocument;
             _files.Remove(fileToClose);
+            _activeDocument = _files.Count > 0 ? _files.Last() : null;
+            RaisePropertyChanged("ActiveDocument");
+            if (ActiveDocumentChanged != null)
+                ActiveDocumentChanged(this, new DocumentChangedEventArgs(oldDoc, _activeDocument));
         }
 
         internal void Save(FileViewModel fileToSave, bool saveAsFlag = false)
@@ -221,6 +350,9 @@ namespace PixelTuner
                     // исправить нотификацию об изменении имени файла.
                     _files.Remove(fileToSave);
                     _files.Add(fileToSave);
+                    RaisePropertyChanged("ActiveDocument");
+                    if (ActiveDocumentChanged != null)
+                        ActiveDocumentChanged(this, new DocumentChangedEventArgs(_activeDocument, _activeDocument));
                     //RaisePropertyChanged("Files");
                 }
                 ActiveDocument.IsDirty = false;
@@ -284,6 +416,49 @@ namespace PixelTuner
             sb.AppendLine(ex.Source);
             if (ex.InnerException != null)
                 WriteException(sb, ex.InnerException);
+        }
+
+        ObservableCollection<ThumbnailFileItem> _images = new ObservableCollection<ThumbnailFileItem>();
+        ReadOnlyObservableCollection<ThumbnailFileItem> _readonyImagesCollection = null;
+        public ReadOnlyObservableCollection<ThumbnailFileItem> ImagesCollection
+        {
+            get
+            {
+                if (_readonyImagesCollection == null)
+                    _readonyImagesCollection = new ReadOnlyObservableCollection<ThumbnailFileItem>(_images);
+
+                return _readonyImagesCollection;
+            }
+        }
+
+        private void RefreshImagesCollection(int height = 0)
+        {
+            string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content");
+            if (!Directory.Exists(sourcePath))
+            {
+                Directory.CreateDirectory(sourcePath);
+            }
+            DirectoryInfo info = new DirectoryInfo(sourcePath);
+            FileSystemInfo[] allfiles = info.GetFileSystemInfos();
+            if (height > 0)
+            {
+                List<FileSystemInfo> suitableFiles = new List<FileSystemInfo>();
+                foreach (var f in allfiles)
+                {
+                    System.Drawing.Image img = System.Drawing.Image.FromFile(f.FullName);
+                    if (img.Height == height)
+                        suitableFiles.Add(f);
+                }
+                allfiles = suitableFiles.ToArray();
+            }
+            _images.Clear();
+            foreach (FileInfo fi in allfiles)
+            {
+                // exlude hidden files 
+                ThumbnailFileItem tfi = new ThumbnailFileItem(fi);
+                if ((fi.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
+                    _images.Add(tfi);
+            }
         }
     }
 }

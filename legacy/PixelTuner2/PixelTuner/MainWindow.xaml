@@ -222,11 +222,13 @@
                 <MenuItem Header="{StaticResource Menu_File_New}" Command="{Binding NewCommand}" InputGestureText="Ctrl+N"/>
                 <MenuItem Header="{StaticResource Menu_File_Open}" Command="{Binding OpenCommand}" InputGestureText="Ctrl+O"/>
                 <MenuItem Header="{StaticResource Menu_File_Save}" Command="{Binding SaveCommand}" InputGestureText="Ctrl+S"/>
+                <MenuItem Header="{StaticResource Menu_File_SaveAs}" Command="{Binding SaveAsCommand}" InputGestureText="Ctrl+Shift+S"/>
+                <MenuItem Header="{StaticResource Menu_File_Close}" Command="{Binding CloseCommand}" InputGestureText="Ctrl+W"/>
                 <MenuItem Header="{StaticResource Menu_File_Exit}" Click="ExitApplication"/>
             </MenuItem>
             <MenuItem Header="{StaticResource Menu_Window}">
-                <MenuItem Header="{StaticResource Menu_Window_Projects}" Click="ShowProjectList"/>
-                <MenuItem Header="{StaticResource Menu_Window_Devices}" Click="ShowDeviceList"/>
+                <MenuItem Header="{StaticResource Menu_Window_Projects}" IsCheckable="True" IsChecked="{Binding ProjectsModel.IsVisible, Mode=TwoWay}"/>
+                <MenuItem Header="{StaticResource Menu_Window_Devices}" IsCheckable="True" IsChecked="{Binding DevicesModel.IsVisible, Mode=TwoWay}"/>
             </MenuItem>
         </Menu>
 
@@ -261,7 +263,7 @@
                                         Content="{StaticResource Doc_Btn_AddLine}" 
                                         Command="{Binding AddLine}"/>
                                 <TextBlock Grid.Row="0" Grid.Column="1" Margin="16,4,4,0" Foreground="{StaticResource TextBrush}" Text="{StaticResource Doc_Lbl_Scale}"/>
-                                <Slider Grid.Row="0" Grid.Column="2" x:Name="Slider_Scale" Margin="2" Minimum="10" Maximum="200" Value="{Binding UnitSize}"/>
+                                <Slider Grid.Row="0" Grid.Column="2" x:Name="Slider_Scale" Margin="2" Minimum="1" Maximum="200" Value="{Binding UnitSize}"/>
                                 <TextBlock Grid.Column="3" Margin="16,4,4,0" Foreground="{StaticResource TextBrush}" Text="{StaticResource Doc_Lbl_Height}" />
                                 <local:NumericUpDownControl 
                                     Grid.Column="4" 
@@ -269,6 +271,7 @@
                                     MaxValue="100"
                                     MinValue="5"
                                     Step="5"
+                                    IsEnabled="{Binding Path=Parent.DataContext.LineHeightChangingAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                     Value="{Binding Path=Parent.DataContext.LineHeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                 <ScrollViewer Grid.Row="1"
                                                 Grid.ColumnSpan="6"
@@ -286,6 +289,16 @@
                             </Grid>
                         </DataTemplate>
                     </local:PanesTemplateSelector.FileViewTemplate>
+                    <local:PanesTemplateSelector.DevicesViewTemplate>
+                        <DataTemplate>
+                            <ListBox x:Name="boxDevicesList" MinWidth="120" MinHeight="120"></ListBox>
+                        </DataTemplate>
+                    </local:PanesTemplateSelector.DevicesViewTemplate>
+                    <local:PanesTemplateSelector.ProjectsViewTemplate>
+                        <DataTemplate>
+                            <ListBox x:Name="boxProjectsList" MinWidth="120" MinHeight="120" ItemsSource="{Binding Files}"></ListBox>
+                        </DataTemplate>
+                    </local:PanesTemplateSelector.ProjectsViewTemplate>
                 </local:PanesTemplateSelector>
             </avalonDock:DockingManager.LayoutItemTemplateSelector>
             <avalonDock:DockingManager.LayoutItemContainerStyleSelector>
@@ -315,15 +328,9 @@
                 <avalonDock:LayoutPanel Orientation="Horizontal">
 
                     <avalonDock:LayoutAnchorablePaneGroup Orientation="Vertical" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120">
-                        <avalonDock:LayoutAnchorablePane DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120">
-                            <avalonDock:LayoutAnchorable x:Name="boxProjectsWindow" Title="{StaticResource Menu_Window_Projects}" IsSelected="True">
-                                <ListBox x:Name="boxProjectsList" MinWidth="120" MinHeight="120" ItemsSource="{Binding Files}"></ListBox>
-                            </avalonDock:LayoutAnchorable>
+                        <avalonDock:LayoutAnchorablePane TargetContentID="ProjectsTool" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120">
                         </avalonDock:LayoutAnchorablePane>
-                        <avalonDock:LayoutAnchorablePane DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120">
-                            <avalonDock:LayoutAnchorable x:Name="boxDevicesWindow" Title="{StaticResource Menu_Window_Devices}" IsSelected="True" >
-                                <ListBox x:Name="boxDevicesList" MinWidth="120" MinHeight="120"></ListBox>
-                            </avalonDock:LayoutAnchorable>
+                        <avalonDock:LayoutAnchorablePane TargetContentID="DevicesTool" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120">
                         </avalonDock:LayoutAnchorablePane>
                     </avalonDock:LayoutAnchorablePaneGroup>
 
@@ -335,18 +342,15 @@
 
                         <avalonDock:LayoutAnchorablePaneGroup DockWidth="100" DockHeight="120" DockMinHeight="80" DockMinWidth="80">
                             <avalonDock:LayoutAnchorablePane>
-                                <avalonDock:LayoutAnchorable x:Name="boxImagesWindow" 
-                                                             Title="{StaticResource Menu_Window_Images}">
-                                    <ListView x:Name="boxThumbnails" 
-                                              SelectionMode="Extended"
-                                              dd:DragDrop.IsDragSource="True">
+                                <avalonDock:LayoutAnchorable x:Name="boxImagesWindow" Title="{StaticResource Menu_Window_Images}">
+                                        <ListView x:Name="boxThumbnails" 
+                                                  SelectionMode="Extended" 
+                                                  dd:DragDrop.IsDragSource="True" 
+                                                  ItemsSource="{Binding ImagesCollection}">
                                                 <ListView.View>
                                                     <l:ImageView />
                                                 </ListView.View>
-                                                <ListView.ItemsSource>
-                                                    <l:FileCollection />
-                                                </ListView.ItemsSource>
-                                    </ListView>
+                                        </ListView>
                                 </avalonDock:LayoutAnchorable>
                             </avalonDock:LayoutAnchorablePane>
                         </avalonDock:LayoutAnchorablePaneGroup>
@@ -367,5 +371,7 @@
         <KeyBinding Gesture="Ctrl+N" Command="{Binding NewCommand}"></KeyBinding>
         <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenCommand}"></KeyBinding>
         <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveCommand}"></KeyBinding>
+        <KeyBinding Gesture="Ctrl+Shift+S" Command="{Binding SaveAsCommand}"></KeyBinding>
+        <KeyBinding Gesture="Ctrl+W" Command="{Binding CloseCommand}"></KeyBinding>
     </Window.InputBindings>
 </Window>

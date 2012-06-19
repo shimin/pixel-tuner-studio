@@ -11,7 +11,7 @@
           <Border Name="bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
                   Background="{TemplateBinding Background}" Margin="{TemplateBinding Margin}">
             <ScrollViewer Margin="{TemplateBinding Padding}">
-              <WrapPanel ItemWidth="160" IsItemsHost="True" MinWidth="100" MinHeight="80" Height="80"
+              <WrapPanel ItemWidth="160" IsItemsHost="True" MinWidth="100"
                          Width="{Binding ActualWidth,RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}">
               </WrapPanel>
             </ScrollViewer>
@@ -30,7 +30,7 @@
             <Setter.Value>
                 <DataTemplate>
                     <Border Background="White">
-                        <Image Margin="3" Source="{Binding FullName}"/>
+                        <Image Height="60" Margin="3" Source="{Binding FullName}"/>
                     </Border>
                 </DataTemplate>
             </Setter.Value>

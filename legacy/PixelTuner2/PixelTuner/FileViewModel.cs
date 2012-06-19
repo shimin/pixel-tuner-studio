@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using TimeLineTool;
 using System.Windows.Media;
 using System.Xml.Serialization;
+using PixelTuner.Properties;
 
 namespace PixelTuner
 {
@@ -60,12 +61,22 @@ namespace PixelTuner
 
         void _timeLines_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
+            if (e.NewItems != null)
+                foreach (TimeLineViewModel v in e.NewItems)
+                {
+                    v.Items.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Items_CollectionChanged);
+                }
             for (int i = 0; i < _timeLines.Count; i++)
             {
                 if (i % 2 == 0) _timeLines[i].Background =  _lightLineColor;
                 else _timeLines[i].Background = _darkLineColor;
                 _timeLines[i].Parent = this;
             }
+        }
+
+        void Items_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            RaisePropertyChanged("LineHeightChangingAvailable");
         }
 
         [XmlIgnore]
@@ -92,13 +103,29 @@ namespace PixelTuner
             }
         }
 
-        int _lineHeight = 25;
+        int _lineHeight = Settings.Default.LineHeight;
         [XmlAttribute]
         public int LineHeight
         {
             get { return _lineHeight; }
-            set { _lineHeight = value; 
-                RaisePropertyChanged("LineHeight"); }
+            set 
+            { 
+                _lineHeight = value;
+                Settings.Default.LineHeight = value;
+                RaisePropertyChanged("LineHeight"); 
+            }
+        }
+
+        [XmlIgnore]
+        public bool LineHeightChangingAvailable
+        {
+            get
+            {
+                foreach (var line in TimeLines)
+                    if (line.Items.Count > 0)
+                        return false;
+                return true;
+            }
         }
 
         [XmlIgnore]

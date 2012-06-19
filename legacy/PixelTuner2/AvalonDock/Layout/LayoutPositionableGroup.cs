@@ -70,6 +70,24 @@ namespace AvalonDock.Layout
             }
         }
 
+        #region TargetContentID
+
+        private string _targetContentID;
+        public string TargetContentID
+        {
+            get { return _targetContentID; }
+            set
+            {
+                if (_targetContentID != value)
+                {
+                    RaisePropertyChanging("TargetContentID");
+                    _targetContentID = value;
+                    RaisePropertyChanged("TargetContentID");
+                }
+            }
+        }
+
+        #endregion
 
         #region DockMinWidth
 
@@ -254,7 +272,9 @@ namespace AvalonDock.Layout
                 writer.WriteAttributeString("FloatingLeft", FloatingLeft.ToString());
             if (FloatingTop != 0.0)
                 writer.WriteAttributeString("FloatingTop", FloatingTop.ToString());
-            
+
+            //writer.WriteAttributeString("TargetContentID", TargetContentID);
+
             base.WriteXml(writer);
         }
 
@@ -279,6 +299,9 @@ namespace AvalonDock.Layout
                 _floatingLeft = double.Parse(reader.Value);
             if (reader.MoveToAttribute("FloatingTop"))
                 _floatingTop = double.Parse(reader.Value);
+            
+            //if (reader.MoveToAttribute("TargetContentID"))
+            //    TargetContentID = reader.Value;
 
             base.ReadXml(reader);
         }
