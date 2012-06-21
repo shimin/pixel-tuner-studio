@@ -12,12 +12,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using PixelTuner.Properties;
-using AvalonDock.Layout;
+using Workspace.Layout;
 using System.Diagnostics;
-using AvalonDock.Layout.Serialization;
+using Workspace.Layout.Serialization;
 using System.IO;
 using System.Collections.ObjectModel;
-using TimeLineTool;
+using Core;
 
 namespace PixelTuner
 {
@@ -49,7 +49,7 @@ namespace PixelTuner
             Application.Current.Resources.MergedDictionaries.Clear();
             Application.Current.Resources.MergedDictionaries.Add(d);
             InitializeComponent();
-            this.DataContext = Workspace.This;
+            this.DataContext = RootViewModel.This;
             //TimeLineInit();
 
         }

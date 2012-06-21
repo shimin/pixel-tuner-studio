@@ -6,6 +6,7 @@ using System.Collections;
 using PixelTuner.Serialization;
 using PixelTuner.ListViewStyle;
 
+
 namespace PixelTuner
 {
     public class DelegatedIList : IList

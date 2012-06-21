@@ -11,19 +11,19 @@ namespace PixelTuner
         public FileStatsViewModel()
             :base("File Stats")
         {
-            Workspace.This.ActiveDocumentChanged += new PixelTuner.Workspace.DocumentChangedEventHandler(OnActiveDocumentChanged);
+            RootViewModel.This.ActiveDocumentChanged += new PixelTuner.RootViewModel.DocumentChangedEventHandler(OnActiveDocumentChanged);
             ContentId = ToolContentId;
         }
 
         public const string ToolContentId = "FileStatsTool";
 
-        void OnActiveDocumentChanged(object sender, PixelTuner.Workspace.DocumentChangedEventArgs e)
+        void OnActiveDocumentChanged(object sender, PixelTuner.RootViewModel.DocumentChangedEventArgs e)
         {
-            if (Workspace.This.ActiveDocument != null &&
-                Workspace.This.ActiveDocument.FilePath != null &&
-                File.Exists(Workspace.This.ActiveDocument.FilePath))
+            if (RootViewModel.This.ActiveDocument != null &&
+                RootViewModel.This.ActiveDocument.FilePath != null &&
+                File.Exists(RootViewModel.This.ActiveDocument.FilePath))
             {
-                var fi = new FileInfo(Workspace.This.ActiveDocument.FilePath);
+                var fi = new FileInfo(RootViewModel.This.ActiveDocument.FilePath);
                 FileSize = fi.Length;
                 LastModified = fi.LastWriteTime;
             }

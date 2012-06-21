@@ -7,7 +7,7 @@ using System.Windows.Input;
 using Microsoft.Win32;
 using System.Windows;
 using System.Collections.ObjectModel;
-using TimeLineTool;
+using Core;
 using System.Windows.Media;
 using System.Xml.Serialization;
 using PixelTuner.Properties;
@@ -184,7 +184,7 @@ namespace PixelTuner
 
         private void OnSave(object parameter)
         {
-            Workspace.This.Save(this, false);
+            RootViewModel.This.Save(this, false);
         }
 
         #endregion
@@ -211,7 +211,7 @@ namespace PixelTuner
 
         private void OnSaveAs(object parameter)
         {
-            Workspace.This.Save(this, true);
+            RootViewModel.This.Save(this, true);
         }
 
         #endregion
@@ -238,7 +238,7 @@ namespace PixelTuner
 
         private void OnClose()
         {
-            Workspace.This.Close(this);
+            RootViewModel.This.Close(this);
         }
         #endregion
 

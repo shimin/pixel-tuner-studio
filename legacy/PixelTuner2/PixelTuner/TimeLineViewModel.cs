@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using TimeLineTool;
+using Core;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -11,7 +11,6 @@ using System.Xml.Serialization;
 using PixelTuner.Serialization;
 using System.Globalization;
 using System.Windows;
-using PixelTuner.ListViewStyle;
 
 namespace PixelTuner
 {

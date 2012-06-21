@@ -5,11 +5,10 @@
         Title="PixelTuner" Height="525" Width="960" WindowStyle="SingleBorderWindow" 
         
         xmlns:avalonDock="http://avalondock.codeplex.com"
-        xmlns:tt="clr-namespace:TimeLineTool;assembly=TimeLineTool"
-        xmlns:l="clr-namespace:PixelTuner.ListViewStyle;assembly=ListViewStyle"
-        xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
+        xmlns:tt="clr-namespace:Core;assembly=Core"
+        xmlns:l="clr-namespace:PixelTuner.ListViewStyle;assembly=Appearance"
+        xmlns:dd="clr-namespace:Core.DragDrop;assembly=Core"
         xmlns:local="clr-namespace:PixelTuner"
-        xmlns:math="clr-namespace:IKriv.Wpf"
 
         Activated="MainWnd_Activated"
         Loaded="Window_Loaded" Closing="Window_Closing">
@@ -345,7 +344,7 @@
                                 <avalonDock:LayoutAnchorable x:Name="boxImagesWindow" Title="{StaticResource Menu_Window_Images}">
                                         <ListView x:Name="boxThumbnails" 
                                                   SelectionMode="Extended" 
-                                                  dd:DragDrop.IsDragSource="True" 
+                                                  dd:DragDropHelper.IsDragSource="True" 
                                                   ItemsSource="{Binding ImagesCollection}">
                                                 <ListView.View>
                                                     <l:ImageView />

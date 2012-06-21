@@ -101,7 +101,7 @@
     <Compile Include="TimeLineViewModel.cs" />
     <Compile Include="ToolViewModel.cs" />
     <Compile Include="ViewModelBase.cs" />
-    <Compile Include="Workspace.cs" />
+    <Compile Include="RootViewModel.cs" />
     <Page Include="NumericUpDownControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -159,25 +159,17 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AvalonDock.Theme.Default\AvalonDock.Themes.Default.csproj">
-      <Project>{4F0F421B-FB70-4FF0-9876-411ED1BA8A5F}</Project>
-      <Name>AvalonDock.Themes.Default</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvalonDock\AvalonDock.csproj">
-      <Project>{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}</Project>
-      <Name>AvalonDock</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DragDropLibrary\DragDropLibrary.csproj">
-      <Project>{0C6674CC-6D49-414A-9B41-D4E175028FFB}</Project>
-      <Name>DragDropLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ListViewStyle\ListViewStyle.csproj">
+    <ProjectReference Include="..\Appearance\Appearance.csproj">
       <Project>{93C014DE-3E6E-47A7-92A9-D9B9AA0B9501}</Project>
-      <Name>ListViewStyle</Name>
+      <Name>Appearance</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TimeLineTool\TimeLineTool.csproj">
+    <ProjectReference Include="..\Core\Core.csproj">
       <Project>{7439A26A-46E1-42A0-9D58-2E38289675F6}</Project>
-      <Name>TimeLineTool</Name>
+      <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Workspace\Workspace.csproj">
+      <Project>{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}</Project>
+      <Name>Workspace</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
