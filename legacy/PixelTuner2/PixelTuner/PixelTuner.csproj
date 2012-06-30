@@ -64,6 +64,9 @@
     <UICulture>ru-RU</UICulture>
     <UICulture>en-US</UICulture>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>PixelTuner.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -194,6 +197,12 @@
     <Resource Include="Images\red_cross.png" />
     <Resource Include="Images\red_crossDisabled.png" />
     <Resource Include="Images\red_crossLight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PixelTuner.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="PixelTuner.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

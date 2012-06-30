@@ -3,6 +3,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="PixelTuner" Height="525" Width="960" WindowStyle="SingleBorderWindow" 
+        Icon="/PixelTuner;component/Images/PixelTuner.ico"
         
         xmlns:avalonDock="http://avalondock.codeplex.com"
         xmlns:tt="clr-namespace:Core;assembly=Core"
