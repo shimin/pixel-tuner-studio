@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="e4835693-c340-4d52-b35f-1a35ade9e2fb" Name="PixelTuner" Language="1031" Codepage="1251" Version="$(var.PackageVersion)" Manufacturer="PixelTuner" UpgradeCode="df1086f7-6803-4697-b66c-74dd2733c092">
+    <Package InstallerVersion="200" Compressed="yes" />
+		<Media Id="1" Cabinet="media.cab" EmbedCab="yes" />
+    <MajorUpgrade AllowDowngrades="no" DowngradeErrorMessage="The newer version already installed." AllowSameVersionUpgrades="yes" IgnoreRemoveFailure="no" />
+    <WixVariable Id="WixUILicenseRtf" Value=".\bin\License.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value=".\bin\pics\banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value=".\bin\pics\dialog.bmp" />
+    <Property Id="INSTALLLOCATION">
+      <RegistrySearch Id="InstallPathRegSearch" Type="raw" Root="HKLM" Key="SOFTWARE\ShiningPromo\PixelTuner 2" Name="InstallLocation" />
+    </Property>
+    <Property Id='ARPNOREPAIR'>1</Property>
+    <Component Id="InstallPathRegWriter" Guid="{AA45D72D-911A-429A-BD1A-5E2858D76C27}" Directory="INSTALLLOCATION">
+      <RegistryValue Id="WriteInstallPathRegValue" Type="string" Root="HKLM" Key="SOFTWARE\ShiningPromo\PixelTuner 2" Name="InstallLocation" Action="write" Value="[INSTALLLOCATION]" />
+    </Component>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLLOCATION" Name="PixelTuner 2">          
+					 <Component Id="PixelTuner.com" Guid="5dede663-8553-41b8-810c-679d0cf6749a">
+             <File Id="CoreLib" Source="..\PixelTuner\bin\$(var.Configuration)\Core.dll" />
+             <File Id="AppearanceLib" Source="..\PixelTuner\bin\$(var.Configuration)\Appearance.dll" />
+             <File Id="WorkspaceLib" Source="..\PixelTuner\bin\$(var.Configuration)\Workspace.dll" />
+             <File Id="PixelTuner.exe" Name="PixelTuner.exe" Source="..\PixelTuner\bin\$(var.Configuration)\PixelTuner.exe" KeyPath='yes'>
+               <Shortcut Id="startmenuPixelTuner" Directory="ProgramMenuDir" Name="PixelTuner 2"
+                    WorkingDirectory='INSTALLLOCATION' Icon="PixelTuner.exe" IconIndex="0" Advertise="yes" />
+               <Shortcut Id="desktopPixelTuner" Directory="DesktopFolder" Name="PixelTuner 2"
+                 WorkingDirectory='INSTALLLOCATION' Icon="PixelTuner.exe" IconIndex="0" Advertise="yes" />
+             </File>
+					 </Component>
+          <Directory Id="ResourceLocation_en_US" Name="en-US">
+            <Component Id="PixelTuner.com.en_US" Guid="872F9BE8-C7CA-485A-83AF-CF822255135E">
+              <File Id="Rosources_en_US" Source="..\PixelTuner\bin\$(var.Configuration)\en-US\PixelTuner.resources.dll" />
+            </Component>
+          </Directory>
+          <!--<Directory Id="ContentDir" Name="Content">
+            <Component Id="DefaultContent" Guid="114E4EA1-8D2F-464C-B017-3952BD1AB67D">
+            </Component>
+          </Directory>-->
+				</Directory>
+			</Directory>
+
+      <Directory Id="ProgramMenuFolder" Name="Programs">
+        <Directory Id="ProgramMenuDir" Name="PixelTuner">
+          <Component Id="ProgramMenuDir" Guid="D10379DC-BEA0-4459-B48B-74107A44648A">
+            <RemoveFolder Id='ProgramMenuDir' On='uninstall' />
+            <RegistryValue Root='HKCU' Key='SOFTWARE\ShiningPromo\PixelTuner 2' Type='string' Value='' KeyPath='yes' />
+          </Component>
+        </Directory>
+      </Directory>
+
+      <Directory Id="DesktopFolder" Name="Desktop" />
+		</Directory>
+
+		<Feature Id="ProductFeature" Title="PixelTuner" Level="1">
+
+			<!-- TODO: Remove the comments around this ComponentRef element and the Component above in order to add resources to this installer. -->
+      <ComponentRef Id="InstallPathRegWriter" />
+			<ComponentRef Id="PixelTuner.com" />
+      <ComponentRef Id="PixelTuner.com.en_US" />
+      <ComponentRef Id='ProgramMenuDir' />
+      <!--<ComponentRef Id="DefaultContent" />-->
+
+      <!-- Note: The following ComponentGroupRef is required to pull in generated authoring from project references. -->
+			<ComponentGroupRef Id="Product.Generated" />
+		</Feature>
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION" />
+    <Icon Id="PixelTuner.exe" SourceFile="..\PixelTuner\bin\$(var.Configuration)\PixelTuner.exe" />
+    <UIRef Id="WixUI_Minimal" />
+	</Product>
+</Wix>

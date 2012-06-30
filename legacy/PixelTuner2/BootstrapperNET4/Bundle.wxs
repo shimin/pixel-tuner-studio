@@ -1,0 +1,62 @@
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <Bundle
+      Name="PixelTuner"
+      Version="$(var.PackageVersion)"
+      IconSourceFile="PixelTuner.ico"
+      AboutUrl="http://shiningpromo.ru/pixel_poi/"
+      UpdateUrl="http://shiningpromo.ru/pixel_poi/downloads/"
+      UpgradeCode="01986B34-AF3E-47CC-A24A-3D3989775451"
+      Compressed="no">
+    <BootstrapperApplicationRef Id="ManagedBootstrapperApplicationHost">
+      <Payload Name='BootstrapperCore.config' SourceFile='./WixBA/bin/Debug/WixBA.BootstrapperCore.config' />
+      <Payload SourceFile='./WixBA/bin/Debug/WixBA.dll' />
+      <Payload Compressed="no" SourceFile="NetfxLicense.rtf"/>
+    </BootstrapperApplicationRef>
+    <Chain>
+      <PackageGroupRef Id="NetFx40Web"/>
+      <PackageGroupRef Id="DriverInstaller"/>
+      <PackageGroupRef Id="DriverInstaller_x64"/>
+      <PackageGroupRef Id="PixelTunerInstaller"/>
+    </Chain>
+  </Bundle>
+  
+  <Fragment>
+    <PackageGroup Id="DriverInstaller">
+      <ExePackage
+        Id="DriverPackage"
+        Cache="no"
+        Compressed="no"
+        PerMachine="yes"
+        Permanent="yes"
+        Vital="yes"
+        SourceFile="VCP_V1.3.1_Setup.exe"
+        InstallCondition="NOT VersionNT64"/>
+    </PackageGroup>
+  </Fragment>
+
+  <Fragment>
+    <PackageGroup Id="DriverInstaller_x64">
+      <ExePackage
+        Id="DriverPackage_x64"
+        Cache="no"
+        Compressed="no"
+        PerMachine="yes"
+        Permanent="yes"
+        Vital="yes"
+        SourceFile="VCP_V1.3.1_Setup_x64.exe"
+        InstallCondition="VersionNT64"/>
+    </PackageGroup>
+  </Fragment>
+  
+  <Fragment>
+    <PackageGroup Id="PixelTunerInstaller">
+      <MsiPackage
+        Id="PixelTunerPackage"
+        Cache="no"
+        Compressed="no"
+        Vital="yes"
+        SourceFile="$(var.PixelTunerMsiPath)" />
+    </PackageGroup>
+  </Fragment>
+</Wix>
