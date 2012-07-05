@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Windows;
+using PixelTuner.Service;
 
 namespace PixelTuner
 {
@@ -14,6 +15,7 @@ namespace PixelTuner
         {
             ContentId = ToolContentId;
             IsVisible = true;
+            DeviceHelper.StartSeeking();
         }
 
         public const string ToolContentId = "DevicesTool";

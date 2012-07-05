@@ -52,8 +52,8 @@ namespace Microsoft.Tools.WindowsInstallerXml.UX
 
         private Dictionary<string, int> downloadRetries;
         private bool downgrade;
-        private readonly string wixHomePageUrl = "http://wixtoolset.org/";
-        private readonly string wixNewsUrl = "http://wixtoolset.org/news/";
+        private readonly string wixHomePageUrl = "http://shiningpromo.ru/pixel_poi/";
+        private readonly string wixNewsUrl = "http://shiningpromo.ru";
 
         private bool planAttempted;
         private LaunchAction plannedAction;
@@ -216,7 +216,7 @@ namespace Microsoft.Tools.WindowsInstallerXml.UX
             {
                 if (this.installCommand == null)
                 {
-                    this.installCommand = new RelayCommand(param => this.Plan(LaunchAction.Install), param => this.root.State == InstallationState.DetectedAbsent);
+                    this.installCommand = new RelayCommand(param => this.Plan(LaunchAction.Install), param => true);//this.root.State == InstallationState.DetectedAbsent);
                 }
 
                 return this.installCommand;

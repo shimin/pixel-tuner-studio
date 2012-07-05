@@ -291,7 +291,9 @@
                     </local:PanesTemplateSelector.FileViewTemplate>
                     <local:PanesTemplateSelector.DevicesViewTemplate>
                         <DataTemplate>
-                            <ListBox x:Name="boxDevicesList" MinWidth="120" MinHeight="120"></ListBox>
+                            <ListBox x:Name="boxDevicesList" MinWidth="120" MinHeight="120"
+                                     ItemsSource="{Binding DeviceHelper.Devices}">
+                            </ListBox>
                         </DataTemplate>
                     </local:PanesTemplateSelector.DevicesViewTemplate>
                     <local:PanesTemplateSelector.ProjectsViewTemplate>

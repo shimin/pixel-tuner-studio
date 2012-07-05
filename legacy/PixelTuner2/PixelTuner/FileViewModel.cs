@@ -34,7 +34,7 @@ namespace PixelTuner
 
         #region FilePath
         private string _filePath = null;
-        [XmlIgnore]
+        [XmlAttribute]
         public string FilePath
         {
             get { return _filePath; }
@@ -84,9 +84,11 @@ namespace PixelTuner
         {
             get 
             {
-                ResourceDictionary rd = Application.Current.Resources.MergedDictionaries[0];
                 if (FilePath == null)
+                {
+                    ResourceDictionary rd = Application.Current.Resources.MergedDictionaries[0];
                     return (String)rd["Doc_Hdr_Default"] + (IsDirty ? " *" : "");
+                }
 
                 return System.IO.Path.GetFileName(FilePath) + (IsDirty ? "*" : ""); 
             }

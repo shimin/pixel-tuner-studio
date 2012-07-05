@@ -355,6 +355,7 @@ namespace PixelTuner
                         ActiveDocumentChanged(this, new DocumentChangedEventArgs(_activeDocument, _activeDocument));
                     //RaisePropertyChanged("Files");
                 }
+                ActiveDocument.FilePath = fileToSave.FilePath;
                 ActiveDocument.IsDirty = false;
             }
         }

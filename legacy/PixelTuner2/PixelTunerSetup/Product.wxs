@@ -4,9 +4,9 @@
     <Package InstallerVersion="200" Compressed="yes" />
     <Media Id="1" Cabinet="media.cab" EmbedCab="yes" />
       <MajorUpgrade AllowDowngrades="no" DowngradeErrorMessage="The newer version already installed." AllowSameVersionUpgrades="yes" IgnoreRemoveFailure="no" />
-    <WixVariable Id="WixUILicenseRtf" Value=".\bin\License.rtf" />
-    <WixVariable Id="WixUIBannerBmp" Value=".\bin\pics\banner.bmp" />
-    <WixVariable Id="WixUIDialogBmp" Value=".\bin\pics\dialog.bmp" />
+    <WixVariable Id="WixUILicenseRtf" Value=".\License.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value=".\pics\banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value=".\pics\dialog.bmp" />
     <Property Id="INSTALLLOCATION">
       <RegistrySearch Id="InstallPathRegSearch" Type="raw" Root="HKLM" Key="SOFTWARE\ShiningPromo\PixelTuner 2" Name="InstallLocation" />
     </Property>
