@@ -17,7 +17,7 @@ namespace PixelTuner.Service
         END_WRITE_FLASH = 0x43,
     }
 
-    public class Device
+    public class PixelDevice
     {
         SerialPort _port = null;
 
@@ -27,12 +27,33 @@ namespace PixelTuner.Service
             set { _port = value; }
         }
 
-        public Device(SerialPort port)
+        string _name = "";
+
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; }
+        }
+
+        public PixelDevice(SerialPort port)
         {
             _port = port;
         }
 
         #region Commands
+
+        public void Disconnect()
+        {
+            if (_port != null)
+            {
+                try
+                {
+                    _port.Close();
+                    _port = null;
+                }
+                catch { }
+            }
+        }
 
         public string WhoIsIt()
         {
@@ -45,6 +66,7 @@ namespace PixelTuner.Service
             if (ans == (int)Command.WHO_IS_IT)
             {
                 result = _port.ReadExisting();
+                Name = PixelSpecs.TryGetName(result);
                 //int len = _port.ReadByte();
                 //byte[] buffer = new byte[len];
                 //int bytesGot = _port.Read(buffer, 0, len);
@@ -70,7 +92,21 @@ namespace PixelTuner.Service
 
         public override string ToString()
         {
-            return _port != null ? this.Port.PortName : "";
+            return this.Name;
+            //return _port != null ? this.Port.PortName : "";
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is PixelDevice)
+                if ((obj as PixelDevice)._port == this._port) return true;
+
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
 
         #endregion

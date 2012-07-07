@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Collections.ObjectModel;
 using System.IO.Ports;
 using System.ComponentModel;
+using PixelTuner.AuxClasses;
 
 namespace PixelTuner.Service
 {
@@ -15,9 +16,7 @@ namespace PixelTuner.Service
         static Thread DeviceSeekerThread = new Thread(SeekDevice);
         static bool _keepSeeking = false;
         static Dictionary<string, SerialPort> PortList = new Dictionary<string, SerialPort>();
-        static Dictionary<string, Device> ActiveConnections = new Dictionary<string, Device>();
-        static AsyncOperation asyncPortCheck = AsyncOperationManager.CreateOperation(null);
-
+        //static Dictionary<string, PixelDevice> ActiveConnections = new Dictionary<string, PixelDevice>();
 
         public static void StartSeeking()
         {
@@ -31,9 +30,12 @@ namespace PixelTuner.Service
             DeviceSeekerThread.Join();
         }
 
-        static void CheckPort(object state)
+        delegate void CheckPortDelegate(CheckPortResult state);
+
+        static CheckPortResult CheckPort(object o)
         {
-            string portName = state as string;
+            CheckPortResult state = o as CheckPortResult;
+            string portName = state.PortName;
             SerialPort port = null;
             
             try
@@ -46,12 +48,11 @@ namespace PixelTuner.Service
                 port.ReadTimeout = 200;
                 port.WriteTimeout = 100;
 
-                Device aDevice = new Device(port);
+                PixelDevice aDevice = new PixelDevice(port);
                 if (!string.IsNullOrEmpty(aDevice.WhoIsIt()))
                 {
-                    ActiveConnections.Add(portName, aDevice);
-                    Devices.Add(portName);
-                }                
+                    state.Device = aDevice;
+                }
             }
             catch (Exception ex)
             {
@@ -62,7 +63,11 @@ namespace PixelTuner.Service
             {
                 if (port != null)
                     port.Close();
+                //CheckPortDelegate callback = new CheckPortDelegate(CheckPortFinished);
+                //callback.Invoke(state);
             }
+
+            return state;
         }
 
         private static void SeekDevice()
@@ -71,25 +76,67 @@ namespace PixelTuner.Service
             {
                 string[] newList = SerialPort.GetPortNames();
                 List<string> justAdded = newList.Where(name => !PortList.ContainsKey(name)).ToList<string>();
-                foreach (string p in justAdded)
+                List<string> justRemoved = PortList.Keys.Where(name => !newList.Contains(name)).ToList<string>();
+                foreach (string portName in justRemoved)
                 {
-                    AsyncOperationManager.CreateOperation(null).Post(CheckPort, p);
+                    PixelDevice aDevice = _devices.First(dev => dev.Port.PortName == portName);
+                    if (aDevice != null)
+                    {
+                        aDevice.Disconnect();
+                        _devices.Remove(aDevice);
+                        PortList.Remove(portName);
+                    }
                 }
-                Thread.Sleep(4000);
+
+                foreach (string portName in justAdded)
+                {
+                    BackgroundWorker cpWorker = new BackgroundWorker();
+                    cpWorker.DoWork += (s, e) => { e.Result = CheckPort(e.Argument); };
+                    cpWorker.RunWorkerCompleted += (s, e) => {
+                        if (e.Result as CheckPortResult != null) 
+                        {
+                            CheckPortResult state = (e.Result as CheckPortResult);
+                            if (state.Device != null)
+                            {
+                                _devices.Add(state.Device);
+                            }
+                        } 
+                    };
+                    cpWorker.RunWorkerAsync(new CheckPortResult(portName));
+                }
+                Thread.Sleep(200);
             }
         }
 
-        //private static ObservableCollection<string> _devicesList = new ObservableCollection<string>();
-        public static ObservableCollection<string> Devices = new ObservableCollection<string>();
-        //public static ReadOnlyObservableCollection<string> Devices
-        //{
-        //    get
-        //    {
-        //        if (_devices == null)
-        //            _devices = new ObservableCollection<string>(_devicesList);
+        private static SafeObservable<PixelDevice> _devices = new SafeObservable<PixelDevice>();
+        public static SafeObservable<PixelDevice> Devices
+        {
+            get
+            {
+                return _devices;
+            }
+        }
 
-        //        return _devices;
-        //    }
-        //}
+        class CheckPortResult
+        {
+            string _portName;
+            public string PortName
+            {
+                get { return _portName; }
+                set { _portName = value; }
+            }
+
+            PixelDevice _device = null;
+            public PixelDevice Device
+            {
+                get { return _device; }
+                set { _device = value; }
+            }
+
+            public CheckPortResult(string portName)
+            {
+                _portName = portName;
+            }
+        }
     }
 }
