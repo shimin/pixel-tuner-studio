@@ -10,6 +10,7 @@
         xmlns:l="clr-namespace:PixelTuner.ListViewStyle;assembly=Appearance"
         xmlns:dd="clr-namespace:Core.DragDrop;assembly=Core"
         xmlns:local="clr-namespace:PixelTuner"
+        xmlns:service="clr-namespace:PixelTuner.Service"
 
         Activated="MainWnd_Activated"
         Loaded="Window_Loaded" Closing="Window_Closing">
@@ -292,7 +293,7 @@
                     <local:PanesTemplateSelector.DevicesViewTemplate>
                         <DataTemplate>
                             <ListBox x:Name="boxDevicesList" MinWidth="120" MinHeight="120"
-                                     ItemsSource="{Binding DeviceHelper.Devices}">
+                                     ItemsSource="{Binding Source={x:Static Member=service:DeviceHelper.Devices}, UpdateSourceTrigger=PropertyChanged}">
                             </ListBox>
                         </DataTemplate>
                     </local:PanesTemplateSelector.DevicesViewTemplate>

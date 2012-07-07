@@ -116,6 +116,8 @@ namespace PixelTuner
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+#if (DONT_SAVE_LAYOUT)
+#else
             //Settings.Default.LayoutString = dockManager.GetLayoutAsXml();
             var layoutSerializer = new XmlLayoutSerializer(dockManager);
             StringBuilder sb = new StringBuilder();
@@ -124,6 +126,7 @@ namespace PixelTuner
                 layoutSerializer.Serialize(sw);
             }
             Settings.Default.LayoutString = sb.ToString();
+#endif
             Settings.Default.Save();
         }
 

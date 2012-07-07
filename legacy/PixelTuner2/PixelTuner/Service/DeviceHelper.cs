@@ -6,6 +6,7 @@ using System.Threading;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
 using System.IO.Ports;
+using System.ComponentModel;
 
 namespace PixelTuner.Service
 {
@@ -14,17 +15,9 @@ namespace PixelTuner.Service
         static Thread DeviceSeekerThread = new Thread(SeekDevice);
         static bool _keepSeeking = false;
         static Dictionary<string, SerialPort> PortList = new Dictionary<string, SerialPort>();
-        static Dictionary<string, SerialPort> ActivePortList = new Dictionary<string, SerialPort>();
-        enum Command
-        {
-            WHO_IS_IT = 0x53,
-            MK_STAT = 0x69,
-            VERSION_BOOT = 0x56,
-            VERSION_FW = 0x76,
-            WRITE_IFLASH_MODE = 0x46,
-            WRITE_BLOCK = 0x42,
-            END_WRITE_FLASH = 0x43,
-        }
+        static Dictionary<string, Device> ActiveConnections = new Dictionary<string, Device>();
+        static AsyncOperation asyncPortCheck = AsyncOperationManager.CreateOperation(null);
+
 
         public static void StartSeeking()
         {
@@ -38,6 +31,40 @@ namespace PixelTuner.Service
             DeviceSeekerThread.Join();
         }
 
+        static void CheckPort(object state)
+        {
+            string portName = state as string;
+            SerialPort port = null;
+            
+            try
+            {
+                port = new SerialPort(portName, 19200, Parity.None, 8, StopBits.One);
+                if (!PortList.ContainsKey(portName))
+                    PortList.Add(portName, port);
+                
+                port.Open();
+                port.ReadTimeout = 200;
+                port.WriteTimeout = 100;
+
+                Device aDevice = new Device(port);
+                if (!string.IsNullOrEmpty(aDevice.WhoIsIt()))
+                {
+                    ActiveConnections.Add(portName, aDevice);
+                    Devices.Add(portName);
+                }                
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine("Ошибка доступа к порту " + portName);
+                Trace.Write(ex);
+            }
+            finally
+            {
+                if (port != null)
+                    port.Close();
+            }
+        }
+
         private static void SeekDevice()
         {
             while (_keepSeeking)
@@ -46,47 +73,23 @@ namespace PixelTuner.Service
                 List<string> justAdded = newList.Where(name => !PortList.ContainsKey(name)).ToList<string>();
                 foreach (string p in justAdded)
                 {
-                    SerialPort port = new SerialPort(p, 19200, Parity.None, 8, StopBits.One);
-                    port.ReadTimeout = 200;
-                    port.WriteTimeout = 100;
-                    try
-                    {
-                        port.Open();
-                        byte[] buf = GetCommandBytes(Command.WHO_IS_IT).ToArray();
-                        port.Write(buf, 0, buf.Length);
-                        PortList.Add(p, port);
-                        int ans = port.ReadByte();
-                        if (ans == (int)Command.WHO_IS_IT)
-                        {
-                            ActivePortList.Add(p, port);
-                            _devicesList.Add(p);
-                        }
-                        else { port.Close(); };
-                    }
-                    catch (Exception ex)
-                    {
-                        port.Close();
-                        Trace.WriteLine("Ошибка доступа к порту " + p);
-                        Trace.Write(ex);
-                    }
+                    AsyncOperationManager.CreateOperation(null).Post(CheckPort, p);
                 }
-                Thread.Sleep(100);
+                Thread.Sleep(4000);
             }
         }
 
-        private static List<byte> GetCommandBytes(Command command, List<byte> args = null)
-        {
-            List<byte> result = new List<byte>() { (byte)command };
-            switch (command)
-            {
-                case Command.WHO_IS_IT: result.Add(0); break;
-                default: break;
-            }
-            result.Add(0x0D);
-            return result;
-        }
+        //private static ObservableCollection<string> _devicesList = new ObservableCollection<string>();
+        public static ObservableCollection<string> Devices = new ObservableCollection<string>();
+        //public static ReadOnlyObservableCollection<string> Devices
+        //{
+        //    get
+        //    {
+        //        if (_devices == null)
+        //            _devices = new ObservableCollection<string>(_devicesList);
 
-        private static ObservableCollection<string> _devicesList = new ObservableCollection<string>();
-        public static ReadOnlyObservableCollection<string> Devices = new ReadOnlyObservableCollection<string>(_devicesList);
+        //        return _devices;
+        //    }
+        //}
     }
 }
