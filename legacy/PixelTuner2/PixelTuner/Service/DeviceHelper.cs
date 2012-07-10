@@ -11,7 +11,7 @@ using PixelTuner.AuxClasses;
 
 namespace PixelTuner.Service
 {
-    internal static class DeviceHelper
+    public static class DeviceHelper
     {
         static Thread DeviceSeekerThread = new Thread(SeekDevice);
         static bool _keepSeeking = false;
@@ -49,7 +49,7 @@ namespace PixelTuner.Service
                 port.WriteTimeout = 100;
 
                 PixelDevice aDevice = new PixelDevice(port);
-                if (!string.IsNullOrEmpty(aDevice.WhoIsIt()))
+                if (!string.IsNullOrEmpty(aDevice.GetName()))
                 {
                     state.Device = aDevice;
                 }
