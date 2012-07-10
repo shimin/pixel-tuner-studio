@@ -99,7 +99,7 @@ namespace PixelTuner.Service
             List<byte> buffer = new List<byte>();
 
             // переход в режим записи
-            DoSession(GetCommandBytes(Command.WRITE_IDATA_MODE, buffer).ToArray());
+            DoSession(GetCommandBytes(Command.WRITE_IDATA_MODE).ToArray());
 
             foreach (byte b in binaryData)
             {
@@ -107,15 +107,43 @@ namespace PixelTuner.Service
                 if (buffer.Count == 61)
                 {
                     DoSession(GetCommandBytes(Command.WRITE_BLOCK, buffer).ToArray());
+                    buffer.Clear();
                 }
             }
             if (buffer.Count > 0)
             {
                 DoSession(GetCommandBytes(Command.WRITE_BLOCK, buffer).ToArray());
+                buffer.Clear();
             }
 
             // выход из режима записи
-            DoSession(GetCommandBytes(Command.END_WRITE_DATA, buffer).ToArray());
+            DoSession(GetCommandBytes(Command.END_WRITE_DATA).ToArray());
+        }
+
+        public void WriteFirmware(List<byte> binaryData)
+        {
+            List<byte> buffer = new List<byte>();
+
+            // переход в режим записи
+            DoSession(GetCommandBytes(Command.WRITE_IFLASH_MODE).ToArray());
+
+            foreach (byte b in binaryData)
+            {
+                buffer.Add(b);
+                if (buffer.Count == 61)
+                {
+                    DoSession(GetCommandBytes(Command.WRITE_BLOCK, buffer).ToArray());
+                    buffer.Clear();
+                }
+            }
+            if (buffer.Count > 0)
+            {
+                DoSession(GetCommandBytes(Command.WRITE_BLOCK, buffer).ToArray());
+                buffer.Clear();
+            }
+
+            // выход из режима записи
+            DoSession(GetCommandBytes(Command.END_WRITE_FLASH).ToArray());
         }
 
         /// <summary>
@@ -131,13 +159,13 @@ namespace PixelTuner.Service
 
             Thread.Sleep(WriteReadDelay);
 
-            if (!WaitBytes(1, statusSetter)) return new byte[] { };            
+            WaitBytes(1, statusSetter);
             int ans = _port.ReadByte();
 
             if (statusSetter != null) statusSetter.Invoke("Чтение: " + ans.ToString("X2"));
             if (ans == (int)query[0])   // если ответ на ту же команду
             {
-                if (!WaitBytes(1, statusSetter)) return new byte[] { };
+                WaitBytes(1, statusSetter);
                 int len = _port.ReadByte();
 
                 byte[] receiveBuf = new byte[len];

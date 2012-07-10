@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ConnectionTester.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="port" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">2</Value>
+    </Setting>
+    <Setting Name="pathFW" Type="System.String" Scope="User">
+      <Value Profile="(Default)">./fw.bin</Value>
+    </Setting>
+    <Setting Name="pathProj" Type="System.String" Scope="User">
+      <Value Profile="(Default)">./test.bin</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
