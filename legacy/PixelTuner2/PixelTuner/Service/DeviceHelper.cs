@@ -21,7 +21,7 @@ namespace PixelTuner.Service
         public static void StartSeeking()
         {
             _keepSeeking = true;
-            DeviceSeekerThread.Start();
+            //DeviceSeekerThread.Start();
         }
 
         public static void StopSeeking()
@@ -108,7 +108,7 @@ namespace PixelTuner.Service
             }
         }
 
-        private static SafeObservable<PixelDevice> _devices = new SafeObservable<PixelDevice>();
+        private static SafeObservable<PixelDevice> _devices = new SafeObservable<PixelDevice> { new PixelDevice(new SerialPort()) };
         public static SafeObservable<PixelDevice> Devices
         {
             get

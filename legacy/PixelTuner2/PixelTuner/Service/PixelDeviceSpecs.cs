@@ -5,7 +5,7 @@ using System.Text;
 
 namespace PixelTuner.Service
 {
-    static class PixelSpecs
+    static class PixelDeviceSpecs
     {
         static Dictionary<string, string> idNamePairs = new Dictionary<string, string>
         {

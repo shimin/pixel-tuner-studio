@@ -20,7 +20,7 @@ namespace PixelTuner.Service
         END_WRITE_DATA = 0x63,
     }
 
-    public delegate void StatusNotifierDelegate (string status);
+    public delegate void StatusNotifierDelegate(string status);
 
     public class PixelDevice
     {
@@ -43,7 +43,7 @@ namespace PixelTuner.Service
             set { _writeReadDelay = value; }
         }
 
-        string _name = "";
+        string _name = "dummy device";
 
         public string Name
         {
@@ -82,7 +82,7 @@ namespace PixelTuner.Service
             string result = "";
             result = Encoding.ASCII.GetString(DoSession(q));
             if (statusSetter != null) statusSetter.Invoke("Строка: " + result);
-            _name = PixelSpecs.TryGetName(result);
+            _name = PixelDeviceSpecs.TryGetName(result);
             return result;
         }
         

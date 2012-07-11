@@ -293,7 +293,26 @@
                     <local:PanesTemplateSelector.DevicesViewTemplate>
                         <DataTemplate>
                             <ListBox x:Name="boxDevicesList" MinWidth="120" MinHeight="120"
-                                     ItemsSource="{Binding Source={x:Static Member=service:DeviceHelper.Devices}, UpdateSourceTrigger=PropertyChanged}">
+                                     ItemsSource="{Binding Source={x:Static Member=service:DeviceHelper.Devices}, UpdateSourceTrigger=PropertyChanged}"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     >
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}">
+                                            <TextBlock.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="{StaticResource Dev_Menu_RefreshBrain}" Command="{Binding UploadFirmware}"></MenuItem>
+                                                    <MenuItem Header="{StaticResource Dev_Menu_Upload}" Command="{Binding UploadProject}"></MenuItem>
+                                                </ContextMenu>
+                                            </TextBlock.ContextMenu>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
                             </ListBox>
                         </DataTemplate>
                     </local:PanesTemplateSelector.DevicesViewTemplate>
