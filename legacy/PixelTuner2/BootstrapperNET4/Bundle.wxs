@@ -26,7 +26,7 @@
       <ExePackage
         Id="DriverPackage"
         Cache="no"
-        Compressed="no"
+        Compressed="yes"
         PerMachine="yes"
         Permanent="yes"
         Vital="yes"
@@ -40,7 +40,7 @@
       <ExePackage
         Id="DriverPackage_x64"
         Cache="no"
-        Compressed="no"
+        Compressed="yes"
         PerMachine="yes"
         Permanent="yes"
         Vital="yes"

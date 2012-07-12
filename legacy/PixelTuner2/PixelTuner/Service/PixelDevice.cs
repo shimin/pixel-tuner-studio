@@ -100,6 +100,7 @@ namespace PixelTuner.Service
 
             // переход в режим записи
             DoSession(GetCommandBytes(Command.WRITE_IDATA_MODE).ToArray());
+            Thread.Sleep(3000);
 
             foreach (byte b in binaryData)
             {
@@ -126,7 +127,7 @@ namespace PixelTuner.Service
 
             // переход в режим записи
             DoSession(GetCommandBytes(Command.WRITE_IFLASH_MODE).ToArray());
-
+            Thread.Sleep(3000);     // задержка необходимая для стирания флеш
             foreach (byte b in binaryData)
             {
                 buffer.Add(b);
@@ -174,7 +175,7 @@ namespace PixelTuner.Service
                 if (!WaitBytes(1, statusSetter)) return receiveBuf;
                 int dSymbol = _port.ReadByte();
 
-                if (statusSetter != null) statusSetter.Invoke("Чтение: " + len.ToString("X2") + BytesToString(receiveBuf));
+                if (statusSetter != null) statusSetter.Invoke("Чтение: (" + len.ToString("X2") + ") " + BytesToString(receiveBuf));
                 return receiveBuf;
             }
             throw new InvalidOperationException(String.Format(

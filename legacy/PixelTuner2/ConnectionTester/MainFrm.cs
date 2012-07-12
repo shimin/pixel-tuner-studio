@@ -30,8 +30,8 @@ namespace ConnectionTester
         {
             SetStatus("Открытие порта");
             SerialPort port = new SerialPort("COM" + boxPortNum.Value.ToString(), 19200, Parity.None, 8, StopBits.One);
-            port.ReadTimeout = 500;
-            port.WriteTimeout = 250;
+            port.ReadTimeout = 4000;
+            port.WriteTimeout = 1000;
             try
             {
                 port.Open();
