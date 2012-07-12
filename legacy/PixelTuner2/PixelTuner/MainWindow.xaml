@@ -4,6 +4,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="PixelTuner" Height="525" Width="960" WindowStyle="SingleBorderWindow" 
         Icon="/PixelTuner;component/Images/PixelTuner.ico"
+        Style="{DynamicResource WindowStyle}"
         
         xmlns:avalonDock="http://avalondock.codeplex.com"
         xmlns:tt="clr-namespace:Core;assembly=Core"
@@ -21,8 +22,9 @@
                B="255"
                A="180"
                x:Key="BgColor" />
-        <SolidColorBrush Color="{StaticResource BgColor}" x:Key="BgBrush" />
+            <SolidColorBrush Color="{StaticResource BgColor}" x:Key="BgBrush" />
         <SolidColorBrush Color="#ffffff" x:Key="TextBrush" />
+        
         <Style TargetType="{x:Type tt:TimeLineItemControl}">
             <Setter Property="Template">
                 <Setter.Value>
@@ -113,6 +115,14 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Name="DeviceUploadMenuItemStyle" x:Key="DeviceUploadMenuItemStyle" TargetType="{x:Type MenuItem}">
+            <!--<Setter Property="ItemsSource" Value="{Binding Source={StaticResource RootContext}, Path=Files}"></Setter>-->
+            <Setter Property="Command" Value="{Binding Path=UploadCommand}"></Setter>
+        </Style>
+        <!--<HierarchicalDataTemplate x:Key="UploadProjectMenuItemTemplate" x:Name="UploadProjectMenuItemTemplate"
+                                  ItemsSource="{Binding Source={StaticResource RootContext}, Path=Files1}">
+            <TextBlock Text="{Binding FileName}"></TextBlock>
+        </HierarchicalDataTemplate>-->
         <DataTemplate  DataType="{x:Type l:ThumbnailFileItem}">
             <Border BorderThickness="1"
                     BorderBrush="Blue"
@@ -306,8 +316,11 @@
                                         <TextBlock Text="{Binding Name}">
                                             <TextBlock.ContextMenu>
                                                 <ContextMenu>
-                                                    <MenuItem Header="{StaticResource Dev_Menu_RefreshBrain}" Command="{Binding UploadFirmware}"></MenuItem>
-                                                    <MenuItem Header="{StaticResource Dev_Menu_Upload}" Command="{Binding UploadProject}"></MenuItem>
+                                                    <MenuItem Header="{StaticResource Dev_Menu_RefreshBrain}" Command="{Binding UploadFirmwareCommand}"></MenuItem>
+                                                    <MenuItem Header="{StaticResource Dev_Menu_Upload}"
+                                                              ItemsSource="{Binding Source={StaticResource RootContext}, Path=Files}"
+                                                              ItemContainerStyle="{StaticResource DeviceUploadMenuItemStyle}">
+                                                    </MenuItem>
                                                 </ContextMenu>
                                             </TextBlock.ContextMenu>
                                         </TextBlock>

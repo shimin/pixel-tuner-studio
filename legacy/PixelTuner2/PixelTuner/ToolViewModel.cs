@@ -5,7 +5,7 @@ using System.Text;
 
 namespace PixelTuner
 {
-    class ToolViewModel : PaneViewModel
+    public class ToolViewModel : PaneViewModel
     {
         public ToolViewModel(string name)
         {

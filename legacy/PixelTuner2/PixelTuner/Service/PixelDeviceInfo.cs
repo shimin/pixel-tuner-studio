@@ -7,7 +7,12 @@ namespace PixelTuner.Service
 {
     public class PixelDeviceInfo
     {
-        string _name;
+        public PixelDeviceInfo()
+        {
+
+        }
+
+        string _name = "Unknown device";
 
         public string Name
         {
@@ -45,6 +50,11 @@ namespace PixelTuner.Service
         {
             get { return _productID; }
             set { _productID = value; }
+        }
+
+        public override string ToString()
+        {
+            return _name;
         }
     }
 }

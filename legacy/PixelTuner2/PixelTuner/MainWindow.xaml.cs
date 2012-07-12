@@ -49,7 +49,7 @@ namespace PixelTuner
             Application.Current.Resources.MergedDictionaries.Clear();
             Application.Current.Resources.MergedDictionaries.Add(d);
             InitializeComponent();
-            this.DataContext = RootViewModel.This;
+            //this.DataContext = RootViewModel.This;
             //TimeLineInit();
 
         }
@@ -142,6 +142,11 @@ namespace PixelTuner
         private void MainWnd_Activated(object sender, EventArgs e)
         {
             this.Focus();   // без явной установки фокуса не работают горячие клавиши
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            (this.DataContext as RootViewModel).Files1.Add(new FileViewModel("qwerty"));
         }
     }
 }

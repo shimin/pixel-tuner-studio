@@ -11,6 +11,7 @@ using Core;
 using System.Windows.Media;
 using System.Xml.Serialization;
 using PixelTuner.Properties;
+using PixelTuner.Service;
 
 namespace PixelTuner
 {
@@ -270,6 +271,41 @@ namespace PixelTuner
             _timeLines.Add(new TimeLineViewModel());
         }
 
+        #endregion 
+
+        #region UploadCommand
+        RelayCommand _uploadCommand = null;
+        public ICommand UploadCommand
+        {
+            get
+            {
+                if (_uploadCommand == null)
+                {
+                    _uploadCommand = new RelayCommand((p) => OnUploadCommand(p), (p) => CanUploadCommand(p));
+                }
+
+                return _uploadCommand;
+            }
+        }
+
+        private bool CanUploadCommand(object parameter)
+        {
+            return true;
+        }
+
+        private void OnUploadCommand(object parameter)
+        {
+            PixelDevice device = parameter as PixelDevice;
+            if (device == null) return;
+
+            List<byte> data = GetBinaryPresentation();
+            device.WriteFile(data);
+        }
+
+        private List<byte> GetBinaryPresentation()
+        {
+            throw new NotImplementedException();
+        }
         #endregion 
 
         [XmlIgnore]

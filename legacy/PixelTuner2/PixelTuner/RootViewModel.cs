@@ -15,11 +15,13 @@ using PixelTuner.ListViewStyle;
 
 namespace PixelTuner
 {
-    class RootViewModel : ViewModelBase
+    public class RootViewModel : ViewModelBase
     {
-        protected RootViewModel()
+        public RootViewModel()
         {
             RefreshImagesCollection();
+            this.Id = Guid.NewGuid();
+            _files.Add(new FileViewModel("qwe.t"));
             this.ActiveDocumentChanged +=new DocumentChangedEventHandler(Workspace_ActiveDocumentChanged);
         }
 
@@ -52,6 +54,11 @@ namespace PixelTuner
         }
 
         ObservableCollection<FileViewModel> _files = new ObservableCollection<FileViewModel>();
+        public ObservableCollection<FileViewModel> Files1
+        {
+            get { return _files; }
+            set { _files = value; }
+        }
         ReadOnlyObservableCollection<FileViewModel> _readonlyFiles = null;
         public ReadOnlyObservableCollection<FileViewModel> Files
         {
@@ -181,6 +188,14 @@ namespace PixelTuner
             model.TimeLines.Add(new TimeLineViewModel());
             _files.Add(model);
             ActiveDocument = _files.Last();
+        }
+
+        private Guid _id = Guid.Empty;
+
+        public Guid Id
+        {
+            get { return _id; }
+            set { _id = value; }
         }
 
         #endregion 

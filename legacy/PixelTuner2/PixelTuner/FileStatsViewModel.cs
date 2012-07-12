@@ -6,7 +6,7 @@ using System.IO;
 
 namespace PixelTuner
 {
-    class FileStatsViewModel : ToolViewModel
+    public class FileStatsViewModel : ToolViewModel
     {
         public FileStatsViewModel()
             :base("File Stats")

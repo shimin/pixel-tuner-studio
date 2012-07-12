@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.IO.Ports;
 using System.ComponentModel;
 using PixelTuner.AuxClasses;
+using System.Windows.Input;
 
 namespace PixelTuner.Service
 {

@@ -8,7 +8,7 @@ using PixelTuner.Service;
 
 namespace PixelTuner
 {
-    class DevicesViewModel : ToolViewModel
+    public class DevicesViewModel : ToolViewModel
     {
         public DevicesViewModel(string name)
             : base(name)
@@ -19,6 +19,11 @@ namespace PixelTuner
         }
 
         public const string ToolContentId = "DevicesTool";
+
+        private void MenuItem_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+
+        }
 
     }
 }

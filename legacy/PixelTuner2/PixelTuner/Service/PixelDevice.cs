@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.IO.Ports;
 using System.Threading;
+using System.Windows.Input;
+using System.Collections.ObjectModel;
 
 namespace PixelTuner.Service
 {
@@ -21,6 +23,49 @@ namespace PixelTuner.Service
     }
 
     public delegate void StatusNotifierDelegate(string status);
+
+    public class DelegateCommand : ICommand
+    {
+        private readonly Predicate<object> _canExecute;
+        private readonly Action<object> _execute;
+
+        public event EventHandler CanExecuteChanged;
+
+        public DelegateCommand(Action<object> execute)
+            : this(execute, null)
+        {
+        }
+
+        public DelegateCommand(Action<object> execute,
+                       Predicate<object> canExecute)
+        {
+            _execute = execute;
+            _canExecute = canExecute;
+        }
+
+        public bool CanExecute(object parameter)
+        {
+            if (_canExecute == null)
+            {
+                return true;
+            }
+
+            return _canExecute(parameter);
+        }
+
+        public void Execute(object parameter)
+        {
+            _execute(parameter);
+        }
+
+        public void RaiseCanExecuteChanged()
+        {
+            if (CanExecuteChanged != null)
+            {
+                CanExecuteChanged(this, EventArgs.Empty);
+            }
+        }
+    }
 
     public class PixelDevice
     {
@@ -53,6 +98,7 @@ namespace PixelTuner.Service
         public PixelDevice(SerialPort port)
         {
             _port = port;
+            //_uploadProjectCommand = new DelegateCommand(x => System.Diagnostics.Debug.WriteLine("8888888888888888888888888888"));
         }
 
         public PixelDevice(SerialPort port, StatusNotifierDelegate statusSetter) 
@@ -60,6 +106,36 @@ namespace PixelTuner.Service
         {
             this.statusSetter = statusSetter;
         }
+
+        #region ViewModel commands
+
+        #region UploadFirmwareCommand
+        RelayCommand _uploadFirmwareCommand = null;
+        public ICommand UploadFirmwareCommand
+        {
+            get
+            {
+                if (_uploadFirmwareCommand == null)
+                {
+                    _uploadFirmwareCommand = new RelayCommand((p) => OnUploadFirmware(p), (p) => CanUploadFirmware(p));
+                }
+
+                return _uploadFirmwareCommand;
+            }
+        }
+
+        private bool CanUploadFirmware(object parameter)
+        {
+            return _port != null && _port.IsOpen;
+        }
+
+        private void OnUploadFirmware(object parameter)
+        {
+
+        }
+        #endregion 
+
+        #endregion
 
         #region Commands
 

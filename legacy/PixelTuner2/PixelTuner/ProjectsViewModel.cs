@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace PixelTuner
 {
-    class ProjectsViewModel : ToolViewModel
+    public class ProjectsViewModel : ToolViewModel
     {
         public ProjectsViewModel(string name)
             : base(name)
