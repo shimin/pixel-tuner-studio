@@ -22,7 +22,7 @@ namespace PixelTuner.Service
         public static void StartSeeking()
         {
             _keepSeeking = true;
-            //DeviceSeekerThread.Start();
+            DeviceSeekerThread.Start();
         }
 
         public static void StopSeeking()
@@ -42,14 +42,21 @@ namespace PixelTuner.Service
             try
             {
                 port = new SerialPort(portName, 19200, Parity.None, 8, StopBits.One);
-                if (!PortList.ContainsKey(portName))
-                    PortList.Add(portName, port);
-                
-                port.Open();
-                port.ReadTimeout = 200;
-                port.WriteTimeout = 100;
+
+                lock (PortList)
+                {
+                    if (!PortList.ContainsKey(portName))
+                        PortList.Add(portName, port);
+                }
 
                 PixelDevice aDevice = new PixelDevice(port);
+                if (!_devices.Contains(aDevice))
+                {
+                    port.Open();
+                    port.ReadTimeout = 200;
+                    port.WriteTimeout = 100;
+                }
+
                 if (!string.IsNullOrEmpty(aDevice.GetName()))
                 {
                     state.Device = aDevice;
@@ -59,11 +66,12 @@ namespace PixelTuner.Service
             {
                 Trace.WriteLine("Ошибка доступа к порту " + portName);
                 Trace.Write(ex);
+                if (port != null)
+                    port.Close();
             }
             finally
             {
-                if (port != null)
-                    port.Close();
+                
                 //CheckPortDelegate callback = new CheckPortDelegate(CheckPortFinished);
                 //callback.Invoke(state);
             }
@@ -76,10 +84,17 @@ namespace PixelTuner.Service
             while (_keepSeeking)
             {
                 string[] newList = SerialPort.GetPortNames();
-                List<string> justAdded = newList.Where(name => !PortList.ContainsKey(name)).ToList<string>();
-                List<string> justRemoved = PortList.Keys.Where(name => !newList.Contains(name)).ToList<string>();
+                List<string> justAdded = new List<string>();
+                List<string> justRemoved = new List<string>();
+                lock (PortList)
+                {
+                    justAdded = newList.Where(name => !PortList.ContainsKey(name)).ToList<string>();
+                    justAdded.Sort(ComparePorts);
+                    justRemoved = PortList.Keys.Where(name => !newList.Contains(name)).ToList<string>();
+                }
                 foreach (string portName in justRemoved)
                 {
+                    if (_devices.Count == 0) break;
                     PixelDevice aDevice = _devices.First(dev => dev.Port.PortName == portName);
                     if (aDevice != null)
                     {
@@ -89,8 +104,10 @@ namespace PixelTuner.Service
                     }
                 }
 
+                int portCount = 0;
                 foreach (string portName in justAdded)
                 {
+                    if (portCount > 3) break;
                     BackgroundWorker cpWorker = new BackgroundWorker();
                     cpWorker.DoWork += (s, e) => { e.Result = CheckPort(e.Argument); };
                     cpWorker.RunWorkerCompleted += (s, e) => {
@@ -99,17 +116,20 @@ namespace PixelTuner.Service
                             CheckPortResult state = (e.Result as CheckPortResult);
                             if (state.Device != null)
                             {
-                                _devices.Add(state.Device);
+                                lock (_devices)
+                                if (!_devices.Contains(state.Device))
+                                    _devices.Add(state.Device);
                             }
-                        } 
+                        }
                     };
                     cpWorker.RunWorkerAsync(new CheckPortResult(portName));
+                    portCount++;
                 }
-                Thread.Sleep(200);
+                Thread.Sleep(500);
             }
         }
 
-        private static SafeObservable<PixelDevice> _devices = new SafeObservable<PixelDevice> { new PixelDevice(new SerialPort()) };
+        private static SafeObservable<PixelDevice> _devices = new SafeObservable<PixelDevice> {  };
         public static SafeObservable<PixelDevice> Devices
         {
             get
@@ -137,6 +157,56 @@ namespace PixelTuner.Service
             public CheckPortResult(string portName)
             {
                 _portName = portName;
+            }
+        }
+
+        private static int ComparePorts(string x, string y)
+        {
+            int intX = 0;
+            int intY = 0;
+            if (x == null || !int.TryParse(x.Substring(3), out intX))
+            {
+                if (y == null || !int.TryParse(y.Substring(3), out intY))
+                {
+                    // If x is null and y is null, they're equal. 
+                    return 0;
+                }
+                else
+                {
+                    // If x is null and y is not null, y is greater. 
+                    return -1;
+                }
+            }
+            else
+            {
+                // If x is not null...
+                if (y == null || !int.TryParse(y.Substring(3), out intY))
+                // ...and y is null, x is greater.
+                {
+                    return 1;
+                }
+                else
+                {
+                    // ...and y is not null, compare the 
+                    // lengths of the two strings.
+                    //
+                    int retval = -intX.CompareTo(intY);
+                    
+                    if (retval != 0)
+                    {
+                        // If the strings are not of equal length,
+                        // the longer string is greater.
+                        //
+                        return retval;
+                    }
+                    else
+                    {
+                        // If the strings are of equal length,
+                        // sort them with ordinary string comparison.
+                        //
+                        return x.CompareTo(y);
+                    }
+                }
             }
         }
     }

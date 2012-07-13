@@ -10,9 +10,9 @@
                 <ResourceDictionary Source="Dictionaries/labels.en-US.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <local:RootViewModel x:Key="RootContext" x:Name="RootContext"></local:RootViewModel>
-            <Style x:Key="WindowStyle" TargetType="{x:Type Window}">
+            <!--<Style x:Key="WindowStyle" TargetType="{x:Type Window}">
                     <Setter Property="DataContext" Value="{StaticResource RootContext}"></Setter>
-            </Style>
+            </Style>-->
         </ResourceDictionary>
     </Application.Resources>
 </Application>

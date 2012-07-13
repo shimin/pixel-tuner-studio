@@ -24,7 +24,7 @@
                x:Key="BgColor" />
             <SolidColorBrush Color="{StaticResource BgColor}" x:Key="BgBrush" />
         <SolidColorBrush Color="#ffffff" x:Key="TextBrush" />
-        
+        <BooleanToVisibilityConverter x:Key="OldschoolVisibilityConverter" />
         <Style TargetType="{x:Type tt:TimeLineItemControl}">
             <Setter Property="Template">
                 <Setter.Value>
@@ -115,14 +115,42 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style x:Name="DeviceUploadMenuItemStyle" x:Key="DeviceUploadMenuItemStyle" TargetType="{x:Type MenuItem}">
-            <!--<Setter Property="ItemsSource" Value="{Binding Source={StaticResource RootContext}, Path=Files}"></Setter>-->
-            <Setter Property="Command" Value="{Binding Path=UploadCommand}"></Setter>
+        <Style x:Key="ProgressBarStyle" TargetType="ProgressBar">
+            <Setter Property="MinHeight" Value="12"></Setter>
+            <Setter Property="Margin" Value="0,0,0,2"></Setter>
         </Style>
-        <!--<HierarchicalDataTemplate x:Key="UploadProjectMenuItemTemplate" x:Name="UploadProjectMenuItemTemplate"
-                                  ItemsSource="{Binding Source={StaticResource RootContext}, Path=Files1}">
-            <TextBlock Text="{Binding FileName}"></TextBlock>
-        </HierarchicalDataTemplate>-->
+        <Style x:Key="OperationProgressBarStyle" TargetType="ProgressBar">
+            <Setter Property="MinHeight" Value="12"></Setter>
+            <Setter Property="Margin" Value="0,0,0,2"></Setter>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding StatusRaw}" Value="2">
+                    <!--<MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding StatusRaw}" Value="2"></Condition>
+                        <Condition Binding="{Binding StatusRaw}" Value="3"></Condition>
+                        <Condition Binding="{Binding StatusRaw}" Value="4"></Condition>
+                    </MultiDataTrigger.Conditions>-->
+                    <Setter Property="Canvas.Visibility" Value="Collapsed"></Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding StatusRaw}" Value="3">
+                    <Setter Property="Canvas.Visibility" Value="Collapsed"></Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding StatusRaw}" Value="4">
+                    <Setter Property="Canvas.Visibility" Value="Collapsed"></Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Name="DeviceUploadMainMenuItemStyle" x:Key="DeviceUploadMainMenuItemStyle" TargetType="{x:Type MenuItem}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Source={StaticResource RootContext}, Path=Files.Count}" Value="0">
+                    <Setter Property="IsEnabled" Value="false"></Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Name="DeviceUploadMenuItemStyle" x:Key="DeviceUploadMenuItemStyle" TargetType="{x:Type MenuItem}">
+            <Setter Property="Command" Value="{Binding PlacementTarget.DataContext.UploadCommand, 
+                RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}"></Setter>
+            <Setter Property="CommandParameter" Value="{Binding .}"></Setter>
+        </Style>
         <DataTemplate  DataType="{x:Type l:ThumbnailFileItem}">
             <Border BorderThickness="1"
                     BorderBrush="Blue"
@@ -302,31 +330,77 @@
                     </local:PanesTemplateSelector.FileViewTemplate>
                     <local:PanesTemplateSelector.DevicesViewTemplate>
                         <DataTemplate>
-                            <ListBox x:Name="boxDevicesList" MinWidth="120" MinHeight="120"
-                                     ItemsSource="{Binding Source={x:Static Member=service:DeviceHelper.Devices}, UpdateSourceTrigger=PropertyChanged}"
-                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                     >
-                                <ListBox.ItemContainerStyle>
-                                    <Style TargetType="ListBoxItem">
-                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                    </Style>
-                                </ListBox.ItemContainerStyle>
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Name}">
-                                            <TextBlock.ContextMenu>
-                                                <ContextMenu>
-                                                    <MenuItem Header="{StaticResource Dev_Menu_RefreshBrain}" Command="{Binding UploadFirmwareCommand}"></MenuItem>
-                                                    <MenuItem Header="{StaticResource Dev_Menu_Upload}"
-                                                              ItemsSource="{Binding Source={StaticResource RootContext}, Path=Files}"
-                                                              ItemContainerStyle="{StaticResource DeviceUploadMenuItemStyle}">
-                                                    </MenuItem>
-                                                </ContextMenu>
-                                            </TextBlock.ContextMenu>
-                                        </TextBlock>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"></RowDefinition>
+                                    <RowDefinition Height="80"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <ListBox x:Name="boxDevicesList" MinWidth="120" MinHeight="120"
+                                         Grid.Row="0"
+                                         ItemsSource="{Binding Source={x:Static Member=service:DeviceHelper.Devices}, UpdateSourceTrigger=PropertyChanged}"
+                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                         SelectionMode="Single"
+                                         >
+                                    <ListBox.ItemContainerStyle>
+                                        <Style TargetType="ListBoxItem">
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}">
+                                                <TextBlock.ContextMenu>
+                                                    <ContextMenu DataContext="{Binding RelativeSource={RelativeSource Mode=Self}, Path=PlacementTarget.DataContext}">
+                                                        <MenuItem Header="{StaticResource Dev_Menu_RefreshBrain}" Command="{Binding UploadFirmwareCommand}"></MenuItem>
+                                                        <MenuItem Header="{StaticResource Dev_Menu_Upload}"
+                                                                  x:Name="UploadMainMenu"
+                                                                  ItemsSource="{Binding Source={StaticResource RootContext}, Path=Files}"
+                                                                  ItemContainerStyle="{StaticResource DeviceUploadMenuItemStyle}"
+                                                                  Style="{StaticResource DeviceUploadMainMenuItemStyle}">
+                                                        </MenuItem>
+                                                    </ContextMenu>
+                                                </TextBlock.ContextMenu>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                                <Canvas Grid.Row="1" >
+                                    <Canvas.Style>
+                                        <Style>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ElementName=boxDevicesList, Path=SelectedItems.Count}" Value="0">
+                                                    <Setter Property="Canvas.Visibility" Value="Collapsed"></Setter>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Canvas.Style>
+                                    <StackPanel DataContext="{Binding ElementName=boxDevicesList, Path=SelectedItem}" Orientation="Vertical">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="72"></ColumnDefinition>
+                                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel x:Name="descriptionsStack" Grid.Row="0" Grid.Column="0" Orientation="Vertical">
+                                                <TextBlock Text="{StaticResource Dev_Props_Name}" />
+                                                <TextBlock Text="{StaticResource Dev_Props_Memory}" />
+                                                <TextBlock Text="{StaticResource Dev_Props_Power}" />
+                                                <TextBlock Text="{StaticResource Dev_Props_Status}" Margin="0,7,0,2" />
+                                            </StackPanel>
+                                            <StackPanel x:Name="valuesStack" Grid.Row="0" Grid.Column="1" Orientation="Vertical">
+                                                <TextBlock Text="{Binding Name}" Margin="0,0,0,2"/>
+                                                <ProgressBar Value="{Binding MemoryRate}" Style="{StaticResource ProgressBarStyle}" />
+                                                <ProgressBar Value="{Binding EnergyLevel}" Style="{StaticResource ProgressBarStyle}" />
+                                                <TextBlock Text="{Binding Status}" Margin="0,4,0,2"/>
+                                            </StackPanel>
+                                        </Grid>
+                                        <ProgressBar 
+                                            Value="{Binding Progress}" 
+                                            Minimum="{Binding ProgressMin}" 
+                                            Maximum="{Binding ProgressMax}" 
+                                            Style="{StaticResource OperationProgressBarStyle}"/>
+                                    </StackPanel>
+                                </Canvas>
+                            </Grid>
                         </DataTemplate>
                     </local:PanesTemplateSelector.DevicesViewTemplate>
                     <local:PanesTemplateSelector.ProjectsViewTemplate>

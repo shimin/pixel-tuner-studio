@@ -15,7 +15,6 @@ namespace PixelTuner
         {
             ContentId = ToolContentId;
             IsVisible = true;
-            DeviceHelper.StartSeeking();
         }
 
         public const string ToolContentId = "DevicesTool";

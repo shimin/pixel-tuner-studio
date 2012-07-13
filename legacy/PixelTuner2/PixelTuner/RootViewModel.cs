@@ -21,7 +21,7 @@ namespace PixelTuner
         {
             RefreshImagesCollection();
             this.Id = Guid.NewGuid();
-            _files.Add(new FileViewModel("qwe.t"));
+            //_files.Add(new FileViewModel("qwe.t"));
             this.ActiveDocumentChanged +=new DocumentChangedEventHandler(Workspace_ActiveDocumentChanged);
         }
 
@@ -46,19 +46,15 @@ namespace PixelTuner
 
         XmlSerializer _projectSerializer = new XmlSerializer(typeof(FileViewModel), FileViewModel.ExtraTypes.ToArray());
 
-        static RootViewModel _this = new RootViewModel();
+        static RootViewModel _this = null;
 
         public static RootViewModel This
         {
             get { return _this; }
+            set { _this = value; }
         }
 
         ObservableCollection<FileViewModel> _files = new ObservableCollection<FileViewModel>();
-        public ObservableCollection<FileViewModel> Files1
-        {
-            get { return _files; }
-            set { _files = value; }
-        }
         ReadOnlyObservableCollection<FileViewModel> _readonlyFiles = null;
         public ReadOnlyObservableCollection<FileViewModel> Files
         {
@@ -327,7 +323,8 @@ namespace PixelTuner
         {
             if (fileToClose.IsDirty)
             {
-                var res = MessageBox.Show(string.Format("Save changes for file '{0}'?", fileToClose.FileName), "Workspace Test App", MessageBoxButton.YesNoCancel);
+                var res = MessageBox.Show(string.Format((String)Application.Current.TryFindResource("Global_SaveChanges"), fileToClose.FileName), 
+                    Application.Current.MainWindow.Title, MessageBoxButton.YesNoCancel);
                 if (res == MessageBoxResult.Cancel)
                     return;
                 if (res == MessageBoxResult.Yes)

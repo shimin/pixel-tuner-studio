@@ -18,6 +18,7 @@ using Workspace.Layout.Serialization;
 using System.IO;
 using System.Collections.ObjectModel;
 using Core;
+using PixelTuner.Service;
 
 namespace PixelTuner
 {
@@ -35,6 +36,7 @@ namespace PixelTuner
             Settings.Default.Reload();
             //string culture = System.Threading.Thread.CurrentThread.CurrentCulture.NativeName;
             string culture = System.Threading.Thread.CurrentThread.CurrentUICulture.Name;
+            DeviceHelper.StartSeeking();
             //System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(culture);
             //System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo(culture);
 
@@ -49,6 +51,7 @@ namespace PixelTuner
             Application.Current.Resources.MergedDictionaries.Clear();
             Application.Current.Resources.MergedDictionaries.Add(d);
             InitializeComponent();
+            this.DataContext = RootViewModel.This = (RootViewModel)Application.Current.TryFindResource("RootContext");
             //this.DataContext = RootViewModel.This;
             //TimeLineInit();
 
@@ -127,6 +130,7 @@ namespace PixelTuner
             }
             Settings.Default.LayoutString = sb.ToString();
 #endif
+            DeviceHelper.StopSeeking();
             Settings.Default.Save();
         }
 
@@ -142,11 +146,6 @@ namespace PixelTuner
         private void MainWnd_Activated(object sender, EventArgs e)
         {
             this.Focus();   // без явной установки фокуса не работают горячие клавиши
-        }
-
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            (this.DataContext as RootViewModel).Files1.Add(new FileViewModel("qwerty"));
         }
     }
 }

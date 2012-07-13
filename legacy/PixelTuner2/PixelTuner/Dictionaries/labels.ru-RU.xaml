@@ -20,4 +20,16 @@
     <system:String x:Key="Doc_Open_DeserializeError">Ошибка открытия файла. Возможно файл поврежден.</system:String>
     <system:String x:Key="Dev_Menu_RefreshBrain">Освежить мозги</system:String>
     <system:String x:Key="Dev_Menu_Upload">Загрузить проект</system:String>
+    <system:String x:Key="Dev_Props_Name">Устройство:</system:String>
+    <system:String x:Key="Dev_Props_Memory">Память:</system:String>
+    <system:String x:Key="Dev_Props_Power">Зарядка:</system:String>
+    <system:String x:Key="Dev_Props_Status">Статус:</system:String>
+    <system:String x:Key="Dev_Props_State_Uploading">Загрузка...</system:String>
+    <system:String x:Key="Dev_Props_State_Downloading">Получение...</system:String>
+    <system:String x:Key="Dev_Props_State_Idle"></system:String>
+    <system:String x:Key="Dev_Props_State_Online">Подключен</system:String>
+    <system:String x:Key="Dev_Props_State_Offline">Нет связи</system:String>
+    <system:String x:Key="Dev_Props_State_ProductID">Идентификатор:</system:String>
+    <system:String x:Key="Dev_Props_State_WriteReadDelay">Пауза запись/чтение:</system:String>
+    <system:String x:Key="Global_SaveChanges">"Сохранить изменения '{0}'?"</system:String>
 </ResourceDictionary>

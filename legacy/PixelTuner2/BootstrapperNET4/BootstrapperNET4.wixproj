@@ -14,7 +14,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-    <DefineConstants>Debug;PackageVersion=2.0.1.0;PixelTunerMsiPath=./../PixelTunerSetup/bin/Debug/PixelTunerSetup.msi</DefineConstants>
+    <DefineConstants>Debug;PackageVersion=2.0.1.001;PixelTunerMsiPath=./../PixelTunerSetup/bin/Debug/PixelTunerSetup.msi</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>

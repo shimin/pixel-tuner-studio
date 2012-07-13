@@ -272,41 +272,11 @@ namespace PixelTuner
         }
 
         #endregion 
-
-        #region UploadCommand
-        RelayCommand _uploadCommand = null;
-        public ICommand UploadCommand
+        
+        public List<byte> GetBinaryPresentation()
         {
-            get
-            {
-                if (_uploadCommand == null)
-                {
-                    _uploadCommand = new RelayCommand((p) => OnUploadCommand(p), (p) => CanUploadCommand(p));
-                }
-
-                return _uploadCommand;
-            }
+            return new List<byte>();
         }
-
-        private bool CanUploadCommand(object parameter)
-        {
-            return true;
-        }
-
-        private void OnUploadCommand(object parameter)
-        {
-            PixelDevice device = parameter as PixelDevice;
-            if (device == null) return;
-
-            List<byte> data = GetBinaryPresentation();
-            device.WriteFile(data);
-        }
-
-        private List<byte> GetBinaryPresentation()
-        {
-            throw new NotImplementedException();
-        }
-        #endregion 
 
         [XmlIgnore]
         public static List<Type> ExtraTypes

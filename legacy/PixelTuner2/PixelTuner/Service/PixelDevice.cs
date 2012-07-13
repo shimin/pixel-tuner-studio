@@ -6,6 +6,8 @@ using System.IO.Ports;
 using System.Threading;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
+using System.Windows;
+using System.ComponentModel;
 
 namespace PixelTuner.Service
 {
@@ -22,7 +24,24 @@ namespace PixelTuner.Service
         END_WRITE_DATA = 0x63,
     }
 
+    public enum ConnectionStatus
+        {
+            [DescriptionAttribute("Dev_Props_State_Uploading")]
+            Uploading = 0,
+            [DescriptionAttribute("Dev_Props_State_Downloading")]
+            Downloading = 1,
+            [DescriptionAttribute("Dev_Props_State_Idle")]
+            Idle = 2,
+            [DescriptionAttribute("Dev_Props_State_Online")]
+            Online = 3,
+            [DescriptionAttribute("Dev_Props_State_Offline")]
+            Offline = 4,
+        }
+    
+    public delegate void InitProcessStatus(int min, int max, int start = 0, int step = 1);
     public delegate void StatusNotifierDelegate(string status);
+    public delegate void PerformStep(ConnectionStatus status);
+    public delegate void SetStatus(ConnectionStatus status);
 
     public class DelegateCommand : ICommand
     {
@@ -67,15 +86,40 @@ namespace PixelTuner.Service
         }
     }
 
-    public class PixelDevice
+    public class PixelDevice : ViewModelBase
     {
         SerialPort _port = null;
         StatusNotifierDelegate statusSetter = null;
+        InitProcessStatus procStatusInit = null;
+        PerformStep procPerformStep = null;
+        SetStatus procSetStatus = null;
 
         public SerialPort Port
         {
             get { return _port; }
             set { _port = value; }
+        }
+
+        #region Properties
+
+        int _usualPacketSize = 61;
+        /// <summary>
+        /// Стандартный размер пакета для передачи любых данных
+        /// </summary>
+        public int UsualPacketSize
+        {
+            get { return _usualPacketSize; }
+            set { _usualPacketSize = value; }
+        }
+
+        int _memoryEraseTime = 3000;
+        /// <summary>
+        /// Время, требуемое перед записью для стирания флеш (мс)
+        /// </summary>
+        public int MemoryEraseTime
+        {
+            get { return _memoryEraseTime; }
+            set { _memoryEraseTime = value; }
         }
 
         int _writeReadDelay = 100;
@@ -88,24 +132,155 @@ namespace PixelTuner.Service
             set { _writeReadDelay = value; }
         }
 
-        string _name = "dummy device";
-
+        string _name = "Unknown device";
         public string Name
         {
             get { return _name; }
         }
 
+        int _maxMemory;
+        /// <summary>
+        /// Доступный максимум памяти
+        /// </summary>
+        public int MaxMemory
+        {
+            get { return _maxMemory; }
+            set { _maxMemory = value; }
+        }
+
+        int _usedMemory;
+        /// <summary>
+        /// Использовано памяти
+        /// </summary>
+        public int UsedMemory
+        {
+            get { return _usedMemory; }
+            set { _usedMemory = value; }
+        }
+
+        int _memoryRate = 24;
+        /// <summary>
+        /// Отношение занятой памяти к общему объему (1..100)
+        /// </summary>
+        public int MemoryRate
+        {
+            get { return _memoryRate; }
+            set { _memoryRate = value; }
+        }
+
+        float _energyLevel = 100;
+        /// <summary>
+        /// Уровень заряда аккумулятора (1..100)
+        /// </summary>
+        public float EnergyLevel
+        {
+            get { return _energyLevel; }
+            set { _energyLevel = value; }
+        }
+
+        string _productID = "";
+        /// <summary>
+        /// Уникальный идентификатор устройства
+        /// </summary>
+        public string ProductID
+        {
+            get { return _productID; }
+            set { _productID = value; }
+        }
+
+        #endregion
+
+        #region Status Info
+
+        public static string GetDescription(Enum value)
+        {
+            System.Reflection.FieldInfo fi = value.GetType().GetField(value.ToString());
+            DescriptionAttribute[] attributes =
+                  (DescriptionAttribute[])fi.GetCustomAttributes(
+                  typeof(DescriptionAttribute), false);
+            return (attributes.Length > 0) ? attributes[0].Description : value.ToString();
+        }
+
+        ConnectionStatus _status = ConnectionStatus.Offline;
+        public int StatusRaw
+        {
+            get { return (int)_status; }
+        }
+
+        public string Status
+        {
+            get
+            {
+                ResourceDictionary rd = Application.Current.Resources.MergedDictionaries[0];
+                if (rd.Contains(GetDescription(_status)))
+                {
+                    return (String)rd[GetDescription(_status)];
+                }
+                return "";
+            }
+        }
+
+        private int _progressMax = 100;
+        public int ProgressMax
+        {
+            get { return _progressMax; }
+            set { _progressMax = value; }
+        }
+
+        int _progressMin = 0;
+
+        public int ProgressMin
+        {
+            get { return _progressMin; }
+            set { _progressMin = value; }
+        }
+
+        int _progress = 0;
+        public int Progress
+        {
+            get { return _progress; }
+            set
+            {
+                _progress = value % 100;
+                RaisePropertyChanged("Progress");
+            }
+        }
+
+        int _step = 1;
+        public int Step
+        {
+            get { return _step; }
+            set { _step = value; }
+        }
+
+        #endregion
+        
+        #region Constructor
+
         public PixelDevice(SerialPort port)
         {
             _port = port;
+            procStatusInit = new InitProcessStatus((min, max, start, step) =>
+                {
+                    _progressMin = min;
+                    _progressMax = max;
+                    _progress = start;
+                    _step = step;
+                }
+            );
+            procPerformStep = new PerformStep(status => { _status = status; _progress += _step; });
+            procSetStatus = new SetStatus(status => _status = status);
+            if (_port != null && _port.IsOpen) _status = ConnectionStatus.Online;
             //_uploadProjectCommand = new DelegateCommand(x => System.Diagnostics.Debug.WriteLine("8888888888888888888888888888"));
         }
 
-        public PixelDevice(SerialPort port, StatusNotifierDelegate statusSetter) 
+        public PixelDevice(SerialPort port, StatusNotifierDelegate statusSetter)
             : this(port)
         {
             this.statusSetter = statusSetter;
         }
+
+        #endregion
 
         #region ViewModel commands
 
@@ -126,7 +301,7 @@ namespace PixelTuner.Service
 
         private bool CanUploadFirmware(object parameter)
         {
-            return _port != null && _port.IsOpen;
+            return _port != null && _port.IsOpen;// && RootViewModel.This.ActiveDocument != null;
         }
 
         private void OnUploadFirmware(object parameter)
@@ -134,6 +309,43 @@ namespace PixelTuner.Service
 
         }
         #endregion 
+
+        #region UploadCommand
+        RelayCommand _uploadCommand = null;
+        public ICommand UploadCommand
+        {
+            get
+            {
+                if (_uploadCommand == null)
+                {
+                    _uploadCommand = new RelayCommand((p) => OnUploadCommand(p), (p) => CanUploadCommand(p));
+                }
+
+                return _uploadCommand;
+            }
+        }
+
+        private bool CanUploadCommand(object parameter)
+        {
+            return _port != null && _port.IsOpen;
+        }
+
+        private void OnUploadCommand(object parameter)
+        {
+            FileViewModel file = parameter as FileViewModel;
+            if (file == null) return;
+
+            List<byte> data = file.GetBinaryPresentation();
+            BackgroundWorker bgWorker = new BackgroundWorker();
+            bgWorker.DoWork += (x, e) => WriteFile(data);
+            bgWorker.RunWorkerCompleted += (s, e) =>
+            {
+                procSetStatus.Invoke(ConnectionStatus.Online);
+            };
+            //WriteFile(data);
+        }
+
+        #endregion
 
         #endregion
 
@@ -147,6 +359,7 @@ namespace PixelTuner.Service
                 {
                     _port.Close();
                     _port = null;
+                    _status = ConnectionStatus.Offline;
                 }
                 catch { }
             }
@@ -174,53 +387,86 @@ namespace PixelTuner.Service
         {
             List<byte> buffer = new List<byte>();
 
+            int max = binaryData.Count / UsualPacketSize + 
+                binaryData.Count % UsualPacketSize == 0 ? 2 : 3 + 
+                MemoryEraseTime / WriteReadDelay;
+            procStatusInit.Invoke(0, max);
+
             // переход в режим записи
             DoSession(GetCommandBytes(Command.WRITE_IDATA_MODE).ToArray());
-            Thread.Sleep(3000);
+            procPerformStep.Invoke(ConnectionStatus.Uploading);
 
+            // ожидание стирания прошивки
+            for (int t = MemoryEraseTime; t > 0; t -= WriteReadDelay)
+            {
+                Thread.Sleep(MemoryEraseTime / WriteReadDelay);
+                procPerformStep.Invoke(ConnectionStatus.Uploading);
+            }
+
+            // запись данных
             foreach (byte b in binaryData)
             {
                 buffer.Add(b);
-                if (buffer.Count == 61)
+                if (buffer.Count == UsualPacketSize)
                 {
                     DoSession(GetCommandBytes(Command.WRITE_BLOCK, buffer).ToArray());
+                    procPerformStep.Invoke(ConnectionStatus.Uploading);
                     buffer.Clear();
                 }
             }
             if (buffer.Count > 0)
             {
                 DoSession(GetCommandBytes(Command.WRITE_BLOCK, buffer).ToArray());
+                procPerformStep.Invoke(ConnectionStatus.Uploading);
                 buffer.Clear();
             }
 
             // выход из режима записи
             DoSession(GetCommandBytes(Command.END_WRITE_DATA).ToArray());
+            procPerformStep.Invoke(ConnectionStatus.Uploading);
         }
 
         public void WriteFirmware(List<byte> binaryData)
         {
             List<byte> buffer = new List<byte>();
 
+            int max = binaryData.Count / UsualPacketSize +
+                binaryData.Count % UsualPacketSize == 0 ? 2 : 3 +
+                MemoryEraseTime / WriteReadDelay;
+            procStatusInit.Invoke(0, max);
+
             // переход в режим записи
             DoSession(GetCommandBytes(Command.WRITE_IFLASH_MODE).ToArray());
-            Thread.Sleep(3000);     // задержка необходимая для стирания флеш
+            procPerformStep.Invoke(ConnectionStatus.Uploading);
+
+            // ожидание стирания прошивки
+            for (int t = MemoryEraseTime; t > 0; t -= WriteReadDelay)
+            {
+                Thread.Sleep(MemoryEraseTime / WriteReadDelay);
+                procPerformStep.Invoke(ConnectionStatus.Uploading);
+            }
+
+            // запись данных
             foreach (byte b in binaryData)
             {
                 buffer.Add(b);
-                if (buffer.Count == 61)
+                if (buffer.Count == UsualPacketSize)
                 {
                     DoSession(GetCommandBytes(Command.WRITE_BLOCK, buffer).ToArray());
+                    procPerformStep.Invoke(ConnectionStatus.Uploading);
                     buffer.Clear();
                 }
             }
             if (buffer.Count > 0)
             {
                 DoSession(GetCommandBytes(Command.WRITE_BLOCK, buffer).ToArray());
+                procPerformStep.Invoke(ConnectionStatus.Uploading);
                 buffer.Clear();
             }
 
             // выход из режима записи
             DoSession(GetCommandBytes(Command.END_WRITE_FLASH).ToArray());
+            procPerformStep.Invoke(ConnectionStatus.Online);
         }
 
         /// <summary>
@@ -274,8 +520,8 @@ namespace PixelTuner.Service
                 case Command.WRITE_BLOCK: 
                     if (args == null) 
                         throw new ArgumentNullException("Не задан отправляемый набор байт", "args");
-                    if (args.Count > 61)
-                        throw new ArgumentOutOfRangeException("Длина пакета превышает допустимую (61)", "args");
+                    if (args.Count > UsualPacketSize)
+                        throw new ArgumentOutOfRangeException(String.Format("Длина пакета превышает допустимую {0}", UsualPacketSize), "args");
                     result.Add((byte)args.Count);
                     result.AddRange(args);
                     break;
@@ -326,7 +572,7 @@ namespace PixelTuner.Service
         public override bool Equals(object obj)
         {
             if (obj is PixelDevice)
-                if ((obj as PixelDevice)._port == this._port) return true;
+                if ((obj as PixelDevice)._port.PortName == this._port.PortName) return true;
 
             return base.Equals(obj);
         }
