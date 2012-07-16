@@ -102,10 +102,13 @@
     </Compile>
     <Compile Include="ProjectsViewModel.cs" />
     <Compile Include="RelayCommand.cs" />
+    <Compile Include="Service\ImageFile.cs" />
     <Compile Include="Service\PixelDevice.cs" />
     <Compile Include="Service\DeviceHelper.cs" />
     <Compile Include="Service\PixelDeviceSpecs.cs" />
     <Compile Include="Service\PortHelper.cs" />
+    <Compile Include="Service\ProjectFile.cs" />
+    <Compile Include="Service\TimelineFile.cs" />
     <Compile Include="TimeLineViewModel.cs" />
     <Compile Include="ToolViewModel.cs" />
     <Compile Include="ViewModelBase.cs" />

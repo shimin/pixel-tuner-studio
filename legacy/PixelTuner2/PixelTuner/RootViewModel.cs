@@ -394,6 +394,7 @@ namespace PixelTuner
                             file.FilePath = path;
                             this._files.Add(file);
                             ActiveDocument = file;
+                            ActiveDocument.IsDirty = false;
                         }
                         catch (Exception ex)
                         {
@@ -418,7 +419,6 @@ namespace PixelTuner
                     string msg = (String)rd["Doc_Open_AccessError"];
                     MessageBox.Show(msg, Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-                ActiveDocument.IsDirty = false;
             }
         }
 
@@ -451,7 +451,9 @@ namespace PixelTuner
                 Directory.CreateDirectory(sourcePath);
             }
             DirectoryInfo info = new DirectoryInfo(sourcePath);
-            FileSystemInfo[] allfiles = info.GetFileSystemInfos();
+            List<FileSystemInfo> allfiles = new List<FileSystemInfo>( info.GetFileSystemInfos("*.png") );
+            allfiles.AddRange(info.GetFileSystemInfos("*.jpg"));
+            allfiles.AddRange(info.GetFileSystemInfos("*.bmp"));
             if (height > 0)
             {
                 List<FileSystemInfo> suitableFiles = new List<FileSystemInfo>();
@@ -461,7 +463,7 @@ namespace PixelTuner
                     if (img.Height == height)
                         suitableFiles.Add(f);
                 }
-                allfiles = suitableFiles.ToArray();
+                allfiles = suitableFiles;
             }
             _images.Clear();
             foreach (FileInfo fi in allfiles)

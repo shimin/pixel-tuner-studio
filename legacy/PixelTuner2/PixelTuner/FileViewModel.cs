@@ -262,7 +262,7 @@ namespace PixelTuner
 
         private bool CanAddLine(object parameter)
         {
-            return true;
+            return TimeLines.Count < 254;
         }
 
         private void OnAddLine(object parameter)
@@ -275,7 +275,97 @@ namespace PixelTuner
         
         public List<byte> GetBinaryPresentation()
         {
-            return new List<byte>();
+            List<byte> projectPrefix = new List<byte>(Encoding.ASCII.GetBytes("FLSH"));
+            byte timeLineCount = (byte)TimeLines.Count;
+            //UInt32 headerSize = (UInt32)(projectPrefix.Count + 1);
+            MemoryStream headerStream = new MemoryStream();
+            MemoryStream picStream = new MemoryStream();
+
+            headerStream.Write(projectPrefix.ToArray(), 0, projectPrefix.Count);
+            headerStream.WriteByte(timeLineCount);
+
+            // словарь в котором хранятся бинарные представления картинок по ключу - пути к файлу
+            Dictionary<string, ImageFile> images = new Dictionary<string, ImageFile>();
+            
+            // сначала сформирую список вообще всех картинок которые есть в таймлайнах
+            foreach (TimeLineViewModel tl in _timeLines)
+            {
+                foreach (PixelTuner.ListViewStyle.ThumbnailFileItem item in tl.Items)
+                {
+                    string path = item.FullName;
+                    if (!images.ContainsKey(path))
+                    {
+                        images.Add(path, new ImageFile(path, (byte)images.Count));
+                    }
+                }
+            }
+
+            List<TimelineFile> timelines = new List<TimelineFile>();
+            // теперь можно формировать список линий времени
+            foreach (TimeLineViewModel tl in _timeLines)
+            {
+                TimelineFile tlf = new TimelineFile(images, tl);
+                timelines.Add(tlf);
+                headerStream.Write(tlf.BinaryHeader.ToArray(), 0, tlf.BinaryHeader.Count);
+            }
+            // конец блока с линиями
+            headerStream.Write(TimelineFile.EndOfTimelineBlock, 0, TimelineFile.EndOfTimelineBlock.Length);
+
+            // формирую блок со списком картинок
+            foreach (var pair in images)
+            {
+                headerStream.Write(pair.Value.BinaryHeader.ToArray(), 0, pair.Value.BinaryHeader.Count);
+            }
+            // конец списка картинок
+            headerStream.Write(ImageFile.EndOfImagesBlock, 0, ImageFile.EndOfImagesBlock.Length);
+
+            // адрес выровненный по границе кратной 8
+            uint address = (uint)headerStream.Length;
+            uint hat = address % 8 != 0 ? (8 - address % 8) : 0;
+            address += hat;
+            // после формирования заголовка корректирую адреса картинок
+            foreach (var pair in images)
+            {
+                pair.Value.StartAddress = address;
+                address += pair.Value.Length;
+            }
+
+            // переписываю заголовок
+            MemoryStream result = new MemoryStream();
+            result.Write(projectPrefix.ToArray(), 0, projectPrefix.Count);
+            result.WriteByte(timeLineCount);
+            foreach (TimeLineViewModel tl in _timeLines)
+            {
+                TimelineFile tlf = new TimelineFile(images, tl);
+                timelines.Add(tlf);
+                result.Write(tlf.BinaryHeader.ToArray(), 0, tlf.BinaryHeader.Count);
+            }
+            // конец блока с линиями
+            result.Write(TimelineFile.EndOfTimelineBlock, 0, TimelineFile.EndOfTimelineBlock.Length);
+
+            // формирую блок со списком картинок
+            foreach (var pair in images)
+            {
+                result.Write(pair.Value.BinaryHeader.ToArray(), 0, pair.Value.BinaryHeader.Count);
+            }
+            // конец списка картинок
+            result.Write(ImageFile.EndOfImagesBlock, 0, ImageFile.EndOfImagesBlock.Length);
+            result.Write(new byte[hat], 0, (int)hat);
+            foreach (var pair in images)
+            {
+                result.Write(pair.Value.BinaryData.ToArray(), 0, pair.Value.BinaryData.Count);
+            }
+
+            List<byte> resList = new List<byte>(result.GetBuffer());
+            try
+            {
+                using (FileStream fs = new FileStream(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "project.bin"), FileMode.Create))
+                {
+                    result.WriteTo(fs);
+                }
+            }
+            catch { MessageBox.Show("Не могу заменить файл.", Application.Current.MainWindow.Title); }
+            return resList;
         }
 
         [XmlIgnore]

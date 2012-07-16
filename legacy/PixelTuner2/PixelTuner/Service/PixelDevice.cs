@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.ComponentModel;
+using System.IO;
 
 namespace PixelTuner.Service
 {
@@ -97,7 +98,7 @@ namespace PixelTuner.Service
         public SerialPort Port
         {
             get { return _port; }
-            set { _port = value; }
+            set { RaisePropertyChanged("Port"); _port = value; }
         }
 
         #region Properties
@@ -109,7 +110,7 @@ namespace PixelTuner.Service
         public int UsualPacketSize
         {
             get { return _usualPacketSize; }
-            set { _usualPacketSize = value; }
+            set { RaisePropertyChanged("UsualPacketSize"); _usualPacketSize = value; }
         }
 
         int _memoryEraseTime = 3000;
@@ -119,7 +120,7 @@ namespace PixelTuner.Service
         public int MemoryEraseTime
         {
             get { return _memoryEraseTime; }
-            set { _memoryEraseTime = value; }
+            set { RaisePropertyChanged("MemoryEraseTime"); _memoryEraseTime = value; }
         }
 
         int _writeReadDelay = 100;
@@ -129,13 +130,14 @@ namespace PixelTuner.Service
         public int WriteReadDelay
         {
             get { return _writeReadDelay; }
-            set { _writeReadDelay = value; }
+            set { RaisePropertyChanged("WriteReadDelay"); _writeReadDelay = value; }
         }
 
         string _name = "Unknown device";
         public string Name
         {
             get { return _name; }
+            private set { RaisePropertyChanged("Name"); _name = value; }
         }
 
         int _maxMemory;
@@ -145,7 +147,7 @@ namespace PixelTuner.Service
         public int MaxMemory
         {
             get { return _maxMemory; }
-            set { _maxMemory = value; }
+            set { RaisePropertyChanged("MaxMemory"); _maxMemory = value; }
         }
 
         int _usedMemory;
@@ -155,7 +157,7 @@ namespace PixelTuner.Service
         public int UsedMemory
         {
             get { return _usedMemory; }
-            set { _usedMemory = value; }
+            set { RaisePropertyChanged("UsedMemory"); _usedMemory = value; }
         }
 
         int _memoryRate = 24;
@@ -165,7 +167,7 @@ namespace PixelTuner.Service
         public int MemoryRate
         {
             get { return _memoryRate; }
-            set { _memoryRate = value; }
+            set { RaisePropertyChanged("MemoryRate"); _memoryRate = value; }
         }
 
         float _energyLevel = 100;
@@ -175,7 +177,7 @@ namespace PixelTuner.Service
         public float EnergyLevel
         {
             get { return _energyLevel; }
-            set { _energyLevel = value; }
+            set { RaisePropertyChanged("EnergyLevel"); _energyLevel = value; }
         }
 
         string _productID = "";
@@ -185,7 +187,7 @@ namespace PixelTuner.Service
         public string ProductID
         {
             get { return _productID; }
-            set { _productID = value; }
+            set { RaisePropertyChanged("ProductID"); _productID = value; }
         }
 
         #endregion
@@ -202,6 +204,14 @@ namespace PixelTuner.Service
         }
 
         ConnectionStatus _status = ConnectionStatus.Offline;
+        private void SetStatus(ConnectionStatus connectionStatus)
+        {
+            _status = connectionStatus;
+
+            RaisePropertyChanged("Status");
+            RaisePropertyChanged("StatusRaw");
+        }
+
         public int StatusRaw
         {
             get { return (int)_status; }
@@ -211,12 +221,7 @@ namespace PixelTuner.Service
         {
             get
             {
-                ResourceDictionary rd = Application.Current.Resources.MergedDictionaries[0];
-                if (rd.Contains(GetDescription(_status)))
-                {
-                    return (String)rd[GetDescription(_status)];
-                }
-                return "";
+                return (String)Application.Current.TryFindResource(GetDescription(_status));
             }
         }
 
@@ -224,7 +229,7 @@ namespace PixelTuner.Service
         public int ProgressMax
         {
             get { return _progressMax; }
-            set { _progressMax = value; }
+            set { RaisePropertyChanged("ProgressMax"); RaisePropertyChanged("Progress"); _progressMax = value; }
         }
 
         int _progressMin = 0;
@@ -232,7 +237,7 @@ namespace PixelTuner.Service
         public int ProgressMin
         {
             get { return _progressMin; }
-            set { _progressMin = value; }
+            set { RaisePropertyChanged("ProgressMin"); RaisePropertyChanged("Progress"); _progressMin = value; }
         }
 
         int _progress = 0;
@@ -241,7 +246,7 @@ namespace PixelTuner.Service
             get { return _progress; }
             set
             {
-                _progress = value % 100;
+                _progress = value % (_progressMax - _progressMin);
                 RaisePropertyChanged("Progress");
             }
         }
@@ -250,7 +255,7 @@ namespace PixelTuner.Service
         public int Step
         {
             get { return _step; }
-            set { _step = value; }
+            set { RaisePropertyChanged("Step"); RaisePropertyChanged("Progress"); _step = value; }
         }
 
         #endregion
@@ -262,15 +267,17 @@ namespace PixelTuner.Service
             _port = port;
             procStatusInit = new InitProcessStatus((min, max, start, step) =>
                 {
-                    _progressMin = min;
-                    _progressMax = max;
-                    _progress = start;
-                    _step = step;
+                    ProgressMin = min;
+                    ProgressMax = max;
+                    Progress = start;
+                    Step = step;
                 }
             );
-            procPerformStep = new PerformStep(status => { _status = status; _progress += _step; });
-            procSetStatus = new SetStatus(status => _status = status);
-            if (_port != null && _port.IsOpen) _status = ConnectionStatus.Online;
+            procPerformStep = new PerformStep(status => {
+                SetStatus(status);
+                Progress += _step; });
+            procSetStatus = new SetStatus(status => SetStatus(status));
+            if (_port != null && _port.IsOpen) SetStatus(ConnectionStatus.Online);
             //_uploadProjectCommand = new DelegateCommand(x => System.Diagnostics.Debug.WriteLine("8888888888888888888888888888"));
         }
 
@@ -301,12 +308,29 @@ namespace PixelTuner.Service
 
         private bool CanUploadFirmware(object parameter)
         {
-            return _port != null && _port.IsOpen;// && RootViewModel.This.ActiveDocument != null;
+            return _port != null && _port.IsOpen && 
+                File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "flash.bin"));
+            // && RootViewModel.This.ActiveDocument != null;
         }
 
         private void OnUploadFirmware(object parameter)
         {
-
+            try
+            {
+                byte[] binaryData = File.ReadAllBytes(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "flash.bin"));
+                BackgroundWorker bgWorker = new BackgroundWorker();
+                bgWorker.DoWork += (x, e) => WriteFirmware(new List<byte>(binaryData));
+                bgWorker.RunWorkerCompleted += (s, e) =>
+                {
+                    procSetStatus.Invoke(ConnectionStatus.Online);
+                };
+                bgWorker.RunWorkerAsync();
+                //WriteFirmware(new List<byte>(binaryData));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Application.Current.MainWindow.Title);
+            }
         }
         #endregion 
 
@@ -342,6 +366,7 @@ namespace PixelTuner.Service
             {
                 procSetStatus.Invoke(ConnectionStatus.Online);
             };
+            bgWorker.RunWorkerAsync();
             //WriteFile(data);
         }
 
@@ -359,7 +384,7 @@ namespace PixelTuner.Service
                 {
                     _port.Close();
                     _port = null;
-                    _status = ConnectionStatus.Offline;
+                    SetStatus(ConnectionStatus.Offline);
                 }
                 catch { }
             }
@@ -371,7 +396,8 @@ namespace PixelTuner.Service
             string result = "";
             result = Encoding.ASCII.GetString(DoSession(q));
             if (statusSetter != null) statusSetter.Invoke("Строка: " + result);
-            _name = PixelDeviceSpecs.TryGetName(result);
+            Name = PixelDeviceSpecs.TryGetName(result);
+            SetStatus(ConnectionStatus.Online);
             return result;
         }
         
@@ -430,9 +456,9 @@ namespace PixelTuner.Service
         {
             List<byte> buffer = new List<byte>();
 
-            int max = binaryData.Count / UsualPacketSize +
-                binaryData.Count % UsualPacketSize == 0 ? 2 : 3 +
-                MemoryEraseTime / WriteReadDelay;
+            int max = (binaryData.Count / UsualPacketSize) +
+                (binaryData.Count % UsualPacketSize == 0 ? 2 : 3) +
+                (MemoryEraseTime / WriteReadDelay);
             procStatusInit.Invoke(0, max);
 
             // переход в режим записи
