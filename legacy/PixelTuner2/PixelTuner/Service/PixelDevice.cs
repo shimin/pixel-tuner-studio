@@ -37,6 +37,8 @@ namespace PixelTuner.Service
             Online = 3,
             [DescriptionAttribute("Dev_Props_State_Offline")]
             Offline = 4,
+            [DescriptionAttribute("Dev_Props_State_Error")]
+            Error = 5,
         }
     
     public delegate void InitProcessStatus(int min, int max, int start = 0, int step = 1);
@@ -123,7 +125,7 @@ namespace PixelTuner.Service
             set { RaisePropertyChanged("MemoryEraseTime"); _memoryEraseTime = value; }
         }
 
-        int _writeReadDelay = 25;
+        int _writeReadDelay = 100;
         /// <summary>
         /// Задержка в мсиллисекундах между операцей записи и чтения.
         /// </summary>
@@ -265,6 +267,9 @@ namespace PixelTuner.Service
         public PixelDevice(SerialPort port)
         {
             _port = port;
+
+            _port.ReadTimeout = 2000;
+            _port.WriteTimeout = 2000;
             procStatusInit = new InitProcessStatus((min, max, start, step) =>
                 {
                     ProgressMin = min;
@@ -278,6 +283,11 @@ namespace PixelTuner.Service
                 Progress += _step; });
             procSetStatus = new SetStatus(status => SetStatus(status));
             if (_port != null && _port.IsOpen) SetStatus(ConnectionStatus.Online);
+            FileStream fs = new FileStream(_port.PortName + ".log", FileMode.OpenOrCreate);
+            statusSetter = (s => { 
+                byte[] b = Encoding.UTF8.GetBytes( DateTime.Now.ToString("HH:mm:ss.ffff") + " " + s + "\n"); 
+                fs.Write(b, 0, b.Length); 
+            });
             //_uploadProjectCommand = new DelegateCommand(x => System.Diagnostics.Debug.WriteLine("8888888888888888888888888888"));
         }
 
@@ -413,8 +423,8 @@ namespace PixelTuner.Service
         {
             List<byte> buffer = new List<byte>();
 
-            int max = binaryData.Count / UsualPacketSize + 
-                binaryData.Count % UsualPacketSize == 0 ? 2 : 3 + 
+            int max = binaryData.Count / UsualPacketSize +
+                binaryData.Count % UsualPacketSize == 0 ? 2 : 3 +
                 MemoryEraseTime / WriteReadDelay;
             procStatusInit.Invoke(0, max);
 
@@ -492,7 +502,6 @@ namespace PixelTuner.Service
 
             // выход из режима записи
             DoSession(GetCommandBytes(Command.END_WRITE_FLASH).ToArray());
-            procPerformStep.Invoke(ConnectionStatus.Online);
         }
 
         /// <summary>
@@ -503,33 +512,44 @@ namespace PixelTuner.Service
         /// <returns>Ответ</returns>
         private byte[] DoSession(byte[] query)
         {
-            if (statusSetter != null) statusSetter.Invoke("Запись: " + BytesToString(query));
-            _port.Write(query, 0, query.Length);
-
-            Thread.Sleep(WriteReadDelay);
-
-            WaitBytes(1, statusSetter);
-            int ans = _port.ReadByte();
-
-            if (statusSetter != null) statusSetter.Invoke("Чтение: " + ans.ToString("X2"));
-            if (ans == (int)query[0])   // если ответ на ту же команду
+            byte[] receiveBuf = new byte[]{};
+            try
             {
+                if (statusSetter != null) statusSetter.Invoke("Запись: " + BytesToString(query));
+                _port.Write(query, 0, query.Length);
+
+                Thread.Sleep(WriteReadDelay);
+
                 WaitBytes(1, statusSetter);
-                int len = _port.ReadByte();
+                int ans = _port.ReadByte();
 
-                byte[] receiveBuf = new byte[len];
-                int bytesGot = _port.Read(receiveBuf, 0, len);
+                if (statusSetter != null) statusSetter.Invoke("Чтение: " + ans.ToString("X2"));
+                if (ans == (int)query[0])   // если ответ на ту же команду
+                {
+                    WaitBytes(1, statusSetter);
+                    int len = _port.ReadByte();
 
-                if (!WaitBytes(1, statusSetter)) return receiveBuf;
-                int dSymbol = _port.ReadByte();
+                    receiveBuf = new byte[len];
+                    int bytesGot = _port.Read(receiveBuf, 0, len);
 
-                Thread.Sleep(10);
-                if (statusSetter != null) statusSetter.Invoke("Чтение: (" + len.ToString("X2") + ") " + BytesToString(receiveBuf));
-                return receiveBuf;
+                    if (!WaitBytes(1, statusSetter)) return receiveBuf;
+                    int dSymbol = _port.ReadByte();
+
+                    Thread.Sleep(10);
+                    if (statusSetter != null) statusSetter.Invoke("Чтение: (" + len.ToString("X2") + ") " + BytesToString(receiveBuf));
+                    Thread.Sleep(WriteReadDelay);
+                    return receiveBuf;
+                }
+                throw new InvalidOperationException(String.Format(
+                    "Неверный ответ '{0}' на команду '{1}'", ans.ToString(), query[0])
+                );
             }
-            throw new InvalidOperationException(String.Format(
-                "Неверный ответ '{0}' на команду '{1}'", ans.ToString(), query[0])
-            );
+            catch (Exception ex)
+            {
+                procPerformStep.Invoke(ConnectionStatus.Error);
+                if (statusSetter != null) statusSetter.Invoke(ex.Message + "\n" + ex.StackTrace);
+            }
+            return receiveBuf;
         }
 
         private List<byte> GetCommandBytes(Command command, List<byte> args = null)
@@ -566,7 +586,7 @@ namespace PixelTuner.Service
         {
             try
             {
-                PortHelper.WaitForBytes(_port, 1, _port.ReadTimeout);
+                PortHelper.WaitForBytes(_port, 1, 5000);
                 return true;
             }
             catch

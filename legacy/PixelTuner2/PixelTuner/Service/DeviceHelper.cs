@@ -53,8 +53,6 @@ namespace PixelTuner.Service
                 if (!_devices.Contains(aDevice))
                 {
                     port.Open();
-                    port.ReadTimeout = 200;
-                    port.WriteTimeout = 100;
                 }
 
                 if (!string.IsNullOrEmpty(aDevice.GetName()))
