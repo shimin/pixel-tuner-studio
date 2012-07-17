@@ -103,7 +103,7 @@ namespace PixelTuner.Service
 
         #region Properties
 
-        int _usualPacketSize = 61;
+        int _usualPacketSize = 60;
         /// <summary>
         /// Стандартный размер пакета для передачи любых данных
         /// </summary>
@@ -123,7 +123,7 @@ namespace PixelTuner.Service
             set { RaisePropertyChanged("MemoryEraseTime"); _memoryEraseTime = value; }
         }
 
-        int _writeReadDelay = 100;
+        int _writeReadDelay = 25;
         /// <summary>
         /// Задержка в мсиллисекундах между операцей записи и чтения.
         /// </summary>
@@ -468,7 +468,7 @@ namespace PixelTuner.Service
             // ожидание стирания прошивки
             for (int t = MemoryEraseTime; t > 0; t -= WriteReadDelay)
             {
-                Thread.Sleep(MemoryEraseTime / WriteReadDelay);
+                Thread.Sleep(WriteReadDelay);
                 procPerformStep.Invoke(ConnectionStatus.Uploading);
             }
 
@@ -523,6 +523,7 @@ namespace PixelTuner.Service
                 if (!WaitBytes(1, statusSetter)) return receiveBuf;
                 int dSymbol = _port.ReadByte();
 
+                Thread.Sleep(10);
                 if (statusSetter != null) statusSetter.Invoke("Чтение: (" + len.ToString("X2") + ") " + BytesToString(receiveBuf));
                 return receiveBuf;
             }
