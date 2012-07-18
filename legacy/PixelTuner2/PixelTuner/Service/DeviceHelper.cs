@@ -28,7 +28,8 @@ namespace PixelTuner.Service
         public static void StopSeeking()
         {
             _keepSeeking = false;
-            DeviceSeekerThread.Join();
+            if (DeviceSeekerThread != null && DeviceSeekerThread.IsAlive)
+                DeviceSeekerThread.Join();
         }
 
         delegate void CheckPortDelegate(CheckPortResult state);

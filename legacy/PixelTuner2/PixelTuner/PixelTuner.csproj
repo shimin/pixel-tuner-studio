@@ -111,9 +111,16 @@
     <Compile Include="Service\TimelineFile.cs" />
     <Compile Include="TimeLineViewModel.cs" />
     <Compile Include="ToolViewModel.cs" />
+    <Compile Include="TriangleSlider.xaml.cs">
+      <DependentUpon>TriangleSlider.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModelBase.cs" />
     <Compile Include="RootViewModel.cs" />
     <Page Include="NumericUpDownControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TriangleSlider.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

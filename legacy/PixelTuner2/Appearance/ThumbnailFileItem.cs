@@ -90,12 +90,24 @@ namespace PixelTuner.ListViewStyle
             }
         }
 
+        int _stretching = 1;
+        public int Stretching
+        {
+            get { return _stretching; }
+            set
+            {
+                _stretching = value;
+                RaisePropertyChanged("Stretching");
+            }
+        }
+
         object ICloneable.Clone()
         {
             ThumbnailFileItem result = new ThumbnailFileItem(this._fi);
             result.StartTime = this.StartTime;
             result.EndTime = this.EndTime;
             result.TimelineViewExpanded = this.TimelineViewExpanded;
+            result.Stretching = this.Stretching;
             return result;
         }
 
@@ -210,6 +222,7 @@ namespace PixelTuner.ListViewStyle
             result.StartTime = item.StartTime;
             result.EndTime = item.EndTime;
             result.FullName = item.FullName;
+            result.Stretching = item.Stretching;
             return result;
         }
 

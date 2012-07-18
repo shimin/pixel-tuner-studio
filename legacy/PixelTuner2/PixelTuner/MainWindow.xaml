@@ -165,7 +165,7 @@
                     BorderBrush="White"
                     CornerRadius="3"
                     Margin="0,10,0,10"
-                    Height="80"
+                    Height="92"
                     Background="{StaticResource BgBrush}">
                 <Border.Triggers>
                     <EventTrigger RoutedEvent="SizeChanged">
@@ -204,6 +204,16 @@
                     </Border>
                     <TextBlock Text="{Binding Path=End}" />
                     <!--<TextBlock Text="{Binding Path=Duration}" /> -->
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{StaticResource Item_Stretching}" Margin="0,2,4,0"/>
+                        <local:TriangleSlider Height="12" 
+                                              Width="48"
+                                              MinValue="1" 
+                                              MaxValue="5" 
+                                              Margin="0,2,4,0"
+                                              Value="{Binding Path=Parent.DataContext.Stretching, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <!--<Slider Height="12" Minimum="1" Maximum="10" Width="32" Value="{Binding Path=Stretching}"/>-->
+                    </StackPanel>
                 </StackPanel>
             </Border>
         </DataTemplate>
@@ -223,7 +233,7 @@
                     <tt:TimeLineControl 
                         Grid.Column="1" 
                         Grid.RowSpan="3" 
-                        Height="100"
+                        Height="112"
                         Items="{Binding Items, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         ItemTemplate="{StaticResource ItemTemplateProperty}"
                         ViewLevel="Seconds"

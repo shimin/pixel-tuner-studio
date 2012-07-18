@@ -36,7 +36,7 @@ namespace PixelTuner.Service
             {
                 TimeLineItem item = (TimeLineItem)(v as PixelTuner.ListViewStyle.ThumbnailFileItem);
                 string path = item.FullName;
-                UInt16 k = 1; //item.K;
+                UInt16 k = (UInt16)item.Stretching;
                 // время в 100мс интервалах
                 UInt16 time = (UInt16)(((TimeSpan)(item.EndTime - item.StartTime)).TotalMilliseconds/ 100);
                 _binaryHeader.Add(_images[path].Index);

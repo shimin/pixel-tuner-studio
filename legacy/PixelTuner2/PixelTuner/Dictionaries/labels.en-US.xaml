@@ -18,6 +18,7 @@
     <system:String x:Key="Doc_Hdr_Default">Noname</system:String>
     <system:String x:Key="Doc_Open_AccessError">File access error.</system:String>
     <system:String x:Key="Doc_Open_DeserializeError">File open error. It's probably corrupted.</system:String>
+    <system:String x:Key="Item_Stretching">stretching</system:String>
     <system:String x:Key="Dev_Menu_RefreshBrain">Refresh brain</system:String>
     <system:String x:Key="Dev_Menu_Upload">Upload project</system:String>
     <system:String x:Key="Dev_Props_Name">Device:</system:String>

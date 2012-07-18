@@ -125,11 +125,20 @@ namespace PixelTuner.Serialization
             }
         }
 
+        int _stretching = 1;
+        [XmlAttribute]
+        public int Stretching
+        {
+            get { return _stretching; }
+            set { _stretching = value; }
+        }
+
         public static implicit operator ThumbnailFileItem(TimeLineItem item)
         {
             var v = new PixelTuner.ListViewStyle.ThumbnailFileItem(new System.IO.FileInfo(item.FullName));
             v.StartTime = item.StartTime;
             v.EndTime = item.EndTime;
+            v.Stretching = item.Stretching;
             return v;
         }
     }
