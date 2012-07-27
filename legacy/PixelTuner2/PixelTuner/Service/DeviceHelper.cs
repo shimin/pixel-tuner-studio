@@ -17,11 +17,26 @@ namespace PixelTuner.Service
         static Thread DeviceSeekerThread = new Thread(SeekDevice);
         static bool _keepSeeking = false;
         static Dictionary<string, SerialPort> PortList = new Dictionary<string, SerialPort>();
-        //static Dictionary<string, PixelDevice> ActiveConnections = new Dictionary<string, PixelDevice>();
+        static List<BackgroundWorker> CheckPortWorkers = new List<BackgroundWorker>();
 
         public static void StartSeeking()
         {
+            if (_keepSeeking == true)
+            {
+                _keepSeeking = false;
+                DeviceSeekerThread.Join(1000);
+                if (DeviceSeekerThread.IsAlive)
+                    throw new InvalidOperationException("Таймаут при попытке повторного запуска сканирования портов.");
+                foreach (var worker in CheckPortWorkers)
+                {
+                    worker.CancelAsync();
+                }
+            }
             _keepSeeking = true;
+            CheckPortWorkers = new List<BackgroundWorker>()
+            {
+                new BackgroundWorker(), new BackgroundWorker(), new BackgroundWorker()
+            };
             DeviceSeekerThread.Start();
         }
 
@@ -30,6 +45,39 @@ namespace PixelTuner.Service
             _keepSeeking = false;
             if (DeviceSeekerThread != null && DeviceSeekerThread.IsAlive)
                 DeviceSeekerThread.Join();
+        }
+
+        private static void PortListController()
+        {
+            while (_keepSeeking)
+            {
+                string[] newList = SerialPort.GetPortNames();
+                List<string> justAdded = new List<string>();
+                List<string> justRemoved = new List<string>();
+                lock (PortList)
+                {
+                    justAdded = newList.Where(name => !PortList.ContainsKey(name)).ToList<string>();
+                    justRemoved = PortList.Keys.Where(name => !newList.Contains(name)).ToList<string>();
+                }
+                justAdded.Sort(ComparePorts);
+                // удалить исчезнувшие порты и отключенные устройства
+                foreach (var portName in justRemoved)
+                {
+                    PixelDevice aDevice = _devices.First(dev => _devices.Count == 0 ? false : dev.Port.PortName == portName);
+                    if (aDevice != null)
+                    {
+                        aDevice.Disconnect();
+                        _devices.Remove(aDevice);
+                    }
+                    lock (PortList) { PortList.Remove(portName); }
+                }
+                // проверить обнаруженные порты
+                foreach (var portName in justAdded)
+                {
+
+                }
+                Thread.Sleep(500);
+            }
         }
 
         delegate void CheckPortDelegate(CheckPortResult state);
@@ -123,14 +171,7 @@ namespace PixelTuner.Service
                 LogExistingPorts(newList, justAdded, justRemoved);
                 foreach (string portName in justRemoved)
                 {
-                    if (_devices.Count == 0) break;
-                    PixelDevice aDevice = _devices.First(dev => dev.Port.PortName == portName);
-                    if (aDevice != null)
-                    {
-                        aDevice.Disconnect();
-                        _devices.Remove(aDevice);
-                        PortList.Remove(portName);
-                    }
+                    
                 }
                 int portCount = 0;
                 foreach (string portName in justAdded)
