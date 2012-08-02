@@ -26,11 +26,11 @@
         </LinearGradientBrush>
     </UserControl.Resources>
     <StackPanel Orientation="Horizontal">
-        <TextBlock Text="{Binding Path=Value}" Margin="0,0,4,0"/>
-        <Canvas MouseDown="Canvas_MouseDown" SizeChanged="Canvas_SizeChanged">
+        <Canvas MouseDown="Canvas_MouseDown" Width="48" SizeChanged="Canvas_SizeChanged" Margin="4,0,4,2">
             <Polygon Stroke="#40000000" Fill="{StaticResource BgTriangleBrush}" StrokeThickness="0.75" Points="{Binding BgPolyPoints}" />
             <Polygon Stroke="Black" Fill="{StaticResource TriangleBrush}" StrokeThickness="0.75" Points="{Binding PolyPoints}" />
             <Rectangle Fill="#00101010" HorizontalAlignment="Left" VerticalAlignment="Top" Width="{Binding Width}" Height="{Binding Height}" />
         </Canvas>
+            <TextBlock Text="{Binding Path=Value}" VerticalAlignment="Center" />
     </StackPanel>
 </UserControl>

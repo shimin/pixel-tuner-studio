@@ -14,7 +14,7 @@ namespace PixelTuner.Service
 {
     public static class DeviceHelper
     {
-        static Thread DeviceSeekerThread = new Thread(SeekDevice);
+        static Thread DeviceSeekerThread = new Thread(PortListController);
         static bool _keepSeeking = false;
         static Dictionary<string, SerialPort> PortList = new Dictionary<string, SerialPort>();
         static List<BackgroundWorker> CheckPortWorkers = new List<BackgroundWorker>();
@@ -74,10 +74,40 @@ namespace PixelTuner.Service
                 // проверить обнаруженные порты
                 foreach (var portName in justAdded)
                 {
+                    var worker = GetFreeWorker();   // попытаться найти свободного работника
+                    if (worker == null) break;
 
+                    lock (PortList)
+                    {                   // если найден, добавить порт в список известных
+                        if (!PortList.ContainsKey(portName))
+                            PortList.Add(portName, new SerialPort(portName, 19200, Parity.None, 8, StopBits.One));
+                    }
+                    // и сделать задание на проверку
+                    worker.DoWork += (s, e) => { e.Result = CheckPort(e.Argument); };
+                    worker.RunWorkerCompleted += (s, e) =>
+                    {
+                        if (e.Result as CheckPortResult != null)
+                        {
+                            CheckPortResult state = (e.Result as CheckPortResult);
+                            if (state.Device != null)
+                            {
+                                lock (_devices) { _devices.Add(state.Device); }
+                            }
+                        }
+                    };
+                    worker.RunWorkerAsync(new CheckPortResult(portName));
                 }
                 Thread.Sleep(500);
             }
+        }
+
+        static BackgroundWorker GetFreeWorker()
+        {
+            foreach (var w in CheckPortWorkers)
+            {
+                if (!w.IsBusy) { return w; }
+            }
+            return null;
         }
 
         delegate void CheckPortDelegate(CheckPortResult state);
@@ -87,121 +117,42 @@ namespace PixelTuner.Service
             CheckPortResult state = o as CheckPortResult;
             string portName = state.PortName;
             SerialPort port = null;
-            using (System.IO.FileStream fs = new System.IO.FileStream("CheckPort " + portName + ".txt", System.IO.FileMode.Append))
+
+            try
             {
-                byte[] msg = Encoding.UTF8.GetBytes("Попытка подключения к порту " + portName + "\n");
-                fs.Write(msg, 0, msg.Length);
-                try
-                {
-                    port = new SerialPort(portName, 19200, Parity.None, 8, StopBits.One);
-
-                    lock (PortList)
-                    {
-                        if (!PortList.ContainsKey(portName))
-                            PortList.Add(portName, port);
-                    }
-
-                    PixelDevice aDevice = new PixelDevice(port);
-                    if (!_devices.Contains(aDevice))
-                    {
-                        msg = Encoding.UTF8.GetBytes("Открытие " + portName + "\n");
-                        fs.Write(msg, 0, msg.Length);
-                        port.Open();
-                        msg = Encoding.UTF8.GetBytes("Порт открыт " + portName + "\n");
-                        fs.Write(msg, 0, msg.Length);
-                    }
-
-                    if (!string.IsNullOrEmpty(aDevice.GetName()))
-                    {
-                        state.Device = aDevice;
-                    }
-                    //foreach (string p in newList)
-                    //{
-                    //    msg = Encoding.UTF8.GetBytes(p + "\n");
-                    //    fs.Write(msg, 0, msg.Length);
-                    //}
-                }
-                catch (InvalidOperationException)
-                {
-                    Trace.WriteLine("Ошибка открытия порта " + portName);
-                    msg = Encoding.UTF8.GetBytes("Ошибка открытия порта " + portName + "\n");
-                    fs.Write(msg, 0, msg.Length);
-
-                    if (port != null)
-                        port.Close();
-                    Thread.Sleep(5000);
-                }
-                catch (Exception ex)
-                {
-                    Trace.WriteLine("Ошибка доступа к порту " + portName);
-                    Trace.Write(ex);
-                    msg = Encoding.UTF8.GetBytes("Ошибка доступа к порту " + portName + "\n");
-                    fs.Write(msg, 0, msg.Length);
-                    msg = Encoding.UTF8.GetBytes(ex.Message + "\n\n\n");
-                    fs.Write(msg, 0, msg.Length);
-
-                    msg = Encoding.UTF8.GetBytes(ex.StackTrace + "\n");
-                    fs.Write(msg, 0, msg.Length);
-                    if (port != null)
-                        port.Close();
-                }
-                finally
-                {
-                    //CheckPortDelegate callback = new CheckPortDelegate(CheckPortFinished);
-                    //callback.Invoke(state);
-                }
-            }
-
-            return state;
-        }
-
-        private static void SeekDevice()
-        {
-            while (_keepSeeking)
-            {
-                string[] newList = SerialPort.GetPortNames();
-                List<string> justAdded = new List<string>();
-                List<string> justRemoved = new List<string>();
                 lock (PortList)
                 {
-                    justAdded = newList.Where(name => !PortList.ContainsKey(name)).ToList<string>();
-                    justAdded.Sort(ComparePorts);
-                    justRemoved = PortList.Keys.Where(name => !newList.Contains(name)).ToList<string>();
+                    if (!PortList.ContainsKey(portName))
+                        PortList.Add(portName, new SerialPort(portName, 19200, Parity.None, 8, StopBits.One));
+
+                    port = PortList[portName];
                 }
-                LogExistingPorts(newList, justAdded, justRemoved);
-                foreach (string portName in justRemoved)
+
+                PixelDevice aDevice = new PixelDevice(port);
+                lock (_devices)
                 {
-                    
+                    if (!_devices.Contains(aDevice)) { port.Open(); }
                 }
-                int portCount = 0;
-                foreach (string portName in justAdded)
+
+                if (!string.IsNullOrEmpty(aDevice.GetName()))
                 {
-                    if (portCount > 3) break;
-                    BackgroundWorker cpWorker = new BackgroundWorker();
-                    cpWorker.DoWork += (s, e) => { e.Result = CheckPort(e.Argument); };
-                    cpWorker.RunWorkerCompleted += (s, e) =>
-                    {
-                        if (e.Result as CheckPortResult != null)
-                        {
-                            CheckPortResult state = (e.Result as CheckPortResult);
-                            if (state.Device != null)
-                            {
-                                lock (_devices)
-                                    if (!_devices.Contains(state.Device))
-                                        _devices.Add(state.Device);
-                                return;
-                            }
-                        }
-                        if (_keepSeeking)
-                        {
-                            cpWorker.RunWorkerAsync(e.Result as CheckPortResult);
-                        }
-                    };
-                    cpWorker.RunWorkerAsync(new CheckPortResult(portName));
-                    portCount++;
+                    state.Device = aDevice;
                 }
-                Thread.Sleep(500);
             }
+            catch (InvalidOperationException)
+            {
+                Trace.WriteLine("Ошибка открытия порта " + portName);
+                if (port != null)
+                    if (port.IsOpen)
+                        port.Close();
+            }
+            catch (Exception ex)
+            {
+                if (port != null)
+                    if (port.IsOpen)
+                        port.Close();
+            }
+            return state;
         }
 
         private static void LogExistingPorts(string[] newList, List<string> justAdded, List<string> justRemoved)

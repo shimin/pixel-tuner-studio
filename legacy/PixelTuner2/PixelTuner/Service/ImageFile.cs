@@ -8,6 +8,8 @@ namespace PixelTuner.Service
 {
     public class ImageFile
     {
+        public static UInt32 HeaderSize = 8;    //(адрес картинки=4 + коэффициент растяжения K=2 + время показа картинки M. Время=M * 0.1сек = 2)
+
         public static byte[] EndOfImagesBlock = new byte[] { 0x50, 0x43, 0xff };
 
         string _path = "";
@@ -22,33 +24,6 @@ namespace PixelTuner.Service
                 _path = value;
                 UpdateBin();
             }
-        }
-
-        byte _index = 0;
-        /// <summary>
-        /// Индекс в файле проекта
-        /// </summary>
-        public byte Index
-        {
-            get { return _index; }
-            set
-            {
-                _index = value;
-                Update();
-            }
-        }
-
-        List<byte> _binaryHeader = new List<byte>();
-        /// <summary>
-        /// Двоичное представление заголовка
-        /// </summary>
-        public List<byte> BinaryHeader
-        {
-            get
-            {
-                return _binaryHeader;
-            }
-            set { _binaryHeader = value; }
         }
 
         List<byte> _binaryData = new List<byte>();
@@ -77,25 +52,20 @@ namespace PixelTuner.Service
             set 
             { 
                 _startAddress = value;
-                Update();
+                if (Length > 4)     // если бинарная часть уже сформирована
+                {                   // заменить 4 байта адреса 
+                    _binaryData.RemoveRange(0, 4);
+                    _binaryData.InsertRange(0, BitConverter.GetBytes(_startAddress + Length));
+                }
             }
         }
-
-        private void Update()
-        {
-            _binaryHeader = new List<byte>(Encoding.ASCII.GetBytes("PC"));
-            _binaryHeader.Add(Index);
-            _binaryHeader.AddRange(BitConverter.GetBytes(StartAddress));
-            _binaryHeader.AddRange(BitConverter.GetBytes(Length));
-        }
-
+        
         private void UpdateBin()
         {
             try
             {
                 Bitmap pic = (Bitmap)Image.FromFile(_path);
                 _binaryData = BinarizePicture(pic);
-                Update();
             }
             catch { _binaryData = new List<byte>(); }
         }
@@ -105,19 +75,24 @@ namespace PixelTuner.Service
             List<byte> result = new List<byte>();
             for (int column = 0; column < pic.Width; column++)
             {
+                List<Color> columnColors = new List<Color>();
                 for (int row = 0; row < pic.Height; row++)
                 {
-                    Color c = pic.GetPixel(column, row);
-                    result.Add(c.R);
-                    result.Add(c.G);
-                    result.Add(c.B);
+                    columnColors.Add(pic.GetPixel(column, row));                    
                 }
+                foreach (var c in columnColors) result.Add(c.R);
+                foreach (var c in columnColors) result.Add(c.G);
+                foreach (var c in columnColors) result.Add(c.B);
             }
-            return result;
+
+            List<byte> bin = new List<byte>();
+            bin.AddRange(BitConverter.GetBytes(StartAddress + Length));
+            bin.AddRange(result);
+            return bin;
         }
 
         /// <summary>
-        /// Длина в проекте
+        /// Длина в байтах внутри карты памяти
         /// </summary>
         public UInt32 Length
         {
@@ -125,15 +100,11 @@ namespace PixelTuner.Service
         }
 
 
-        public ImageFile(string path)
+        public ImageFile(UInt32 startAddress, string path)
         {
+            _startAddress = startAddress;
             Path = path;
-        }
-
-        public ImageFile(string path, byte index)
-            : this(path)
-        {
-            Index = index;
+            UpdateBin();
         }
     }
 }

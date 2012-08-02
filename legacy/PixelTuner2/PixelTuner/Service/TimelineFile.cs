@@ -12,36 +12,28 @@ namespace PixelTuner.Service
 
         Dictionary<string, ImageFile> _images = null;
         TimeLineViewModel _viewModel = null;
-        public TimelineFile(Dictionary<string, ImageFile> images, TimeLineViewModel tlvm, byte index = 0)
+        public TimelineFile(Dictionary<string, ImageFile> images, TimeLineViewModel tlvm)
         {
             _images = images;
             _viewModel = tlvm;
-            UpdateHeader(index);
+            UpdateHeader();
         }
 
-        byte _index = 0;
-
-        public byte Index
+        private void UpdateHeader()
         {
-            get { return _index; }
-            set { _index = value; UpdateHeader(value); }
-        }
-
-        private void UpdateHeader(byte index)
-        {
-            _binaryHeader = new List<byte>(Encoding.ASCII.GetBytes("PR"));
-            _binaryHeader.Add(index);
+            _binaryHeader = new List<byte>();// (Encoding.ASCII.GetBytes("PR"));
+            //_binaryHeader.Add(index);
             _binaryHeader.Add((byte)_viewModel.Items.Count);
             foreach (var v in _viewModel.Items)
             {
                 TimeLineItem item = (TimeLineItem)(v as PixelTuner.ListViewStyle.ThumbnailFileItem);
-                string path = item.FullName;
+                string path = item.FullName.ToLower();
                 UInt16 k = (UInt16)item.Stretching;
                 // время в 100мс интервалах
                 UInt16 time = (UInt16)(((TimeSpan)(item.EndTime - item.StartTime)).TotalMilliseconds/ 100);
-                _binaryHeader.Add(_images[path].Index);
-                _binaryHeader.AddRange(BitConverter.GetBytes(k));
-                _binaryHeader.AddRange(BitConverter.GetBytes(time));
+                _binaryHeader.AddRange(BitConverter.GetBytes(_images[path].StartAddress));      // 4 байта
+                _binaryHeader.AddRange(BitConverter.GetBytes(k));                               // 2 байта
+                _binaryHeader.AddRange(BitConverter.GetBytes(time));                            // 2 байта
             }
         }
 
@@ -52,7 +44,7 @@ namespace PixelTuner.Service
         public List<byte> BinaryHeader
         {
             get { return _binaryHeader; }
-            set { _binaryHeader = value; }
+            private set { _binaryHeader = value; }
         }
 
     }
