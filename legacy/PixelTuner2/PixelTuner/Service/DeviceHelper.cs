@@ -37,6 +37,21 @@ namespace PixelTuner.Service
             {
                 new BackgroundWorker(), new BackgroundWorker(), new BackgroundWorker()
             };
+            foreach (var worker in CheckPortWorkers)
+            {
+                worker.DoWork += (s, e) => { e.Result = CheckPort(e.Argument); };
+                worker.RunWorkerCompleted += (s, e) =>
+                {
+                    if (e.Result as CheckPortResult != null)
+                    {
+                        CheckPortResult state = (e.Result as CheckPortResult);
+                        if (state.Device != null)
+                        {
+                            lock (_devices) { _devices.Add(state.Device); }
+                        }
+                    }
+                };
+            }
             DeviceSeekerThread.Start();
         }
 
@@ -63,13 +78,14 @@ namespace PixelTuner.Service
                 // удалить исчезнувшие порты и отключенные устройства
                 foreach (var portName in justRemoved)
                 {
+                    lock (PortList) { if (PortList.ContainsKey(portName)) PortList.Remove(portName); }
+                    if (_devices.Count == 0) break;
                     PixelDevice aDevice = _devices.First(dev => _devices.Count == 0 ? false : dev.Port.PortName == portName);
                     if (aDevice != null)
                     {
                         aDevice.Disconnect();
                         _devices.Remove(aDevice);
                     }
-                    lock (PortList) { PortList.Remove(portName); }
                 }
                 // проверить обнаруженные порты
                 foreach (var portName in justAdded)
@@ -83,18 +99,6 @@ namespace PixelTuner.Service
                             PortList.Add(portName, new SerialPort(portName, 19200, Parity.None, 8, StopBits.One));
                     }
                     // и сделать задание на проверку
-                    worker.DoWork += (s, e) => { e.Result = CheckPort(e.Argument); };
-                    worker.RunWorkerCompleted += (s, e) =>
-                    {
-                        if (e.Result as CheckPortResult != null)
-                        {
-                            CheckPortResult state = (e.Result as CheckPortResult);
-                            if (state.Device != null)
-                            {
-                                lock (_devices) { _devices.Add(state.Device); }
-                            }
-                        }
-                    };
                     worker.RunWorkerAsync(new CheckPortResult(portName));
                 }
                 Thread.Sleep(500);
@@ -131,7 +135,7 @@ namespace PixelTuner.Service
                 PixelDevice aDevice = new PixelDevice(port);
                 lock (_devices)
                 {
-                    if (!_devices.Contains(aDevice)) { port.Open(); }
+                    if (!_devices.Contains(aDevice)) { if (!port.IsOpen) port.Open(); }
                 }
 
                 if (!string.IsNullOrEmpty(aDevice.GetName()))

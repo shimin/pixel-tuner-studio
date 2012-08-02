@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.ComponentModel;
 using System.IO;
+using System.Management;
 
 namespace PixelTuner.Service
 {
@@ -264,6 +265,7 @@ namespace PixelTuner.Service
         
         #region Constructor
 
+        FileStream fs = null;
         public PixelDevice(SerialPort port)
         {
             _port = port;
@@ -283,11 +285,13 @@ namespace PixelTuner.Service
                 Progress += _step; });
             procSetStatus = new SetStatus(status => SetStatus(status));
             if (_port != null && _port.IsOpen) SetStatus(ConnectionStatus.Online);
-            FileStream fs = new FileStream(_port.PortName + ".log", FileMode.OpenOrCreate);
+            fs = new FileStream(_port.PortName + ".log", FileMode.OpenOrCreate);
             statusSetter = (s => { 
                 byte[] b = Encoding.UTF8.GetBytes( DateTime.Now.ToString("HH:mm:ss.ffff") + " " + s + "\n"); 
                 fs.Write(b, 0, b.Length); 
             });
+
+            AddRemoveUSBHandler();
             //_uploadProjectCommand = new DelegateCommand(x => System.Diagnostics.Debug.WriteLine("8888888888888888888888888888"));
         }
 
@@ -384,6 +388,45 @@ namespace PixelTuner.Service
 
         #endregion
 
+
+        #region DisconnectWatcher
+
+        private ManagementEventWatcher w = null;
+
+        private void AddRemoveUSBHandler()
+        {
+            WqlEventQuery q;
+            ManagementScope scope = new ManagementScope("root\\CIMV2");
+            scope.Options.EnablePrivileges = true;
+
+            try
+            {
+                q = new WqlEventQuery();
+                q.EventClassName = "__InstanceDeletionEvent";
+                q.WithinInterval = new TimeSpan(0, 0, 3);
+                q.Condition = "TargetInstance ISA 'Win32_USBControllerdevice'";
+                w = new ManagementEventWatcher(scope, q);
+                w.EventArrived += USBRemoved;
+
+                w.Start();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                if (w != null)
+                {
+                    w.Stop();
+                }
+            }
+        }
+
+        private void USBRemoved(object sender, EventArgs e)
+        {
+            Console.WriteLine("A USB device removed");
+            this.Disconnect();
+        } 
+        #endregion
+
         #region Commands
 
         public void Disconnect()
@@ -395,6 +438,10 @@ namespace PixelTuner.Service
                     _port.Close();
                     _port = null;
                     SetStatus(ConnectionStatus.Offline);
+
+                    if (fs != null)
+                        fs.Close();
+                    fs = null;
                 }
                 catch { }
             }
@@ -619,7 +666,10 @@ namespace PixelTuner.Service
         public override bool Equals(object obj)
         {
             if (obj is PixelDevice)
-                if ((obj as PixelDevice)._port.PortName == this._port.PortName) return true;
+            {
+                if ((obj as PixelDevice)._port != null && this._port != null)
+                    if ((obj as PixelDevice)._port.PortName == this._port.PortName) return true;
+            }
 
             return base.Equals(obj);
         }

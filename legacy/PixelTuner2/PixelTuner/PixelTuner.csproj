@@ -71,6 +71,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -102,6 +103,9 @@
     </Compile>
     <Compile Include="ProjectsViewModel.cs" />
     <Compile Include="RelayCommand.cs" />
+    <Compile Include="Service\DeviceHelperAux.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Service\ImageFile.cs" />
     <Compile Include="Service\PixelDevice.cs" />
     <Compile Include="Service\DeviceHelper.cs" />
