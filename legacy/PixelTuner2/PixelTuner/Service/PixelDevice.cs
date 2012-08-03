@@ -563,6 +563,8 @@ namespace PixelTuner.Service
             try
             {
                 if (statusSetter != null) statusSetter.Invoke("Запись: " + BytesToString(query));
+                _port.DiscardInBuffer();
+                _port.DiscardOutBuffer();
                 _port.Write(query, 0, query.Length);
 
                 Thread.Sleep(WriteReadDelay);
