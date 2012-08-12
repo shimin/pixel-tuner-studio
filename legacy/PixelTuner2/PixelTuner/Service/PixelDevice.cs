@@ -470,9 +470,9 @@ namespace PixelTuner.Service
         {
             List<byte> buffer = new List<byte>();
 
-            int max = binaryData.Count / UsualPacketSize +
-                binaryData.Count % UsualPacketSize == 0 ? 2 : 3 +
-                MemoryEraseTime / WriteReadDelay;
+            int max = (binaryData.Count / UsualPacketSize) +
+                (binaryData.Count % UsualPacketSize == 0 ? 2 : 3) +
+                (MemoryEraseTime / WriteReadDelay);
             procStatusInit.Invoke(0, max);
 
             // переход в режим записи

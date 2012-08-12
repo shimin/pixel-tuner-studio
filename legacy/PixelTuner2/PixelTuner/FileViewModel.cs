@@ -281,6 +281,7 @@ namespace PixelTuner
             MemoryStream picStream = new MemoryStream();
 
             headerStream.Write(projectPrefix.ToArray(), 0, projectPrefix.Count);
+            headerStream.Write(new byte[4], 0, 4);
             headerStream.WriteByte(timeLineCount);
 
             // адрес начала секции проектов равен длине уже записанного заголовка, плюс к-во 4-байтных адресов проектов:
@@ -326,6 +327,13 @@ namespace PixelTuner
             }
 
             List<byte> resList = new List<byte>(headerStream.GetBuffer());
+            byte[] length = BitConverter.GetBytes(resList.Count);
+            int i = 0;
+            foreach (var b in length)
+            {
+                resList[projectPrefix.Count + i] = b;
+                i++;
+            }
             try
             {
                 using (FileStream fs = new FileStream(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "project.bin"), FileMode.Create))
