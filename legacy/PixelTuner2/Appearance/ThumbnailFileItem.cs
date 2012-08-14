@@ -45,7 +45,7 @@ namespace PixelTuner.ListViewStyle
             {
                 return _startTime.HasValue ? String.Format("{0}:{1}:{2}.{3}", _startTime.Value.Hour.ToString("D2"),
                     _startTime.Value.Minute.ToString("D2"), _startTime.Value.Second.ToString("D2"),
-                    _startTime.Value.Millisecond.ToString("D4")) 
+                    _startTime.Value.Millisecond.ToString("D3")) 
                     : "";
             }
         }
@@ -71,7 +71,7 @@ namespace PixelTuner.ListViewStyle
             {
                 return _endTime.HasValue ? String.Format("{0}:{1}:{2}.{3}", _endTime.Value.Hour.ToString("D2"),
                     _endTime.Value.Minute.ToString("D2"), _endTime.Value.Second.ToString("D2"),
-                    _endTime.Value.Millisecond.ToString("D4")) 
+                    _endTime.Value.Millisecond.ToString("D3")) 
                     : "";
             }
         }
@@ -90,7 +90,7 @@ namespace PixelTuner.ListViewStyle
             }
         }
 
-        int _stretching = 1;
+        int _stretching = 5;
         public int Stretching
         {
             get { return _stretching; }

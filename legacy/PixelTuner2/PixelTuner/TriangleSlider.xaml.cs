@@ -43,8 +43,9 @@ namespace PixelTuner
             }
             set
             {
+                if (value < MinValue) return;
                 double v = value;
-                if (v <= Height) v = Height;
+                //if (v <= Height) v = Height;
 
                 Value = (int)Math.Round((MaxValue - MinValue) * (v / (Width - Height)));
                 RaisePropertyChanged("Coordinate");

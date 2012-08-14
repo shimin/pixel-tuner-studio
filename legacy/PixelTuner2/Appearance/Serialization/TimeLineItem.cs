@@ -12,7 +12,7 @@ namespace PixelTuner.Serialization
 {
     public class TimeLineItem
     {
-        Regex timeRx = new Regex(@"(?<h>\d{2}):(?<m>\d{2}):(?<s>\d{2})\.(?<ms>\d{4})");
+        Regex timeRx = new Regex(@"(?<h>\d{2}):(?<m>\d{2}):(?<s>\d{2})\.(?<ms>\d{3})");
         public TimeLineItem()
         {
 
@@ -36,7 +36,7 @@ namespace PixelTuner.Serialization
             {
                 return _startTime.HasValue ? String.Format("{0}:{1}:{2}.{3}", _startTime.Value.Hour.ToString("D2"),
                     _startTime.Value.Minute.ToString("D2"), _startTime.Value.Second.ToString("D2"),
-                    _startTime.Value.Millisecond.ToString("D4"))
+                    _startTime.Value.Millisecond.ToString("D3"))
                     : "";
             }
             set
@@ -77,7 +77,7 @@ namespace PixelTuner.Serialization
             {
                 return _endTime.HasValue ? String.Format("{0}:{1}:{2}.{3}", _endTime.Value.Hour.ToString("D2"),
                     _endTime.Value.Minute.ToString("D2"), _endTime.Value.Second.ToString("D2"),
-                    _endTime.Value.Millisecond.ToString("D4"))
+                    _endTime.Value.Millisecond.ToString("D3"))
                     : "";
             }
             set
