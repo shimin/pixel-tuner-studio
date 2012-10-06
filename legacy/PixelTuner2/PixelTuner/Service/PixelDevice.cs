@@ -116,7 +116,7 @@ namespace PixelTuner.Service
             set { RaisePropertyChanged("UsualPacketSize"); _usualPacketSize = value; }
         }
 
-        int _memoryEraseTime = 3000;
+        int _memoryEraseTime = 30;
         /// <summary>
         /// Время, требуемое перед записью для стирания флеш (мс)
         /// </summary>
@@ -126,7 +126,7 @@ namespace PixelTuner.Service
             set { RaisePropertyChanged("MemoryEraseTime"); _memoryEraseTime = value; }
         }
 
-        int _writeReadDelay = 100;
+        int _writeReadDelay = 1;
         /// <summary>
         /// Задержка в мсиллисекундах между операцей записи и чтения.
         /// </summary>
