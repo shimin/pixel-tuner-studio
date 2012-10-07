@@ -16,7 +16,7 @@ namespace PixelTuner.Service
     enum Command
     {
         WHO_IS_IT = 0x53,
-        MK_STAT = 0x69,
+        INFO = 0x49,
         VERSION_BOOT = 0x56,
         VERSION_FW = 0x76,
         WRITE_IFLASH_MODE = 0x46,
@@ -116,7 +116,7 @@ namespace PixelTuner.Service
             set { RaisePropertyChanged("UsualPacketSize"); _usualPacketSize = value; }
         }
 
-        int _memoryEraseTime = 30;
+        int _memoryEraseTime = 3;
         /// <summary>
         /// Время, требуемое перед записью для стирания флеш (мс)
         /// </summary>
@@ -163,7 +163,7 @@ namespace PixelTuner.Service
             set { RaisePropertyChanged("UsedMemory"); _usedMemory = value; }
         }
 
-        int _memoryRate = 24;
+        int _memoryRate = 0;
         /// <summary>
         /// Отношение занятой памяти к общему объему (1..100)
         /// </summary>
@@ -173,7 +173,7 @@ namespace PixelTuner.Service
             set { RaisePropertyChanged("MemoryRate"); _memoryRate = value; }
         }
 
-        float _energyLevel = 100;
+        float _energyLevel = 0;
         /// <summary>
         /// Уровень заряда аккумулятора (1..100)
         /// </summary>
@@ -224,6 +224,11 @@ namespace PixelTuner.Service
         {
             get
             {
+                var info = GetInfo();
+                UsedMemory = info.UsedMemory;
+                MemoryRate = info.MemoryRate;
+                MaxMemory = info.MaxMemory;
+                EnergyLevel = info.EnergyLevel;
                 return (String)Application.Current.TryFindResource(GetDescription(_status));
             }
         }
@@ -388,7 +393,6 @@ namespace PixelTuner.Service
 
         #endregion
 
-
         #region DisconnectWatcher
 
         private ManagementEventWatcher w = null;
@@ -457,13 +461,13 @@ namespace PixelTuner.Service
             SetStatus(ConnectionStatus.Online);
             return result;
         }
-        
-        public object GetState()
-        {
-            byte[] q = GetCommandBytes(Command.MK_STAT).ToArray();
-            DoSession(q);
 
-            return null;
+        public DeviceInfo GetInfo()
+        {
+            var result = new DeviceInfo();
+            var buffer = DoSession(GetCommandBytes(Command.INFO).ToArray());
+
+            return result;
         }
 
         public void WriteFile(List<byte> binaryData)
@@ -606,8 +610,8 @@ namespace PixelTuner.Service
             List<byte> result = new List<byte>() { (byte)command };
             switch (command)
             {
+                case Command.INFO: result.Add(0); break;
                 case Command.WHO_IS_IT: result.Add(0); break;
-                case Command.MK_STAT: result.Add(0); break;
                 case Command.WRITE_IDATA_MODE: result.Add(0); break;
                 case Command.WRITE_IFLASH_MODE: result.Add(0); break;
                 case Command.END_WRITE_DATA: result.Add(0); break;

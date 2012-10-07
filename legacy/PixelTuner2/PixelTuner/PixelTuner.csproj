@@ -106,6 +106,7 @@
     <Compile Include="Service\DeviceHelperAux.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Service\DeviceInfo.cs" />
     <Compile Include="Service\ImageFile.cs" />
     <Compile Include="Service\PixelDevice.cs" />
     <Compile Include="Service\DeviceHelper.cs" />
