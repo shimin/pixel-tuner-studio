@@ -40,10 +40,11 @@
               <File Id="Rosources_en_US" Source="..\PixelTuner\bin\$(var.Configuration)\en-US\PixelTuner.resources.dll" />
             </Component>
           </Directory>
-          <!--<Directory Id="ContentDir" Name="Content">
+          <Directory Id="ContentDir" Name="Content">
             <Component Id="DefaultContent" Guid="114E4EA1-8D2F-464C-B017-3952BD1AB67D">
+              <CreateFolder></CreateFolder>
             </Component>
-          </Directory>-->
+          </Directory>
         </Directory>
       </Directory>
 
@@ -66,7 +67,7 @@
       <ComponentRef Id="PixelTuner.com" />
       <ComponentRef Id="PixelTuner.com.en_US" />
       <ComponentRef Id='ProgramMenuDir' />
-      <!--<ComponentRef Id="DefaultContent" />-->
+      <ComponentRef Id="DefaultContent" />
 
     </Feature>
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION" />

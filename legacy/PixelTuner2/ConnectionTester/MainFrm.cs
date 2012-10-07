@@ -108,7 +108,7 @@ namespace ConnectionTester
                 return;
             }
 
-            object pixelState = _device.GetState();
+            object pixelState = _device.GetInfo();
         }
 
         private void boxClear_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
