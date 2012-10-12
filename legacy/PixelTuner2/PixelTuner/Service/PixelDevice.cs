@@ -442,9 +442,9 @@ namespace PixelTuner.Service
 
         public void Disconnect()
         {
-            lock(_port)
             if (_port != null)
             {
+                lock (_port)
                 try
                 {
                     _port.Close();
