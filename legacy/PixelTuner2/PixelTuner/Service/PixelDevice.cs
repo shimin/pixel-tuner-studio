@@ -224,11 +224,11 @@ namespace PixelTuner.Service
         {
             get
             {
-                var info = GetInfo();
-                UsedMemory = info.UsedMemory;
-                MemoryRate = info.MemoryRate;
-                MaxMemory = info.MaxMemory;
-                EnergyLevel = info.EnergyLevel;
+                //var info = GetInfo();
+                //UsedMemory = info.UsedMemory;
+                //MemoryRate = info.MemoryRate;
+                //MaxMemory = info.MaxMemory;
+                //EnergyLevel = info.EnergyLevel;
                 return (String)Application.Current.TryFindResource(GetDescription(_status));
             }
         }
@@ -274,9 +274,11 @@ namespace PixelTuner.Service
         public PixelDevice(SerialPort port)
         {
             _port = port;
-
-            _port.ReadTimeout = 2000;
-            _port.WriteTimeout = 2000;
+            lock (_port)
+            {
+                _port.ReadTimeout = 2000;
+                _port.WriteTimeout = 2000;
+            }
             procStatusInit = new InitProcessStatus((min, max, start, step) =>
                 {
                     ProgressMin = min;
@@ -289,8 +291,11 @@ namespace PixelTuner.Service
                 SetStatus(status);
                 Progress += _step; });
             procSetStatus = new SetStatus(status => SetStatus(status));
-            if (_port != null && _port.IsOpen) SetStatus(ConnectionStatus.Online);
-            fs = new FileStream(_port.PortName + ".log", FileMode.OpenOrCreate);
+            lock (_port)
+            {
+                if (_port != null && _port.IsOpen) SetStatus(ConnectionStatus.Online);
+                fs = new FileStream(_port.PortName + ".log", FileMode.OpenOrCreate);
+            }
             statusSetter = (s => { 
                 byte[] b = Encoding.UTF8.GetBytes( DateTime.Now.ToString("HH:mm:ss.ffff") + " " + s + "\n"); 
                 fs.Write(b, 0, b.Length); 
@@ -327,6 +332,7 @@ namespace PixelTuner.Service
 
         private bool CanUploadFirmware(object parameter)
         {
+            lock(_port)
             return _port != null && _port.IsOpen && 
                 File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "flash.bin"));
             // && RootViewModel.This.ActiveDocument != null;
@@ -370,6 +376,7 @@ namespace PixelTuner.Service
 
         private bool CanUploadCommand(object parameter)
         {
+            lock(_port)
             return _port != null && _port.IsOpen;
         }
 
@@ -435,6 +442,7 @@ namespace PixelTuner.Service
 
         public void Disconnect()
         {
+            lock(_port)
             if (_port != null)
             {
                 try
@@ -480,7 +488,7 @@ namespace PixelTuner.Service
             procStatusInit.Invoke(0, max);
 
             // переход в режим записи
-            DoSession(GetCommandBytes(Command.WRITE_IDATA_MODE).ToArray());
+            DoSession(GetCommandBytes(Command.WRITE_IDATA_MODE, BitConverter.GetBytes(binaryData.Count)).ToArray());
             procPerformStep.Invoke(ConnectionStatus.Uploading);
 
             // ожидание стирания прошивки
@@ -555,6 +563,7 @@ namespace PixelTuner.Service
             DoSession(GetCommandBytes(Command.END_WRITE_FLASH).ToArray());
         }
 
+        object _syncSession = new object();
         /// <summary>
         /// Возвращает ответ устройства на пользовательский запрос.
         /// </summary>
@@ -564,31 +573,48 @@ namespace PixelTuner.Service
         private byte[] DoSession(byte[] query)
         {
             byte[] receiveBuf = new byte[]{};
+            lock (_syncSession)
             try
             {
                 if (statusSetter != null) statusSetter.Invoke("Запись: " + BytesToString(query));
-                _port.DiscardInBuffer();
-                _port.DiscardOutBuffer();
-                _port.Write(query, 0, query.Length);
-
+                lock (_port)
+                {
+                    _port.DiscardInBuffer();
+                    _port.DiscardOutBuffer();
+                    _port.Write(query, 0, query.Length);
+                }
                 Thread.Sleep(WriteReadDelay);
 
-                WaitBytes(1, statusSetter);
-                int ans = _port.ReadByte();
+                //WaitBytes(1, statusSetter);
+                int ans = -1;
+                lock (_port)
+                {
+                    ans = _port.ReadByte();
+                }
 
                 if (statusSetter != null) statusSetter.Invoke("Чтение: " + ans.ToString("X2"));
                 if (ans == (int)query[0])   // если ответ на ту же команду
                 {
                     WaitBytes(1, statusSetter);
-                    int len = _port.ReadByte();
+                    int len = 0;
+                    lock (_port)
+                    {
+                        len = _port.ReadByte();
+                    }
 
                     receiveBuf = new byte[len];
-                    int bytesGot = _port.Read(receiveBuf, 0, len);
+                    lock (_port)
+                    {
+                        int bytesGot = _port.Read(receiveBuf, 0, len);
+                    }
 
                     if (!WaitBytes(1, statusSetter)) return receiveBuf;
-                    int dSymbol = _port.ReadByte();
+                    int dSymbol = 0;
+                    lock (_port)
+                    {
+                        dSymbol = _port.ReadByte();
+                    }
 
-                    Thread.Sleep(10);
                     if (statusSetter != null) statusSetter.Invoke("Чтение: (" + len.ToString("X2") + ") " + BytesToString(receiveBuf));
                     Thread.Sleep(WriteReadDelay);
                     return receiveBuf;
@@ -605,14 +631,14 @@ namespace PixelTuner.Service
             return receiveBuf;
         }
 
-        private List<byte> GetCommandBytes(Command command, List<byte> args = null)
+        private List<byte> GetCommandBytes(Command command, IList<byte> args = null)
         {
             List<byte> result = new List<byte>() { (byte)command };
             switch (command)
             {
                 case Command.INFO: result.Add(0); break;
                 case Command.WHO_IS_IT: result.Add(0); break;
-                case Command.WRITE_IDATA_MODE: result.Add(0); break;
+                case Command.WRITE_IDATA_MODE: result.Add((byte)args.Count); result.AddRange(args); break;
                 case Command.WRITE_IFLASH_MODE: result.Add(0); break;
                 case Command.END_WRITE_DATA: result.Add(0); break;
                 case Command.END_WRITE_FLASH: result.Add(0); break;

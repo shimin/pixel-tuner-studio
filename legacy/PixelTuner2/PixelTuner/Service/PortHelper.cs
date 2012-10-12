@@ -30,7 +30,7 @@ namespace PixelTuner.Service
         /// <see cref="SerialPortWatcher"/> instance for the lifetime of your SerialPort.</remarks>
         public static void WaitForBytes(this SerialPort port, int count, int millisecondsTimeout)
         {
-
+            lock(port)
             if (port == null) throw new ArgumentNullException("port");
             if (port.BytesToRead >= count) return;
 
