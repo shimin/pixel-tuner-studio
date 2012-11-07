@@ -306,6 +306,7 @@
                                     <ColumnDefinition Width="120" />
                                     <ColumnDefinition Width="60" />
                                     <ColumnDefinition Width="60" />
+                                    <ColumnDefinition Width="132" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <Button x:Name="NewBtn" Grid.Row="0" Grid.Column="0" Margin="4,0,0,2" 
@@ -322,8 +323,16 @@
                                     Step="5"
                                     IsEnabled="{Binding Path=Parent.DataContext.LineHeightChangingAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                     Value="{Binding Path=Parent.DataContext.LineHeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <TextBlock Grid.Column="5" Margin="16,4,4,0" Foreground="{StaticResource TextBrush}" Text="{StaticResource Doc_Lbl_MemoryUsed}" />
+                                <ProgressBar 
+                                    Grid.Column="6" 
+                                    Value="{Binding ProjectSize, Mode=OneWay}" 
+                                    Minimum="0" 
+                                    Maximum="1024" 
+                                    Margin="4,4,4,4"
+                                    Style="{StaticResource OperationProgressBarStyle}" />
                                 <ScrollViewer Grid.Row="1"
-                                                Grid.ColumnSpan="6"
+                                                Grid.ColumnSpan="7"
                                                 Grid.RowSpan="2"
                                                 HorizontalAlignment="Stretch"
                                                 HorizontalScrollBarVisibility="Auto"
@@ -387,27 +396,30 @@
                                     <StackPanel DataContext="{Binding ElementName=boxDevicesList, Path=SelectedItem}" Orientation="Vertical">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="72"></ColumnDefinition>
+                                                <ColumnDefinition Width="82"></ColumnDefinition>
                                                 <ColumnDefinition Width="*"></ColumnDefinition>
                                             </Grid.ColumnDefinitions>
                                             <StackPanel x:Name="descriptionsStack" Grid.Row="0" Grid.Column="0" Orientation="Vertical">
-                                                <TextBlock Text="{StaticResource Dev_Props_Name}" />
-                                                <TextBlock Text="{StaticResource Dev_Props_Memory}" />
-                                                <TextBlock Text="{StaticResource Dev_Props_Power}" />
-                                                <TextBlock Text="{StaticResource Dev_Props_Status}" Margin="0,7,0,2" />
+                                                <TextBlock Text="{StaticResource Dev_Props_Name}" Margin="0,2,0,0" />
+                                                <TextBlock Text="{StaticResource Dev_Props_Length}" />
+                                                <TextBlock Text="{StaticResource Dev_Props_Status}" />
+                                                <!--<TextBlock Text="{StaticResource Dev_Props_Memory}" />-->
+                                                <TextBlock Text="{StaticResource Dev_Props_Power}" />                                                
                                             </StackPanel>
                                             <StackPanel x:Name="valuesStack" Grid.Row="0" Grid.Column="1" Orientation="Vertical">
-                                                <TextBlock Text="{Binding Name}" Margin="0,0,0,2"/>
-                                                <ProgressBar Value="{Binding MemoryRate}" Style="{StaticResource ProgressBarStyle}" />
-                                                <ProgressBar Value="{Binding EnergyLevel}" Style="{StaticResource ProgressBarStyle}" />
-                                                <TextBlock Text="{Binding Status}" Margin="0,4,0,2"/>
+                                                <TextBlock Text="{Binding FullName}" Margin="0,2,0,0"/>
+                                                <TextBlock Text="{Binding LedsTotal}" />
+                                                <TextBlock Text="{Binding Status}" />
+                                                <!--<ProgressBar Value="{Binding MemoryRate}" Style="{StaticResource ProgressBarStyle}" />-->
+                                                <ProgressBar Value="{Binding EnergyLevel}" Margin="0,3,0,0" Style="{StaticResource ProgressBarStyle}" />                                                
                                             </StackPanel>
                                         </Grid>
                                         <ProgressBar 
                                             Value="{Binding Progress}" 
                                             Minimum="{Binding ProgressMin}" 
                                             Maximum="{Binding ProgressMax}" 
-                                            Style="{StaticResource OperationProgressBarStyle}"/>
+                                            Style="{StaticResource OperationProgressBarStyle}"
+                                            Margin="0,2,0,0" />
                                     </StackPanel>
                                 </Canvas>
                             </Grid>

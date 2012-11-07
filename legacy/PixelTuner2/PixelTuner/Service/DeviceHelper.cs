@@ -141,12 +141,7 @@ namespace PixelTuner.Service
                 if (!string.IsNullOrEmpty(aDevice.GetName()))
                 {
                     state.Device = aDevice;
-                    var info = aDevice.GetInfo();
-
-                    state.Device.UsedMemory = info.UsedMemory;
-                    state.Device.MemoryRate = info.MemoryRate;
-                    state.Device.MaxMemory = info.MaxMemory;
-                    state.Device.EnergyLevel = info.EnergyLevel;
+                    aDevice.UpdateInfo();
                 }
             }
             catch (InvalidOperationException)

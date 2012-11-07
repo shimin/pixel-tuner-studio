@@ -72,12 +72,19 @@ namespace PixelTuner
                 if (i % 2 == 0) _timeLines[i].Background =  _lightLineColor;
                 else _timeLines[i].Background = _darkLineColor;
                 _timeLines[i].Parent = this;
+                _timeLines[i].Items.CollectionChanged -= TimeLineItems_CollectionChanged;
+                _timeLines[i].Items.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(TimeLineItems_CollectionChanged);
             }
         }
 
         void Items_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             RaisePropertyChanged("LineHeightChangingAvailable");
+        }
+
+        void TimeLineItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            RaisePropertyChanged("ProjectSize");
         }
 
         [XmlIgnore]
@@ -116,6 +123,27 @@ namespace PixelTuner
                 _lineHeight = value;
                 Settings.Default.LineHeight = value;
                 RaisePropertyChanged("LineHeight"); 
+            }
+        }
+
+        [XmlIgnore]
+        public int ProjectSize
+        {
+            get
+            {
+                List<byte> bin = GetBinaryPresentation();
+                int size = (bin.Count / 1024) + 1;
+                System.Diagnostics.Debug.WriteLine("Размер проекта: " + size.ToString());
+                return size;
+                //int result = 32;         // размер заголовка равный 9 взят с запасом.
+                //foreach (var t in _timeLines)
+                //{
+                //    // размер проекта равен произведению числа картинок и размера описателя картинки, 
+                //    int size = t.Items.Count * (int)ImageFile.HeaderSize + 1; // плюс байт с количеством картинок
+                //    // адрес следующего описателя проекта равен адресу текущего, плюс длина текущего
+                //    result += size;
+                //}
+                //return result;
             }
         }
 
@@ -273,6 +301,8 @@ namespace PixelTuner
 
         #endregion 
         
+
+
         public List<byte> GetBinaryPresentation()
         {
             List<byte> projectPrefix = new List<byte>(Encoding.ASCII.GetBytes("FLSH"));

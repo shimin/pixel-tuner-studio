@@ -29,6 +29,7 @@ namespace PixelTuner
                 foreach (ITimeLineDataItem item in e.NewItems)
                     item.Parent = this;
             }
+            //this.Parent.RefreshSize();
         }
 
         #region ITimeLineManager Members

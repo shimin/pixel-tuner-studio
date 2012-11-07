@@ -9,32 +9,12 @@ namespace PixelTuner.Service
     {
         int _maxMemory;
         /// <summary>
-        /// Доступный максимум памяти
+        /// Доступный максимум памяти в килобайтах
         /// </summary>
         public int MaxMemory
         {
             get { return _maxMemory; }
             set { RaisePropertyChanged("MaxMemory"); _maxMemory = value; }
-        }
-
-        int _usedMemory;
-        /// <summary>
-        /// Использовано памяти
-        /// </summary>
-        public int UsedMemory
-        {
-            get { return _usedMemory; }
-            set { RaisePropertyChanged("UsedMemory"); _usedMemory = value; }
-        }
-
-        int _memoryRate = 0;
-        /// <summary>
-        /// Отношение занятой памяти к общему объему (1..100)
-        /// </summary>
-        public int MemoryRate
-        {
-            get { return _memoryRate; }
-            set { RaisePropertyChanged("MemoryRate"); _memoryRate = value; }
         }
 
         float _energyLevel = 0;
@@ -47,14 +27,44 @@ namespace PixelTuner.Service
             set { RaisePropertyChanged("EnergyLevel"); _energyLevel = value; }
         }
 
-        string _productID = "";
+        int _firmwareVersion = 0;
         /// <summary>
-        /// Уникальный идентификатор устройства
+        /// Версия прошивки
         /// </summary>
-        public string ProductID
+        public int FirmwareVersion
         {
-            get { return _productID; }
-            set { RaisePropertyChanged("ProductID"); _productID = value; }
+            get { return _firmwareVersion; }
+            set { RaisePropertyChanged("FirmwareVersion"); _firmwareVersion = value; }
+        }
+
+        int _bootVersion = 0;
+        /// <summary>
+        /// Версия загрузчика
+        /// </summary>
+        public int BootVersion
+        {
+            get { return _bootVersion; }
+            set { RaisePropertyChanged("BootVersion"); _bootVersion = value; }
+        }
+
+        int _platformVersion = 0;
+        /// <summary>
+        /// Версия платформы
+        /// </summary>
+        public int PlatformVersion
+        {
+            get { return _platformVersion; }
+            set { RaisePropertyChanged("PlatformVersion"); _platformVersion = value; }
+        }
+
+        byte _ledsTotal = 0;
+        /// <summary>
+        /// Число диодов в устройстве
+        /// </summary>
+        public byte LedsTotal
+        {
+            get { return _ledsTotal; }
+            set { RaisePropertyChanged("LedsTotal"); _ledsTotal = value; }
         }
     }
 }

@@ -28,6 +28,8 @@
             <File Id="CoreLib" Source="..\PixelTuner\bin\$(var.Configuration)\Core.dll" />
             <File Id="AppearanceLib" Source="..\PixelTuner\bin\$(var.Configuration)\Appearance.dll" />
             <File Id="WorkspaceLib" Source="..\PixelTuner\bin\$(var.Configuration)\Workspace.dll" />
+            <File Id="demo25.ptp" Source="..\PixelTuner\bin\$(var.Configuration)\demo25.ptp" />
+            <File Id="demo50.ptp" Source="..\PixelTuner\bin\$(var.Configuration)\demo50.ptp" />
             <File Id="PixelTuner.exe" Name="PixelTuner.exe" Source="..\PixelTuner\bin\$(var.Configuration)\PixelTuner.exe" KeyPath='yes'>
               <Shortcut Id="startmenuPixelTuner" Directory="ProgramMenuDir" Name="PixelTuner 2"
                    WorkingDirectory='INSTALLLOCATION' Icon="PixelTuner.exe" IconIndex="0" Advertise="yes" />
@@ -43,6 +45,20 @@
           <Directory Id="ContentDir" Name="Content">
             <Component Id="DefaultContent" Guid="114E4EA1-8D2F-464C-B017-3952BD1AB67D">
               <CreateFolder></CreateFolder>
+              <File Id="_25_hearts_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_hearts.jpg" />
+              <File Id="_25_love_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_love.jpg" />
+              <File Id="_25_stars_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_stars.jpg" />
+              <File Id="_25_stripes_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_stripes.jpg" />
+              <File Id="_25_triangle_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_triangle.jpg" />
+
+              <File Id="_50_AudioLevels.png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_AudioLevels.png" />
+              <File Id="_50_cards.png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_cards.png" />
+              <File Id="_50_DM.png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_DM.png" />
+              <File Id="_50_new_year.png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_new_year.png" />
+              <File Id="_50_red_arrows_right.png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_red_arrows_right.png" />
+              <File Id="_50_snake.png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_snake.png" />
+              <File Id="_50_SquareCircle.png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_SquareCircle.png" />
+              <File Id="_50_steps2.png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_steps2.png" />
             </Component>
           </Directory>
         </Directory>

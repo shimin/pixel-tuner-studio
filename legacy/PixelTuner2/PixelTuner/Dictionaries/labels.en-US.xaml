@@ -15,6 +15,7 @@
     <system:String x:Key="Doc_Btn_AddLine">Add line</system:String>
     <system:String x:Key="Doc_Lbl_Scale">Scale</system:String>
     <system:String x:Key="Doc_Lbl_Height">Height</system:String>
+    <system:String x:Key="Doc_Lbl_MemoryUsed">Memory used</system:String>
     <system:String x:Key="Doc_Hdr_Default">Noname</system:String>
     <system:String x:Key="Doc_Open_AccessError">File access error.</system:String>
     <system:String x:Key="Doc_Open_DeserializeError">File open error. It's probably corrupted.</system:String>
@@ -25,6 +26,7 @@
     <system:String x:Key="Dev_Props_Memory">Memory:</system:String>
     <system:String x:Key="Dev_Props_Power">Battery:</system:String>
     <system:String x:Key="Dev_Props_Status">Status:</system:String>
+    <system:String x:Key="Dev_Props_Length">LEDs count:</system:String>
     <system:String x:Key="Dev_Props_State_Uploading">Uploading...</system:String>
     <system:String x:Key="Dev_Props_State_Downloading">Downloading...</system:String>
     <system:String x:Key="Dev_Props_State_Idle"></system:String>

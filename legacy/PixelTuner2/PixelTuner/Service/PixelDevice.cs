@@ -106,6 +106,10 @@ namespace PixelTuner.Service
 
         #region Properties
 
+        private const int Umax = 4200;
+
+        private const int Umin = 3000;
+        
         int _usualPacketSize = 60;
         /// <summary>
         /// Стандартный размер пакета для передачи любых данных
@@ -116,17 +120,7 @@ namespace PixelTuner.Service
             set { RaisePropertyChanged("UsualPacketSize"); _usualPacketSize = value; }
         }
 
-        int _memoryEraseTime = 3;
-        /// <summary>
-        /// Время, требуемое перед записью для стирания флеш (мс)
-        /// </summary>
-        public int MemoryEraseTime
-        {
-            get { return _memoryEraseTime; }
-            set { RaisePropertyChanged("MemoryEraseTime"); _memoryEraseTime = value; }
-        }
-
-        int _writeReadDelay = 1;
+        int _writeReadDelay = 10;
         /// <summary>
         /// Задержка в мсиллисекундах между операцей записи и чтения.
         /// </summary>
@@ -143,34 +137,21 @@ namespace PixelTuner.Service
             private set { RaisePropertyChanged("Name"); _name = value; }
         }
 
+        string _fullName = "Unknown device";
+        public string FullName
+        {
+            get { return _fullName; }
+            private set { RaisePropertyChanged("FullName"); _fullName = value; }
+        }
+
         int _maxMemory;
         /// <summary>
-        /// Доступный максимум памяти
+        /// Доступный максимум памяти в килобайтах
         /// </summary>
         public int MaxMemory
         {
             get { return _maxMemory; }
             set { RaisePropertyChanged("MaxMemory"); _maxMemory = value; }
-        }
-
-        int _usedMemory;
-        /// <summary>
-        /// Использовано памяти
-        /// </summary>
-        public int UsedMemory
-        {
-            get { return _usedMemory; }
-            set { RaisePropertyChanged("UsedMemory"); _usedMemory = value; }
-        }
-
-        int _memoryRate = 0;
-        /// <summary>
-        /// Отношение занятой памяти к общему объему (1..100)
-        /// </summary>
-        public int MemoryRate
-        {
-            get { return _memoryRate; }
-            set { RaisePropertyChanged("MemoryRate"); _memoryRate = value; }
         }
 
         float _energyLevel = 0;
@@ -191,6 +172,16 @@ namespace PixelTuner.Service
         {
             get { return _productID; }
             set { RaisePropertyChanged("ProductID"); _productID = value; }
+        }
+
+        byte _ledsTotal = 0;
+        /// <summary>
+        /// Число диодов в устройстве
+        /// </summary>
+        public byte LedsTotal
+        {
+            get { return _ledsTotal; }
+            set { RaisePropertyChanged("LedsTotal"); _ledsTotal = value; }
         }
 
         #endregion
@@ -276,7 +267,7 @@ namespace PixelTuner.Service
             _port = port;
             lock (_port)
             {
-                _port.ReadTimeout = 2000;
+                _port.ReadTimeout = 10000;
                 _port.WriteTimeout = 2000;
             }
             procStatusInit = new InitProcessStatus((min, max, start, step) =>
@@ -294,7 +285,14 @@ namespace PixelTuner.Service
             lock (_port)
             {
                 if (_port != null && _port.IsOpen) SetStatus(ConnectionStatus.Online);
-                fs = new FileStream(_port.PortName + ".log", FileMode.OpenOrCreate);
+                try
+                {
+                    fs = new FileStream(Path.Combine(@"c:\", "log_" + _port.PortName + ".log"), FileMode.OpenOrCreate);
+                }
+                catch
+                {
+
+                }
             }
             statusSetter = (s => { 
                 byte[] b = Encoding.UTF8.GetBytes( DateTime.Now.ToString("HH:mm:ss.ffff") + " " + s + "\n"); 
@@ -474,8 +472,24 @@ namespace PixelTuner.Service
         {
             var result = new DeviceInfo();
             var buffer = DoSession(GetCommandBytes(Command.INFO).ToArray());
-
+            int Uizm = (buffer[4] << 8 | buffer[5]);
+            result.PlatformVersion = buffer[0];
+            result.EnergyLevel = (Uizm - Umin) * 100 / (Umax - Umin);
+            result.BootVersion = buffer[1];
+            result.FirmwareVersion = buffer[2];
+            result.LedsTotal = buffer[3];
+            int memoryBytes = buffer[6] << 24 | buffer[7] << 16 | buffer[8] << 8 | buffer[9]; // в байтах
+            result.MaxMemory = memoryBytes / 1024;
             return result;
+        }
+
+        public void UpdateInfo()
+        {
+            var info = GetInfo();
+            this.EnergyLevel = info.EnergyLevel;
+            this.FullName = String.Format("Pixel Poi {0}.{1}.{2}", info.PlatformVersion, info.BootVersion, info.FirmwareVersion );
+            this.LedsTotal = info.LedsTotal;
+            this.MaxMemory = info.MaxMemory;
         }
 
         public void WriteFile(List<byte> binaryData)
@@ -483,20 +497,12 @@ namespace PixelTuner.Service
             List<byte> buffer = new List<byte>();
 
             int max = (binaryData.Count / UsualPacketSize) +
-                (binaryData.Count % UsualPacketSize == 0 ? 2 : 3) +
-                (MemoryEraseTime / WriteReadDelay);
+                (binaryData.Count % UsualPacketSize == 0 ? 2 : 3);
             procStatusInit.Invoke(0, max);
 
             // переход в режим записи
             DoSession(GetCommandBytes(Command.WRITE_IDATA_MODE, BitConverter.GetBytes(binaryData.Count)).ToArray());
             procPerformStep.Invoke(ConnectionStatus.Uploading);
-
-            // ожидание стирания прошивки
-            for (int t = MemoryEraseTime; t > 0; t -= WriteReadDelay)
-            {
-                Thread.Sleep(MemoryEraseTime / WriteReadDelay);
-                procPerformStep.Invoke(ConnectionStatus.Uploading);
-            }
 
             // запись данных
             foreach (byte b in binaryData)
@@ -526,20 +532,12 @@ namespace PixelTuner.Service
             List<byte> buffer = new List<byte>();
 
             int max = (binaryData.Count / UsualPacketSize) +
-                (binaryData.Count % UsualPacketSize == 0 ? 2 : 3) +
-                (MemoryEraseTime / WriteReadDelay);
+                (binaryData.Count % UsualPacketSize == 0 ? 2 : 3);
             procStatusInit.Invoke(0, max);
 
             // переход в режим записи
             DoSession(GetCommandBytes(Command.WRITE_IFLASH_MODE).ToArray());
             procPerformStep.Invoke(ConnectionStatus.Uploading);
-
-            // ожидание стирания прошивки
-            for (int t = MemoryEraseTime; t > 0; t -= WriteReadDelay)
-            {
-                Thread.Sleep(WriteReadDelay);
-                procPerformStep.Invoke(ConnectionStatus.Uploading);
-            }
 
             // запись данных
             foreach (byte b in binaryData)
@@ -560,7 +558,8 @@ namespace PixelTuner.Service
             }
 
             // выход из режима записи
-            DoSession(GetCommandBytes(Command.END_WRITE_FLASH).ToArray());
+            byte[] finishProcess = GetCommandBytes(Command.END_WRITE_FLASH).ToArray();
+            _port.Write(finishProcess, 0, finishProcess.Length);
         }
 
         object _syncSession = new object();
@@ -572,63 +571,31 @@ namespace PixelTuner.Service
         /// <returns>Ответ</returns>
         private byte[] DoSession(byte[] query)
         {
-            byte[] receiveBuf = new byte[]{};
+            if (statusSetter != null) statusSetter.Invoke("Запись: " + BytesToString(query));
             lock (_syncSession)
-            try
             {
-                if (statusSetter != null) statusSetter.Invoke("Запись: " + BytesToString(query));
-                lock (_port)
-                {
-                    _port.DiscardInBuffer();
-                    _port.DiscardOutBuffer();
-                    _port.Write(query, 0, query.Length);
-                }
+                List<byte> result = new List<byte>();
+                _port.DiscardInBuffer();
+                _port.DiscardOutBuffer();
+                _port.Write(query, 0, query.Length);
                 Thread.Sleep(WriteReadDelay);
-
-                //WaitBytes(1, statusSetter);
                 int ans = -1;
-                lock (_port)
-                {
-                    ans = _port.ReadByte();
-                }
+                try { ans = _port.ReadByte(); }
+                catch { }
 
-                if (statusSetter != null) statusSetter.Invoke("Чтение: " + ans.ToString("X2"));
+                if (statusSetter != null) statusSetter.Invoke("Прочитан заголовок: " + ans.ToString("X2"));
                 if (ans == (int)query[0])   // если ответ на ту же команду
                 {
-                    WaitBytes(1, statusSetter);
-                    int len = 0;
-                    lock (_port)
-                    {
-                        len = _port.ReadByte();
-                    }
-
-                    receiveBuf = new byte[len];
-                    lock (_port)
-                    {
-                        int bytesGot = _port.Read(receiveBuf, 0, len);
-                    }
-
-                    if (!WaitBytes(1, statusSetter)) return receiveBuf;
-                    int dSymbol = 0;
-                    lock (_port)
-                    {
-                        dSymbol = _port.ReadByte();
-                    }
-
-                    if (statusSetter != null) statusSetter.Invoke("Чтение: (" + len.ToString("X2") + ") " + BytesToString(receiveBuf));
-                    Thread.Sleep(WriteReadDelay);
+                    int len = -1;
+                    len = _port.ReadByte();
+                    if (statusSetter != null) statusSetter.Invoke("Прочитана длина: " + len.ToString("X2"));
+                    byte[] receiveBuf = new byte[len];
+                    int bytesGot = _port.Read(receiveBuf, 0, len);
+                    if (statusSetter != null) statusSetter.Invoke("Получено (" + bytesGot.ToString("X2") + "): " + BytesToString(receiveBuf));
                     return receiveBuf;
                 }
-                throw new InvalidOperationException(String.Format(
-                    "Неверный ответ '{0}' на команду '{1}'", ans.ToString(), query[0])
-                );
             }
-            catch (Exception ex)
-            {
-                procPerformStep.Invoke(ConnectionStatus.Error);
-                if (statusSetter != null) statusSetter.Invoke(ex.Message + "\n" + ex.StackTrace);
-            }
-            return receiveBuf;
+            return new byte[] { };
         }
 
         private List<byte> GetCommandBytes(Command command, IList<byte> args = null)
@@ -661,20 +628,6 @@ namespace PixelTuner.Service
 
         #region Misc
 
-        private bool WaitBytes(int p, StatusNotifierDelegate statusSetter = null)
-        {
-            try
-            {
-                PortHelper.WaitForBytes(_port, 1, 5000);
-                return true;
-            }
-            catch
-            {
-                if (statusSetter != null) statusSetter.Invoke("Таймаут чтения.");
-            }
-            return false;
-        }
-
         private string BytesToString(byte[] buf)
         {
             string result = "";
@@ -692,7 +645,6 @@ namespace PixelTuner.Service
         public override string ToString()
         {
             return this.Name;
-            //return _port != null ? this.Port.PortName : "";
         }
 
         public override bool Equals(object obj)
