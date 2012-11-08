@@ -80,7 +80,11 @@ namespace PixelTuner.Service
                 {
                     lock (PortList) { if (PortList.ContainsKey(portName)) PortList.Remove(portName); }
                     if (_devices.Count == 0) break;
-                    PixelDevice aDevice = _devices.First(dev => _devices.Count == 0 ? false : dev.Port.PortName == portName);
+                    PixelDevice aDevice = _devices.First(dev => _devices.Count == 0 || dev.Port == null ? false : dev.Port.PortName == portName);
+                    List<PixelDevice> devsWithNullPorts = new List<PixelDevice>();
+                    // и поудалять все устройства у которых порт null
+                    foreach (var d in _devices) { if (d.Port == null) devsWithNullPorts.Add(d); }
+                    foreach (var d in devsWithNullPorts) { _devices.Remove(d); }
                     if (aDevice != null)
                     {
                         aDevice.Disconnect();
@@ -196,7 +200,7 @@ namespace PixelTuner.Service
                 return _devices;
             }
         }
-
+        
         class CheckPortResult
         {
             string _portName;

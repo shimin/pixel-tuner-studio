@@ -146,7 +146,7 @@ namespace PixelTuner.Service
 
         int _maxMemory;
         /// <summary>
-        /// Доступный максимум памяти в килобайтах
+        /// Доступный максимум памяти в байтах
         /// </summary>
         public int MaxMemory
         {
@@ -265,11 +265,12 @@ namespace PixelTuner.Service
         public PixelDevice(SerialPort port)
         {
             _port = port;
-            lock (_port)
+            if (_port != null)
             {
-                _port.ReadTimeout = 10000;
+                _port.ReadTimeout = 30000;
                 _port.WriteTimeout = 2000;
             }
+
             procStatusInit = new InitProcessStatus((min, max, start, step) =>
                 {
                     ProgressMin = min;
@@ -278,11 +279,13 @@ namespace PixelTuner.Service
                     Step = step;
                 }
             );
-            procPerformStep = new PerformStep(status => {
+            procPerformStep = new PerformStep(status =>
+            {
                 SetStatus(status);
-                Progress += _step; });
+                Progress += _step;
+            });
             procSetStatus = new SetStatus(status => SetStatus(status));
-            lock (_port)
+
             {
                 if (_port != null && _port.IsOpen) SetStatus(ConnectionStatus.Online);
                 try
@@ -294,9 +297,10 @@ namespace PixelTuner.Service
 
                 }
             }
-            statusSetter = (s => { 
-                byte[] b = Encoding.UTF8.GetBytes( DateTime.Now.ToString("HH:mm:ss.ffff") + " " + s + "\n"); 
-                fs.Write(b, 0, b.Length); 
+            statusSetter = (s =>
+            {
+                byte[] b = Encoding.UTF8.GetBytes(DateTime.Now.ToString("HH:mm:ss.ffff") + " " + s + "\n");
+                fs.Write(b, 0, b.Length);
             });
 
             AddRemoveUSBHandler();
@@ -383,7 +387,40 @@ namespace PixelTuner.Service
             FileViewModel file = parameter as FileViewModel;
             if (file == null) return;
 
-            List<byte> data = file.GetBinaryPresentation();
+            List<byte> data = file.GetBinaryPresentation(this.LedsTotal);
+            if (data.Count >= this.MaxMemory)
+            {
+                MessageBox.Show((String)Application.Current.TryFindResource("Global_NotEnoughtSpace"), 
+                    Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            if (file.LineHeight > this.LedsTotal)
+            {
+                if (MessageBox.Show(
+                    String.Format(
+                        (String)Application.Current.TryFindResource("Global_TimelineHigherThanDevice"),
+                        file.LineHeight,
+                        this.LedsTotal,
+                        file.LineHeight - this.LedsTotal),
+                    Application.Current.MainWindow.Title, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                {
+                    return;
+                }
+            }
+            if (file.LineHeight < this.LedsTotal)
+            {
+                if (MessageBox.Show(
+                    String.Format(
+                        (String)Application.Current.TryFindResource("Global_TimelineLowerThanDevice"), 
+                        file.LineHeight, 
+                        this.LedsTotal,
+                        this.LedsTotal - file.LineHeight),
+                    Application.Current.MainWindow.Title, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                {
+                    return;
+                }
+            }
+
             BackgroundWorker bgWorker = new BackgroundWorker();
             bgWorker.DoWork += (x, e) => WriteFile(data);
             bgWorker.RunWorkerCompleted += (s, e) =>
@@ -391,7 +428,6 @@ namespace PixelTuner.Service
                 procSetStatus.Invoke(ConnectionStatus.Online);
             };
             bgWorker.RunWorkerAsync();
-            //WriteFile(data);
         }
 
         #endregion
@@ -436,13 +472,12 @@ namespace PixelTuner.Service
         } 
         #endregion
 
-        #region Commands
+        #region Protocol
 
         public void Disconnect()
         {
             if (_port != null)
             {
-                lock (_port)
                 try
                 {
                     _port.Close();
@@ -479,7 +514,7 @@ namespace PixelTuner.Service
             result.FirmwareVersion = buffer[2];
             result.LedsTotal = buffer[3];
             int memoryBytes = buffer[6] << 24 | buffer[7] << 16 | buffer[8] << 8 | buffer[9]; // в байтах
-            result.MaxMemory = memoryBytes / 1024;
+            result.MaxMemory = (memoryBytes / 100000) * 100000;
             return result;
         }
 

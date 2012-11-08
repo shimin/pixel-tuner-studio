@@ -18,7 +18,5 @@ namespace PixelTuner
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-
-
     }
 }

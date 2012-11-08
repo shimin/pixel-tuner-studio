@@ -23,6 +23,7 @@ namespace PixelTuner
             Title = FileName;
             _timeLines.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(
                 _timeLines_CollectionChanged);
+            DeviceHelper.Devices.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Devices_CollectionChanged);
         }
 
         public FileViewModel()
@@ -31,6 +32,7 @@ namespace PixelTuner
             Title = FileName;
             _timeLines.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(
                _timeLines_CollectionChanged);
+            DeviceHelper.Devices.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Devices_CollectionChanged);
         }
 
         #region FilePath
@@ -132,7 +134,7 @@ namespace PixelTuner
             get
             {
                 List<byte> bin = GetBinaryPresentation();
-                int size = (bin.Count / 1024) + 1;
+                int size = bin.Count; //(bin.Count / 1024) + 1;
                 System.Diagnostics.Debug.WriteLine("Размер проекта: " + size.ToString());
                 return size;
                 //int result = 32;         // размер заголовка равный 9 взят с запасом.
@@ -301,15 +303,17 @@ namespace PixelTuner
 
         #endregion 
         
-
-
         public List<byte> GetBinaryPresentation()
+        {
+            return GetBinaryPresentation(this.LineHeight);
+        }
+
+        public List<byte> GetBinaryPresentation(int realDeviceHeight)
         {
             List<byte> projectPrefix = new List<byte>(Encoding.ASCII.GetBytes("FLSH"));
             byte timeLineCount = (byte)TimeLines.Count;
             MemoryStream headerStream = new MemoryStream();
-            MemoryStream picStream = new MemoryStream();
-
+            
             headerStream.Write(projectPrefix.ToArray(), 0, projectPrefix.Count);
             headerStream.Write(new byte[4], 0, 4);
             headerStream.WriteByte(timeLineCount);
@@ -335,7 +339,7 @@ namespace PixelTuner
                     string path = item.FullName.ToLower();
                     if (!images.ContainsKey(path))
                     {
-                        images.Add(path, new ImageFile(currentAddress, path));
+                        images.Add(path, new ImageFile(currentAddress, path, realDeviceHeight));
                         currentAddress += images[path].Length;
                     }
                 }
@@ -368,10 +372,11 @@ namespace PixelTuner
             {
                 using (FileStream fs = new FileStream(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "project.bin"), FileMode.Create))
                 {
-                    headerStream.WriteTo(fs);
+                    fs.Write(resList.ToArray(), 0, resList.Count);
+                    //headerStream.WriteTo(fs);
                 }
             }
-            catch { MessageBox.Show("Не могу заменить файл.", Application.Current.MainWindow.Title); }
+            catch { MessageBox.Show("Can't replace file.", Application.Current.MainWindow.Title); }
             return resList;
         }
 
@@ -387,6 +392,28 @@ namespace PixelTuner
                 result.AddRange(TimeLineViewModel.ExtraTypes);
                 return result;
             }
+        }
+
+        public int MemoryListHeight
+        {
+            get
+            {
+                return DeviceHelper.Devices.Count != 0 ? DeviceHelper.Devices.Count * 15 + 20 : 0;
+            }
+        }
+
+        public System.Windows.Visibility Visibility
+        {
+            get
+            {
+                return DeviceHelper.Devices.Count > 0 ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+            }
+        }
+
+        void Devices_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            RaisePropertyChanged("MemoryListHeight");
+            RaisePropertyChanged("Visibility");
         }
 
         ObservableCollection<TimeLineViewModel> _timeLines = new ObservableCollection<TimeLineViewModel>();

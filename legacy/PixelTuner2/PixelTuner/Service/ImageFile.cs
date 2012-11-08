@@ -76,9 +76,12 @@ namespace PixelTuner.Service
             for (int column = 0; column < pic.Width; column++)
             {
                 List<Color> columnColors = new List<Color>();
-                for (int row = 0; row < pic.Height; row++)
+                for (int row = 0; row < _height; row++)
                 {
-                    columnColors.Add(pic.GetPixel(column, row));                    
+                    if (row < pic.Height)                               // что за пределами реальной высоты заполнять черным.
+                        columnColors.Add(pic.GetPixel(column, row));
+                    else
+                        columnColors.Add(Color.Black);
                 }
                 foreach (var c in columnColors) result.Add(c.R);
                 foreach (var c in columnColors) result.Add(c.G);
@@ -99,10 +102,19 @@ namespace PixelTuner.Service
             get { return (UInt32)_binaryData.Count; }
         }
 
+        private int _height = 0;
+        /// <summary>
+        /// Высота картинки заданная пользователем в проекте.
+        /// </summary>
+        public int Height
+        {
+            get { return _height; }
+        }
 
-        public ImageFile(UInt32 startAddress, string path)
+        public ImageFile(UInt32 startAddress, string path, int height)
         {
             _startAddress = startAddress;
+            _height = height;
             Path = path;
             UpdateBin();
         }

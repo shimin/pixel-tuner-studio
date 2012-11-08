@@ -36,4 +36,7 @@
     <system:String x:Key="Dev_Props_State_WriteReadDelay">Write/read pause:</system:String>
     <system:String x:Key="Dev_Props_State_Error">Communication error.</system:String>
     <system:String x:Key="Global_SaveChanges">"Save changes for file '{0}'?"</system:String>
+    <system:String x:Key="Global_NotEnoughtSpace">Not enough device memory.</system:String>
+    <system:String x:Key="Global_TimelineHigherThanDevice">Pictures height&#160;is&#160;{0}. It's&#160;more&#160;than&#160;{1}&#160;-&#160;actual device&#160;leds&#160;count. All&#160;pics will&#160;be cropped&#160;for&#160;{2}&#160;pixels on&#160;bottom. Continue&#160;anyway?</system:String>
+    <system:String x:Key="Global_TimelineLowerThanDevice">Pictures height&#160;is&#160;{0}. It's&#160;less&#160;than&#160;{1}&#160;-&#160;actual device&#160;leds&#160;count. All&#160;pics will&#160;be extended&#160;for&#160;{2}&#160;pixels with&#160;black&#160;field on bottom. Continue&#160;anyway?</system:String>
 </ResourceDictionary>

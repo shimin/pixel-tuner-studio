@@ -36,4 +36,7 @@
     <system:String x:Key="Dev_Props_State_WriteReadDelay">Пауза запись/чтение:</system:String>
     <system:String x:Key="Dev_Props_State_Error">Ошибка связи.</system:String>
     <system:String x:Key="Global_SaveChanges">"Сохранить изменения '{0}'?"</system:String>
+    <system:String x:Key="Global_NotEnoughtSpace">Недостаточно памяти устройства.</system:String>
+    <system:String x:Key="Global_TimelineHigherThanDevice">Высота картинок в проекте&#160;{0}, это больше, чем&#160;{1}&#160;-&#160;число&#160;светодиодов&#160;в&#160;устройстве. Картинки будут обрезаны&#160;на&#160;{2}&#160;пикселей&#160;снизу. Продолжить?</system:String>
+    <system:String x:Key="Global_TimelineLowerThanDevice">Высота картинок в проекте&#160;{0}, это меньше, чем&#160;{1}&#160;-&#160;число&#160;светодиодов&#160;в&#160;устройстве. Картинки будут дополнены&#160;на&#160;{2}&#160;пикселей&#160;снизу черным полем. Продолжить?</system:String>
 </ResourceDictionary>
