@@ -24,6 +24,7 @@ namespace PixelTuner.Service
         WRITE_BLOCK = 0x42,
         END_WRITE_FLASH = 0x43,
         END_WRITE_DATA = 0x63,
+        SWITCH_TO_BOOT = 0x62,
     }
 
     public enum ConnectionStatus
@@ -41,7 +42,13 @@ namespace PixelTuner.Service
             [DescriptionAttribute("Dev_Props_State_Error")]
             Error = 5,
         }
-    
+
+    public enum Timeout
+    {
+        Short = 500,
+        Long = 30000
+    }
+
     public delegate void InitProcessStatus(int min, int max, int start = 0, int step = 1);
     public delegate void StatusNotifierDelegate(string status);
     public delegate void PerformStep(ConnectionStatus status);
@@ -97,6 +104,7 @@ namespace PixelTuner.Service
         InitProcessStatus procStatusInit = null;
         PerformStep procPerformStep = null;
         SetStatus procSetStatus = null;
+        int CURRENTVERSION = 2;
 
         public SerialPort Port
         {
@@ -130,6 +138,16 @@ namespace PixelTuner.Service
             set { RaisePropertyChanged("WriteReadDelay"); _writeReadDelay = value; }
         }
 
+        bool _bootMode = false;
+        /// <summary>
+        /// Показывает, находится ли устройство в ржиме бутлоадера.
+        /// </summary>
+        public bool BootMode
+        {
+            get { return _bootMode; }
+            set {  }
+        }
+
         string _name = "Unknown device";
         public string Name
         {
@@ -137,11 +155,10 @@ namespace PixelTuner.Service
             private set { RaisePropertyChanged("Name"); _name = value; }
         }
 
-        string _fullName = "Unknown device";
         public string FullName
         {
-            get { return _fullName; }
-            private set { RaisePropertyChanged("FullName"); _fullName = value; }
+            get { return String.Format("Pixel Poi {0}.{1}.{2}", this.PlatformVersion, this.BootVersion, this.FirmwareVersion); ; }
+            private set { RaisePropertyChanged("FullName"); }
         }
 
         int _maxMemory;
@@ -184,6 +201,46 @@ namespace PixelTuner.Service
             set { RaisePropertyChanged("LedsTotal"); _ledsTotal = value; }
         }
 
+        int _firmwareVersion = 0;
+        /// <summary>
+        /// Версия прошивки
+        /// </summary>
+        public int FirmwareVersion
+        {
+            get { return _firmwareVersion; }
+            set { RaisePropertyChanged("FirmwareVersion"); RaisePropertyChanged("FullName"); _firmwareVersion = value; }
+        }
+
+        int _bootVersion = 0;
+        /// <summary>
+        /// Версия загрузчика
+        /// </summary>
+        public int BootVersion
+        {
+            get { return _bootVersion; }
+            set { RaisePropertyChanged("BootVersion"); RaisePropertyChanged("FullName"); _bootVersion = value; }
+        }
+        
+        int _platformVersion = 0;
+        /// <summary>
+        /// Версия платформы
+        /// </summary>
+        public int PlatformVersion
+        {
+            get { return _platformVersion; }
+            set { RaisePropertyChanged("PlatformVersion"); RaisePropertyChanged("FullName"); _platformVersion = value; }
+        }
+
+        /// <summary>
+        /// Свойство определяет, показывать ли контролы, связанные с обновлением прошивки
+        /// </summary>
+        public Visibility UpdateNeeded
+        {
+            get
+            {
+                return this.FirmwareVersion < CURRENTVERSION && !this.BootMode ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
         #endregion
 
         #region Status Info
@@ -267,7 +324,7 @@ namespace PixelTuner.Service
             _port = port;
             if (_port != null)
             {
-                _port.ReadTimeout = 30000;
+                _port.ReadTimeout = (int)Timeout.Long;
                 _port.WriteTimeout = 2000;
             }
 
@@ -334,8 +391,7 @@ namespace PixelTuner.Service
 
         private bool CanUploadFirmware(object parameter)
         {
-            lock(_port)
-            return _port != null && _port.IsOpen && 
+            return _port != null && _port.IsOpen && this.BootMode &&
                 File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "flash.bin"));
             // && RootViewModel.This.ActiveDocument != null;
         }
@@ -344,7 +400,10 @@ namespace PixelTuner.Service
         {
             try
             {
-                byte[] binaryData = File.ReadAllBytes(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "flash.bin"));
+                byte[] binaryData = parameter as byte[];
+                if (binaryData == null)
+                    binaryData = File.ReadAllBytes(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "flash.bin"));
+                if (binaryData == null) return;
                 BackgroundWorker bgWorker = new BackgroundWorker();
                 bgWorker.DoWork += (x, e) => WriteFirmware(new List<byte>(binaryData));
                 bgWorker.RunWorkerCompleted += (s, e) =>
@@ -378,8 +437,7 @@ namespace PixelTuner.Service
 
         private bool CanUploadCommand(object parameter)
         {
-            lock(_port)
-            return _port != null && _port.IsOpen;
+            return _port != null && _port.IsOpen && !this.BootMode;
         }
 
         private void OnUploadCommand(object parameter)
@@ -432,6 +490,61 @@ namespace PixelTuner.Service
 
         #endregion
 
+        #region AutoUpdateCommand
+        RelayCommand _autoUpdateCommand = null;
+        public ICommand AutoUpdateCommand
+        {
+            get
+            {
+                if (_autoUpdateCommand == null)
+                {
+                    _autoUpdateCommand = new RelayCommand((p) => OnAutoUpdateCommand(p), (p) => CanAutoUpdateCommand(p));
+                }
+
+                return _autoUpdateCommand;
+            }
+        }
+
+        private bool CanAutoUpdateCommand(object parameter)
+        {
+            return _port != null && _port.IsOpen;
+        }
+
+        private void OnAutoUpdateCommand(object parameter)
+        {
+            SwitchToBoot();
+        }
+        
+        #endregion
+
+        #region UpdatePostponeCommand
+        RelayCommand _updatePostponeCommand = null;
+        public ICommand UpdatePostponeCommand
+        {
+            get
+            {
+                if (_updatePostponeCommand == null)
+                {
+                    _updatePostponeCommand = new RelayCommand((p) => OnUpdatePostponeCommand(p), (p) => CanUpdatePostponeCommand(p));
+                }
+
+                return _updatePostponeCommand;
+            }
+        }
+
+        private bool CanUpdatePostponeCommand(object parameter)
+        {
+            return _port != null && _port.IsOpen;
+        }
+
+        private void OnUpdatePostponeCommand(object parameter)
+        {
+            CURRENTVERSION = this.FirmwareVersion;
+            RaisePropertyChanged("UpdateNeeded");
+        }
+
+        #endregion
+
         #endregion
 
         #region DisconnectWatcher
@@ -476,128 +589,163 @@ namespace PixelTuner.Service
 
         public void Disconnect()
         {
-            if (_port != null)
+            lock (_longOperation)
             {
-                try
+                if (_port != null)
                 {
-                    _port.Close();
-                    _port = null;
-                    SetStatus(ConnectionStatus.Offline);
+                    try
+                    {
+                        _port.Close();
+                        _port = null;
+                        SetStatus(ConnectionStatus.Offline);
 
-                    if (fs != null)
-                        fs.Close();
-                    fs = null;
+                        if (fs != null)
+                            fs.Close();
+                        fs = null;
+                    }
+                    catch { }
                 }
-                catch { }
             }
         }
 
         public string GetName()
         {
-            byte[] q = GetCommandBytes(Command.WHO_IS_IT).ToArray();
-            string result = "";
-            result = Encoding.ASCII.GetString(DoSession(q));
-            if (statusSetter != null) statusSetter.Invoke("Строка: " + result);
-            Name = PixelDeviceSpecs.TryGetName(result);
-            SetStatus(ConnectionStatus.Online);
-            return result;
+            lock (_longOperation)
+            {
+                byte[] q = GetCommandBytes(Command.WHO_IS_IT).ToArray();
+                string result = "";
+                result = Encoding.ASCII.GetString(DoSession(q));
+                if (result == "STM32BOOT") _bootMode = true;
+                if (statusSetter != null) statusSetter.Invoke("Строка: " + result);
+                Name = PixelDeviceSpecs.TryGetName(result);
+                SetStatus(ConnectionStatus.Online);
+                return result;
+            }
         }
 
         public DeviceInfo GetInfo()
         {
-            var result = new DeviceInfo();
-            var buffer = DoSession(GetCommandBytes(Command.INFO).ToArray());
-            int Uizm = (buffer[4] << 8 | buffer[5]);
-            result.PlatformVersion = buffer[0];
-            result.EnergyLevel = (Uizm - Umin) * 100 / (Umax - Umin);
-            result.BootVersion = buffer[1];
-            result.FirmwareVersion = buffer[2];
-            result.LedsTotal = buffer[3];
-            int memoryBytes = buffer[6] << 24 | buffer[7] << 16 | buffer[8] << 8 | buffer[9]; // в байтах
-            result.MaxMemory = (memoryBytes / 100000) * 100000;
-            return result;
+            lock (_longOperation)
+            {
+                var result = new DeviceInfo();
+                var buffer = DoSession(GetCommandBytes(Command.INFO).ToArray());
+                int Uizm = (buffer[4] << 8 | buffer[5]);
+                result.PlatformVersion = buffer[0];
+                result.EnergyLevel = (Uizm - Umin) * 100 / (Umax - Umin);
+                result.BootVersion = buffer[1];
+                result.FirmwareVersion = buffer[2];
+                result.LedsTotal = buffer[3];
+                int memoryBytes = buffer[6] << 24 | buffer[7] << 16 | buffer[8] << 8 | buffer[9]; // в байтах
+                result.MaxMemory = (memoryBytes / 100000) * 100000;
+                return result;
+            }
         }
 
         public void UpdateInfo()
         {
             var info = GetInfo();
             this.EnergyLevel = info.EnergyLevel;
-            this.FullName = String.Format("Pixel Poi {0}.{1}.{2}", info.PlatformVersion, info.BootVersion, info.FirmwareVersion );
+            this.PlatformVersion = info.PlatformVersion;
             this.LedsTotal = info.LedsTotal;
             this.MaxMemory = info.MaxMemory;
+            this.BootVersion = info.BootVersion;
+            this.FirmwareVersion = info.FirmwareVersion;
+        }
+
+        private void SwitchToBoot()
+        {
+            lock (_longOperation)
+            {
+                if (this.Port == null) return;
+
+                this.Port.ReadTimeout = (int)Timeout.Short;
+                DoSession(GetCommandBytes(Command.SWITCH_TO_BOOT).ToArray());
+                this.Port.ReadTimeout = (int)Timeout.Long;
+            }
         }
 
         public void WriteFile(List<byte> binaryData)
         {
-            List<byte> buffer = new List<byte>();
-
-            int max = (binaryData.Count / UsualPacketSize) +
-                (binaryData.Count % UsualPacketSize == 0 ? 2 : 3);
-            procStatusInit.Invoke(0, max);
-
-            // переход в режим записи
-            DoSession(GetCommandBytes(Command.WRITE_IDATA_MODE, BitConverter.GetBytes(binaryData.Count)).ToArray());
-            procPerformStep.Invoke(ConnectionStatus.Uploading);
-
-            // запись данных
-            foreach (byte b in binaryData)
+            lock (_longOperation)
             {
-                buffer.Add(b);
-                if (buffer.Count == UsualPacketSize)
+                List<byte> buffer = new List<byte>();
+
+                int max = (binaryData.Count / UsualPacketSize) +
+                    (binaryData.Count % UsualPacketSize == 0 ? 2 : 3);
+                procStatusInit.Invoke(0, max);
+
+                // переход в режим записи
+                DoSession(GetCommandBytes(Command.WRITE_IDATA_MODE, BitConverter.GetBytes(binaryData.Count)).ToArray());
+                procPerformStep.Invoke(ConnectionStatus.Uploading);
+
+                // запись данных
+                foreach (byte b in binaryData)
+                {
+                    buffer.Add(b);
+                    if (buffer.Count == UsualPacketSize)
+                    {
+                        DoSession(GetCommandBytes(Command.WRITE_BLOCK, buffer).ToArray());
+                        procPerformStep.Invoke(ConnectionStatus.Uploading);
+                        buffer.Clear();
+                    }
+                }
+                if (buffer.Count > 0)
                 {
                     DoSession(GetCommandBytes(Command.WRITE_BLOCK, buffer).ToArray());
                     procPerformStep.Invoke(ConnectionStatus.Uploading);
                     buffer.Clear();
                 }
-            }
-            if (buffer.Count > 0)
-            {
-                DoSession(GetCommandBytes(Command.WRITE_BLOCK, buffer).ToArray());
-                procPerformStep.Invoke(ConnectionStatus.Uploading);
-                buffer.Clear();
-            }
 
-            // выход из режима записи
-            DoSession(GetCommandBytes(Command.END_WRITE_DATA).ToArray());
-            procPerformStep.Invoke(ConnectionStatus.Uploading);
+                // выход из режима записи
+                DoSession(GetCommandBytes(Command.END_WRITE_DATA).ToArray());
+                procPerformStep.Invoke(ConnectionStatus.Uploading);
+            }
         }
 
         public void WriteFirmware(List<byte> binaryData)
         {
-            List<byte> buffer = new List<byte>();
-
-            int max = (binaryData.Count / UsualPacketSize) +
-                (binaryData.Count % UsualPacketSize == 0 ? 2 : 3);
-            procStatusInit.Invoke(0, max);
-
-            // переход в режим записи
-            DoSession(GetCommandBytes(Command.WRITE_IFLASH_MODE).ToArray());
-            procPerformStep.Invoke(ConnectionStatus.Uploading);
-
-            // запись данных
-            foreach (byte b in binaryData)
+            lock (_longOperation)
             {
-                buffer.Add(b);
-                if (buffer.Count == UsualPacketSize)
+                List<byte> buffer = new List<byte>();
+
+                int max = (binaryData.Count / UsualPacketSize) +
+                    (binaryData.Count % UsualPacketSize == 0 ? 2 : 3);
+                procStatusInit.Invoke(0, max);
+
+                // переход в режим записи
+                DoSession(GetCommandBytes(Command.WRITE_IFLASH_MODE).ToArray());
+                procPerformStep.Invoke(ConnectionStatus.Uploading);
+
+                // запись данных
+                foreach (byte b in binaryData)
+                {
+                    buffer.Add(b);
+                    if (buffer.Count == UsualPacketSize)
+                    {
+                        DoSession(GetCommandBytes(Command.WRITE_BLOCK, buffer).ToArray());
+                        procPerformStep.Invoke(ConnectionStatus.Uploading);
+                        buffer.Clear();
+                    }
+                }
+                if (buffer.Count > 0)
                 {
                     DoSession(GetCommandBytes(Command.WRITE_BLOCK, buffer).ToArray());
                     procPerformStep.Invoke(ConnectionStatus.Uploading);
                     buffer.Clear();
                 }
-            }
-            if (buffer.Count > 0)
-            {
-                DoSession(GetCommandBytes(Command.WRITE_BLOCK, buffer).ToArray());
-                procPerformStep.Invoke(ConnectionStatus.Uploading);
-                buffer.Clear();
-            }
 
-            // выход из режима записи
-            byte[] finishProcess = GetCommandBytes(Command.END_WRITE_FLASH).ToArray();
-            _port.Write(finishProcess, 0, finishProcess.Length);
+                // выход из режима записи
+                byte[] finishProcess = GetCommandBytes(Command.END_WRITE_FLASH).ToArray();
+                _port.Write(finishProcess, 0, finishProcess.Length);
+            }
         }
 
         object _syncSession = new object();
+
+        /// <summary>
+        /// Объект синхронизации. Не использовать внутри DoSession!
+        /// </summary>
+        object _longOperation = new object();
         /// <summary>
         /// Возвращает ответ устройства на пользовательский запрос.
         /// </summary>
@@ -644,7 +792,7 @@ namespace PixelTuner.Service
                 case Command.WRITE_IFLASH_MODE: result.Add(0); break;
                 case Command.END_WRITE_DATA: result.Add(0); break;
                 case Command.END_WRITE_FLASH: result.Add(0); break;
-
+                case Command.SWITCH_TO_BOOT: result.Add(0); break;
                 case Command.WRITE_BLOCK: 
                     if (args == null) 
                         throw new ArgumentNullException("Не задан отправляемый набор байт", "args");

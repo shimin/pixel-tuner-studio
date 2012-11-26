@@ -19,6 +19,8 @@ using System.IO;
 using System.Collections.ObjectModel;
 using Core;
 using PixelTuner.Service;
+using PixelTunerAutoupdater;
+using System.Net;
 
 namespace PixelTuner
 {
@@ -27,20 +29,14 @@ namespace PixelTuner
     /// </summary>
     public partial class MainWindow : Window
     {
-        //ListWindow _projectList = new ListWindow();
-        //ListWindow _deviceList = new ListWindow();
         string _layoutString = Settings.Default.LayoutString;
+        System.ComponentModel.BackgroundWorker _updatesCheckWorker = new System.ComponentModel.BackgroundWorker();
 
         public MainWindow()
         {
             Settings.Default.Reload();
-            //string culture = System.Threading.Thread.CurrentThread.CurrentCulture.NativeName;
             string culture = System.Threading.Thread.CurrentThread.CurrentUICulture.Name;
             DeviceHelper.StartSeeking();
-            //System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(culture);
-            //System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo(culture);
-
-            // Reload all the merged dictionaries to reset the resources.
             ResourceDictionary d = null;
             
             foreach (ResourceDictionary dictionary in Application.Current.Resources.MergedDictionaries)
@@ -52,46 +48,43 @@ namespace PixelTuner
             Application.Current.Resources.MergedDictionaries.Add(d);
             InitializeComponent();
             this.DataContext = RootViewModel.This = (RootViewModel)Application.Current.TryFindResource("RootContext");
-            //this.DataContext = RootViewModel.This;
-            //TimeLineInit();
-
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs ev)
         {
-            //dockManager.ParentWindow = this;
-            
-#if (DONT_SAVE_LAYOUT)
-#else
-            if (!string.IsNullOrEmpty(_layoutString))
+            _updatesCheckWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(_updatesCheckWorker_DoWork);
+            _updatesCheckWorker.RunWorkerAsync();
+        }
+
+        private static void UiInvoke(Action a)
+        {
+            System.Windows.Application.Current.Dispatcher.Invoke(a);
+        }
+
+        void _updatesCheckWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            try
             {
-                var layoutSerializer = new XmlLayoutSerializer(dockManager);
-                using (StringReader sr = new StringReader(_layoutString))
+                AutoUpdater autoUpdater = new AutoUpdater(this);
+                if (autoUpdater.UpdateNeeded())
                 {
-                    layoutSerializer.LayoutSerializationCallback += (s, args) =>
+                    UiInvoke(() =>
                     {
-                        args.Content = Application.Current.MainWindow.FindName(args.Model.ContentId);
-                    };
-                    layoutSerializer.Deserialize(sr);
+                        (this.DataContext as RootViewModel).UpdatesAvailable = System.Windows.Visibility.Visible;
+                    });
+                    
+                }
+                else
+                {
+                    UiInvoke(() =>
+                    {
+                        (this.DataContext as RootViewModel).UpdatesAvailable = System.Windows.Visibility.Collapsed;
+                    });
                 }
             }
-#endif
-
-            //if (!string.IsNullOrEmpty(_layoutString))
-            //    dockManager.RestoreLayoutFromXml(_layoutString, ExtractListWindow);
-            //else
+            catch
             {
-                //_projectList.Title = (string)Application.Current.FindResource("Menu_Window_Projects");
-                //_projectList.DockManager = dockManager;
-                //_projectList.Name = "ProjectList";
-                //_projectList.Show(Dock.Left);
-                //(_projectList.ContainerPane as DockingLibrary.DockablePane).AutoHide();
 
-                //_deviceList.Title = (string)Application.Current.FindResource("Menu_Window_Devices");
-                //_deviceList.DockManager = dockManager;
-                //_deviceList.Name = "DeviceList";
-                //_deviceList.Show(Dock.Left);
-                //(_deviceList.ContainerPane as DockingLibrary.DockablePane).AutoHide();
             }
         }
 
@@ -119,17 +112,6 @@ namespace PixelTuner
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-#if (DONT_SAVE_LAYOUT)
-#else
-            //Settings.Default.LayoutString = dockManager.GetLayoutAsXml();
-            var layoutSerializer = new XmlLayoutSerializer(dockManager);
-            StringBuilder sb = new StringBuilder();
-            using (StringWriter sw = new StringWriter(sb))
-            {
-                layoutSerializer.Serialize(sw);
-            }
-            Settings.Default.LayoutString = sb.ToString();
-#endif
             DeviceHelper.StopSeeking();
             Settings.Default.Save();
         }

@@ -19,6 +19,11 @@ namespace PixelTuner.Service
         static Dictionary<string, SerialPort> PortList = new Dictionary<string, SerialPort>();
         static List<BackgroundWorker> CheckPortWorkers = new List<BackgroundWorker>();
 
+        public static void UiInvoke(Action a)
+        {
+            System.Windows.Application.Current.Dispatcher.Invoke(a);
+        }
+
         public static void StartSeeking()
         {
             if (_keepSeeking == true)
@@ -48,6 +53,20 @@ namespace PixelTuner.Service
                         if (state.Device != null)
                         {
                             lock (_devices) { _devices.Add(state.Device); }
+                            if (state.Device.BootMode)
+                            {
+                                UiInvoke(() =>
+                                {
+                                    if (System.Windows.MessageBox.Show("Continue update?",
+                                      System.Windows.Application.Current.MainWindow.Title,
+                                      System.Windows.MessageBoxButton.YesNo,
+                                      System.Windows.MessageBoxImage.Question) == System.Windows.MessageBoxResult.Yes)
+                                    {
+                                        AutoUpdateFirmware(state.Device);
+                                    }
+                                }
+                                );
+                            }
                         }
                     }
                 };
@@ -154,14 +173,33 @@ namespace PixelTuner.Service
                 if (port != null)
                     if (port.IsOpen)
                         port.Close();
+                PortList.Remove(port.PortName);
             }
             catch (Exception ex)
             {
                 if (port != null)
                     if (port.IsOpen)
                         port.Close();
+                PortList.Remove(port.PortName);
             }
             return state;
+        }
+
+        private static void AutoUpdateFirmware(PixelDevice pixelDevice)
+        {
+            try
+            {
+                Uri uri = new Uri("pack://application:,,,/Files/Flash.bin", UriKind.Absolute);
+                System.Windows.Resources.StreamResourceInfo info = System.Windows.Application.GetResourceStream(uri);
+                byte[] binaryData = new byte[info.Stream.Length];
+                info.Stream.Read(binaryData, 0, (int)info.Stream.Length);
+                pixelDevice.UploadFirmwareCommand.Execute(binaryData);
+                //WriteFirmware(new List<byte>(binaryData));
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message, System.Windows.Application.Current.MainWindow.Title);
+            }
         }
 
         private static void LogExistingPorts(string[] newList, List<string> justAdded, List<string> justRemoved)

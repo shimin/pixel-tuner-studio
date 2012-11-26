@@ -26,6 +26,9 @@
     <system:String x:Key="Dev_Props_Memory">Memory:</system:String>
     <system:String x:Key="Dev_Props_Power">Battery:</system:String>
     <system:String x:Key="Dev_Props_Status">Status:</system:String>
+    <system:String x:Key="Dev_Props_UpdateNeeded">Device updates available!</system:String>
+    <system:String x:Key="Dev_Props_Update">Update</system:String>
+    <system:String x:Key="Dev_Props_Postpone">Postpone</system:String>
     <system:String x:Key="Dev_Props_Length">LEDs count:</system:String>
     <system:String x:Key="Dev_Props_State_Uploading">Uploading...</system:String>
     <system:String x:Key="Dev_Props_State_Downloading">Downloading...</system:String>

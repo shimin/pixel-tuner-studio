@@ -120,6 +120,99 @@ namespace PixelTuner
             }
         }
 
+        private Visibility _updatesAvailable = Visibility.Collapsed;
+        public Visibility UpdatesAvailable
+        {
+            get { return _updatesAvailable; }
+            set { _updatesAvailable = value; RaisePropertyChanged("UpdatesAvailable"); }
+        }
+
+        public string AssemblyVersion
+        {
+            get
+            {
+                System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                return assembly.GetName().Version.ToString();
+            }
+        }
+
+        #region UpdateCommand
+        RelayCommand _updateCommand = null;
+        public ICommand UpdateCommand
+        {
+            get
+            {
+                if (_updateCommand == null)
+                {
+                    _updateCommand = new RelayCommand((p) => OnUpdate(p), (p) => CanUpdate(p));
+                }
+
+                return _updateCommand;
+            }
+        }
+
+        private bool CanUpdate(object parameter)
+        {
+            return true;
+        }
+
+        private void OnUpdate(object parameter)
+        {
+            CheckForUpdates();
+        }
+
+        private void CheckForUpdates()
+        {
+            #region check and download new version program
+            bool bHasError = false;
+            PixelTunerAutoupdater.IAutoUpdater autoUpdater = new PixelTunerAutoupdater.AutoUpdater(Application.Current.MainWindow);
+            try
+            {
+                autoUpdater.Update();
+            }
+            catch (System.Net.WebException exp)
+            {
+                MessageBox.Show("Can not find the specified resource");
+                bHasError = true;
+            }
+            catch (System.Xml.XmlException exp)
+            {
+                bHasError = true;
+                MessageBox.Show("Download the upgrade file error");
+            }
+            catch (NotSupportedException exp)
+            {
+                bHasError = true;
+                MessageBox.Show("Upgrade address configuration error");
+            }
+            catch (ArgumentException exp)
+            {
+                bHasError = true;
+                MessageBox.Show("Download the upgrade file error");
+            }
+            catch (Exception exp)
+            {
+                bHasError = true;
+                MessageBox.Show("An error occurred during the upgrade process");
+            }
+            finally
+            {
+                if (bHasError == true)
+                {
+                    try
+                    {
+                        autoUpdater.RollBack();
+                    }
+                    catch (Exception)
+                    {
+                        //Log the message to your file or database
+                    }
+                }
+            }
+            #endregion
+        }
+        #endregion 
+
         #region OpenCommand
         RelayCommand _openCommand = null;
         public ICommand OpenCommand
@@ -144,17 +237,6 @@ namespace PixelTuner
         {
             Open((string)parameter);
         }
-
-        //public FileViewModel Open(string filepath)
-        //{
-        //    var fileViewModel = _files.FirstOrDefault(fm => fm.FilePath == filepath);
-        //    if (fileViewModel != null)
-        //        return fileViewModel;
-
-        //    fileViewModel = new FileViewModel(filepath);
-        //    _files.Add(fileViewModel);
-        //    return fileViewModel;
-        //}
 
         #endregion 
 

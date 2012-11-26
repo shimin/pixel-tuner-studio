@@ -9,7 +9,7 @@ namespace PixelTuner.Service
     {
         int _maxMemory;
         /// <summary>
-        /// Доступный максимум памяти в килобайтах
+        /// Доступный максимум памяти в байтах
         /// </summary>
         public int MaxMemory
         {
