@@ -12,15 +12,6 @@
     <ControlTemplate x:Key="ButtonTemplateKey" TargetType="{x:Type Button}">
         <Grid Margin="3" x:Name="ButtonGrid">
             <Rectangle Fill="{TemplateBinding Button.Background}" />
-            <!-- TODO: how to make the gradient here look right 
-                        <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                            <Rectangle.Fill>
-                                <LinearGradientBrush EndPoint="1,1" StartPoint="1,1">
-                                    <GradientStop Offset="0.8"/>
-                                    <GradientStop Color="#66FFFFFF" Offset="1"/>
-                                </LinearGradientBrush>
-                            </Rectangle.Fill>
-                        </Rectangle>-->
             <Rectangle x:Name="HighlightRectangle" Fill="#44FFFFFF" Visibility="Hidden" IsHitTestVisible="False"/>
             <ContentPresenter VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="5" Content="{TemplateBinding Button.Content}" />
         </Grid>
@@ -30,7 +21,6 @@
                     <Setter.Value>
                         <TransformGroup>
                             <ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX=".96" ScaleY=".96" />
-                            <!-- TODO: Figure out how to make this relative to button size rather than hard coded to 2 -->
                             <TranslateTransform X="2" Y="2"/>
                         </TransformGroup>
                     </Setter.Value>
@@ -58,7 +48,7 @@
     <Style TargetType="Button">
         <Setter Property="FontFamily" Value="Segoe UI" />
         <Setter Property="Foreground" Value="White"/>
-        <Setter Property="Background" Value="DarkRed"/>
+        <Setter Property="Background" Value="#100010"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="Template" Value="{StaticResource ButtonTemplateKey}"/>
     </Style>
@@ -80,19 +70,28 @@
     </Style>
 
     <Style TargetType="ProgressBar">
-        <Setter Property="Foreground" Value="DarkRed" />
-        <Setter Property="Background" Value="#FFCB0000" />
+        <Setter Property="Foreground" Value="#d0cccccc" />
+        <Setter Property="Background" Value="#FF100010" />
         <Setter Property="Template" Value="{StaticResource ProgressBarTemplateKey}"/>
     </Style>
 
     <!-- Brushes -->
-    <LinearGradientBrush x:Key="BackgroundBrush" EndPoint="1.015,0.735" StartPoint="0.098,0.223">
+    <!--<LinearGradientBrush x:Key="BackgroundBrush" EndPoint="1.015,0.735" StartPoint="0.098,0.223">
         <GradientStop Color="#88000000" Offset="0"/>
         <GradientStop Color="#88452E2E" Offset="0.108"/>
         <GradientStop Color="#88000000" Offset="0.228"/>
         <GradientStop Color="#886A3C3C" Offset="0.414"/>
         <GradientStop Color="#88000000" Offset="0.586"/>
         <GradientStop Color="#885E4242" Offset="0.737"/>
+        <GradientStop Color="#88000000" Offset="0.948"/>
+    </LinearGradientBrush>-->
+    <LinearGradientBrush x:Key="BackgroundBrush" EndPoint="1.015,0.735" StartPoint="0.098,0.223">
+        <GradientStop Color="#88000000" Offset="0"/>
+        <GradientStop Color="#882e2E2E" Offset="0.108"/>
+        <GradientStop Color="#88000000" Offset="0.228"/>
+        <GradientStop Color="#883C3C3C" Offset="0.414"/>
+        <GradientStop Color="#88000000" Offset="0.586"/>
+        <GradientStop Color="#88424242" Offset="0.737"/>
         <GradientStop Color="#88000000" Offset="0.948"/>
     </LinearGradientBrush>
 

@@ -163,7 +163,7 @@ namespace Microsoft.Tools.WindowsInstallerXml.UX
         public void Refresh()
         {
             this.InstallationViewModel.Refresh();
-            this.UpdateViewModel.Refresh();
+            //this.UpdateViewModel.Refresh();
         }
     }
 }

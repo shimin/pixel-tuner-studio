@@ -36,3 +36,5 @@ using Microsoft.Tools.WindowsInstallerXml.UX;
 // Identifies the class that derives from UserExperience and is the UX class that gets
 // instantiated by the interop layer
 [assembly: BootstrapperApplication(typeof(WixBA))]
+[assembly: AssemblyVersionAttribute("2.0.25.0")]
+[assembly: AssemblyFileVersionAttribute("2.0.25.0")]

@@ -11,7 +11,7 @@
     <BootstrapperApplicationRef Id="ManagedBootstrapperApplicationHost">
       <Payload Name='BootstrapperCore.config' SourceFile='./WixBA/bin/Debug/WixBA.BootstrapperCore.config' />
       <Payload SourceFile='./WixBA/bin/Debug/WixBA.dll' />
-      <Payload Compressed="no" SourceFile="NetfxLicense.rtf"/>
+      <Payload Compressed="yes" SourceFile="NetfxLicense.rtf"/>
     </BootstrapperApplicationRef>
     <Chain>
       <PackageGroupRef Id="NetFx40Web"/>
@@ -54,7 +54,7 @@
       <MsiPackage
         Id="PixelTunerPackage"
         Cache="no"
-        Compressed="no"
+        Compressed="yes"
         Vital="yes"
         SourceFile="$(var.PixelTunerMsiPath)" />
     </PackageGroup>

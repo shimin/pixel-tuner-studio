@@ -386,8 +386,25 @@ namespace Microsoft.Tools.WindowsInstallerXml.UX
         /// </summary>
         private void LaunchLicense()
         {
-            string folder = IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            WixBA.LaunchUrl(IO.Path.Combine(folder, "License.htm"));
+            try
+            {
+                string licensePath = IO.Path.Combine(System.IO.Path.GetTempPath(), "PixelTuner2License.htm");
+                Uri uri = new Uri("pack://application:,,,/WixBA;component/License/License.htm", UriKind.Absolute);
+                System.Windows.Resources.StreamResourceInfo info = System.Windows.Application.GetResourceStream(uri);
+                using (System.IO.FileStream fs = new IO.FileStream(licensePath, IO.FileMode.Create))
+                {
+                    byte[] binaryData = new byte[info.Stream.Length];
+                    info.Stream.Read(binaryData, 0, (int)info.Stream.Length);
+                    fs.Write(binaryData, 0, binaryData.Length);
+                }
+                WixBA.LaunchUrl(licensePath);
+            }
+            finally
+            {
+
+            }
+            //string folder = IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            //WixBA.LaunchUrl(IO.Path.Combine(folder, "License.htm"));
         }
 
         /// <summary>

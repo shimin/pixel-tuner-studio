@@ -231,30 +231,14 @@ namespace Microsoft.Tools.WindowsInstallerXml.UX
             bool succeeded = false;
             try
             {
-                HttpWebRequest request = WixBA.Model.CreateWebRequest("http://wixtoolset.org/releases/feed/v3.6");
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                var updater = new PixelTunerAutoupdater.AutoUpdater(System.Windows.Application.Current.MainWindow);
 
-                if (response.StatusCode == HttpStatusCode.OK)
+                if (updater.UpdateNeeded())
                 {
-                    SyndicationFeed feed;
-                    using (XmlReader reader = XmlReader.Create(response.GetResponseStream()))
-                    {
-                        feed = SyndicationFeed.Load(reader);
-                    }
+                    var update = new Update();
+                    update.Url = "http://shiningpromo.ru/downloads/PixelTunerSetup.exe";
+                    update.Version = updater.RemoteVersion;
 
-                    var updates = from entry in feed.Items
-                                  from link in entry.Links
-                                  from extension in entry.ElementExtensions
-                                  where String.Equals(link.RelationshipType, "enclosure", StringComparison.Ordinal) &&
-                                        String.Equals(extension.OuterNamespace, this.AppSyndicationNamespace, StringComparison.Ordinal) &&
-                                        String.Equals(extension.OuterName, "version", StringComparison.Ordinal)
-                                  select new Update()
-                                  {
-                                      Url = link.Uri.AbsoluteUri,
-                                      Version = new Version(extension.GetObject<string>())
-                                  };
-
-                    Update update = updates.Where(u => u.Version > WixBA.Model.Version).OrderByDescending(u => u.Version).FirstOrDefault();
                     if (update == null)
                     {
                         this.UpdateUrl = null;

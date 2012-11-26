@@ -10,8 +10,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WixBA</RootNamespace>
     <AssemblyName>WixBA</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -71,8 +72,10 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase">
@@ -85,6 +88,18 @@
     <Resource Include="Resources\legal.png" />
     <Resource Include="Resources\news.png" />
     <Resource Include="Resources\wrench.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="License\License.htm" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\AutoUpdater\AutoUpdater.csproj">
+      <Project>{4BA4719C-C6AB-49BA-9754-848CA24C1FD6}</Project>
+      <Name>AutoUpdater</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\refresh.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
