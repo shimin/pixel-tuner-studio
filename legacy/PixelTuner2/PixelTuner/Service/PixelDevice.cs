@@ -117,6 +117,16 @@ namespace PixelTuner.Service
         private const int Umax = 4200;
 
         private const int Umin = 3000;
+
+        private bool _deviceBusy = false;
+        /// <summary>
+        /// Показывает что устройство в данный момент выполняет долгую операцию
+        /// </summary>
+        public bool DeviceBusy
+        {
+            get { return _deviceBusy; }
+            set { _deviceBusy = value; RaisePropertyChanged("DeviceBusy"); }
+        }
         
         int _usualPacketSize = 60;
         /// <summary>
@@ -125,7 +135,7 @@ namespace PixelTuner.Service
         public int UsualPacketSize
         {
             get { return _usualPacketSize; }
-            set { RaisePropertyChanged("UsualPacketSize"); _usualPacketSize = value; }
+            set { _usualPacketSize = value; RaisePropertyChanged("UsualPacketSize"); }
         }
 
         int _writeReadDelay = 10;
@@ -135,7 +145,7 @@ namespace PixelTuner.Service
         public int WriteReadDelay
         {
             get { return _writeReadDelay; }
-            set { RaisePropertyChanged("WriteReadDelay"); _writeReadDelay = value; }
+            set { _writeReadDelay = value; RaisePropertyChanged("WriteReadDelay"); }
         }
 
         bool _bootMode = false;
@@ -152,7 +162,7 @@ namespace PixelTuner.Service
         public string Name
         {
             get { return _name; }
-            private set { RaisePropertyChanged("Name"); _name = value; }
+            private set { _name = value; RaisePropertyChanged("Name"); }
         }
 
         public string FullName
@@ -168,7 +178,7 @@ namespace PixelTuner.Service
         public int MaxMemory
         {
             get { return _maxMemory; }
-            set { RaisePropertyChanged("MaxMemory"); _maxMemory = value; }
+            set { _maxMemory = value; RaisePropertyChanged("MaxMemory"); }
         }
 
         float _energyLevel = 0;
@@ -178,7 +188,7 @@ namespace PixelTuner.Service
         public float EnergyLevel
         {
             get { return _energyLevel; }
-            set { RaisePropertyChanged("EnergyLevel"); _energyLevel = value; }
+            set { _energyLevel = value; RaisePropertyChanged("EnergyLevel"); }
         }
 
         string _productID = "";
@@ -188,7 +198,7 @@ namespace PixelTuner.Service
         public string ProductID
         {
             get { return _productID; }
-            set { RaisePropertyChanged("ProductID"); _productID = value; }
+            set { _productID = value; RaisePropertyChanged("ProductID"); }
         }
 
         byte _ledsTotal = 0;
@@ -198,7 +208,7 @@ namespace PixelTuner.Service
         public byte LedsTotal
         {
             get { return _ledsTotal; }
-            set { RaisePropertyChanged("LedsTotal"); _ledsTotal = value; }
+            set { _ledsTotal = value; RaisePropertyChanged("LedsTotal"); }
         }
 
         int _firmwareVersion = 0;
@@ -208,7 +218,7 @@ namespace PixelTuner.Service
         public int FirmwareVersion
         {
             get { return _firmwareVersion; }
-            set { RaisePropertyChanged("FirmwareVersion"); RaisePropertyChanged("FullName"); _firmwareVersion = value; }
+            set { _firmwareVersion = value; RaisePropertyChanged("FirmwareVersion"); RaisePropertyChanged("FullName"); }
         }
 
         int _bootVersion = 0;
@@ -218,7 +228,7 @@ namespace PixelTuner.Service
         public int BootVersion
         {
             get { return _bootVersion; }
-            set { RaisePropertyChanged("BootVersion"); RaisePropertyChanged("FullName"); _bootVersion = value; }
+            set { _bootVersion = value; RaisePropertyChanged("BootVersion"); RaisePropertyChanged("FullName"); }
         }
         
         int _platformVersion = 0;
@@ -228,7 +238,7 @@ namespace PixelTuner.Service
         public int PlatformVersion
         {
             get { return _platformVersion; }
-            set { RaisePropertyChanged("PlatformVersion"); RaisePropertyChanged("FullName"); _platformVersion = value; }
+            set { _platformVersion = value; RaisePropertyChanged("PlatformVersion"); RaisePropertyChanged("FullName"); }
         }
 
         /// <summary>
@@ -668,11 +678,13 @@ namespace PixelTuner.Service
         {
             lock (_longOperation)
             {
+                DeviceBusy = true;
                 List<byte> buffer = new List<byte>();
 
                 int max = (binaryData.Count / UsualPacketSize) +
                     (binaryData.Count % UsualPacketSize == 0 ? 2 : 3);
                 procStatusInit.Invoke(0, max);
+                procPerformStep.Invoke(ConnectionStatus.Uploading);
 
                 // переход в режим записи
                 DoSession(GetCommandBytes(Command.WRITE_IDATA_MODE, BitConverter.GetBytes(binaryData.Count)).ToArray());
@@ -699,6 +711,7 @@ namespace PixelTuner.Service
                 // выход из режима записи
                 DoSession(GetCommandBytes(Command.END_WRITE_DATA).ToArray());
                 procPerformStep.Invoke(ConnectionStatus.Uploading);
+                DeviceBusy = false;
             }
         }
 
@@ -706,11 +719,13 @@ namespace PixelTuner.Service
         {
             lock (_longOperation)
             {
+                DeviceBusy = true;
                 List<byte> buffer = new List<byte>();
 
                 int max = (binaryData.Count / UsualPacketSize) +
                     (binaryData.Count % UsualPacketSize == 0 ? 2 : 3);
                 procStatusInit.Invoke(0, max);
+                procPerformStep.Invoke(ConnectionStatus.Uploading);
 
                 // переход в режим записи
                 DoSession(GetCommandBytes(Command.WRITE_IFLASH_MODE).ToArray());
@@ -737,6 +752,7 @@ namespace PixelTuner.Service
                 // выход из режима записи
                 byte[] finishProcess = GetCommandBytes(Command.END_WRITE_FLASH).ToArray();
                 _port.Write(finishProcess, 0, finishProcess.Length);
+                DeviceBusy = false;
             }
         }
 

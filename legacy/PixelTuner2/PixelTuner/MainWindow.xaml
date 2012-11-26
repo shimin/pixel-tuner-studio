@@ -449,6 +449,15 @@
                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                          SelectionMode="Single"
                                          >
+                                    <ListBox.Style>
+                                        <Style>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ElementName=boxDevicesList, Path=SelectedItem.DeviceBusy}" Value="true">
+                                                    <Setter Property="ListBox.IsEnabled" Value="false"></Setter>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ListBox.Style>
                                     <ListBox.ItemContainerStyle>
                                         <Style TargetType="ListBoxItem">
                                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />

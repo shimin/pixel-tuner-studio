@@ -126,7 +126,6 @@
     <Compile Include="Service\PixelDevice.cs" />
     <Compile Include="Service\DeviceHelper.cs" />
     <Compile Include="Service\PixelDeviceSpecs.cs" />
-    <Compile Include="Service\PortHelper.cs" />
     <Compile Include="Service\ProjectFile.cs" />
     <Compile Include="Service\TimelineFile.cs" />
     <Compile Include="TimeLineViewModel.cs" />
