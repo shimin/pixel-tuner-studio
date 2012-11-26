@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 
-  <?define ProductVersion="2.0.1.001" ?>
+  <?define ProductVersion="2.0.2.1" ?>
   <?define RTMProductVersion="1.0.0" ?>
   <?define UpgradeCode="{df1086f7-6803-4697-b66c-74dd2733c092}"?>
   <?define Manufacturer="shiningpromo.ru"?>
@@ -11,7 +11,7 @@
   <Product Id="$(var.ProductCode)" Name="PixelTuner" Language="1031" Codepage="1251" Version="$(var.ProductVersion)" Manufacturer="PixelTuner" UpgradeCode="$(var.UpgradeCode)">
     <Package Id='$(var.PackageCode)' Manufacturer='$(var.Manufacturer)' InstallerVersion="200" Compressed="yes" ReadOnly='yes' ShortNames='no' Keywords='Installer,MSI,Database'/>
     <Media Id="1" Cabinet="media.cab" EmbedCab="yes" />
-      <MajorUpgrade AllowDowngrades="no" DowngradeErrorMessage="The newer version already installed." AllowSameVersionUpgrades="yes" IgnoreRemoveFailure="no" />
+      <MajorUpgrade AllowDowngrades="yes" IgnoreRemoveFailure="no" />
     <WixVariable Id="WixUILicenseRtf" Value=".\License.rtf" />
     <WixVariable Id="WixUIBannerBmp" Value=".\pics\banner.bmp" />
     <WixVariable Id="WixUIDialogBmp" Value=".\pics\dialog.bmp" />

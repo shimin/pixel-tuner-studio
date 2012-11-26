@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FileViewModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" FilePath="1.ptp" UnitSize="10" LineHeight="25">
+  <Line>
+    <Item Start="00:00:00.000" End="00:00:10.000" TimelineViewExpanded="false" FullName="D:\Programming\pl5\PixelTuner\bin\Debug\Content\hearts.jpg" Stretching="5" />
+    <Item Start="00:00:10.000" End="00:00:20.000" TimelineViewExpanded="false" FullName="D:\Programming\pl5\PixelTuner\bin\Debug\Content\stripes.jpg" Stretching="5" />
+    <Item Start="00:00:20.000" End="00:00:45.950" TimelineViewExpanded="false" FullName="D:\Programming\pl5\PixelTuner\bin\Debug\Content\samson.jpg" Stretching="5" />
+  </Line>
+  <Line>
+    <Item Start="00:00:00.000" End="00:00:41.766" TimelineViewExpanded="false" FullName="D:\Programming\pl5\PixelTuner\bin\Debug\Content\santorini.jpg" Stretching="5" />
+  </Line>
+  <Line>
+    <Item Start="00:00:00.000" End="00:01:42.062" TimelineViewExpanded="false" FullName="D:\Programming\pl5\PixelTuner\bin\Debug\Content\stars.jpg" Stretching="5" />
+  </Line>
+</FileViewModel>

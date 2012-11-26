@@ -267,6 +267,19 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>if not exist .\upload\ md .\upload\
+xcopy /y /f ".\*.dll" ".\upload\"
+xcopy /y /f ".\PixelTuner.exe" ".\upload\"
+if not exist .\upload\en-US\ md .\upload\en-US
+xcopy /y /f ".\en-US\PixelTuner.resources.dll" ".\upload\en-US"
+if not exist .\upload\Content\ md .\upload\Content
+xcopy /y /f ".\Content\*.*" ".\upload\Content"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

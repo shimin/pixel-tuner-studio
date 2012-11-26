@@ -1,4 +1,4 @@
-﻿//Copyright (c) 2007-2012, Adolfo Marinucci
+//Copyright (c) 2007-2012, Adolfo Marinucci
 //All rights reserved.
 
 //Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
@@ -64,8 +64,8 @@ using System.Windows.Markup;
 )]
 
 
-[assembly: AssemblyVersion("2.0.0804")]
-[assembly: AssemblyFileVersion("2.0.0804")]
+[assembly: AssemblyVersion("2.0.2.1")]
+[assembly: AssemblyFileVersion("2.0.2.1")]
 
 [assembly: XmlnsPrefix("http://avalondock.codeplex.com", "avalondock")]
 [assembly: XmlnsDefinition("http://avalondock.codeplex.com", "Workspace")]
