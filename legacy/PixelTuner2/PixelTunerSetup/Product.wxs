@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="e4835693-c340-4d52-b35f-1a35ade9e2fb" Name="PixelTuner" Language="1031" Codepage="1251" Version="$(var.PackageVersion)" Manufacturer="PixelTuner" UpgradeCode="df1086f7-6803-4697-b66c-74dd2733c092">
-    <Package InstallerVersion="200" Compressed="yes" />
+
+  <?define ProductVersion="2.0.1.001" ?>
+  <?define RTMProductVersion="1.0.0" ?>
+  <?define UpgradeCode="{df1086f7-6803-4697-b66c-74dd2733c092}"?>
+  <?define Manufacturer="shiningpromo.ru"?>
+  <?define ProductCode="{e4835693-c340-4d52-b35f-1a35ade9e2fb}"?>
+  <?define PackageCode="*"?>
+
+  <Product Id="$(var.ProductCode)" Name="PixelTuner" Language="1031" Codepage="1251" Version="$(var.ProductVersion)" Manufacturer="PixelTuner" UpgradeCode="$(var.UpgradeCode)">
+    <Package Id='$(var.PackageCode)' Manufacturer='$(var.Manufacturer)' InstallerVersion="200" Compressed="yes" ReadOnly='yes' ShortNames='no' Keywords='Installer,MSI,Database'/>
     <Media Id="1" Cabinet="media.cab" EmbedCab="yes" />
       <MajorUpgrade AllowDowngrades="no" DowngradeErrorMessage="The newer version already installed." AllowSameVersionUpgrades="yes" IgnoreRemoveFailure="no" />
     <WixVariable Id="WixUILicenseRtf" Value=".\License.rtf" />
@@ -11,9 +19,14 @@
       <RegistrySearch Id="InstallPathRegSearch" Type="raw" Root="HKLM" Key="SOFTWARE\ShiningPromo\PixelTuner 2" Name="InstallLocation" />
     </Property>
     <Property Id="PREVIOUSVERSIONSINSTALLED" Secure="yes" />
-    <Upgrade Id="df1086f7-6803-4697-b66c-74dd2733c092">
+    <Property Id="NEWPRODUCTFOUND" Secure="yes" />
+    <Upgrade Id="$(var.UpgradeCode)">
+      <UpgradeVersion Minimum="$(var.ProductVersion)"
+                  IncludeMinimum="no"
+                  OnlyDetect="yes"
+                  Property="NEWPRODUCTFOUND" />
       <UpgradeVersion
-         Minimum="1.0.0.0" Maximum="$(var.PackageVersion)"
+         Minimum="$(var.RTMProductVersion)" Maximum="$(var.ProductVersion)"
          Property="PREVIOUSVERSIONSINSTALLED"
          IncludeMinimum="yes" IncludeMaximum="no" />
     </Upgrade>
