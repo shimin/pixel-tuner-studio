@@ -38,6 +38,8 @@
       <Directory Id="ProgramFilesFolder">
         <Directory Id="INSTALLLOCATION" Name="PixelTuner 2">
           <Component Id="PixelTuner.com" Guid="5dede663-8553-41b8-810c-679d0cf6749a">
+            <File Id="AutoUpdaterLib" Source="..\PixelTuner\bin\$(var.Configuration)\AutoUpdater.dll" />
+            <File Id="AutoUpdaterCfg" Source="..\PixelTuner\bin\$(var.Configuration)\Autoupdater.config" />
             <File Id="CoreLib" Source="..\PixelTuner\bin\$(var.Configuration)\Core.dll" />
             <File Id="AppearanceLib" Source="..\PixelTuner\bin\$(var.Configuration)\Appearance.dll" />
             <File Id="WorkspaceLib" Source="..\PixelTuner\bin\$(var.Configuration)\Workspace.dll" />

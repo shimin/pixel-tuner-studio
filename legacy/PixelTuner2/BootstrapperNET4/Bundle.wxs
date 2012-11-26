@@ -6,7 +6,7 @@
       IconSourceFile="PixelTuner.ico"
       AboutUrl="http://shiningpromo.ru/pixel_poi/"
       UpdateUrl="http://shiningpromo.ru/pixel_poi/downloads/"
-      UpgradeCode="01986B34-AF3E-47CC-A24A-3D3989775451"
+      UpgradeCode="{df1086f7-6803-4697-b66c-74dd2733c092}"
       Compressed="no">
     <BootstrapperApplicationRef Id="ManagedBootstrapperApplicationHost">
       <Payload Name='BootstrapperCore.config' SourceFile='./WixBA/bin/Debug/WixBA.BootstrapperCore.config' />
@@ -20,7 +20,6 @@
       <PackageGroupRef Id="PixelTunerInstaller"/>
     </Chain>
   </Bundle>
-  
   <Fragment>
     <PackageGroup Id="DriverInstaller">
       <ExePackage
