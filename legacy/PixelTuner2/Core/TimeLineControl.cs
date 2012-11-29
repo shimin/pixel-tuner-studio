@@ -738,6 +738,7 @@ namespace Core
             /*adder.PreviewMouseLeftButtonDown += item_PreviewEditButtonDown;
             adder.MouseMove += item_MouseMove;
             adder.PreviewMouseLeftButtonUp += item_PreviewEditButtonUp;*/
+            adder.PreviewMouseLeftButtonDown += item_PreviewEditButtonDown;
             adder.PreviewMouseRightButtonDown += item_PreviewEditButtonDown;
             adder.MouseMove += item_MouseMove;
             adder.PreviewMouseRightButtonUp += item_PreviewEditButtonUp;
@@ -1546,7 +1547,6 @@ namespace Core
 
         #endregion
 
-
         #region edit events etc
         private Double _curX = 0;
         private TimeLineAction _action;
@@ -1561,10 +1561,12 @@ namespace Core
             var ctrl = sender as TimeLineItemControl;
 
             _action = ctrl.GetClickAction();
-            (sender as TimeLineItemControl).CaptureMouse();
+            if (_action == TimeLineAction.StretchEnd || 
+                _action == TimeLineAction.StretchStart)
+            {
+                (sender as TimeLineItemControl).CaptureMouse();
+            }
         }
-
-
 
         #region key down and up
         Boolean _rightCtrlDown = false;
@@ -1591,7 +1593,6 @@ namespace Core
 
         internal void HandleItemManipulation(TimeLineItemControl ctrl, TimeLineItemChangedEventArgs e)
         {
-
             Boolean doStretch = false;
             TimeSpan deltaT = e.DeltaTime;
             TimeSpan zeroT = new TimeSpan();
@@ -1682,11 +1683,29 @@ namespace Core
                                 useDeltaX = -gap;
                             if (Math.Abs(gap) < _bumpThreshold)
                             {//we are linked
-                                if (ctrl.CanDelta(0, useDeltaX) && previous.CanDelta(1, useDeltaX))
+                                Boolean previousBackToStart = false;
+                                List<TimeLineItemControl> previousChain = GetTimeLineBackwardsChain(ctrl, previousIndex, ref previousBackToStart, ref gap);
+                                if (-gap > useDeltaX)
                                 {
-                                    ctrl.MoveStartTime(useDeltaX);
-                                    previous.MoveEndTime(useDeltaX);
+                                    useDeltaX = gap;
                                 }
+                                if (!previousBackToStart)
+                                {
+                                    foreach (var ti in previousChain)
+                                    {
+                                        if (ti == ctrl && ctrl.CanDelta(0, useDeltaX) && previous.CanDelta(1, useDeltaX))
+                                        {
+                                            ctrl.MoveStartTime(useDeltaX);
+                                        }
+                                        else
+                                        {
+                                            ti.MoveMe(useDeltaX);
+                                        }
+                                    }
+                                }
+                                var first = previousChain[0];//previousChain[previousChain.Count - 1];
+                                var last = previousChain[previousChain.Count - 1];
+                                BringChainIntoView(last, first, direction);
                             }
                             else if (ctrl.CanDelta(0, useDeltaX))
                             {
@@ -1761,11 +1780,24 @@ namespace Core
                                 useDeltaX = -gap;
                             if (gap < _bumpThreshold)
                             {//we are linked
-                                if (ctrl.CanDelta(1, useDeltaX) && after.CanDelta(0, useDeltaX))
+                                List<TimeLineItemControl> afterChain = GetTimeLineForwardChain(ctrl, afterIndex, ref gap);
+                                if (gap < useDeltaX)
+                                    useDeltaX = gap;
+                                foreach (var ti in afterChain)
                                 {
-                                    ctrl.MoveEndTime(useDeltaX);
-                                    after.MoveStartTime(useDeltaX);
+                                    if (ti == ctrl && ctrl.CanDelta(1, useDeltaX) && after.CanDelta(0, useDeltaX))
+                                    {
+                                        ctrl.MoveEndTime(useDeltaX);
+                                    }
+                                    else
+                                    {
+                                        ti.MoveMe(useDeltaX);
+                                    }
                                 }
+                                //find the size of our chain so we bring it into view
+                                var first = afterChain[0];
+                                var last = afterChain[afterChain.Count - 1];
+                                BringChainIntoView(first, last, direction);
                             }
                             else if (ctrl.CanDelta(0, useDeltaX))
                             {
@@ -1848,22 +1880,22 @@ namespace Core
             if (ctrl == null)
                 return;
 
-            if (Mouse.LeftButton == MouseButtonState.Pressed)
-            {
-                if (ctrl.IsExpanded)
-                    return;
-                var position = Mouse.GetPosition(null);
-                if (Math.Abs(position.X - _dragStartPosition.X) > SystemParameters.MinimumHorizontalDragDistance ||
-                    Math.Abs(position.Y - _dragStartPosition.Y) > SystemParameters.MinimumVerticalDragDistance)
-                {
-                    System.Windows.DragDrop.DoDragDrop(this, ctrl, DragDropEffects.Move | DragDropEffects.Scroll);
-                    _dragging = true;
+            //if (Mouse.LeftButton == MouseButtonState.Pressed)
+            //{
+            //    if (ctrl.IsExpanded)
+            //        return;
+            //    var position = Mouse.GetPosition(null);
+            //    if (Math.Abs(position.X - _dragStartPosition.X) > SystemParameters.MinimumHorizontalDragDistance ||
+            //        Math.Abs(position.Y - _dragStartPosition.Y) > SystemParameters.MinimumVerticalDragDistance)
+            //    {
+            //        System.Windows.DragDrop.DoDragDrop(this, ctrl, DragDropEffects.Move | DragDropEffects.Scroll);
+            //        _dragging = true;
 
 
-                }
+            //    }
 
-                return;
-            }
+            //    return;
+            //}
             #endregion
 
 
@@ -1891,7 +1923,7 @@ namespace Core
 
             //When we pressed, this lost focus and we therefore didn't capture any changes to the key status
             //so we check it again after our manipulation finishes.  That way we can be linked and go out of or back into it while dragging
-            ManipulationMode = TimeLineManipulationMode.Free;
+            ManipulationMode = TimeLineManipulationMode.Linked;
             _leftCtrlDown = Keyboard.IsKeyDown(Key.LeftCtrl);
             _rightCtrlDown = Keyboard.IsKeyDown(Key.RightCtrl);
             if (_leftCtrlDown || _rightCtrlDown)

@@ -256,13 +256,13 @@
                     <!--<TextBlock Text="{Binding Path=Duration}" /> -->
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{StaticResource Item_Stretching}" Margin="0,2,4,0"/>
-                        <local:TriangleSlider Height="12" 
+                        <!--<local:TriangleSlider Height="12" 
                                               Width="48"
                                               MinValue="4" 
                                               MaxValue="32" 
                                               Margin="0,2,4,0"
-                                              Value="{Binding Path=Parent.DataContext.Stretching, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <!--<Slider Height="12" Minimum="1" Maximum="10" Width="32" Value="{Binding Path=Stretching}"/>-->
+                                              Value="{Binding Path=Parent.DataContext.Stretching, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />-->
+                        <Slider Height="12" Minimum="4" Maximum="32" Width="44" Value="{Binding Path=Parent.DataContext.Stretching, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
                 </StackPanel>
             </Border>

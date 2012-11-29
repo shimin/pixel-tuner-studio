@@ -90,7 +90,7 @@ namespace PixelTuner.ListViewStyle
             }
         }
 
-        int _stretching = 5;
+        int _stretching = 24;
         public int Stretching
         {
             get { return _stretching; }
