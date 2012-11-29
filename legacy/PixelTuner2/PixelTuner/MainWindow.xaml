@@ -22,7 +22,12 @@
                B="255"
                A="180"
                x:Key="BgColor" />
-            <SolidColorBrush Color="{StaticResource BgColor}" x:Key="BgBrush" />
+        <Color R="240"
+               G="240"
+               B="240"
+               A="220"
+               x:Key="SelectedBgColor" />
+        <SolidColorBrush Color="{StaticResource BgColor}" x:Key="BgBrush" />
         <SolidColorBrush Color="#ffffff" x:Key="TextBrush" />
         <BooleanToVisibilityConverter x:Key="OldschoolVisibilityConverter" />
         <Style TargetType="{x:Type tt:TimeLineItemControl}">
@@ -262,7 +267,9 @@
                                               MaxValue="32" 
                                               Margin="0,2,4,0"
                                               Value="{Binding Path=Parent.DataContext.Stretching, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />-->
-                        <Slider Height="12" Minimum="4" Maximum="32" Width="44" Value="{Binding Path=Parent.DataContext.Stretching, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Slider Height="12" Minimum="4" Maximum="32" Width="44" 
+                                Margin="0,-2,0,-2"
+                                Value="{Binding Path=Parent.DataContext.Stretching, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
                 </StackPanel>
             </Border>

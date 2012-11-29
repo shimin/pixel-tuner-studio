@@ -138,6 +138,36 @@ namespace Core
 
 		#endregion
 
+        #region NormalBackground
+
+        //Brush _normalBackground = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+        public Brush NormalBackground
+        {
+            get { return (Brush)GetValue(NormalBackgroundProperty); }
+            set { SetValue(NormalBackgroundProperty, value); }
+        }
+
+        public static readonly DependencyProperty NormalBackgroundProperty =
+            DependencyProperty.Register("NormalBackground", typeof(Brush), typeof(TimeLineItemControl), 
+            new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(0, 0, 0, 0))));
+
+        #endregion
+
+        #region SelectedBackground
+
+        //Brush _selectedBackground = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+        public Brush SelectedBackground
+        {
+            get { return (Brush)GetValue(SelectedBackgroundProperty); }
+            set { SetValue(SelectedBackgroundProperty, value); }
+        }
+
+        public static readonly DependencyProperty SelectedBackgroundProperty =
+            DependencyProperty.Register("SelectedBackground", typeof(Brush), typeof(TimeLineItemControl), 
+            new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(0, 0, 0, 0))));
+
+        #endregion
+
         public Double EditBorderThreshold
         {
             get { return (Double)GetValue(EditBorderThresholdProperty); }
