@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 using System.Xml.Serialization;
 using PixelTuner.Serialization;
 using Core;
+using System.Windows.Media.Imaging;
 
 namespace PixelTuner.ListViewStyle
 {
@@ -73,6 +74,29 @@ namespace PixelTuner.ListViewStyle
                     _endTime.Value.Minute.ToString("D2"), _endTime.Value.Second.ToString("D2"),
                     _endTime.Value.Millisecond.ToString("D3")) 
                     : "";
+            }
+        }
+
+        public object ImageSource
+        {
+            get
+            {
+                BitmapImage image = new BitmapImage();
+
+                try
+                {
+                    image.BeginInit();
+                    image.CacheOption = BitmapCacheOption.OnLoad;
+                    image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                    image.UriSource = new Uri(FullName, UriKind.Absolute);
+                    image.EndInit();
+                }
+                catch
+                {
+                    return DependencyProperty.UnsetValue;
+                }
+
+                return image;
             }
         }
 

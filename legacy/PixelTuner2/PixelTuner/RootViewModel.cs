@@ -25,6 +25,8 @@ namespace PixelTuner
             this.ActiveDocumentChanged +=new DocumentChangedEventHandler(Workspace_ActiveDocumentChanged);
         }
 
+        int _lastUsedLineHeight = 0;
+
         void Workspace_ActiveDocumentChanged(object sender, DocumentChangedEventArgs e)
         {
             if (_activeDocument == null) RefreshImagesCollection();
@@ -39,9 +41,12 @@ namespace PixelTuner
 
         void NewDocument_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "LineHeight") 
+            if (e.PropertyName == "LineHeight")
                 if (sender is FileViewModel)
-                    RefreshImagesCollection((sender as FileViewModel).LineHeight);
+                {
+                    _lastUsedLineHeight = (sender as FileViewModel).LineHeight;
+                    RefreshImagesCollection(_lastUsedLineHeight);                    
+                }
         }
 
         XmlSerializer _projectSerializer = new XmlSerializer(typeof(FileViewModel), FileViewModel.ExtraTypes.ToArray());
@@ -236,6 +241,7 @@ namespace PixelTuner
         private void OnOpen(object parameter)
         {
             Open((string)parameter);
+            RemoveBrokenReferences();
         }
 
         #endregion 
@@ -525,7 +531,7 @@ namespace PixelTuner
             }
         }
 
-        private void RefreshImagesCollection(int height = 0)
+        private void RefreshImagesCollection(int height = 0, string itemToRemove = "")
         {
             string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content");
             if (!Directory.Exists(sourcePath))
@@ -536,6 +542,7 @@ namespace PixelTuner
             List<FileSystemInfo> allfiles = new List<FileSystemInfo>( info.GetFileSystemInfos("*.png") );
             allfiles.AddRange(info.GetFileSystemInfos("*.jpg"));
             allfiles.AddRange(info.GetFileSystemInfos("*.bmp"));
+
             if (height > 0)
             {
                 List<FileSystemInfo> suitableFiles = new List<FileSystemInfo>();
@@ -548,12 +555,129 @@ namespace PixelTuner
                 allfiles = suitableFiles;
             }
             _images.Clear();
+
+            FileSystemInfo ftr = null;
+            foreach (var f in allfiles)
+                if (f.FullName == itemToRemove)
+                {
+                    ftr = f; break;
+                }
+
+            if (ftr != null)
+            {
+                allfiles.Remove(ftr);
+                ftr.Delete();
+            }
+
             foreach (FileInfo fi in allfiles)
             {
                 // exlude hidden files 
                 ThumbnailFileItem tfi = new ThumbnailFileItem(fi);
                 if ((fi.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
                     _images.Add(tfi);
+            }
+        }
+
+        internal void boxThumbnails_DragOver(object sender, DragEventArgs e)
+        {
+            //Console.WriteLine("DragOver");
+        }
+
+        internal void boxThumbnails_DragEnter(object sender, DragEventArgs e)
+        {
+            //Console.WriteLine("DragEnter");
+        }
+
+        internal void boxThumbnails_Drop(object sender, DragEventArgs e)
+        {
+            //Console.WriteLine("Dropped");
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] droppedFilePaths = e.Data.GetData(DataFormats.FileDrop, true) as string[];
+                StringBuilder sb = new StringBuilder();
+                string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content");
+                foreach (var p in droppedFilePaths)
+                {
+                    try
+                    {
+                        System.Drawing.Image img = System.Drawing.Image.FromFile(p);
+                        if (img.Height > 100 && img.Width > 1200)
+                        {
+                            sb.AppendLine(String.Format("Wrong image format. File: {0}", p));
+                            continue;
+                        }
+                        string destFileName = "";
+                        var shortName = Path.GetFileName(p);
+                        var testFileName = destFileName = Path.Combine(sourcePath, shortName);
+
+                        int idx = 0;
+                        while (File.Exists(testFileName))
+                        {
+                            idx++;
+                            testFileName = Path.Combine(sourcePath, Path.GetFileNameWithoutExtension(destFileName) + 
+                                "_" + idx.ToString() + Path.GetExtension(destFileName));
+                        }
+                        File.Copy(p, testFileName);
+                    }
+                    catch
+                    {
+                        sb.AppendLine(String.Format("Error copying image. File: {0}", p));
+                    }
+                }
+                RefreshImagesCollection(_lastUsedLineHeight);
+                if (sender is UIElement) (sender as UIElement).Focus();
+            }
+        }
+
+        internal void boxThumbnails_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete)
+            {
+                var control = sender as System.Windows.Controls.ListView;
+                if (control != null)
+                {
+                    var itemToRemove = control.SelectedItem as ThumbnailFileItem;
+                    if (itemToRemove != null)
+                    {
+                        try
+                        {
+                            if (
+                            MessageBox.Show(
+                                String.Format(
+                                    (String)Application.Current.TryFindResource("Global_ReallyRemove"),
+                                    itemToRemove.FullName),
+                                Application.Current.MainWindow.Title,
+                                MessageBoxButton.YesNo,
+                                MessageBoxImage.Question) == MessageBoxResult.Yes)
+                            {
+                                RefreshImagesCollection(_lastUsedLineHeight, itemToRemove.FullName);
+                                RemoveBrokenReferences();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void RemoveBrokenReferences()
+        {
+            foreach (var fileView in _files)
+            {
+                foreach (var timeline in fileView.TimeLines)
+                {
+                    List<ThumbnailFileItem> toRemove = new List<ThumbnailFileItem>();
+                    foreach (var item in timeline.Items)
+                    {
+                        if (!File.Exists((item as ThumbnailFileItem).FullName))
+                            toRemove.Add(item as ThumbnailFileItem);
+                    }
+                    foreach (var item in toRemove)
+                        timeline.Items.Remove(item);
+                }
             }
         }
     }

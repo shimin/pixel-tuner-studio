@@ -251,14 +251,10 @@
                     </Grid>
                     <Border Height="44" MinWidth="200">
                         <Border.Background>
-                            <ImageBrush ImageSource="{Binding FullName}"
-                                        AlignmentX="Left"
-                                        Stretch="Uniform" 
-                                        TileMode="Tile"/>
+                            <ImageBrush ImageSource="{Binding ImageSource}" Stretch="Uniform" AlignmentX="Left" />
                         </Border.Background>
                     </Border>
                     <TextBlock Text="{Binding Path=End}" />
-                    <!--<TextBlock Text="{Binding Path=Duration}" /> -->
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{StaticResource Item_Stretching}" Margin="0,2,4,0"/>
                         <!--<local:TriangleSlider Height="12" 
@@ -591,8 +587,13 @@
                                 <avalonDock:LayoutAnchorable x:Name="boxImagesWindow" Title="{StaticResource Menu_Window_Images}">
                                         <ListView x:Name="boxThumbnails" 
                                                   SelectionMode="Extended" 
+                                                  AllowDrop="True"
+                                                  KeyDown="boxThumbnails_KeyDown"
+                                                  Drop="boxThumbnails_Drop"
+                                                  DragEnter="boxThumbnails_DragEnter"
+                                                  DragOver="boxThumbnails_DragOver"
                                                   dd:DragDropHelper.IsDragSource="True" 
-                                                  ItemsSource="{Binding ImagesCollection}">
+                                                  ItemsSource="{Binding ImagesCollection, Mode=OneWay}">
                                                 <ListView.View>
                                                     <l:ImageView />
                                                 </ListView.View>

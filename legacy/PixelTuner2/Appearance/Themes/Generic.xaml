@@ -30,7 +30,12 @@
             <Setter.Value>
                 <DataTemplate>
                     <Border Background="White">
-                        <Image Height="60" Margin="3" Source="{Binding FullName}"/>
+                        <Image Height="60" Margin="3">
+                            <Image.Source>
+                                <BitmapImage UriSource="{Binding FullName}" CacheOption="OnLoad" />
+                            </Image.Source>
+                        </Image>
+                        <!--<Image Height="60" Margin="3" Source="{Binding FullName}"/>-->
                     </Border>
                 </DataTemplate>
             </Setter.Value>

@@ -129,5 +129,37 @@ namespace PixelTuner
         {
             this.Focus();   // без явной установки фокуса не работают горячие клавиши
         }
+
+        private void boxThumbnails_DragOver(object sender, DragEventArgs e)
+        {
+            if (this.DataContext as RootViewModel != null)
+            {
+                (this.DataContext as RootViewModel).boxThumbnails_DragOver(sender, e);
+            }
+        }
+
+        private void boxThumbnails_DragEnter(object sender, DragEventArgs e)
+        {
+            if (this.DataContext as RootViewModel != null)
+            {
+                (this.DataContext as RootViewModel).boxThumbnails_DragEnter(sender, e);
+            }
+        }
+
+        private void boxThumbnails_Drop(object sender, DragEventArgs e)
+        {
+            if (this.DataContext as RootViewModel != null)
+            {
+                (this.DataContext as RootViewModel).boxThumbnails_Drop(sender, e);
+            }
+        }
+
+        private void boxThumbnails_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (this.DataContext as RootViewModel != null)
+            {
+                (this.DataContext as RootViewModel).boxThumbnails_KeyDown(sender, e);
+            }
+        }
     }
 }

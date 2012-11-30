@@ -113,18 +113,24 @@ namespace Workspace.Controls
                 var parentAnchorable = focusedElement.FindVisualAncestor<LayoutAnchorableControl>();
                 if (parentAnchorable != null)
                 {
-                    if (_modelFocusedWindowHandle.ContainsKey(parentAnchorable.Model))
-                        _modelFocusedWindowHandle.Remove(parentAnchorable.Model);
-                    _modelFocusedElement[parentAnchorable.Model] = e.NewFocus;
+                    if (parentAnchorable.Model != null)
+                    {
+                        if (_modelFocusedWindowHandle.ContainsKey(parentAnchorable.Model))
+                            _modelFocusedWindowHandle.Remove(parentAnchorable.Model);
+                        _modelFocusedElement[parentAnchorable.Model] = e.NewFocus;
+                    }
                 }
                 else
                 {
                     var parentDocument = focusedElement.FindVisualAncestor<LayoutDocumentControl>();
                     if (parentDocument != null)
                     {
-                        if (_modelFocusedWindowHandle.ContainsKey(parentDocument.Model))
-                            _modelFocusedWindowHandle.Remove(parentDocument.Model);
-                        _modelFocusedElement[parentDocument.Model] = e.NewFocus;
+                        if (parentDocument.Model != null)
+                        {
+                            if (_modelFocusedWindowHandle.ContainsKey(parentDocument.Model))
+                                _modelFocusedWindowHandle.Remove(parentDocument.Model);
+                            _modelFocusedElement[parentDocument.Model] = e.NewFocus;
+                        }
                     }
                 }
             }
