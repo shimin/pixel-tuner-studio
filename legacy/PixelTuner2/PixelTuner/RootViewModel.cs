@@ -19,9 +19,7 @@ namespace PixelTuner
     {
         public RootViewModel()
         {
-            RefreshImagesCollection();
             this.Id = Guid.NewGuid();
-            //_files.Add(new FileViewModel("qwe.t"));
             this.ActiveDocumentChanged +=new DocumentChangedEventHandler(Workspace_ActiveDocumentChanged);
         }
 
@@ -29,10 +27,10 @@ namespace PixelTuner
 
         void Workspace_ActiveDocumentChanged(object sender, DocumentChangedEventArgs e)
         {
-            if (_activeDocument == null) RefreshImagesCollection();
+            if (_activeDocument == null) ImagesModel.RefreshImagesCollection();
             else
             {
-                RefreshImagesCollection(_activeDocument.LineHeight);
+                ImagesModel.RefreshImagesCollection(_activeDocument.LineHeight);
                 e.NewDocument.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(NewDocument_PropertyChanged);
                 if (e.OldDocument != null)
                     e.OldDocument.PropertyChanged -= NewDocument_PropertyChanged;
@@ -45,7 +43,7 @@ namespace PixelTuner
                 if (sender is FileViewModel)
                 {
                     _lastUsedLineHeight = (sender as FileViewModel).LineHeight;
-                    RefreshImagesCollection(_lastUsedLineHeight);                    
+                    ImagesModel.RefreshImagesCollection(_lastUsedLineHeight);                    
                 }
         }
 
@@ -79,20 +77,10 @@ namespace PixelTuner
             get
             {
                 if (_tools == null)
-                    _tools = new ToolViewModel[] { FileStats, DevicesModel, ProjectsModel };
+                    _tools = new ToolViewModel[] { //FileStats,
+                        DevicesModel, ProjectsModel, ImagesModel
+                    };
                 return _tools;
-            }
-        }
-
-        FileStatsViewModel _fileStats = null;
-        public FileStatsViewModel FileStats
-        {
-            get
-            {
-                if (_fileStats == null)
-                    _fileStats = new FileStatsViewModel();
-
-                return _fileStats;
             }
         }
 
@@ -125,6 +113,21 @@ namespace PixelTuner
             }
         }
 
+        ImagesViewModel _imagesModel = null;
+        public ImagesViewModel ImagesModel
+        {
+            get
+            {
+                if (_imagesModel == null)
+                {
+                    _imagesModel = new ImagesViewModel(
+                        (String)Application.Current.TryFindResource("Menu_Window_Images"));
+                }
+
+                return _imagesModel;
+            }
+        }
+
         private Visibility _updatesAvailable = Visibility.Collapsed;
         public Visibility UpdatesAvailable
         {
@@ -139,6 +142,13 @@ namespace PixelTuner
                 System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
                 return assembly.GetName().Version.ToString();
             }
+        }
+
+        private Guid _id = Guid.Empty;
+        public Guid Id
+        {
+            get { return _id; }
+            set { _id = value; }
         }
 
         #region UpdateCommand
@@ -274,14 +284,6 @@ namespace PixelTuner
             ActiveDocument = _files.Last();
         }
 
-        private Guid _id = Guid.Empty;
-
-        public Guid Id
-        {
-            get { return _id; }
-            set { _id = value; }
-        }
-
         #endregion 
 
         #region ActiveDocument
@@ -407,6 +409,46 @@ namespace PixelTuner
 
         #endregion 
 
+        #region AdjustDefaultsCommand
+        RelayCommand _adjustDefaultsCommand = null;
+        public ICommand AdjustDefaultsCommand
+        {
+            get
+            {
+                if (_adjustDefaultsCommand == null)
+                {
+                    _adjustDefaultsCommand = new RelayCommand((p) => OnAdjustDefaults(p), (p) => CanAdjustDefaults(p));
+                }
+
+                return _adjustDefaultsCommand;
+            }
+        }
+
+        private bool CanAdjustDefaults(object parameter)
+        {
+            return true;
+        }
+
+        private void OnAdjustDefaults(object parameter)
+        {
+            DefaultsWindow dw = new DefaultsWindow();
+            dw.Owner = Application.Current.MainWindow;
+            dw.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            dw.ShowDialog();
+            if (_activeDocument == null) ImagesModel.RefreshImagesCollection();
+            else { ImagesModel.RefreshImagesCollection(_activeDocument.LineHeight); }
+
+            foreach (var f in Files)
+            {
+                foreach (var t in f.TimeLines)
+                {
+                    t.DefaultTimeInterval = Settings.Default.DefaultDuration;
+                }
+            }
+        }
+
+        #endregion 
+
         internal void Close(FileViewModel fileToClose)
         {
             if (fileToClose.IsDirty)
@@ -518,66 +560,6 @@ namespace PixelTuner
                 WriteException(sb, ex.InnerException);
         }
 
-        ObservableCollection<ThumbnailFileItem> _images = new ObservableCollection<ThumbnailFileItem>();
-        ReadOnlyObservableCollection<ThumbnailFileItem> _readonyImagesCollection = null;
-        public ReadOnlyObservableCollection<ThumbnailFileItem> ImagesCollection
-        {
-            get
-            {
-                if (_readonyImagesCollection == null)
-                    _readonyImagesCollection = new ReadOnlyObservableCollection<ThumbnailFileItem>(_images);
-
-                return _readonyImagesCollection;
-            }
-        }
-
-        private void RefreshImagesCollection(int height = 0, string itemToRemove = "")
-        {
-            string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content");
-            if (!Directory.Exists(sourcePath))
-            {
-                Directory.CreateDirectory(sourcePath);
-            }
-            DirectoryInfo info = new DirectoryInfo(sourcePath);
-            List<FileSystemInfo> allfiles = new List<FileSystemInfo>( info.GetFileSystemInfos("*.png") );
-            allfiles.AddRange(info.GetFileSystemInfos("*.jpg"));
-            allfiles.AddRange(info.GetFileSystemInfos("*.bmp"));
-
-            if (height > 0)
-            {
-                List<FileSystemInfo> suitableFiles = new List<FileSystemInfo>();
-                foreach (var f in allfiles)
-                {
-                    System.Drawing.Image img = System.Drawing.Image.FromFile(f.FullName);
-                    if (img.Height == height)
-                        suitableFiles.Add(f);
-                }
-                allfiles = suitableFiles;
-            }
-            _images.Clear();
-
-            FileSystemInfo ftr = null;
-            foreach (var f in allfiles)
-                if (f.FullName == itemToRemove)
-                {
-                    ftr = f; break;
-                }
-
-            if (ftr != null)
-            {
-                allfiles.Remove(ftr);
-                ftr.Delete();
-            }
-
-            foreach (FileInfo fi in allfiles)
-            {
-                // exlude hidden files 
-                ThumbnailFileItem tfi = new ThumbnailFileItem(fi);
-                if ((fi.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
-                    _images.Add(tfi);
-            }
-        }
-
         internal void boxThumbnails_DragOver(object sender, DragEventArgs e)
         {
             //Console.WriteLine("DragOver");
@@ -624,7 +606,7 @@ namespace PixelTuner
                         sb.AppendLine(String.Format("Error copying image. File: {0}", p));
                     }
                 }
-                RefreshImagesCollection(_lastUsedLineHeight);
+                ImagesModel.RefreshImagesCollection(_lastUsedLineHeight);
                 if (sender is UIElement) (sender as UIElement).Focus();
             }
         }
@@ -650,7 +632,7 @@ namespace PixelTuner
                                 MessageBoxButton.YesNo,
                                 MessageBoxImage.Question) == MessageBoxResult.Yes)
                             {
-                                RefreshImagesCollection(_lastUsedLineHeight, itemToRemove.FullName);
+                                ImagesModel.RefreshImagesCollection(_lastUsedLineHeight, itemToRemove.FullName);
                                 RemoveBrokenReferences();
                             }
                         }

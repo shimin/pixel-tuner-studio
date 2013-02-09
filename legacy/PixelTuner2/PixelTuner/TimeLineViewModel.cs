@@ -61,7 +61,7 @@ namespace PixelTuner
         [XmlIgnore]
         public Double DefaultTimeInterval
         {
-            get { return _defaultLength; }
+            get { return _defaultLength = PixelTuner.Properties.Settings.Default.DefaultDuration; }
             set { _defaultLength = value; RaisePropertyChanged("DefaultTimeInterval"); }
         }
 

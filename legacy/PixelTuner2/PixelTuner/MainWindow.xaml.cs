@@ -161,5 +161,20 @@ namespace PixelTuner
                 (this.DataContext as RootViewModel).boxThumbnails_KeyDown(sender, e);
             }
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            //Uri uri = new Uri("pack://application:,,,/Images/paint_bucket+.png", UriKind.Absolute);
+            //System.Windows.Resources.StreamResourceInfo info = System.Windows.Application.GetResourceStream(uri);
+
+
+            var c = new PixelTuner.Drawing.ConfigurationItem();
+            c.PointSize = 6;
+            c.PatternLines = Settings.Default.LineHeight;
+            PictureEditor pe = new PictureEditor(c);
+            pe.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
+            pe.Owner = Application.Current.MainWindow;
+            pe.ShowDialog();
+        }
     }
 }

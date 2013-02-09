@@ -158,6 +158,15 @@ namespace Core
         Boolean _unitSizeInitialized = false;
         Boolean _startDateInitialized = false;
 
+        TimeLineItemControl _selectedItem = null;
+        /// <summary>
+        /// Выбранный элемент
+        /// </summary>
+        public TimeLineItemControl SelectedItem
+        {
+            get { return _selectedItem; }
+            set { _selectedItem = value; }
+        }
 
         #region dependency properties
 
@@ -493,6 +502,29 @@ namespace Core
         }
         #endregion
 
+        #region DefaultStretching
+        public Double DefaultStretching
+        {
+            get { return (Double)GetValue(DefaultStretchingProperty); }
+            set { SetValue(DefaultStretchingProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for UnitSize.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty DefaultStretchingProperty =
+            DependencyProperty.Register("DefaultStretching", typeof(Double), typeof(TimeLineControl),
+            new UIPropertyMetadata(5.0,
+                    new PropertyChangedCallback(OnDefaultStretchingChanged)));
+
+        private static void OnDefaultStretchingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            TimeLineItemControl ctrl = d as TimeLineItemControl;
+            if (ctrl != null)
+            {
+                ctrl.PlaceOnCanvas();
+            }
+        }
+        #endregion
+
         #region unitsize
 
 
@@ -717,6 +749,10 @@ namespace Core
             endBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
             DateTime timelineStart = StartDate;
 
+            Binding colorBinding = new Binding("NormalBackground");
+            colorBinding.Mode = BindingMode.TwoWay;
+            colorBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+
             Binding expandedBinding = new Binding("TimelineViewExpanded");
             expandedBinding.Mode = BindingMode.TwoWay;
             endBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
@@ -728,6 +764,7 @@ namespace Core
 
             adder.SetBinding(TimeLineItemControl.StartTimeProperty, startBinding);
             adder.SetBinding(TimeLineItemControl.EndTimeProperty, endBinding);
+            adder.SetBinding(TimeLineItemControl.NormalBackgroundProperty, colorBinding);
             adder.SetBinding(TimeLineItemControl.IsExpandedProperty, expandedBinding);
 
             if (_template != null)
@@ -1559,6 +1596,7 @@ namespace Core
         void item_PreviewEditButtonDown(object sender, MouseButtonEventArgs e)
         {
             var ctrl = sender as TimeLineItemControl;
+            //ctrl.NormalBackground = new SolidColorBrush(Color.FromRgb(0, 160, 0));
 
             _action = ctrl.GetClickAction();
             if (_action == TimeLineAction.StretchEnd || 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 
-  <?define ProductVersion="2.0.2.1" ?>
+  <?define ProductVersion="2.0.2.4" ?>
   <?define RTMProductVersion="1.0.0" ?>
   <?define UpgradeCode="{df1086f7-6803-4697-b66c-74dd2733c092}"?>
   <?define Manufacturer="shiningpromo.ru"?>
@@ -65,6 +65,19 @@
               <File Id="_25_stars_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_stars.jpg" />
               <File Id="_25_stripes_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_stripes.jpg" />
               <File Id="_25_triangle_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_triangle.jpg" />
+
+              <File Id="_25_cards_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_cards.bmp" />
+              <File Id="_25_red_arrows_right_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_red_arrows_right.bmp" />
+              <File Id="_40_audio_levels_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\40_audio_levels.bmp" />
+              <File Id="_40_hearts_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\40_hearts.bmp" />
+              <File Id="_40_new_year_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\40_new_year.bmp" />
+              <File Id="_40_steps2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\40_steps2.bmp" />
+              
+              <File Id="_50_2waves_png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_2waves.png" />
+              <File Id="_50_rainbow_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_rainbow.bmp" />
+              <File Id="_50_stork2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_stork2.bmp" />
+              <File Id="_50_stork3_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_stork3.bmp" />
+              
 
               <File Id="_50_AudioLevels.png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_AudioLevels.png" />
               <File Id="_50_cards.png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_cards.png" />

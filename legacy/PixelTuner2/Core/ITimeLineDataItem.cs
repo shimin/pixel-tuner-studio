@@ -11,6 +11,7 @@ namespace Core
 		DateTime? StartTime { get; set; }
 		DateTime? EndTime { get; set; }
         Boolean TimelineViewExpanded { get; set; }
+        System.Windows.Media.Brush NormalBackground { get; set; }
         System.ComponentModel.INotifyPropertyChanged Parent { get; set; }
 	}
 }

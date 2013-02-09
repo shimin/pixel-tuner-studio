@@ -17,6 +17,7 @@
     <WarningLevel>4</WarningLevel>
     <UICulture>ru-RU</UICulture>
     <UICulture>en-US</UICulture>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -29,7 +30,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -87,6 +87,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -95,9 +96,11 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="UIAutomationProvider" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -107,14 +110,34 @@
     <Compile Include="ActiveDocumentConverter.cs" />
     <Compile Include="ActiveTimeLineConverter.cs" />
     <Compile Include="AuxClasses\SafeObservable.cs" />
+    <Compile Include="DefaultsWindow.xaml.cs">
+      <DependentUpon>DefaultsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DevicesViewModel.cs" />
     <Compile Include="DelegatedList.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FileStatsViewModel.cs" />
+    <Compile Include="Drawing\ConfigurationItemBase.cs" />
+    <Compile Include="Drawing\DrawControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Drawing\DrawControl.designer.cs">
+      <DependentUpon>DrawControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Drawing\ConfigurationItem.cs" />
+    <Compile Include="Drawing\TextDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Drawing\TextDialog.designer.cs">
+      <DependentUpon>TextDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ImagesViewModel.cs" />
     <Compile Include="MathConverter.cs" />
     <Compile Include="NumericUpDownControl.xaml.cs">
       <DependentUpon>NumericUpDownControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PictureEditor.xaml.cs">
+      <DependentUpon>PictureEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="ProjectsViewModel.cs" />
     <Compile Include="RelayCommand.cs" />
@@ -135,7 +158,15 @@
     </Compile>
     <Compile Include="ViewModelBase.cs" />
     <Compile Include="RootViewModel.cs" />
+    <Page Include="DefaultsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="NumericUpDownControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PictureEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -172,19 +203,13 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    <EmbeddedResource Include="Drawing\DrawControl.resx">
+      <DependentUpon>DrawControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="app.config">
@@ -265,6 +290,18 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\DrawingTool\bmp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\DrawingTool\copy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\DrawingTool\text.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\DrawingTool\paint_bucket.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -34,6 +34,12 @@ namespace PixelTuner
             set;
         }
 
+        public DataTemplate ImagesViewTemplate
+        {
+            get;
+            set;
+        }
+
         public DataTemplate FileStatsViewTemplate
         {
             get;
@@ -47,14 +53,17 @@ namespace PixelTuner
             if (item is FileViewModel)
                 return FileViewTemplate;
 
-            if (item is FileStatsViewModel)
-                return FileStatsViewTemplate;
+            //if (item is FileStatsViewModel)
+            //    return FileStatsViewTemplate;
 
             if (item is DevicesViewModel)
                 return DevicesViewTemplate;
 
             if (item is ProjectsViewModel)
                 return ProjectsViewTemplate;
+
+            if (item is ImagesViewModel)
+                return ImagesViewTemplate;
 
             return base.SelectTemplate(item, container);
         }

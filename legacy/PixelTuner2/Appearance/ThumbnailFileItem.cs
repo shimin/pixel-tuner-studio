@@ -19,6 +19,13 @@ namespace PixelTuner.ListViewStyle
     public class ThumbnailFileItem: FileSystemInfo, ITimeLineDataItemConvertable<TimeLineItem>, INotifyPropertyChanged
     {
         FileInfo _fi = null;
+
+        public static void SetDefaultStretching(int s)
+        {
+            Settings.Default.DefaultStretching = s;
+            Settings.Default.Save();
+        }
+
         public ThumbnailFileItem()
         {
         }
@@ -114,7 +121,7 @@ namespace PixelTuner.ListViewStyle
             }
         }
 
-        int _stretching = 24;
+        int _stretching = Settings.Default.DefaultStretching;
         public int Stretching
         {
             get { return _stretching; }
@@ -125,6 +132,15 @@ namespace PixelTuner.ListViewStyle
             }
         }
 
+
+        System.Windows.Media.Brush _backGround = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(160, 255,255,255));
+        [XmlIgnore]
+        public System.Windows.Media.Brush NormalBackground
+        {
+            get { return _backGround; }
+            set { _backGround = value; RaisePropertyChanged("NormalBackground"); }
+        }
+
         object ICloneable.Clone()
         {
             ThumbnailFileItem result = new ThumbnailFileItem(this._fi);
@@ -132,6 +148,7 @@ namespace PixelTuner.ListViewStyle
             result.EndTime = this.EndTime;
             result.TimelineViewExpanded = this.TimelineViewExpanded;
             result.Stretching = this.Stretching;
+            result.NormalBackground = this.NormalBackground;
             return result;
         }
 

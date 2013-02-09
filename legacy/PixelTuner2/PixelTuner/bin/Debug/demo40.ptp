@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FileViewModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" FilePath="demo40.ptp" UnitSize="10" LineHeight="40">
+  <Line>
+    <Item Start="00:00:00.000" End="00:00:34.273" TimelineViewExpanded="false" FullName="D:\Programming\pl5\PixelTuner\bin\Debug\Content\40_new_year.bmp" Stretching="22" />
+  </Line>
+  <Line>
+    <Item Start="00:00:00.000" End="00:00:18.274" TimelineViewExpanded="false" FullName="D:\Programming\pl5\PixelTuner\bin\Debug\Content\40_hearts.bmp" Stretching="22" />
+  </Line>
+  <Line>
+    <Item Start="00:00:00.000" End="00:00:20.963" TimelineViewExpanded="false" FullName="D:\Programming\pl5\PixelTuner\bin\Debug\Content\40_steps2.bmp" Stretching="22" />
+  </Line>
+</FileViewModel>

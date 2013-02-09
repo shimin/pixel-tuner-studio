@@ -206,14 +206,6 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        <DataTemplate  DataType="{x:Type l:ThumbnailFileItem}">
-            <Border BorderThickness="1"
-                    BorderBrush="Blue"
-                    CornerRadius="3"
-                    Height="30">
-                <TextBlock Text="{Binding Path=Name}" />
-            </Border>
-        </DataTemplate>
         <DataTemplate  DataType="{x:Type l:ThumbnailFileItem}"
                        x:Key="ItemTemplateProperty">
             <Border BorderThickness="1"
@@ -221,13 +213,12 @@
                     CornerRadius="3"
                     Margin="0,10,0,10"
                     Height="96"
-                    Background="{StaticResource BgBrush}">
+                    Background="{Binding NormalBackground}">
                 <Border.Triggers>
                     <EventTrigger RoutedEvent="SizeChanged">
                     </EventTrigger>
                 </Border.Triggers>
                 <StackPanel Orientation="Vertical">
-                    <!--<TextBlock Text="{Binding Path=Name}" /> -->
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -257,15 +248,15 @@
                     <TextBlock Text="{Binding Path=End}" />
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{StaticResource Item_Stretching}" Margin="0,2,4,0"/>
-                        <!--<local:TriangleSlider Height="12" 
+                        <local:TriangleSlider Height="12" 
                                               Width="48"
                                               MinValue="4" 
-                                              MaxValue="32" 
+                                              MaxValue="46" 
                                               Margin="0,2,4,0"
-                                              Value="{Binding Path=Parent.DataContext.Stretching, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />-->
-                        <Slider Height="12" Minimum="4" Maximum="32" Width="44" 
+                                              Value="{Binding Path=Parent.DataContext.Stretching, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <!--<Slider Height="12" Minimum="4" Maximum="32" Width="44" 
                                 Margin="0,-2,0,-2"
-                                Value="{Binding Path=Parent.DataContext.Stretching, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                Value="{Binding Path=Parent.DataContext.Stretching, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>-->
                     </StackPanel>
                 </StackPanel>
             </Border>
@@ -298,7 +289,7 @@
                         Background="{Binding Background}"
                         DrawTimeGrid="False"
                         MinWidth="740"
-                        DefaultTimeInterval="10"
+                        DefaultTimeInterval="{Binding DefaultTimeInterval}"
                         SynchedWithSiblings="True" />
                 </Grid>
             </ItemsControl>
@@ -329,8 +320,12 @@
                 <MenuItem Header="{StaticResource Menu_File_Exit}" Click="ExitApplication"/>
             </MenuItem>
             <MenuItem Header="{StaticResource Menu_Window}">
-                <MenuItem Header="{StaticResource Menu_Window_Projects}" IsCheckable="True" IsChecked="{Binding ProjectsModel.IsVisible, Mode=TwoWay}"/>
-                <MenuItem Header="{StaticResource Menu_Window_Devices}" IsCheckable="True" IsChecked="{Binding DevicesModel.IsVisible, Mode=TwoWay}"/>
+                <MenuItem Header="{StaticResource Menu_Window_Projects}" IsCheckable="True" IsChecked="{Binding ProjectsModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                <MenuItem Header="{StaticResource Menu_Window_Devices}" IsCheckable="True" IsChecked="{Binding DevicesModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                <MenuItem Header="{StaticResource Menu_Window_Images}" IsCheckable="True" IsChecked="{Binding ImagesModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+            </MenuItem>
+            <MenuItem Header="{StaticResource Menu_Settings}">
+                <MenuItem Header="{StaticResource Menu_Settings_Defaults}" Command="{Binding AdjustDefaultsCommand}"/>
             </MenuItem>
         </Menu>
 
@@ -541,6 +536,35 @@
                             <ListBox x:Name="boxProjectsList" MinWidth="120" MinHeight="120" ItemsSource="{Binding Files}"></ListBox>
                         </DataTemplate>
                     </local:PanesTemplateSelector.ProjectsViewTemplate>
+                    <local:PanesTemplateSelector.ImagesViewTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <StackPanel Orientation="Horizontal" Opacity="50" Margin="1,0,0,-2" Background="#ffffff">
+                                    <Button Style="{StaticResource BlueLinkButton}" Content="Создать" Click="Button_Click" Margin="4,0,4,0"></Button>
+                                    <Button Style="{StaticResource BlueLinkButton}" Content="Изменить" Margin="4,0,4,0"></Button>
+                                    <Button Style="{StaticResource BlueLinkButton}" Content="Удалить" Margin="4,0,4,0"></Button>
+                                    <Button Style="{StaticResource BlueLinkButton}" Content="Обновить" Margin="10,0,4,0"></Button>
+                                </StackPanel>
+                                <ListView Grid.Row="1" x:Name="boxThumbnails" 
+                                                      SelectionMode="Extended" 
+                                                      AllowDrop="True"
+                                                      KeyDown="boxThumbnails_KeyDown"
+                                                      Drop="boxThumbnails_Drop"
+                                                      DragEnter="boxThumbnails_DragEnter"
+                                                      DragOver="boxThumbnails_DragOver"
+                                                      dd:DragDropHelper.IsDragSource="True" 
+                                                      ItemsSource="{Binding ImagesCollection, Mode=OneWay}">
+                                    <ListView.View>
+                                        <l:ImageView />
+                                    </ListView.View>
+                                </ListView>
+                            </Grid>
+                        </DataTemplate>
+                    </local:PanesTemplateSelector.ImagesViewTemplate>
                 </local:PanesTemplateSelector>
             </avalonDock:DockingManager.LayoutItemTemplateSelector>
             <avalonDock:DockingManager.LayoutItemContainerStyleSelector>
@@ -583,23 +607,7 @@
                         </avalonDock:LayoutDocumentPaneGroup>
 
                         <avalonDock:LayoutAnchorablePaneGroup DockWidth="100" DockHeight="120" DockMinHeight="80" DockMinWidth="80">
-                            <avalonDock:LayoutAnchorablePane>
-                                <avalonDock:LayoutAnchorable x:Name="boxImagesWindow" Title="{StaticResource Menu_Window_Images}">
-                                        <ListView x:Name="boxThumbnails" 
-                                                  SelectionMode="Extended" 
-                                                  AllowDrop="True"
-                                                  KeyDown="boxThumbnails_KeyDown"
-                                                  Drop="boxThumbnails_Drop"
-                                                  DragEnter="boxThumbnails_DragEnter"
-                                                  DragOver="boxThumbnails_DragOver"
-                                                  dd:DragDropHelper.IsDragSource="True" 
-                                                  ItemsSource="{Binding ImagesCollection, Mode=OneWay}">
-                                                <ListView.View>
-                                                    <l:ImageView />
-                                                </ListView.View>
-                                        </ListView>
-                                </avalonDock:LayoutAnchorable>
-                            </avalonDock:LayoutAnchorablePane>
+                            <avalonDock:LayoutAnchorablePane TargetContentID="ImagesTool" />
                         </avalonDock:LayoutAnchorablePaneGroup>
                         
                     </avalonDock:LayoutPanel>

@@ -312,6 +312,8 @@ namespace PixelTuner
         {
             List<byte> projectPrefix = new List<byte>(Encoding.ASCII.GetBytes("FLSH"));
             byte timeLineCount = (byte)TimeLines.Count;
+            foreach (var t in _timeLines) if (t.Items.Count == 0) timeLineCount--;
+
             MemoryStream headerStream = new MemoryStream();
             
             headerStream.Write(projectPrefix.ToArray(), 0, projectPrefix.Count);
@@ -319,9 +321,10 @@ namespace PixelTuner
             headerStream.WriteByte(timeLineCount);
 
             // адрес начала секции проектов равен длине уже записанного заголовка, плюс к-во 4-байтных адресов проектов:
-            UInt32 currentAddress = (UInt32)(headerStream.Length + _timeLines.Count * 4);
+            UInt32 currentAddress = (UInt32)(headerStream.Length + timeLineCount * 4);
             foreach(var t in _timeLines) 
             {
+                if (t.Items.Count == 0) continue;
                 headerStream.Write(BitConverter.GetBytes(currentAddress), 0, 4);
                 // размер проекта равен произведению числа картинок и размера описателя картинки, 
                 UInt32 size = (UInt32)t.Items.Count * ImageFile.HeaderSize + 1; // плюс байт с количеством картинок
@@ -334,6 +337,7 @@ namespace PixelTuner
             // сформирую список вообще всех картинок которые есть в таймлайнах
             foreach (TimeLineViewModel tl in _timeLines)
             {
+                if (tl.Items.Count == 0) continue;
                 foreach (PixelTuner.ListViewStyle.ThumbnailFileItem item in tl.Items)
                 {
                     string path = item.FullName.ToLower();
@@ -349,6 +353,7 @@ namespace PixelTuner
             // теперь можно формировать список линий времени
             foreach (TimeLineViewModel tl in _timeLines)
             {
+                if (tl.Items.Count == 0) continue;
                 TimelineFile tlf = new TimelineFile(images, tl);
                 timelines.Add(tlf);
                 headerStream.Write(tlf.BinaryHeader.ToArray(), 0, tlf.BinaryHeader.Count);  // tlf.BinaryHeader.Count должен быть 8 * n + 1

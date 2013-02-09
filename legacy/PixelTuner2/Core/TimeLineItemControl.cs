@@ -149,7 +149,7 @@ namespace Core
 
         public static readonly DependencyProperty NormalBackgroundProperty =
             DependencyProperty.Register("NormalBackground", typeof(Brush), typeof(TimeLineItemControl), 
-            new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(0, 0, 0, 0))));
+            new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(200, 100, 160, 100))));
 
         #endregion
 
@@ -166,6 +166,27 @@ namespace Core
             DependencyProperty.Register("SelectedBackground", typeof(Brush), typeof(TimeLineItemControl), 
             new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(0, 0, 0, 0))));
 
+        #endregion
+
+        #region DefaultStretching
+
+        public int DefaultStretching
+        {
+            get { return (int)GetValue(DefaultStretchingProperty); }
+            set { SetValue(DefaultStretchingProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for DefaultStretching.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty DefaultStretchingProperty =
+            DependencyProperty.Register("DefaultStretching", typeof(int), typeof(TimeLineItemControl),
+            new UIPropertyMetadata(20, new PropertyChangedCallback(OnDefaultStretchingValueChanged)));
+
+        private static void OnDefaultStretchingValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            TimeLineItemControl ctrl = d as TimeLineItemControl;
+            if (ctrl != null)
+                ctrl.PlaceOnCanvas();
+        }
         #endregion
 
         public Double EditBorderThreshold

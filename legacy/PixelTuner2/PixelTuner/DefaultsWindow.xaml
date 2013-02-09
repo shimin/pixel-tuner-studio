@@ -1,0 +1,25 @@
+﻿<Window x:Class="PixelTuner.DefaultsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{StaticResource Menu_Settings_Defaults_Window}" Height="157" Width="300" xmlns:my="clr-namespace:PixelTuner" WindowStyle="ToolWindow" ResizeMode="NoResize">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="25" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="1" Height="25" HorizontalAlignment="Left" Name="stackPanel1" VerticalAlignment="Top" Width="278" Orientation="Horizontal" FlowDirection="RightToLeft">
+            <Button Content="Cancel" Height="23" Name="CancelButton" Width="75" Click="CancelButton_Click" />
+            <Button Content="OK" Height="23" Name="OKButton" Width="75" Margin="4,0,0,0" Click="OKButton_Click"/>
+        </StackPanel>
+        <StackPanel Height="236" HorizontalAlignment="Left" Name="stackPanel2" VerticalAlignment="Top" Width="278" Orientation="Horizontal">
+            <StackPanel Height="235" Name="stackPanel3" Width="81">
+                <my:NumericUpDownControl x:Name="numericUpDownControl1" MinValue="1" MaxValue="500" Margin="2,0,0,3" KeyDown="numeric_KeyDown" Value="{Binding Path=Parent.DataContext.DefaultDuration, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                <my:NumericUpDownControl x:Name="numericUpDownControl2" MinValue="4" MaxValue="46"  Margin="2,0,0,3" KeyDown="numeric_KeyDown" Value="{Binding Path=Parent.DataContext.Stretching, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+            </StackPanel>
+            <StackPanel Height="235" Name="stackPanel4" Width="200">
+                <Label Content="{StaticResource Menu_Settings_Defaults_Duration}" Height="22" Padding="6,2,0,0" Name="label1" />
+                <Label Content="{StaticResource Menu_Settings_Defaults_Stretching}" Height="22" Padding="6,2,0,0"  Name="label2" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

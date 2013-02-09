@@ -37,7 +37,7 @@ namespace Workspace.Layout
     {
         public LayoutPanel()
         {
-            
+
         }
 
         public LayoutPanel(ILayoutPanelElement firstChild)

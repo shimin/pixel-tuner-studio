@@ -291,16 +291,30 @@ namespace Workspace.Controls
 
         void _anchorable_IsVisibleChanged(object sender, EventArgs e)
         {
-            if (_anchorable.Root != null)
+            //if (_anchorable.Root != null)
             {
                 if (_visibilityReentrantFlag.CanEnter)
                 {
                     using (_visibilityReentrantFlag.Enter())
                     {
                         if (_anchorable.IsVisible)
+                        {
                             Visibility = Visibility.Visible;
+                            if (this.Model != null)
+                            {
+                                var pi = this.Model.GetType().GetProperty("IsVisible");
+                                pi.SetValue(this.Model, true, null);
+                            }
+                        }
                         else
+                        {
                             Visibility = Visibility.Hidden;
+                            if (this.Model != null)
+                            {
+                                var pi = this.Model.GetType().GetProperty("IsVisible");
+                                pi.SetValue(this.Model, this.IsVisible, null);
+                            }
+                        }
                     }
                 }
             }
