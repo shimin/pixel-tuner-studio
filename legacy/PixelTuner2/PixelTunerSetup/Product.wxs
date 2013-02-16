@@ -77,7 +77,6 @@
               <File Id="_50_rainbow_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_rainbow.bmp" />
               <File Id="_50_stork2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_stork2.bmp" />
               <File Id="_50_stork3_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_stork3.bmp" />
-              
 
               <File Id="_50_AudioLevels.png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_AudioLevels.png" />
               <File Id="_50_cards.png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_cards.png" />

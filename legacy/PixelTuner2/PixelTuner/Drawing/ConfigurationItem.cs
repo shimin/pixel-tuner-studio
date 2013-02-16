@@ -13,12 +13,21 @@ namespace PixelTuner.Drawing
         : ConfigurationItemBase
     {
         public ConfigurationItem()
-            :this ("")
+            :this (25, 80, 10)
         { }
 
-        public ConfigurationItem(string name)
-            : base(name)
+        /// <summary>
+        /// Создает объект-конфигурацию
+        /// </summary>
+        /// <param name="patternLines">Высота картинки, число квадратов по вертикали (соответствует числу диодов с одной стороны в палке)</param>
+        /// <param name="patternLength">Длина картинки, число квадратов по горизонтали</param>
+        /// <param name="pointSize">Размер квадрата</param>
+        public ConfigurationItem(int patternLines, int patternLength, int pointSize)
+            : base("")
         {
+            this.PatternLines = patternLines;
+            this.PatternLength = patternLength;
+            this.PointSize = pointSize;
             MakeImage();            
         }
 
@@ -33,15 +42,19 @@ namespace PixelTuner.Drawing
         }
 
         /// <summary>
-        /// Константа - максимальная длина узора
+        /// Константа - мминимальная длина узора
         /// </summary>
         public const int MinPatternLength = 20;
+
+        /// <summary>
+        /// Константа - максимальная длина узора
+        /// </summary>
+        public const int MaxPatternLength = 800;
 
         private int _patternLength = 80;
         /// <summary>
         /// Длина полотна в условных ячейках
         /// </summary>
-        [XmlAttribute]
         public int PatternLength
         {
             get { return _patternLength; }
@@ -55,7 +68,6 @@ namespace PixelTuner.Drawing
         /// <summary>
         /// Размер одной ячейки сетки в пикселах (используется для дизайна и рисования), пересчитывать при онресайзе
         /// </summary>
-        [XmlAttribute]
         public int PointSize
         {
             get { return _pointSize; }
@@ -66,12 +78,11 @@ namespace PixelTuner.Drawing
         }
 
         Image _image = null;
-        [XmlIgnore]
         public Image Image
         {
             get
             {
-                if (_image == null) MakeImage();
+                //if (_image == null) MakeImage();
                 return _image;
             }
             set
@@ -80,8 +91,25 @@ namespace PixelTuner.Drawing
             }
         }
 
-        #region Формирование данных согласно формату прошивки
-
+        public Image GetScaledImage()
+        {
+            if (_image == null) return null;
+            Bitmap source = (Bitmap)_image;
+            Bitmap result = new Bitmap(_image.Width / PointSize, _image.Height / PointSize);
+            int xPos = 0;
+            int yPos = 0;
+            for (int x = 1; x < _image.Width; x += _pointSize)
+            {
+                for (int y = 1; y < _image.Height; y += _pointSize)
+                {
+                    result.SetPixel(xPos, yPos, source.GetPixel(x, y));
+                    yPos++;
+                }
+                xPos++;
+                yPos = 0;
+            }
+            return result;
+        }
 
         private void MakeImage()
         {
@@ -93,14 +121,13 @@ namespace PixelTuner.Drawing
 
         }
 
-        #endregion
-
         public override ConfigurationItemBase Clone()
         {
-            ConfigurationItem newItem = new ConfigurationItem(this.Name);
+            ConfigurationItem newItem = new ConfigurationItem();
             newItem.Image = this.Image.Clone() as Image;
             newItem._patternLength = this._patternLength;
             newItem._pointSize = this._pointSize;
+            newItem._patternLines = this._patternLines;
             return newItem;
         }
     }

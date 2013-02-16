@@ -168,13 +168,13 @@ namespace PixelTuner
             //System.Windows.Resources.StreamResourceInfo info = System.Windows.Application.GetResourceStream(uri);
 
 
-            var c = new PixelTuner.Drawing.ConfigurationItem();
-            c.PointSize = 6;
-            c.PatternLines = Settings.Default.LineHeight;
+            var c = new PixelTuner.Drawing.ConfigurationItem(25, 64, 16);
             PictureEditor pe = new PictureEditor(c);
             pe.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
             pe.Owner = Application.Current.MainWindow;
             pe.ShowDialog();
+            var img = pe.Config.GetScaledImage();
+            //img.Save("c:\\11111111111.bmp");
         }
     }
 }

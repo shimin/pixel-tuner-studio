@@ -21,14 +21,15 @@ namespace PixelTuner
     /// </summary>
     public partial class PictureEditor : Window, INotifyPropertyChanged
     {
-        public PictureEditor()
-            : this(new ConfigurationItem())
-        {
+        //public PictureEditor()
+        //    : this(new ConfigurationItem())
+        //{
             
-        }
+        //}
 
         public PictureEditor(ConfigurationItem config)
         {
+            _drawControl = new Drawing.DrawControl(config);
             InitializeComponent();
             this.Config = config;
             this.SizeChanged += new SizeChangedEventHandler(PictureEditor_SizeChanged);
@@ -51,15 +52,22 @@ namespace PixelTuner
         {
             get
             {
-                return _drawControl ?? new DrawControl(Config);
+                if (_drawControl == null) _drawControl = new DrawControl(Config);
+                return _drawControl;
             }
         }
 
-        ConfigurationItem _config = null;
         public ConfigurationItem Config
         {
-            get { return _config ?? new ConfigurationItem(); }
-            set { _config = value; }
+            get
+            {
+                if (_drawControl != null) return _drawControl.Configuration;
+                else return null;
+            }
+            set 
+            { 
+                if (_drawControl != null) _drawControl.Configuration = value; 
+            }
         }
         
         void PictureEditor_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -74,7 +82,7 @@ namespace PixelTuner
         {
             get
             {
-                return DrawControl.Configuration().PatternLines * DrawControl.Configuration().PointSize;
+                return _drawControl.ControlHeight;
             }
         }
 

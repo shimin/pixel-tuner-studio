@@ -14,51 +14,36 @@ namespace PixelTuner.Drawing
 {
     public partial class DrawControl : UserControl, IMessageFilter
     {
-        Color GridColorLight = Color.FromArgb(255, 60, 60, 60);
-        Image _tempImage = null;
-        private Image ImageBuffer = null;
         bool _mouseSelecting = false;
         bool _startSelection = false;
+        private Image _duplicatedFragment = null;
         Rectangle _selection = new Rectangle(0, 0, 0, 0);
-        Point _bufferCurrentPosition = new Point(0, 0);
+        Rectangle _invalidationArea = new Rectangle(0, 0, 0, 0);
+        Point _mousePoint = Point.Empty;
+
+        Color _gridColor = Color.FromArgb(255, 60, 60, 60);
        
         #region Поля
         private ConfigurationItem _item = null;
         /// <summary>
-        /// Текущий обрабатываемый узор
+        /// Объект, содержащий параметры редактора и картинку
         /// </summary>
-
-        public void SetItem(ConfigurationItem item)
+        public ConfigurationItem Configuration
         {
-            if (item == null) return;
-            boxCanvas.Paint -= boxCanvas_Paint;
-            boxSplit.SplitterMoved -= boxSplit_SplitterMoved;
-            boxSplit.SplitterMoving -= boxSplit_SplitterMoving;
+            get
+            {
+                return _item;
+            }
+            set
+            {
+                _item = value;
+                ResetControls(_item);
 
-            int ps = _item != null ? _item.PointSize : item.PointSize;
-            _item = item;
-            if (ImageBuffer != null)
-                _item.PointSize = ps;
-            boxHeight.Value = _item.PatternLines;
-            boxCanvasHolder.Height = boxSplit.Height = _item.PointSize * _item.PatternLines;
-            boxSplit.SplitterDistance = _item.PatternLength * _item.PointSize;
-            _tempImage = _item.Image;
-            undo.Clear();
-            redo.Clear();
-            
+                undo.Clear();
+                redo.Clear();
 
-            boxSplit.SplitterIncrement = _item.PointSize;
-
-            boxCanvas.Paint += new PaintEventHandler(boxCanvas_Paint);
-            boxSplit.SplitterMoved += new SplitterEventHandler(boxSplit_SplitterMoved);
-            boxSplit.SplitterMoving += new SplitterCancelEventHandler(boxSplit_SplitterMoving);
-            boxCanvas.Invalidate();
-        }        
-
-        public ConfigurationItem Configuration()
-        {
-            _item.Image = _tempImage.Clone() as Image;
-            return _item.Clone() as ConfigurationItem;
+                boxCanvas.Invalidate();
+            }
         }
 
         public Color BrushFrontColor
@@ -83,14 +68,22 @@ namespace PixelTuner.Drawing
             }
         }
 
-        #endregion
-
-        public DrawControl()
-            : this(null)
+        public int ToolbarHeight
         {
+            get
+            {
+                return splitContainer.SplitterDistance + splitContainer.SplitterWidth / 2 + 1;
+            }
         }
 
-        public DrawControl(ConfigurationItem item = null)
+        public double ControlHeight
+        {
+            get { return Configuration.PatternLines * Configuration.PointSize + this.ToolbarHeight; }
+        }
+
+        #endregion
+
+        public DrawControl(ConfigurationItem item)
         {
             InitializeComponent();
 
@@ -105,15 +98,11 @@ namespace PixelTuner.Drawing
 
             boxFillBG.BackgroundImage = BitmapImage2Bitmap<PngBitmapEncoder>(bucket);
             boxTextButton.BackgroundImage = BitmapImage2Bitmap<PngBitmapEncoder>(text);
-            buttonSelect.BackgroundImage = BitmapImage2Bitmap<PngBitmapEncoder>(copy);
+            boxSelect.BackgroundImage = BitmapImage2Bitmap<PngBitmapEncoder>(copy);
             boxBmpImport.BackgroundImage = BitmapImage2Bitmap<PngBitmapEncoder>(bmp);
 
-            if (item == null)
-            {
-                item = new ConfigurationItem("");
-            }
             this.DoubleBuffered = true;
-            SetItem(item);
+            this.Configuration = item;
         }
 
         private Bitmap BitmapImage2Bitmap<EncoderType>(BitmapImage bitmapImage)
@@ -148,6 +137,54 @@ namespace PixelTuner.Drawing
             return changingColor;
         }
 
+        private void DrawControl_Load(object sender, EventArgs e)
+        {
+            Application.AddMessageFilter(this);
+        }
+
+        /// <summary>
+        /// Устанавливает значения полей извлекая их из конфигурации
+        /// </summary>
+        /// <param name="value">Конфигурационный объект</param>
+        private void ResetControls(ConfigurationItem value)
+        {
+            if (value != null)
+            {
+                boxHeight.Value = _item.PatternLines;
+                boxSplit.SplitterIncrement = _item.PointSize;
+                SetNumericControlValue(boxPointSize, _item.PointSize);
+                SetNumericControlValue(boxHeight, _item.PatternLines);
+
+                boxCanvas.Paint -= boxCanvas_Paint;
+                boxSplit.SplitterMoved -= boxSplit_SplitterMoved;
+                boxSplit.SplitterMoving -= boxSplit_SplitterMoving;
+
+                boxSplit.SplitterDistance = _item.PatternLength * _item.PointSize;
+
+                boxSplit.SplitterMoved += new SplitterEventHandler(boxSplit_SplitterMoved);
+                boxSplit.SplitterMoving += new SplitterCancelEventHandler(boxSplit_SplitterMoving);
+                boxCanvas.Paint += new PaintEventHandler(boxCanvas_Paint);
+            }
+            else
+            {
+                boxHeight.Value = boxHeight.Minimum;
+                boxPointSize.Value = boxPointSize.Minimum;
+                boxSplit.SplitterIncrement = 1;
+            }
+        }
+
+        /// <summary>
+        /// Позволяет безопасно задать значения в диапазоне от минимума до максимума
+        /// </summary>
+        /// <param name="control">Объект NumericUpDown для задания значения</param>
+        /// <param name="val">Желаемое значение</param>
+        private void SetNumericControlValue(NumericUpDown control, int val)
+        {
+            if (val > control.Maximum) { control.Value = control.Maximum; }
+            else if (val < control.Minimum) { control.Value = control.Minimum; }
+            else { control.Value = val; }
+        }
+
         #region Функции рисования
 
         /// <summary>
@@ -156,9 +193,9 @@ namespace PixelTuner.Drawing
         /// <param name="parameters">Graphics, Color</param>
         private void FillCanvas(Color color)
         {
-            if (_item == null) return;
-            if (_tempImage == null) return;
-            Graphics g = Graphics.FromImage(_tempImage);            
+            if (_item == null || _item.Image == null) return;
+            //if (_tempImage == null) return;
+            Graphics g = Graphics.FromImage(_item.Image);            
             g.FillRectangle(new SolidBrush(color), 0, 0, boxCanvas.Width, boxCanvas.Height);
             boxCanvas.Refresh();
         }
@@ -169,9 +206,9 @@ namespace PixelTuner.Drawing
         /// <param name="parameters">Graphics, Color, X, Y</param>
         void FillPixel(Color c, int x, int y)
         {
-            if (_item == null) return;
-            if (_tempImage == null) return;
-            Graphics g = Graphics.FromImage(_tempImage);
+            if (_item == null || _item.Image == null) return;
+            //if (_tempImage == null) return;
+            Graphics g = Graphics.FromImage(_item.Image);
             Rectangle fillArea = FillPixel(c, g, _item.PointSize, x, y);
             boxCanvas.Invalidate(fillArea);
             boxCanvas.Update();
@@ -205,13 +242,13 @@ namespace PixelTuner.Drawing
         {
             if (graphics == null) return;
             for (int i = 0; i < boxCanvas.Width; ++i)
-                graphics.DrawLine(new Pen(GridColorLight),
+                graphics.DrawLine(new Pen(_gridColor),
                     i * _item.PointSize,
                     0,
                     i * _item.PointSize,
                     boxCanvas.Height);
             for (int i = 0; i < boxCanvas.Width; ++i)
-                graphics.DrawLine(new Pen(GridColorLight),
+                graphics.DrawLine(new Pen(_gridColor),
                     0,
                     i * _item.PointSize,
                     boxCanvas.Width,
@@ -234,16 +271,28 @@ namespace PixelTuner.Drawing
             if (_item == null) return;
             if (undo.Count != 0)
             {
-                _item.Image = _tempImage.Clone() as Image;
+                //_item.Image = _tempImage.Clone() as Image;
                 redo.Push(_item.Clone() as ConfigurationItem);
 
-                boxSplit.SplitterMoved -= boxSplit_SplitterMoved;
                 _item = undo.Pop().Clone() as ConfigurationItem;
-                _tempImage = _item.Image.Clone() as Image;
+                //_tempImage = _item.Image.Clone() as Image;
+                boxSplit.SplitterMoved -= boxSplit_SplitterMoved;
+                boxSplit.SplitterMoving -= boxSplit_SplitterMoving;
+                boxHeight.ValueChanged -= boxHeight_ValueChanged;
+                boxPointSize.ValueChanged -= boxPointSize_ValueChanged;
+
                 boxSplit.SplitterDistance = _item.PatternLength * _item.PointSize;
-                boxCanvasHolder.Height = boxSplit.Height = _item.PointSize * _item.PatternLines;
-                
+                SetNumericControlValue(boxHeight, _item.PatternLines);
+                SetNumericControlValue(boxPointSize, _item.PointSize);
+                //boxCanvasHolder.Height = boxSplit.Height = splitContainer.SplitterDistance  + _item.PointSize * _item.PatternLines;
                 boxSplit.SplitterMoved += boxSplit_SplitterMoved;
+                boxSplit.SplitterMoving += boxSplit_SplitterMoving;
+                boxHeight.ValueChanged += boxHeight_ValueChanged;
+                boxPointSize.ValueChanged += boxPointSize_ValueChanged;
+
+                if (PatternLinesChanged != null)
+                    PatternLinesChanged(this, new EventArgs());
+
                 boxCanvas.Refresh();
             }
         }
@@ -252,22 +301,34 @@ namespace PixelTuner.Drawing
             if (_item == null) return;
             if (redo.Count != 0)
             {
-                _item.Image = _tempImage.Clone() as Image;
                 undo.Push(_item.Clone() as ConfigurationItem);
 
-                boxSplit.SplitterMoved -= boxSplit_SplitterMoved;
                 _item = redo.Pop().Clone() as ConfigurationItem;
-                _tempImage = _item.Image.Clone() as Image;
-                boxSplit.SplitterDistance = _item.PatternLength * _item.PointSize;
-                boxCanvasHolder.Height = boxSplit.Height = _item.PointSize * _item.PatternLines;
+
+                boxSplit.SplitterMoved -= boxSplit_SplitterMoved;
+                boxSplit.SplitterMoving -= boxSplit_SplitterMoving;
+                boxHeight.ValueChanged -= boxHeight_ValueChanged;
+                boxPointSize.ValueChanged -= boxPointSize_ValueChanged;
+
+                boxSplit.SplitterDistance = _item.PatternLength * _item.PointSize;                
+                SetNumericControlValue(boxHeight, _item.PatternLines);
+                SetNumericControlValue(boxPointSize, _item.PointSize);
+                //boxCanvasHolder.Height = boxSplit.Height = splitContainer.SplitterDistance + _item.PointSize * _item.PatternLines;
                 
                 boxSplit.SplitterMoved += boxSplit_SplitterMoved;
+                boxSplit.SplitterMoving += boxSplit_SplitterMoving;
+                boxHeight.ValueChanged += boxHeight_ValueChanged;
+                boxPointSize.ValueChanged += boxPointSize_ValueChanged;
+                
+                if (PatternLinesChanged != null)
+                    PatternLinesChanged(this, new EventArgs());
+
                 boxCanvas.Refresh();
             }
         }
         public void Push()
         {
-            _item.Image = _tempImage.Clone() as Image;
+            //_item.Image = _tempImage.Clone() as Image;
             undo.Push(_item.Clone() as ConfigurationItem);
             redo.Clear();
         }
@@ -277,7 +338,7 @@ namespace PixelTuner.Drawing
 
         private void boxCanvas_MouseDown(object sender, MouseEventArgs e)
         {
-            if (_item == null) return;
+            if (_item == null || _item.Image == null) return;
             Push();
 
             if (_startSelection)
@@ -291,13 +352,13 @@ namespace PixelTuner.Drawing
 
             //undo.Push(_tempImage.Clone() as Image);            
 
-            if (ImageBuffer != null)
+            if (_duplicatedFragment != null)
             {
                 isMouseDraws = false;
-                Graphics g = Graphics.FromImage(_tempImage);                
-                g.DrawImageUnscaled(ImageBuffer, new Point(
-                    e.X / _item.PointSize * _item.PointSize - ((ImageBuffer.Width / _item.PointSize) / 2) * _item.PointSize,
-                    e.Y / _item.PointSize * _item.PointSize - ((ImageBuffer.Height / _item.PointSize) / 2) * _item.PointSize
+                Graphics g = Graphics.FromImage(_item.Image);                
+                g.DrawImageUnscaled(_duplicatedFragment, new Point(
+                    e.X / _item.PointSize * _item.PointSize - ((_duplicatedFragment.Width / _item.PointSize) / 2) * _item.PointSize,
+                    e.Y / _item.PointSize * _item.PointSize - ((_duplicatedFragment.Height / _item.PointSize) / 2) * _item.PointSize
                     ));
                 g.Dispose();
                 return;
@@ -352,12 +413,12 @@ namespace PixelTuner.Drawing
                 return;
             }
 
-            if (ImageBuffer != null)
+            if (_duplicatedFragment != null)
             {
                 int newX = e.X / _item.PointSize * _item.PointSize;
                 int newY = e.Y / _item.PointSize * _item.PointSize;
                 _mousePoint = new Point(newX, newY);
-                if (_bufferCurrentPosition != _mousePoint)
+                //if (_bufferCurrentPosition != _mousePoint)
                     boxCanvas.Invalidate();
             }
 
@@ -367,18 +428,15 @@ namespace PixelTuner.Drawing
             else if (e.Button == MouseButtons.Right)
                 FillPixel(BrushBackColor, e.X, e.Y);
         }
-
-        Rectangle _invalidationArea = new Rectangle(0, 0, 0, 0);
-        Point _mousePoint = Point.Empty;
-
+                
         private void boxCanvas_MouseUp(object sender, MouseEventArgs e)
         {
-            if (_mouseSelecting)
+            if (_item != null && _item.Image != null && _mouseSelecting)
             {
                 Bitmap buf = new Bitmap(_selection.Width, _selection.Height);
                 Graphics gBuf = Graphics.FromImage(buf);
-                gBuf.DrawImage(_tempImage, new Rectangle(0, 0, buf.Width, buf.Height), _selection, GraphicsUnit.Pixel);
-                ImageBuffer = buf.Clone() as Image;
+                gBuf.DrawImage(_item.Image, new Rectangle(0, 0, buf.Width, buf.Height), _selection, GraphicsUnit.Pixel);
+                _duplicatedFragment = buf.Clone() as Image;
                 gBuf.Dispose();
                 buf.Dispose();
             }
@@ -389,17 +447,16 @@ namespace PixelTuner.Drawing
         }
         #endregion
 
-        #region Обработчики
+        #region Отрисовка
         
         void boxCanvas_Paint(object sender, PaintEventArgs e)
         {
-            if (_item == null) return;
-            e.Graphics.DrawImage(_tempImage, 0, 0);
-            if (ImageBuffer != null)
+            if (_item == null || _item.Image == null) return;
+            e.Graphics.DrawImage(_item.Image, 0, 0);
+            if (_duplicatedFragment != null)
             {                
-                e.Graphics.DrawImage(ImageBuffer, new Point(_mousePoint.X - ((ImageBuffer.Width / _item.PointSize) / 2) * _item.PointSize,
-                    _mousePoint.Y - ((ImageBuffer.Height / _item.PointSize) / 2) * _item.PointSize));
-                //_bufferCurrentPosition = _mousePoint;
+                e.Graphics.DrawImage(_duplicatedFragment, new Point(_mousePoint.X - ((_duplicatedFragment.Width / _item.PointSize) / 2) * _item.PointSize,
+                    _mousePoint.Y - ((_duplicatedFragment.Height / _item.PointSize) / 2) * _item.PointSize));
             }
             DrawGrid(e.Graphics);
             if (_mouseSelecting)
@@ -410,90 +467,44 @@ namespace PixelTuner.Drawing
             }
         }
 
-        private void boxFrontColor_Click(object sender, EventArgs e)
+        #endregion
+
+        #region Обработка кнопок формы
+
+        private void buttonSelect_Click(object sender, EventArgs e)
         {
-            BrushFrontColor = ChooseColor(BrushFrontColor);
-        }
-        
-        private void boxBgColor_Click(object sender, EventArgs e)
-        {
-            Color bc = BrushBackColor = ChooseColor(BrushBackColor);
-            Bitmap b = (Bitmap) boxFillBG.BackgroundImage;
-            for(int x=0; x< b.Width; x++)
-                for (int y = 0; y < b.Height; y++)
-                {
-                    if (b.GetPixel(x, y).A > 80) b.SetPixel(x, y, bc);
-                }
-            boxFillBG.BackgroundImage = b;
-            boxFillBG.Refresh();
+            _duplicatedFragment = null;
+            _startSelection = true;
         }
 
-        void boxSplit_SplitterMoved(object sender, SplitterEventArgs e)
-        {
-            Push();
-            _item.PatternLength = boxCanvas.Width / _item.PointSize;
-            _tempImage = _item.Image.Clone() as Image;
-            Bitmap b = new Bitmap(_item.PatternLength * _item.PointSize, _item.PatternLines * _item.PointSize);
-            var g = Graphics.FromImage(b);
-            g.DrawImage(_tempImage, 0, 0);
-            _tempImage = b;
-            g.Dispose();
-        }
-
-        void boxSplit_SplitterMoving(object sender, SplitterCancelEventArgs e)
-        {
-            //if (_item == null) e.Cancel = true;
-            //if (e.MouseCursorX > PatternItem.MaxPatternLength * _item.PointSize
-            //    || e.MouseCursorX < PatternItem.MinPatternLength * _item.PointSize) e.Cancel = true;
-        }
-        
         private void boxFillBG_Click(object sender, EventArgs e)
         {
             Push();
-            FillCanvas(BrushBackColor);            
+            FillCanvas(BrushBackColor);
         }
 
         private void boxTextButton_Click(object sender, EventArgs e)
         {
-            //TextDialog td = new TextDialog(_item, Settings.Default.FontStyle, _item.PointSize, BrushFrontColor);
             TextDialog td = new TextDialog(_item, DefaultFont, _item.PointSize, BrushFrontColor);
             Application.RemoveMessageFilter(this);
             if (td.ShowDialog() == DialogResult.OK)
             {
-                ImageBuffer = td.TextImage;
+                _duplicatedFragment = td.TextImage;
             }
             Application.AddMessageFilter(this);
-        }
-        
-        private void DrawControl_Load(object sender, EventArgs e)
-        {
-            Application.AddMessageFilter(this);
-        }
-
-        private void buttonSelect_Click(object sender, EventArgs e)
-        {
-            ImageBuffer = null;
-            _startSelection = true;
-        }
-
-        private void boxColumnWidth_ValueChanged(object sender, EventArgs e)
-        {
-            if (_item == null) return;
-            Push();
-            
         }
 
         private void boxBmpImport_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Multiselect = false;
-            ofd.Filter = "Bmp files (.bmp)|*.bmp";
+            ofd.Filter = "Image files|*.jpg;*.bmp;*.png|Bmp files (.bmp)|*.bmp|Jpeg files (.jpg)|*.jpg|PNG files (.png)|*.png";
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                ImageBuffer = null;
+                _duplicatedFragment = null;
                 Bitmap bmp = Bitmap.FromFile(ofd.FileName) as Bitmap;
-                ImageBuffer = new Bitmap(_item.PatternLength * _item.PointSize, _item.PointSize * _item.PatternLines);
-                Graphics gra = Graphics.FromImage(ImageBuffer);
+                _duplicatedFragment = new Bitmap(_item.PatternLength * _item.PointSize, _item.PointSize * _item.PatternLines);
+                Graphics gra = Graphics.FromImage(_duplicatedFragment);
                 if (bmp != null)
                     for (int column = 0; column < bmp.Width && column < _item.PatternLength; column++)
                     {
@@ -525,27 +536,126 @@ namespace PixelTuner.Drawing
             ofd.Dispose();
         }
 
+        private void boxFrontColor_Click(object sender, EventArgs e)
+        {
+            BrushFrontColor = ChooseColor(BrushFrontColor);
+        }
+
+        private void boxBgColor_Click(object sender, EventArgs e)
+        {
+            Color bc = BrushBackColor = ChooseColor(BrushBackColor);
+            Bitmap b = (Bitmap)boxFillBG.BackgroundImage;
+            for (int x = 0; x < b.Width; x++)
+                for (int y = 0; y < b.Height; y++)
+                {
+                    if (b.GetPixel(x, y).A > 80) b.SetPixel(x, y, bc);
+                }
+            boxFillBG.BackgroundImage = b;
+            boxFillBG.Refresh();
+        }
+
+        #endregion
+
+        #region Изменение размеров
+
+        void boxSplit_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            if (_item == null || _item.Image == null) return;
+
+            Push();
+            _item.PatternLength = boxCanvas.Width / _item.PointSize;
+            ResizeImage(_item.PatternLength, _item.PointSize, _item.PatternLines);
+        }
+
+        void boxSplit_SplitterMoving(object sender, SplitterCancelEventArgs e)
+        {
+            if (_item == null) e.Cancel = true;
+            if (e.MouseCursorX > ConfigurationItem.MaxPatternLength * _item.PointSize
+                || e.MouseCursorX < ConfigurationItem.MinPatternLength * _item.PointSize) e.Cancel = true;
+        }
+
         private void boxHeight_ValueChanged(object sender, EventArgs e)
         {
-            _item.PatternLines = (int)(sender as NumericUpDown).Value;
-            _item.PatternLength = boxCanvas.Width / _item.PointSize;
-            if (_tempImage == null) _tempImage = _item.Image.Clone() as Image;
-            Bitmap b = new Bitmap(_item.PatternLength * _item.PointSize, _item.PatternLines * _item.PointSize);
-            var g = Graphics.FromImage(b);
-            g.DrawImage(_tempImage, 0, 0);
-            _tempImage = b;
-            g.Dispose();
-            this.Height = b.Height;
-            boxCanvas.Invalidate();
+            if (_item == null || _item.Image == null) return;
+            Push();
+
+            _item.PatternLines = (int)boxHeight.Value;
+
+            ResizeImage(_item.PatternLength, _item.PointSize, _item.PatternLines);
             if (PatternLinesChanged != null)
                 PatternLinesChanged(this, new EventArgs());
+        }
+
+        private void boxPointSize_ValueChanged(object sender, EventArgs e)
+        {
+            if (_item == null || _item.Image == null) return;
+            _duplicatedFragment = null;
+            Push();
+
+            int destPointSizeValue = (int)(sender as NumericUpDown).Value;
+            _item.PatternLength = boxCanvas.Width / _item.PointSize;
+
+            float scale = (float)destPointSizeValue / (float)_item.PointSize;
+            int newWidth = (_item.Image.Width / _item.PointSize) * destPointSizeValue;
+            int newHeight = (_item.Image.Height / _item.PointSize) * destPointSizeValue;
+
+            Bitmap resize = new Bitmap(newWidth, newHeight);
+
+            Graphics g = Graphics.FromImage(resize);
+            for (int column = 0; column < (_item.Image.Width / _item.PointSize); column++)
+            {
+                for (int row = 0; row < _item.PatternLines; row++)
+                {
+
+                    Color pixColor = (_item.Image as Bitmap).GetPixel(
+                        column * _item.PointSize + 1,
+                        row * _item.PointSize + 1);
+
+                    g.FillRectangle(new SolidBrush(pixColor), new Rectangle(
+                        column * destPointSizeValue,
+                        row * destPointSizeValue,
+                        destPointSizeValue,
+                        destPointSizeValue));
+
+                }
+            }
+            _item.Image = resize;
+            g.Dispose();
+
+            _item.PointSize = destPointSizeValue;
+
+            boxSplit.SplitterMoved -= boxSplit_SplitterMoved;
+            boxSplit.SplitterMoving -= boxSplit_SplitterMoving;
+            boxSplit.SplitterDistance = _item.PatternLength * _item.PointSize;
+            boxSplit.SplitterMoved += boxSplit_SplitterMoved;
+            boxSplit.SplitterMoving += boxSplit_SplitterMoving;
+
+            ResizeImage(_item.PatternLength, _item.PointSize, _item.PatternLines);
+            
+            if (PatternLinesChanged != null)
+                PatternLinesChanged(this, new EventArgs());
+        }
+
+        private void ResizeImage(int patternLength, int pointSize, int patternLines)
+        {
+            if (_item == null || _item.Image == null) return;
+
+            Image _tempImageBuffer = _item.Image.Clone() as Image;
+            Bitmap b = new Bitmap(patternLength * pointSize, patternLines * pointSize);
+            var g = Graphics.FromImage(b);
+            g.FillRectangle(new SolidBrush(BrushBackColor), 0, 0, b.Width, b.Height);
+            g.DrawImage(_tempImageBuffer, 0, 0);
+            _item.Image = (Image)b.Clone();
+            g.Dispose();
+            boxCanvas.Invalidate();
         }
 
         #endregion
 
         public event EventHandler PatternLinesChanged;
 
-        #region Обработка клавиш
+        #region Обработка нажатий кнопок клавиатуры
+
         const int WM_KEYDOWN = 0x100;
         public bool PreFilterMessage(ref Message m)
         {
@@ -553,7 +663,7 @@ namespace PixelTuner.Drawing
             //Keys.Modifiers mod = (Keys.Modifiers)(int)m.WParam & Keys.ModifierKeys;
             if (m.Msg == WM_KEYDOWN && keyCode == Keys.Escape)
             {
-                ImageBuffer = null;
+                _duplicatedFragment = null;
                 isMouseDraws = false;
                 _startSelection = false;
                 _mouseSelecting = false;
@@ -572,6 +682,8 @@ namespace PixelTuner.Drawing
             }
             return false;
         } 
+
         #endregion
+
     }
 }

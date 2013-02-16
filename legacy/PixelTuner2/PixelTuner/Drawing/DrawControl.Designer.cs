@@ -28,24 +28,27 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.boxScaleLabel = new System.Windows.Forms.Label();
+            this.boxPointSize = new System.Windows.Forms.NumericUpDown();
+            this.boxLImageLinesCountLabel = new System.Windows.Forms.Label();
             this.boxHeight = new System.Windows.Forms.NumericUpDown();
             this.boxBmpImport = new System.Windows.Forms.Button();
-            this.buttonSelect = new System.Windows.Forms.Button();
+            this.boxSelect = new System.Windows.Forms.Button();
             this.boxTextButton = new System.Windows.Forms.Button();
             this.boxFillBG = new System.Windows.Forms.Button();
             this.boxFrontColor = new System.Windows.Forms.Button();
+            this.boxDummyButton = new System.Windows.Forms.Button();
             this.boxBgColor = new System.Windows.Forms.Button();
             this.boxTableLayout = new System.Windows.Forms.TableLayoutPanel();
             this.boxCanvasHolder = new System.Windows.Forms.Panel();
             this.boxSplit = new System.Windows.Forms.SplitContainer();
             this.boxCanvas = new System.Windows.Forms.Panel();
-            this.cursorTimer = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
             this.splitContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.boxPointSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxHeight)).BeginInit();
             this.boxTableLayout.SuspendLayout();
             this.boxCanvasHolder.SuspendLayout();
@@ -58,43 +61,90 @@
             // 
             this.splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.splitContainer.IsSplitterFixed = true;
             this.splitContainer.Location = new System.Drawing.Point(0, 0);
             this.splitContainer.Margin = new System.Windows.Forms.Padding(0);
             this.splitContainer.Name = "splitContainer";
+            this.splitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // splitContainer.Panel1
             // 
+            this.splitContainer.Panel1.Controls.Add(this.boxScaleLabel);
+            this.splitContainer.Panel1.Controls.Add(this.boxPointSize);
+            this.splitContainer.Panel1.Controls.Add(this.boxLImageLinesCountLabel);
             this.splitContainer.Panel1.Controls.Add(this.boxHeight);
             this.splitContainer.Panel1.Controls.Add(this.boxBmpImport);
-            this.splitContainer.Panel1.Controls.Add(this.buttonSelect);
+            this.splitContainer.Panel1.Controls.Add(this.boxSelect);
             this.splitContainer.Panel1.Controls.Add(this.boxTextButton);
             this.splitContainer.Panel1.Controls.Add(this.boxFillBG);
             this.splitContainer.Panel1.Controls.Add(this.boxFrontColor);
+            this.splitContainer.Panel1.Controls.Add(this.boxDummyButton);
             this.splitContainer.Panel1.Controls.Add(this.boxBgColor);
             // 
             // splitContainer.Panel2
             // 
             this.splitContainer.Panel2.Controls.Add(this.boxTableLayout);
-            this.splitContainer.Size = new System.Drawing.Size(911, 185);
-            this.splitContainer.SplitterDistance = 52;
+            this.splitContainer.Size = new System.Drawing.Size(911, 241);
+            this.splitContainer.SplitterDistance = 33;
+            this.splitContainer.SplitterWidth = 2;
             this.splitContainer.TabIndex = 0;
+            // 
+            // boxScaleLabel
+            // 
+            this.boxScaleLabel.AutoSize = true;
+            this.boxScaleLabel.Location = new System.Drawing.Point(152, 7);
+            this.boxScaleLabel.Name = "boxScaleLabel";
+            this.boxScaleLabel.Size = new System.Drawing.Size(53, 13);
+            this.boxScaleLabel.TabIndex = 34;
+            this.boxScaleLabel.Text = "Масштаб";
+            // 
+            // boxPointSize
+            // 
+            this.boxPointSize.Location = new System.Drawing.Point(205, 5);
+            this.boxPointSize.Maximum = new decimal(new int[] {
+            12,
+            0,
+            0,
+            0});
+            this.boxPointSize.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.boxPointSize.Name = "boxPointSize";
+            this.boxPointSize.Size = new System.Drawing.Size(52, 20);
+            this.boxPointSize.TabIndex = 33;
+            this.boxPointSize.Value = new decimal(new int[] {
+            6,
+            0,
+            0,
+            0});
+            this.boxPointSize.ValueChanged += new System.EventHandler(this.boxPointSize_ValueChanged);
+            // 
+            // boxLImageLinesCountLabel
+            // 
+            this.boxLImageLinesCountLabel.AutoSize = true;
+            this.boxLImageLinesCountLabel.Location = new System.Drawing.Point(268, 7);
+            this.boxLImageLinesCountLabel.Name = "boxLImageLinesCountLabel";
+            this.boxLImageLinesCountLabel.Size = new System.Drawing.Size(45, 13);
+            this.boxLImageLinesCountLabel.TabIndex = 32;
+            this.boxLImageLinesCountLabel.Text = "Высота";
             // 
             // boxHeight
             // 
-            this.boxHeight.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.boxHeight.Increment = new decimal(new int[] {
             5,
             0,
             0,
             0});
-            this.boxHeight.Location = new System.Drawing.Point(0, 163);
+            this.boxHeight.Location = new System.Drawing.Point(313, 5);
             this.boxHeight.Minimum = new decimal(new int[] {
             10,
             0,
             0,
             0});
             this.boxHeight.Name = "boxHeight";
-            this.boxHeight.Size = new System.Drawing.Size(52, 22);
+            this.boxHeight.Size = new System.Drawing.Size(52, 20);
             this.boxHeight.TabIndex = 30;
             this.boxHeight.Value = new decimal(new int[] {
             10,
@@ -111,7 +161,7 @@
             this.boxBmpImport.FlatAppearance.BorderSize = 0;
             this.boxBmpImport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.boxBmpImport.Font = new System.Drawing.Font("Georgia", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.boxBmpImport.Location = new System.Drawing.Point(28, 64);
+            this.boxBmpImport.Location = new System.Drawing.Point(112, 5);
             this.boxBmpImport.Name = "boxBmpImport";
             this.boxBmpImport.Size = new System.Drawing.Size(20, 19);
             this.boxBmpImport.TabIndex = 29;
@@ -119,21 +169,21 @@
             this.boxBmpImport.UseVisualStyleBackColor = false;
             this.boxBmpImport.Click += new System.EventHandler(this.boxBmpImport_Click);
             // 
-            // buttonSelect
+            // boxSelect
             // 
-            this.buttonSelect.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonSelect.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.buttonSelect.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.buttonSelect.FlatAppearance.BorderSize = 0;
-            this.buttonSelect.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonSelect.Font = new System.Drawing.Font("Georgia", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.buttonSelect.Location = new System.Drawing.Point(7, 64);
-            this.buttonSelect.Name = "buttonSelect";
-            this.buttonSelect.Size = new System.Drawing.Size(20, 19);
-            this.buttonSelect.TabIndex = 28;
-            this.buttonSelect.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.buttonSelect.UseVisualStyleBackColor = false;
-            this.buttonSelect.Click += new System.EventHandler(this.buttonSelect_Click);
+            this.boxSelect.BackColor = System.Drawing.SystemColors.Control;
+            this.boxSelect.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.boxSelect.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.boxSelect.FlatAppearance.BorderSize = 0;
+            this.boxSelect.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.boxSelect.Font = new System.Drawing.Font("Georgia", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.boxSelect.Location = new System.Drawing.Point(40, 5);
+            this.boxSelect.Name = "boxSelect";
+            this.boxSelect.Size = new System.Drawing.Size(20, 19);
+            this.boxSelect.TabIndex = 28;
+            this.boxSelect.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.boxSelect.UseVisualStyleBackColor = false;
+            this.boxSelect.Click += new System.EventHandler(this.buttonSelect_Click);
             // 
             // boxTextButton
             // 
@@ -143,7 +193,7 @@
             this.boxTextButton.FlatAppearance.BorderSize = 0;
             this.boxTextButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.boxTextButton.Font = new System.Drawing.Font("Georgia", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.boxTextButton.Location = new System.Drawing.Point(28, 39);
+            this.boxTextButton.Location = new System.Drawing.Point(88, 5);
             this.boxTextButton.Name = "boxTextButton";
             this.boxTextButton.Size = new System.Drawing.Size(20, 19);
             this.boxTextButton.TabIndex = 27;
@@ -158,7 +208,7 @@
             this.boxFillBG.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.boxFillBG.FlatAppearance.BorderSize = 0;
             this.boxFillBG.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.boxFillBG.Location = new System.Drawing.Point(7, 38);
+            this.boxFillBG.Location = new System.Drawing.Point(64, 5);
             this.boxFillBG.Name = "boxFillBG";
             this.boxFillBG.Size = new System.Drawing.Size(20, 19);
             this.boxFillBG.TabIndex = 0;
@@ -172,12 +222,26 @@
             this.boxFrontColor.FlatAppearance.MouseDownBackColor = System.Drawing.Color.White;
             this.boxFrontColor.FlatAppearance.MouseOverBackColor = System.Drawing.Color.White;
             this.boxFrontColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.boxFrontColor.Location = new System.Drawing.Point(10, 4);
+            this.boxFrontColor.Location = new System.Drawing.Point(5, 3);
             this.boxFrontColor.Name = "boxFrontColor";
-            this.boxFrontColor.Size = new System.Drawing.Size(20, 20);
+            this.boxFrontColor.Size = new System.Drawing.Size(16, 16);
             this.boxFrontColor.TabIndex = 25;
             this.boxFrontColor.UseVisualStyleBackColor = false;
             this.boxFrontColor.Click += new System.EventHandler(this.boxFrontColor_Click);
+            // 
+            // boxDummyButton
+            // 
+            this.boxDummyButton.BackColor = System.Drawing.Color.Black;
+            this.boxDummyButton.Enabled = false;
+            this.boxDummyButton.FlatAppearance.BorderSize = 0;
+            this.boxDummyButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Black;
+            this.boxDummyButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Black;
+            this.boxDummyButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.boxDummyButton.Location = new System.Drawing.Point(4, 2);
+            this.boxDummyButton.Name = "boxDummyButton";
+            this.boxDummyButton.Size = new System.Drawing.Size(18, 17);
+            this.boxDummyButton.TabIndex = 31;
+            this.boxDummyButton.UseVisualStyleBackColor = false;
             // 
             // boxBgColor
             // 
@@ -186,9 +250,9 @@
             this.boxBgColor.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Black;
             this.boxBgColor.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Black;
             this.boxBgColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.boxBgColor.Location = new System.Drawing.Point(20, 13);
+            this.boxBgColor.Location = new System.Drawing.Point(13, 11);
             this.boxBgColor.Name = "boxBgColor";
-            this.boxBgColor.Size = new System.Drawing.Size(20, 20);
+            this.boxBgColor.Size = new System.Drawing.Size(17, 17);
             this.boxBgColor.TabIndex = 26;
             this.boxBgColor.UseVisualStyleBackColor = false;
             this.boxBgColor.Click += new System.EventHandler(this.boxBgColor_Click);
@@ -213,7 +277,7 @@
             this.boxTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.boxTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.boxTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.boxTableLayout.Size = new System.Drawing.Size(855, 185);
+            this.boxTableLayout.Size = new System.Drawing.Size(911, 206);
             this.boxTableLayout.TabIndex = 0;
             // 
             // boxCanvasHolder
@@ -224,7 +288,7 @@
             this.boxCanvasHolder.Location = new System.Drawing.Point(0, 0);
             this.boxCanvasHolder.Margin = new System.Windows.Forms.Padding(0);
             this.boxCanvasHolder.Name = "boxCanvasHolder";
-            this.boxCanvasHolder.Size = new System.Drawing.Size(855, 185);
+            this.boxCanvasHolder.Size = new System.Drawing.Size(911, 206);
             this.boxCanvasHolder.TabIndex = 1;
             // 
             // boxSplit
@@ -239,18 +303,18 @@
             // 
             this.boxSplit.Panel1.Controls.Add(this.boxCanvas);
             this.boxSplit.Panel2MinSize = 0;
-            this.boxSplit.Size = new System.Drawing.Size(855, 185);
+            this.boxSplit.Size = new System.Drawing.Size(911, 206);
             this.boxSplit.SplitterDistance = 820;
             this.boxSplit.TabIndex = 17;
             // 
             // boxCanvas
             // 
-            this.boxCanvas.BackColor = System.Drawing.Color.Black;
+            this.boxCanvas.BackColor = System.Drawing.Color.Transparent;
             this.boxCanvas.Dock = System.Windows.Forms.DockStyle.Fill;
             this.boxCanvas.Location = new System.Drawing.Point(0, 0);
             this.boxCanvas.Margin = new System.Windows.Forms.Padding(0);
             this.boxCanvas.Name = "boxCanvas";
-            this.boxCanvas.Size = new System.Drawing.Size(820, 185);
+            this.boxCanvas.Size = new System.Drawing.Size(820, 206);
             this.boxCanvas.TabIndex = 16;
             this.boxCanvas.MouseDown += new System.Windows.Forms.MouseEventHandler(this.boxCanvas_MouseDown);
             this.boxCanvas.MouseMove += new System.Windows.Forms.MouseEventHandler(this.boxCanvas_MouseMove);
@@ -263,12 +327,14 @@
             this.Controls.Add(this.splitContainer);
             this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "DrawControl";
-            this.Size = new System.Drawing.Size(911, 185);
+            this.Size = new System.Drawing.Size(911, 241);
             this.Load += new System.EventHandler(this.DrawControl_Load);
             this.splitContainer.Panel1.ResumeLayout(false);
+            this.splitContainer.Panel1.PerformLayout();
             this.splitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
             this.splitContainer.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.boxPointSize)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxHeight)).EndInit();
             this.boxTableLayout.ResumeLayout(false);
             this.boxCanvasHolder.ResumeLayout(false);
@@ -290,9 +356,12 @@
         private System.Windows.Forms.Panel boxCanvasHolder;
         private System.Windows.Forms.SplitContainer boxSplit;
         private System.Windows.Forms.Panel boxCanvas;
-        private System.Windows.Forms.Timer cursorTimer;
-        private System.Windows.Forms.Button buttonSelect;
+        private System.Windows.Forms.Button boxSelect;
         private System.Windows.Forms.Button boxBmpImport;
         private System.Windows.Forms.NumericUpDown boxHeight;
+        private System.Windows.Forms.Button boxDummyButton;
+        private System.Windows.Forms.Label boxLImageLinesCountLabel;
+        private System.Windows.Forms.Label boxScaleLabel;
+        private System.Windows.Forms.NumericUpDown boxPointSize;
     }
 }

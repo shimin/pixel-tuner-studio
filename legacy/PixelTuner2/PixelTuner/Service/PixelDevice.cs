@@ -104,7 +104,7 @@ namespace PixelTuner.Service
         InitProcessStatus procStatusInit = null;
         PerformStep procPerformStep = null;
         SetStatus procSetStatus = null;
-        int CURRENTVERSION = 5;
+        int CURRENTVERSION = 7;
 
         public SerialPort Port
         {
@@ -114,9 +114,13 @@ namespace PixelTuner.Service
 
         #region Properties
 
-        private const int Umax = 4200;
+        private const int Umax = 4170;
 
-        private const int Umin = 3000;
+        private const int Umin = 3500;
+
+        //private const int Umax = 4200;
+
+        //private const int Umin = 3000;
 
         private bool _deviceBusy = false;
         /// <summary>
