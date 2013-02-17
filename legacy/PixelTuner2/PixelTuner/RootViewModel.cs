@@ -645,6 +645,7 @@ namespace PixelTuner
                 }
                 catch (Exception ex)
                 {
+                    ImagesModel.RefreshImagesCollection(_lastUsedLineHeight);
                     Console.WriteLine(ex.Message);
                 }
             }

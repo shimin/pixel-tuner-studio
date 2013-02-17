@@ -153,6 +153,8 @@ namespace PixelTuner.Drawing
                 xPos += this.PointSize;
                 yPos = 0;
             }
+            g.Dispose();
+            sourceImage.Dispose();
         }
 
         private void MakeImage()
