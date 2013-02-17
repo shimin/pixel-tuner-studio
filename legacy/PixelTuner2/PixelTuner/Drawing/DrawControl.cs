@@ -39,8 +39,8 @@ namespace PixelTuner.Drawing
                 _item = value;
                 ResetControls(_item);
 
-                undo.Clear();
-                redo.Clear();
+                undo = new Stack<ConfigurationItem>();
+                redo = new Stack<ConfigurationItem>();
 
                 boxCanvas.Invalidate();
             }
@@ -144,6 +144,11 @@ namespace PixelTuner.Drawing
             Application.AddMessageFilter(this);
         }
 
+        public void CleanUp()
+        {
+            Application.RemoveMessageFilter(this);
+        }
+
         /// <summary>
         /// Устанавливает значения полей извлекая их из конфигурации
         /// </summary>
@@ -159,6 +164,9 @@ namespace PixelTuner.Drawing
                 boxPointSize.ValueChanged += boxPointSize_ValueChanged;
 
                 boxHeight.ValueChanged -= boxHeight_ValueChanged;
+                if (_item.PatternLines % 5 != 0)
+                    _item.PatternLines = ((_item.PatternLines / 5) + 1) * 5;
+
                 SetNumericControlValue(boxHeight, _item.PatternLines);
                 boxHeight.ValueChanged += boxHeight_ValueChanged;
 
@@ -170,6 +178,8 @@ namespace PixelTuner.Drawing
                 boxSplit.SplitterMoved -= boxSplit_SplitterMoved;
                 boxSplit.SplitterMoving -= boxSplit_SplitterMoving;
 
+                int w = (int)_item.PatternLength * _item.PointSize + boxSplit.SplitterWidth + 52 + boxSplit.Margin.Right;
+                if (w > this.MinimumSize.Width) this.Width = w;
                 boxSplit.SplitterDistance = _item.PatternLength * _item.PointSize;
 
                 boxSplit.SplitterMoved += new SplitterEventHandler(boxSplit_SplitterMoved);
@@ -293,12 +303,12 @@ namespace PixelTuner.Drawing
                 boxWidth.ValueChanged -= boxWidth_ValueChanged;
                 boxPointSize.ValueChanged -= boxPointSize_ValueChanged;
                 {
+                    int newWidth = (int)boxWidth.Value * _item.PointSize + boxSplit.SplitterWidth + 52 + boxSplit.Margin.Right;
+                    if (newWidth > this.MinimumSize.Width) this.Width = newWidth;
                     boxSplit.SplitterDistance = _item.PatternLength * _item.PointSize;
                     SetNumericControlValue(boxHeight, _item.PatternLines);
                     SetNumericControlValue(boxWidth, _item.PatternLength);
                     SetNumericControlValue(boxPointSize, _item.PointSize);
-                    int newWidth = (int)boxWidth.Value * _item.PointSize + boxSplit.SplitterWidth + 52 + boxSplit.Margin.Right;
-                    if (newWidth > this.MinimumSize.Width) this.Width = newWidth;
                 }
                 boxSplit.SplitterMoved += boxSplit_SplitterMoved;
                 boxSplit.SplitterMoving += boxSplit_SplitterMoving;
@@ -327,12 +337,12 @@ namespace PixelTuner.Drawing
                 boxWidth.ValueChanged -= boxWidth_ValueChanged;
                 boxPointSize.ValueChanged -= boxPointSize_ValueChanged;
                 {
+                    int newWidth = (int)boxWidth.Value * _item.PointSize + boxSplit.SplitterWidth + 52 + boxSplit.Margin.Right;
+                    if (newWidth > this.MinimumSize.Width) this.Width = newWidth;
                     boxSplit.SplitterDistance = _item.PatternLength * _item.PointSize;
                     SetNumericControlValue(boxHeight, _item.PatternLines);
                     SetNumericControlValue(boxWidth, _item.PatternLength);
                     SetNumericControlValue(boxPointSize, _item.PointSize);
-                    int newWidth = (int)boxWidth.Value * _item.PointSize + boxSplit.SplitterWidth + 52 + boxSplit.Margin.Right;
-                    if (newWidth > this.MinimumSize.Width) this.Width = newWidth;
                 }
                 boxSplit.SplitterMoved += boxSplit_SplitterMoved;
                 boxSplit.SplitterMoving += boxSplit_SplitterMoving;
@@ -641,6 +651,11 @@ namespace PixelTuner.Drawing
 
             boxSplit.SplitterMoved -= boxSplit_SplitterMoved;
             boxSplit.SplitterMoving -= boxSplit_SplitterMoving;
+
+
+            int w = (int)_item.PatternLength * _item.PointSize +boxSplit.SplitterWidth + 52 + boxSplit.Margin.Right;
+            if (w > this.MinimumSize.Width) this.Width = w;
+
             boxSplit.SplitterDistance = _item.PatternLength * _item.PointSize;
             boxSplit.SplitterMoved += boxSplit_SplitterMoved;
             boxSplit.SplitterMoving += boxSplit_SplitterMoving;
@@ -699,6 +714,7 @@ namespace PixelTuner.Drawing
         } 
 
         #endregion
+
 
     }
 }

@@ -193,5 +193,35 @@ namespace PixelTuner
         {
             ((RootViewModel)this.DataContext).ImagesModel.RefreshImagesCollection();
         }
+
+        private void Change_Button_Click(object sender, RoutedEventArgs e)
+        {
+            var thumbItem = ((RootViewModel)this.DataContext).ImagesModel.SelectedItem;
+
+            if (thumbItem != null)
+            {
+                var image = System.Drawing.Image.FromFile(thumbItem.FullName);
+                if (image != null)
+                {
+                    var c = new PixelTuner.Drawing.ConfigurationItem(Settings.Default.LineHeight, 84, 8);
+                    c.SetScaledImage(image, true);
+
+                    PictureEditor pe = new PictureEditor(c);
+                    pe.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
+                    pe.Owner = Application.Current.MainWindow;
+                    pe.ShowDialog();
+                    var img = pe.Config.GetScaledImage();
+                    var saveDialog = new System.Windows.Forms.SaveFileDialog();
+                    saveDialog.FileName = thumbItem.Name;
+                    saveDialog.InitialDirectory = System.Windows.Forms.Application.StartupPath + "\\Content";
+                    saveDialog.Filter = "Bmp files|*.bmp";
+                    if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        img.Save(saveDialog.FileName);
+                    }
+                    ((RootViewModel)this.DataContext).ImagesModel.RefreshImagesCollection();
+                }
+            }
+        }
     }
 }

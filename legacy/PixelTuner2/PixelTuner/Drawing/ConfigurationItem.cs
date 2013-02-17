@@ -51,6 +51,8 @@ namespace PixelTuner.Drawing
         /// </summary>
         public const int MaxPatternLength = 800;
 
+        public const int MaxPatternLines = 100;
+
         private int _patternLength = 80;
         /// <summary>
         /// Длина полотна в условных ячейках
@@ -90,6 +92,10 @@ namespace PixelTuner.Drawing
             }
         }
 
+        /// <summary>
+        /// Преобразовывает картинку из масштаба заданного PointSize в PointSize=1
+        /// </summary>
+        /// <returns>Возвращает картинку с масштабом PointSize=1</returns>
         public Image GetScaledImage()
         {
             if (_image == null) return null;
@@ -110,14 +116,51 @@ namespace PixelTuner.Drawing
             return result;
         }
 
+        /// <summary>
+        /// Преобразовывает картинку из масштаба PointSize=1 в текущий заданный PointSize
+        /// </summary>
+        /// <param name="sourceImage">Картинка для преобразования</param>
+        /// <param name="sourcePicturePrimary">Если истина, то обрезка выполняется по размеру входной картинки, 
+        /// иначе - по размеру заданному параметрами PatternLength и PatternLines</param>
+        public void SetScaledImage(Image sourceImage, bool sourcePicturePrimary = false)
+        {
+            if (_image == null) { this.Image = null; return; }
+
+            Bitmap source = (Bitmap)sourceImage;
+            if (sourcePicturePrimary)
+            {
+                int w = sourceImage.Width;
+                int h = sourceImage.Height;
+                if (sourceImage.Width > ConfigurationItem.MaxPatternLength) w = ConfigurationItem.MaxPatternLength;
+                if (sourceImage.Height > ConfigurationItem.MaxPatternLines) h = ConfigurationItem.MaxPatternLines;
+                this.Image = new Bitmap(w * this.PointSize, h * this.PointSize);
+                this.PatternLength = w;
+                this.PatternLines = h;
+            }
+            else
+                this.Image = new Bitmap(this.PatternLength, this.PatternLines);
+
+            int xPos = 0;
+            int yPos = 0;
+            var g = Graphics.FromImage(this.Image);
+            for (int x = 0; x < sourceImage.Width; x++)
+            {
+                for (int y = 0; y < sourceImage.Height; y++)
+                {
+                    g.FillRectangle(new SolidBrush(source.GetPixel(x, y)), xPos, yPos, this.PointSize, this.PointSize);
+                    yPos += this.PointSize;
+                }
+                xPos += this.PointSize;
+                yPos = 0;
+            }
+        }
+
         private void MakeImage()
         {
-
             _image = new Bitmap(PatternLength * PointSize, PatternLines * PointSize);
             Graphics g = Graphics.FromImage(_image);
             g.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, _image.Width, _image.Height));
             g.Dispose();
-
         }
 
         public override ConfigurationItemBase Clone()

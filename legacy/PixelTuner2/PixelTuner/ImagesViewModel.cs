@@ -49,6 +49,15 @@ namespace PixelTuner
             set
             {
                 _selectedItem = value;
+                RaisePropertyChanged("IsSomethingSelected");
+            }
+        }
+
+        public bool IsSomethingSelected
+        {
+            get
+            {
+                return _selectedItem != null;
             }
         }
 

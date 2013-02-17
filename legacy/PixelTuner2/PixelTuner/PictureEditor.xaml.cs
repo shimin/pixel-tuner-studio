@@ -40,6 +40,16 @@ namespace PixelTuner
             this.windowsFormsHost.Child = DrawControl;
             DrawControl.PatternLinesChanged += new EventHandler(DrawControl_PatternLinesChanged);
             DrawControl.Resize += new EventHandler(DrawControl_Resize);
+            this.Closing += new CancelEventHandler(PictureEditor_Closing);
+        }
+
+        void PictureEditor_Closing(object sender, CancelEventArgs e)
+        {
+            if (DrawControl != null)
+            {
+                DrawControl.CleanUp();
+                DrawControl.Dispose();
+            }
         }
 
         void DrawControl_Resize(object sender, EventArgs e)
