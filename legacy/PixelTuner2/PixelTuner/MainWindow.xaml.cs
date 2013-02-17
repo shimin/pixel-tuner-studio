@@ -162,19 +162,36 @@ namespace PixelTuner
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Create_Button_Click(object sender, RoutedEventArgs e)
         {
-            //Uri uri = new Uri("pack://application:,,,/Images/paint_bucket+.png", UriKind.Absolute);
-            //System.Windows.Resources.StreamResourceInfo info = System.Windows.Application.GetResourceStream(uri);
-
-
-            var c = new PixelTuner.Drawing.ConfigurationItem(25, 84, 8);
+            var c = new PixelTuner.Drawing.ConfigurationItem(Settings.Default.LineHeight, 84, 8);
             PictureEditor pe = new PictureEditor(c);
             pe.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
             pe.Owner = Application.Current.MainWindow;
             pe.ShowDialog();
             var img = pe.Config.GetScaledImage();
-            //img.Save("c:\\11111111111.bmp");
+            var saveDialog = new System.Windows.Forms.SaveFileDialog();
+            saveDialog.InitialDirectory = System.Windows.Forms.Application.StartupPath + "\\Content";
+            saveDialog.Filter = "Bmp files|*.bmp";
+            if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                img.Save(saveDialog.FileName);
+            }
+            ((RootViewModel)this.DataContext).ImagesModel.RefreshImagesCollection();
+        }
+
+        private void Delete_Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.DataContext as RootViewModel != null)
+            {
+                (this.DataContext as RootViewModel).DeleteItem(
+                    ((RootViewModel)this.DataContext).ImagesModel.SelectedItem);
+            }
+        }
+
+        private void Resfresh_Button_Click(object sender, RoutedEventArgs e)
+        {
+            ((RootViewModel)this.DataContext).ImagesModel.RefreshImagesCollection();
         }
     }
 }

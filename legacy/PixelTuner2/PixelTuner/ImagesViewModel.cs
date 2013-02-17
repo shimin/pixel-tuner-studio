@@ -39,6 +39,19 @@ namespace PixelTuner
             }
         }
 
+        ThumbnailFileItem _selectedItem = null;
+        public ThumbnailFileItem SelectedItem
+        {
+            get
+            {
+                return _selectedItem;
+            }
+            set
+            {
+                _selectedItem = value;
+            }
+        }
+
         public void RefreshImagesCollection(int height = 0, string itemToRemove = "")
         {
             string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content");

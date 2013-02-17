@@ -43,7 +43,9 @@
             this.boxTableLayout = new System.Windows.Forms.TableLayoutPanel();
             this.boxCanvasHolder = new System.Windows.Forms.Panel();
             this.boxSplit = new System.Windows.Forms.SplitContainer();
-            this.boxCanvas = new PixelCanvas();
+            this.boxLabelWidth = new System.Windows.Forms.Label();
+            this.boxWidth = new System.Windows.Forms.NumericUpDown();
+            this.boxCanvas = new PixelTuner.Drawing.PixelCanvas();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
@@ -55,10 +57,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.boxSplit)).BeginInit();
             this.boxSplit.Panel1.SuspendLayout();
             this.boxSplit.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.boxWidth)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer
             // 
+            this.splitContainer.BackColor = System.Drawing.SystemColors.Control;
             this.splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer.IsSplitterFixed = true;
@@ -69,6 +73,8 @@
             // 
             // splitContainer.Panel1
             // 
+            this.splitContainer.Panel1.Controls.Add(this.boxLabelWidth);
+            this.splitContainer.Panel1.Controls.Add(this.boxWidth);
             this.splitContainer.Panel1.Controls.Add(this.boxScaleLabel);
             this.splitContainer.Panel1.Controls.Add(this.boxPointSize);
             this.splitContainer.Panel1.Controls.Add(this.boxLImageLinesCountLabel);
@@ -84,7 +90,7 @@
             // splitContainer.Panel2
             // 
             this.splitContainer.Panel2.Controls.Add(this.boxTableLayout);
-            this.splitContainer.Size = new System.Drawing.Size(911, 241);
+            this.splitContainer.Size = new System.Drawing.Size(872, 241);
             this.splitContainer.SplitterDistance = 33;
             this.splitContainer.SplitterWidth = 2;
             this.splitContainer.TabIndex = 0;
@@ -107,7 +113,7 @@
             0,
             0});
             this.boxPointSize.Minimum = new decimal(new int[] {
-            2,
+            3,
             0,
             0,
             0});
@@ -275,9 +281,9 @@
             this.boxTableLayout.Name = "boxTableLayout";
             this.boxTableLayout.RowCount = 1;
             this.boxTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.boxTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.boxTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.boxTableLayout.Size = new System.Drawing.Size(911, 206);
+            this.boxTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 206F));
+            this.boxTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 206F));
+            this.boxTableLayout.Size = new System.Drawing.Size(872, 206);
             this.boxTableLayout.TabIndex = 0;
             // 
             // boxCanvasHolder
@@ -288,7 +294,7 @@
             this.boxCanvasHolder.Location = new System.Drawing.Point(0, 0);
             this.boxCanvasHolder.Margin = new System.Windows.Forms.Padding(0);
             this.boxCanvasHolder.Name = "boxCanvasHolder";
-            this.boxCanvasHolder.Size = new System.Drawing.Size(911, 206);
+            this.boxCanvasHolder.Size = new System.Drawing.Size(872, 206);
             this.boxCanvasHolder.TabIndex = 1;
             // 
             // boxSplit
@@ -303,9 +309,41 @@
             // 
             this.boxSplit.Panel1.Controls.Add(this.boxCanvas);
             this.boxSplit.Panel2MinSize = 0;
-            this.boxSplit.Size = new System.Drawing.Size(911, 206);
+            this.boxSplit.Size = new System.Drawing.Size(872, 206);
             this.boxSplit.SplitterDistance = 820;
             this.boxSplit.TabIndex = 17;
+            // 
+            // boxLabelWidth
+            // 
+            this.boxLabelWidth.AutoSize = true;
+            this.boxLabelWidth.Location = new System.Drawing.Point(382, 7);
+            this.boxLabelWidth.Name = "boxLabelWidth";
+            this.boxLabelWidth.Size = new System.Drawing.Size(46, 13);
+            this.boxLabelWidth.TabIndex = 36;
+            this.boxLabelWidth.Text = "Ширина";
+            // 
+            // boxWidth
+            // 
+            this.boxWidth.Location = new System.Drawing.Point(427, 5);
+            this.boxWidth.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.boxWidth.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.boxWidth.Name = "boxWidth";
+            this.boxWidth.Size = new System.Drawing.Size(52, 20);
+            this.boxWidth.TabIndex = 35;
+            this.boxWidth.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.boxWidth.ValueChanged += new System.EventHandler(this.boxWidth_ValueChanged);
             // 
             // boxCanvas
             // 
@@ -326,8 +364,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer);
             this.Margin = new System.Windows.Forms.Padding(0);
+            this.MinimumSize = new System.Drawing.Size(500, 200);
             this.Name = "DrawControl";
-            this.Size = new System.Drawing.Size(911, 241);
+            this.Size = new System.Drawing.Size(872, 241);
             this.Load += new System.EventHandler(this.DrawControl_Load);
             this.splitContainer.Panel1.ResumeLayout(false);
             this.splitContainer.Panel1.PerformLayout();
@@ -341,6 +380,7 @@
             this.boxSplit.Panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.boxSplit)).EndInit();
             this.boxSplit.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.boxWidth)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -363,5 +403,7 @@
         private System.Windows.Forms.Label boxLImageLinesCountLabel;
         private System.Windows.Forms.Label boxScaleLabel;
         private System.Windows.Forms.NumericUpDown boxPointSize;
+        private System.Windows.Forms.Label boxLabelWidth;
+        private System.Windows.Forms.NumericUpDown boxWidth;
     }
 }

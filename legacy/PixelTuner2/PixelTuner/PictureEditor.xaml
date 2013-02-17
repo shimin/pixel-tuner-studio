@@ -3,15 +3,16 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:drawing="clr-namespace:PixelTuner.Drawing"
         Name="FormPictureEditor"
-        Title="{StaticResource PictureEditor_WindowTitle}" Height="328" Width="1024">
-    <StackPanel>
-    <WindowsFormsHost Height="{Binding ElementName=FormPictureEditor, Path=CanvasHeight, UpdateSourceTrigger=PropertyChanged}" 
-                                  Width="{Binding ElementName=FormPictureEditor, Path=Width}"
+        Title="{StaticResource PictureEditor_WindowTitle}" Height="328" Width="1522">
+    <ScrollViewer FlowDirection="LeftToRight" IsEnabled="True" CanContentScroll="True" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled">
+        <StackPanel>
+            <WindowsFormsHost Height="{Binding ElementName=FormPictureEditor, Path=CanvasHeight, UpdateSourceTrigger=PropertyChanged}" 
+                                  Width="{Binding ElementName=FormPictureEditor, Path=CanvasWidth}"
                                   HorizontalAlignment="Left" 
                                   Margin="0,0,0,0" 
                                   Name="windowsFormsHost" 
                                   VerticalAlignment="Top">
-                    <!--<drawing:DrawControl Name="drawControl" Height="250"></drawing:DrawControl>-->
-                </WindowsFormsHost>
-    </StackPanel>
+            </WindowsFormsHost>
+        </StackPanel>
+    </ScrollViewer>
 </Window>

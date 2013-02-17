@@ -31,7 +31,6 @@ namespace PixelTuner
         {
             _drawControl = new Drawing.DrawControl(config);
             InitializeComponent();
-            this.Config = config;
             this.SizeChanged += new SizeChangedEventHandler(PictureEditor_SizeChanged);
             this.Loaded += new RoutedEventHandler(PictureEditor_Loaded);
         }
@@ -40,6 +39,12 @@ namespace PixelTuner
         {
             this.windowsFormsHost.Child = DrawControl;
             DrawControl.PatternLinesChanged += new EventHandler(DrawControl_PatternLinesChanged);
+            DrawControl.Resize += new EventHandler(DrawControl_Resize);
+        }
+
+        void DrawControl_Resize(object sender, EventArgs e)
+        {
+            RaisePropertyChanged("CanvasWidth");
         }
 
         void DrawControl_PatternLinesChanged(object sender, EventArgs e)
@@ -94,6 +99,15 @@ namespace PixelTuner
             get
             {
                 return this.Height - 40;
+            }
+        }
+
+        public double CanvasWidth
+        {
+            get
+            {
+                if (this.DrawControl == null) return this.Width;
+                return this.DrawControl.Width;
             }
         }
 

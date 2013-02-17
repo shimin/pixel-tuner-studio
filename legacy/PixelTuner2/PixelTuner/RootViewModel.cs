@@ -619,28 +619,33 @@ namespace PixelTuner
                 if (control != null)
                 {
                     var itemToRemove = control.SelectedItem as ThumbnailFileItem;
-                    if (itemToRemove != null)
+                    DeleteItem(itemToRemove);
+                }
+            }
+        }
+
+        public void DeleteItem(ThumbnailFileItem itemToRemove)
+        {
+            if (itemToRemove != null)
+            {
+                try
+                {
+                    if (
+                    MessageBox.Show(
+                        String.Format(
+                            (String)Application.Current.TryFindResource("Global_ReallyRemove"),
+                            itemToRemove.FullName),
+                        Application.Current.MainWindow.Title,
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
-                        try
-                        {
-                            if (
-                            MessageBox.Show(
-                                String.Format(
-                                    (String)Application.Current.TryFindResource("Global_ReallyRemove"),
-                                    itemToRemove.FullName),
-                                Application.Current.MainWindow.Title,
-                                MessageBoxButton.YesNo,
-                                MessageBoxImage.Question) == MessageBoxResult.Yes)
-                            {
-                                ImagesModel.RefreshImagesCollection(_lastUsedLineHeight, itemToRemove.FullName);
-                                RemoveBrokenReferences();
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
+                        ImagesModel.RefreshImagesCollection(_lastUsedLineHeight, itemToRemove.FullName);
+                        RemoveBrokenReferences();
                     }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
                 }
             }
         }

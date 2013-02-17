@@ -122,11 +122,8 @@ namespace PixelTuner.Drawing
 
         public override ConfigurationItemBase Clone()
         {
-            ConfigurationItem newItem = new ConfigurationItem();
+            ConfigurationItem newItem = new ConfigurationItem(this.PatternLines, this._patternLength, this.PointSize);
             newItem.Image = this.Image.Clone() as Image;
-            newItem._patternLength = this._patternLength;
-            newItem._pointSize = this._pointSize;
-            newItem._patternLines = this._patternLines;
             return newItem;
         }
     }

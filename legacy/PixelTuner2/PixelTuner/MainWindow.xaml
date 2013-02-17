@@ -544,12 +544,13 @@
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
                                 <StackPanel Orientation="Horizontal" Opacity="50" Margin="1,0,0,-2" Background="#ffffff">
-                                    <Button Style="{StaticResource BlueLinkButton}" Content="Создать" Click="Button_Click" Margin="4,0,4,0"></Button>
+                                    <Button Style="{StaticResource BlueLinkButton}" Content="Создать" Click="Create_Button_Click" Margin="4,0,4,0"></Button>
                                     <Button Style="{StaticResource BlueLinkButton}" Content="Изменить" Margin="4,0,4,0"></Button>
-                                    <Button Style="{StaticResource BlueLinkButton}" Content="Удалить" Margin="4,0,4,0"></Button>
-                                    <Button Style="{StaticResource BlueLinkButton}" Content="Обновить" Margin="10,0,4,0"></Button>
+                                    <Button Style="{StaticResource BlueLinkButton}" Content="Удалить" Click="Delete_Button_Click" Margin="4,0,4,0"></Button>
+                                    <Button Style="{StaticResource BlueLinkButton}" Content="Обновить" Click="Resfresh_Button_Click" Margin="10,0,4,0"></Button>
                                 </StackPanel>
                                 <ListView Grid.Row="1" x:Name="boxThumbnails" 
+                                                      SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}"
                                                       SelectionMode="Extended" 
                                                       AllowDrop="True"
                                                       KeyDown="boxThumbnails_KeyDown"
