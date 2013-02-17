@@ -125,6 +125,12 @@
       <DependentUpon>DrawControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Drawing\ConfigurationItem.cs" />
+    <Compile Include="Drawing\PixelCanvas.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Drawing\PixelCanvas.Designer.cs">
+      <DependentUpon>PixelCanvas.cs</DependentUpon>
+    </Compile>
     <Compile Include="Drawing\TextDialog.cs">
       <SubType>Form</SubType>
     </Compile>

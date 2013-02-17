@@ -511,22 +511,6 @@ namespace PixelTuner.Drawing
                         for (int row = 0; row < bmp.Height && row < _item.PatternLines; row++)
                         {
                             Color c = bmp.GetPixel(column, row);
-                            int eps = 20;
-                            int max = Math.Max(c.R, Math.Max(c.B, c.G));
-                            int middle = (c.B + c.G + c.R) / 3;
-
-                            if (Math.Abs(max - middle) > eps)
-                            {
-                                if (c.R == max) c = Color.Red;
-                                else if (c.G == max) c = Color.FromArgb(0, 255, 0);
-                                else if (c.B == max) c = Color.Blue;
-                            }
-                            else
-                            {
-                                if ((c.B + c.G + c.R) / 3 - 127 > 20) { c = Color.White; }
-                                else c = Color.Black;
-                            }
-
                             FillPixel(c, gra, _item.PointSize, column * _item.PointSize, row * _item.PointSize);
                         }
                     }

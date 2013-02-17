@@ -168,7 +168,7 @@ namespace PixelTuner
             //System.Windows.Resources.StreamResourceInfo info = System.Windows.Application.GetResourceStream(uri);
 
 
-            var c = new PixelTuner.Drawing.ConfigurationItem(25, 64, 16);
+            var c = new PixelTuner.Drawing.ConfigurationItem(25, 84, 8);
             PictureEditor pe = new PictureEditor(c);
             pe.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
             pe.Owner = Application.Current.MainWindow;

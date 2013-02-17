@@ -82,7 +82,6 @@ namespace PixelTuner.Drawing
         {
             get
             {
-                //if (_image == null) MakeImage();
                 return _image;
             }
             set

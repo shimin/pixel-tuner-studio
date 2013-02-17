@@ -43,7 +43,7 @@
             this.boxTableLayout = new System.Windows.Forms.TableLayoutPanel();
             this.boxCanvasHolder = new System.Windows.Forms.Panel();
             this.boxSplit = new System.Windows.Forms.SplitContainer();
-            this.boxCanvas = new System.Windows.Forms.Panel();
+            this.boxCanvas = new PixelCanvas();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
@@ -355,7 +355,7 @@
         private System.Windows.Forms.TableLayoutPanel boxTableLayout;
         private System.Windows.Forms.Panel boxCanvasHolder;
         private System.Windows.Forms.SplitContainer boxSplit;
-        private System.Windows.Forms.Panel boxCanvas;
+        private PixelCanvas boxCanvas;
         private System.Windows.Forms.Button boxSelect;
         private System.Windows.Forms.Button boxBmpImport;
         private System.Windows.Forms.NumericUpDown boxHeight;
