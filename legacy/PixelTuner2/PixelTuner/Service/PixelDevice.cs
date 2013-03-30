@@ -645,7 +645,7 @@ namespace PixelTuner.Service
                 var buffer = DoSession(GetCommandBytes(Command.INFO).ToArray());
                 int Uizm = (buffer[4] << 8 | buffer[5]);
                 result.PlatformVersion = buffer[0];
-                result.EnergyLevel = (Uizm - Umin) * 100 / (Umax - Umin);
+                result.EnergyLevel = Uizm;//(Uizm - Umin) * 100 / (Umax - Umin);
                 result.BootVersion = buffer[1];
                 result.FirmwareVersion = buffer[2];
                 result.LedsTotal = buffer[3];
