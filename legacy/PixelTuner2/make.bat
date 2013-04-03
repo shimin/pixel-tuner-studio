@@ -1,4 +1,4 @@
-@set Version="2.0.2.4"
+@set Version="2.0.4.6"
 
 call "c:\Program Files\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat"
 msbuild ./SetAssemblyInfoTool/SetAssemblyInfoTool.csproj
