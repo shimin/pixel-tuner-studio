@@ -20,6 +20,7 @@ namespace PixelTuner.Drawing
         Rectangle _selection = new Rectangle(0, 0, 0, 0);
         Rectangle _invalidationArea = new Rectangle(0, 0, 0, 0);
         Point _mousePoint = Point.Empty;
+        const int MAX_UNDO_STACK_SIZE = 256;
 
         Color _gridColor = Color.FromArgb(255, 60, 60, 60);
        
@@ -39,8 +40,8 @@ namespace PixelTuner.Drawing
                 _item = value;
                 ResetControls(_item);
 
-                undo = new Stack<ConfigurationItem>();
-                redo = new Stack<ConfigurationItem>();
+                undo = new CircularBuffer<ConfigurationItem>(MAX_UNDO_STACK_SIZE);
+                redo = new CircularBuffer<ConfigurationItem>(MAX_UNDO_STACK_SIZE);
 
                 boxCanvas.Invalidate();
             }
@@ -285,8 +286,8 @@ namespace PixelTuner.Drawing
         #endregion
 
         #region Стек Undo/Redo
-        private Stack<ConfigurationItem> undo = new Stack<ConfigurationItem>();
-        private Stack<ConfigurationItem> redo = new Stack<ConfigurationItem>();
+        private CircularBuffer<ConfigurationItem> undo = new CircularBuffer<ConfigurationItem>(MAX_UNDO_STACK_SIZE);
+        private CircularBuffer<ConfigurationItem> redo = new CircularBuffer<ConfigurationItem>(MAX_UNDO_STACK_SIZE);
         public void Undo()
         {
             if (_item == null) return;
@@ -359,6 +360,7 @@ namespace PixelTuner.Drawing
         public void Push()
         {
             //_item.Image = _tempImage.Clone() as Image;
+            this._item._opNum++;
             undo.Push(_item.Clone() as ConfigurationItem);
             redo.Clear();
         }

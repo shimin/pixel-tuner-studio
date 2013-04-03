@@ -117,6 +117,7 @@
     <Compile Include="DelegatedList.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Drawing\CircularBuffer.cs" />
     <Compile Include="Drawing\ConfigurationItemBase.cs" />
     <Compile Include="Drawing\DrawControl.cs">
       <SubType>UserControl</SubType>
