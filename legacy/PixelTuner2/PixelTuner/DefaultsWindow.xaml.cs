@@ -18,7 +18,7 @@ namespace PixelTuner
     /// <summary>
     /// Interaction logic for DefaultsWindow.xaml
     /// </summary>
-    public partial class DefaultsWindow : Window
+    public partial class DefaultsWindow : Window, INotifyPropertyChanged
     {
         public DefaultsWindow()
         {
@@ -40,8 +40,34 @@ namespace PixelTuner
             set { _defaultDuration = value; }
         }
 
+        byte _turnOffMenuAfter = Settings.Default.TurnOffMenuAfter;
+        public byte TurnOffMenuAfter
+        {
+            get { return _turnOffMenuAfter; }
+            set { _turnOffMenuAfter = value; RaisePropertyChanged("DontTurnOffVisibility"); RaisePropertyChanged("TurnOffVisibility"); RaisePropertyChanged("TurnOffText"); }
+        }
+
+        public Visibility DontTurnOffVisibility
+        {
+            get { return _turnOffMenuAfter == 0 ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed; }
+        }
+
+        public Visibility TurnOffVisibility
+        {
+            get { return _turnOffMenuAfter == 0 ? System.Windows.Visibility.Collapsed : System.Windows.Visibility.Visible; }
+        }
+
+        public string TurnOffText
+        {
+            get
+            {
+                return String.Format((String)Application.Current.TryFindResource("Menu_Settings_Defaults_TurnOffAfter"), _turnOffMenuAfter);
+            }
+        }
+
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
+            Settings.Default.TurnOffMenuAfter = TurnOffMenuAfter;
             Settings.Default.DefaultDuration = DefaultDuration;
             PixelTuner.ListViewStyle.ThumbnailFileItem.SetDefaultStretching(Stretching);
             Settings.Default.DefaultStretching = Stretching;
@@ -59,5 +85,11 @@ namespace PixelTuner
 
         }
 
+        protected virtual void RaisePropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

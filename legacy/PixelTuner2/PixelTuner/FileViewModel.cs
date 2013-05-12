@@ -320,17 +320,23 @@ namespace PixelTuner
             headerStream.Write(new byte[4], 0, 4);
             headerStream.WriteByte(timeLineCount);
 
-            // адрес начала секции проектов равен длине уже записанного заголовка, плюс к-во 4-байтных адресов проектов:
+            // адрес начала секции таймлайнов равен длине уже записанного заголовка, плюс к-во 4-байтных адресов таймлайнов:
             UInt32 currentAddress = (UInt32)(headerStream.Length + timeLineCount * 4);
+            // плюс длина секции настроек
+            currentAddress += 2;
             foreach(var t in _timeLines) 
             {
                 if (t.Items.Count == 0) continue;
                 headerStream.Write(BitConverter.GetBytes(currentAddress), 0, 4);
-                // размер проекта равен произведению числа картинок и размера описателя картинки, 
+                // размер описателя таймлайна равен произведению числа картинок и размера описателя картинки, 
                 UInt32 size = (UInt32)t.Items.Count * ImageFile.HeaderSize + 1; // плюс байт с количеством картинок
-                // адрес следующего описателя проекта равен адресу текущего, плюс длина текущего
+                // адрес следующего описателя таймлайна равен адресу текущего, плюс длина текущего
                 currentAddress += (UInt32)size;
             }
+
+            // секция настроек
+            headerStream.WriteByte(Settings.Default.TurnOffMenuAfter);
+            headerStream.WriteByte(Settings.Default.TurnOffAfterIdle);
 
             // словарь в котором хранятся бинарные представления картинок по ключу - пути к файлу
             Dictionary<string, ImageFile> images = new Dictionary<string, ImageFile>();            
