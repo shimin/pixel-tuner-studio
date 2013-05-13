@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.boxLabelWidth = new System.Windows.Forms.Label();
+            this.boxWidth = new System.Windows.Forms.NumericUpDown();
             this.boxScaleLabel = new System.Windows.Forms.Label();
             this.boxPointSize = new System.Windows.Forms.NumericUpDown();
             this.boxLImageLinesCountLabel = new System.Windows.Forms.Label();
@@ -43,13 +45,12 @@
             this.boxTableLayout = new System.Windows.Forms.TableLayoutPanel();
             this.boxCanvasHolder = new System.Windows.Forms.Panel();
             this.boxSplit = new System.Windows.Forms.SplitContainer();
-            this.boxLabelWidth = new System.Windows.Forms.Label();
-            this.boxWidth = new System.Windows.Forms.NumericUpDown();
             this.boxCanvas = new PixelTuner.Drawing.PixelCanvas();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
             this.splitContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.boxWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxPointSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxHeight)).BeginInit();
             this.boxTableLayout.SuspendLayout();
@@ -57,7 +58,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.boxSplit)).BeginInit();
             this.boxSplit.Panel1.SuspendLayout();
             this.boxSplit.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.boxWidth)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer
@@ -95,12 +95,44 @@
             this.splitContainer.SplitterWidth = 2;
             this.splitContainer.TabIndex = 0;
             // 
+            // boxLabelWidth
+            // 
+            this.boxLabelWidth.AutoSize = true;
+            this.boxLabelWidth.Location = new System.Drawing.Point(382, 7);
+            this.boxLabelWidth.Name = "boxLabelWidth";
+            this.boxLabelWidth.Size = new System.Drawing.Size(52, 13);
+            this.boxLabelWidth.TabIndex = 36;
+            this.boxLabelWidth.Text = "Ширина";
+            // 
+            // boxWidth
+            // 
+            this.boxWidth.Location = new System.Drawing.Point(427, 5);
+            this.boxWidth.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.boxWidth.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.boxWidth.Name = "boxWidth";
+            this.boxWidth.Size = new System.Drawing.Size(52, 22);
+            this.boxWidth.TabIndex = 35;
+            this.boxWidth.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.boxWidth.ValueChanged += new System.EventHandler(this.boxWidth_ValueChanged);
+            // 
             // boxScaleLabel
             // 
             this.boxScaleLabel.AutoSize = true;
             this.boxScaleLabel.Location = new System.Drawing.Point(152, 7);
             this.boxScaleLabel.Name = "boxScaleLabel";
-            this.boxScaleLabel.Size = new System.Drawing.Size(53, 13);
+            this.boxScaleLabel.Size = new System.Drawing.Size(55, 13);
             this.boxScaleLabel.TabIndex = 34;
             this.boxScaleLabel.Text = "Масштаб";
             // 
@@ -118,7 +150,7 @@
             0,
             0});
             this.boxPointSize.Name = "boxPointSize";
-            this.boxPointSize.Size = new System.Drawing.Size(52, 20);
+            this.boxPointSize.Size = new System.Drawing.Size(52, 22);
             this.boxPointSize.TabIndex = 33;
             this.boxPointSize.Value = new decimal(new int[] {
             6,
@@ -150,7 +182,7 @@
             0,
             0});
             this.boxHeight.Name = "boxHeight";
-            this.boxHeight.Size = new System.Drawing.Size(52, 20);
+            this.boxHeight.Size = new System.Drawing.Size(52, 22);
             this.boxHeight.TabIndex = 30;
             this.boxHeight.Value = new decimal(new int[] {
             10,
@@ -313,38 +345,6 @@
             this.boxSplit.SplitterDistance = 820;
             this.boxSplit.TabIndex = 17;
             // 
-            // boxLabelWidth
-            // 
-            this.boxLabelWidth.AutoSize = true;
-            this.boxLabelWidth.Location = new System.Drawing.Point(382, 7);
-            this.boxLabelWidth.Name = "boxLabelWidth";
-            this.boxLabelWidth.Size = new System.Drawing.Size(46, 13);
-            this.boxLabelWidth.TabIndex = 36;
-            this.boxLabelWidth.Text = "Ширина";
-            // 
-            // boxWidth
-            // 
-            this.boxWidth.Location = new System.Drawing.Point(427, 5);
-            this.boxWidth.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.boxWidth.Minimum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.boxWidth.Name = "boxWidth";
-            this.boxWidth.Size = new System.Drawing.Size(52, 20);
-            this.boxWidth.TabIndex = 35;
-            this.boxWidth.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.boxWidth.ValueChanged += new System.EventHandler(this.boxWidth_ValueChanged);
-            // 
             // boxCanvas
             // 
             this.boxCanvas.BackColor = System.Drawing.Color.Transparent;
@@ -373,6 +373,7 @@
             this.splitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
             this.splitContainer.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.boxWidth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxPointSize)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxHeight)).EndInit();
             this.boxTableLayout.ResumeLayout(false);
@@ -380,7 +381,6 @@
             this.boxSplit.Panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.boxSplit)).EndInit();
             this.boxSplit.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.boxWidth)).EndInit();
             this.ResumeLayout(false);
 
         }

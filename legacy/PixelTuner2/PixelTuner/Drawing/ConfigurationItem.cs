@@ -31,8 +31,6 @@ namespace PixelTuner.Drawing
             MakeImage();            
         }
 
-        public int _opNum;
-
         private int _patternLines = 25;
         /// <summary>
         /// Высота узора в светодиодах
@@ -171,7 +169,6 @@ namespace PixelTuner.Drawing
         {
             ConfigurationItem newItem = new ConfigurationItem(this.PatternLines, this._patternLength, this.PointSize);
             newItem.Image = this.Image.Clone() as Image;
-            newItem._opNum = this._opNum;
             return newItem;
         }
     }

@@ -14,21 +14,20 @@ namespace PixelTuner.Drawing
 {
     public partial class DrawControl : UserControl, IMessageFilter
     {
+        #region Поля
+
         bool _mouseSelecting = false;
         bool _startSelection = false;
-        private Image _duplicatedFragment = null;
+        private static Image _duplicatedFragment = null;
         Rectangle _selection = new Rectangle(0, 0, 0, 0);
         Rectangle _invalidationArea = new Rectangle(0, 0, 0, 0);
         Point _mousePoint = Point.Empty;
         const int MAX_UNDO_STACK_SIZE = 256;
 
         Color _gridColor = Color.FromArgb(255, 60, 60, 60);
-       
-        #region Поля
-        private ConfigurationItem _item = null;
-        /// <summary>
-        /// Объект, содержащий параметры редактора и картинку
-        /// </summary>
+
+        private static ConfigurationItem _item = null;
+
         public ConfigurationItem Configuration
         {
             get
@@ -84,6 +83,52 @@ namespace PixelTuner.Drawing
 
         #endregion
 
+        protected static class ImageOffsetAboutMousePosition
+        {
+            private static int _deltaX = 0;
+            private static int _deltaY = 0;
+
+            public enum Direction { Horizontal, Vertical };
+
+            public static int DeltaX
+            {
+                get
+                {
+                    int x = 0;
+                    if (_duplicatedFragment == null) { _deltaX = 0; _deltaY = 0; return x; }
+                    x = ((_duplicatedFragment.Width / _item.PointSize) / 2) * _item.PointSize - _deltaX;
+                    return x;
+                }
+            }
+
+            public static int DeltaY
+            {
+                get
+                {
+                    int y = 0;
+                    if (_duplicatedFragment == null) { _deltaX = 0; _deltaY = 0; return y; }
+                    y = ((_duplicatedFragment.Height / _item.PointSize) / 2) * _item.PointSize - _deltaY;
+                    return y;
+                }
+            }
+
+            public static void IncreaseOffset(Direction d)
+            {
+                if (d == Direction.Horizontal)
+                    _deltaX += _item.PointSize;
+                else if (d == Direction.Vertical)
+                    _deltaY += _item.PointSize;
+            }
+
+            public static void DecreaseOffset(Direction d)
+            {
+                if (d == Direction.Horizontal)
+                    _deltaX -= _item.PointSize;
+                else if (d == Direction.Vertical)
+                    _deltaY -= _item.PointSize;
+            }
+        }
+
         public DrawControl(ConfigurationItem item)
         {
             InitializeComponent();
@@ -124,7 +169,7 @@ namespace PixelTuner.Drawing
         private Color ChooseColor(Color changingColor)
         {
             ColorDialog cd = new ColorDialog();
-            cd.AllowFullOpen = false;
+            cd.AllowFullOpen = true;
             cd.CustomColors = new int[8] { 
                 ColorTranslator.ToOle( Color.FromArgb(0, 0, 0)), 
                 ColorTranslator.ToOle( Color.FromArgb(255, 0, 0)), 
@@ -360,7 +405,6 @@ namespace PixelTuner.Drawing
         public void Push()
         {
             //_item.Image = _tempImage.Clone() as Image;
-            this._item._opNum++;
             undo.Push(_item.Clone() as ConfigurationItem);
             redo.Clear();
         }
@@ -377,20 +421,18 @@ namespace PixelTuner.Drawing
             {
                 _mouseSelecting = true;
                 _startSelection = false;
-                _selection = new Rectangle(e.X / _item.PointSize * _item.PointSize, 
+                _selection = new Rectangle(e.X / _item.PointSize * _item.PointSize,
                     e.Y / _item.PointSize * _item.PointSize, 1, 1);
                 return;
             }
 
-            //undo.Push(_tempImage.Clone() as Image);            
-
             if (_duplicatedFragment != null)
             {
                 isMouseDraws = false;
-                Graphics g = Graphics.FromImage(_item.Image);                
+                Graphics g = Graphics.FromImage(_item.Image);
                 g.DrawImageUnscaled(_duplicatedFragment, new Point(
-                    e.X / _item.PointSize * _item.PointSize - ((_duplicatedFragment.Width / _item.PointSize) / 2) * _item.PointSize,
-                    e.Y / _item.PointSize * _item.PointSize - ((_duplicatedFragment.Height / _item.PointSize) / 2) * _item.PointSize
+                    e.X / _item.PointSize * _item.PointSize - ImageOffsetAboutMousePosition.DeltaX,
+                    e.Y / _item.PointSize * _item.PointSize - ImageOffsetAboutMousePosition.DeltaY
                     ));
                 g.Dispose();
                 return;
@@ -486,9 +528,9 @@ namespace PixelTuner.Drawing
             if (_item == null || _item.Image == null) return;
             e.Graphics.DrawImage(_item.Image, 0, 0);
             if (_duplicatedFragment != null)
-            {                
-                e.Graphics.DrawImage(_duplicatedFragment, new Point(_mousePoint.X - ((_duplicatedFragment.Width / _item.PointSize) / 2) * _item.PointSize,
-                    _mousePoint.Y - ((_duplicatedFragment.Height / _item.PointSize) / 2) * _item.PointSize));
+            {
+                e.Graphics.DrawImage(_duplicatedFragment, new Point(_mousePoint.X - ImageOffsetAboutMousePosition.DeltaX,
+                    _mousePoint.Y - ImageOffsetAboutMousePosition.DeltaY));
             }
             DrawGrid(e.Graphics);
             if (_mouseSelecting)
@@ -712,11 +754,30 @@ namespace PixelTuner.Drawing
                 Redo();
                 return true;
             }
+            if (m.Msg == WM_KEYDOWN && keyCode == Keys.Left)
+            {
+                ImageOffsetAboutMousePosition.DecreaseOffset(ImageOffsetAboutMousePosition.Direction.Horizontal);
+                return true;
+            }
+            if (m.Msg == WM_KEYDOWN && keyCode == Keys.Right)
+            {
+                ImageOffsetAboutMousePosition.IncreaseOffset(ImageOffsetAboutMousePosition.Direction.Horizontal);
+                return true;
+            }
+            if (m.Msg == WM_KEYDOWN && keyCode == Keys.Down)
+            {
+                ImageOffsetAboutMousePosition.DecreaseOffset(ImageOffsetAboutMousePosition.Direction.Vertical);
+                return true;
+            }
+            if (m.Msg == WM_KEYDOWN && keyCode == Keys.Up)
+            {
+                ImageOffsetAboutMousePosition.IncreaseOffset(ImageOffsetAboutMousePosition.Direction.Vertical);
+                return true;
+            }
             return false;
         } 
 
         #endregion
-
 
     }
 }
