@@ -5,7 +5,7 @@
   <?define RTMProductVersion="1.0.0" ?>
   <?define UpgradeCode="{df1086f7-6803-4697-b66c-74dd2733c092}"?>
   <?define Manufacturer="shiningpromo.ru"?>
-  <?define ProductCode="{F2AFCC7F-B71F-4581-8555-92544B2C3EDD}"?>
+  <?define ProductCode="{C18D9485-CC6B-4251-AEB0-3342FC1FA1B5}"?>
   <?define PackageCode="*"?>
 
   <Product Id="$(var.ProductCode)" Name="PixelTuner" Language="1031" Codepage="1251" Version="$(var.ProductVersion)" Manufacturer="PixelTuner" UpgradeCode="$(var.UpgradeCode)">

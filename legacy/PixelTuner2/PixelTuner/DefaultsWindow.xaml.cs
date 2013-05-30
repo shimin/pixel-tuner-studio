@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using PixelTuner.Properties;
 using System.ComponentModel;
+using PixelTuner.Service;
 
 namespace PixelTuner
 {
@@ -72,6 +73,12 @@ namespace PixelTuner
             PixelTuner.ListViewStyle.ThumbnailFileItem.SetDefaultStretching(Stretching);
             Settings.Default.DefaultStretching = Stretching;
             Settings.Default.Save();
+            
+            List<DeviceFeature> settings = new List<DeviceFeature>();
+            settings.Add(new DeviceFeature(1, TurnOffMenuAfter));
+            settings.Add(new DeviceFeature(2, Settings.Default.TurnOffAfterIdle));
+            
+            DeviceHelper.WriteSettings(settings);
             this.Close();
         }
 

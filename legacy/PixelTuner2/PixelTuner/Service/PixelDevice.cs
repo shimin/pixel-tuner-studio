@@ -25,6 +25,7 @@ namespace PixelTuner.Service
         END_WRITE_FLASH = 0x43,
         END_WRITE_DATA = 0x63,
         SWITCH_TO_BOOT = 0x62,
+        WRITE_SETTINGS = 0x73,
     }
 
     public enum ConnectionStatus
@@ -760,6 +761,30 @@ namespace PixelTuner.Service
             }
         }
 
+        public bool WriteSettings(List<DeviceFeature> settings)
+        {
+            bool success = true;
+            lock (_longOperation)
+            {
+                List<byte> args = new List<byte>();
+                foreach (DeviceFeature df in settings)
+                {
+                    args.AddRange(df.GetBytes());
+                    if (args.Count >= 60)
+                    {
+                        DoSession(GetCommandBytes(Command.WRITE_SETTINGS, args).ToArray());
+                        args.Clear();
+                    }
+                }
+                if (args.Count > 0)
+                {
+                    DoSession(GetCommandBytes(Command.WRITE_SETTINGS, args).ToArray());
+                    args.Clear();
+                }
+            }
+            return success;
+        }
+
         object _syncSession = new object();
 
         /// <summary>
@@ -813,6 +838,7 @@ namespace PixelTuner.Service
                 case Command.END_WRITE_DATA: result.Add(0); break;
                 case Command.END_WRITE_FLASH: result.Add(0); break;
                 case Command.SWITCH_TO_BOOT: result.Add(0); break;
+                case Command.WRITE_SETTINGS:
                 case Command.WRITE_BLOCK: 
                     if (args == null) 
                         throw new ArgumentNullException("Не задан отправляемый набор байт", "args");

@@ -81,6 +81,14 @@ namespace PixelTuner.Service
                 DeviceSeekerThread.Join();
         }
 
+        public static void WriteSettings(List<DeviceFeature> settings)
+        {
+            foreach (PixelDevice d in _devices)
+            {
+                d.WriteSettings(settings);
+            }
+        }
+
         private static void PortListController()
         {
             while (_keepSeeking)
