@@ -60,32 +60,32 @@
           <Directory Id="ContentDir" Name="Content">
             <Component Id="DefaultContent" Guid="114E4EA1-8D2F-464C-B017-3952BD1AB67D">
               <CreateFolder></CreateFolder>
-              <File Id="_25_hearts_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_hearts.jpg" />
-              <File Id="_25_love_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_love.jpg" />
-              <File Id="_25_stars_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_stars.jpg" />
-              <File Id="_25_stripes_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_stripes.jpg" />
-              <File Id="_25_triangle_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_triangle.jpg" />
+              <File Id="_25_hearts_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_hearts.bmp" />
+              <File Id="_25_love_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_love.bmp" />
+              <File Id="_25_stars_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_stars.bmp" />
+              <File Id="_25_stripes_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_stripes.bmp" />
+              <File Id="_25_triangle_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_triangle.bmp" />
 
-              <File Id="_25_cards_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_cards.bmp" />
+              <File Id="_25_cards_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_cards.bmp" />
               <File Id="_25_red_arrows_right_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_red_arrows_right.bmp" />
               <File Id="_40_audio_levels_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\40_audio_levels.bmp" />
               <File Id="_40_hearts_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\40_hearts.bmp" />
               <File Id="_40_new_year_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\40_new_year.bmp" />
               <File Id="_40_steps2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\40_steps2.bmp" />
               
-              <File Id="_50_2waves_png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_2waves.png" />
+              <File Id="_50_2_waves_png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_2_waves.bmp" />
               <File Id="_50_rainbow_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_rainbow.bmp" />
               <File Id="_50_stork2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_stork2.bmp" />
               <File Id="_50_stork3_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_stork3.bmp" />
 
-              <File Id="_50_AudioLevels.png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_AudioLevels.png" />
-              <File Id="_50_cards.png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_cards.png" />
-              <File Id="_50_DM.png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_DM.png" />
-              <File Id="_50_new_year.png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_new_year.png" />
-              <File Id="_50_red_arrows_right.png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_red_arrows_right.png" />
-              <File Id="_50_snake.png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_snake.png" />
-              <File Id="_50_SquareCircle.png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_SquareCircle.png" />
-              <File Id="_50_steps2.png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_steps2.png" />
+              <File Id="_50_AudioLevels.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_audio_levels.bmp" />
+              <File Id="_50_cards.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_cards.bmp" />
+              <File Id="_50_santa.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_santa.bmp" />
+              <File Id="_50_new_year.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_new_year.bmp" />
+              <File Id="_50_red_arrows_right.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_red_arrows_right.bmp" />
+              <File Id="_50_snake.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_snake.bmp" />
+              <File Id="_50_square_circle.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_square_circle.bmp" />
+              <File Id="_50_steps2.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_steps2.bmp" />
 
               <File Id="_70_audio_levels.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_audio_levels.bmp" />
               <File Id="_70_hearts.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_hearts.bmp" />

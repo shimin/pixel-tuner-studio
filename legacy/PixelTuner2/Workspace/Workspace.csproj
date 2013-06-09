@@ -209,25 +209,25 @@
     <Resource Include="Images\DockBottom.PNG" />
     <Resource Include="Images\DockLeft.PNG" />
     <Resource Include="Images\DockPane.PNG" />
-    <Resource Include="Images\DockPaneEmpty.png" />
+    <Resource Include="Images\DockPaneEmpty.bmp" />
     <Resource Include="Images\DockRight.PNG" />
     <Resource Include="Images\DockTop.PNG" />
-    <Resource Include="Images\HTabGroup.png" />
-    <Resource Include="Images\InnerDockDocPaneBottom.png" />
-    <Resource Include="Images\InnerDockDocPaneLeft.png" />
-    <Resource Include="Images\InnerDockDocPaneRight.png" />
-    <Resource Include="Images\InnerDockDocPaneTop.png" />
-    <Resource Include="Images\InnerDockPaneBottom.png" />
-    <Resource Include="Images\InnerDockPaneInside.png" />
-    <Resource Include="Images\InnerDockPaneLeft.png" />
-    <Resource Include="Images\InnerDockPaneRight.png" />
-    <Resource Include="Images\InnerDockPaneTop.png" />
-    <Resource Include="Images\Locked.png" />
-    <Resource Include="Images\PinAutoHide.png" />
-    <Resource Include="Images\PinClose.png" />
-    <Resource Include="Images\PinDocMenu.png" />
-    <Resource Include="Images\PinMenu.png" />
-    <Resource Include="Images\VTabGroup.png" />
+    <Resource Include="Images\HTabGroup.bmp" />
+    <Resource Include="Images\InnerDockDocPaneBottom.bmp" />
+    <Resource Include="Images\InnerDockDocPaneLeft.bmp" />
+    <Resource Include="Images\InnerDockDocPaneRight.bmp" />
+    <Resource Include="Images\InnerDockDocPaneTop.bmp" />
+    <Resource Include="Images\InnerDockPaneBottom.bmp" />
+    <Resource Include="Images\InnerDockPaneInside.bmp" />
+    <Resource Include="Images\InnerDockPaneLeft.bmp" />
+    <Resource Include="Images\InnerDockPaneRight.bmp" />
+    <Resource Include="Images\InnerDockPaneTop.bmp" />
+    <Resource Include="Images\Locked.bmp" />
+    <Resource Include="Images\PinAutoHide.bmp" />
+    <Resource Include="Images\PinClose.bmp" />
+    <Resource Include="Images\PinDocMenu.bmp" />
+    <Resource Include="Images\PinMenu.bmp" />
+    <Resource Include="Images\VTabGroup.bmp" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Themes\Default\Brushes.xaml">
@@ -244,41 +244,41 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\PinMaximize.png" />
+    <Resource Include="Images\PinMaximize.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\PinRestore.png" />
+    <Resource Include="Images\PinRestore.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Themes\Default\Images\DockAnchorableBottom.png" />
-    <Resource Include="Themes\Default\Images\DockAnchorableLeft.png" />
-    <Resource Include="Themes\Default\Images\DockAnchorableRight.png" />
-    <Resource Include="Themes\Default\Images\DockAnchorableTop.png" />
-    <Resource Include="Themes\Default\Images\DockDocumentAsAnchorableBottom.png" />
-    <Resource Include="Themes\Default\Images\DockDocumentAsAnchorableLeft.png" />
-    <Resource Include="Themes\Default\Images\DockDocumentAsAnchorableRight.png" />
-    <Resource Include="Themes\Default\Images\DockDocumentAsAnchorableTop.png" />
-    <Resource Include="Themes\Default\Images\DockDocumentBottom.png" />
-    <Resource Include="Themes\Default\Images\DockDocumentInside.png" />
-    <Resource Include="Themes\Default\Images\DockDocumentLeft.png" />
-    <Resource Include="Themes\Default\Images\DockDocumentRight.png" />
-    <Resource Include="Themes\Default\Images\DockDocumentTop.png" />
-    <Resource Include="Themes\Default\Images\DockPaneEmpty.png" />
-    <Resource Include="Themes\Default\Images\DockPaneLargeEmpty.png" />
-    <Resource Include="Themes\Default\Images\HTabGroup.png" />
-    <Resource Include="Themes\Default\Images\Locked.png" />
-    <Resource Include="Themes\Default\Images\PinAutoHide.png" />
-    <Resource Include="Themes\Default\Images\PinAutoHide_Dark.png" />
-    <Resource Include="Themes\Default\Images\PinClose.png" />
-    <Resource Include="Themes\Default\Images\PinClose_Dark.png" />
-    <Resource Include="Themes\Default\Images\PinDocMenu.png" />
-    <Resource Include="Themes\Default\Images\PinMaximize.png" />
-    <Resource Include="Themes\Default\Images\PinMaximize_Dark.png" />
-    <Resource Include="Themes\Default\Images\PinMenu.png" />
-    <Resource Include="Themes\Default\Images\PinMenu_Dark.png" />
-    <Resource Include="Themes\Default\Images\PinRestore.png" />
-    <Resource Include="Themes\Default\Images\PinRestore_Dark.png" />
-    <Resource Include="Themes\Default\Images\VTabGroup.png" />
+    <Resource Include="Themes\Default\Images\DockAnchorableBottom.bmp" />
+    <Resource Include="Themes\Default\Images\DockAnchorableLeft.bmp" />
+    <Resource Include="Themes\Default\Images\DockAnchorableRight.bmp" />
+    <Resource Include="Themes\Default\Images\DockAnchorableTop.bmp" />
+    <Resource Include="Themes\Default\Images\DockDocumentAsAnchorableBottom.bmp" />
+    <Resource Include="Themes\Default\Images\DockDocumentAsAnchorableLeft.bmp" />
+    <Resource Include="Themes\Default\Images\DockDocumentAsAnchorableRight.bmp" />
+    <Resource Include="Themes\Default\Images\DockDocumentAsAnchorableTop.bmp" />
+    <Resource Include="Themes\Default\Images\DockDocumentBottom.bmp" />
+    <Resource Include="Themes\Default\Images\DockDocumentInside.bmp" />
+    <Resource Include="Themes\Default\Images\DockDocumentLeft.bmp" />
+    <Resource Include="Themes\Default\Images\DockDocumentRight.bmp" />
+    <Resource Include="Themes\Default\Images\DockDocumentTop.bmp" />
+    <Resource Include="Themes\Default\Images\DockPaneEmpty.bmp" />
+    <Resource Include="Themes\Default\Images\DockPaneLargeEmpty.bmp" />
+    <Resource Include="Themes\Default\Images\HTabGroup.bmp" />
+    <Resource Include="Themes\Default\Images\Locked.bmp" />
+    <Resource Include="Themes\Default\Images\PinAutoHide.bmp" />
+    <Resource Include="Themes\Default\Images\PinAutoHide_Dark.bmp" />
+    <Resource Include="Themes\Default\Images\PinClose.bmp" />
+    <Resource Include="Themes\Default\Images\PinClose_Dark.bmp" />
+    <Resource Include="Themes\Default\Images\PinDocMenu.bmp" />
+    <Resource Include="Themes\Default\Images\PinMaximize.bmp" />
+    <Resource Include="Themes\Default\Images\PinMaximize_Dark.bmp" />
+    <Resource Include="Themes\Default\Images\PinMenu.bmp" />
+    <Resource Include="Themes\Default\Images\PinMenu_Dark.bmp" />
+    <Resource Include="Themes\Default\Images\PinRestore.bmp" />
+    <Resource Include="Themes\Default\Images\PinRestore_Dark.bmp" />
+    <Resource Include="Themes\Default\Images\VTabGroup.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

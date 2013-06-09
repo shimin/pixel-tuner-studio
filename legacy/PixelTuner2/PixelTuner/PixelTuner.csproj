@@ -249,27 +249,27 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\PinClose_Dark.png" />
+    <Resource Include="Images\PinClose_Dark.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\PinClose.png" />
+    <Resource Include="Images\PinClose.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\_grey_Arrow-Down.png" />
-    <Resource Include="Images\_grey_Arrow-DownLight.png" />
+    <Resource Include="Images\_grey_Arrow-Down.bmp" />
+    <Resource Include="Images\_grey_Arrow-DownLight.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\_grey_Arrow-DownDisabled.png" />
+    <Resource Include="Images\_grey_Arrow-DownDisabled.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\_grey_Arrow-Up.png" />
-    <Resource Include="Images\_grey_Arrow-UpDisabled.png" />
-    <Resource Include="Images\_grey_Arrow-UpLight.png" />
+    <Resource Include="Images\_grey_Arrow-Up.bmp" />
+    <Resource Include="Images\_grey_Arrow-UpDisabled.bmp" />
+    <Resource Include="Images\_grey_Arrow-UpLight.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\red_cross.png" />
-    <Resource Include="Images\red_crossDisabled.png" />
-    <Resource Include="Images\red_crossLight.png" />
+    <Resource Include="Images\red_cross.bmp" />
+    <Resource Include="Images\red_crossDisabled.bmp" />
+    <Resource Include="Images\red_crossLight.bmp" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\PixelTuner.ico" />
@@ -300,16 +300,16 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\DrawingTool\bmp.png" />
+    <Resource Include="Images\DrawingTool\bmp.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\DrawingTool\copy.png" />
+    <Resource Include="Images\DrawingTool\copy.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\DrawingTool\text.png" />
+    <Resource Include="Images\DrawingTool\text.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\DrawingTool\paint_bucket.png" />
+    <Resource Include="Images\DrawingTool\paint_bucket.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
