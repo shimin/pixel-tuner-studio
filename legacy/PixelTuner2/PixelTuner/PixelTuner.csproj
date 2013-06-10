@@ -148,11 +148,11 @@
     </Compile>
     <Compile Include="ProjectsViewModel.cs" />
     <Compile Include="RelayCommand.cs" />
+    <Compile Include="Service\DeviceFeature.cs" />
     <Compile Include="Service\DeviceHelperAux.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Service\DeviceInfo.cs" />
-    <Compile Include="Service\DeviceFeature.cs" />
     <Compile Include="Service\ImageFile.cs" />
     <Compile Include="Service\PixelDevice.cs" />
     <Compile Include="Service\DeviceHelper.cs" />
@@ -249,27 +249,27 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\PinClose_Dark.bmp" />
+    <Resource Include="Images\PinClose_Dark.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\PinClose.bmp" />
+    <Resource Include="Images\PinClose.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\_grey_Arrow-Down.bmp" />
-    <Resource Include="Images\_grey_Arrow-DownLight.bmp" />
+    <Resource Include="Images\_grey_Arrow-Down.png" />
+    <Resource Include="Images\_grey_Arrow-DownLight.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\_grey_Arrow-DownDisabled.bmp" />
+    <Resource Include="Images\_grey_Arrow-DownDisabled.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\_grey_Arrow-Up.bmp" />
-    <Resource Include="Images\_grey_Arrow-UpDisabled.bmp" />
-    <Resource Include="Images\_grey_Arrow-UpLight.bmp" />
+    <Resource Include="Images\_grey_Arrow-Up.png" />
+    <Resource Include="Images\_grey_Arrow-UpDisabled.png" />
+    <Resource Include="Images\_grey_Arrow-UpLight.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\red_cross.bmp" />
-    <Resource Include="Images\red_crossDisabled.bmp" />
-    <Resource Include="Images\red_crossLight.bmp" />
+    <Resource Include="Images\red_cross.png" />
+    <Resource Include="Images\red_crossDisabled.png" />
+    <Resource Include="Images\red_crossLight.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\PixelTuner.ico" />
@@ -300,16 +300,16 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\DrawingTool\bmp.bmp" />
+    <Resource Include="Images\DrawingTool\bmp.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\DrawingTool\copy.bmp" />
+    <Resource Include="Images\DrawingTool\copy.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\DrawingTool\text.bmp" />
+    <Resource Include="Images\DrawingTool\text.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\DrawingTool\paint_bucket.bmp" />
+    <Resource Include="Images\DrawingTool\paint_bucket.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
