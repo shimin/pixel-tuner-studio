@@ -18,5 +18,5 @@ using System.Reflection;
     //(used if a resource is not found in the page, 
     // app, or any theme specific resource dictionaries)
 )]
-[assembly: AssemblyVersion("2.0.4.10")]
-[assembly: AssemblyFileVersion("2.0.4.10")]
+[assembly: AssemblyVersion("2.0.4.11")]
+[assembly: AssemblyFileVersion("2.0.4.11")]

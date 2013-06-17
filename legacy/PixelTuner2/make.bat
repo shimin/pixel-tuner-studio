@@ -5,6 +5,8 @@ msbuild ./SetAssemblyInfoTool/SetAssemblyInfoTool.csproj
 
 SetAssemblyInfoTool.exe SetAssemblyInfoTool\..\ %Version%
 
+SetAssemblyInfoTool.exe SetAssemblyInfoTool\..\ %Version% autoupdaterconfig
+
 msbuild ./BootstrapperNET4/BootstrapperNET4.wixproj
 @rem msbuild ./PixelTuner/PixelTuner.sln /t:Clean
 @rem msbuild ./PixelTuner/PixelTuner.sln /p:Configuration=Debug
