@@ -105,7 +105,7 @@ namespace PixelTuner.Service
         InitProcessStatus procStatusInit = null;
         PerformStep procPerformStep = null;
         SetStatus procSetStatus = null;
-        int CURRENTVERSION = 7;
+        int CURRENTVERSION = 8;
 
         public SerialPort Port
         {
@@ -249,11 +249,11 @@ namespace PixelTuner.Service
         /// <summary>
         /// Свойство определяет, показывать ли контролы, связанные с обновлением прошивки
         /// </summary>
-        public Visibility UpdateNeeded
+        public bool UpdateNeeded
         {
             get
             {
-                return this.FirmwareVersion < CURRENTVERSION && !this.BootMode ? Visibility.Visible : Visibility.Collapsed;
+                return (this.FirmwareVersion < CURRENTVERSION) && !this.BootMode;
             }
         }
         #endregion

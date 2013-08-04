@@ -29,7 +29,6 @@
                x:Key="SelectedBgColor" />
         <SolidColorBrush Color="{StaticResource BgColor}" x:Key="BgBrush" />
         <SolidColorBrush Color="#ffffff" x:Key="TextBrush" />
-        <BooleanToVisibilityConverter x:Key="OldschoolVisibilityConverter" />
         <Style TargetType="{x:Type tt:TimeLineItemControl}">
             <Setter Property="Template">
                 <Setter.Value>
@@ -525,9 +524,21 @@
                                                 Grid.ColumnSpan="2"
                                                 Grid.Row="1"
                                                 Margin="0,2,0,0" />
-                                            <TextBlock Text="{StaticResource Dev_Props_UpdateNeeded}" Foreground="#d0d010" Margin="0,2,0,0" Visibility="{Binding UpdateNeeded}" Grid.Row="2" Grid.ColumnSpan="2"/>
-                                            <Button Style="{StaticResource LinkButton}" Content="{StaticResource Dev_Props_Update}" Command="{Binding AutoUpdateCommand}" Visibility="{Binding UpdateNeeded}" Grid.Row="3" Margin="8,0,0,0"></Button>
-                                            <Button Style="{StaticResource LinkButton}" Content="{StaticResource Dev_Props_Postpone}" Command="{Binding UpdatePostponeCommand}" Visibility="{Binding UpdateNeeded}" Grid.Row="3" Grid.Column="1"></Button>
+                                            <TextBlock Text="{StaticResource Dev_Props_UpdateNeeded}" 
+                                                       Foreground="#d0d010" 
+                                                       Margin="0,2,0,0" 
+                                                       Visibility="{Binding UpdateNeeded, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Hidden}}"
+                                                       Grid.Row="2" Grid.ColumnSpan="2"/>
+                                            <Button Style="{StaticResource LinkButton}" 
+                                                    Content="{StaticResource Dev_Props_Update}" 
+                                                    Command="{Binding AutoUpdateCommand}" 
+                                                    Visibility="{Binding UpdateNeeded, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Hidden}}"
+                                                    Grid.Row="3" Margin="8,0,0,0" />
+                                            <Button Style="{StaticResource LinkButton}" 
+                                                    Content="{StaticResource Dev_Props_Postpone}" 
+                                                    Command="{Binding UpdatePostponeCommand}" 
+                                                    Visibility="{Binding UpdateNeeded, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Hidden}}"
+                                                    Grid.Row="3" Grid.Column="1" />
                                         </Grid>
                                     </StackPanel>
                                 </Canvas>
