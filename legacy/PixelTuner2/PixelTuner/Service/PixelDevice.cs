@@ -105,7 +105,7 @@ namespace PixelTuner.Service
         InitProcessStatus procStatusInit = null;
         PerformStep procPerformStep = null;
         SetStatus procSetStatus = null;
-        int CURRENTVERSION = 8;
+        int CURRENTVERSION = 9;
 
         public SerialPort Port
         {
