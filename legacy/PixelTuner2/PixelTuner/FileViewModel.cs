@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Xml.Serialization;
 using PixelTuner.Properties;
 using PixelTuner.Service;
+using PixelTuner.Pixelate;
 
 namespace PixelTuner
 {
@@ -308,81 +309,31 @@ namespace PixelTuner
             return GetBinaryPresentation(this.LineHeight);
         }
 
-        public List<byte> GetBinaryPresentation(int realDeviceHeight)
+        public List<byte> GetBinaryPresentation(int targetHeight)
         {
-            List<byte> projectPrefix = new List<byte>(Encoding.ASCII.GetBytes("FLSH"));
-            byte timeLineCount = (byte)TimeLines.Count;
-            foreach (var t in _timeLines) if (t.Items.Count == 0) timeLineCount--;
+            var knownPaths = new List<string>();
+            byte projectHeight = (byte)targetHeight;
 
-            MemoryStream headerStream = new MemoryStream();
-            
-            headerStream.Write(projectPrefix.ToArray(), 0, projectPrefix.Count);
-            headerStream.Write(new byte[4], 0, 4);
-            headerStream.WriteByte(timeLineCount);
-
-            // адрес начала секции таймлайнов равен длине уже записанного заголовка, плюс к-во 4-байтных адресов таймлайнов:
-            UInt32 currentAddress = (UInt32)(headerStream.Length + timeLineCount * 4);
-            foreach(var t in _timeLines) 
-            {
-                if (t.Items.Count == 0) continue;
-                headerStream.Write(BitConverter.GetBytes(currentAddress), 0, 4);
-                // размер описателя таймлайна равен произведению числа картинок и размера описателя картинки, 
-                UInt32 size = (UInt32)t.Items.Count * ImageFile.HeaderSize + 1; // плюс байт с количеством картинок
-                // адрес следующего описателя таймлайна равен адресу текущего, плюс длина текущего
-                currentAddress += (UInt32)size;
-            }
-
-            // словарь в котором хранятся бинарные представления картинок по ключу - пути к файлу
-            Dictionary<string, ImageFile> images = new Dictionary<string, ImageFile>();            
-            // сформирую список вообще всех картинок которые есть в таймлайнах
+            PixelProjectFile project = new PixelProjectFile();
             foreach (TimeLineViewModel tl in _timeLines)
             {
                 if (tl.Items.Count == 0) continue;
+                var tlf = new PixelTimelineFile();
+
                 foreach (PixelTuner.ListViewStyle.ThumbnailFileItem item in tl.Items)
                 {
                     string path = item.FullName.ToLower();
-                    if (!images.ContainsKey(path))
-                    {
-                        images.Add(path, new ImageFile(currentAddress, path, realDeviceHeight));
-                        currentAddress += images[path].Length;
-                    }
+                    UInt16 duration = (UInt16)(((TimeSpan)(item.EndTime - item.StartTime)).TotalMilliseconds / 100);                    
+                    
+                    var imgf = new PixelImageFile(path, (UInt16)item.Stretching, duration);
+                    knownPaths.Add(path);
+                    tlf.Images.Add(imgf);
                 }
+                project.TimeLines.Add(tlf);
             }
 
-            List<TimelineFile> timelines = new List<TimelineFile>();
-            // теперь можно формировать список линий времени
-            foreach (TimeLineViewModel tl in _timeLines)
-            {
-                if (tl.Items.Count == 0) continue;
-                TimelineFile tlf = new TimelineFile(images, tl);
-                timelines.Add(tlf);
-                headerStream.Write(tlf.BinaryHeader.ToArray(), 0, tlf.BinaryHeader.Count);  // tlf.BinaryHeader.Count должен быть 8 * n + 1
-            }
-
-            // формирую блок со списком картинок
-            foreach (var pair in images)
-            {
-                headerStream.Write(pair.Value.BinaryData.ToArray(), 0, pair.Value.BinaryData.Count);
-            }
-
-            List<byte> resList = new List<byte>(headerStream.GetBuffer());
-            byte[] length = BitConverter.GetBytes(resList.Count);
-            int i = 0;
-            foreach (var b in length)
-            {
-                resList[projectPrefix.Count + i] = b;
-                i++;
-            }
-            try
-            {
-                using (FileStream fs = new FileStream(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "project.bin"), FileMode.Create))
-                {
-                    fs.Write(resList.ToArray(), 0, resList.Count);
-                    //headerStream.WriteTo(fs);
-                }
-            }
-            catch { MessageBox.Show("Can't replace file.", Application.Current.MainWindow.Title); }
-            return resList;
+            ImagesCollection c = new ImagesCollection(knownPaths, projectHeight);            
+            return project.GetBinary(c, projectHeight);
         }
 
         [XmlIgnore]
@@ -438,5 +389,7 @@ namespace PixelTuner
                 _timeLines = value;
             }
         }
+
+        public object tlf { get; set; }
     }
 }

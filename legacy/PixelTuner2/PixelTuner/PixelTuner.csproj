@@ -109,6 +109,7 @@
     </ApplicationDefinition>
     <Compile Include="ActiveDocumentConverter.cs" />
     <Compile Include="ActiveTimeLineConverter.cs" />
+    <Compile Include="AuxClasses\ReadOnlyDictionary.cs" />
     <Compile Include="AuxClasses\SafeObservable.cs" />
     <Compile Include="DefaultsWindow.xaml.cs">
       <DependentUpon>DefaultsWindow.xaml</DependentUpon>
@@ -146,6 +147,10 @@
     <Compile Include="PictureEditor.xaml.cs">
       <DependentUpon>PictureEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pixelate\ImagesCollectionItem.cs" />
+    <Compile Include="Pixelate\PixelImageFile.cs" />
+    <Compile Include="Pixelate\ImagesCollection.cs" />
+    <Compile Include="Pixelate\PixelTimeLineFile.cs" />
     <Compile Include="ProjectsViewModel.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="Service\DeviceFeature.cs" />
@@ -153,12 +158,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Service\DeviceInfo.cs" />
-    <Compile Include="Service\ImageFile.cs" />
     <Compile Include="Service\PixelDevice.cs" />
     <Compile Include="Service\DeviceHelper.cs" />
     <Compile Include="Service\PixelDeviceSpecs.cs" />
-    <Compile Include="Service\ProjectFile.cs" />
-    <Compile Include="Service\TimelineFile.cs" />
+    <Compile Include="Pixelate\PixelProjectFile.cs" />
     <Compile Include="TimeLineViewModel.cs" />
     <Compile Include="ToolViewModel.cs" />
     <Compile Include="TriangleSlider.xaml.cs">

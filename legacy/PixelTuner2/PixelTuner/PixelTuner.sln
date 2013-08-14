@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoUpdater", "..\AutoUpdat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SetAssemblyInfoTool", "..\SetAssemblyInfoTool\SetAssemblyInfoTool.csproj", "{C666606F-C50F-4E05-B0CD-F0EC22ACA614}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdateFileGenerator", "..\UpdateFileGenerator\UpdateFileGenerator.csproj", "{C9B3D35F-8B4A-4998-8BB4-144C06A098CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -233,6 +235,26 @@ Global
 		{C666606F-C50F-4E05-B0CD-F0EC22ACA614}.Release|Mixed Platforms.ActiveCfg = Release|x86
 		{C666606F-C50F-4E05-B0CD-F0EC22ACA614}.Release|x86.ActiveCfg = Release|x86
 		{C666606F-C50F-4E05-B0CD-F0EC22ACA614}.Release|x86.Build.0 = Release|x86
+		{C9B3D35F-8B4A-4998-8BB4-144C06A098CB}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{C9B3D35F-8B4A-4998-8BB4-144C06A098CB}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{C9B3D35F-8B4A-4998-8BB4-144C06A098CB}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{C9B3D35F-8B4A-4998-8BB4-144C06A098CB}.Debug|x86.ActiveCfg = Debug|x86
+		{C9B3D35F-8B4A-4998-8BB4-144C06A098CB}.Debug|x86.Build.0 = Debug|x86
+		{C9B3D35F-8B4A-4998-8BB4-144C06A098CB}.EnDebug|Any CPU.ActiveCfg = Debug|x86
+		{C9B3D35F-8B4A-4998-8BB4-144C06A098CB}.EnDebug|Mixed Platforms.ActiveCfg = Debug|x86
+		{C9B3D35F-8B4A-4998-8BB4-144C06A098CB}.EnDebug|Mixed Platforms.Build.0 = Debug|x86
+		{C9B3D35F-8B4A-4998-8BB4-144C06A098CB}.EnDebug|x86.ActiveCfg = Debug|x86
+		{C9B3D35F-8B4A-4998-8BB4-144C06A098CB}.EnDebug|x86.Build.0 = Debug|x86
+		{C9B3D35F-8B4A-4998-8BB4-144C06A098CB}.EnRelease|Any CPU.ActiveCfg = Release|x86
+		{C9B3D35F-8B4A-4998-8BB4-144C06A098CB}.EnRelease|Mixed Platforms.ActiveCfg = Release|x86
+		{C9B3D35F-8B4A-4998-8BB4-144C06A098CB}.EnRelease|Mixed Platforms.Build.0 = Release|x86
+		{C9B3D35F-8B4A-4998-8BB4-144C06A098CB}.EnRelease|x86.ActiveCfg = Release|x86
+		{C9B3D35F-8B4A-4998-8BB4-144C06A098CB}.EnRelease|x86.Build.0 = Release|x86
+		{C9B3D35F-8B4A-4998-8BB4-144C06A098CB}.Release|Any CPU.ActiveCfg = Release|x86
+		{C9B3D35F-8B4A-4998-8BB4-144C06A098CB}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{C9B3D35F-8B4A-4998-8BB4-144C06A098CB}.Release|Mixed Platforms.Build.0 = Release|x86
+		{C9B3D35F-8B4A-4998-8BB4-144C06A098CB}.Release|x86.ActiveCfg = Release|x86
+		{C9B3D35F-8B4A-4998-8BB4-144C06A098CB}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

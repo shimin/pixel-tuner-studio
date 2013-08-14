@@ -192,6 +192,8 @@ namespace PixelTuner.Drawing
 
         public void CleanUp()
         {
+            undo.Clear();
+            redo.Clear();
             Application.RemoveMessageFilter(this);
         }
 
