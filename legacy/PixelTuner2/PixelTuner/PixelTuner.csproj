@@ -315,201 +315,201 @@
     <Resource Include="Images\DrawingTool\paint_bucket.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Content\100_2_waves.bmp">
+    <Content Include="Content\100_2_waves.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\100_black.bmp">
+    </Content>
+    <Content Include="Content\100_black.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\100_hearts.bmp">
+    </Content>
+    <Content Include="Content\100_hearts.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\100_hub1.bmp">
+    </Content>
+    <Content Include="Content\100_hub1.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\100_mickey.bmp">
+    </Content>
+    <Content Include="Content\100_mickey.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\100_mosaic.bmp">
+    </Content>
+    <Content Include="Content\100_mosaic.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\100_mosaic2.bmp">
+    </Content>
+    <Content Include="Content\100_mosaic2.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\100_mosaic3.bmp">
+    </Content>
+    <Content Include="Content\100_mosaic3.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\100_mosaic_hole.bmp">
+    </Content>
+    <Content Include="Content\100_mosaic_hole.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\100_pattern.bmp">
+    </Content>
+    <Content Include="Content\100_pattern.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\100_stain.bmp">
+    </Content>
+    <Content Include="Content\100_stain.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\100_stain2.bmp">
+    </Content>
+    <Content Include="Content\100_stain2.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\100_stars.bmp">
+    </Content>
+    <Content Include="Content\100_stars.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\100_steps.bmp">
+    </Content>
+    <Content Include="Content\100_steps.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\100_white.bmp">
+    </Content>
+    <Content Include="Content\100_white.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\100_wing.bmp">
+    </Content>
+    <Content Include="Content\100_wing.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\20_simple_white.bmp">
+    </Content>
+    <Content Include="Content\20_simple_white.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\25_cards.bmp">
+    </Content>
+    <Content Include="Content\25_cards.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\25_fish.bmp">
+    </Content>
+    <Content Include="Content\25_fish.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\25_hearts.bmp">
+    </Content>
+    <Content Include="Content\25_hearts.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\25_leaf.bmp">
+    </Content>
+    <Content Include="Content\25_leaf.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\25_love.bmp">
+    </Content>
+    <Content Include="Content\25_love.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\25_pikachu.bmp">
+    </Content>
+    <Content Include="Content\25_pikachu.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\25_red_arrows_right.bmp">
+    </Content>
+    <Content Include="Content\25_red_arrows_right.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\25_samson.bmp">
+    </Content>
+    <Content Include="Content\25_samson.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\25_santorini.bmp">
+    </Content>
+    <Content Include="Content\25_santorini.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\25_smiles.bmp">
+    </Content>
+    <Content Include="Content\25_smiles.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\25_stars.bmp">
+    </Content>
+    <Content Include="Content\25_stars.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\25_stripes.bmp">
+    </Content>
+    <Content Include="Content\25_stripes.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\25_triangle.bmp">
+    </Content>
+    <Content Include="Content\25_triangle.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\30_red_line.bmp">
+    </Content>
+    <Content Include="Content\30_red_line.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\40_AudioLevels.bmp">
+    </Content>
+    <Content Include="Content\40_AudioLevels.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\40_audio_levels.bmp">
+    </Content>
+    <Content Include="Content\40_audio_levels.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\40_hearts.bmp">
+    </Content>
+    <Content Include="Content\40_hearts.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\40_new_year.bmp">
+    </Content>
+    <Content Include="Content\40_new_year.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\40_steps2.bmp">
+    </Content>
+    <Content Include="Content\40_steps2.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\50_2_waves.bmp">
+    </Content>
+    <Content Include="Content\50_2_waves.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\50_audio_levels.bmp">
+    </Content>
+    <Content Include="Content\50_audio_levels.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\50_cards.bmp">
+    </Content>
+    <Content Include="Content\50_cards.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\50_girlface.bmp">
+    </Content>
+    <Content Include="Content\50_girlface.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\50_microsoft.bmp">
+    </Content>
+    <Content Include="Content\50_microsoft.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\50_microsoft2.bmp">
+    </Content>
+    <Content Include="Content\50_microsoft2.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\50_new_year.bmp">
+    </Content>
+    <Content Include="Content\50_new_year.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\50_rainbow.bmp">
+    </Content>
+    <Content Include="Content\50_rainbow.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\50_red_arrows_right.bmp">
+    </Content>
+    <Content Include="Content\50_red_arrows_right.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\50_ruflag.bmp">
+    </Content>
+    <Content Include="Content\50_ruflag.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\50_santa.bmp">
+    </Content>
+    <Content Include="Content\50_santa.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\50_snake.bmp">
+    </Content>
+    <Content Include="Content\50_snake.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\50_square_circle.bmp">
+    </Content>
+    <Content Include="Content\50_square_circle.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\50_stars.bmp">
+    </Content>
+    <Content Include="Content\50_stars.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\50_steps.bmp">
+    </Content>
+    <Content Include="Content\50_steps.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\50_steps2.bmp">
+    </Content>
+    <Content Include="Content\50_steps2.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\50_stork2.bmp">
+    </Content>
+    <Content Include="Content\50_stork2.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\50_stork3.bmp">
+    </Content>
+    <Content Include="Content\50_stork3.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\50_white.bmp">
+    </Content>
+    <Content Include="Content\50_white.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\70_audio_levels.bmp">
+    </Content>
+    <Content Include="Content\70_audio_levels.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\70_hearts.bmp">
+    </Content>
+    <Content Include="Content\70_hearts.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\70_rainbow.bmp">
+    </Content>
+    <Content Include="Content\70_rainbow.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\70_rainbow2.bmp">
+    </Content>
+    <Content Include="Content\70_rainbow2.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\70_red_arrows_right.bmp">
+    </Content>
+    <Content Include="Content\70_red_arrows_right.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\70_stars.bmp">
+    </Content>
+    <Content Include="Content\70_stars.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\70_steps2.bmp">
+    </Content>
+    <Content Include="Content\70_steps2.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\70_stork2.bmp">
+    </Content>
+    <Content Include="Content\70_stork2.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\70_stripes.bmp">
+    </Content>
+    <Content Include="Content\70_stripes.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Content\70_triangle.bmp">
+    </Content>
+    <Content Include="Content\70_triangle.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
