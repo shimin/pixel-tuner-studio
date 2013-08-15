@@ -94,6 +94,32 @@
               <File Id="_70_steps2.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_steps2.bmp" />
               <File Id="_70_stripes.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_stripes.bmp" />
               <File Id="_70_triangle.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_triangle.bmp" />
+
+              <File Id="_80_batterfly_002.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_batterfly_002.bmp" />
+              <File Id="_80_batterfly_003.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_batterfly_003.bmp" />
+              <File Id="_80_batterfly_004.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_batterfly_004.bmp" />
+              <File Id="_80_batterfly_005.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_batterfly_005.bmp" />
+              <File Id="_80_batterfly_006.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_batterfly_006.bmp" />
+              <File Id="_80_batterfly_007.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_batterfly_007.bmp" />
+              <File Id="_80_batterfly_008.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_batterfly_008.bmp" />
+              <File Id="_80_batterfly_009.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_batterfly_009.bmp" />
+
+              <File Id="_100_2_waves.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_2_waves.bmp" />
+              <File Id="_100_black.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_black.bmp" />
+              <File Id="_100_hearts.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_hearts.bmp" />
+              <File Id="_100_hub1.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_hub1.bmp" />
+              <File Id="_100_mickey.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_mickey.bmp" />
+              <File Id="_100_mosaic.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_mosaic.bmp" />
+              <File Id="_100_mosaic2.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_mosaic2.bmp" />
+              <File Id="_100_mosaic3.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_mosaic3.bmp" />
+              <File Id="_100_pattern.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_pattern.bmp" />
+              <File Id="_100_stain.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_stain.bmp" />
+              <File Id="_100_stain2.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_stain2.bmp" />
+              <File Id="_100_stars.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_stars.bmp" />
+              <File Id="_100_steps.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_steps.bmp" />
+              <File Id="_100_white.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_white.bmp" />
+              <File Id="_100_wing.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_wing.bmp" />
+              <File Id="_100_mosaic_hole.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_mosaic_hole.bmp" />
             </Component>
           </Directory>
         </Directory>
