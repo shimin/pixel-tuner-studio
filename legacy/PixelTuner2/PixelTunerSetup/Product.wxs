@@ -43,8 +43,6 @@
             <File Id="CoreLib" Source="..\PixelTuner\bin\$(var.Configuration)\Core.dll" />
             <File Id="AppearanceLib" Source="..\PixelTuner\bin\$(var.Configuration)\Appearance.dll" />
             <File Id="WorkspaceLib" Source="..\PixelTuner\bin\$(var.Configuration)\Workspace.dll" />
-            <File Id="demo25.ptp" Source="..\PixelTuner\bin\$(var.Configuration)\demo25.ptp" />
-            <File Id="demo50.ptp" Source="..\PixelTuner\bin\$(var.Configuration)\demo50.ptp" />
             <File Id="PixelTuner.exe" Name="PixelTuner.exe" Source="..\PixelTuner\bin\$(var.Configuration)\PixelTuner.exe" KeyPath='yes'>
               <Shortcut Id="startmenuPixelTuner" Directory="ProgramMenuDir" Name="PixelTuner 2"
                    WorkingDirectory='INSTALLLOCATION' Icon="PixelTuner.exe" IconIndex="0" Advertise="yes" />

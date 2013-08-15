@@ -1,0 +1,11 @@
+bin/
+obj/
+Debug/
+Release/
+*.sdf
+*.suo
+*.opensdf
+*.o
+*.pdb
+*.user
+SetAssemblyInfoTool.exe
