@@ -9,8 +9,8 @@
       UpgradeCode="{df1086f7-6803-4697-b66c-74dd2733c092}"
       Compressed="no">
     <BootstrapperApplicationRef Id="ManagedBootstrapperApplicationHost">
-      <Payload Name='BootstrapperCore.config' SourceFile='./WixBA/bin/Debug/WixBA.BootstrapperCore.config' />
-      <Payload SourceFile='./WixBA/bin/Debug/WixBA.dll' />
+      <Payload Name='BootstrapperCore.config' SourceFile='./WixBA/bin/$(var.Configuration)/WixBA.BootstrapperCore.config' />
+      <Payload SourceFile='./WixBA/bin/$(var.Configuration)/WixBA.dll' />
       <Payload Compressed="yes" SourceFile="NetfxLicense.rtf"/>
     </BootstrapperApplicationRef>
     <Chain>

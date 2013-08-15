@@ -95,7 +95,7 @@
               <File Id="_70_stars.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_stars.bmp" />
               <File Id="_70_steps2.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_steps2.bmp" />
               <File Id="_70_stripes.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_stripes.bmp" />
-              <File Id="_70_triangle.png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_triangle.png" />
+              <File Id="_70_triangle.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_triangle.bmp" />
             </Component>
           </Directory>
         </Directory>
