@@ -71,7 +71,7 @@ namespace PixelTuner.Pixelate
             return result;
         }
 
-        public ImagesCollectionItem TryGetDescriptor(string path)
+        public ImagesCollectionItem GetItem(string path)
         {
             if (_descriptors.ContainsKey(path))
                 return _descriptors[path];

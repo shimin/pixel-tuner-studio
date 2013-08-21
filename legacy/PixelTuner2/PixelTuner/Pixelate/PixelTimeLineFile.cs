@@ -26,7 +26,7 @@ namespace PixelTuner.Pixelate
             bin.Add((byte)Images.Count);
             foreach (var v in Images)
             {
-                var desc = imgCollection.TryGetDescriptor(v.Path);
+                var desc = imgCollection.GetItem(v.Path);
                 if (desc != null)
                 {
                     v.StartAddress = desc.StartAddress;

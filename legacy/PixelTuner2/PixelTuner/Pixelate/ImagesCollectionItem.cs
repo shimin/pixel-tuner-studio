@@ -66,6 +66,8 @@ namespace PixelTuner.Pixelate
 
         #region Methods
 
+        bool appendUp = true;
+
         public List<byte> GetBinary(byte targetHeight)
         {
             if (Bitmap != null)
@@ -80,11 +82,25 @@ namespace PixelTuner.Pixelate
                     List<Color> columnColors = new List<Color>();
                     for (int row = 0; row < targetHeight; row++)
                     {
-                        // fill black part that exceeds real bitmap height.
-                        if (row < Bitmap.Height)
-                            columnColors.Add(Bitmap.GetPixel(column, row));
+                        if (appendUp)
+                        {
+                            if (row < targetHeight - Bitmap.Height)
+                            {
+                                columnColors.Add(Color.Black);
+                            }
+                            else
+                            {
+                                columnColors.Add(Bitmap.GetPixel(column, row - (targetHeight - Bitmap.Height)));
+                            }
+                        }
                         else
-                            columnColors.Add(Color.Black);
+                        {
+                            // fill black part that exceeds real bitmap height.
+                            if (row < Bitmap.Height)
+                                columnColors.Add(Bitmap.GetPixel(column, row));
+                            else
+                                columnColors.Add(Color.Black);
+                        }
                     }
                     foreach (var c in columnColors) _binary.Add(c.R);
                     foreach (var c in columnColors) _binary.Add(c.G);

@@ -332,7 +332,7 @@ namespace PixelTuner
                 project.TimeLines.Add(tlf);
             }
 
-            ImagesCollection c = new ImagesCollection(knownPaths, projectHeight);            
+            ImagesCollection c = new ImagesCollection(knownPaths, projectHeight);
             return project.GetBinary(c, projectHeight);
         }
 
