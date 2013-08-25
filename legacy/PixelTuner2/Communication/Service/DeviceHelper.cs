@@ -18,13 +18,13 @@ namespace Communication.Service
         static List<BackgroundWorker> CheckPortWorkers = new List<BackgroundWorker>();
         
         private static List<PixelDevice> _devices = new List<PixelDevice>();
-        public static List<PixelDevice> Devices
-        {
-            get
-            {
-                return _devices;
-            }
-        }
+        //public static List<PixelDevice> Devices
+        //{
+        //    get
+        //    {
+        //        return _devices;
+        //    }
+        //}
         
         public static void StartSeeking()
         {
@@ -60,12 +60,18 @@ namespace Communication.Service
                             {
                                 // вызов события
                                 OnDeviceFound(state.Device);
+                                state.Device.Disconnected += new SerialDeviceBase.DisconnectedDelegate(Device_Disconnected);
                             }
                         }
                     }
                 };
             }
             DeviceSeekerThread.Start();
+        }
+
+        static void Device_Disconnected(DeviceEventArgs e)
+        {
+            OnDeviceLost(e.Device);
         }
 
         public static void StopSeeking()
@@ -271,14 +277,22 @@ namespace Communication.Service
 
         #region Events
 
-        delegate void DeviceFoundDelegate(DeviceEventArgs e);
+        public delegate void DeviceChangedDelegate(DeviceEventArgs e);
 
-        static event DeviceFoundDelegate DeviceFound;
+        public static event DeviceChangedDelegate DeviceFound;
 
         private static void OnDeviceFound(DeviceBase d)
         {
             if (DeviceFound != null)
                 DeviceFound(new DeviceEventArgs(d));
+        }
+
+        public static event DeviceChangedDelegate DeviceLost;
+
+        private static void OnDeviceLost(DeviceBase d)
+        {
+            if (DeviceLost != null)
+                DeviceLost(new DeviceEventArgs(d));
         } 
 
         #endregion

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Communication.Service
 {
-    class DeviceSessionEventArgs : DeviceEventArgs
+    public class DeviceSessionEventArgs : DeviceEventArgs
     {
         public List<byte> Data { get; private set; }
 

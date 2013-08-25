@@ -5,7 +5,7 @@ using System.Text;
 using System.Drawing;
 using System.IO;
 
-namespace Pixelate
+namespace Communication.Pixelate
 {
     public class ImagesCollectionItem
     {

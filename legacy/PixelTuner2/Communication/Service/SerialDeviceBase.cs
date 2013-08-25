@@ -160,9 +160,9 @@ namespace Communication.Service
         /// </summary>
         public event SessionDelegate SessionStarted;
 
-        delegate void DisconnectedDelegate(DeviceEventArgs e);
+        public delegate void DisconnectedDelegate(DeviceEventArgs e);
 
-        delegate void SessionDelegate(DeviceSessionEventArgs e);
+        public delegate void SessionDelegate(DeviceSessionEventArgs e);
         
         protected void OnDisconnected(DeviceBase d)
         {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 
-namespace Pixelate
+namespace Communication.Pixelate
 {
     public class ImagesCollection
     {

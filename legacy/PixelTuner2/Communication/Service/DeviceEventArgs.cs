@@ -7,7 +7,7 @@ namespace Communication.Service
 {
     public class DeviceEventArgs
     {
-        DeviceBase Device { get; set; }
+        public DeviceBase Device { get; set; }
 
         public DeviceEventArgs(DeviceBase device)
         {
