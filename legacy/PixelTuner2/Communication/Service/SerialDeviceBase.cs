@@ -148,17 +148,17 @@ namespace Communication.Service
         /// <summary>
         /// Occures when device disconnected.
         /// </summary>
-        event DisconnectedDelegate Disconnected;
+        public event DisconnectedDelegate Disconnected;
 
         /// <summary>
         /// Occurs before sending bytes.
         /// </summary>
-        event SessionDelegate SessionFinished;
+        public event SessionDelegate SessionFinished;
 
         /// <summary>
         /// Occurs after all bytes received or receive timeout.
         /// </summary>
-        event SessionDelegate SessionStarted;
+        public event SessionDelegate SessionStarted;
 
         delegate void DisconnectedDelegate(DeviceEventArgs e);
 
