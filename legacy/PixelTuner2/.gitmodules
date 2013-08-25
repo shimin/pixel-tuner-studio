@@ -1,3 +1,6 @@
 [submodule "Common"]
 	path = Common
 	url = https://shimin@bitbucket.org/shimin/common.git
+[submodule "Communication"]
+	path = Communication
+	url = https://shimin@bitbucket.org/shimin/communication.git
