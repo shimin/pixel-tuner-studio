@@ -1,17 +1,19 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.Collections.ObjectModel;
-using System.Windows.Input;
-using Microsoft.Win32;
-using System.IO;
 using System.Windows;
-using Workspace.Layout;
-using System.Xml.Serialization;
+using System.Windows.Input;
 using System.Xml;
+using System.Xml.Serialization;
+
+using Common.ViewModel;
 using PixelTuner.Properties;
 using PixelTuner.ListViewStyle;
+using Workspace.Layout;
 
 namespace PixelTuner
 {

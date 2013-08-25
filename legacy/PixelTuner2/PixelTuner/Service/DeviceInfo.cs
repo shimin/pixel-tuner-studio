@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using Common.ViewModel;
+
 namespace PixelTuner.Service
 {
     public class DeviceInfo : ViewModelBase

@@ -164,7 +164,6 @@
     <Compile Include="TriangleSlider.xaml.cs">
       <DependentUpon>TriangleSlider.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModelBase.cs" />
     <Compile Include="RootViewModel.cs" />
     <Page Include="DefaultsWindow.xaml">
       <SubType>Designer</SubType>
@@ -238,6 +237,14 @@
     <ProjectReference Include="..\AutoUpdater\AutoUpdater.csproj">
       <Project>{4BA4719C-C6AB-49BA-9754-848CA24C1FD6}</Project>
       <Name>AutoUpdater</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{3C6806B7-698D-45CD-B131-EB84845CC938}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Communication\Communication.csproj">
+      <Project>{DA6AD361-E034-4A14-BA94-8605A21D2E70}</Project>
+      <Name>Communication</Name>
     </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{7439A26A-46E1-42A0-9D58-2E38289675F6}</Project>
@@ -531,6 +538,9 @@
     <Content Include="Content\80_batterfly_009.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

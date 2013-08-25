@@ -78,6 +78,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{3C6806B7-698D-45CD-B131-EB84845CC938}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PixelTuner\PixelTuner.csproj">
       <Project>{B086FF41-D6AB-42FD-9609-7E1004470DD2}</Project>
       <Name>PixelTuner</Name>
