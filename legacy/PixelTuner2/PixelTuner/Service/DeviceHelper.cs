@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Diagnostics;
-using System.Collections.ObjectModel;
-using System.IO.Ports;
-using System.ComponentModel;
-using PixelTuner.AuxClasses;
 using System.Windows.Input;
+
 using Common.Collections;
 
 namespace PixelTuner.Service

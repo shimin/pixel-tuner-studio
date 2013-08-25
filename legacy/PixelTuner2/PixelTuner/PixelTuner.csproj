@@ -109,8 +109,6 @@
     </ApplicationDefinition>
     <Compile Include="ActiveDocumentConverter.cs" />
     <Compile Include="ActiveTimeLineConverter.cs" />
-    <Compile Include="AuxClasses\ReadOnlyDictionary.cs" />
-    <Compile Include="AuxClasses\SafeObservable.cs" />
     <Compile Include="DefaultsWindow.xaml.cs">
       <DependentUpon>DefaultsWindow.xaml</DependentUpon>
     </Compile>
