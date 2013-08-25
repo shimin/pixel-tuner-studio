@@ -6,7 +6,7 @@ using System.Collections.Specialized;
 using System.Windows.Threading;
 using System.Threading;
 
-namespace Communication.AuxClasses
+namespace Common.Collections
 {
     public class SafeObservable<T> : IList<T>, INotifyCollectionChanged
     {
