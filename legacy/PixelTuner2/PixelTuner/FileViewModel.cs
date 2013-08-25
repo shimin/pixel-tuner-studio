@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Xml.Serialization;
 using PixelTuner.Properties;
 using PixelTuner.Service;
-using PixelTuner.Pixelate;
+using Communication.Pixelate;
 
 namespace PixelTuner
 {
