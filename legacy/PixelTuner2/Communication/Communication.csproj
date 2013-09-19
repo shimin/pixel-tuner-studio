@@ -55,6 +55,7 @@
     <Compile Include="Service\DeviceBase.cs" />
     <Compile Include="Service\DeviceFeature.cs" />
     <Compile Include="Service\DeviceHelper.cs" />
+    <Compile Include="Service\PixelDevicePacket.cs" />
     <Compile Include="Service\PixelDeviceInfo.cs" />
     <Compile Include="Service\PixelDevice.cs" />
     <Compile Include="Service\PixelDeviceCommand.cs" />

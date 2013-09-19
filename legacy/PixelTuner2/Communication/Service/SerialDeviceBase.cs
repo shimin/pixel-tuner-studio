@@ -10,11 +10,9 @@ namespace Communication.Service
 {
     public abstract class SerialDeviceBase : DeviceBase
     {
-        #region Fields
+        #region Properties
 
         object _syncSession = new object();
-
-        public abstract void Disconnect();
 
         protected SerialPort _port = null;
         public SerialPort Port
@@ -31,7 +29,13 @@ namespace Communication.Service
         {
             get { return _writeReadDelay; }
             set { _writeReadDelay = value; }
-        } 
+        }
+
+        ConnectionStatus _status = ConnectionStatus.Offline;
+        public ConnectionStatus Status
+        {
+            get { return _status; }
+        }
 
         #endregion
         
@@ -83,8 +87,8 @@ namespace Communication.Service
 
         private void USBRemoved(object sender, EventArgs e)
         {
-            Console.WriteLine("A USB device removed");
             this.Disconnect();
+            OnDisconnected();
         }
 
         #endregion
@@ -99,6 +103,7 @@ namespace Communication.Service
         protected byte[] DoSession(byte[] query)
         {
             OnSessionStarted(this, new List<byte>(query));
+            LogMessage("Request: " + BytesToString(query), Common.Log.MessageType.Debug);
             List<byte> received = new List<byte>();
             try
             {
@@ -130,6 +135,7 @@ namespace Communication.Service
 
                     if (bytesGot != len) throw new TimeoutException("Packet data reading timeout.");
                     received.AddRange(receiveBuf);
+                    LogMessage("Result:  " + BytesToString(receiveBuf), Common.Log.MessageType.Debug);
                 }
             }
             catch (Exception ex)
@@ -141,6 +147,19 @@ namespace Communication.Service
                 OnSessionFinished(this, received);
             }
             return received.ToArray();
+        }
+
+        protected PixelDevicePacket DoSession(PixelDevicePacket request)
+        {
+            return new PixelDevicePacket(new List<byte>(DoSession(request.RawData.ToArray())));
+        }
+
+        public abstract void Disconnect();
+
+        protected void SetStatus(ConnectionStatus status)
+        {
+            _status = status;
+            OnStatusChanged();
         }
 
         #region Events
@@ -160,23 +179,36 @@ namespace Communication.Service
         /// </summary>
         public event SessionDelegate SessionStarted;
 
-        public delegate void DisconnectedDelegate(DeviceEventArgs e);
+        /// <summary>
+        /// Occurs after all bytes received or receive timeout.
+        /// </summary>
+        public event StatusDelegate StatusChanged;
+
+        public delegate void StatusDelegate(EventArgs e);
+
+        public delegate void DisconnectedDelegate(EventArgs e);
 
         public delegate void SessionDelegate(DeviceSessionEventArgs e);
-        
-        protected void OnDisconnected(DeviceBase d)
+
+        private void OnStatusChanged()
         {
-            if (Disconnected != null)
-                Disconnected(new DeviceEventArgs(d));
+            if (StatusChanged != null)
+                StatusChanged(new EventArgs());
         }
 
-        protected void OnSessionStarted(DeviceBase d, List<byte> data)
+        private void OnDisconnected()
+        {
+            if (Disconnected != null)
+                Disconnected(new EventArgs());
+        }
+
+        private void OnSessionStarted(DeviceBase d, List<byte> data)
         {
             if (SessionStarted != null)
                 SessionStarted(new DeviceSessionEventArgs(d, data));
         }
 
-        protected void OnSessionFinished(DeviceBase d, List<byte> data)
+        private void OnSessionFinished(DeviceBase d, List<byte> data)
         {
             if (SessionFinished != null)
                 SessionFinished(new DeviceSessionEventArgs(d, data));

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Communication.Service
 {
-    static class PixelDeviceSpecs
+    public static class PixelDeviceSpecs
     {
         static Dictionary<string, string> idNamePairs = new Dictionary<string, string>
         {

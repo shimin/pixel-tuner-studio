@@ -16,16 +16,13 @@ namespace Communication.Service
     public class PixelDevice : SerialDeviceBase
     {
         object _longOperation = new object();
-        //InitProcessStatus procStatusInit = null;
-        //PerformStep procPerformStep = null;
-        //SetStatus procSetStatus = null;
 
         #region Static properties
         
         /// <summary>
         /// Maximum packet size in bytes.
         /// </summary>
-        protected static int UsualPacketSize { get { return 60; } }
+        public static int UsualPacketSize { get { return 60; } }
 
         /// <summary>
         /// Calculates how many frames will be used to transmit some binary data.
@@ -40,59 +37,30 @@ namespace Communication.Service
         #endregion
 
         #region Properties
-        
+
         /// <summary>
         /// Показывает, находится ли устройство в ржиме бутлоадера.
         /// </summary>
         public bool BootMode { get; private set; }
 
+        public bool Busy { get; private set; }
+
         public string Name { get; set; }
 
-        public PixelDeviceInfo DeviceInfo { get; set; }
-
-        #endregion
-
-        #region Status Info
-
-        public int StatusRaw
+        private string _fullName = "dkjashfkjasdh";
+        public string FullName
         {
-            get { return (int)_status; }
+            get
+            {
+                return _fullName;
+            }
+            set
+            {
+                _fullName = value;
+            }
         }
 
-        ConnectionStatus _status = ConnectionStatus.Offline;
-        public ConnectionStatus Status
-        {
-            get { return _status; }
-            set { _status = value; }
-        }
-
-        private int _progressMax = 100;
-        public int ProgressMax
-        {
-            get { return _progressMax; }
-            set { _progressMax = value; }
-        }
-
-        int _progressMin = 0;
-        public int ProgressMin
-        {
-            get { return _progressMin; }
-            set { _progressMin = value; }
-        }
-
-        int _progress = 0;
-        public int Progress
-        {
-            get { return _progress; }
-            set { _progress = value % (_progressMax - _progressMin); }
-        }
-
-        int _step = 1;
-        public int Step
-        {
-            get { return _step; }
-            set { _step = value; }
-        }
+        public PixelDeviceInfo Info { get; private set; }
 
         #endregion
         
@@ -122,11 +90,14 @@ namespace Communication.Service
         
         #region Protocol
 
-        protected override void Initialize(object parameter)
+        public override void Initialize(object parameter)
         {
             base.Initialize(parameter);
-            Name = GetName();
-            DeviceInfo = GetInfo();
+            bool bootModeFlag;
+            Name = GetName(out bootModeFlag);
+            BootMode = bootModeFlag;
+            Info = GetInfo();
+            SetStatus(ConnectionStatus.Online);
         }
 
         /// <summary>
@@ -142,13 +113,9 @@ namespace Communication.Service
                     {
                         _port.Close();
                         _port = null;
-                        this.Status = ConnectionStatus.Offline;
+                        SetStatus(ConnectionStatus.Offline);
                     }
                     catch { }
-                    finally
-                    {
-                        OnDisconnected(this);
-                    }
                 }
             }
         }
@@ -157,20 +124,25 @@ namespace Communication.Service
         /// Retrieves name from device.
         /// </summary>
         /// <returns>Name string.</returns>
-        public string GetName()
+        public string GetName(out bool bootMode)
         {
             lock (_longOperation)
             {
+                SetStatus(ConnectionStatus.Downloading);
                 string result = "";
+                bootMode = false;
+                Busy = true;
                 try
                 {
-                    byte[] q = GetCommandBytes(PixelDeviceCommand.WHO_IS_IT).ToArray();
-                    result = Encoding.ASCII.GetString(DoSession(q));
-                    if (result.ToLower().Contains("boot")) BootMode = true;
-                    LogMessage("String: " + result, MessageType.Info, 0);
-                    this.Status = ConnectionStatus.Online;
+                    PixelDevicePacket request = new PixelDevicePacket(PixelDeviceCommand.WHO_IS_IT);
+                    var answer = DoSession(request);
+                    result = Encoding.ASCII.GetString(answer.Data.ToArray());
+
+                    if (result.ToLower().Contains("boot")) bootMode = true;
+                    LogMessage("Device name: " + result, MessageType.Info);
                 }
                 catch (Exception ex) { if (Logger != null) Logger.WriteException(ex); }
+                finally { Busy = false; SetStatus(ConnectionStatus.Online); }
                 return result;
             }
         }
@@ -183,10 +155,12 @@ namespace Communication.Service
         {
             lock (_longOperation)
             {
+                Busy = true;
+                SetStatus(ConnectionStatus.Downloading);
                 var result = new PixelDeviceInfo();
                 try
                 {
-                    var buffer = DoSession(GetCommandBytes(PixelDeviceCommand.INFO).ToArray());
+                    var buffer = DoSession(new PixelDevicePacket(PixelDeviceCommand.INFO)).Data;
                     int Uizm = (buffer[4] << 8 | buffer[5]);
                     result.PlatformVersion = buffer[0];
                     result.EnergyLevel = Uizm;
@@ -197,6 +171,7 @@ namespace Communication.Service
                     result.MaxMemory = (memoryBytes / 100000) * 100000;
                 }
                 catch (Exception ex) { if (Logger != null) Logger.WriteException(ex); }
+                finally { Busy = false; SetStatus(ConnectionStatus.Online); }
                 return result;
             }
         }
@@ -213,7 +188,7 @@ namespace Communication.Service
                 try
                 {
                     this.Port.ReadTimeout = (int)PixelDeviceTimeout.Short;
-                    DoSession(GetCommandBytes(PixelDeviceCommand.SWITCH_TO_BOOT).ToArray());
+                    DoSession(new PixelDevicePacket(PixelDeviceCommand.SWITCH_TO_BOOT));
                     this.Port.ReadTimeout = (int)PixelDeviceTimeout.Long;
                 }
                 catch (Exception ex) { if (Logger != null) Logger.WriteException(ex); }
@@ -228,17 +203,14 @@ namespace Communication.Service
         {
             lock (_longOperation)
             {
+                Busy = true;
+                SetStatus(ConnectionStatus.Uploading);
                 try
                 {
                     List<byte> buffer = new List<byte>();
 
-                    //int max = PixelDevice.EstimateRequestsCount(binaryData.Count);
-                    //procStatusInit.Invoke(0, max);
-                    //procPerformStep.Invoke(ConnectionStatus.Uploading);
-
                     // switch to write mode
-                    DoSession(GetCommandBytes(PixelDeviceCommand.WRITE_IDATA_MODE, BitConverter.GetBytes(binaryData.Count)).ToArray());
-                    //procPerformStep.Invoke(ConnectionStatus.Uploading);
+                    DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_IDATA_MODE, BitConverter.GetBytes(binaryData.Count)));
 
                     // write data
                     foreach (byte b in binaryData)
@@ -246,23 +218,21 @@ namespace Communication.Service
                         buffer.Add(b);
                         if (buffer.Count == UsualPacketSize)
                         {
-                            DoSession(GetCommandBytes(PixelDeviceCommand.WRITE_BLOCK, buffer).ToArray());
-                            //procPerformStep.Invoke(ConnectionStatus.Uploading);
+                            DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_BLOCK, buffer));
                             buffer.Clear();
                         }
                     }
                     if (buffer.Count > 0)
                     {
-                        DoSession(GetCommandBytes(PixelDeviceCommand.WRITE_BLOCK, buffer).ToArray());
-                        //procPerformStep.Invoke(ConnectionStatus.Uploading);
+                        DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_BLOCK, buffer));
                         buffer.Clear();
                     }
 
                     // quit from write mode
-                    DoSession(GetCommandBytes(PixelDeviceCommand.END_WRITE_DATA).ToArray());
-                    //procPerformStep.Invoke(ConnectionStatus.Uploading);
+                    DoSession(new PixelDevicePacket(PixelDeviceCommand.END_WRITE_DATA));
                 }
                 catch (Exception ex) { if (Logger != null) Logger.WriteException(ex); }
+                finally { Busy = false; SetStatus(ConnectionStatus.Online); }
             }
         }
 
@@ -274,6 +244,8 @@ namespace Communication.Service
         {
             lock (_longOperation)
             {
+                Busy = true;
+                SetStatus(ConnectionStatus.Uploading);
                 try
                 {
                     List<byte> buffer = new List<byte>();
@@ -283,7 +255,7 @@ namespace Communication.Service
                     //procPerformStep.Invoke(ConnectionStatus.Uploading);
 
                     // переход в режим записи
-                    DoSession(GetCommandBytes(PixelDeviceCommand.WRITE_IFLASH_MODE).ToArray());
+                    DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_IFLASH_MODE));
                     //procPerformStep.Invoke(ConnectionStatus.Uploading);
 
                     // запись данных
@@ -292,23 +264,24 @@ namespace Communication.Service
                         buffer.Add(b);
                         if (buffer.Count == UsualPacketSize)
                         {
-                            DoSession(GetCommandBytes(PixelDeviceCommand.WRITE_BLOCK, buffer).ToArray());
+                            DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_BLOCK, buffer));
                             //procPerformStep.Invoke(ConnectionStatus.Uploading);
                             buffer.Clear();
                         }
                     }
                     if (buffer.Count > 0)
                     {
-                        DoSession(GetCommandBytes(PixelDeviceCommand.WRITE_BLOCK, buffer).ToArray());
+                        DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_BLOCK, buffer));
                         //procPerformStep.Invoke(ConnectionStatus.Uploading);
                         buffer.Clear();
                     }
 
                     // выход из режима записи
-                    byte[] finishProcess = GetCommandBytes(PixelDeviceCommand.END_WRITE_FLASH).ToArray();
-                    _port.Write(finishProcess, 0, finishProcess.Length);
+                    List<byte> finishProcess = (new PixelDevicePacket(PixelDeviceCommand.END_WRITE_FLASH)).RawData;
+                    _port.Write(finishProcess.ToArray(), 0, finishProcess.Count);
                 }
                 catch (Exception ex) { if (Logger != null) Logger.WriteException(ex); }
+                finally { Busy = false; SetStatus(ConnectionStatus.Online); }
             }
         }
 
@@ -320,6 +293,8 @@ namespace Communication.Service
         {
             lock (_longOperation)
             {
+                Busy = true;
+                SetStatus(ConnectionStatus.Uploading);
                 try
                 {
                     List<byte> args = new List<byte>();
@@ -328,17 +303,18 @@ namespace Communication.Service
                         args.AddRange(df.GetBytes());
                         if (args.Count >= 60)
                         {
-                            DoSession(GetCommandBytes(PixelDeviceCommand.WRITE_SETTINGS, args).ToArray());
+                            DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_SETTINGS, args));
                             args.Clear();
                         }
                     }
                     if (args.Count > 0)
                     {
-                        DoSession(GetCommandBytes(PixelDeviceCommand.WRITE_SETTINGS, args).ToArray());
+                        DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_SETTINGS, args));
                         args.Clear();
                     }
                 }
                 catch (Exception ex) { if (Logger != null) Logger.WriteException(ex); }
+                finally { Busy = false; SetStatus(ConnectionStatus.Online); }
             }
         }
 
@@ -371,29 +347,30 @@ namespace Communication.Service
 
         #endregion
 
-        //#region Misc
+        #region Misc
 
-        //public override string ToString()
-        //{
-        //    return this.Name;
-        //}
+        public override string ToString()
+        {
+            return this.Name;
+        }
 
-        //public override bool Equals(object obj)
-        //{
-        //    if (obj is PixelDevice)
-        //    {
-        //        if ((obj as PixelDevice)._port != null && this._port != null)
-        //            if ((obj as PixelDevice)._port.PortName == this._port.PortName) return true;
-        //    }
+        public override bool Equals(object obj)
+        {
+            if (obj is PixelDevice)
+            {
+                if ((obj as PixelDevice)._port != null && this._port != null)
+                    if ((obj as PixelDevice)._port.PortName == this._port.PortName) return true;
+                    else return false;
+            }
 
-        //    return base.Equals(obj);
-        //}
+            return base.Equals(obj);
+        }
 
-        //public override int GetHashCode()
-        //{
-        //    return base.GetHashCode();
-        //}
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
 
-        //#endregion
+        #endregion
     }
 }

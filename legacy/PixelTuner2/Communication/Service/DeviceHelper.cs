@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Diagnostics;
-using System.Collections.ObjectModel;
 using System.IO.Ports;
-using System.ComponentModel;
 
 namespace Communication.Service
 {
@@ -18,13 +18,13 @@ namespace Communication.Service
         static List<BackgroundWorker> CheckPortWorkers = new List<BackgroundWorker>();
         
         private static List<PixelDevice> _devices = new List<PixelDevice>();
-        //public static List<PixelDevice> Devices
-        //{
-        //    get
-        //    {
-        //        return _devices;
-        //    }
-        //}
+        public static List<PixelDevice> Devices
+        {
+            get
+            {
+                return _devices;
+            }
+        }
         
         public static void StartSeeking()
         {
@@ -55,23 +55,17 @@ namespace Communication.Service
                         CheckPortResult state = (e.Result as CheckPortResult);
                         if (state.Device != null)
                         {
-                            lock (_devices) { _devices.Add(state.Device); }
-                            if (state.Device.BootMode)
+                            lock (_devices) 
                             {
-                                // вызов события
+                                state.Device.Initialize(null);
+                                _devices.Add(state.Device);
                                 OnDeviceFound(state.Device);
-                                state.Device.Disconnected += new SerialDeviceBase.DisconnectedDelegate(Device_Disconnected);
                             }
                         }
                     }
                 };
             }
             DeviceSeekerThread.Start();
-        }
-
-        static void Device_Disconnected(DeviceEventArgs e)
-        {
-            OnDeviceLost(e.Device);
         }
 
         public static void StopSeeking()
@@ -126,8 +120,8 @@ namespace Communication.Service
                     foreach (var d in devsWithNullPorts) { _devices.Remove(d); }
                     if (aDevice != null)
                     {
-                        aDevice.Disconnect();
                         _devices.Remove(aDevice);
+                        OnDeviceLost(aDevice);
                     }
                 }
                 // проверить обнаруженные порты
@@ -179,7 +173,8 @@ namespace Communication.Service
                     if (!_devices.Contains(aDevice)) { if (!port.IsOpen) port.Open(); }
                 }
 
-                if (!string.IsNullOrEmpty(aDevice.GetName()))
+                bool bootModeFlag;
+                if (!string.IsNullOrEmpty(aDevice.GetName(out bootModeFlag)))
                 {
                     state.Device = aDevice;
                     //aDevice.UpdateInfo();

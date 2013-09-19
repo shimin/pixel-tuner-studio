@@ -12,11 +12,16 @@ namespace Communication.Service
 
     public abstract class DeviceBase
     {
-        protected virtual void Initialize(object parameter) { }
+        public virtual void Initialize(object parameter) { }
 
         #region Logging
 
         public Logger Logger { get; set; }
+
+        protected void LogMessage(string message, MessageType mType)
+        {
+            if (Logger != null) Logger.NewMessage(message, mType);
+        }
 
         protected void LogMessage(string message, MessageType mType, int level)
         {

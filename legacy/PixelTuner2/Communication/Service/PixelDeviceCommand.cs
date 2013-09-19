@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Communication.Service
 {
-    enum PixelDeviceCommand
+    public enum PixelDeviceCommand
     {
         WHO_IS_IT = 0x53,
         INFO = 0x49,
