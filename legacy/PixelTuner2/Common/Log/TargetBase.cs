@@ -10,6 +10,8 @@ namespace Common.Log
     {
         public abstract void NewMessage(string message, MessageType messageType, string component, int depth);
 
+        public virtual int DefaultLogDepth { get; set; }
+
         protected Dictionary<MessageType, string> _messageTypes = null;
 
         protected AsyncOperation _operation = AsyncOperationManager.CreateOperation(null);

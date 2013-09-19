@@ -31,6 +31,13 @@ namespace Common.Log
             NewMessage(message, messageType, null, depth);
         }
 
+        public void NewMessage(string message, MessageType messageType)
+        {
+            int depth = 0;
+            if (_logTarget != null) depth = _logTarget.DefaultLogDepth;
+            NewMessage(message, messageType, null, depth);
+        }
+
         public void NewMessage(string message, MessageType messageType, string component, int depth)
         {
             lock (syncLog)
