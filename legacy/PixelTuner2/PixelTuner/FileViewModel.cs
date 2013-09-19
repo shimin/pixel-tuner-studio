@@ -1,39 +1,80 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.IO;
-using System.Windows.Input;
-using Microsoft.Win32;
 using System.Windows;
-using System.Collections.ObjectModel;
-using Core;
+using System.Windows.Input;
+
 using System.Windows.Media;
 using System.Xml.Serialization;
-using PixelTuner.Properties;
-using PixelTuner.Service;
+
+using Core;
 using Communication.Pixelate;
+using Communication.Service;
+using PixelTuner.Properties;
+using Common.Collections;
+using PixelTuner.Service;
 
 namespace PixelTuner
 {
     public class FileViewModel : PaneViewModel
     {
+        [XmlIgnore]
+        public SafeObservable<PixelDeviceViewModel> Devices
+        {
+            get;
+            private set;
+        }
+
+        public FileViewModel()
+            : this(Path.GetTempFileName())
+        {
+            IsDirty = true;
+        }
+
         public FileViewModel(string filePath)
         {
             FilePath = filePath;
             Title = FileName;
             _timeLines.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(
                 _timeLines_CollectionChanged);
-            DeviceHelper.Devices.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Devices_CollectionChanged);
+
+            Devices = new SafeObservable<PixelDeviceViewModel>();
+            DeviceHelper.Devices.ForEach((d) => { DeviceHelper_DeviceFound(new DeviceEventArgs(d)); });
+            DeviceHelper.DeviceFound += new DeviceHelper.DeviceChangedDelegate(DeviceHelper_DeviceFound);
+            DeviceHelper.DeviceLost += new DeviceHelper.DeviceChangedDelegate(DeviceHelper_DeviceLost);
         }
 
-        public FileViewModel()
+        void DeviceHelper_DeviceFound(DeviceEventArgs e)
         {
-            IsDirty = true;
-            Title = FileName;
-            _timeLines.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(
-               _timeLines_CollectionChanged);
-            DeviceHelper.Devices.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Devices_CollectionChanged);
+            var pixelDevice = e.Device as PixelDevice;
+            if (pixelDevice != null)
+            {
+                Devices.Add(new PixelDeviceViewModel(pixelDevice));
+            }
+
+            RaisePropertyChanged("MemoryListHeight");
+            RaisePropertyChanged("Visibility");
+        }
+
+        void DeviceHelper_DeviceLost(DeviceEventArgs e)
+        {
+            RaisePropertyChanged("MemoryListHeight");
+            RaisePropertyChanged("Visibility");
+
+            List<PixelDeviceViewModel> modelsToRemove = new List<PixelDeviceViewModel>();
+            for (int i = 0; i < Devices.Count; i++)
+            {
+                if (Devices[i].Device == e.Device)
+                {
+                    modelsToRemove.Add(Devices[i]);
+                    break;
+                }
+            }
+            modelsToRemove.ForEach((item) => { Devices.Remove(item); });
         }
 
         #region FilePath
@@ -358,18 +399,12 @@ namespace PixelTuner
             }
         }
 
-        public System.Windows.Visibility Visibility
+        public System.Windows.Visibility MemoryIndicatorVisibility
         {
             get
             {
                 return DeviceHelper.Devices.Count > 0 ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
             }
-        }
-
-        void Devices_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            RaisePropertyChanged("MemoryListHeight");
-            RaisePropertyChanged("Visibility");
         }
 
         ObservableCollection<TimeLineViewModel> _timeLines = new ObservableCollection<TimeLineViewModel>();
@@ -381,7 +416,6 @@ namespace PixelTuner
                 if (_timeLines == null)
                     _timeLines = new ObservableCollection<TimeLineViewModel>(_timeLines);
 
-                 //if (_timeLines.Count == 0) _timeLines.Add(new TimeLineViewModel());
                 return _timeLines;
             }
             set
@@ -389,7 +423,5 @@ namespace PixelTuner
                 _timeLines = value;
             }
         }
-
-        public object tlf { get; set; }
     }
 }

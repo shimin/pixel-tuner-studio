@@ -10,6 +10,7 @@ using PixelTuner.Service;
 using System.IO.Ports;
 using ConnectionTester.Properties;
 using System.IO;
+using Communication.Service;
 
 namespace ConnectionTester
 {
@@ -17,10 +18,13 @@ namespace ConnectionTester
     {
         PixelDevice _device = null;
 
+        LoggerRichTextBox _logTarget = null;
+
         public MainFrm()
         {
             Settings.Default.Reload();
             InitializeComponent();
+            _logTarget = new LoggerRichTextBox(boxLog);
             boxPortNum.Value = Settings.Default.port;
             boxPathFW.Text = Settings.Default.pathFW;
             boxPathProject.Text = Settings.Default.pathProj;
@@ -28,48 +32,39 @@ namespace ConnectionTester
 
         private void boxConnect_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            SetStatus("Открытие порта");
+            SetStatus("Открытие порта", Common.Log.MessageType.Info, 0);
             SerialPort port = new SerialPort("COM" + boxPortNum.Value.ToString(), 19200, Parity.None, 8, StopBits.One);
             port.ReadTimeout = 4000;
             port.WriteTimeout = 1000;
             try
             {
                 port.Open();
-                _device = new PixelDevice(port, SetStatus);
-                SetStatus("Порт открыт");
+                _device = new PixelDevice(port);
+                _device.Logger = new Common.Log.Logger(_logTarget);
+                SetStatus("Порт открыт", Common.Log.MessageType.Info, 0);
             }
             catch
             {
-                SetStatus("Ошибка открытия порта " + port.PortName);
+                SetStatus("Ошибка открытия порта " + port.PortName, Common.Log.MessageType.Error, 0);
                 return;
             }
 
             try
             {
-                string id = _device.GetName();
-                SetStatus("Ответ устройства: " + id);
+                bool bootModeFlag;
+                string id = _device.GetName(out bootModeFlag);
+                SetStatus("Ответ устройства: " + id, Common.Log.MessageType.Info, 1);
                 boxStatus.Text = "Готов";
             }
             catch
             {
-                SetStatus("Ошибка чтения" + port.PortName);
+                SetStatus("Ошибка чтения" + port.PortName, Common.Log.MessageType.Error, 0);
             }
         }
 
-        private void SetStatus(string p)
+        private void SetStatus(string p, Common.Log.MessageType messageType, int depth)
         {
-            boxStatus.Text = p;
-            if (!boxLog.InvokeRequired)
-            {
-                boxLog.Text += DateTime.Now.ToString("HH:mm:ss.ffff") + " " + p + "\n";
-            }
-            else
-            {
-                this.Invoke((MethodInvoker)delegate
-                {
-                    boxLog.Text += DateTime.Now.ToString("HH:mm:ss.ffff") + " " + p + "\n";
-                });
-            }
+            _logTarget.NewMessage(p, messageType, null, 0);
         }
 
         private void MainFrm_FormClosing(object sender, FormClosingEventArgs e)
@@ -94,7 +89,7 @@ namespace ConnectionTester
                 {
                     _device.Disconnect();
                     _device = null;
-                    SetStatus("Порт закрыт.");
+                    SetStatus("Порт закрыт.", Common.Log.MessageType.Info, 0);
                 }
                 catch { }
             }
@@ -104,7 +99,7 @@ namespace ConnectionTester
         {
             if (_device == null)
             {
-                SetStatus("Не подключено.");
+                SetStatus("Не подключено.", Common.Log.MessageType.Alert, 0);
                 return;
             }
 
@@ -120,7 +115,7 @@ namespace ConnectionTester
         {
             if (_device == null)
             {
-                SetStatus("Не подключено.");
+                SetStatus("Не подключено.", Common.Log.MessageType.Alert, 0);
                 return;
             }
 
@@ -135,7 +130,7 @@ namespace ConnectionTester
             }
             catch(Exception ex)
             {
-                SetStatus(ex.Message);
+                SetStatus(ex.Message, Common.Log.MessageType.Error, 0);
             }
         }
 
@@ -143,7 +138,7 @@ namespace ConnectionTester
         {
             if (_device == null)
             {
-                SetStatus("Не подключено.");
+                SetStatus("Не подключено.", Common.Log.MessageType.Alert, 0);
                 return;
             }
 
@@ -158,7 +153,7 @@ namespace ConnectionTester
             }
             catch (Exception ex)
             {
-                SetStatus(ex.Message);
+                SetStatus(ex.Message, Common.Log.MessageType.Error, 0);
             }
         }
 

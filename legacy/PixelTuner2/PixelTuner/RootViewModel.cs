@@ -187,22 +187,22 @@ namespace PixelTuner
             {
                 autoUpdater.Update();
             }
-            catch (System.Net.WebException exp)
+            catch (System.Net.WebException)
             {
                 MessageBox.Show("Can not find the specified resource");
                 bHasError = true;
             }
-            catch (System.Xml.XmlException exp)
+            catch (System.Xml.XmlException)
             {
                 bHasError = true;
                 MessageBox.Show("Download the upgrade file error");
             }
-            catch (NotSupportedException exp)
+            catch (NotSupportedException)
             {
                 bHasError = true;
                 MessageBox.Show("Upgrade address configuration error");
             }
-            catch (ArgumentException exp)
+            catch (ArgumentException)
             {
                 bHasError = true;
                 MessageBox.Show("Download the upgrade file error");
@@ -210,7 +210,7 @@ namespace PixelTuner
             catch (Exception exp)
             {
                 bHasError = true;
-                MessageBox.Show("An error occurred during the upgrade process");
+                MessageBox.Show("An error occurred during the upgrade process" + exp.Message);
             }
             finally
             {

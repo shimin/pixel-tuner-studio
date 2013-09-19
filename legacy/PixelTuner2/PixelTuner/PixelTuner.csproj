@@ -147,11 +147,7 @@
     </Compile>
     <Compile Include="ProjectsViewModel.cs" />
     <Compile Include="RelayCommand.cs" />
-    <Compile Include="Service\DeviceFeature.cs" />
-    <Compile Include="Service\DeviceInfo.cs" />
-    <Compile Include="Service\PixelDevice.cs" />
-    <Compile Include="Service\DeviceHelper.cs" />
-    <Compile Include="Service\PixelDeviceSpecs.cs" />
+    <Compile Include="Service\PixelDeviceViewModel.cs" />
     <Compile Include="TimeLineViewModel.cs" />
     <Compile Include="ToolViewModel.cs" />
     <Compile Include="TriangleSlider.xaml.cs">
@@ -472,6 +468,15 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\50_stork3.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\50_Volkswagen.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\50_Volkswagen_blue.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\50_Volkswagen_text.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\50_white.bmp">

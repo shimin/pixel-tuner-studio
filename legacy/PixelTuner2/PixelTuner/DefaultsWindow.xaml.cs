@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using PixelTuner.Properties;
 using System.ComponentModel;
-using PixelTuner.Service;
+using Communication.Service;
 
 namespace PixelTuner
 {

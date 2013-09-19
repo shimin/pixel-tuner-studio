@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,14 +17,12 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using PixelTuner.Properties;
 using Workspace.Layout;
-using System.Diagnostics;
 using Workspace.Layout.Serialization;
-using System.IO;
-using System.Collections.ObjectModel;
+
 using Core;
+using Communication.Service;
 using PixelTuner.Service;
 using PixelTunerAutoupdater;
-using System.Net;
 
 namespace PixelTuner
 {
@@ -222,6 +224,11 @@ namespace PixelTuner
                     ((RootViewModel)this.DataContext).ImagesModel.RefreshImagesCollection();
                 }
             }
+        }
+
+        private void boxDevicesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

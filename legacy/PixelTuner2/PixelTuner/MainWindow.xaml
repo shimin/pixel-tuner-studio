@@ -11,7 +11,7 @@
         xmlns:l="clr-namespace:PixelTuner.ListViewStyle;assembly=Appearance"
         xmlns:dd="clr-namespace:Core.DragDrop;assembly=Core"
         xmlns:local="clr-namespace:PixelTuner"
-        xmlns:service="clr-namespace:PixelTuner.Service"
+        xmlns:service="clr-namespace:Communication.Service;assembly=Communication"
 
         Activated="MainWnd_Activated"
         Loaded="Window_Loaded" Closing="Window_Closing">
@@ -128,11 +128,6 @@
             <Setter Property="Margin" Value="0,0,0,2"></Setter>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding StatusRaw}" Value="2">
-                    <!--<MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding StatusRaw}" Value="2"></Condition>
-                        <Condition Binding="{Binding StatusRaw}" Value="3"></Condition>
-                        <Condition Binding="{Binding StatusRaw}" Value="4"></Condition>
-                    </MultiDataTrigger.Conditions>-->
                     <Setter Property="Canvas.Visibility" Value="Collapsed"></Setter>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding StatusRaw}" Value="3">
@@ -389,8 +384,7 @@
                                         x:Name="MemoryListBox"
                                         Margin="0,0,0,0"
                                         Grid.Row="1"                                        
-                                        ItemsSource="{Binding Source={x:Static Member=service:DeviceHelper.Devices}, 
-                                        UpdateSourceTrigger=PropertyChanged}"
+                                        ItemsSource="{Binding Devices}"
                                         BorderBrush="Transparent"
                                         Background="Transparent"
                                         ScrollViewer.VerticalScrollBarVisibility="Disabled"
@@ -445,14 +439,15 @@
                                 </Grid.RowDefinitions>
                                 <ListBox x:Name="boxDevicesList" MinWidth="120" MinHeight="120"
                                          Grid.Row="0"
-                                         ItemsSource="{Binding Source={x:Static Member=service:DeviceHelper.Devices}, UpdateSourceTrigger=PropertyChanged}"
+                                         ItemsSource="{Binding Devices, UpdateSourceTrigger=PropertyChanged}"
                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                          SelectionMode="Single"
+                                         SelectionChanged="boxDevicesList_SelectionChanged"
                                          >
                                     <ListBox.Style>
                                         <Style>
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding ElementName=boxDevicesList, Path=SelectedItem.DeviceBusy}" Value="true">
+                                                <DataTrigger Binding="{Binding ElementName=boxDevicesList, Path=SelectedItem.Busy}" Value="true">
                                                     <Setter Property="ListBox.IsEnabled" Value="false"></Setter>
                                                 </DataTrigger>
                                             </Style.Triggers>
@@ -510,10 +505,10 @@
                                                 <TextBlock Text="{StaticResource Dev_Props_Status}" />
                                             </StackPanel>
                                             <StackPanel x:Name="valuesStack" Grid.Row="0" Grid.Column="1" Orientation="Vertical">
-                                                <TextBlock Text="{Binding FullName}" Margin="0,2,0,0"/>
-                                                <ProgressBar Value="{Binding EnergyLevel}" Margin="0,3,0,0" Style="{StaticResource ProgressBarStyle}"/>
-                                                <TextBlock Text="{Binding LedsTotal}" />
-                                                <TextBlock Text="{Binding Status}" />
+                                                <TextBlock Text="{Binding FullName}" Margin="0,3,0,0"/>
+                                                <ProgressBar Value="{Binding EnergyLevel, Mode=OneWay}" Margin="0,3,0,0" Style="{StaticResource ProgressBarStyle}"/>
+                                                <TextBlock Text="{Binding LedsTotal}" Margin="0,0,0,0"/>
+                                                <TextBlock Text="{Binding Status}" Margin="0,0,0,0"/>
                                             </StackPanel>
                                             <ProgressBar 
                                                 x:Name="UploadProgressBar"
