@@ -374,7 +374,9 @@ namespace PixelTuner
             }
 
             ImagesCollection c = new ImagesCollection(knownPaths, projectHeight);
-            return project.GetBinary(c, projectHeight);
+            var buf = project.GetBinary(c, projectHeight);
+            File.WriteAllBytes("project.bin", buf.ToArray());
+            return buf;
         }
 
         [XmlIgnore]

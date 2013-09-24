@@ -570,6 +570,8 @@ namespace PixelTuner.Drawing
             Application.AddMessageFilter(this);
         }
 
+        int threshold = 25;
+
         private void boxBmpImport_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
@@ -587,6 +589,13 @@ namespace PixelTuner.Drawing
                         for (int row = 0; row < bmp.Height && row < _item.PatternLines; row++)
                         {
                             Color c = bmp.GetPixel(column, row);
+                            //int r = c.R % threshold < (threshold / 2) ? (c.R / threshold) * threshold : (c.R / threshold + 1) * threshold;
+                            //int g = c.G % threshold < (threshold / 2) ? (c.G / threshold) * threshold : (c.G / threshold + 1) * threshold;
+                            //int b = c.B % threshold < (threshold / 2) ? (c.B / threshold) * threshold : (c.B / threshold + 1) * threshold;
+                            //if (r > 255) r = 255;
+                            //if (g > 255) g = 255;
+                            //if (b > 255) b = 255;
+                            //c = Color.FromArgb(r, g, b);
                             FillPixel(c, gra, _item.PointSize, column * _item.PointSize, row * _item.PointSize);
                         }
                     }
