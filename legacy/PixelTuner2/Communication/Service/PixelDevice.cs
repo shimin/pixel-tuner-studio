@@ -148,6 +148,27 @@ namespace Communication.Service
         }
 
         /// <summary>
+        /// Sets displaying color.
+        /// </summary>
+        public void SetColor(System.Drawing.Color c)
+        {
+            lock (_longOperation)
+            {
+                Busy = true;
+                try
+                {
+                    PixelDevicePacket request = new PixelDevicePacket(PixelDeviceCommand.WHO_IS_IT);
+                    
+                    var buf = new List<byte>() { 0x52, 3, c.R, c.G, c.B };
+                    request = new PixelDevicePacket(buf);
+                    var answer = DoSession(request);
+                }
+                catch (Exception ex) { if (Logger != null) Logger.WriteException(ex); }
+                finally { Busy = false; SetStatus(ConnectionStatus.Online); }
+            }
+        }
+
+        /// <summary>
         /// Retreives device info.
         /// </summary>
         /// <returns>DeviceInfo structure.</returns>
