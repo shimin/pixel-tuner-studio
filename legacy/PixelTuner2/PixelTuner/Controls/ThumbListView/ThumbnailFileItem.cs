@@ -1,23 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Controls;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Security.AccessControl;
-using System.ComponentModel;
+using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
-using System.Collections.ObjectModel;
-using System.Xml.Serialization;
-using Core;
 using System.Windows.Media.Imaging;
+using System.Xml.Serialization;
+
+using Core;
 using PixelTuner.Properties;
 using PixelTuner.Controls.ThumbListView.Serialization;
+using PixelTuner.ViewModel;
 
 namespace PixelTuner.Controls.ThumbListView
 {
-    public class ThumbnailFileItem: FileSystemInfo, ITimeLineDataItemConvertable<TimeLineItem>, INotifyPropertyChanged
+    public class ThumbnailFileItem : FileSystemInfo, ITimeLineDataItem, INotifyPropertyChanged, IConvertible
     {
         FileInfo _fi = null;
 
@@ -262,18 +264,93 @@ namespace PixelTuner.Controls.ThumbListView
             return result;
         }
 
-        #region ITimeLineDataItemConvertable<TimeLineItem> Members
+        public TypeCode GetTypeCode()
+        {
+            return TypeCode.Object;
+        }
 
-        TimeLineItem ITimeLineDataItemConvertable<TimeLineItem>.ConvertTo(ITimeLineDataItem item)
+        public bool ToBoolean(IFormatProvider provider)
         {
             throw new NotImplementedException();
         }
 
-        ITimeLineDataItem ITimeLineDataItemConvertable<TimeLineItem>.ConvertFrom(TimeLineItem item)
+        public byte ToByte(IFormatProvider provider)
         {
             throw new NotImplementedException();
         }
 
-        #endregion
+        public char ToChar(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DateTime ToDateTime(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public decimal ToDecimal(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public double ToDouble(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public short ToInt16(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int ToInt32(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public long ToInt64(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public sbyte ToSByte(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public float ToSingle(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string ToString(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object ToType(Type conversionType, IFormatProvider provider)
+        {
+            if (conversionType == typeof(TimeLineItem))
+            {
+                return (TimeLineItem)this;
+            }
+            throw new NotImplementedException();
+        }
+
+        public ushort ToUInt16(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public uint ToUInt32(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ulong ToUInt64(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

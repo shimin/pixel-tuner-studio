@@ -14,7 +14,7 @@ using System.Windows;
 using Common.ViewModel;
 using Communication.Service;
 
-namespace PixelTuner.Service
+namespace PixelTuner.ViewModel
 {
     public class PixelDeviceViewModel : ViewModelBase
     {

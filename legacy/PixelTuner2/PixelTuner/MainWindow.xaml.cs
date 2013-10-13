@@ -21,7 +21,7 @@ using Workspace.Layout.Serialization;
 
 using Core;
 using Communication.Service;
-using PixelTuner.Service;
+using PixelTuner.ViewModel;
 using PixelTunerAutoupdater;
 
 namespace PixelTuner
