@@ -70,7 +70,6 @@ namespace PixelTuner
         {
             Settings.Default.TurnOffMenuAfter = TurnOffMenuAfter;
             Settings.Default.DefaultDuration = DefaultDuration;
-            PixelTuner.ListViewStyle.ThumbnailFileItem.SetDefaultStretching(Stretching);
             Settings.Default.DefaultStretching = Stretching;
             Settings.Default.Save();
             

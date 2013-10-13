@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/PixelTuner;component/Controls/SearchTextBox/SearchTextBox.xaml"></ResourceDictionary>
+        <ResourceDictionary Source="/PixelTuner;component/Controls/ThumbListView/ThumbListView.xaml"></ResourceDictionary>
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

@@ -361,7 +361,7 @@ namespace PixelTuner
                 if (tl.Items.Count == 0) continue;
                 var tlf = new PixelTimelineFile();
 
-                foreach (PixelTuner.ListViewStyle.ThumbnailFileItem item in tl.Items)
+                foreach (PixelTuner.Controls.ThumbListView.ThumbnailFileItem item in tl.Items)
                 {
                     string path = item.FullName.ToLower();
                     UInt16 duration = (UInt16)(((TimeSpan)(item.EndTime - item.StartTime)).TotalMilliseconds / 100);                    

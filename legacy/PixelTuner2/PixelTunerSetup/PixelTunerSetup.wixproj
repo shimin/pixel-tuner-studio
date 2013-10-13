@@ -27,14 +27,6 @@
     <Compile Include="Product.wxs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Appearance\Appearance.csproj">
-      <Name>Appearance</Name>
-      <Project>{93c014de-3e6e-47a7-92a9-d9b9aa0b9501}</Project>
-      <Private>True</Private>
-      <DoNotHarvest>True</DoNotHarvest>
-      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
-      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
-    </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Name>Core</Name>
       <Project>{7439a26a-46e1-42a0-9d58-2e38289675f6}</Project>

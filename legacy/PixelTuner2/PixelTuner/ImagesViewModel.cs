@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using PixelTuner.ListViewStyle;
+using PixelTuner.Controls.ThumbListView;
 using System.Collections.ObjectModel;
 
 namespace PixelTuner

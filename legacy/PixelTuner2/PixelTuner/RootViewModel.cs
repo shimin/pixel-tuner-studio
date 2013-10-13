@@ -12,7 +12,7 @@ using System.Xml.Serialization;
 
 using Common.ViewModel;
 using PixelTuner.Properties;
-using PixelTuner.ListViewStyle;
+using PixelTuner.Controls.ThumbListView;
 using Workspace.Layout;
 
 namespace PixelTuner

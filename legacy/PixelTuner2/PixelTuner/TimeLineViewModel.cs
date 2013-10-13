@@ -8,7 +8,7 @@ using System.ComponentModel;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Serialization;
-using PixelTuner.Serialization;
+using PixelTuner.Controls.ThumbListView.Serialization;
 using System.Globalization;
 using System.Windows;
 

@@ -83,6 +83,7 @@
     <ApplicationIcon>PixelTuner.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -96,6 +97,7 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="UIAutomationClient" />
     <Reference Include="UIAutomationProvider" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -109,6 +111,10 @@
     </ApplicationDefinition>
     <Compile Include="ActiveDocumentConverter.cs" />
     <Compile Include="ActiveTimeLineConverter.cs" />
+    <Compile Include="Controls\SearchTextBox\SearchTextBox.cs" />
+    <Compile Include="Controls\ThumbListView\ImageView.cs" />
+    <Compile Include="Controls\ThumbListView\Serialization\TimeLineItem.cs" />
+    <Compile Include="Controls\ThumbListView\ThumbnailFileItem.cs" />
     <Compile Include="DefaultsWindow.xaml.cs">
       <DependentUpon>DefaultsWindow.xaml</DependentUpon>
     </Compile>
@@ -154,6 +160,14 @@
       <DependentUpon>TriangleSlider.xaml</DependentUpon>
     </Compile>
     <Compile Include="RootViewModel.cs" />
+    <Resource Include="Controls\SearchTextBox\SearchTextBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Resource>
+    <Page Include="Controls\ThumbListView\ThumbListView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="DefaultsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -219,10 +233,6 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Appearance\Appearance.csproj">
-      <Project>{93C014DE-3E6E-47A7-92A9-D9B9AA0B9501}</Project>
-      <Name>Appearance</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AutoUpdater\AutoUpdater.csproj">
       <Project>{4BA4719C-C6AB-49BA-9754-848CA24C1FD6}</Project>
       <Name>AutoUpdater</Name>
@@ -536,10 +546,17 @@
     <Content Include="Content\80_batterfly_009.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Page Include="Themes\Generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Resource Include="Controls\SearchTextBox\Images\clear.png" />
+    <Resource Include="Controls\SearchTextBox\Images\search.png" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
