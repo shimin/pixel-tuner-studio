@@ -86,7 +86,6 @@ namespace PixelTuner.Controls
             set 
             { 
                 SetValue(ValueProperty, value);
-                //SetValue(CoordinateProperty, value * ((Width - Height) / (MaxValue - MinValue)));
                 RaisePropertyChanged("Value");
                 RaisePropertyChanged("PolyPoints");
             }
@@ -99,7 +98,6 @@ namespace PixelTuner.Controls
 
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Console.WriteLine("OnValueChanged triggered");
         }
         #endregion
 
@@ -115,7 +113,6 @@ namespace PixelTuner.Controls
         {
             get
             {
-                //return String.Format("0,{1} {0},0 {0},{2} 0,{3} 0,{1}", Width, (int)(Height * 0.44), Height, (int)(Height * 0.56));
                 return String.Format("0,0 {0},{1} {0},{3} 0,{2} 0,0", Width, (int)(Height * 0.44), Height, (int)(Height * 0.56));
             }
         }
@@ -124,7 +121,6 @@ namespace PixelTuner.Controls
         {
             get
             {
-                //return String.Format("0,{1} {0},0 {0},{2} 0,{3} 0,{1}", (int)Coordinate, (int)(Height * 0.44), Height, (int)(Height * 0.56));
                 return String.Format("0,0 {0},{1} {0},{3} 0,{2} 0,0", (int)Coordinate, (int)(Height * 0.44), Height, (int)(Height * 0.56));
             }
         }
@@ -143,7 +139,6 @@ namespace PixelTuner.Controls
 
         private static void OnMaxValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Console.WriteLine("OnMaxValueChanged triggered");
             // проверку на достижение максимального значения?
         }
         #endregion
@@ -162,7 +157,6 @@ namespace PixelTuner.Controls
 
         private static void OnMinValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Console.WriteLine("OnMinValueChanged triggered");
             // проверку на достижение максимального значения?
         }
         #endregion

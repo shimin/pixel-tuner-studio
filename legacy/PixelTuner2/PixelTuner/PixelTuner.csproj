@@ -109,10 +109,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Controls\TimeLineItem\ITimeLineDataItem.cs" />
-    <Compile Include="Controls\TimeLineItem\ITimeLineManager.cs" />
-    <Compile Include="Controls\TimeLineItem\TimeLineControl.cs" />
-    <Compile Include="Controls\TimeLineItem\TimeLineItemControl.cs" />
+    <Compile Include="Controls\TimeLine\ITimeLineDataItem.cs" />
+    <Compile Include="Controls\TimeLine\ITimeLineManager.cs" />
+    <Compile Include="Controls\TimeLine\TimeLineControl.cs" />
+    <Compile Include="Controls\TimeLine\TimeLineItemControl.cs" />
     <Compile Include="Converters\ActiveDocumentConverter.cs" />
     <Compile Include="Converters\ActiveTimeLineConverter.cs" />
     <Compile Include="Controls\SearchTextBox\SearchTextBox.cs" />
@@ -165,10 +165,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Resource>
-    <Page Include="Styles\ThumbListView.xaml">
+    <Resource Include="Styles\ThumbListView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
+    </Resource>
     <Page Include="DefaultsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -547,10 +547,10 @@
     <Content Include="Content\80_batterfly_009.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Page Include="Styles\TimeLineItem.xaml">
+    <Resource Include="Styles\TimeLineItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
+    </Resource>
     <Page Include="Themes\Generic.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

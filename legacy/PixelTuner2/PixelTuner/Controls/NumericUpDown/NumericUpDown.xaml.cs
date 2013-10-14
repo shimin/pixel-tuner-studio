@@ -41,7 +41,6 @@ namespace PixelTuner.Controls
 
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Console.WriteLine("OnValueChanged triggered");
         }
         #endregion
 
@@ -59,7 +58,6 @@ namespace PixelTuner.Controls
 
         private static void OnMaxValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Console.WriteLine("OnMaxValueChanged triggered");
             // проверку на достижение максимального значения?
         }
         #endregion
@@ -78,7 +76,6 @@ namespace PixelTuner.Controls
 
         private static void OnMinValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Console.WriteLine("OnMinValueChanged triggered");
             // проверку на достижение максимального значения?
         }
         #endregion

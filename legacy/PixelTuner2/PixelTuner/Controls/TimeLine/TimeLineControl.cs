@@ -26,7 +26,6 @@ namespace PixelTuner.Controls
         public TimeLineAction Action { get; set; }
         public TimeSpan DeltaTime { get; set; }
         public Double DeltaX { get; set; }
-
     }
 
     internal class TimeLineDragAdorner : Adorner

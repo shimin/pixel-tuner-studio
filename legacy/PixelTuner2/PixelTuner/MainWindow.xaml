@@ -7,7 +7,6 @@
         Style="{DynamicResource WindowStyle}"
         
         xmlns:avalonDock="http://avalondock.codeplex.com"
-        xmlns:c="clr-namespace:Core;assembly=Core"
         xmlns:dd="clr-namespace:Core.DragDrop;assembly=Core"
         xmlns:tlw="clr-namespace:PixelTuner.Controls.ThumbListView"
         
@@ -33,11 +32,6 @@
                x:Key="SelectedBgColor" />
         <SolidColorBrush Color="{StaticResource BgColor}" x:Key="BgBrush" />
         <SolidColorBrush Color="#ffffff" x:Key="TextBrush" />
-        <ResourceDictionary x:Key="merged">
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Styles/TimeLineItemControlStyle.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
         <Style x:Key="ButtonDownStyle" TargetType="{x:Type Button}">
             <Setter Property="Template">
                 <Setter.Value>
