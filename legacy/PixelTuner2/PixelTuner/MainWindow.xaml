@@ -33,39 +33,11 @@
                x:Key="SelectedBgColor" />
         <SolidColorBrush Color="{StaticResource BgColor}" x:Key="BgBrush" />
         <SolidColorBrush Color="#ffffff" x:Key="TextBrush" />
-        <Style TargetType="{x:Type c:TimeLineItemControl}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type c:TimeLineItemControl}">
-                        <Grid>
-                            <Border Background="Blue"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch"
-                                    Opacity="0" />
-                            <ContentPresenter HorizontalAlignment="Stretch"
-                                              VerticalAlignment="Stretch"
-                                              x:Name="PART_ContentHostPART_ContentHost" />
-                            <ContentPresenter HorizontalAlignment="Left"
-                                              VerticalAlignment="Stretch"
-                                              x:Name="PART_LeftIndicator">
-                                <ContentPresenter.Content>
-                                    <Button />
-                                </ContentPresenter.Content>
-
-                            </ContentPresenter>
-                            <ContentPresenter HorizontalAlignment="Right"
-                                              VerticalAlignment="Stretch"
-                                              x:Name="PART_RightIndicator">
-                                <ContentPresenter.Content>
-                                    <Button />
-                                </ContentPresenter.Content>
-
-                            </ContentPresenter>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        <ResourceDictionary x:Key="merged">
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/TimeLineItemControlStyle.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
         <Style x:Key="ButtonDownStyle" TargetType="{x:Type Button}">
             <Setter Property="Template">
                 <Setter.Value>
@@ -275,7 +247,7 @@
                         <Button Height="14" Margin="4,0,2,1" Style="{StaticResource ButtonDownStyle}" Command="{Binding MoveDown}"></Button>
                         <Button Height="16" Margin="4,1,2,1" Style="{StaticResource ButtonDeleteLineStyle}" Command="{Binding DeleteLine}"></Button>
                     </StackPanel>
-                    <c:TimeLineControl 
+                    <ct:TimeLineControl 
                         Grid.Column="1" 
                         Grid.RowSpan="3" 
                         Height="112"

@@ -10,8 +10,8 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
-using Core;
 using Common.Collections;
+using PixelTuner.Controls;
 using PixelTuner.Controls.ThumbListView.Serialization;
 
 namespace PixelTuner.ViewModel

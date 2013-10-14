@@ -109,6 +109,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\TimeLineItem\ITimeLineDataItem.cs" />
+    <Compile Include="Controls\TimeLineItem\ITimeLineManager.cs" />
+    <Compile Include="Controls\TimeLineItem\TimeLineControl.cs" />
+    <Compile Include="Controls\TimeLineItem\TimeLineItemControl.cs" />
     <Compile Include="Converters\ActiveDocumentConverter.cs" />
     <Compile Include="Converters\ActiveTimeLineConverter.cs" />
     <Compile Include="Controls\SearchTextBox\SearchTextBox.cs" />
@@ -157,11 +161,11 @@
       <DependentUpon>TriangleSlider.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\RootViewModel.cs" />
-    <Resource Include="Controls\SearchTextBox\SearchTextBox.xaml">
+    <Resource Include="Styles\SearchTextBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Resource>
-    <Page Include="Controls\ThumbListView\ThumbListView.xaml">
+    <Page Include="Styles\ThumbListView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -543,6 +547,10 @@
     <Content Include="Content\80_batterfly_009.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Page Include="Styles\TimeLineItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\Generic.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
