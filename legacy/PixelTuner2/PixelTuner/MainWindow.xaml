@@ -19,486 +19,306 @@
         Activated="MainWnd_Activated"
         Loaded="Window_Loaded" Closing="Window_Closing">
     
-<Window.Resources>
-        <avalonDock:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-        <Color R="255"
-           G="255"
-           B="255"
-           A="180"
-           x:Key="BgColor" />
+    <Window.Resources>
+        <ResourceDictionary >
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/PixelTuner;component/Styles/FileLayoutTemplate.xaml" />
+                <ResourceDictionary Source="/PixelTuner;component/Styles/ImagesLayoutTemplate.xaml" />
+                <ResourceDictionary Source="/PixelTuner;component/Styles/SharedStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        
+            <avalonDock:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 
-        <Color R="240"
-           G="240"
-           B="240"
-           A="220"
-           x:Key="SelectedBgColor" />
-        <SolidColorBrush Color="{StaticResource BgColor}" x:Key="BgBrush" />
-        <SolidColorBrush Color="#ffffff" x:Key="TextBrush" />
-        <Style x:Key="ProgressBarStyle" TargetType="ProgressBar">
-            <Setter Property="MinHeight" Value="12"></Setter>
-            <Setter Property="Margin" Value="0,0,0,2"></Setter>
-        </Style>
-        <Style x:Key="ButtonDownStyle" TargetType="{x:Type Button}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate>
-                        <Border MinWidth="6" MinHeight="4">
-                            <Image x:Name="DownImage" Source="/PixelTuner;component/Images/_grey_Arrow-Down.png"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="true">
-                                <Setter Property="Source" Value="/PixelTuner;component/Images/_grey_Arrow-DownLight.png" TargetName="DownImage"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="false">
-                                <Setter Property="Source" Value="/PixelTuner;component/Images/_grey_Arrow-DownDisabled.png" TargetName="DownImage"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="ButtonUpStyle" TargetType="{x:Type Button}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate>
-                        <Border MinWidth="6" MinHeight="4">
-                            <Image x:Name="UpImage" Source="/PixelTuner;component/Images/_grey_Arrow-Up.png"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="true">
-                                <Setter Property="Source" Value="/PixelTuner;component/Images/_grey_Arrow-UpLight.png" TargetName="UpImage"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="false">
-                                <Setter Property="Source" Value="/PixelTuner;component/Images/_grey_Arrow-UpDisabled.png" TargetName="UpImage"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="ButtonDeleteLineStyle" TargetType="{x:Type Button}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate>
-                        <Border Width="16" Height="14">
-                            <Image x:Name="UpImage" Source="/PixelTuner;component/Images/red_cross.png"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="true">
-                                <Setter Property="Source" Value="/PixelTuner;component/Images/red_crossLight.png" TargetName="UpImage"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="false">
-                                <Setter Property="Source" Value="/PixelTuner;component/Images/red_crossDisabled.png" TargetName="UpImage"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="OperationProgressBarStyle" TargetType="ProgressBar">
-            <Setter Property="MinHeight" Value="12"></Setter>
-            <Setter Property="Margin" Value="0,0,0,2"></Setter>
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding StatusRaw}" Value="2">
-                    <Setter Property="Canvas.Visibility" Value="Collapsed"></Setter>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding StatusRaw}" Value="3">
-                    <Setter Property="Canvas.Visibility" Value="Collapsed"></Setter>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding StatusRaw}" Value="4">
-                    <Setter Property="Canvas.Visibility" Value="Collapsed"></Setter>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-        <Style x:Name="DeviceUploadMainMenuItemStyle" x:Key="DeviceUploadMainMenuItemStyle" TargetType="{x:Type MenuItem}">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding Source={StaticResource RootContext}, Path=Files.Count}" Value="0">
-                    <Setter Property="IsEnabled" Value="false"></Setter>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-        <Style x:Name="DeviceUploadMenuItemStyle" x:Key="DeviceUploadMenuItemStyle" TargetType="{x:Type MenuItem}">
-            <Setter Property="Command" Value="{Binding PlacementTarget.DataContext.UploadCommand, 
-                RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}"></Setter>
-            <Setter Property="CommandParameter" Value="{Binding .}"></Setter>
-        </Style>
-        <Style x:Key="disabledListBoxSelection">
-            <Style.Resources>
-                <!-- Background of selected item when focussed -->
-                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
-                <!-- Background of selected item when not focussed -->
-                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent" />
-                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#ffffff" />
-                <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#ffffff" />
-            </Style.Resources>
-        </Style>
-        <Style
-            x:Key="LinkButton"
-            TargetType="Button">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <TextBlock TextDecorations="Underline">
-                            <ContentPresenter />
-                        </TextBlock>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="Background" Value="White" />
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="true">
-                    <Setter Property="Foreground" Value="Red" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        <Style
-            x:Key="BlueLinkButton"
-            TargetType="Button">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <TextBlock TextDecorations="Underline" Margin="0,0,0,0">
-                            <ContentPresenter />
-                        </TextBlock>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Background" Value="White" />
-            <Setter Property="Foreground" Value="#f0f0ff" />
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="true">
-                    <Setter Property="Foreground" Value="Red" />
-                </Trigger>
-                <Trigger Property="IsEnabled" Value="false">
-                    <Setter Property="Foreground" Value="#888888" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        <DataTemplate  DataType="{x:Type tlw:ThumbnailFileItem}"
-                       x:Key="ItemTemplateProperty">
-            <Border BorderThickness="1"
-                    BorderBrush="White"
-                    CornerRadius="3"
-                    Margin="0,10,0,10"
-                    Height="96"
-                    Background="{Binding NormalBackground}">
-                <Border.Triggers>
-                    <EventTrigger RoutedEvent="SizeChanged">
-                    </EventTrigger>
-                </Border.Triggers>
-                <StackPanel Orientation="Vertical">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="20" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding Path=Start}" />
-                        <Button Grid.Column="1" Margin="0,2,0,0" Command="{Binding DisposeMe}">
-                            <Button.Template>
-                                <ControlTemplate>
-                                    <Border Width="16" Height="14">
-                                        <Image x:Name="RemoveBtnImage" Source="/PixelTuner;component/Images/PinClose_Dark.png"/>
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="true">
-                                            <Setter Property="Source" Value="/PixelTuner;component/Images/PinClose.png" TargetName="RemoveBtnImage"/>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
-                    </Grid>
-                    <Border Height="44" MinWidth="200">
-                        <Border.Background>
-                            <ImageBrush ImageSource="{Binding ImageSource}" Stretch="Uniform" AlignmentX="Left" />
-                        </Border.Background>
-                    </Border>
-                    <TextBlock Text="{Binding Path=End}" />
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{StaticResource Item_Stretching}" Margin="0,2,4,0"/>
-                        <ct:TriangleSlider Height="12" 
-                                              Width="48"
-                                              MinValue="4" 
-                                              MaxValue="46" 
-                                              Margin="0,2,4,0"
-                                              Value="{Binding Path=Parent.DataContext.Stretching, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <!--<Slider Height="12" Minimum="4" Maximum="32" Width="44" 
-                                Margin="0,-2,0,-2"
-                                Value="{Binding Path=Parent.DataContext.Stretching, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>-->
-                    </StackPanel>
-                </StackPanel>
-            </Border>
-        </DataTemplate>
-        <DataTemplate  DataType="{x:Type vm:TimeLineViewModel}"
-                       x:Key="TimeLineLayoutTemplate">
-            <ItemsControl>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="26" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0" Background="#4a4a4a">
-                        <Button Height="14" Margin="4,3,2,0" Style="{StaticResource ButtonUpStyle}" Command="{Binding MoveUp}"></Button>
-                        <Button Height="14" Margin="4,0,2,1" Style="{StaticResource ButtonDownStyle}" Command="{Binding MoveDown}"></Button>
-                        <Button Height="16" Margin="4,1,2,1" Style="{StaticResource ButtonDeleteLineStyle}" Command="{Binding DeleteLine}"></Button>
-                    </StackPanel>
-                    <ct:TimeLineControl 
-                        Grid.Column="1" 
-                        Grid.RowSpan="3" 
-                        Height="112"
-                        Items="{Binding Items, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        ItemTemplate="{StaticResource ItemTemplateProperty}"
-                        ViewLevel="Seconds"
-                        HorizontalAlignment="Left"
-                        x:Name="TimeLine"
-                        StartDate="{Binding Start, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        UnitSize="{Binding ElementName=Slider_Scale, Path=Value}"
-                        MinimumUnitWidth="20"
-                        Background="{Binding Background}"
-                        DrawTimeGrid="False"
-                        MinWidth="740"
-                        DefaultTimeInterval="{Binding DefaultTimeInterval}"
-                        SynchedWithSiblings="True" />
-                </Grid>
-            </ItemsControl>
-        </DataTemplate>
-
-        <DataTemplate x:Key="FileLayoutTemplate" DataType="{x:Type vm:FileViewModel}">
-            <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="24"/>
-                <RowDefinition Height="{Binding MemoryListHeight, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" MinHeight="0"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="0"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="80" />
-                <ColumnDefinition Width="66" />
-                <ColumnDefinition Width="120" />
-                <ColumnDefinition Width="60" />
-                <ColumnDefinition Width="60" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Button x:Name="NewBtn" Grid.Row="0" Grid.Column="0" Margin="4,0,0,2" 
-                                        Content="{StaticResource Doc_Btn_AddLine}" 
-                                        Command="{Binding AddLine}"/>
-            <TextBlock Grid.Row="0" Grid.Column="1" Margin="16,4,4,0" Foreground="{StaticResource TextBrush}" Text="{StaticResource Doc_Lbl_Scale}"/>
-            <Slider Grid.Row="0" Grid.Column="2" x:Name="Slider_Scale" Margin="2" Minimum="1" Maximum="60" Value="{Binding UnitSize}"/>
-            <TextBlock Grid.Column="3" Margin="16,4,4,0" Foreground="{StaticResource TextBrush}" Text="{StaticResource Doc_Lbl_Height}" />
-            <ct:NumericUpDownControl 
-                                    Grid.Column="4" 
-                                    Margin="4,2,2,0" 
-                                    MaxValue="100"
-                                    MinValue="5"
-                                    Step="5"
-                                    IsEnabled="{Binding Path=Parent.DataContext.LineHeightChangingAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                    Value="{Binding Path=Parent.DataContext.LineHeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-
-            <Grid x:Name="MemoryGrid" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="6"
-                                            Height="{Binding MemoryListHeight, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                            Visibility="{Binding Visibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="14"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Row="0" Margin="4,0,0,1" Foreground="{StaticResource TextBrush}" Text="{StaticResource Doc_Lbl_MemoryUsed}" />
-                <ListBox 
-                                        x:Name="MemoryListBox"
-                                        Margin="0,0,0,0"
-                                        Grid.Row="1"                                        
-                                        ItemsSource="{Binding Devices}"
-                                        BorderBrush="Transparent"
-                                        Background="Transparent"
-                                        ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                        Style="{StaticResource disabledListBoxSelection}">
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="{x:Type ListBoxItem}">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
-                        </Style>
-                    </ListBox.ItemContainerStyle>
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Height="12" Orientation="Horizontal" Margin="4,2,0,1">
-                                <TextBlock Text="{Binding FullName}" MinWidth="84" Margin="8,-2,6,1"/>
-                                <ProgressBar 
-                                                        Width="500"
-                                                        Value="{Binding ElementName=MemoryGrid, Path=Parent.DataContext.ProjectSize, Mode=OneWay}" 
-                                                        Minimum="0" 
-                                                        Maximum="{Binding MaxMemory}" 
-                                                        Margin="0,0,0,0"/>
-                                <TextBlock Text="{Binding ElementName=MemoryGrid, Path=Parent.DataContext.ProjectSize, Mode=OneWay}" Margin="8,-2,1,0" />
-                                <TextBlock Text="/" Margin="0,-2,0,0" />
-                                <TextBlock Text="{Binding MaxMemory, Mode=OneWay}" Margin="1,-2,6,0" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </Grid>
-
-            <ScrollViewer Grid.Row="2"
-                                                Grid.ColumnSpan="6"
-                                                Grid.RowSpan="1"
-                                                HorizontalAlignment="Stretch"
-                                                HorizontalScrollBarVisibility="Auto"
-                                                VerticalScrollBarVisibility="Auto"
-                                                VerticalAlignment="Stretch">
-                <StackPanel x:Name="timelineStackPanel" Orientation="Vertical">
-                    <ItemsControl Grid.Row="2" 
-                                                        ItemTemplate="{StaticResource TimeLineLayoutTemplate}"
-                                                        ItemsSource="{Binding Path=TimeLines, Mode=TwoWay}" />
-                </StackPanel>
-            </ScrollViewer>
-        </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="DevicesLayoutTemplate" DataType="{x:Type vm:DevicesViewModel}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"></RowDefinition>
-                    <RowDefinition Height="100"></RowDefinition>
-                </Grid.RowDefinitions>
-                <ListBox x:Name="boxDevicesList" MinWidth="120" MinHeight="120"
-                                         Grid.Row="0"
-                                         ItemsSource="{Binding Devices, UpdateSourceTrigger=PropertyChanged}"
-                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                         SelectionMode="Single"
-                                         SelectionChanged="boxDevicesList_SelectionChanged"
-                                         >
-                    <ListBox.Style>
-                        <Style>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ElementName=boxDevicesList, Path=SelectedItem.Busy}" Value="true">
-                                    <Setter Property="ListBox.IsEnabled" Value="false"></Setter>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ListBox.Style>
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        </Style>
-                    </ListBox.ItemContainerStyle>
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Name}">
-                                <TextBlock.ContextMenu>
-                                    <ContextMenu DataContext="{Binding RelativeSource={RelativeSource Mode=Self}, Path=PlacementTarget.DataContext}">
-                                        <MenuItem Header="{StaticResource Dev_Menu_RefreshBrain}" Command="{Binding UploadFirmwareCommand}"></MenuItem>
-                                        <MenuItem Header="{StaticResource Dev_Menu_Upload}"
-                                                    x:Name="UploadMainMenu"
-                                                    ItemsSource="{Binding Source={StaticResource RootContext}, Path=Files}"
-                                                    ItemContainerStyle="{StaticResource DeviceUploadMenuItemStyle}"
-                                                    Style="{StaticResource DeviceUploadMainMenuItemStyle}">
-                                        </MenuItem>
-                                    </ContextMenu>
-                                </TextBlock.ContextMenu>
-                            </TextBlock>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                <Canvas Grid.Row="1" >
-                    <Canvas.Style>
-                        <Style>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ElementName=boxDevicesList, Path=SelectedItems.Count}" Value="0">
-                                    <Setter Property="Canvas.Visibility" Value="Collapsed"></Setter>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Canvas.Style>
-                    <StackPanel DataContext="{Binding ElementName=boxDevicesList, Path=SelectedItem}" Orientation="Vertical">
+            <DataTemplate x:Key="ItemTemplateProperty" DataType="{x:Type tlw:ThumbnailFileItem}">
+                <Border BorderThickness="1"
+                        BorderBrush="White"
+                        CornerRadius="3"
+                        Margin="0,10,0,10"
+                        Height="96"
+                        Background="{Binding NormalBackground}">
+                    <Border.Triggers>
+                        <EventTrigger RoutedEvent="SizeChanged">
+                        </EventTrigger>
+                    </Border.Triggers>
+                    <StackPanel Orientation="Vertical">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="82"></ColumnDefinition>
-                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="20" />
                             </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"></RowDefinition>
-                                <RowDefinition Height="{Binding ElementName=UploadProgressBar, Path=Height}"></RowDefinition>
-                                <RowDefinition Height="16"></RowDefinition>
-                                <RowDefinition Height="16"></RowDefinition>
-                            </Grid.RowDefinitions>
-                            <StackPanel x:Name="descriptionsStack" Grid.Row="0" Grid.Column="0" Orientation="Vertical">
-                                <TextBlock Text="{StaticResource Dev_Props_Name}" Margin="0,2,0,0" />
-                                <TextBlock Text="{StaticResource Dev_Props_Power}" />
-                                <TextBlock Text="{StaticResource Dev_Props_Length}" />
-                                <TextBlock Text="{StaticResource Dev_Props_Status}" />
-                            </StackPanel>
-                            <StackPanel x:Name="valuesStack" Grid.Row="0" Grid.Column="1" Orientation="Vertical">
-                                <TextBlock Text="{Binding FullName}" Margin="0,3,0,0"/>
-                                <ProgressBar Value="{Binding EnergyLevel, Mode=OneWay}" Margin="0,3,0,0" Style="{StaticResource ProgressBarStyle}"/>
-                                <TextBlock Text="{Binding LedsTotal}" Margin="0,0,0,0"/>
-                                <TextBlock Text="{Binding Status}" Margin="0,0,0,0"/>
-                            </StackPanel>
-                            <ProgressBar 
-                                                x:Name="UploadProgressBar"
-                                                Value="{Binding Progress}" 
-                                                Minimum="{Binding ProgressMin}" 
-                                                Maximum="{Binding ProgressMax}" 
-                                                Style="{StaticResource OperationProgressBarStyle}"
-                                                Grid.ColumnSpan="2"
-                                                Grid.Row="1"
-                                                Margin="0,2,0,0" />
-                            <TextBlock Text="{StaticResource Dev_Props_UpdateNeeded}" 
-                                                       Foreground="#d0d010" 
-                                                       Margin="0,2,0,0" 
-                                                       Visibility="{Binding UpdateNeeded, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Hidden}}"
-                                                       Grid.Row="2" Grid.ColumnSpan="2"/>
-                            <Button Style="{StaticResource LinkButton}" 
-                                                    Content="{StaticResource Dev_Props_Update}" 
-                                                    Command="{Binding AutoUpdateCommand}" 
-                                                    Visibility="{Binding UpdateNeeded, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Hidden}}"
-                                                    Grid.Row="3" Margin="8,0,0,0" />
-                            <Button Style="{StaticResource LinkButton}" 
-                                                    Content="{StaticResource Dev_Props_Postpone}" 
-                                                    Command="{Binding UpdatePostponeCommand}" 
-                                                    Visibility="{Binding UpdateNeeded, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Hidden}}"
-                                                    Grid.Row="3" Grid.Column="1" />
+                            <TextBlock Grid.Column="0" Text="{Binding Path=Start}" />
+                            <Button Grid.Column="1" Margin="0,2,0,0" Command="{Binding DisposeMe}">
+                                <Button.Template>
+                                    <ControlTemplate>
+                                        <Border Width="16" Height="14">
+                                            <Image x:Name="RemoveBtnImage" Source="/PixelTuner;component/Images/PinClose_Dark.png"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="true">
+                                                <Setter Property="Source" Value="/PixelTuner;component/Images/PinClose.png" TargetName="RemoveBtnImage"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
                         </Grid>
+                        <Border Height="44" MinWidth="200">
+                            <Border.Background>
+                                <ImageBrush ImageSource="{Binding ImageSource}" Stretch="Uniform" AlignmentX="Left" />
+                            </Border.Background>
+                        </Border>
+                        <TextBlock Text="{Binding Path=End}" />
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{StaticResource Item_Stretching}" Margin="0,2,4,0"/>
+                            <ct:TriangleSlider Height="12" 
+                                                  Width="48"
+                                                  MinValue="4" 
+                                                  MaxValue="46" 
+                                                  Margin="0,2,4,0"
+                                                  Value="{Binding Path=Parent.DataContext.Stretching, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <!--<Slider Height="12" Minimum="4" Maximum="32" Width="44" 
+                                    Margin="0,-2,0,-2"
+                                    Value="{Binding Path=Parent.DataContext.Stretching, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>-->
+                        </StackPanel>
                     </StackPanel>
-                </Canvas>
-            </Grid>
-        </DataTemplate>
+                </Border>
+            </DataTemplate>
 
-        <DataTemplate x:Key="ImagesLayoutTemplate">
-            <Grid>
+            <DataTemplate x:Key="TimeLineLayoutTemplate" DataType="{x:Type vm:TimeLineViewModel}">
+                <ItemsControl>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="26" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Background="#4a4a4a">
+                            <Button Height="14" Margin="4,3,2,0" Style="{StaticResource ButtonUpStyle}" Command="{Binding MoveUp}"></Button>
+                            <Button Height="14" Margin="4,0,2,1" Style="{StaticResource ButtonDownStyle}" Command="{Binding MoveDown}"></Button>
+                            <Button Height="16" Margin="4,1,2,1" Style="{StaticResource ButtonDeleteLineStyle}" Command="{Binding DeleteLine}"></Button>
+                        </StackPanel>
+                        <ct:TimeLineControl 
+                            Grid.Column="1" 
+                            Grid.RowSpan="3" 
+                            Height="112"
+                            Items="{Binding Items, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            ItemTemplate="{StaticResource ItemTemplateProperty}"
+                            ViewLevel="Seconds"
+                            HorizontalAlignment="Left"
+                            x:Name="TimeLine"
+                            StartDate="{Binding Start, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            UnitSize="{Binding ElementName=Slider_Scale, Path=Value}"
+                            MinimumUnitWidth="20"
+                            Background="{Binding Background}"
+                            DrawTimeGrid="False"
+                            MinWidth="740"
+                            DefaultTimeInterval="{Binding DefaultTimeInterval}"
+                            SynchedWithSiblings="True" />
+                    </Grid>
+                </ItemsControl>
+            </DataTemplate>
+
+            <DataTemplate x:Key="FileLayoutTemplate" DataType="{x:Type vm:FileViewModel}">
+                <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="25" />
-                    <RowDefinition Height="*" />
+                    <RowDefinition Height="24"/>
+                    <RowDefinition Height="{Binding MemoryListHeight, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" MinHeight="0"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="0"/>
                 </Grid.RowDefinitions>
-                <DockPanel LastChildFill="True" Margin="1,0,0,-2" Background="#00ffffff">
-                    <Button Style="{StaticResource BlueLinkButton}" DockPanel.Dock="Left" Content="{StaticResource PictureEditor_Create}" Click="Create_Button_Click" Margin="4,2,4,0"></Button>
-                    <Button Style="{StaticResource BlueLinkButton}" DockPanel.Dock="Left" Content="{StaticResource PictureEditor_Change}" Click="Change_Button_Click"  Margin="4,2,4,0" IsEnabled="{Binding ElementName=boxThumbnails, Path=DataContext.IsSomethingSelected, Mode=OneWay}"></Button>
-                    <Button Style="{StaticResource BlueLinkButton}" DockPanel.Dock="Left" Content="{StaticResource PictureEditor_Delete}" Click="Delete_Button_Click" Margin="4,2,4,0" IsEnabled="{Binding ElementName=boxThumbnails, Path=DataContext.IsSomethingSelected, Mode=OneWay}"></Button>
-                    <Button Style="{StaticResource BlueLinkButton}" DockPanel.Dock="Left" Content="{StaticResource PictureEditor_Update}" Click="Resfresh_Button_Click" Margin="4,2,4,0"></Button>
-                    <ct:SearchTextBox Height="20" Margin="8,2,0,0" VerticalAlignment="Top" HorizontalAlignment="Stretch"></ct:SearchTextBox>
-                </DockPanel>
-                <ListView Grid.Row="1" x:Name="boxThumbnails" 
-                                                      SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}"
-                                                      SelectionMode="Extended" 
-                                                      BorderThickness="0"
-                                                      AllowDrop="True"
-                                                      KeyDown="boxThumbnails_KeyDown"
-                                                      Drop="boxThumbnails_Drop"
-                                                      DragEnter="boxThumbnails_DragEnter"
-                                                      DragOver="boxThumbnails_DragOver"
-                                                      dd:DragDropHelper.IsDragSource="True" 
-                                                      ItemsSource="{Binding ImagesCollection, Mode=OneWay}">
-                    <ListView.View>
-                        <tlw:ImageView />
-                    </ListView.View>
-                </ListView>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="66" />
+                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="60" />
+                    <ColumnDefinition Width="60" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button x:Name="NewBtn" Grid.Row="0" Grid.Column="0" Margin="4,0,0,2" 
+                                            Content="{StaticResource Doc_Btn_AddLine}" 
+                                            Command="{Binding AddLine}"/>
+                <TextBlock Grid.Row="0" Grid.Column="1" Margin="16,4,4,0" Foreground="{StaticResource TextBrush}" Text="{StaticResource Doc_Lbl_Scale}"/>
+                <Slider Grid.Row="0" Grid.Column="2" x:Name="Slider_Scale" Margin="2" Minimum="1" Maximum="60" Value="{Binding UnitSize}"/>
+                <TextBlock Grid.Column="3" Margin="16,4,4,0" Foreground="{StaticResource TextBrush}" Text="{StaticResource Doc_Lbl_Height}" />
+                <ct:NumericUpDownControl 
+                                        Grid.Column="4" 
+                                        Margin="4,2,2,0" 
+                                        MaxValue="100"
+                                        MinValue="5"
+                                        Step="5"
+                                        IsEnabled="{Binding Path=Parent.DataContext.LineHeightChangingAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Value="{Binding Path=Parent.DataContext.LineHeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <Grid x:Name="MemoryGrid" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="6"
+                                                Height="{Binding MemoryListHeight, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                                Visibility="{Binding Visibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="14"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0" Margin="4,0,0,1" Foreground="{StaticResource TextBrush}" Text="{StaticResource Doc_Lbl_MemoryUsed}" />
+                    <ListBox 
+                                            x:Name="MemoryListBox"
+                                            Margin="0,0,0,0"
+                                            Grid.Row="1"                                        
+                                            ItemsSource="{Binding Devices}"
+                                            BorderBrush="Transparent"
+                                            Background="Transparent"
+                                            ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                            Style="{StaticResource disabledListBoxSelection}">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListBoxItem}">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Height="12" Orientation="Horizontal" Margin="4,2,0,1">
+                                    <TextBlock Text="{Binding FullName}" MinWidth="84" Margin="8,-2,6,1"/>
+                                    <ProgressBar 
+                                                            Width="500"
+                                                            Value="{Binding ElementName=MemoryGrid, Path=Parent.DataContext.ProjectSize, Mode=OneWay}" 
+                                                            Minimum="0" 
+                                                            Maximum="{Binding MaxMemory}" 
+                                                            Margin="0,0,0,0"/>
+                                    <TextBlock Text="{Binding ElementName=MemoryGrid, Path=Parent.DataContext.ProjectSize, Mode=OneWay}" Margin="8,-2,1,0" />
+                                    <TextBlock Text="/" Margin="0,-2,0,0" />
+                                    <TextBlock Text="{Binding MaxMemory, Mode=OneWay}" Margin="1,-2,6,0" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+
+                <ScrollViewer Grid.Row="2"
+                                                    Grid.ColumnSpan="6"
+                                                    Grid.RowSpan="1"
+                                                    HorizontalAlignment="Stretch"
+                                                    HorizontalScrollBarVisibility="Auto"
+                                                    VerticalScrollBarVisibility="Auto"
+                                                    VerticalAlignment="Stretch">
+                    <StackPanel x:Name="timelineStackPanel" Orientation="Vertical">
+                        <ItemsControl Grid.Row="2" 
+                                                            ItemTemplate="{StaticResource TimeLineLayoutTemplate}"
+                                                            ItemsSource="{Binding Path=TimeLines, Mode=TwoWay}" />
+                    </StackPanel>
+                </ScrollViewer>
             </Grid>
-        </DataTemplate>
+            </DataTemplate>
 
-        <cv:ActiveDocumentConverter x:Key="ActiveDocumentConverter"/>
+            <DataTemplate x:Key="DevicesLayoutTemplate" DataType="{x:Type vm:DevicesViewModel}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"></RowDefinition>
+                        <RowDefinition Height="100"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <ListBox x:Name="boxDevicesList" MinWidth="120" MinHeight="120"
+                                             Grid.Row="0"
+                                             ItemsSource="{Binding Devices, UpdateSourceTrigger=PropertyChanged}"
+                                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                             SelectionMode="Single">
+                        <ListBox.Style>
+                            <Style>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ElementName=boxDevicesList, Path=SelectedItem.Busy}" Value="true">
+                                        <Setter Property="ListBox.IsEnabled" Value="false"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListBox.Style>
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}">
+                                    <TextBlock.ContextMenu>
+                                        <ContextMenu DataContext="{Binding RelativeSource={RelativeSource Mode=Self}, Path=PlacementTarget.DataContext}">
+                                            <MenuItem Header="{StaticResource Dev_Menu_RefreshBrain}" Command="{Binding UploadFirmwareCommand}"></MenuItem>
+                                            <MenuItem Header="{StaticResource Dev_Menu_Upload}"
+                                                        x:Name="UploadMainMenu"
+                                                        ItemsSource="{Binding Source={StaticResource RootContext}, Path=Files}"
+                                                        ItemContainerStyle="{StaticResource DeviceUploadMenuItemStyle}"
+                                                        Style="{StaticResource DeviceUploadMainMenuItemStyle}">
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </TextBlock.ContextMenu>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <Canvas Grid.Row="1" >
+                        <Canvas.Style>
+                            <Style>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ElementName=boxDevicesList, Path=SelectedItems.Count}" Value="0">
+                                        <Setter Property="Canvas.Visibility" Value="Collapsed"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Canvas.Style>
+                        <StackPanel DataContext="{Binding ElementName=boxDevicesList, Path=SelectedItem}" Orientation="Vertical">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="82"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"></RowDefinition>
+                                    <RowDefinition Height="{Binding ElementName=UploadProgressBar, Path=Height}"></RowDefinition>
+                                    <RowDefinition Height="16"></RowDefinition>
+                                    <RowDefinition Height="16"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <StackPanel x:Name="descriptionsStack" Grid.Row="0" Grid.Column="0" Orientation="Vertical">
+                                    <TextBlock Text="{StaticResource Dev_Props_Name}" Margin="0,2,0,0" />
+                                    <TextBlock Text="{StaticResource Dev_Props_Power}" />
+                                    <TextBlock Text="{StaticResource Dev_Props_Length}" />
+                                    <TextBlock Text="{StaticResource Dev_Props_Status}" />
+                                </StackPanel>
+                                <StackPanel x:Name="valuesStack" Grid.Row="0" Grid.Column="1" Orientation="Vertical">
+                                    <TextBlock Text="{Binding FullName}" Margin="0,3,0,0"/>
+                                    <ProgressBar Value="{Binding EnergyLevel, Mode=OneWay}" Margin="0,3,0,0" Style="{StaticResource ProgressBarStyle}"/>
+                                    <TextBlock Text="{Binding LedsTotal}" Margin="0,0,0,0"/>
+                                    <TextBlock Text="{Binding Status}" Margin="0,0,0,0"/>
+                                </StackPanel>
+                                <ProgressBar 
+                                                    x:Name="UploadProgressBar"
+                                                    Value="{Binding Progress}" 
+                                                    Minimum="{Binding ProgressMin}" 
+                                                    Maximum="{Binding ProgressMax}" 
+                                                    Style="{StaticResource OperationProgressBarStyle}"
+                                                    Grid.ColumnSpan="2"
+                                                    Grid.Row="1"
+                                                    Margin="0,2,0,0" />
+                                <TextBlock Text="{StaticResource Dev_Props_UpdateNeeded}" 
+                                                           Foreground="#d0d010" 
+                                                           Margin="0,2,0,0" 
+                                                           Visibility="{Binding UpdateNeeded, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Hidden}}"
+                                                           Grid.Row="2" Grid.ColumnSpan="2"/>
+                                <Button Style="{StaticResource WhiteLinkButton}" 
+                                                        Content="{StaticResource Dev_Props_Update}" 
+                                                        Command="{Binding AutoUpdateCommand}" 
+                                                        Visibility="{Binding UpdateNeeded, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Hidden}}"
+                                                        Grid.Row="3" Margin="8,0,0,0" />
+                                <Button Style="{StaticResource WhiteLinkButton}" 
+                                                        Content="{StaticResource Dev_Props_Postpone}" 
+                                                        Command="{Binding UpdatePostponeCommand}" 
+                                                        Visibility="{Binding UpdateNeeded, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Hidden}}"
+                                                        Grid.Row="3" Grid.Column="1" />
+                            </Grid>
+                        </StackPanel>
+                    </Canvas>
+                </Grid>
+            </DataTemplate>
+
+            <cv:ActiveDocumentConverter x:Key="ActiveDocumentConverter"/>
         
-
+        </ResourceDictionary>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -601,7 +421,7 @@
             <StatusBarItem Content="Pixel Tuner" Margin="2,0,0,2"/>
             <StatusBarItem Content="{Binding AssemblyVersion}" Margin="0,0,2,2"/>
             <StatusBarItem >
-                <Button Style="{StaticResource BlueLinkButton}" Content="{StaticResource Dev_Props_Update}" Command="{Binding UpdateCommand}" Visibility="{Binding UpdatesAvailable}" Margin="8,-4,0,0"></Button>
+                <Button Style="{StaticResource BlueLinkButton}" Content="{StaticResource Dev_Props_Update}" Command="{Binding UpdateCommand}" Visibility="{Binding UpdatesAvailable, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" Margin="8,-4,0,0"></Button>
             </StatusBarItem>
         </StatusBar>
     </Grid>

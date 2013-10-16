@@ -10,12 +10,8 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Dictionaries/labels.ru-RU.xaml" />
                 <ResourceDictionary Source="Dictionaries/labels.en-US.xaml" />
-                <ResourceDictionary Source="/PixelTuner;component/Styles/FileTemplate.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <local:RootViewModel x:Key="RootContext" x:Name="RootContext"></local:RootViewModel>
-            <!--<Style x:Key="WindowStyle" TargetType="{x:Type Window}">
-                    <Setter Property="DataContext" Value="{StaticResource RootContext}"></Setter>
-            </Style>-->
         </ResourceDictionary>
     </Application.Resources>
 </Application>

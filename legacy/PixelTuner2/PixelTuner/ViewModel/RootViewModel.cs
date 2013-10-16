@@ -25,14 +25,13 @@ namespace PixelTuner.ViewModel
             this.ActiveDocumentChanged +=new DocumentChangedEventHandler(Workspace_ActiveDocumentChanged);
         }
 
-        int _lastUsedLineHeight = 0;
-
         void Workspace_ActiveDocumentChanged(object sender, DocumentChangedEventArgs e)
         {
             if (_activeDocument == null) ImagesModel.RefreshImagesCollection();
             else
             {
-                ImagesModel.RefreshImagesCollection(_activeDocument.LineHeight);
+                Settings.Default.LineHeight = _activeDocument.LineHeight;
+                ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
                 e.NewDocument.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(NewDocument_PropertyChanged);
                 if (e.OldDocument != null)
                     e.OldDocument.PropertyChanged -= NewDocument_PropertyChanged;
@@ -44,20 +43,91 @@ namespace PixelTuner.ViewModel
             if (e.PropertyName == "LineHeight")
                 if (sender is FileViewModel)
                 {
-                    _lastUsedLineHeight = (sender as FileViewModel).LineHeight;
-                    ImagesModel.RefreshImagesCollection(_lastUsedLineHeight);                    
+                    Settings.Default.LineHeight = (sender as FileViewModel).LineHeight;
+                    ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
                 }
         }
 
-        XmlSerializer _projectSerializer = new XmlSerializer(typeof(FileViewModel), FileViewModel.ExtraTypes.ToArray());
+        #region Properties
 
         static RootViewModel _this = null;
-
         public static RootViewModel This
         {
             get { return _this; }
             set { _this = value; }
         }
+
+        public string AssemblyVersion
+        {
+            get
+            {
+                System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                return assembly.GetName().Version.ToString();
+            }
+        }
+
+        private bool _updatesAvailable = false;
+        public bool UpdatesAvailable
+        {
+            get { return _updatesAvailable; }
+            set { _updatesAvailable = value; RaisePropertyChanged("UpdatesAvailable"); }
+        }
+
+        private Guid _id = Guid.Empty;
+        public Guid Id
+        {
+            get { return _id; }
+            set { _id = value; }
+        }
+
+        XmlSerializer _projectSerializer = new XmlSerializer(typeof(FileViewModel), FileViewModel.ExtraTypes.ToArray());
+
+        #endregion
+
+        #region View models
+
+        #region ActiveDocument
+
+        private FileViewModel _activeDocument = null;
+        public FileViewModel ActiveDocument
+        {
+            get { return _activeDocument; }
+            set
+            {
+                if (_activeDocument != value)
+                {
+                    FileViewModel oldDoc = _activeDocument;     // сохраняю ссылку на предыдущий документ, чтобы иметь к нему доступ в обработчике события
+                    _activeDocument = value;
+                    RaisePropertyChanged("ActiveDocument");
+                    if (ActiveDocumentChanged != null)
+                        ActiveDocumentChanged(this, new DocumentChangedEventArgs(oldDoc, _activeDocument));
+                }
+            }
+        }
+
+        public class DocumentChangedEventArgs : EventArgs
+        {
+            FileViewModel _oldDoc;
+            public FileViewModel OldDocument
+            {
+                get { return _oldDoc; }
+            }
+            FileViewModel _newDoc;
+            public FileViewModel NewDocument
+            {
+                get { return _newDoc; }
+            }
+
+            public DocumentChangedEventArgs(FileViewModel oldDoc, FileViewModel newDoc)
+            {
+                _oldDoc = oldDoc;
+                _newDoc = newDoc;
+            }
+        }
+        public delegate void DocumentChangedEventHandler(object sender, DocumentChangedEventArgs e);
+        public event DocumentChangedEventHandler ActiveDocumentChanged;
+
+        #endregion
 
         ObservableCollection<FileViewModel> _files = new ObservableCollection<FileViewModel>();
         ReadOnlyObservableCollection<FileViewModel> _readonlyFiles = null;
@@ -73,7 +143,6 @@ namespace PixelTuner.ViewModel
         }
 
         ToolViewModel[] _tools = null;
-
         public IEnumerable<ToolViewModel> Tools
         {
             get
@@ -114,6 +183,8 @@ namespace PixelTuner.ViewModel
                 return _projectsModel;
             }
         }
+        
+        #region Images model
 
         ImagesViewModel _imagesModel = null;
         public ImagesViewModel ImagesModel
@@ -130,28 +201,44 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        private Visibility _updatesAvailable = Visibility.Collapsed;
-        public Visibility UpdatesAvailable
+        public void DeleteItem(ThumbnailFileItem itemToRemove)
         {
-            get { return _updatesAvailable; }
-            set { _updatesAvailable = value; RaisePropertyChanged("UpdatesAvailable"); }
-        }
-
-        public string AssemblyVersion
-        {
-            get
+            if (itemToRemove != null)
             {
-                System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
-                return assembly.GetName().Version.ToString();
+                try
+                {
+                    ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight, itemToRemove.FullName);
+                    RemoveBrokenReferences();
+                }
+                catch (Exception ex)
+                {
+                    ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
+                    Console.WriteLine(ex.Message);
+                }
             }
         }
 
-        private Guid _id = Guid.Empty;
-        public Guid Id
+        private void RemoveBrokenReferences()
         {
-            get { return _id; }
-            set { _id = value; }
+            foreach (var fileView in _files)
+            {
+                foreach (var timeline in fileView.TimeLines)
+                {
+                    List<ThumbnailFileItem> toRemove = new List<ThumbnailFileItem>();
+                    foreach (var item in timeline.Items)
+                    {
+                        if (!File.Exists((item as ThumbnailFileItem).FullName))
+                            toRemove.Add(item as ThumbnailFileItem);
+                    }
+                    foreach (var item in toRemove)
+                        timeline.Items.Remove(item);
+                }
+            }
         }
+
+        #endregion
+
+        #endregion
 
         #region UpdateCommand
         RelayCommand _updateCommand = null;
@@ -256,6 +343,48 @@ namespace PixelTuner.ViewModel
             RemoveBrokenReferences();
         }
 
+        internal void Open(string path = null)
+        {
+            if (String.IsNullOrEmpty(path))
+            {
+                var dlg = new OpenFileDialog();
+                dlg.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                dlg.Filter = "PixelTuner project file|*.ptp";
+                if (dlg.ShowDialog().GetValueOrDefault())
+                    path = dlg.FileName;
+            }
+
+            if (path != null)
+            {
+                try
+                {
+                    using (XmlTextReader tr = new XmlTextReader(path))
+                    {
+                        try
+                        {
+                            var file = (FileViewModel)_projectSerializer.Deserialize(tr);
+                            file.FilePath = path;
+                            this._files.Add(file);
+                            ActiveDocument = file;
+                            ActiveDocument.IsDirty = false;
+                        }
+                        catch (Exception ex)
+                        {
+                            ResourceDictionary rd = Application.Current.Resources.MergedDictionaries[0];
+                            string msg = (String)rd["Doc_Open_DeserializeError"];
+                            MessageBox.Show(msg, Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
+                catch
+                {
+                    ResourceDictionary rd = Application.Current.Resources.MergedDictionaries[0];
+                    string msg = (String)rd["Doc_Open_AccessError"];
+                    MessageBox.Show(msg, Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
         #endregion 
 
         #region NewCommand
@@ -288,48 +417,6 @@ namespace PixelTuner.ViewModel
 
         #endregion 
 
-        #region ActiveDocument
-
-        private FileViewModel _activeDocument = null;
-        public FileViewModel ActiveDocument
-        {
-            get { return _activeDocument; }
-            set
-            {
-                if (_activeDocument != value)
-                {
-                    FileViewModel oldDoc = _activeDocument;     // сохраняю ссылку на предыдущий документ, чтобы иметь к нему доступ в обработчике события
-                    _activeDocument = value;
-                    RaisePropertyChanged("ActiveDocument");
-                    if (ActiveDocumentChanged != null)
-                        ActiveDocumentChanged(this, new DocumentChangedEventArgs(oldDoc, _activeDocument));
-                }
-            }
-        }
-        public class DocumentChangedEventArgs : EventArgs
-        {
-            FileViewModel _oldDoc;
-            public FileViewModel OldDocument
-            {
-                get { return _oldDoc; }
-            }
-            FileViewModel _newDoc;
-            public FileViewModel NewDocument
-            {
-                get { return _newDoc; }
-            }
-
-            public DocumentChangedEventArgs(FileViewModel oldDoc, FileViewModel newDoc)
-            {
-                _oldDoc = oldDoc;
-                _newDoc = newDoc;
-            }
-        }
-        public delegate void DocumentChangedEventHandler(object sender, DocumentChangedEventArgs e);
-        public event DocumentChangedEventHandler ActiveDocumentChanged;
-
-        #endregion
-
         #region SaveCommand
         RelayCommand _saveCommand = null;
         public ICommand SaveCommand
@@ -353,6 +440,36 @@ namespace PixelTuner.ViewModel
         private void OnSave(object parameter)
         {
             Save(ActiveDocument);
+        }
+
+        internal void Save(FileViewModel fileToSave, bool saveAsFlag = false)
+        {
+            if (fileToSave.FilePath == null || saveAsFlag)
+            {
+                var dlg = new SaveFileDialog();
+                dlg.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                dlg.Filter = "PixelTuner project file|*.ptp";
+                if (dlg.ShowDialog().GetValueOrDefault())
+                    fileToSave.FilePath = dlg.SafeFileName;
+            }
+
+            if (fileToSave.FilePath != null)
+            {
+                using (XmlTextWriter tw = new XmlTextWriter(fileToSave.FilePath, Encoding.UTF8))
+                {
+                    tw.Formatting = Formatting.Indented;
+                    _projectSerializer.Serialize(tw, fileToSave);
+                    ///////////////////////////////
+                    // исправить нотификацию об изменении имени файла.
+                    _files.Remove(fileToSave);
+                    _files.Add(fileToSave);
+                    RaisePropertyChanged("ActiveDocument");
+                    if (ActiveDocumentChanged != null)
+                        ActiveDocumentChanged(this, new DocumentChangedEventArgs(_activeDocument, _activeDocument));
+                    //RaisePropertyChanged("Files");
+                }
+                ActiveDocument.IsDirty = false;
+            }
         }
 
         #endregion 
@@ -409,6 +526,28 @@ namespace PixelTuner.ViewModel
             Close(ActiveDocument);
         }
 
+        internal void Close(FileViewModel fileToClose)
+        {
+            if (fileToClose.IsDirty)
+            {
+                var res = MessageBox.Show(string.Format((String)Application.Current.TryFindResource("Global_SaveChanges"), fileToClose.FileName),
+                    Application.Current.MainWindow.Title, MessageBoxButton.YesNoCancel);
+                if (res == MessageBoxResult.Cancel)
+                    return;
+                if (res == MessageBoxResult.Yes)
+                {
+                    Save(fileToClose);
+                }
+            }
+
+            FileViewModel oldDoc = _activeDocument;
+            _files.Remove(fileToClose);
+            _activeDocument = _files.Count > 0 ? _files.Last() : null;
+            RaisePropertyChanged("ActiveDocument");
+            if (ActiveDocumentChanged != null)
+                ActiveDocumentChanged(this, new DocumentChangedEventArgs(oldDoc, _activeDocument));
+        }
+
         #endregion 
 
         #region AdjustDefaultsCommand
@@ -451,224 +590,5 @@ namespace PixelTuner.ViewModel
 
         #endregion 
 
-        internal void Close(FileViewModel fileToClose)
-        {
-            if (fileToClose.IsDirty)
-            {
-                var res = MessageBox.Show(string.Format((String)Application.Current.TryFindResource("Global_SaveChanges"), fileToClose.FileName), 
-                    Application.Current.MainWindow.Title, MessageBoxButton.YesNoCancel);
-                if (res == MessageBoxResult.Cancel)
-                    return;
-                if (res == MessageBoxResult.Yes)
-                {
-                    Save(fileToClose);
-                }
-            }
-
-            FileViewModel oldDoc = _activeDocument;
-            _files.Remove(fileToClose);
-            _activeDocument = _files.Count > 0 ? _files.Last() : null;
-            RaisePropertyChanged("ActiveDocument");
-            if (ActiveDocumentChanged != null)
-                ActiveDocumentChanged(this, new DocumentChangedEventArgs(oldDoc, _activeDocument));
-        }
-
-        internal void Save(FileViewModel fileToSave, bool saveAsFlag = false)
-        {
-            if (fileToSave.FilePath == null || saveAsFlag)
-            {
-                var dlg = new SaveFileDialog();
-                dlg.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
-                dlg.Filter = "PixelTuner project file|*.ptp";
-                if (dlg.ShowDialog().GetValueOrDefault())
-                    fileToSave.FilePath = dlg.SafeFileName;
-            }
-
-            if (fileToSave.FilePath != null)
-            {
-                using (XmlTextWriter tw = new XmlTextWriter(fileToSave.FilePath, Encoding.UTF8))
-                {
-                    tw.Formatting = Formatting.Indented;
-                    _projectSerializer.Serialize(tw, fileToSave);
-                    ///////////////////////////////
-                    // исправить нотификацию об изменении имени файла.
-                    _files.Remove(fileToSave);
-                    _files.Add(fileToSave);
-                    RaisePropertyChanged("ActiveDocument");
-                    if (ActiveDocumentChanged != null)
-                        ActiveDocumentChanged(this, new DocumentChangedEventArgs(_activeDocument, _activeDocument));
-                    //RaisePropertyChanged("Files");
-                }
-                ActiveDocument.IsDirty = false;
-            }
-        }
-
-        internal void Open(string path = null)
-        {
-            if (String.IsNullOrEmpty(path))
-            {
-                var dlg = new OpenFileDialog();
-                dlg.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
-                dlg.Filter = "PixelTuner project file|*.ptp";
-                if (dlg.ShowDialog().GetValueOrDefault())
-                    path = dlg.FileName;
-            }
-
-            if (path != null)
-            {
-                try
-                {
-                    using (XmlTextReader tr = new XmlTextReader(path))
-                    {
-                        try
-                        {
-                            var file = (FileViewModel)_projectSerializer.Deserialize(tr);
-                            file.FilePath = path;
-                            this._files.Add(file);
-                            ActiveDocument = file;
-                            ActiveDocument.IsDirty = false;
-                        }
-                        catch (Exception ex)
-                        {
-                            StringBuilder sb = new StringBuilder();
-                            WriteException(sb, ex);
-                            sb.AppendLine(ex.StackTrace);
-                            try
-                            {
-                                File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LastException.txt"), sb.ToString());
-                            }
-                            catch { }
-
-                            ResourceDictionary rd = Application.Current.Resources.MergedDictionaries[0];
-                            string msg = (String)rd["Doc_Open_DeserializeError"];
-                            MessageBox.Show(msg, Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
-                    }
-                }
-                catch 
-                {
-                    ResourceDictionary rd = Application.Current.Resources.MergedDictionaries[0];
-                    string msg = (String)rd["Doc_Open_AccessError"];
-                    MessageBox.Show(msg, Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-        }
-
-        private void WriteException(StringBuilder sb, Exception ex)
-        {
-            sb.AppendLine(ex.Message);
-            sb.AppendLine(ex.Source);
-            if (ex.InnerException != null)
-                WriteException(sb, ex.InnerException);
-        }
-
-        internal void boxThumbnails_DragOver(object sender, DragEventArgs e)
-        {
-            //Console.WriteLine("DragOver");
-        }
-
-        internal void boxThumbnails_DragEnter(object sender, DragEventArgs e)
-        {
-            //Console.WriteLine("DragEnter");
-        }
-
-        internal void boxThumbnails_Drop(object sender, DragEventArgs e)
-        {
-            //Console.WriteLine("Dropped");
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                string[] droppedFilePaths = e.Data.GetData(DataFormats.FileDrop, true) as string[];
-                StringBuilder sb = new StringBuilder();
-                string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content");
-                foreach (var p in droppedFilePaths)
-                {
-                    try
-                    {
-                        System.Drawing.Image img = System.Drawing.Image.FromFile(p);
-                        if (img.Height > 100 && img.Width > 1200)
-                        {
-                            sb.AppendLine(String.Format("Wrong image format. File: {0}", p));
-                            continue;
-                        }
-                        string destFileName = "";
-                        var shortName = Path.GetFileName(p);
-                        var testFileName = destFileName = Path.Combine(sourcePath, shortName);
-
-                        int idx = 0;
-                        while (File.Exists(testFileName))
-                        {
-                            idx++;
-                            testFileName = Path.Combine(sourcePath, Path.GetFileNameWithoutExtension(destFileName) + 
-                                "_" + idx.ToString() + Path.GetExtension(destFileName));
-                        }
-                        File.Copy(p, testFileName);
-                    }
-                    catch
-                    {
-                        sb.AppendLine(String.Format("Error copying image. File: {0}", p));
-                    }
-                }
-                ImagesModel.RefreshImagesCollection(_lastUsedLineHeight);
-                if (sender is UIElement) (sender as UIElement).Focus();
-            }
-        }
-
-        internal void boxThumbnails_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Delete)
-            {
-                var control = sender as System.Windows.Controls.ListView;
-                if (control != null)
-                {
-                    var itemToRemove = control.SelectedItem as ThumbnailFileItem;
-                    DeleteItem(itemToRemove);
-                }
-            }
-        }
-
-        public void DeleteItem(ThumbnailFileItem itemToRemove)
-        {
-            if (itemToRemove != null)
-            {
-                try
-                {
-                    if (
-                    MessageBox.Show(
-                        String.Format(
-                            (String)Application.Current.TryFindResource("Global_ReallyRemove"),
-                            itemToRemove.FullName),
-                        Application.Current.MainWindow.Title,
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Question) == MessageBoxResult.Yes)
-                    {
-                        ImagesModel.RefreshImagesCollection(_lastUsedLineHeight, itemToRemove.FullName);
-                        RemoveBrokenReferences();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    ImagesModel.RefreshImagesCollection(_lastUsedLineHeight);
-                    Console.WriteLine(ex.Message);
-                }
-            }
-        }
-
-        private void RemoveBrokenReferences()
-        {
-            foreach (var fileView in _files)
-            {
-                foreach (var timeline in fileView.TimeLines)
-                {
-                    List<ThumbnailFileItem> toRemove = new List<ThumbnailFileItem>();
-                    foreach (var item in timeline.Items)
-                    {
-                        if (!File.Exists((item as ThumbnailFileItem).FullName))
-                            toRemove.Add(item as ThumbnailFileItem);
-                    }
-                    foreach (var item in toRemove)
-                        timeline.Items.Remove(item);
-                }
-            }
-        }
     }
 }
