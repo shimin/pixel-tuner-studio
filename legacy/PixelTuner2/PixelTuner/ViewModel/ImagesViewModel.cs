@@ -60,6 +60,42 @@ namespace PixelTuner.ViewModel
             }
         }
 
+
+        public void ApplyFilter(string text)
+        {
+            string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content");
+            if (!Directory.Exists(sourcePath))
+            {
+                Directory.CreateDirectory(sourcePath);
+            }
+            DirectoryInfo info = new DirectoryInfo(sourcePath);
+            List<FileSystemInfo> allfiles = new List<FileSystemInfo>(info.GetFileSystemInfos("*.png"));
+            allfiles.AddRange(info.GetFileSystemInfos("*.jpg"));
+            allfiles.AddRange(info.GetFileSystemInfos("*.bmp"));
+            List<FileSystemInfo> suitableFiles = new List<FileSystemInfo>();
+            foreach (var f in allfiles)
+            {
+                if (string.IsNullOrEmpty(text) || Path.GetFileNameWithoutExtension(f.Name).Contains(text))
+                {
+                    using (System.Drawing.Image img = System.Drawing.Image.FromFile(f.FullName))
+                    {
+                        if (img.Height == PixelTuner.Properties.Settings.Default.LineHeight)
+                            suitableFiles.Add(f);
+                    }
+                }
+            }
+            allfiles = suitableFiles;
+            _images.Clear();
+
+            foreach (FileInfo fi in allfiles)
+            {
+                // exlude hidden files 
+                ThumbnailFileItem tfi = new ThumbnailFileItem(fi);
+                if ((fi.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
+                    _images.Add(tfi);
+            }
+        }
+
         public void RefreshImagesCollection(int height = 0, string itemToRemove = "")
         {
             string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content");

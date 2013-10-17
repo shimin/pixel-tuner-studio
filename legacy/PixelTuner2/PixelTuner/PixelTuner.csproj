@@ -567,8 +567,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Resource Include="Controls\SearchTextBox\Images\clear.png" />
-    <Resource Include="Controls\SearchTextBox\Images\search.png" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

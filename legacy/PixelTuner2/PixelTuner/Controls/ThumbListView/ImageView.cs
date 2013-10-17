@@ -71,6 +71,12 @@ namespace PixelTuner.Controls.ThumbListView
             }
         }
 
+        private void SearchHandler(object sender, RoutedEventArgs e)
+        {
+            var s = sender as TextBox;
+            RootViewModel.This.ImagesModel.ApplyFilter(s.Text);
+        }
+
         #region Picture editor
 
         private void Create_Button_Click(object sender, RoutedEventArgs e)

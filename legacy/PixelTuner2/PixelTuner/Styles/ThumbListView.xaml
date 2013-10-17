@@ -27,6 +27,7 @@
         <Setter Property='Padding' Value='3'/>
         <Setter Property='Margin' Value='5'/>
         <Setter Property='HorizontalContentAlignment' Value='Center'/>
+        <Setter Property="ToolTip" Value="{Binding Name, Mode=OneWay}" />
         <Setter Property="ContentTemplate">
             <Setter.Value>
                 <DataTemplate>
@@ -36,7 +37,6 @@
                                 <BitmapImage UriSource="{Binding FullName}" CacheOption="OnLoad" />
                             </Image.Source>
                         </Image>
-                        <!--<Image Height="60" Margin="3" Source="{Binding FullName}"/>-->
                     </Border>
                 </DataTemplate>
             </Setter.Value>

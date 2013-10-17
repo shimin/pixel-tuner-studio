@@ -46,7 +46,7 @@
     <Setter Property="Foreground" Value="{StaticResource SearchTextBox_Foreground}" />
     <Setter Property="BorderThickness" Value="1" />
     <Setter Property="SnapsToDevicePixels" Value="True" />
-    <Setter Property="LabelText" Value="Search" />
+    <Setter Property="LabelText" Value="{DynamicResource PictureEditor_Search}" />
     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
     <Setter Property="LabelTextColor" Value="{StaticResource SearchTextBox_LabelTextColor}" /> 
     <Setter Property="Template">
@@ -79,19 +79,16 @@
                       HorizontalAlignment="Stretch"
                       BorderBrush="{StaticResource SearchTextBox_SearchIconBorder}"
                       Background="{StaticResource SearchTextBox_SearchIconBackground}">
-                <Image x:Name="SearchIcon"
-                       Stretch="None"
-                       Width="15"
-                       Height="15" 
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"
-                       Source="pack://application:,,,/PixelTuner;component/Controls/SearchTextBox/Images/search.png" />
                </Border>
             </Grid>
           </Border>
           <ControlTemplate.Triggers>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter Property="LabelText" Value=""></Setter>
+                        </Trigger>
             <Trigger Property="IsMouseOver" Value="True">
               <Setter Property="BorderBrush" Value="{StaticResource SearchTextBox_BorderMouseOver}" />
+              <Setter Property="Cursor" Value="IBeam"></Setter>
             </Trigger>
             <Trigger Property="IsKeyboardFocusWithin" Value="True">
               <Setter Property="BorderBrush" Value="{StaticResource SearchTextBox_BorderMouseOver}" />
@@ -104,9 +101,6 @@
                 <Condition Property="HasText" Value="True" />
                 <Condition Property="SearchMode" Value="Instant" />
               </MultiTrigger.Conditions>
-              <Setter Property="Source"
-                      TargetName="SearchIcon"
-                      Value="pack://application:,,,/PixelTuner;component/Controls/SearchTextBox/Images/clear.png" />
             </MultiTrigger>
             <MultiTrigger>
               <MultiTrigger.Conditions>

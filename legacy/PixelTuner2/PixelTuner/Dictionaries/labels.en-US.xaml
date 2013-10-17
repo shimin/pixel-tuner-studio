@@ -55,4 +55,5 @@
     <system:String x:Key="PictureEditor_Change">Edit</system:String>
     <system:String x:Key="PictureEditor_Delete">Delete</system:String>
     <system:String x:Key="PictureEditor_Update">Refresh</system:String>
+    <system:String x:Key="PictureEditor_Search">Search</system:String>
 </ResourceDictionary>
