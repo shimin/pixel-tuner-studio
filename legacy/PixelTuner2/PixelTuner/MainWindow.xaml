@@ -27,8 +27,6 @@
                 <ResourceDictionary Source="/PixelTuner;component/Styles/SharedStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
         
-            <avalonDock:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-
             <DataTemplate x:Key="ItemTemplateProperty" DataType="{x:Type tlw:ThumbnailFileItem}">
                 <Border BorderThickness="1"
                         BorderBrush="White"

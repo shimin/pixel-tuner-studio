@@ -54,7 +54,6 @@ namespace PixelTuner
 
         private void Window_Loaded(object sender, RoutedEventArgs ev)
         {
-            RootViewModel.This.ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
             _updatesCheckWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(_updatesCheckWorker_DoWork);
             _updatesCheckWorker.RunWorkerAsync();
         }

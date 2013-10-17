@@ -56,7 +56,7 @@ namespace PixelTuner.Controls.ThumbListView
         {
             if (e.Key == System.Windows.Input.Key.Delete)
             {
-                var control = sender as System.Windows.Controls.ListView;
+                var control = sender as ListView;
                 if (control != null)
                 {
                     var itemToRemove = control.SelectedItem as ThumbnailFileItem;

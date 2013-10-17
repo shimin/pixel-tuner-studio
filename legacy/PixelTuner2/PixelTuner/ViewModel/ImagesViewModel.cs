@@ -10,13 +10,12 @@ namespace PixelTuner.ViewModel
 {
     public class ImagesViewModel : ToolViewModel
     {
-
         public ImagesViewModel(string name)
             : base(name)
         {
             ContentId = ToolContentId;
             IsVisible = true;
-            RefreshImagesCollection();
+            RefreshImagesCollection(PixelTuner.Properties.Settings.Default.LineHeight);
         }
 
         public const string ToolContentId = "ImagesTool";
@@ -72,33 +71,25 @@ namespace PixelTuner.ViewModel
             List<FileSystemInfo> allfiles = new List<FileSystemInfo>(info.GetFileSystemInfos("*.png"));
             allfiles.AddRange(info.GetFileSystemInfos("*.jpg"));
             allfiles.AddRange(info.GetFileSystemInfos("*.bmp"));
-
             if (height > 0)
             {
                 List<FileSystemInfo> suitableFiles = new List<FileSystemInfo>();
                 foreach (var f in allfiles)
                 {
-                    System.Drawing.Image img = System.Drawing.Image.FromFile(f.FullName);
-                    if (img.Height == height)
-                        suitableFiles.Add(f);
+                    using (System.Drawing.Image img = System.Drawing.Image.FromFile(f.FullName))
+                    {
+                        if (img.Height == height && f.FullName != itemToRemove)
+                            suitableFiles.Add(f);
+                    }
                 }
                 allfiles = suitableFiles;
             }
             _images.Clear();
-
-            FileSystemInfo ftr = null;
-            foreach (var f in allfiles)
-                if (f.FullName == itemToRemove)
-                {
-                    ftr = f; break;
-                }
-
-            if (ftr != null)
+            if (!string.IsNullOrEmpty(itemToRemove))
             {
-                allfiles.Remove(ftr);
-                ftr.Delete();
+                File.Delete(itemToRemove);
             }
-
+            
             foreach (FileInfo fi in allfiles)
             {
                 // exlude hidden files 

@@ -10,6 +10,8 @@
         <ResourceDictionary Source="/PixelTuner;component/Styles/SharedStyles.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
+    <tlw:ImageView x:Key="ImageView"/>
+
     <DataTemplate x:Key="ImagesLayoutTemplate">
         <Grid>
             <Grid.RowDefinitions>
@@ -23,18 +25,18 @@
                 <Button Style="{StaticResource WhiteLinkButton}" DockPanel.Dock="Left" Content="{StaticResource PictureEditor_Update}" Click="Resfresh_Button_Click" Margin="4,2,4,0"></Button>
                 <ct:SearchTextBox Height="20" Margin="8,2,0,0" VerticalAlignment="Top" HorizontalAlignment="Stretch"></ct:SearchTextBox>
             </DockPanel>
-            <ListView Grid.Row="1" x:Name="boxThumbnails" 
-                                                      SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}"
-                                                      SelectionMode="Extended" 
-                                                      BorderThickness="0"
-                                                      AllowDrop="True"
-                                                      KeyDown="boxThumbnails_KeyDown"
-                                                      Drop="boxThumbnails_Drop"
-                                                      dd:DragDropHelper.IsDragSource="True" 
-                                                      ItemsSource="{Binding ImagesCollection, Mode=OneWay}">
-                <ListView.View>
-                    <tlw:ImageView />
-                </ListView.View>
+            <ListView 
+                x:Name="boxThumbnails"
+                Grid.Row="1"
+                View="{DynamicResource ImageView}"
+                SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}"
+                SelectionMode="Extended" 
+                BorderThickness="0"
+                AllowDrop="True"
+                KeyDown="boxThumbnails_KeyDown"
+                Drop="boxThumbnails_Drop"
+                dd:DragDropHelper.IsDragSource="True" 
+                ItemsSource="{Binding ImagesCollection, Mode=OneWay}">
             </ListView>
         </Grid>
     </DataTemplate>
