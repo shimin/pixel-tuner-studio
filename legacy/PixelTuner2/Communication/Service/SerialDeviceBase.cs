@@ -133,7 +133,7 @@ namespace Communication.Service
                     try { bytesGot = _port.Read(receiveBuf, 0, len); }
                     catch { }
 
-                    if (bytesGot != len) throw new TimeoutException("Packet data reading timeout.");
+                    if (bytesGot != len) throw new TimeoutException("Incorrect packet length " + bytesGot.ToString() + " (expected " + len.ToString() + ")");
                     received.AddRange(receiveBuf);
                     LogMessage("Result:  " + BytesToString(receiveBuf), Common.Log.MessageType.Debug);
                 }
