@@ -335,7 +335,12 @@ namespace PixelTuner.Controls
 			{
                 case TimeLineViewLevel.Seconds:
                     //value = span.TotalMinutes * unitSize;
-                    seconds = (distance / unitSize);
+                    seconds = Math.Round((distance / Math.Round(unitSize, 0)), 3);
+                    Int64 secInt = (Int64)(seconds * 1000);
+                    secInt = (secInt / 50) * 50;
+                    seconds = (Double)secInt / 1000;
+                    Console.WriteLine(string.Format("distance={0}\tunitSize={1}\tseconds={2}\troundedSeconds={3}\tMath.Round((distance / unitSize), 3)",
+                        distance, unitSize, distance / unitSize, seconds));
                     //convert to milliseconds
                     milliseconds = seconds * 1000;
                     break;
@@ -374,7 +379,7 @@ namespace PixelTuner.Controls
 				default:
 					break;
 			}
-			long ticks = (long)milliseconds * 10000; 
+			long ticks = (long)milliseconds* 10000; 
 			TimeSpan returner = new TimeSpan(ticks);
 			return returner;
 

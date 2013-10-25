@@ -407,12 +407,12 @@ namespace PixelTuner.Controls
         private DataTemplate _template;
         public DataTemplate ItemTemplate
         {
-            get { return (DataTemplate)GetValue(ItemTemplateProperty); }
-            set { SetValue(ItemTemplateProperty, value); }
+            get { return (DataTemplate)GetValue(TimelineItemTemplate); }
+            set { SetValue(TimelineItemTemplate, value); }
         }
 
         // Using a DependencyProperty as the backing store for ItemTemplate.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty ItemTemplateProperty =
+        public static readonly DependencyProperty TimelineItemTemplate =
             DependencyProperty.Register("ItemTemplate", typeof(DataTemplate), typeof(TimeLineControl),
             new UIPropertyMetadata(null,
                 new PropertyChangedCallback(OnItemTemplateChanged)));
