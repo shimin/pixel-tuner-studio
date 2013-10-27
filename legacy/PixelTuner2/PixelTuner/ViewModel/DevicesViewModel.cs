@@ -38,10 +38,25 @@ namespace PixelTuner.ViewModel
         void DeviceHelper_DeviceFound(DeviceEventArgs e)
         {
             var pixelDevice = e.Device as PixelDevice;
+            var pdvm = new PixelDeviceViewModel(pixelDevice);
             if (pixelDevice != null)
             {
-                Devices.Add(new PixelDeviceViewModel(pixelDevice));
+                Devices.Add(pdvm);
             }
+            if (pixelDevice.BootMode && ContinueUpdate())
+            {
+                var streamInfo = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash.bin"));
+                pdvm.UploadFirmwareCommand.Execute(StreamHelper.ReadFully(streamInfo.Stream));
+            }
+        }
+
+        private static bool ContinueUpdate()
+        {
+            return MessageBox.Show(
+                "Continue update?", 
+                "PixelTuner", 
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question) == MessageBoxResult.Yes;
         }
 
         void DeviceHelper_DeviceLost(DeviceEventArgs e)

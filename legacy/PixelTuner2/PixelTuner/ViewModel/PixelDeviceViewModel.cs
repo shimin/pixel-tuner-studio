@@ -183,7 +183,7 @@ namespace PixelTuner.ViewModel
         public PixelDeviceViewModel(PixelDevice device)
         {
             Device = device;
-            FirmwareFileVersion = 9;
+            FirmwareFileVersion = 11;
             device.StatusChanged += new SerialDeviceBase.StatusDelegate(device_StatusChanged);
             device.SessionFinished += new SerialDeviceBase.SessionDelegate(device_SessionFinished);
         }
