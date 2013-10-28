@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 
-namespace PixelTuner.Controls.ThumbListView.Serialization
+namespace PixelTuner.ViewModel.Serialization
 {
     public class TimeLineItem : IConvertible
     {
@@ -132,9 +132,9 @@ namespace PixelTuner.Controls.ThumbListView.Serialization
             set { _stretching = value; }
         }
 
-        public static implicit operator ThumbnailFileItem(TimeLineItem item)
+        public static implicit operator TimeLineItemViewModel(TimeLineItem item)
         {
-            var v = new PixelTuner.Controls.ThumbListView.ThumbnailFileItem(new System.IO.FileInfo(item.FullName));
+            var v = new PixelTuner.ViewModel.TimeLineItemViewModel(new System.IO.FileInfo(item.FullName));
             v.StartTime = item.StartTime;
             v.EndTime = item.EndTime;
             v.Stretching = item.Stretching;
@@ -208,9 +208,9 @@ namespace PixelTuner.Controls.ThumbListView.Serialization
 
         public object ToType(Type conversionType, IFormatProvider provider)
         {
-            if (conversionType == typeof(ThumbnailFileItem))
+            if (conversionType == typeof(TimeLineItemViewModel))
             {
-                return (ThumbnailFileItem)this;
+                return (TimeLineItemViewModel)this;
             }
             throw new NotImplementedException();
         }

@@ -12,7 +12,7 @@ using System.Windows.Media;
 
 using Common.Collections;
 using PixelTuner.Controls;
-using PixelTuner.Controls.ThumbListView.Serialization;
+using PixelTuner.ViewModel.Serialization;
 
 namespace PixelTuner.ViewModel
 {
@@ -20,7 +20,7 @@ namespace PixelTuner.ViewModel
         : INotifyPropertyChanged
     {
         public TimeLineViewModel() {
-            _xmlItems = new DelegatedIList<PixelTuner.Controls.ThumbListView.ThumbnailFileItem, TimeLineItem>(_items);
+            _xmlItems = new DelegatedIList<PixelTuner.ViewModel.TimeLineItemViewModel, TimeLineItem>(_items);
             _items.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(_items_CollectionChanged);
         }
 
@@ -71,9 +71,9 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        DelegatedIList<PixelTuner.Controls.ThumbListView.ThumbnailFileItem, TimeLineItem> _xmlItems;
+        DelegatedIList<PixelTuner.ViewModel.TimeLineItemViewModel, TimeLineItem> _xmlItems;
         [XmlElement(ElementName = "Item", Type = typeof(TimeLineItem))]
-        public DelegatedIList<PixelTuner.Controls.ThumbListView.ThumbnailFileItem, TimeLineItem> XmlItems
+        public DelegatedIList<PixelTuner.ViewModel.TimeLineItemViewModel, TimeLineItem> XmlItems
         {
             get
             {

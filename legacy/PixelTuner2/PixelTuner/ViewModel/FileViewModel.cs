@@ -360,7 +360,7 @@ namespace PixelTuner.ViewModel
                 if (tl.Items.Count == 0) continue;
                 var tlf = new PixelTimelineFile();
 
-                foreach (PixelTuner.Controls.ThumbListView.ThumbnailFileItem item in tl.Items)
+                foreach (PixelTuner.ViewModel.TimeLineItemViewModel item in tl.Items)
                 {
                     string path = item.FullName.ToLower();
                     UInt16 duration = (UInt16)(((TimeSpan)(item.EndTime - item.StartTime)).TotalMilliseconds / 100);                    

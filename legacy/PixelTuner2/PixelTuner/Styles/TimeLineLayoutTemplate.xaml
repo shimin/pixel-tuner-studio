@@ -11,7 +11,7 @@
     </ResourceDictionary.MergedDictionaries>
 
 
-    <DataTemplate x:Key="TimelineItemTemplate" DataType="{x:Type tlw:ThumbnailFileItem}">
+    <DataTemplate x:Key="TimelineItemTemplate" DataType="{x:Type vm:TimeLineItemViewModel}">
         <Border BorderThickness="1"
                         BorderBrush="White"
                         CornerRadius="3"

@@ -25,21 +25,21 @@ namespace PixelTuner.ViewModel
 
         }
 
-        ObservableCollection<ThumbnailFileItem> _images = new ObservableCollection<ThumbnailFileItem>();
-        ReadOnlyObservableCollection<ThumbnailFileItem> _readonyImagesCollection = null;
-        public ReadOnlyObservableCollection<ThumbnailFileItem> ImagesCollection
+        ObservableCollection<TimeLineItemViewModel> _images = new ObservableCollection<TimeLineItemViewModel>();
+        ReadOnlyObservableCollection<TimeLineItemViewModel> _readonyImagesCollection = null;
+        public ReadOnlyObservableCollection<TimeLineItemViewModel> ImagesCollection
         {
             get
             {
                 if (_readonyImagesCollection == null)
-                    _readonyImagesCollection = new ReadOnlyObservableCollection<ThumbnailFileItem>(_images);
+                    _readonyImagesCollection = new ReadOnlyObservableCollection<TimeLineItemViewModel>(_images);
 
                 return _readonyImagesCollection;
             }
         }
 
-        ThumbnailFileItem _selectedItem = null;
-        public ThumbnailFileItem SelectedItem
+        TimeLineItemViewModel _selectedItem = null;
+        public TimeLineItemViewModel SelectedItem
         {
             get
             {
@@ -90,7 +90,7 @@ namespace PixelTuner.ViewModel
             foreach (FileInfo fi in allfiles)
             {
                 // exlude hidden files 
-                ThumbnailFileItem tfi = new ThumbnailFileItem(fi);
+                TimeLineItemViewModel tfi = new TimeLineItemViewModel(fi);
                 if ((fi.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
                     _images.Add(tfi);
             }
@@ -129,7 +129,7 @@ namespace PixelTuner.ViewModel
             foreach (FileInfo fi in allfiles)
             {
                 // exlude hidden files 
-                ThumbnailFileItem tfi = new ThumbnailFileItem(fi);
+                TimeLineItemViewModel tfi = new TimeLineItemViewModel(fi);
                 if ((fi.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
                     _images.Add(tfi);
             }

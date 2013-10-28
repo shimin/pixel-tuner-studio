@@ -14,20 +14,20 @@ using System.Xml.Serialization;
 
 using Core;
 using PixelTuner.Properties;
-using PixelTuner.Controls.ThumbListView.Serialization;
-using PixelTuner.ViewModel;
+using PixelTuner.Controls;
+using PixelTuner.ViewModel.Serialization;
 
-namespace PixelTuner.Controls.ThumbListView
+namespace PixelTuner.ViewModel
 {
-    public class ThumbnailFileItem : FileSystemInfo, ITimeLineDataItem, INotifyPropertyChanged, IConvertible
+    public class TimeLineItemViewModel : FileSystemInfo, ITimeLineDataItem, INotifyPropertyChanged, IConvertible
     {
         FileInfo _fi = null;
 
-        public ThumbnailFileItem()
+        public TimeLineItemViewModel()
         {
         }
 
-        public ThumbnailFileItem(FileInfo fi)
+        public TimeLineItemViewModel(FileInfo fi)
         {
             _fi = fi;
         }
@@ -140,7 +140,7 @@ namespace PixelTuner.Controls.ThumbListView
 
         object ICloneable.Clone()
         {
-            ThumbnailFileItem result = new ThumbnailFileItem(this._fi);
+            TimeLineItemViewModel result = new TimeLineItemViewModel(this._fi);
             result.StartTime = this.StartTime;
             result.EndTime = this.EndTime;
             result.TimelineViewExpanded = this.TimelineViewExpanded;
@@ -254,7 +254,7 @@ namespace PixelTuner.Controls.ThumbListView
         } 
         #endregion
 
-        public static implicit operator TimeLineItem(ThumbnailFileItem item)
+        public static implicit operator TimeLineItem(TimeLineItemViewModel item)
         {
             var result = new TimeLineItem();
             result.StartTime = item.StartTime;

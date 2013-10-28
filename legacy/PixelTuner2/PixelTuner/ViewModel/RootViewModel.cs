@@ -201,7 +201,7 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        public void DeleteItem(ThumbnailFileItem itemToRemove)
+        public void DeleteItem(TimeLineItemViewModel itemToRemove)
         {
             if (itemToRemove != null)
             {
@@ -224,11 +224,11 @@ namespace PixelTuner.ViewModel
             {
                 foreach (var timeline in fileView.TimeLines)
                 {
-                    List<ThumbnailFileItem> toRemove = new List<ThumbnailFileItem>();
+                    List<TimeLineItemViewModel> toRemove = new List<TimeLineItemViewModel>();
                     foreach (var item in timeline.Items)
                     {
-                        if (!File.Exists((item as ThumbnailFileItem).FullName))
-                            toRemove.Add(item as ThumbnailFileItem);
+                        if (!File.Exists((item as TimeLineItemViewModel).FullName))
+                            toRemove.Add(item as TimeLineItemViewModel);
                     }
                     foreach (var item in toRemove)
                         timeline.Items.Remove(item);

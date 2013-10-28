@@ -59,7 +59,7 @@ namespace PixelTuner.Controls.ThumbListView
                 var control = sender as ListView;
                 if (control != null)
                 {
-                    var itemToRemove = control.SelectedItem as ThumbnailFileItem;
+                    var itemToRemove = control.SelectedItem as TimeLineItemViewModel;
                     string msg = String.Format((String)Application.Current.TryFindResource("Global_ReallyRemove"), itemToRemove.FullName);
                     var answer = MessageBox.Show(msg, Application.Current.MainWindow.Title, MessageBoxButton.YesNo, MessageBoxImage.Question);
 
