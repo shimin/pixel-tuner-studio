@@ -335,12 +335,12 @@ namespace PixelTuner.Controls
 			{
                 case TimeLineViewLevel.Seconds:
                     //value = span.TotalMinutes * unitSize;
-                    seconds = Math.Round((distance / Math.Round(unitSize, 0)), 3);
+                    seconds = Math.Round((distance / unitSize), 3);
                     Int64 secInt = (Int64)(seconds * 1000);
                     secInt = (secInt / 50) * 50;
                     seconds = (Double)secInt / 1000;
-                    Console.WriteLine(string.Format("distance={0}\tunitSize={1}\tseconds={2}\troundedSeconds={3}\tMath.Round((distance / unitSize), 3)",
-                        distance, unitSize, distance / unitSize, seconds));
+                    //Console.WriteLine(string.Format("distance={0}\tunitSize={1}\tseconds={2}\troundedSeconds={3}\tMath.Round((distance / unitSize), 3)",
+                        //distance, unitSize, distance / unitSize, seconds));
                     //convert to milliseconds
                     milliseconds = seconds * 1000;
                     break;
@@ -448,7 +448,6 @@ namespace PixelTuner.Controls
 		
 		internal bool CanDelta(int StartOrEnd, Double deltaX)
 		{
-			
 			Double unitS = (Double)GetValue(UnitSizeProperty);
 			Double threshold = unitS / 3.0;
 			Double newW = unitS;
@@ -464,8 +463,9 @@ namespace PixelTuner.Controls
 			{
 				if (deltaX > 0)
 					return true;
-				newW = Width + deltaX;
-				return newW > threshold;
+                bool canDelta = Width + deltaX > threshold;
+                if (canDelta) newW = Width + deltaX;
+				return canDelta;
 			}
 		}
 		
@@ -512,16 +512,24 @@ namespace PixelTuner.Controls
 
 		internal void MoveEndTime(double delta)
 		{
-			Width += delta;
-			//calculate our new end time
-			DateTime s = (DateTime)GetValue(StartTimeProperty);
-			TimeSpan ts = ConvertDistanceToTime(Width);
-			EndTime = s.Add(ts);
+            Double unitS = (Double)GetValue(UnitSizeProperty);
+            //Console.WriteLine(String.Format("MoveEndTime delta={0} MousePositionX={1}", delta, Mouse.GetPosition(null).X));
+            //Console.WriteLine(String.Format("MoveEndTime delta={0} WidthBeforeChanges={2} MouseXPositionOnControl={1}", delta, Mouse.GetPosition(this).X, Width));
+			Double threshold = unitS / 3.0;
+            if (Width + delta > threshold)
+            {
+                Width += delta;
+                //calculate our new end time
+                DateTime s = (DateTime)GetValue(StartTimeProperty);
+                TimeSpan ts = ConvertDistanceToTime(Width);
+                EndTime = s.Add(ts);
+            }
 		}
 
 		internal void MoveStartTime(double delta)
 		{
 			Double curLeft = Canvas.GetLeft(this);
+            delta = Mouse.GetPosition(this).X;
 			if (curLeft == 0 && delta < 0)
 				return;
 			curLeft += delta;

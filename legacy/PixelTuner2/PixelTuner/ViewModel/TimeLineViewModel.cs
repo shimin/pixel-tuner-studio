@@ -17,7 +17,7 @@ using PixelTuner.Controls.ThumbListView.Serialization;
 namespace PixelTuner.ViewModel
 {
     public class TimeLineViewModel
-        : ITimeLineManager, INotifyPropertyChanged
+        : INotifyPropertyChanged
     {
         public TimeLineViewModel() {
             _xmlItems = new DelegatedIList<PixelTuner.Controls.ThumbListView.ThumbnailFileItem, TimeLineItem>(_items);
@@ -33,15 +33,6 @@ namespace PixelTuner.ViewModel
             }
             //this.Parent.RefreshSize();
         }
-
-        #region ITimeLineManager Members
-
-        public bool CanAddToTimeLine(ITimeLineDataItem item)
-        {
-            return false;
-        }
-
-        #endregion
 
         FileViewModel _parent;
         [XmlIgnore]

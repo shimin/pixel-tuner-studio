@@ -407,12 +407,12 @@ namespace PixelTuner.Controls
         private DataTemplate _template;
         public DataTemplate ItemTemplate
         {
-            get { return (DataTemplate)GetValue(TimelineItemTemplate); }
-            set { SetValue(TimelineItemTemplate, value); }
+            get { return (DataTemplate)GetValue(ItemTemplateProperty); }
+            set { SetValue(ItemTemplateProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for ItemTemplate.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty TimelineItemTemplate =
+        public static readonly DependencyProperty ItemTemplateProperty =
             DependencyProperty.Register("ItemTemplate", typeof(DataTemplate), typeof(TimeLineControl),
             new UIPropertyMetadata(null,
                 new PropertyChangedCallback(OnItemTemplateChanged)));
@@ -1230,22 +1230,47 @@ namespace PixelTuner.Controls
             _dragStartPosition.X = double.MinValue;
             _dragStartPosition.Y = double.MinValue;
             _dragObject = null;
+            ITimeLineDataItem prev = null;
+            if (ManipulationMode == TimeLineManipulationMode.Linked)
+                foreach (FrameworkElement line in Children)
+                {
+                    foreach (var item in LogicalTreeHelper.GetChildren(line))
+                    {
+                        var data = item as ITimeLineDataItem;
+                        if (data != null)
+                        {
+                            if (prev == null)
+                            {
+                                data.StartTime = StartDate;
+                            }
+                            else
+                            {
+                                data.StartTime = prev.EndTime.Value;
+                            }
+                            prev = data;
+                        }
+                    }
+                }
         }
 
 
         void TimeLineControl_DragOver(object sender, DragEventArgs e)
         {
-
-
             //throw new NotImplementedException();
             TimeLineItemControl d = e.Data.GetData(typeof(TimeLineItemControl)) as TimeLineItemControl;
             if (d != null)
             {
                 if (Manager != null)
                 {
-                    if (!Manager.CanAddToTimeLine(d.DataContext as ITimeLineDataItem))
+                    var tmpDAC = new TimeLineItemControl();
+                    tmpDAC.UnitSize = UnitSize;
+                    tmpDAC.StartTime = StartDate.Add(tmpDAC.ConvertDistanceToTime((Double)e.GetPosition(this).X));
+                    if (!Manager.CanAddToTimeLine(d.DataContext as ITimeLineDataItem, tmpDAC.StartTime))
                     {
                         e.Effects = DragDropEffects.None;
+                        e.Handled = true;
+                        if (Children.Contains(_tmpDraggAdornerControl)) Children.Remove(_tmpDraggAdornerControl);
+                        _tmpDraggAdornerControl = null;
                         return;
                     }
                 }
@@ -1268,9 +1293,15 @@ namespace PixelTuner.Controls
                 {
                     if (Manager != null)
                     {
-                        if (!Manager.CanAddToTimeLine(d2 as ITimeLineDataItem))
+                        var tmpDAC = new TimeLineItemControl();
+                        tmpDAC.UnitSize = UnitSize;
+                        tmpDAC.StartTime = StartDate.Add(tmpDAC.ConvertDistanceToTime((Double)e.GetPosition(this).X));
+                        if (!Manager.CanAddToTimeLine(d2 as ITimeLineDataItem, tmpDAC.StartTime))
                         {
                             e.Effects = DragDropEffects.None;
+                            e.Handled = true;
+                            if (Children.Contains(_tmpDraggAdornerControl)) Children.Remove(_tmpDraggAdornerControl);
+                            _tmpDraggAdornerControl = null;
                             return;
                         }
                     }
@@ -1288,19 +1319,21 @@ namespace PixelTuner.Controls
                         Canvas.SetLeft(_tmpDraggAdornerControl, -1000000);
                         _tmpDraggAdornerControl.DataContext = d2;
                         _tmpDraggAdornerControl.StartTime = StartDate.Add(_tmpDraggAdornerControl.ConvertDistanceToTime((Double)e.GetPosition(this).X));
+                        
                         _tmpDraggAdornerControl.DefaultTimeInterval = DefaultTimeInterval;
                         _tmpDraggAdornerControl.InitializeDefaultLength();
                         _tmpDraggAdornerControl.ContentTemplate = ItemTemplate;
 
                         _dragAdorner = new TimeLineDragAdorner(_tmpDraggAdornerControl, ItemTemplate);
                     }
-                    DragAdorner.MousePosition = e.GetPosition(_tmpDraggAdornerControl);
-                    DragAdorner.InvalidateVisual();
+                    if (_tmpDraggAdornerControl != null)
+                    {
+                        DragAdorner.MousePosition = e.GetPosition(_tmpDraggAdornerControl);
+                        DragAdorner.InvalidateVisual();
+                    }
                 }
             }
             DragScroll(e);
-
-
         }
 
         void TimeLineControL_DragLeave(object sender, DragEventArgs e)
@@ -1476,6 +1509,7 @@ namespace PixelTuner.Controls
             return Items.Count;
 
         }
+
         private void MakeRoom(int newIndex, Double width)
         {
             int moveIndex = newIndex + 1;
@@ -1541,8 +1575,6 @@ namespace PixelTuner.Controls
             }//if next ctrl is null we are adding to the very end and there is no work to do to make room.
         }
         #endregion
-
-
 
 
         //NOT WORKING YET AND I DON'T KNOW WHY 8(
@@ -1657,51 +1689,62 @@ namespace PixelTuner.Controls
             switch (e.Action)
             {
                 case TimeLineAction.Move:
-                    #region move
-
-                    Double chainGap = Double.MaxValue;
-                    if (direction > 0)
+                    switch (e.Mode)
                     {
-                        //find chain connecteds that are after this one
-                        //delta each one in that chain that we are pushing
-                        List<TimeLineItemControl> afterChain = GetTimeLineForwardChain(ctrl, afterIndex, ref chainGap);
+                        case TimeLineManipulationMode.Linked:
 
-                        if (chainGap < useDeltaX)
-                            useDeltaX = chainGap;
-                        foreach (var ti in afterChain)
-                        {
-                            ti.MoveMe(useDeltaX);
-                        }
+                            break;
+                        case TimeLineManipulationMode.Free:
+                            #region Free
+                                Double chainGap = Double.MaxValue;
+                                if (direction > 0)
+                                {
+                                    //find chain connecteds that are after this one
+                                    //delta each one in that chain that we are pushing
+                                    List<TimeLineItemControl> afterChain = GetTimeLineForwardChain(ctrl, afterIndex, ref chainGap);
 
-                        //find the size of our chain so we bring it into view
-                        var first = afterChain[0];
-                        var last = afterChain[afterChain.Count - 1];
-                        BringChainIntoView(first, last, direction);
+                                    if (chainGap < useDeltaX)
+                                        useDeltaX = chainGap;
+                                    foreach (var ti in afterChain)
+                                    {
+                                        ti.MoveMe(useDeltaX);
+                                    }
+
+                                    //find the size of our chain so we bring it into view
+                                    var first = afterChain[0];
+                                    var last = afterChain[afterChain.Count - 1];
+                                    BringChainIntoView(first, last, direction);
 
 
+                                }
+                                if (direction < 0)
+                                {
+                                    Boolean previousBackToStart = false;
+                                    List<TimeLineItemControl> previousChain = GetTimeLineBackwardsChain(ctrl, previousIndex, ref previousBackToStart, ref chainGap);
+                                    if (-chainGap > useDeltaX)
+                                    {
+                                        useDeltaX = chainGap;
+                                    }
+                                    if (!previousBackToStart)
+                                    {
+                                        foreach (var ti in previousChain)
+                                        {
+                                            ti.MoveMe(useDeltaX);
+                                        }
+                                    }
+                                    var first = previousChain[0];//previousChain[previousChain.Count - 1];
+                                    var last = previousChain[previousChain.Count - 1];
+                                    BringChainIntoView(last, first, direction);
+                                }
+                                #endregion
+                            break;
+                        default: break;
                     }
-                    if (direction < 0)
-                    {
-                        Boolean previousBackToStart = false;
-                        List<TimeLineItemControl> previousChain = GetTimeLineBackwardsChain(ctrl, previousIndex, ref previousBackToStart, ref chainGap);
-                        if (-chainGap > useDeltaX)
-                        {
-                            useDeltaX = chainGap;
-                        }
-                        if (!previousBackToStart)
-                        {
-                            foreach (var ti in previousChain)
-                            {
-                                ti.MoveMe(useDeltaX);
-                            }
-                        }
-                        var first = previousChain[0];//previousChain[previousChain.Count - 1];
-                        var last = previousChain[previousChain.Count - 1];
-                        BringChainIntoView(last, first, direction);
-                    }
-                    #endregion
+                    
                     break;
                 case TimeLineAction.StretchStart:
+                    // bugfix of wrong delta calculation
+                    useDeltaX = Mouse.GetPosition(ctrl).X;
                     switch (e.Mode)
                     {
                         #region stretchstart
@@ -1799,6 +1842,8 @@ namespace PixelTuner.Controls
                     }
                     break;
                 case TimeLineAction.StretchEnd:
+                    // bugfix of wrong delta calculation
+                    useDeltaX = Mouse.GetPosition(ctrl).X - ctrl.Width;
                     switch (e.Mode)
                     {
                         #region stretchend
@@ -1814,33 +1859,25 @@ namespace PixelTuner.Controls
                                 gap = aLeft - cEnd;
                             }
 
-                            if (direction > 0 && gap > _bumpThreshold && gap < useDeltaX)//if we are positive, not linked but about to bump
-                                useDeltaX = -gap;
-                            if (gap < _bumpThreshold)
-                            {//we are linked
-                                List<TimeLineItemControl> afterChain = GetTimeLineForwardChain(ctrl, afterIndex, ref gap);
-                                if (gap < useDeltaX)
-                                    useDeltaX = gap;
-                                foreach (var ti in afterChain)
-                                {
-                                    if (ti == ctrl && ctrl.CanDelta(1, useDeltaX) && after.CanDelta(0, useDeltaX))
-                                    {
-                                        ctrl.MoveEndTime(useDeltaX);
-                                    }
-                                    else
-                                    {
-                                        ti.MoveMe(useDeltaX);
-                                    }
-                                }
-                                //find the size of our chain so we bring it into view
-                                var first = afterChain[0];
-                                var last = afterChain[afterChain.Count - 1];
-                                BringChainIntoView(first, last, direction);
-                            }
-                            else if (ctrl.CanDelta(0, useDeltaX))
+                            List<TimeLineItemControl> afterChain = GetTimeLineForwardChain(ctrl, afterIndex, ref gap);
+                            if (gap < useDeltaX)
+                                useDeltaX = gap;
+                            foreach (var ti in afterChain)
                             {
-                                ctrl.MoveEndTime(useDeltaX);
+                                if (ti == ctrl && ctrl.CanDelta(1, useDeltaX))
+                                {
+                                    ctrl.MoveEndTime(useDeltaX);
+                                }
+                                else if (ctrl.CanDelta(1, useDeltaX))
+                                {
+                                    ti.MoveMe(useDeltaX);
+                                }
                             }
+                            //find the size of our chain so we bring it into view
+                            var first = afterChain[0];
+                            var last = afterChain[afterChain.Count - 1];
+                            BringChainIntoView(first, last, direction);
+                            
                             break;
                             #endregion
                         case TimeLineManipulationMode.Free:
@@ -1913,31 +1950,10 @@ namespace PixelTuner.Controls
         /// <param name="e"></param>
         void item_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            #region drag - left click and move
             TimeLineItemControl ctrl = sender as TimeLineItemControl;
-            if (ctrl == null)
-                return;
+            if (ctrl == null) return;
 
-            //if (Mouse.LeftButton == MouseButtonState.Pressed)
-            //{
-            //    if (ctrl.IsExpanded)
-            //        return;
-            //    var position = Mouse.GetPosition(null);
-            //    if (Math.Abs(position.X - _dragStartPosition.X) > SystemParameters.MinimumHorizontalDragDistance ||
-            //        Math.Abs(position.Y - _dragStartPosition.Y) > SystemParameters.MinimumVerticalDragDistance)
-            //    {
-            //        System.Windows.DragDrop.DoDragDrop(this, ctrl, DragDropEffects.Move | DragDropEffects.Scroll);
-            //        _dragging = true;
-
-
-            //    }
-
-            //    return;
-            //}
-            #endregion
-
-
-            #region edits - right click and move
+            #region edit
             if (Mouse.Captured != ctrl)
             {
                 _curX = Mouse.GetPosition(null).X;

@@ -7,6 +7,6 @@ namespace PixelTuner.Controls
 {
 	public interface ITimeLineManager
 	{
-		Boolean CanAddToTimeLine(ITimeLineDataItem item);
+		Boolean CanAddToTimeLine(ITimeLineDataItem item, DateTime timePoint);
 	}
 }
