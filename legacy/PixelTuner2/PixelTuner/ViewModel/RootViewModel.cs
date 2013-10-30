@@ -27,7 +27,7 @@ namespace PixelTuner.ViewModel
 
         void Workspace_ActiveDocumentChanged(object sender, DocumentChangedEventArgs e)
         {
-            if (_activeDocument == null) ImagesModel.RefreshImagesCollection();
+            if (_activeDocument == null) ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
             else
             {
                 Settings.Default.LineHeight = _activeDocument.LineHeight;
@@ -46,6 +46,11 @@ namespace PixelTuner.ViewModel
                     Settings.Default.LineHeight = (sender as FileViewModel).LineHeight;
                     ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
                 }
+        }
+
+        public static void NotifySettingsChanged()
+        {
+            RaiseApplicationSettingsChanged();
         }
 
         #region Properties
@@ -576,8 +581,8 @@ namespace PixelTuner.ViewModel
             dw.Owner = Application.Current.MainWindow;
             dw.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             dw.ShowDialog();
-            if (_activeDocument == null) ImagesModel.RefreshImagesCollection();
-            else { ImagesModel.RefreshImagesCollection(_activeDocument.LineHeight); }
+
+            ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
 
             foreach (var f in Files)
             {
@@ -590,5 +595,15 @@ namespace PixelTuner.ViewModel
 
         #endregion 
 
+        #region Events
+
+        protected static void RaiseApplicationSettingsChanged()
+        {
+            if (ApplicationSettingsChanged != null)
+                ApplicationSettingsChanged(null, new EventArgs());
+        }
+        public static event EventHandler ApplicationSettingsChanged;
+
+        #endregion
     }
 }

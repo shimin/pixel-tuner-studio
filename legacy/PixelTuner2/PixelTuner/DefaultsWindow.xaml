@@ -14,11 +14,13 @@
         </StackPanel>
         <StackPanel Height="236" HorizontalAlignment="Left" Name="stackPanel2" VerticalAlignment="Top" Orientation="Horizontal" Grid.RowSpan="2">
             <StackPanel Name="stackPanel3" Width="81">
+                <CheckBox x:Name="boxUseTimeSpan" IsChecked="{Binding UseTimeSpan}" Margin="4"/>
                 <controls:NumericUpDownControl x:Name="numericUpDownControl1" MinValue="1" MaxValue="500" Margin="2,0,0,3" KeyDown="numeric_KeyDown" Value="{Binding Path=Parent.DataContext.DefaultDuration, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                 <controls:NumericUpDownControl x:Name="numericUpDownControl2" MinValue="4" MaxValue="46"  Margin="2,0,0,3" KeyDown="numeric_KeyDown" Value="{Binding Path=Parent.DataContext.Stretching, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                 <Slider Minimum="0" Maximum="30" Value="{Binding ElementName=stackPanel3, Path=DataContext.TurnOffMenuAfter, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
             </StackPanel>
             <StackPanel Name="stackPanel4">
+                <Label Content="{StaticResource Menu_Settings_Defaults_UseTimespan}" Height="22" Padding="6,2,0,0" Name="label5" />
                 <Label Content="{StaticResource Menu_Settings_Defaults_Duration}" Height="22" Padding="6,2,0,0" Name="label1" />
                 <Label Content="{StaticResource Menu_Settings_Defaults_Stretching}" Height="22" Padding="6,2,0,0"  Name="label2" />
                 <Grid>

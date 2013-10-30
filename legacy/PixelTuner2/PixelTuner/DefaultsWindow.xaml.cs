@@ -41,6 +41,19 @@ namespace PixelTuner
             set { _defaultDuration = value; }
         }
 
+        bool _useTimeSpan = Settings.Default.TimeSpanMode;
+        public bool UseTimeSpan
+        {
+            get
+            {
+                return _useTimeSpan;
+            }
+            set
+            {
+                _useTimeSpan = value;
+            }
+        }
+
         byte _turnOffMenuAfter = Settings.Default.TurnOffMenuAfter;
         public byte TurnOffMenuAfter
         {
@@ -71,8 +84,11 @@ namespace PixelTuner
             Settings.Default.TurnOffMenuAfter = TurnOffMenuAfter;
             Settings.Default.DefaultDuration = DefaultDuration;
             Settings.Default.DefaultStretching = Stretching;
+            Settings.Default.TimeSpanMode = UseTimeSpan;
             Settings.Default.Save();
             
+            PixelTuner.ViewModel.RootViewModel.NotifySettingsChanged();
+
             List<DeviceFeature> settings = new List<DeviceFeature>();
             settings.Add(new DeviceFeature(1, TurnOffMenuAfter));
             settings.Add(new DeviceFeature(2, Settings.Default.TurnOffAfterIdle));
@@ -88,7 +104,15 @@ namespace PixelTuner
 
         private void numeric_KeyDown(object sender, KeyEventArgs e)
         {
-
+            var c = sender as PixelTuner.Controls.NumericUpDownControl;
+            if (c != null && e.Key == Key.Up)
+            {
+                c.Value = c.Value < c.MaxValue ? c.Value + 1 : c.MaxValue;
+            }
+            if (c != null && e.Key == Key.Down)
+            {
+                c.Value = c.Value > c.MinValue ? c.Value - 1 : c.MinValue;
+            }
         }
 
         protected virtual void RaisePropertyChanged(string propertyName)
@@ -97,5 +121,6 @@ namespace PixelTuner
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
         public event PropertyChangedEventHandler PropertyChanged;
+
     }
 }

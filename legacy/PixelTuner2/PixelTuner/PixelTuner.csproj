@@ -559,6 +559,9 @@
     <Content Include="Content\80_batterfly_009.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\timeEnd.png" />
+    <Resource Include="Images\timeLength.png" />
+    <Resource Include="Images\timeStart.png" />
     <Page Include="Styles\TimeLineItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -24,12 +24,70 @@ namespace PixelTuner.ViewModel
         FileInfo _fi = null;
 
         public TimeLineItemViewModel()
+            : this(null)
         {
         }
 
         public TimeLineItemViewModel(FileInfo fi)
         {
+            RootViewModel.ApplicationSettingsChanged += new EventHandler(RootViewModel_ApplicationSettingsChanged);
             _fi = fi;
+        }
+
+        void RootViewModel_ApplicationSettingsChanged(object sender, EventArgs e)
+        {
+            RaisePropertyChanged("StartIcon");
+            RaisePropertyChanged("EndIcon");
+            RaisePropertyChanged("Start");
+            RaisePropertyChanged("End");
+        }
+
+        public object StartIcon
+        {
+            get
+            {
+                BitmapImage image = new BitmapImage();
+
+                try
+                {
+                    image.BeginInit();
+                    image.CacheOption = BitmapCacheOption.OnLoad;
+                    image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                    image.UriSource = new Uri("pack://application:,,,/Images/timeStart.png", UriKind.Absolute);
+                    image.EndInit();
+                }
+                catch
+                {
+                    return DependencyProperty.UnsetValue;
+                }
+
+                return image;
+            }
+        }
+
+        public object EndIcon
+        {
+            get
+            {
+                BitmapImage image = new BitmapImage();
+
+                try
+                {
+                    image.BeginInit();
+                    image.CacheOption = BitmapCacheOption.OnLoad;
+                    image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                    string path = "pack://application:,,,/Images/timeEnd.png";
+                    if (Settings.Default.TimeSpanMode) path = "pack://application:,,,/Images/timeLength.png";
+                    image.UriSource = new Uri(path, UriKind.Absolute);
+                    image.EndInit();
+                }
+                catch
+                {
+                    return DependencyProperty.UnsetValue;
+                }
+
+                return image;
+            }
         }
 
         DateTime? _startTime = DateTime.MinValue;
@@ -74,9 +132,15 @@ namespace PixelTuner.ViewModel
         {
             get
             {
-                return _endTime.HasValue ? String.Format("{0}:{1}:{2}.{3}", _endTime.Value.Hour.ToString("D2"),
-                    _endTime.Value.Minute.ToString("D2"), _endTime.Value.Second.ToString("D2"),
-                    _endTime.Value.Millisecond.ToString("D3")) 
+                DateTime? end = _endTime ?? DateTime.MinValue;
+                if (Settings.Default.TimeSpanMode)
+                {
+                    var start = _startTime ?? DateTime.MinValue;
+                    end = new DateTime((end.Value - start).Ticks);
+                }
+                return end.HasValue ? String.Format("{0}:{1}:{2}.{3}", end.Value.Hour.ToString("D2"),
+                    end.Value.Minute.ToString("D2"), end.Value.Second.ToString("D2"),
+                    end.Value.Millisecond.ToString("D3")) 
                     : "";
             }
         }
@@ -128,7 +192,33 @@ namespace PixelTuner.ViewModel
                 RaisePropertyChanged("Stretching");
             }
         }
+        
+        #region UpdateCommand
+        RelayCommand _updateCommand = null;
+        public ICommand UpdateCommand
+        {
+            get
+            {
+                if (_updateCommand == null)
+                {
+                    _updateCommand = new RelayCommand((p) => OnUpdate(p), (p) => CanUpdate(p));
+                }
 
+                return _updateCommand;
+            }
+        }
+
+        private bool CanUpdate(object parameter)
+        {
+            return true;
+        }
+
+        private void OnUpdate(object parameter)
+        {
+            StartTime = DateTime.MinValue;
+        }
+
+        #endregion
 
         System.Windows.Media.Brush _backGround = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(160, 255,255,255));
         [XmlIgnore]
@@ -148,7 +238,7 @@ namespace PixelTuner.ViewModel
             result.NormalBackground = this.NormalBackground;
             return result;
         }
-
+        
         #region DisposeMe
         RelayCommand _disposeMeCommand = null;
         public ICommand DisposeMe

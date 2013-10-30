@@ -10,14 +10,14 @@
         <ResourceDictionary Source="/PixelTuner;component/Styles/SharedStyles.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-
     <DataTemplate x:Key="TimelineItemTemplate" DataType="{x:Type vm:TimeLineItemViewModel}">
         <Border BorderThickness="1"
                         BorderBrush="White"
                         CornerRadius="3"
                         Margin="0,10,0,10"
                         Height="96"
-                        Background="{Binding NormalBackground}">
+                        Background="{Binding NormalBackground}"
+                        >
             <Border.Triggers>
                 <EventTrigger RoutedEvent="SizeChanged">
                 </EventTrigger>
@@ -28,7 +28,13 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="20" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="{Binding Path=Start}" />
+                    <StackPanel Orientation="Horizontal">
+                        <Border Width="15" Height="15">
+                            <Image Source="{Binding StartIcon}"/>
+                        </Border>
+                        <TextBlock Grid.Column="0" Text="{Binding Path=Start}" />
+                    </StackPanel>
+                    
                     <Button Grid.Column="1" Margin="0,2,0,0" Command="{Binding DisposeMe}">
                         <Button.Template>
                             <ControlTemplate>
@@ -44,23 +50,31 @@
                         </Button.Template>
                     </Button>
                 </Grid>
-                <Border Height="44" MinWidth="200">
-                    <Border.Background>
-                        <ImageBrush ImageSource="{Binding ImageSource}" Stretch="Uniform" AlignmentX="Left" />
-                    </Border.Background>
-                </Border>
-                <TextBlock Text="{Binding Path=End}" />
+                <Button>
+                    <Button.Template>
+                        <ControlTemplate>
+                            <Border Height="44" MinWidth="200">
+                                <Border.Background>
+                                    <ImageBrush ImageSource="{Binding ImageSource}" Stretch="Uniform" AlignmentX="Left" />
+                                </Border.Background>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <StackPanel Orientation="Horizontal">
+                    <Border Width="15" Height="15">
+                        <Image Source="{Binding EndIcon}"/>
+                    </Border>
+                    <TextBlock Text="{Binding Path=End}" />
+                </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="{StaticResource Item_Stretching}" Margin="0,2,4,0"/>
                     <ct:TriangleSlider Height="12" 
-                                                  Width="48"
-                                                  MinValue="4" 
-                                                  MaxValue="46" 
-                                                  Margin="0,2,4,0"
-                                                  Value="{Binding Path=Parent.DataContext.Stretching, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <!--<Slider Height="12" Minimum="4" Maximum="32" Width="44" 
-                                    Margin="0,-2,0,-2"
-                                    Value="{Binding Path=Parent.DataContext.Stretching, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>-->
+                                       Width="48"
+                                       MinValue="4" 
+                                       MaxValue="46" 
+                                       Margin="0,2,4,0"
+                                       Value="{Binding Path=Parent.DataContext.Stretching, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
             </StackPanel>
         </Border>
