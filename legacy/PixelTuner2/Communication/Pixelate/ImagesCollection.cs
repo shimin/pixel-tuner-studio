@@ -16,7 +16,7 @@ namespace Communication.Pixelate
 
         #region Constructors
 
-        public ImagesCollection(List<string> imageFilePaths, byte targetHeight)
+        public ImagesCollection(List<string> imageFilePaths, byte targetHeight, ColorDepth depth)
         {
             _descriptors = new Dictionary<string, ImagesCollectionItem>();
             foreach (var path in imageFilePaths)
@@ -24,7 +24,7 @@ namespace Communication.Pixelate
                 // don't add/rewrite already existing images
                 if (!_descriptors.ContainsKey(path))
                 {
-                    _descriptors.Add(path, new ImagesCollectionItem(path, targetHeight));
+                    _descriptors.Add(path, new ImagesCollectionItem(path, targetHeight, depth));
                 }
             }
         }
