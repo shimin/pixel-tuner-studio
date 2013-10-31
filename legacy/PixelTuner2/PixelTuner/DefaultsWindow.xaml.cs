@@ -13,6 +13,7 @@ using System.Windows.Shapes;
 using PixelTuner.Properties;
 using System.ComponentModel;
 using Communication.Service;
+using Communication.Pixelate;
 
 namespace PixelTuner
 {
@@ -25,6 +26,14 @@ namespace PixelTuner
         {
             this.DataContext = this;
             InitializeComponent();
+
+            var depth = ColorDepth.Bit24;
+            try { 
+                depth = (ColorDepth)ColorDepth.Parse(typeof(ColorDepth), Settings.Default.ColorDepth); 
+                Compression = (int)depth;
+                RaisePropertyChanged("ColorDepthInt");
+            }
+            catch { }
         }
 
         int _stretching = Settings.Default.DefaultStretching;
@@ -79,12 +88,35 @@ namespace PixelTuner
             }
         }
 
+        int _compression = 1;
+        public int Compression
+        {
+            get { return _compression; }
+            set { _compression = value; RaisePropertyChanged("Compression"); RaisePropertyChanged("CompressionText"); }
+        }
+
+        public string CompressionText
+        {
+            get
+            {
+                string text = "";
+                switch (Compression)
+                {
+                    case 0: text = (string)Application.Current.TryFindResource("Menu_Settings_Defaults_CompressionHigh");  break;
+                    case 1: text = (string)Application.Current.TryFindResource("Menu_Settings_Defaults_CompressionMedium"); break;
+                    case 2: text = (string)Application.Current.TryFindResource("Menu_Settings_Defaults_CompressionNone"); break;
+                }
+                return text;
+            }
+        }
+
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             Settings.Default.TurnOffMenuAfter = TurnOffMenuAfter;
             Settings.Default.DefaultDuration = DefaultDuration;
             Settings.Default.DefaultStretching = Stretching;
             Settings.Default.TimeSpanMode = UseTimeSpan;
+            Settings.Default.ColorDepth = ((ColorDepth)Compression).ToString();
             Settings.Default.Save();
             
             PixelTuner.ViewModel.RootViewModel.NotifySettingsChanged();

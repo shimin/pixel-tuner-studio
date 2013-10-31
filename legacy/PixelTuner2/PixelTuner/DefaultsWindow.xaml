@@ -2,8 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:PixelTuner.Controls" 
-        Title="{StaticResource Menu_Settings_Defaults_Window}" Height="157" Width="505" WindowStyle="ToolWindow" ResizeMode="NoResize">
-    <Grid>
+        Title="{StaticResource Menu_Settings_Defaults_Window}" Height="214" Width="505" WindowStyle="ToolWindow" ResizeMode="NoResize">
+    <Grid Margin="6,2">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="25" />
@@ -15,11 +15,12 @@
         <StackPanel Height="236" HorizontalAlignment="Left" Name="stackPanel2" VerticalAlignment="Top" Orientation="Horizontal" Grid.RowSpan="2">
             <StackPanel Name="stackPanel3" Width="81">
                 <CheckBox x:Name="boxUseTimeSpan" IsChecked="{Binding UseTimeSpan}" Margin="4"/>
-                <controls:NumericUpDownControl x:Name="numericUpDownControl1" MinValue="1" MaxValue="500" Margin="2,0,0,3" KeyDown="numeric_KeyDown" Value="{Binding Path=Parent.DataContext.DefaultDuration, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                <controls:NumericUpDownControl x:Name="numericUpDownControl2" MinValue="4" MaxValue="46"  Margin="2,0,0,3" KeyDown="numeric_KeyDown" Value="{Binding Path=Parent.DataContext.Stretching, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                <controls:NumericUpDownControl x:Name="numericUpDownControl1" MinValue="1" MaxValue="500" Margin="2,0,0,3" KeyDown="numeric_KeyDown" Value="{Binding Path=Parent.DataContext.DefaultDuration, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsManipulationEnabled="True" />
+                <controls:NumericUpDownControl x:Name="numericUpDownControl2" MinValue="4" MaxValue="46"  Margin="2,0,0,3" KeyDown="numeric_KeyDown" Value="{Binding Path=Parent.DataContext.Stretching, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsManipulationEnabled="True" />
                 <Slider Minimum="0" Maximum="30" Value="{Binding ElementName=stackPanel3, Path=DataContext.TurnOffMenuAfter, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                <Slider Minimum="0" Maximum="2" Value="{Binding ElementName=stackPanel3, Path=DataContext.Compression, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" TickPlacement="Both" SmallChange="1" IsSnapToTickEnabled="True" FlowDirection="RightToLeft" />
             </StackPanel>
-            <StackPanel Name="stackPanel4">
+            <StackPanel Name="stackPanel4" ForceCursor="True">
                 <Label Content="{StaticResource Menu_Settings_Defaults_UseTimespan}" Height="22" Padding="6,2,0,0" Name="label5" />
                 <Label Content="{StaticResource Menu_Settings_Defaults_Duration}" Height="22" Padding="6,2,0,0" Name="label1" />
                 <Label Content="{StaticResource Menu_Settings_Defaults_Stretching}" Height="22" Padding="6,2,0,0"  Name="label2" />
@@ -27,6 +28,10 @@
                     <Label Content="{StaticResource Menu_Settings_Defaults_DontTurnOff}" Visibility="{Binding ElementName=stackPanel3, Path=DataContext.DontTurnOffVisibility, UpdateSourceTrigger=PropertyChanged}" Height="22" Padding="6,2,0,0"  Name="label3" />
                     <Label Content="{Binding ElementName=stackPanel3, Path=DataContext.TurnOffText}" Visibility="{Binding ElementName=stackPanel3, Path=DataContext.TurnOffVisibility, UpdateSourceTrigger=PropertyChanged}" Height="22" Padding="6,2,0,0"  Name="label4" />
                 </Grid>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="{StaticResource Menu_Settings_Defaults_Compression}" Height="22" Padding="6,6,0,0" />
+                    <Label Content="{Binding ElementName=stackPanel3, Path=DataContext.CompressionText}" Height="22" Padding="6,6,0,0" />
+                </StackPanel>
             </StackPanel>
         </StackPanel>
     </Grid>

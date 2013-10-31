@@ -371,8 +371,12 @@ namespace PixelTuner.ViewModel
                 }
                 project.TimeLines.Add(tlf);
             }
-
-            ImagesCollection c = new ImagesCollection(knownPaths, projectHeight);
+            var depth = ColorDepth.Bit24;
+            
+            try { depth = (ColorDepth)ColorDepth.Parse(typeof(ColorDepth), Settings.Default.ColorDepth); }
+            catch { }
+            
+            ImagesCollection c = new ImagesCollection(knownPaths, projectHeight, depth);
             var buf = project.GetBinary(c, projectHeight);
             File.WriteAllBytes("project.bin", buf.ToArray());
             return buf;

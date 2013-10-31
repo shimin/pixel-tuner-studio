@@ -23,5 +23,8 @@
     <Setting Name="TimeSpanMode" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="ColorDepth" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Bit24</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

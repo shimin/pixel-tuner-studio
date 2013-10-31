@@ -75,7 +75,7 @@ namespace PixelTuner.ViewModel
             List<FileSystemInfo> suitableFiles = new List<FileSystemInfo>();
             foreach (var f in allfiles)
             {
-                if (string.IsNullOrEmpty(text) || Path.GetFileNameWithoutExtension(f.Name).Contains(text))
+                if (string.IsNullOrEmpty(text) || Path.GetFileNameWithoutExtension(f.Name.ToLower()).Contains(text.ToLower()))
                 {
                     using (System.Drawing.Image img = System.Drawing.Image.FromFile(f.FullName))
                     {

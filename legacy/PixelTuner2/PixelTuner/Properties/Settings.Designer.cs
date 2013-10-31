@@ -106,5 +106,17 @@ namespace PixelTuner.Properties {
                 this["TimeSpanMode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Bit24")]
+        public string ColorDepth {
+            get {
+                return ((string)(this["ColorDepth"]));
+            }
+            set {
+                this["ColorDepth"] = value;
+            }
+        }
     }
 }
