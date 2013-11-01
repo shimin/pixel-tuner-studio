@@ -74,24 +74,24 @@ namespace PixelTuner.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public byte TurnOffMenuAfter {
+        public byte FadeDownMenuAfter {
             get {
-                return ((byte)(this["TurnOffMenuAfter"]));
+                return ((byte)(this["FadeDownMenuAfter"]));
             }
             set {
-                this["TurnOffMenuAfter"] = value;
+                this["FadeDownMenuAfter"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("30")]
-        public byte TurnOffAfterIdle {
+        public byte ShutdownAfterIdle {
             get {
-                return ((byte)(this["TurnOffAfterIdle"]));
+                return ((byte)(this["ShutdownAfterIdle"]));
             }
             set {
-                this["TurnOffAfterIdle"] = value;
+                this["ShutdownAfterIdle"] = value;
             }
         }
         

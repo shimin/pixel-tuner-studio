@@ -145,6 +145,30 @@ namespace PixelTuner.ViewModel
             }
         }
 
+        Double _minUnitSize = 1.0;
+        [XmlAttribute]
+        public Double MinUnitSize
+        {
+            get { return _minUnitSize; }
+            set
+            {
+                _minUnitSize = value;
+                RaisePropertyChanged("MinUnitSize");
+            }
+        }
+
+        Double _maxUnitSize = 60.0;
+        [XmlAttribute]
+        public Double MaxUnitSize
+        {
+            get { return _maxUnitSize; }
+            set
+            {
+                _maxUnitSize = value;
+                RaisePropertyChanged("MaxUnitSize");
+            }
+        }
+
         Double _unitSize = 10.0;
         [XmlAttribute]
         public Double UnitSize

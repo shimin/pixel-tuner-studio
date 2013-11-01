@@ -63,28 +63,28 @@ namespace PixelTuner
             }
         }
 
-        byte _turnOffMenuAfter = Settings.Default.TurnOffMenuAfter;
-        public byte TurnOffMenuAfter
+        byte _fadeDownMenuAfter = Settings.Default.FadeDownMenuAfter;
+        public byte FadeDownMenuAfter
         {
-            get { return _turnOffMenuAfter; }
-            set { _turnOffMenuAfter = value; RaisePropertyChanged("DontTurnOffVisibility"); RaisePropertyChanged("TurnOffVisibility"); RaisePropertyChanged("TurnOffText"); }
+            get { return _fadeDownMenuAfter; }
+            set { _fadeDownMenuAfter = value; RaisePropertyChanged("DontFadeDownVisibility"); RaisePropertyChanged("FadeDownVisibility"); RaisePropertyChanged("FadeDownText"); }
         }
 
-        public Visibility DontTurnOffVisibility
+        public Visibility DontFadeDownVisibility
         {
-            get { return _turnOffMenuAfter == 0 ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed; }
+            get { return _fadeDownMenuAfter == 0 ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed; }
         }
 
-        public Visibility TurnOffVisibility
+        public Visibility FadeDownVisibility
         {
-            get { return _turnOffMenuAfter == 0 ? System.Windows.Visibility.Collapsed : System.Windows.Visibility.Visible; }
+            get { return _fadeDownMenuAfter == 0 ? System.Windows.Visibility.Collapsed : System.Windows.Visibility.Visible; }
         }
 
-        public string TurnOffText
+        public string FadeDownText
         {
             get
             {
-                return String.Format((String)Application.Current.TryFindResource("Menu_Settings_Defaults_TurnOffAfter"), _turnOffMenuAfter);
+                return String.Format((String)Application.Current.TryFindResource("Menu_Settings_Defaults_TurnOffAfter"), _fadeDownMenuAfter);
             }
         }
 
@@ -112,7 +112,7 @@ namespace PixelTuner
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
-            Settings.Default.TurnOffMenuAfter = TurnOffMenuAfter;
+            Settings.Default.FadeDownMenuAfter = FadeDownMenuAfter;
             Settings.Default.DefaultDuration = DefaultDuration;
             Settings.Default.DefaultStretching = Stretching;
             Settings.Default.TimeSpanMode = UseTimeSpan;
@@ -122,8 +122,8 @@ namespace PixelTuner
             PixelTuner.ViewModel.RootViewModel.NotifySettingsChanged();
 
             List<DeviceFeature> settings = new List<DeviceFeature>();
-            settings.Add(new DeviceFeature(1, TurnOffMenuAfter));
-            settings.Add(new DeviceFeature(2, Settings.Default.TurnOffAfterIdle));
+            settings.Add(new DeviceFeature(1, FadeDownMenuAfter));
+            settings.Add(new DeviceFeature(2, Settings.Default.ShutdownAfterIdle));
             
             DeviceHelper.WriteSettings(settings);
             this.Close();

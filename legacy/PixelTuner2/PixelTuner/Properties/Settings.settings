@@ -14,10 +14,10 @@
     <Setting Name="DefaultStretching" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">20</Value>
     </Setting>
-    <Setting Name="TurnOffMenuAfter" Type="System.Byte" Scope="User">
+    <Setting Name="FadeDownMenuAfter" Type="System.Byte" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="TurnOffAfterIdle" Type="System.Byte" Scope="User">
+    <Setting Name="ShutdownAfterIdle" Type="System.Byte" Scope="User">
       <Value Profile="(Default)">30</Value>
     </Setting>
     <Setting Name="TimeSpanMode" Type="System.Boolean" Scope="User">

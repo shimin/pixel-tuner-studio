@@ -117,6 +117,9 @@
     <Compile Include="Converters\ActiveTimeLineConverter.cs" />
     <Compile Include="Controls\SearchTextBox\SearchTextBox.cs" />
     <Compile Include="Controls\ThumbListView\ImageView.cs" />
+    <Compile Include="Styles\FileLayoutTemplate.xaml.cs">
+      <DependentUpon>FileLayoutTemplate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\Serialization\TimeLineItem.cs" />
     <Compile Include="ViewModel\TimeLineItemViewModel.cs" />
     <Compile Include="DefaultsWindow.xaml.cs">
