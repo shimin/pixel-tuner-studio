@@ -14,6 +14,26 @@
         <Setter Property="Margin" Value="0,0,0,2"></Setter>
     </Style>
     
+    <Style x:Key="ButtonCloneStyle" TargetType="{x:Type Button}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border MinWidth="6" MinHeight="4">
+                        <Image x:Name="CloneImage" Source="/PixelTuner;component/Images/timelineClone.png"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Source" Value="/PixelTuner;component/Images/timelineCloneLight.png" TargetName="CloneImage"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Source" Value="/PixelTuner;component/Images/timelineCloneDisabled.png" TargetName="CloneImage"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="ButtonDownStyle" TargetType="{x:Type Button}">
         <Setter Property="Template">
             <Setter.Value>

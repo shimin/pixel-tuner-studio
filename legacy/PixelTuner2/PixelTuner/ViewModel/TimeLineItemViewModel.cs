@@ -228,7 +228,7 @@ namespace PixelTuner.ViewModel
             set { _backGround = value; RaisePropertyChanged("NormalBackground"); }
         }
 
-        object ICloneable.Clone()
+        public object Clone()
         {
             TimeLineItemViewModel result = new TimeLineItemViewModel(this._fi);
             result.StartTime = this.StartTime;

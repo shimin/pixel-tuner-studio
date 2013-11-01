@@ -1431,6 +1431,7 @@ namespace PixelTuner.Controls
             //ReDrawChildren();
             DrawBackGround();
             e.Handled = true;
+            this.Focus(); 
         }
 
 

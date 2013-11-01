@@ -222,6 +222,44 @@ namespace PixelTuner.ViewModel
 
         #endregion 
 
+        #region CloneLineCommand
+        RelayCommand _cloneLineCommand = null;
+        public ICommand CloneLine
+        {
+            get
+            {
+                if (_cloneLineCommand == null)
+                {
+                    _cloneLineCommand = new RelayCommand((p) => OnCloneLine(p), (p) => CanCloneLine(p));
+                }
+
+                return _cloneLineCommand;
+            }
+        }
+
+        private bool CanCloneLine(object parameter)
+        {
+            return Parent != null && Parent.TimeLines != null && this.Items != null && this.Items.Count > 0;
+        }
+
+        private void OnCloneLine(object parameter)
+        {
+            int idx = Parent.TimeLines.IndexOf(this);
+            Parent.TimeLines.Insert(idx +1 , this.Clone());
+        }
+
+        private TimeLineViewModel Clone()
+        {
+            var timelineCopy = new TimeLineViewModel();
+            timelineCopy.DefaultTimeInterval = this.DefaultTimeInterval;
+            timelineCopy.Start = this.Start;
+            foreach (var item in this.Items)
+                timelineCopy.Items.Add((ITimeLineDataItem)(item as TimeLineItemViewModel).Clone());
+            return timelineCopy;
+        }
+
+        #endregion 
+
         #endregion
 
         [XmlIgnore]

@@ -562,6 +562,9 @@
     <Content Include="Content\80_batterfly_009.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\timelineCloneDisabled.png" />
+    <Resource Include="Images\timelineCloneLight.png" />
+    <Resource Include="Images\timelineClone.png" />
     <Resource Include="Images\timeEnd.png" />
     <Resource Include="Images\timeLength.png" />
     <Resource Include="Images\timeStart.png" />
