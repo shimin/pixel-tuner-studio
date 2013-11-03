@@ -207,7 +207,7 @@ namespace Communication.Pixelate
                 }
                 if (idx != 0) binary.Add(value);
             }
-            byte[] length = BitConverter.GetBytes((UInt32)(StartAddress + binary.Count + 4));
+            byte[] length = BitConverter.GetBytes((UInt32)(StartAddress + binary.Count + 5));
             binary[0] = length[0];
             binary[1] = length[1];
             binary[2] = length[2];
