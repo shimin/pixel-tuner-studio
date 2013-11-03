@@ -168,6 +168,13 @@ namespace PixelTuner.ViewModel
             }
         }
 
+        private bool _isSelected = false;
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set { _isSelected = value; RaisePropertyChanged("IsSelected"); }
+        }
+
         bool _viewExpanded = false;
         public bool TimelineViewExpanded
         {
@@ -220,14 +227,6 @@ namespace PixelTuner.ViewModel
 
         #endregion
 
-        System.Windows.Media.Brush _backGround = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(160, 255,255,255));
-        [XmlIgnore]
-        public System.Windows.Media.Brush NormalBackground
-        {
-            get { return _backGround; }
-            set { _backGround = value; RaisePropertyChanged("NormalBackground"); }
-        }
-
         public object Clone()
         {
             TimeLineItemViewModel result = new TimeLineItemViewModel(this._fi);
@@ -235,7 +234,6 @@ namespace PixelTuner.ViewModel
             result.EndTime = this.EndTime;
             result.TimelineViewExpanded = this.TimelineViewExpanded;
             result.Stretching = this.Stretching;
-            result.NormalBackground = this.NormalBackground;
             return result;
         }
         
@@ -441,6 +439,13 @@ namespace PixelTuner.ViewModel
         public ulong ToUInt64(IFormatProvider provider)
         {
             throw new NotImplementedException();
+        }
+
+        internal void RaiseMouseDown()
+        {
+            //foreach (TimeLineItemViewModel i in ((TimeLineViewModel)Parent).Items)
+            //    i.IsSelected = false;
+            this.IsSelected = true;
         }
     }
 }

@@ -105,11 +105,11 @@ namespace PixelTuner.ViewModel
 
         void _timeLines_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            if (e.NewItems != null)
-                foreach (TimeLineViewModel v in e.NewItems)
-                {
-                    v.Items.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Items_CollectionChanged);
-                }
+            ClearSelection();
+
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+                ((TimeLineViewModel)e.NewItems[e.NewItems.Count - 1]).IsSelected = true;
+
             for (int i = 0; i < _timeLines.Count; i++)
             {
                 if (i % 2 == 0) _timeLines[i].Background =  _lightLineColor;
@@ -120,13 +120,9 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        void Items_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            RaisePropertyChanged("LineHeightChangingAvailable");
-        }
-
         void TimeLineItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
+            RaisePropertyChanged("LineHeightChangingAvailable");
             RaisePropertyChanged("ProjectSize");
         }
 
@@ -362,7 +358,6 @@ namespace PixelTuner.ViewModel
 
         private void OnAddLine(object parameter)
         {
-            Console.WriteLine("ButtonPressed");
             _timeLines.Add(new TimeLineViewModel());
         }
 
@@ -451,6 +446,120 @@ namespace PixelTuner.ViewModel
             {
                 _timeLines = value;
             }
+        }
+
+        List<TimeLineItemViewModel> _selectedItems = new List<TimeLineItemViewModel>();
+        
+        internal void SetSelection(object dataContext, bool ctrlHold, bool shiftHold, bool altHold)
+        {
+            if (!ctrlHold && !shiftHold) ClearSelection();
+            
+            TimeLineViewModel selectedLine = null;
+            foreach (var line in TimeLines)
+            {
+                selectedLine = line.IsSelected ? line : null;
+                if (selectedLine != null) break;
+            }
+
+            if (dataContext is TimeLineViewModel)
+            {
+                var sender = (dataContext as TimeLineViewModel);
+                sender.IsSelected = true;
+                selectedLine = sender;
+            }
+            else if (dataContext is TimeLineItemViewModel)
+            {
+                var item = (dataContext as TimeLineItemViewModel);
+                if (_selectedItems.Count > 0)
+                {
+                    if (selectedLine != null && item.Parent == selectedLine)
+                    {
+                        if (item.IsSelected && ctrlHold)
+                        {
+                            _selectedItems.Remove(item);
+                            item.IsSelected = false;
+                        }
+                        else
+                        {
+                            _selectedItems.Add(item);
+                            item.IsSelected = true;
+                        }
+                    }
+                }
+                else
+                {
+                    _selectedItems.Add(item);
+                    item.IsSelected = true;
+                    ((TimeLineViewModel)item.Parent).IsSelected = true;
+                }
+            }            
+        }
+
+        internal void CopySelectedItems()
+        {
+            RootViewModel.This.CopiedItems.Clear();
+            _selectedItems = _selectedItems.OrderByDescending(i => i.StartTime).ToList();
+            foreach (var i in _selectedItems) RootViewModel.This.CopiedItems.Add((TimeLineItemViewModel)i.Clone());
+            ClearSelection();
+        }
+
+        internal void PasteSelectedItems()
+        {
+            TimeLineViewModel selectedLine = null;
+            foreach (var line in TimeLines)
+            {
+                selectedLine = line.IsSelected ? line : null;
+                if (selectedLine != null) break;
+            }
+            if (selectedLine != null)
+            {
+                TimeLineItemViewModel selected = null;
+                foreach(TimeLineItemViewModel i in selectedLine.Items)
+                    if (i.IsSelected)
+                    {
+                        selected = i;
+                        break;
+                    }
+
+                int insertIndex = selectedLine.Items.Count;
+                if (selected != null) insertIndex = selectedLine.Items.IndexOf(selected);
+                
+                foreach (var i in RootViewModel.This.CopiedItems)
+                {
+                    var clone = (TimeLineItemViewModel)i.Clone();
+                    selectedLine.Items.Insert(insertIndex, clone);
+                }
+
+                // time borders correction
+                TimeLineItemViewModel prevItem = null;
+                foreach (TimeLineItemViewModel i in selectedLine.Items)
+                {
+                    var ts = i.EndTime.Value - i.StartTime.Value;
+                    if (prevItem != null)
+                    {
+                        i.StartTime = prevItem.EndTime;
+                    }
+                    else
+                    {
+                        i.StartTime = DateTime.MinValue.AddYears(1);
+                    }
+                    i.EndTime = i.StartTime.Value.AddTicks(ts.Ticks);
+                    prevItem = i;
+                }
+            }
+        }
+
+        internal void DeleteSelectedItems()
+        {
+            _selectedItems.ForEach(i => { ((TimeLineViewModel)i.Parent).Items.Remove(i); });
+            _selectedItems.Clear();
+        }
+
+        private void ClearSelection()
+        {
+            foreach (var t in TimeLines) t.IsSelected = false;
+            _selectedItems.ForEach(i => { i.IsSelected = false; });
+            _selectedItems.Clear();
         }
     }
 }

@@ -192,41 +192,41 @@ namespace PixelTuner.Controls
 
         private void ScrollToItem(ITimeLineDataItem target)
         {
-            Double tgtNewWidth = 0;
-            Double maxUnitSize = 450;//28000;
-            Double minUnitSize = 1;
-            if (_scrollViewer != null)
-            {
-                for (int i = 1; i < Children.Count; i++)
-                {
-                    var ctrl = Children[i] as TimeLineItemControl;
-                    if (ctrl != null && ctrl.DataContext == target)
-                    {
-                        Double curW = ctrl.Width;
-                        if (curW < 5)
-                        {
-                            tgtNewWidth = 50;
-                        }
-                        else if (curW > _scrollViewer.ViewportWidth)
-                        {
-                            tgtNewWidth = _scrollViewer.ViewportWidth / 3;
-                        }
+            //Double tgtNewWidth = 0;
+            //Double maxUnitSize = 450;//28000;
+            //Double minUnitSize = 1;
+            //if (_scrollViewer != null)
+            //{
+            //    for (int i = 1; i < Children.Count; i++)
+            //    {
+            //        var ctrl = Children[i] as TimeLineItemControl;
+            //        if (ctrl != null && ctrl.DataContext == target)
+            //        {
+            //            Double curW = ctrl.Width;
+            //            if (curW < 5)
+            //            {
+            //                tgtNewWidth = 50;
+            //            }
+            //            else if (curW > _scrollViewer.ViewportWidth)
+            //            {
+            //                tgtNewWidth = _scrollViewer.ViewportWidth / 3;
+            //            }
 
-                        if (tgtNewWidth != 0)
-                        {
-                            Double newUnitSize = (UnitSize * tgtNewWidth) / curW;
-                            if (newUnitSize > maxUnitSize)
-                                newUnitSize = maxUnitSize;
-                            else if (newUnitSize < minUnitSize)
-                                newUnitSize = minUnitSize;
-                            UnitSize = newUnitSize;
-                            SynchronizeSiblings();
-                        }
-                        ctrl.BringIntoView();
-                        return;
-                    }
-                }
-            }
+            //            if (tgtNewWidth != 0)
+            //            {
+            //                Double newUnitSize = (UnitSize * tgtNewWidth) / curW;
+            //                if (newUnitSize > maxUnitSize)
+            //                    newUnitSize = maxUnitSize;
+            //                else if (newUnitSize < minUnitSize)
+            //                    newUnitSize = minUnitSize;
+            //                UnitSize = newUnitSize;
+            //                SynchronizeSiblings();
+            //            }
+            //            ctrl.BringIntoView();
+            //            return;
+            //        }
+            //    }
+            //}
         }
 
 
@@ -608,7 +608,6 @@ namespace PixelTuner.Controls
 
             AllowDrop = true;
 
-
             _scrollViewer = GetParentScrollViewer();
             //Items = new ObservableCollection<ITimeLineDataItem>();
         }
@@ -618,7 +617,6 @@ namespace PixelTuner.Controls
         {
             base.OnRender(dc);
             _scrollViewer = GetParentScrollViewer();
-
         }
 
 
@@ -701,27 +699,13 @@ namespace PixelTuner.Controls
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
             {
                 var itm = e.NewItems[0] as ITimeLineDataItem;
-                if (itm.StartTime.HasValue && itm.StartTime.Value == DateTime.MinValue)
+                if (!HasExistingControl(itm))
                 {//newly created item isn't a drop in so we need to instantiate and place its control.
-                    TimeSpan duration = itm.EndTime.Value.Subtract(itm.StartTime.Value);
-                    if (Items.Count == 1)//this is the first one added
-                    {
-                        itm.StartTime = StartDate;
-                        itm.EndTime = StartDate.Add(duration);
-                    }
-                    else
-                    {
-                        var last = Items.OrderBy(i => i.StartTime.Value).LastOrDefault();
-                        if (last != null)
-                        {
-                            itm.StartTime = last.EndTime;
-                            itm.EndTime = itm.StartTime.Value.Add(duration);
-                        }
-                    }
                     var ctrl = CreateTimeLineItemControl(itm);
+                    int idx = Items.IndexOf(itm);
                     //The index if Items.Count-1 because of zero indexing.
                     //however our children is 1 indexed because 0 is our canvas grid.
-                    Children.Insert(Items.Count, ctrl);
+                    Children.Insert(idx + 1, ctrl);
                 }
             }
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
@@ -736,7 +720,19 @@ namespace PixelTuner.Controls
                         break;
                     }
                 }
+                if (ManipulationMode == TimeLineManipulationMode.Linked)
+                    TrimTimeSpaces();
             }
+        }
+
+        private bool HasExistingControl(ITimeLineDataItem itm)
+        {
+            foreach (var c in Children)
+            {
+                TimeLineItemControl item = c as TimeLineItemControl;
+                if (item != null && item.DataContext == itm) return true;
+            }
+            return false;
         }
 
         private TimeLineItemControl CreateTimeLineItemControl(ITimeLineDataItem data)
@@ -912,10 +908,10 @@ namespace PixelTuner.Controls
                 }
                 if ((oldW != Width) && (_scrollViewer != null))//if we are at min width then we need to redraw our time grid when unit sizes change
                 {
-                    var available = LayoutInformation.GetLayoutSlot(_scrollViewer);
-                    Size s = new Size(available.Width, available.Height);
-                    _scrollViewer.Measure(s);
-                    _scrollViewer.Arrange(available);
+                    //var available = LayoutInformation.GetLayoutSlot(_scrollViewer);
+                    //Size s = new Size(available.Width, available.Height);
+                    //_scrollViewer.Measure(s);
+                    //_scrollViewer.Arrange(available);
                 }
             }
 
@@ -1230,8 +1226,13 @@ namespace PixelTuner.Controls
             _dragStartPosition.X = double.MinValue;
             _dragStartPosition.Y = double.MinValue;
             _dragObject = null;
+            if (ManipulationMode == TimeLineManipulationMode.Linked) 
+                TrimTimeSpaces();
+        }
+
+        private void TrimTimeSpaces()
+        {
             ITimeLineDataItem prev = null;
-            if (ManipulationMode == TimeLineManipulationMode.Linked)
                 foreach (FrameworkElement line in Children)
                 {
                     foreach (var item in LogicalTreeHelper.GetChildren(line))
@@ -1239,6 +1240,7 @@ namespace PixelTuner.Controls
                         var data = item as ITimeLineDataItem;
                         if (data != null)
                         {
+                            var duration = data.EndTime.Value - data.StartTime.Value;
                             if (prev == null)
                             {
                                 data.StartTime = StartDate;
@@ -1247,12 +1249,12 @@ namespace PixelTuner.Controls
                             {
                                 data.StartTime = prev.EndTime.Value;
                             }
+                            data.EndTime = data.StartTime.Value.AddTicks(duration.Ticks);
                             prev = data;
                         }
                     }
                 }
         }
-
 
         void TimeLineControl_DragOver(object sender, DragEventArgs e)
         {
@@ -1431,9 +1433,7 @@ namespace PixelTuner.Controls
             //ReDrawChildren();
             DrawBackGround();
             e.Handled = true;
-            this.Focus(); 
         }
-
 
         #region drop helpers
         private void InsertTimeLineItemControlAt(int index, TimeLineItemControl adder)

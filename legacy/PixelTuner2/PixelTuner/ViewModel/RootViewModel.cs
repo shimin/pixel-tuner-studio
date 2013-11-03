@@ -85,6 +85,13 @@ namespace PixelTuner.ViewModel
             set { _id = value; }
         }
 
+        private ObservableCollection<TimeLineItemViewModel> _copiedItems = new ObservableCollection<TimeLineItemViewModel>();
+        public ObservableCollection<TimeLineItemViewModel> CopiedItems
+        {
+            get { return _copiedItems; }
+            set { _copiedItems = value; RaisePropertyChanged("CopiedItems"); }
+        }
+
         XmlSerializer _projectSerializer = new XmlSerializer(typeof(FileViewModel), FileViewModel.ExtraTypes.ToArray());
 
         #endregion

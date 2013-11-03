@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Controls;
+using System.Windows.Media;
+using PixelTuner.ViewModel;
 
 namespace PixelTuner.Styles
 {
     public partial class FileLayoutTemplate : System.Windows.ResourceDictionary
     {
         bool ctrlHold = false;
+        bool shiftHold = false;
         bool altHold = false;
 
         private void Grid_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
@@ -28,7 +31,7 @@ namespace PixelTuner.Styles
                 }
                 if (altHold)
                 {
-                    var fm = ((Grid)sender).DataContext as PixelTuner.ViewModel.FileViewModel;
+                    var fm = RootViewModel.This.ActiveDocument as FileViewModel;
                     var delta = (double)e.Delta / 50;
                     if (fm.UnitSize + delta >= fm.MinUnitSize && fm.UnitSize + delta <= fm.MaxUnitSize)
                         fm.UnitSize += delta;
@@ -39,6 +42,12 @@ namespace PixelTuner.Styles
 
         private void Grid_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
+            FileViewModel fm = null;
+            if (e.Key == System.Windows.Input.Key.Delete)
+            {
+                if (fm == null) fm = RootViewModel.This.ActiveDocument as FileViewModel;
+                fm.DeleteSelectedItems();
+            }
             if (e.Key == System.Windows.Input.Key.LeftCtrl || e.Key == System.Windows.Input.Key.RightCtrl)
             {
                 ctrlHold = true;
@@ -48,6 +57,21 @@ namespace PixelTuner.Styles
             {
                 altHold = true;
                 e.Handled = true;
+            }
+            if (e.SystemKey == System.Windows.Input.Key.LeftShift || e.SystemKey == System.Windows.Input.Key.RightShift)
+            {
+                shiftHold = true;
+                e.Handled = true;
+            }
+            if (e.Key == System.Windows.Input.Key.C && ctrlHold)
+            {
+                if (fm == null) fm = RootViewModel.This.ActiveDocument as FileViewModel;
+                fm.CopySelectedItems();
+            }
+            if (e.Key == System.Windows.Input.Key.V && ctrlHold)
+            {
+                if (fm == null) fm = RootViewModel.This.ActiveDocument as FileViewModel;
+                fm.PasteSelectedItems();
             }
         }
 
@@ -62,6 +86,17 @@ namespace PixelTuner.Styles
             {
                 altHold = false;
                 e.Handled = true;
+            }
+        }
+
+        private void Grid_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var dc = ((Grid)(sender));
+            var element = VisualTreeHelper.HitTest(dc, e.GetPosition(dc)).VisualHit as System.Windows.FrameworkElement;
+            var fm = RootViewModel.This.ActiveDocument as FileViewModel;
+            if (element.DataContext is TimeLineViewModel || element.DataContext is TimeLineItemViewModel)
+            {
+                fm.SetSelection(element.DataContext, ctrlHold, shiftHold, altHold);
             }
         }
     }

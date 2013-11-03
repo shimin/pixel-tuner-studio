@@ -28,10 +28,12 @@ namespace PixelTuner.ViewModel
         {
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
             {
-                foreach (ITimeLineDataItem item in e.NewItems)
+                foreach (TimeLineItemViewModel item in e.NewItems)
+                {
                     item.Parent = this;
+                }
             }
-            //this.Parent.RefreshSize();
+            CanCloneLine(null);
         }
 
         FileViewModel _parent;
@@ -48,6 +50,13 @@ namespace PixelTuner.ViewModel
         {
             get { return _backGround; }
             set { _backGround = value; RaisePropertyChanged("Background"); }
+        }
+
+        private bool _isSelected = false;
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set { _isSelected = value; RaisePropertyChanged("IsSelected"); }
         }
 
         Double _defaultLength;

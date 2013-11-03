@@ -10,7 +10,7 @@
     </ResourceDictionary.MergedDictionaries>
     
     <DataTemplate x:Key="FileLayoutTemplate" DataType="{x:Type vm:FileViewModel}">
-        <Grid PreviewKeyDown="Grid_PreviewKeyDown" PreviewKeyUp="Grid_PreviewKeyUp" PreviewMouseWheel="Grid_PreviewMouseWheel">
+        <Grid PreviewMouseDown="Grid_PreviewMouseDown" PreviewKeyDown="Grid_PreviewKeyDown" PreviewKeyUp="Grid_PreviewKeyUp" PreviewMouseWheel="Grid_PreviewMouseWheel">
             <Grid.RowDefinitions>
                 <RowDefinition Height="24"/>
                 <RowDefinition Height="{Binding MemoryListHeight, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" MinHeight="0"/>
@@ -25,9 +25,12 @@
                 <ColumnDefinition Width="60" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Button x:Name="NewBtn" Grid.Row="0" Grid.Column="0" Margin="4,0,0,2" 
-                                            Content="{StaticResource Doc_Btn_AddLine}" 
-                                            Command="{Binding AddLine}"/>
+            <Button x:Name="NewBtn" 
+                    Grid.Row="0" 
+                    Grid.Column="0" 
+                    Margin="4,0,0,2" 
+                    Content="{StaticResource Doc_Btn_AddLine}" 
+                    Command="{Binding AddLine}"/>
             <TextBlock Grid.Row="0" Grid.Column="1" Margin="16,4,4,0" Foreground="{StaticResource TextBrush}" Text="{StaticResource Doc_Lbl_Scale}"/>
             <Slider Grid.Row="0" Grid.Column="2" x:Name="Slider_Scale" Margin="2" Minimum="{Binding MinUnitSize}" Maximum="{Binding MaxUnitSize}" Value="{Binding UnitSize}"/>
             <TextBlock Grid.Column="3" Margin="16,4,4,0" Foreground="{StaticResource TextBrush}" Text="{StaticResource Doc_Lbl_Height}" />
