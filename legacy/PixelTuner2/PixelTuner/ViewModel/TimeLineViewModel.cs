@@ -283,5 +283,25 @@ namespace PixelTuner.ViewModel
                 return result;
             }
         }
+
+        internal void TrimTimeSpaces()
+        {
+            // time borders correction
+            TimeLineItemViewModel prevItem = null;
+            foreach (TimeLineItemViewModel i in this.Items)
+            {
+                var ts = i.EndTime.Value - i.StartTime.Value;
+                if (prevItem != null)
+                {
+                    i.StartTime = prevItem.EndTime;
+                }
+                else
+                {
+                    i.StartTime = DateTime.MinValue.AddYears(1);
+                }
+                i.EndTime = i.StartTime.Value.AddTicks(ts.Ticks);
+                prevItem = i;
+            }
+        }
     }
 }

@@ -33,6 +33,7 @@
                 SelectionMode="Extended" 
                 BorderThickness="0"
                 AllowDrop="True"
+                MouseDoubleClick="ListView_MouseDoubleClick"
                 KeyDown="boxThumbnails_KeyDown"
                 Drop="boxThumbnails_Drop"
                 dd:DragDropHelper.IsDragSource="True" 

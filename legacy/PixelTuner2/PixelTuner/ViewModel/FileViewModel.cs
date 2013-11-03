@@ -231,6 +231,15 @@ namespace PixelTuner.ViewModel
             }
         }
 
+        public TimeLineViewModel SelectedTimeline
+        {
+            get
+            {
+                foreach (var t in TimeLines) if (t.IsSelected) return t;
+                return null;
+            }
+        }
+
         public override string ToString()
         {
             return String.Format("{0} < {1} >", this.FileName, this.FilePath);
@@ -449,7 +458,7 @@ namespace PixelTuner.ViewModel
         }
 
         List<TimeLineItemViewModel> _selectedItems = new List<TimeLineItemViewModel>();
-        
+
         internal void SetSelection(object dataContext, bool ctrlHold, bool shiftHold, bool altHold)
         {
             if (!ctrlHold && !shiftHold) ClearSelection();
@@ -529,23 +538,7 @@ namespace PixelTuner.ViewModel
                     var clone = (TimeLineItemViewModel)i.Clone();
                     selectedLine.Items.Insert(insertIndex, clone);
                 }
-
-                // time borders correction
-                TimeLineItemViewModel prevItem = null;
-                foreach (TimeLineItemViewModel i in selectedLine.Items)
-                {
-                    var ts = i.EndTime.Value - i.StartTime.Value;
-                    if (prevItem != null)
-                    {
-                        i.StartTime = prevItem.EndTime;
-                    }
-                    else
-                    {
-                        i.StartTime = DateTime.MinValue.AddYears(1);
-                    }
-                    i.EndTime = i.StartTime.Value.AddTicks(ts.Ticks);
-                    prevItem = i;
-                }
+                selectedLine.TrimTimeSpaces();
             }
         }
 

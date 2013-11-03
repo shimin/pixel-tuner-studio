@@ -77,6 +77,47 @@ namespace PixelTuner.Controls.ThumbListView
             RootViewModel.This.ImagesModel.ApplyFilter(s.Text);
         }
 
+        private void ListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            DependencyObject obj = (DependencyObject)e.OriginalSource;
+
+            while (obj != null && obj != sender)
+            {
+                var item = obj as ListViewItem;
+                if (item != null)
+                {
+                    var fm = RootViewModel.This.ActiveDocument;
+                    if (fm.SelectedTimeline != null)
+                    {
+                        var src = item.DataContext as TimeLineItemViewModel;
+                        if (src != null)
+                        {
+                            var newItem = (TimeLineItemViewModel)src.Clone();
+                            int insertPosition = fm.SelectedTimeline.Items.Count;
+                            foreach (TimeLineItemViewModel i in fm.SelectedTimeline.Items)
+                                if (i.IsSelected)
+                                {
+                                    insertPosition = fm.SelectedTimeline.Items.IndexOf(i); break;
+                                }
+                            if (insertPosition == 0)
+                            {
+                                newItem.StartTime = fm.SelectedTimeline.Start;
+                            }
+                            else
+                            {
+                                newItem.StartTime = fm.SelectedTimeline.Items[insertPosition - 1].EndTime;
+                            }
+                            newItem.EndTime = newItem.StartTime.Value.AddSeconds(Settings.Default.DefaultDuration);
+                            fm.SelectedTimeline.Items.Insert(insertPosition, newItem);
+                        }
+                        fm.SelectedTimeline.TrimTimeSpaces();
+                    }
+                    break;
+                }
+                obj = System.Windows.Media.VisualTreeHelper.GetParent(obj);
+            }
+        }
+
         #region Picture editor
 
         private void Create_Button_Click(object sender, RoutedEventArgs e)
