@@ -1258,7 +1258,7 @@ namespace PixelTuner.Controls
 
         void TimeLineControl_DragOver(object sender, DragEventArgs e)
         {
-            //throw new NotImplementedException();
+            e.Effects = DragDropEffects.None;
             TimeLineItemControl d = e.Data.GetData(typeof(TimeLineItemControl)) as TimeLineItemControl;
             if (d != null)
             {
@@ -1353,10 +1353,10 @@ namespace PixelTuner.Controls
             ITimeLineDataItem dropData = null;
             if (dropper == null)
             {
-                //dropData = e.Data.GetData(typeof(ITimeLineDataItem)) as ITimeLineDataItem;
-                dropData = (ITimeLineDataItem)(e.Data.GetData("Core.DragDropHelper") as ITimeLineDataItem).Clone();
+                dropData = e.Data.GetData("Core.DragDropHelper") as ITimeLineDataItem;
                 if (dropData != null)
                 {
+                    dropData = (ITimeLineDataItem)dropData.Clone();
                     //I haven't figured out why but
                     //sometimes when dropping from an external source
                     //the drop event hits twice.
@@ -1376,16 +1376,15 @@ namespace PixelTuner.Controls
             }
             var dropX = e.GetPosition(this).X;
             int newIndex = GetDroppedNewIndex(dropX);
-            var curData = dropper.DataContext as ITimeLineDataItem;
-            var curIndex = Items.IndexOf(curData);
-            if ((curIndex == newIndex || curIndex + 1 == newIndex) && dropData == null && dropper.Parent == this)//dropdata null is to make sure we aren't failing on adding a new data item into the timeline
-            //dropper.parent==this makes it so that we allow a dropper control from another timeline to be inserted in at the start.
-            {
-                return;//our drag did nothing meaningful so we do nothing.
-            }
 
             if (dropper != null)
             {
+                var curData = dropper.DataContext as ITimeLineDataItem;
+                var curIndex = curData != null ? Items.IndexOf(curData) : newIndex;
+                if ((curIndex == newIndex || curIndex + 1 == newIndex) && dropData == null && dropper.Parent == this)
+                {
+                    return;
+                }
                 DateTime start = (DateTime)GetValue(StartDateProperty);
                 if (newIndex == 0)
                 {
@@ -1577,7 +1576,6 @@ namespace PixelTuner.Controls
         }
         #endregion
 
-
         //NOT WORKING YET AND I DON'T KNOW WHY 8(
         private void DragScroll(DragEventArgs e)
         {
@@ -1612,8 +1610,6 @@ namespace PixelTuner.Controls
                 }
             }
         }
-
-
 
         #endregion
 
