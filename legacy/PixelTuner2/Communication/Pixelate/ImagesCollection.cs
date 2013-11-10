@@ -53,10 +53,21 @@ namespace Communication.Pixelate
         public void SetBlockAddress(UInt32 adress)
         {
             UInt32 adr = adress;
+            UInt32 adrLen = adress;
             foreach (var kvp in _descriptors)
             {
                 kvp.Value.StartAddress = adr;
-                adr += kvp.Value.EndAddress - kvp.Value.StartAddress;
+                adr += kvp.Value.BinaryLength;
+                //Console.WriteLine(string.Format("Dec: adr={0}, adrLen={1}, end-start={2}, len={3} ||| Hex: adr={4}, adrLen={5}, end-start={6}, len={7}", 
+                //    adr.ToString("D8"), 
+                //    adrLen.ToString("D8"), 
+                //    (kvp.Value.EndAddress - kvp.Value.StartAddress).ToString("D8"),
+                //    (kvp.Value.Length).ToString("D8"),
+                //    adr.ToString("X4"), 
+                //    adrLen.ToString("X4"), 
+                //    (kvp.Value.EndAddress - kvp.Value.StartAddress).ToString("X4"),
+                //    (kvp.Value.Length).ToString("X4")
+                //));
             }
         }
 
