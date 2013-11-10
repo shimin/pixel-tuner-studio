@@ -35,7 +35,7 @@ namespace PixelTuner.ViewModel
             get { return Device == null || Device.Info == null ? false : Device.Busy; }
         }
 
-        private int FirmwareFileVersion { get; set; }
+        static int FirmwareFileVersion { get; set; }
 
         public string FullName
         {
@@ -180,10 +180,16 @@ namespace PixelTuner.ViewModel
         
         #region Constructor
 
+        static PixelDeviceViewModel()
+        {
+            var streamInfo = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash.bin"));
+            var firmwareBytes = Common.Collections.StreamHelper.ReadFully(streamInfo.Stream);
+            FirmwareFileVersion = firmwareBytes[52];
+        }
+
         public PixelDeviceViewModel(PixelDevice device)
         {
             Device = device;
-            FirmwareFileVersion = 11;
             device.StatusChanged += new SerialDeviceBase.StatusDelegate(device_StatusChanged);
             device.SessionFinished += new SerialDeviceBase.SessionDelegate(device_SessionFinished);
         }

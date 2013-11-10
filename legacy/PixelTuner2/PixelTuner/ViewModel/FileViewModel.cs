@@ -42,9 +42,16 @@ namespace PixelTuner.ViewModel
                 _timeLines_CollectionChanged);
 
             Devices = new SafeObservable<PixelDeviceViewModel>();
+            RootViewModel.ApplicationSettingsChanged += new EventHandler(RootViewModel_ApplicationSettingsChanged);
             DeviceHelper.Devices.ForEach((d) => { DeviceHelper_DeviceFound(new DeviceEventArgs(d)); });
             DeviceHelper.DeviceFound += new DeviceHelper.DeviceChangedDelegate(DeviceHelper_DeviceFound);
             DeviceHelper.DeviceLost += new DeviceHelper.DeviceChangedDelegate(DeviceHelper_DeviceLost);
+        }
+
+        void RootViewModel_ApplicationSettingsChanged(object sender, EventArgs e)
+        {
+            var i = ProjectSize;
+            RaisePropertyChanged("ProjectSize");
         }
 
         void DeviceHelper_DeviceFound(DeviceEventArgs e)

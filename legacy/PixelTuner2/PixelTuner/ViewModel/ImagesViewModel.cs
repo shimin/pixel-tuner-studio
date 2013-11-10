@@ -20,6 +20,8 @@ namespace PixelTuner.ViewModel
 
         public const string ToolContentId = "ImagesTool";
 
+        private string _lastFilter = "";
+
         private void MenuItem_Click(object sender, System.Windows.RoutedEventArgs e)
         {
 
@@ -60,9 +62,9 @@ namespace PixelTuner.ViewModel
             }
         }
 
-
         public void ApplyFilter(string text)
         {
+            _lastFilter = text;
             string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content");
             if (!Directory.Exists(sourcePath))
             {
@@ -133,6 +135,7 @@ namespace PixelTuner.ViewModel
                 if ((fi.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
                     _images.Add(tfi);
             }
+            ApplyFilter(_lastFilter);
         }
 
     }
