@@ -248,6 +248,7 @@ namespace Communication.Pixelate
 
         private IList<byte> Map8To4(byte p)
         {
+            //p = (byte)(p / 2);
             return BitConverter.GetBytes((byte)(15 * p / byte.MaxValue));
         }
 
