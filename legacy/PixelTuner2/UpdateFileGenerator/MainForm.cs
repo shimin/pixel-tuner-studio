@@ -14,7 +14,7 @@ namespace UpdateFileGenerator
 {
     public partial class MainForm : Form
     {
-        string baseUrl = "";
+        string baseUrl = @"http://shiningpromo.ru/downloads/pixeltuner2";
         string baseDir = "";
 
         public MainForm()
