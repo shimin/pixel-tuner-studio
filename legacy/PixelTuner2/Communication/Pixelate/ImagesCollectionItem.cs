@@ -93,6 +93,28 @@ namespace Communication.Pixelate
 
         #region Methods
 
+        private void GetColumn(byte targetHeight, int column, List<Color> columnColors)
+        {
+            int firstLineOffset = targetHeight - Bitmap.Height;
+            for (int row = 0; row < targetHeight; row++)
+            {
+                // fill black part that exceeds real bitmap height.
+                if (row < targetHeight)
+                {
+                    if (row < firstLineOffset)
+                    {
+                        columnColors.Add(Color.Black);
+                    }
+                    else
+                    {
+                        columnColors.Add(Bitmap.GetPixel(column, row - firstLineOffset));
+                    }
+                }
+                else
+                    columnColors.Add(Color.Black);
+            }
+        }
+
         /// <summary>
         /// Returns binary representation according to project format.
         /// </summary>
@@ -131,14 +153,7 @@ namespace Communication.Pixelate
             for (int column = 0; column < Bitmap.Width; column++)
             {
                 List<Color> columnColors = new List<Color>();
-                for (int row = 0; row < targetHeight; row++)
-                {
-                    // fill black part that exceeds real bitmap height.
-                    if (row < Bitmap.Height)
-                        columnColors.Add(Bitmap.GetPixel(column, row));
-                    else
-                        columnColors.Add(Color.Black);
-                }
+                GetColumn(targetHeight, column, columnColors);
                 foreach (var c in columnColors) binary.AddRange(Map8To12(c.R));
                 foreach (var c in columnColors) binary.AddRange(Map8To12(c.G));
                 foreach (var c in columnColors) binary.AddRange(Map8To12(c.B));
@@ -155,26 +170,12 @@ namespace Communication.Pixelate
             for (int column = 0; column < Bitmap.Width; column++)
             {
                 List<Color> columnColors = new List<Color>();
-                for (int row = 0; row < targetHeight; row++)
-                {
-                    // fill black part that exceeds real bitmap height.
-                    if (row < Bitmap.Height)
-                        columnColors.Add(Bitmap.GetPixel(column, row));
-                    else
-                        columnColors.Add(Color.Black);
-                }
+                GetColumn(targetHeight, column, columnColors);
                 foreach (var c in columnColors) binary.Add(c.R);
                 foreach (var c in columnColors) binary.Add(c.G);
                 foreach (var c in columnColors) binary.Add(c.B);
             }
             return binary;
-        }
-
-        private static void AttachParameters(List<byte> binary, ColorDepth depth)
-        {
-            if (depth == ColorDepth.Bit12) { binary.Add(4); }
-            else if (depth == ColorDepth.Bit24) { binary.Add(8); }
-            else if (depth == ColorDepth.Bit36) { binary.Add(12); }
         }
 
         private List<byte> GetBinary12(byte targetHeight)
@@ -187,14 +188,7 @@ namespace Communication.Pixelate
             for (int column = 0; column < Bitmap.Width; column++)
             {
                 List<Color> columnColors = new List<Color>();
-                for (int row = 0; row < targetHeight; row++)
-                {
-                    // fill black part that exceeds real bitmap height.
-                    if (row < Bitmap.Height)
-                        columnColors.Add(Bitmap.GetPixel(column, row));
-                    else
-                        columnColors.Add(Color.Black);
-                }
+                GetColumn(targetHeight, column, columnColors);
                 byte value = 0;
                 int idx = 0;
                 foreach (var c in columnColors)
@@ -250,6 +244,13 @@ namespace Communication.Pixelate
         {
             //p = (byte)(p / 2);
             return BitConverter.GetBytes((byte)(15 * p / byte.MaxValue));
+        }
+
+        private static void AttachParameters(List<byte> binary, ColorDepth depth)
+        {
+            if (depth == ColorDepth.Bit12) { binary.Add(4); }
+            else if (depth == ColorDepth.Bit24) { binary.Add(8); }
+            else if (depth == ColorDepth.Bit36) { binary.Add(12); }
         }
 
         #endregion
