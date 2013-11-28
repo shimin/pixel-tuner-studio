@@ -42,6 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Binarize\LightImageFile.cs" />
+    <Compile Include="Binarize\LightProjectFile.cs" />
+    <Compile Include="Binarize\LightTimeLineFile.cs" />
     <Compile Include="Service\DeviceEventArgs.cs" />
     <Compile Include="Service\DeviceSessionEventArgs.cs" />
     <Compile Include="Service\DeviceStatus.cs" />
@@ -62,6 +65,8 @@
     <Compile Include="Service\PixelDeviceSpecs.cs" />
     <Compile Include="Service\PixelDeviceTimeout.cs" />
     <Compile Include="Service\SerialDeviceBase.cs" />
+    <Compile Include="Service\UdmxDevice.cs" />
+    <Compile Include="Service\UdmxDeviceInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
