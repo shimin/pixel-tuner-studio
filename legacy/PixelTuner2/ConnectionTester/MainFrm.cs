@@ -17,14 +17,15 @@ namespace ConnectionTester
     {
         PixelDevice _device = null;
 
-        LoggerRichTextBox _logTarget = null;
+        Common.Log.TargetBase _logTarget = null;
 
         public MainFrm()
         {
             Settings.Default.Reload();
             InitializeComponent();
             boxActualColor.BackColor = boxSampleColor.BackColor = Color.Black;
-            _logTarget = new LoggerRichTextBox(boxLog);
+            //_logTarget = new LoggerRichTextBox(boxLog);
+            _logTarget = new Common.Log.FileTarget(@"c:\connectionTester.log");
             boxPortNum.Value = Settings.Default.port;
             boxPathFW.Text = Settings.Default.pathFW;
             boxPathProject.Text = Settings.Default.pathProj;

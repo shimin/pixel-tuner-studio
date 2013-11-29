@@ -130,7 +130,7 @@ namespace PixelTuner.ViewModel
             
             foreach (FileInfo fi in allfiles)
             {
-                // exlude hidden files 
+                // exclude hidden files 
                 TimeLineItemViewModel tfi = new TimeLineItemViewModel(fi);
                 if ((fi.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
                     _images.Add(tfi);

@@ -44,8 +44,7 @@
                                         Value="{Binding Path=Parent.DataContext.LineHeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
             <Grid x:Name="MemoryGrid" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="6"
-                                                Height="{Binding MemoryListHeight, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                                Visibility="{Binding Visibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                                Height="{Binding MemoryListHeight, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="14"/>
                     <RowDefinition Height="*"/>
@@ -75,11 +74,11 @@
                                 <TextBlock Text="{Binding FullName}" MinWidth="84" Margin="8,-2,6,1"/>
                                 <ProgressBar 
                                                             Width="500"
-                                                            Value="{Binding ElementName=MemoryGrid, Path=Parent.DataContext.ProjectSize, Mode=OneWay}" 
+                                                            Value="{Binding ActiveProjectSize, Mode=OneWay}" 
                                                             Minimum="0" 
                                                             Maximum="{Binding MaxMemory}" 
                                                             Margin="0,0,0,0"/>
-                                <TextBlock Text="{Binding ElementName=MemoryGrid, Path=Parent.DataContext.ProjectSize, Mode=OneWay}" Margin="8,-2,1,0" />
+                                <TextBlock Text="{Binding ActiveProjectSize, Mode=OneWay}" Margin="8,-2,1,0" />
                                 <TextBlock Text="/" Margin="0,-2,0,0" />
                                 <TextBlock Text="{Binding MaxMemory, Mode=OneWay}" Margin="1,-2,6,0" />
                             </StackPanel>

@@ -53,10 +53,19 @@ namespace PixelTuner.ViewModel
         }
 
         private bool _isSelected = false;
+        [XmlIgnore]
         public bool IsSelected
         {
             get { return _isSelected; }
             set { _isSelected = value; RaisePropertyChanged("IsSelected"); }
+        }
+
+        private bool _isChanged = false;
+        [XmlIgnore]
+        public bool IsChanged
+        {
+            get { return _isChanged; }
+            set { _isChanged = value; if (Parent != null) Parent.IsDirty = true; }
         }
 
         Double _defaultLength;

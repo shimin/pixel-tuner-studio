@@ -456,13 +456,17 @@ namespace PixelTuner.ViewModel
 
         internal void Save(FileViewModel fileToSave, bool saveAsFlag = false)
         {
-            if (fileToSave.FilePath == null || saveAsFlag)
+            if (fileToSave.FilePath == null || saveAsFlag || Path.GetExtension(fileToSave.FilePath) == ".tmp")
             {
                 var dlg = new SaveFileDialog();
                 dlg.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 dlg.Filter = "PixelTuner project file|*.ptp";
-                if (dlg.ShowDialog().GetValueOrDefault())
-                    fileToSave.FilePath = dlg.SafeFileName;
+                if (dlg.ShowDialog() == true)
+                    fileToSave.FilePath = dlg.FileName;
+                else
+                {
+                    return;
+                }
             }
 
             if (fileToSave.FilePath != null)
@@ -471,16 +475,14 @@ namespace PixelTuner.ViewModel
                 {
                     tw.Formatting = Formatting.Indented;
                     _projectSerializer.Serialize(tw, fileToSave);
-                    ///////////////////////////////
-                    // исправить нотификацию об изменении имени файла.
-                    _files.Remove(fileToSave);
-                    _files.Add(fileToSave);
-                    RaisePropertyChanged("ActiveDocument");
+
                     if (ActiveDocumentChanged != null)
                         ActiveDocumentChanged(this, new DocumentChangedEventArgs(_activeDocument, _activeDocument));
-                    //RaisePropertyChanged("Files");
                 }
+                foreach (var t in ActiveDocument.TimeLines) { t.IsChanged = false; }
                 ActiveDocument.IsDirty = false;
+                ActiveDocument.FileName = "";
+                RaisePropertyChanged("ActiveDocument");
             }
         }
 

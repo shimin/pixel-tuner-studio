@@ -94,7 +94,6 @@ namespace PixelTuner.Controls
 
         private static void OnStepChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Console.WriteLine("OnStepChanged triggered");
             // проверку на достижение максимального значения?
         }
         #endregion

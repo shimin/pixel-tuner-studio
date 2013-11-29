@@ -96,9 +96,14 @@ namespace PixelTuner.ViewModel
             get { return _startTime; }
             set
             {
+                if (value != _startTime)
+                {
+                    var p = Parent as TimeLineViewModel;
+                    if (p != null) { p.IsChanged = true; }
+                }
                 _startTime = value;
                 RaisePropertyChanged("StartTime");
-                RaisePropertyChanged("Start");
+                RaisePropertyChanged("Start");                
             }
         }
 
@@ -122,6 +127,11 @@ namespace PixelTuner.ViewModel
             }
             set
             {
+                if (value != _endTime)
+                {
+                    var p = Parent as TimeLineViewModel;
+                    if (p != null) { p.IsChanged = true; }
+                }
                 _endTime = value;
                 RaisePropertyChanged("EndTime");
                 RaisePropertyChanged("End");
@@ -195,37 +205,15 @@ namespace PixelTuner.ViewModel
             get { return _stretching; }
             set
             {
+                if (value != _stretching)
+                {
+                    var p = Parent as TimeLineViewModel;
+                    if (p != null) { p.IsChanged = true; }
+                }
                 _stretching = value;
                 RaisePropertyChanged("Stretching");
             }
         }
-        
-        #region UpdateCommand
-        RelayCommand _updateCommand = null;
-        public ICommand UpdateCommand
-        {
-            get
-            {
-                if (_updateCommand == null)
-                {
-                    _updateCommand = new RelayCommand((p) => OnUpdate(p), (p) => CanUpdate(p));
-                }
-
-                return _updateCommand;
-            }
-        }
-
-        private bool CanUpdate(object parameter)
-        {
-            return true;
-        }
-
-        private void OnUpdate(object parameter)
-        {
-            StartTime = DateTime.MinValue;
-        }
-
-        #endregion
 
         public object Clone()
         {
@@ -260,8 +248,10 @@ namespace PixelTuner.ViewModel
         private void OnDisposeMe(object parameter)
         {
             ObservableCollection<ITimeLineDataItem> parentCollection = null;
-            if (_parent != null)
+            var p = Parent as TimeLineViewModel;
+            if (p != null)
             {
+                p.IsChanged = true;
                 System.Reflection.PropertyInfo pi = _parent.GetType().GetProperty("Items");
                 if (pi != null) parentCollection = 
                     (ObservableCollection<ITimeLineDataItem>)pi.GetValue(_parent, null);

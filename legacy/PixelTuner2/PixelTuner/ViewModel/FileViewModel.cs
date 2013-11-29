@@ -21,13 +21,6 @@ namespace PixelTuner.ViewModel
 {
     public class FileViewModel : PaneViewModel
     {
-        [XmlIgnore]
-        public SafeObservable<PixelDeviceViewModel> Devices
-        {
-            get;
-            private set;
-        }
-
         public FileViewModel()
             : this(Path.GetTempFileName())
         {
@@ -42,16 +35,10 @@ namespace PixelTuner.ViewModel
                 _timeLines_CollectionChanged);
 
             Devices = new SafeObservable<PixelDeviceViewModel>();
-            RootViewModel.ApplicationSettingsChanged += new EventHandler(RootViewModel_ApplicationSettingsChanged);
+            FileChanged += (x, e) => { IsDirty = true; };
             DeviceHelper.Devices.ForEach((d) => { DeviceHelper_DeviceFound(new DeviceEventArgs(d)); });
             DeviceHelper.DeviceFound += new DeviceHelper.DeviceChangedDelegate(DeviceHelper_DeviceFound);
             DeviceHelper.DeviceLost += new DeviceHelper.DeviceChangedDelegate(DeviceHelper_DeviceLost);
-        }
-
-        void RootViewModel_ApplicationSettingsChanged(object sender, EventArgs e)
-        {
-            var i = ProjectSize;
-            RaisePropertyChanged("ProjectSize");
         }
 
         void DeviceHelper_DeviceFound(DeviceEventArgs e)
@@ -63,13 +50,11 @@ namespace PixelTuner.ViewModel
             }
 
             RaisePropertyChanged("MemoryListHeight");
-            RaisePropertyChanged("Visibility");
         }
 
         void DeviceHelper_DeviceLost(DeviceEventArgs e)
         {
             RaisePropertyChanged("MemoryListHeight");
-            RaisePropertyChanged("Visibility");
 
             List<PixelDeviceViewModel> modelsToRemove = new List<PixelDeviceViewModel>();
             for (int i = 0; i < Devices.Count; i++)
@@ -83,7 +68,75 @@ namespace PixelTuner.ViewModel
             modelsToRemove.ForEach((item) => { Devices.Remove(item); });
         }
 
-        #region FilePath
+        void _timeLines_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            ClearSelection();
+
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+                ((TimeLineViewModel)e.NewItems[e.NewItems.Count - 1]).IsSelected = true;
+
+            for (int i = 0; i < _timeLines.Count; i++)
+            {
+                if (i % 2 == 0) _timeLines[i].Background =  _lightLineColor;
+                else _timeLines[i].Background = _darkLineColor;
+                _timeLines[i].Parent = this;
+                _timeLines[i].Items.CollectionChanged -= TimeLineItems_CollectionChanged;
+                _timeLines[i].Items.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(TimeLineItems_CollectionChanged);
+            }
+            OnFileChanged(sender, e);
+        }
+
+        void TimeLineItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            RaisePropertyChanged("LineHeightChangingAvailable");
+            OnFileChanged(sender, e);
+        }
+
+        #region Properties
+
+        [XmlIgnore]
+        public SafeObservable<PixelDeviceViewModel> Devices
+        {
+            get;
+            private set;
+        }
+
+        ObservableCollection<TimeLineViewModel> _timeLines = new ObservableCollection<TimeLineViewModel>();
+        [XmlElement(ElementName = "Line")]
+        public ObservableCollection<TimeLineViewModel> TimeLines
+        {
+            get
+            {
+                if (_timeLines == null)
+                    _timeLines = new ObservableCollection<TimeLineViewModel>(_timeLines);
+
+                return _timeLines;
+            }
+            set
+            {
+                _timeLines = value;
+            }
+        }
+
+        [XmlIgnore]
+        public string FileName
+        {
+            get
+            {
+                if (FilePath == null)
+                {
+                    ResourceDictionary rd = Application.Current.Resources.MergedDictionaries[0];
+                    return (String)rd["Doc_Hdr_Default"] + (IsDirty ? " *" : "");
+                }
+
+                return System.IO.Path.GetFileName(FilePath) + (IsDirty ? "*" : "");
+            }
+            set
+            {
+                RaisePropertyChanged("FileName");
+            }
+        }
+
         private string _filePath = null;
         [XmlAttribute]
         public string FilePath
@@ -105,48 +158,10 @@ namespace PixelTuner.ViewModel
                 }
             }
         }
-        #endregion
 
         Brush _darkLineColor = new SolidColorBrush(Color.FromArgb(255, 64, 64, 64));
+
         Brush _lightLineColor = new SolidColorBrush(Color.FromArgb(255, 70, 70, 70));
-
-        void _timeLines_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            ClearSelection();
-
-            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
-                ((TimeLineViewModel)e.NewItems[e.NewItems.Count - 1]).IsSelected = true;
-
-            for (int i = 0; i < _timeLines.Count; i++)
-            {
-                if (i % 2 == 0) _timeLines[i].Background =  _lightLineColor;
-                else _timeLines[i].Background = _darkLineColor;
-                _timeLines[i].Parent = this;
-                _timeLines[i].Items.CollectionChanged -= TimeLineItems_CollectionChanged;
-                _timeLines[i].Items.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(TimeLineItems_CollectionChanged);
-            }
-        }
-
-        void TimeLineItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            RaisePropertyChanged("LineHeightChangingAvailable");
-            RaisePropertyChanged("ProjectSize");
-        }
-
-        [XmlIgnore]
-        public string FileName
-        {
-            get 
-            {
-                if (FilePath == null)
-                {
-                    ResourceDictionary rd = Application.Current.Resources.MergedDictionaries[0];
-                    return (String)rd["Doc_Hdr_Default"] + (IsDirty ? " *" : "");
-                }
-
-                return System.IO.Path.GetFileName(FilePath) + (IsDirty ? "*" : ""); 
-            }
-        }
 
         Double _minUnitSize = 1.0;
         [XmlAttribute]
@@ -177,7 +192,8 @@ namespace PixelTuner.ViewModel
         public Double UnitSize
         {
             get { return _unitSize; }
-            set { 
+            set
+            {
                 _unitSize = value;
                 RaisePropertyChanged("UnitSize");
             }
@@ -188,11 +204,11 @@ namespace PixelTuner.ViewModel
         public int LineHeight
         {
             get { return _lineHeight; }
-            set 
-            { 
+            set
+            {
                 _lineHeight = value;
                 Settings.Default.LineHeight = value;
-                RaisePropertyChanged("LineHeight"); 
+                RaisePropertyChanged("LineHeight");
             }
         }
 
@@ -201,19 +217,10 @@ namespace PixelTuner.ViewModel
         {
             get
             {
-                List<byte> bin = GetBinaryPresentation();
-                int size = bin.Count; //(bin.Count / 1024) + 1;
-                System.Diagnostics.Debug.WriteLine("Размер проекта: " + size.ToString());
-                return size;
-                //int result = 32;         // размер заголовка равный 9 взят с запасом.
-                //foreach (var t in _timeLines)
-                //{
-                //    // размер проекта равен произведению числа картинок и размера описателя картинки, 
-                //    int size = t.Items.Count * (int)ImageFile.HeaderSize + 1; // плюс байт с количеством картинок
-                //    // адрес следующего описателя проекта равен адресу текущего, плюс длина текущего
-                //    result += size;
-                //}
-                //return result;
+                return 0;
+                //List<byte> bin = GetBinaryPresentation();
+                //int size = bin.Count;
+                //return size;
             }
         }
 
@@ -247,10 +254,7 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        public override string ToString()
-        {
-            return String.Format("{0} < {1} >", this.FileName, this.FilePath);
-        }
+        #endregion
 
         #region IsDirty
 
@@ -379,9 +383,14 @@ namespace PixelTuner.ViewModel
 
         #endregion 
         
-        public List<byte> GetBinaryPresentation()
+        public int EvaluateBinarySize(byte targetHeight)
         {
-            return GetBinaryPresentation(this.LineHeight);
+            var knownPaths = new List<string>();
+
+            ColorDepth depth;
+            PixelProjectFile project = CreateProjectFile(knownPaths, out depth);
+            ImagesCollection c = new ImagesCollection(knownPaths, targetHeight, depth);
+            return project.GetBinarySize(c, targetHeight);
         }
 
         public List<byte> GetBinaryPresentation(int targetHeight)
@@ -389,7 +398,19 @@ namespace PixelTuner.ViewModel
             var knownPaths = new List<string>();
             byte projectHeight = (byte)targetHeight;
 
-            PixelProjectFile project = new PixelProjectFile();
+            ColorDepth depth;
+            PixelProjectFile project = CreateProjectFile(knownPaths, out depth);            
+            ImagesCollection c = new ImagesCollection(knownPaths, projectHeight, depth);
+            var buf = project.GetBinary(c, projectHeight);
+#if(DEBUG)
+            File.WriteAllBytes("project.bin", buf.ToArray());
+#endif
+            return buf;
+        }
+
+        private PixelProjectFile CreateProjectFile(List<string> knownPaths, out ColorDepth depth)
+        {
+            var project = new PixelProjectFile();
             foreach (TimeLineViewModel tl in _timeLines)
             {
                 if (tl.Items.Count == 0) continue;
@@ -398,23 +419,19 @@ namespace PixelTuner.ViewModel
                 foreach (PixelTuner.ViewModel.TimeLineItemViewModel item in tl.Items)
                 {
                     string path = item.FullName.ToLower();
-                    UInt16 duration = (UInt16)(((TimeSpan)(item.EndTime - item.StartTime)).TotalMilliseconds / 100);                    
-                    
+                    UInt16 duration = (UInt16)(((TimeSpan)(item.EndTime - item.StartTime)).TotalMilliseconds / 100);
                     var imgf = new PixelImageFile(path, (UInt16)item.Stretching, duration);
                     knownPaths.Add(path);
                     tlf.Images.Add(imgf);
                 }
                 project.TimeLines.Add(tlf);
             }
-            var depth = ColorDepth.Bit24;
-            
+            depth = ColorDepth.Bit24;
+
             try { depth = (ColorDepth)ColorDepth.Parse(typeof(ColorDepth), Settings.Default.ColorDepth); }
             catch { }
-            
-            ImagesCollection c = new ImagesCollection(knownPaths, projectHeight, depth);
-            var buf = project.GetBinary(c, projectHeight);
-            File.WriteAllBytes("project.bin", buf.ToArray());
-            return buf;
+
+            return project;
         }
 
         [XmlIgnore]
@@ -439,37 +456,19 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        public System.Windows.Visibility MemoryIndicatorVisibility
+        public override string ToString()
         {
-            get
-            {
-                return DeviceHelper.Devices.Count > 0 ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
-            }
+            return String.Format("{0} < {1} >", this.FileName, this.FilePath);
         }
 
-        ObservableCollection<TimeLineViewModel> _timeLines = new ObservableCollection<TimeLineViewModel>();
-        [XmlElement(ElementName = "Line")]
-        public ObservableCollection<TimeLineViewModel> TimeLines
-        {
-            get
-            {
-                if (_timeLines == null)
-                    _timeLines = new ObservableCollection<TimeLineViewModel>(_timeLines);
-
-                return _timeLines;
-            }
-            set
-            {
-                _timeLines = value;
-            }
-        }
+        #region Selection
 
         List<TimeLineItemViewModel> _selectedItems = new List<TimeLineItemViewModel>();
 
         internal void SetSelection(object dataContext, bool ctrlHold, bool shiftHold, bool altHold)
         {
             if (!ctrlHold && !shiftHold) ClearSelection();
-            
+
             TimeLineViewModel selectedLine = null;
             foreach (var line in TimeLines)
             {
@@ -508,7 +507,7 @@ namespace PixelTuner.ViewModel
                     item.IsSelected = true;
                     ((TimeLineViewModel)item.Parent).IsSelected = true;
                 }
-            }            
+            }
         }
 
         internal void CopySelectedItems()
@@ -530,7 +529,7 @@ namespace PixelTuner.ViewModel
             if (selectedLine != null)
             {
                 TimeLineItemViewModel selected = null;
-                foreach(TimeLineItemViewModel i in selectedLine.Items)
+                foreach (TimeLineItemViewModel i in selectedLine.Items)
                     if (i.IsSelected)
                     {
                         selected = i;
@@ -539,7 +538,7 @@ namespace PixelTuner.ViewModel
 
                 int insertIndex = selectedLine.Items.Count;
                 if (selected != null) insertIndex = selectedLine.Items.IndexOf(selected);
-                
+
                 foreach (var i in RootViewModel.This.CopiedItems)
                 {
                     var clone = (TimeLineItemViewModel)i.Clone();
@@ -561,5 +560,15 @@ namespace PixelTuner.ViewModel
             _selectedItems.ForEach(i => { i.IsSelected = false; });
             _selectedItems.Clear();
         }
+
+        #endregion
+
+        protected void OnFileChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (FileChanged != null)
+                FileChanged(sender, e);
+        }
+        public event EventHandler FileChanged;
+
     }
 }

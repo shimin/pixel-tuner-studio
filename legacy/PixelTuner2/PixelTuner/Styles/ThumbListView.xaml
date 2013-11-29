@@ -9,11 +9,16 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>
-                    <Border Name="bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
-                  Background="{TemplateBinding Background}" Margin="{TemplateBinding Margin}">
+                    <Border Name="bd" 
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}" 
+                            Margin="{TemplateBinding Margin}">
                         <ScrollViewer Margin="{TemplateBinding Padding}">
-                            <WrapPanel ItemWidth="160" IsItemsHost="True" MinWidth="100"
-                         Width="{Binding ActualWidth,RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}">
+                            <WrapPanel ItemWidth="160" 
+                                       IsItemsHost="True" 
+                                       MinWidth="100"
+                                       Width="{Binding ActualWidth,RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}">
                             </WrapPanel>
                         </ScrollViewer>
                     </Border>
@@ -27,6 +32,7 @@
         <Setter Property='Padding' Value='3'/>
         <Setter Property='Margin' Value='5'/>
         <Setter Property='HorizontalContentAlignment' Value='Center'/>
+        <Setter Property='VerticalContentAlignment' Value='Center'/>
         <Setter Property="ToolTip" Value="{Binding Name, Mode=OneWay}" />
         <Setter Property="ContentTemplate">
             <Setter.Value>

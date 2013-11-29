@@ -37,6 +37,15 @@ namespace PixelTuner.ViewModel
 
         static int FirmwareFileVersion { get; set; }
 
+        public int ActiveProjectSize
+        {
+            get
+            {
+                return RootViewModel.This.ActiveDocument != null ?
+                    RootViewModel.This.ActiveDocument.EvaluateBinarySize(LedsTotal) : 0;
+            }
+        }
+
         public string FullName
         {
             get { return String.Format("Pixel Poi {0}.{1}.{2}", this.PlatformVersion, this.BootVersion, this.FirmwareVersion); ; }
@@ -161,11 +170,8 @@ namespace PixelTuner.ViewModel
             get { return _progress; }
             set
             {
-                lock (_sync)
-                {
-                    _progress = value % (_progressMax - _progressMin);
-                    RaisePropertyChanged("Progress");
-                }
+                _progress = value % (_progressMax - _progressMin);
+                RaisePropertyChanged("Progress");
             }
         }
 
@@ -192,6 +198,13 @@ namespace PixelTuner.ViewModel
             Device = device;
             device.StatusChanged += new SerialDeviceBase.StatusDelegate(device_StatusChanged);
             device.SessionFinished += new SerialDeviceBase.SessionDelegate(device_SessionFinished);
+            
+            RootViewModel.ApplicationSettingsChanged += ProjectUpdateHandler;
+            RootViewModel.This.ActiveDocumentChanged += (x, e) => {
+                ProjectUpdateHandler(x, e);
+                if (e.OldDocument != null) e.OldDocument.FileChanged -= ProjectUpdateHandler;
+                if (e.NewDocument != null) e.NewDocument.FileChanged += ProjectUpdateHandler;
+            };
         }
 
         void device_SessionFinished(DeviceSessionEventArgs e)
@@ -203,6 +216,11 @@ namespace PixelTuner.ViewModel
         {
             RaisePropertyChanged("StatusRaw");
             RaisePropertyChanged("Status");
+        }
+
+        void ProjectUpdateHandler(object sender, EventArgs e)
+        {
+            RaisePropertyChanged("ActiveProjectSize");
         }
 
         #endregion
@@ -277,11 +295,11 @@ namespace PixelTuner.ViewModel
             if (file == null) return;
 
             List<byte> data = file.GetBinaryPresentation(this.LedsTotal);
-
+            InitializeProgressBar(data);
+            RaisePropertyChanged("ProgressMax");
             if (ValidateProject(file, data.Count))
             {
                 BackgroundWorker bgWorker = new BackgroundWorker();
-                InitializeProgressBar(data);
                 bgWorker.DoWork += (x, e) => Device.WriteFile(data);
                 bgWorker.RunWorkerAsync();
             }

@@ -208,7 +208,7 @@ namespace Core.DragDrop
         static bool HitTestScrollBar(object sender, MouseButtonEventArgs e)
         {
             HitTestResult hit = VisualTreeHelper.HitTest((Visual)sender, e.GetPosition((IInputElement)sender));
-            return hit.VisualHit.GetVisualAncestor<System.Windows.Controls.Primitives.ScrollBar>() != null;
+            return hit != null && hit.VisualHit.GetVisualAncestor<System.Windows.Controls.Primitives.ScrollBar>() != null;
         }
 
         static void Scroll(DependencyObject o, DragEventArgs e)
