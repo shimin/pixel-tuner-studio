@@ -85,7 +85,8 @@ namespace Communication.Pixelate
             if (File.Exists(_path))
             {
                 _bitmap = Bitmap.FromFile(_path) as Bitmap;
-                GetBinary(targetHeight);
+                var size = GetSize(targetHeight);
+                _binary = new List<byte>(new byte[size]);
             }
         }
 
@@ -113,6 +114,34 @@ namespace Communication.Pixelate
                 else
                     columnColors.Add(Color.Black);
             }
+        }
+
+        internal int GetSize(byte targetHeight)
+        {
+            int size = 0;
+            if (Bitmap != null || File.Exists(_path))
+            {
+                if (Bitmap == null) _bitmap = Bitmap.FromFile(_path) as Bitmap;
+
+                var parameters = new List<byte>();
+                AttachParameters(parameters, _depth);
+                size += parameters.Count;
+
+                if (_depth == ColorDepth.Bit36)
+                {
+                    size += Bitmap.Width * targetHeight * 3 * 2;
+                }
+                else if (_depth == ColorDepth.Bit24)
+                {
+                    size += Bitmap.Width * targetHeight * 3;
+                }
+                else if (_depth == ColorDepth.Bit12)
+                {
+                    size += Bitmap.Width * (targetHeight % 2 == 0 ? targetHeight / 2 : (targetHeight + 1) / 2) * 3;
+                }
+                size += sizeof(UInt32);     // end address field
+            }
+            return size;
         }
 
         /// <summary>
@@ -254,5 +283,6 @@ namespace Communication.Pixelate
         }
 
         #endregion
+
     }
 }
