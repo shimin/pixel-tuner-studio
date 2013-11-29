@@ -1,0 +1,37 @@
+﻿<Window x:Class="PixelTuner.ReplaceItemWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ReplaceItemWindow" 
+        Height="356" 
+        Width="699"
+        Background="#FFF0F0F0" 
+        xmlns:c="clr-namespace:PixelTuner.Controls"
+        xmlns:tlw="clr-namespace:PixelTuner.Controls.ThumbListView">
+    <Window.Resources>    
+        <tlw:ImageView x:Key="ImageView"/>
+    </Window.Resources>
+    <Grid Margin="4" Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="27" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="32" />
+        </Grid.RowDefinitions>
+        <StackPanel Background="Transparent" Orientation="Horizontal" Grid.Row="2" FlowDirection="RightToLeft">
+            <Button Content="Cancel" Height="23" Name="CancelButton" Click="CancelButton_Click"  Margin="3" Width="75" />
+            <Button Content="OK" Grid.Row="1" Height="23" Name="OKButton" Click="OKButton_Click" Margin="3" Width="75" />
+        </StackPanel>
+        <c:SearchTextBox Grid.Row="0" VerticalAlignment="Top" Search="SearchHandler" HorizontalAlignment="Stretch" x:Name="searchTextBox" Height="23" Margin="1" />
+        <ListView 
+                x:Name="boxThumbnails"
+                Grid.Row="1"
+                View="{DynamicResource ImageView}"
+                SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}"
+                SelectionMode="Extended" 
+                BorderThickness="0"
+                MouseDoubleClick="ListView_MouseDoubleClick"
+                SelectionChanged="boxThumbnails_SelectionChanged"
+                KeyDown="boxThumbnails_KeyDown"
+                ItemsSource="{Binding ImagesCollection, Mode=OneWay}">
+        </ListView>
+    </Grid>
+</Window>

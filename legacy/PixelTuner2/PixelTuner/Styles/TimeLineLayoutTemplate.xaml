@@ -85,8 +85,13 @@
                             <ControlTemplate>
                                 <Border Height="44" MinWidth="200">
                                     <Border.Background>
-                                        <ImageBrush ImageSource="{Binding ImageSource}" Stretch="Uniform" AlignmentX="Left" />
+                                        <ImageBrush ImageSource="{Binding ImageSource, UpdateSourceTrigger=PropertyChanged}" Stretch="Uniform" AlignmentX="Left" />
                                     </Border.Background>
+                                    <Border.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="{StaticResource Item_Menu_Replace}" Command="{Binding ReplaceCommand}"/>
+                                        </ContextMenu>
+                                    </Border.ContextMenu>
                                 </Border>
                             </ControlTemplate>
                         </Button.Template>

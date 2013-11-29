@@ -98,6 +98,11 @@ namespace PixelTuner
         {
             DeviceHelper.StopSeeking();
             Settings.Default.Save();
+            var filesToClose = new List<FileViewModel>(RootViewModel.This.Files);
+            foreach (var f in filesToClose)
+            {
+                if (!RootViewModel.This.Close(f)) e.Cancel = true;
+            }
         }
 
         private void MainWnd_Activated(object sender, EventArgs e)

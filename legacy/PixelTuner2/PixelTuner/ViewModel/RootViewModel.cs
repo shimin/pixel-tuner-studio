@@ -479,10 +479,9 @@ namespace PixelTuner.ViewModel
                     if (ActiveDocumentChanged != null)
                         ActiveDocumentChanged(this, new DocumentChangedEventArgs(_activeDocument, _activeDocument));
                 }
-                foreach (var t in ActiveDocument.TimeLines) { t.IsChanged = false; }
-                ActiveDocument.IsDirty = false;
-                ActiveDocument.FileName = "";
-                RaisePropertyChanged("ActiveDocument");
+                foreach (var t in fileToSave.TimeLines) { t.IsChanged = false; }
+                fileToSave.IsDirty = false;
+                fileToSave.FileName = "";
             }
         }
 
@@ -540,14 +539,14 @@ namespace PixelTuner.ViewModel
             Close(ActiveDocument);
         }
 
-        internal void Close(FileViewModel fileToClose)
+        internal bool Close(FileViewModel fileToClose)
         {
             if (fileToClose.IsDirty)
             {
                 var res = MessageBox.Show(string.Format((String)Application.Current.TryFindResource("Global_SaveChanges"), fileToClose.FileName),
                     Application.Current.MainWindow.Title, MessageBoxButton.YesNoCancel);
                 if (res == MessageBoxResult.Cancel)
-                    return;
+                    return false;
                 if (res == MessageBoxResult.Yes)
                 {
                     Save(fileToClose);
@@ -560,6 +559,8 @@ namespace PixelTuner.ViewModel
             RaisePropertyChanged("ActiveDocument");
             if (ActiveDocumentChanged != null)
                 ActiveDocumentChanged(this, new DocumentChangedEventArgs(oldDoc, _activeDocument));
+
+            return true;
         }
 
         #endregion 

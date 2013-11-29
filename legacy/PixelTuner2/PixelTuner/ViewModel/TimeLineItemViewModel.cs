@@ -214,6 +214,54 @@ namespace PixelTuner.ViewModel
                 RaisePropertyChanged("Stretching");
             }
         }
+        
+        #region ReplaceCommand
+        RelayCommand _replaceCommand = null;
+        public ICommand ReplaceCommand
+        {
+            get
+            {
+                if (_replaceCommand == null)
+                {
+                    _replaceCommand = new RelayCommand((p) => OnReplace(p), (p) => CanReplace(p));
+                }
+
+                return _replaceCommand;
+            }
+        }
+
+        private bool CanReplace(object parameter)
+        {
+            return true;
+        }
+
+        private void OnReplace(object parameter)
+        {
+            var w = new ReplaceItemWindow();
+            w.Owner = Application.Current.MainWindow;
+            w.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            if (w.ShowDialog() == true)
+            {
+                TimeLineItemViewModel newItem = w.SelectedItem as TimeLineItemViewModel;
+                if (newItem != null)
+                {
+                    var p = Parent as TimeLineViewModel;
+                    if (p != null) 
+                    {
+                        int idx = p.Items.IndexOf(this);
+                        newItem.StartTime = this.StartTime;
+                        newItem.EndTime = this.EndTime;
+                        newItem.Stretching = this.Stretching;
+                        p.Items.Remove(this);
+                        p.Items.Insert(idx, newItem);
+                        p.TrimTimeSpaces();
+                        p.IsChanged = true;
+                    }
+                }
+            }
+        }
+
+        #endregion
 
         public object Clone()
         {

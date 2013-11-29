@@ -117,6 +117,9 @@
     <Compile Include="Converters\ActiveTimeLineConverter.cs" />
     <Compile Include="Controls\SearchTextBox\SearchTextBox.cs" />
     <Compile Include="Controls\ThumbListView\ImageView.cs" />
+    <Compile Include="ReplaceItemWindow.xaml.cs">
+      <DependentUpon>ReplaceItemWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Styles\FileLayoutTemplate.xaml.cs">
       <DependentUpon>FileLayoutTemplate.xaml</DependentUpon>
     </Compile>
@@ -167,6 +170,10 @@
       <DependentUpon>TriangleSlider.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\RootViewModel.cs" />
+    <Page Include="ReplaceItemWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Styles\FileLayoutTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
