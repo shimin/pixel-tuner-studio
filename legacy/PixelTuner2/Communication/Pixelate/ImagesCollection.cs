@@ -71,6 +71,16 @@ namespace Communication.Pixelate
             }
         }
 
+        internal int GetSize(byte targetHeight)
+        {
+            int size = 0;
+            foreach (var desc in _descriptors.Values)
+            {
+                size += desc.GetSize(targetHeight);
+            }
+            return size;
+        }
+
         public List<byte> GetBinary(byte targetHeight)
         {
             List<byte> result = new List<byte>();

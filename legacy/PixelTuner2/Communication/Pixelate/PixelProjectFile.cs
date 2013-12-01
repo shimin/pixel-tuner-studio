@@ -26,16 +26,26 @@ namespace Communication.Pixelate
 
         #region Methods
         
+        public int GetBinarySize(ImagesCollection images, byte targetHeight)
+        {
+            int size = 0;
+            var notEmptyLines = new List<PixelTimelineFile>();
+            TimeLines.ForEach((tl) => { if (tl.Images.Count > 0) notEmptyLines.Add(tl); });
+
+            List<byte> result = CreateProjectHeader(notEmptyLines);
+            size = (int)SetTimelineRefs(notEmptyLines, result);
+            size += images.GetSize(targetHeight);
+
+            return size;
+        }
+
         public List<byte> GetBinary(ImagesCollection images, byte targetHeight)
         {
             // ignore empty timelines
             var notEmptyLines = new List<PixelTimelineFile>();
             TimeLines.ForEach((tl) => { if (tl.Images.Count > 0) notEmptyLines.Add(tl); });
 
-
-            List<byte> result = new List<byte>(projectPrefix);                          // header
-            result.AddRange(new byte[4]);                                               // binary total size field
-            result.Add((byte)notEmptyLines.Count);                                      // timelines count
+            List<byte> result = CreateProjectHeader(notEmptyLines);
 
             var firstFreeAddress = SetTimelineRefs(notEmptyLines, result);              // timeline addresses
             images.SetBlockAddress(firstFreeAddress);
@@ -45,6 +55,14 @@ namespace Communication.Pixelate
 
             SetBinarySize(result);
 
+            return result;
+        }
+
+        private List<byte> CreateProjectHeader(List<PixelTimelineFile> timeLines)
+        {
+            List<byte> result = new List<byte>(projectPrefix);                          // header
+            result.AddRange(new byte[4]);                                               // binary total size field
+            result.Add((byte)timeLines.Count);                                          // timelines count
             return result;
         }
 
