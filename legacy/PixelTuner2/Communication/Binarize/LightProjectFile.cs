@@ -42,7 +42,7 @@ namespace Communication.Binarize
             result.AddRange(new byte[4]);                                               // binary total size field
             result.AddRange(BitConverter.GetBytes(samplesSectionAddress));              // start address samples section
             result.Add((byte)notEmptyLines.Count);                                      // timelines count            
-            result.Add((byte)rate);                                                     // rate
+            result.AddRange(BitConverter.GetBytes((UInt16)rate));                       // rate
             result.Add((byte)pointSize);                                                // pointSize
 
             DateTime start = DateTime.MinValue.AddYears(1);
