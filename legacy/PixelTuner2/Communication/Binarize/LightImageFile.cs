@@ -74,5 +74,44 @@ namespace Communication.Binarize
 
         #endregion
 
+        /// <summary>
+        /// returns color by time marker
+        /// </summary>
+        /// <param name="time">Must be within start and end time</param>
+        /// <param name="startColor">Left bound color</param>
+        /// <param name="endColor">Right bound color</param>
+        /// <returns></returns>
+        internal virtual IEnumerable<byte> GetColor(DateTime time, System.Drawing.Color startColor, System.Drawing.Color endColor)
+        {
+            List<byte> color = new List<byte>();
+            int dR = endColor.R - startColor.R;
+            int dG = endColor.G - startColor.G;
+            int dB = endColor.B - startColor.B;
+
+            double durationMS = (EndTime - StartTime).TotalMilliseconds;
+            double timepointMS = (time - StartTime).TotalMilliseconds;
+
+            // для линейного перехода, линейная пропорция
+            int xR = (int)(dR * timepointMS / durationMS);
+            int xG = (int)(dG * timepointMS / durationMS);
+            int xB = (int)(dB * timepointMS / durationMS);
+
+            color.Add((byte)(startColor.R + xR));
+            color.Add((byte)(startColor.G + xG));
+            color.Add((byte)(startColor.B + xB));
+
+            return color;
+        }
+
+        internal static IEnumerable<byte> ColorToBinary(Color c)
+        {
+            List<byte> color = new List<byte>();
+
+            color.Add((byte)c.R);
+            color.Add((byte)c.G);
+            color.Add((byte)c.B);
+
+            return color;
+        }
     }
 }

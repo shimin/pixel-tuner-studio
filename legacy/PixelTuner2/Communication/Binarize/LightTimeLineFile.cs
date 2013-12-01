@@ -96,5 +96,38 @@ namespace Communication.Binarize
                 }
             }
         }
+
+        internal List<byte> GetBinary(int samplesCount, int rate)
+        {
+            List<byte> result = new List<byte>();
+            DateTime time = Images.First().StartTime;
+
+            int currentSampleIdx = 0;
+            Color lastColor = Color.Black;
+
+            Images.ForEach((image) =>
+            {
+                Color startColor = Color.Black;
+                Color endColor = Color.Black;
+                GetColorBounds(image, out startColor, out endColor);
+                while (time <= image.EndTime)
+                {
+                    result.AddRange(image.GetColor(time, startColor, endColor));
+                    time = time.AddMilliseconds(rate);
+                    currentSampleIdx++;
+                }
+                lastColor = endColor;
+            });
+
+            while (currentSampleIdx < samplesCount)
+            {
+                // возможно, если таймлайн кончился, цвет должен стать черным
+                //result.AddRange(LightImageFile.ColorToBinary(lastColor));
+                result.AddRange(LightImageFile.ColorToBinary(Color.Black));
+                currentSampleIdx++;
+            }
+
+            return result;
+        }
     }
 }
