@@ -10,8 +10,8 @@ namespace Common.Log
     {
         private readonly string LogFileName;
         private long maxLogFileSize;
-        private const int MaxLogFileSizeDefault = 10485760;
-        private Encoding enc = Encoding.GetEncoding(1251);
+        private const int MaxLogFileSizeDefault = 1073741824;
+        private Encoding enc = Encoding.UTF8;
 
         /// <summary>
         /// Конструктор класса

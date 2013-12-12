@@ -73,12 +73,12 @@ namespace Common.Log
         private void InnerWriteException(Exception ex, int depth)
         {
             NewMessage(
-                    string.Format("ExceptionMessage: ", ex.Message),
+                    string.Format("ExceptionMessage: {0}", ex.Message),
                     MessageType.Error,
                     depth
                     );
             NewMessage(
-                    string.Format("ExceptionStack: ", ex.StackTrace),
+                    string.Format("ExceptionStack: {0}", ex.StackTrace),
                     MessageType.Error,
                     depth
                     );
@@ -87,6 +87,30 @@ namespace Common.Log
                 NewMessage("InnerException: ", MessageType.Error, depth + 1);
                 InnerWriteException(ex.InnerException, depth + 1);
             }
+        }
+
+        public static string BytesToString(byte[] buf)
+        {
+            string result = "";
+            foreach (byte b in buf) result += b.ToString("X2") + " ";
+            return result;
+        }
+
+        public static string BytesToString(List<byte> buf)
+        {
+            return BytesToString(buf.ToArray());
+        }
+
+        public static List<byte> BytesFromString(string p)
+        {
+            var bytesStrs = p.Split(' ');
+            List<byte> result = new List<byte>();
+            foreach (var s in bytesStrs)
+            {
+                if (!string.IsNullOrEmpty(s))
+                    result.Add(byte.Parse(s, System.Globalization.NumberStyles.HexNumber));
+            }
+            return result;
         }
     }
 }
