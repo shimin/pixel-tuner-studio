@@ -14,14 +14,22 @@ using Common.ViewModel;
 using PixelTuner.Properties;
 using PixelTuner.Controls.ThumbListView;
 using Workspace.Layout;
+using Common.Log;
 
 namespace PixelTuner.ViewModel
 {
     public class RootViewModel : ViewModelBase
     {
+#if DEBUG
+        public static Logger Logger = null;
+#endif
+
         public RootViewModel()
         {
             this.Id = Guid.NewGuid();
+#if DEBUG
+            Logger = new Logger(new FileTarget("log.txt"));
+#endif
             this.ActiveDocumentChanged +=new DocumentChangedEventHandler(Workspace_ActiveDocumentChanged);
         }
 

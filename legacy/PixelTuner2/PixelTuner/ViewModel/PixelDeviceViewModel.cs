@@ -205,6 +205,9 @@ namespace PixelTuner.ViewModel
                 if (e.OldDocument != null) e.OldDocument.FileChanged -= ProjectUpdateHandler;
                 if (e.NewDocument != null) e.NewDocument.FileChanged += ProjectUpdateHandler;
             };
+#if DEBUG
+            Device.Logger = RootViewModel.Logger;
+#endif
         }
 
         void device_SessionFinished(DeviceSessionEventArgs e)
@@ -291,6 +294,7 @@ namespace PixelTuner.ViewModel
 
         private void OnUploadCommand(object parameter)
         {
+            Progress = 0;
             FileViewModel file = parameter as FileViewModel;
             if (file == null) return;
 

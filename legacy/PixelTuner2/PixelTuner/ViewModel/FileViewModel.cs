@@ -403,7 +403,10 @@ namespace PixelTuner.ViewModel
             ImagesCollection c = new ImagesCollection(knownPaths, projectHeight, depth);
             var buf = project.GetBinary(c, projectHeight);
 #if(DEBUG)
-            File.WriteAllBytes("project.bin", buf.ToArray());
+            string logFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".\\Logs");
+            Directory.CreateDirectory(logFolder);
+            string projectFileName = Path.Combine(logFolder, DateTime.Now.ToString("dd_MM_yyyy___HH_mm_ss_fff") + ".bin");
+            File.WriteAllBytes(projectFileName, buf.ToArray());
 #endif
             return buf;
         }

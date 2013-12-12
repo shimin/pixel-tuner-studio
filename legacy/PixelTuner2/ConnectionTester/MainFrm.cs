@@ -15,22 +15,35 @@ namespace ConnectionTester
 {
     public partial class MainFrm : Form
     {
-        PixelDevice _device = null;
+        PixelDeviceTest _device = null;
 
         Common.Log.TargetBase _logTarget = null;
+
+        List<string> requestsSource = new List<string>();
 
         public MainFrm()
         {
             Settings.Default.Reload();
+            foreach (var s in Settings.Default.requests) requestsSource.Add(s);
+
             InitializeComponent();
+            boxLogToFile.Checked = Settings.Default.logToFile;
+            boxRequest.DataSource = requestsSource;
             boxActualColor.BackColor = boxSampleColor.BackColor = Color.Black;
-            //_logTarget = new LoggerRichTextBox(boxLog);
-            _logTarget = new Common.Log.FileTarget(@"c:\connectionTester.log");
+            if (boxLogToFile.Checked)
+            {
+                _logTarget = new Common.Log.FileTarget("connection.log");
+            }
+            else
+            {
+                _logTarget = new LoggerRichTextBox(boxLog);
+            }
+            boxRequest.SelectedIndexChanged += boxRequest_SelectedIndexChanged;
             boxPortNum.Value = Settings.Default.port;
             boxPathFW.Text = Settings.Default.pathFW;
             boxPathProject.Text = Settings.Default.pathProj;
         }
-
+        
         private void boxConnect_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             SetStatus("Открытие порта", Common.Log.MessageType.Info, 0);
@@ -40,7 +53,7 @@ namespace ConnectionTester
             try
             {
                 port.Open();
-                _device = new PixelDevice(port);
+                _device = new PixelDeviceTest(port);
                 _device.Logger = new Common.Log.Logger(_logTarget);
                 SetStatus("Порт открыт", Common.Log.MessageType.Info, 0);
             }
@@ -79,6 +92,12 @@ namespace ConnectionTester
             Settings.Default.port = (int)boxPortNum.Value;
             Settings.Default.pathFW = boxPathFW.Text;
             Settings.Default.pathProj = boxPathProject.Text;
+            Settings.Default.requests.Clear();
+            Settings.Default.logToFile = boxLogToFile.Checked;
+            foreach (string s in requestsSource)
+            {
+                Settings.Default.requests.Add(s);
+            }
             Settings.Default.Save();
         }
 
@@ -127,7 +146,21 @@ namespace ConnectionTester
 
             try
             {
-                _device.WriteFile(binaryData);
+                if (boxRepeatCount.Value > 1)
+                {
+                    if (MessageBox.Show("Upload project " + boxRepeatCount.Value.ToString() + " times?", "PixelTuner", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                    {
+                        for (int i = 0; i < boxRepeatCount.Value; i++)
+                        {
+                            _device.WriteFile(binaryData);
+                            System.Threading.Thread.Sleep((int)boxDelay.Value);
+                        }
+                    }
+                }
+                else
+                {
+                    _device.WriteFile(binaryData);
+                }
             }
             catch(Exception ex)
             {
@@ -286,6 +319,72 @@ namespace ConnectionTester
         private void boxActualBnum_ValueChanged(object sender, EventArgs e)
         {
             boxActualB.Value = (int)boxActualBnum.Value;
+        }
+
+        private void boxSendRequest_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (_device != null && boxRequest.SelectedIndex != 0)
+            {
+                for (int i = 0; i < boxRepeatCount.Value; i++)
+                {
+                    List<byte> request = Common.Log.Logger.BytesFromString(boxRequest.Text);
+                    try
+                    {
+                        _device.SendRequest(request);
+                    }
+                    catch (Exception ex)
+                    {
+                        _device.Logger.WriteException(ex);
+                    }
+                    System.Threading.Thread.Sleep((int)boxDelay.Value);
+                }
+            }
+        }
+
+        void boxRequest_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (boxRequest.SelectedIndex == 0)
+            {
+                var ofd = new OpenFileDialog();
+                ofd.Filter = "binary files|*.bin";
+                if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    boxRequest.SelectedIndexChanged -= boxRequest_SelectedIndexChanged;
+                    var bs = File.ReadAllBytes(ofd.FileName);
+                    boxRequest.DataSource = null;
+                    requestsSource.Add(Common.Log.Logger.BytesToString(bs));
+                    boxRequest.DataSource = requestsSource;
+                    boxRequest.SelectedIndex = requestsSource.Count == 0 ? 0 : requestsSource.Count - 1;
+                    boxRequest.SelectedIndexChanged += boxRequest_SelectedIndexChanged;
+                }
+            }
+        }
+
+        private void boxDeleteRequest_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (boxRequest.SelectedIndex != 0)
+            {
+                boxRequest.SelectedIndexChanged -= boxRequest_SelectedIndexChanged;
+                int selected = boxRequest.SelectedIndex;
+                boxRequest.DataSource = null;
+                requestsSource.RemoveAt(selected);
+                boxRequest.DataSource = requestsSource;
+                boxRequest.SelectedIndexChanged += boxRequest_SelectedIndexChanged;
+            }
+        }
+
+        private void boxLogToFile_CheckedChanged(object sender, EventArgs e)
+        {
+            if (boxLogToFile.Checked)
+            {
+                _logTarget = new Common.Log.FileTarget("connection.log");
+            }
+            else
+            {
+                _logTarget = new LoggerRichTextBox(boxLog);
+            }
+            if (_device != null)
+                _device.Logger = new Common.Log.Logger(_logTarget);
         }
     }
 }
