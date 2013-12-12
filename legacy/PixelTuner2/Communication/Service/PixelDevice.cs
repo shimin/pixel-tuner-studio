@@ -69,6 +69,9 @@ namespace Communication.Service
         public PixelDevice(SerialPort port)
             : base(port)
         {
+#if DEBUG
+            Logger = new Logger(new FileTarget("log.txt"));
+#endif
             this.Name = PixelDeviceSpecs.TryGetName("");
             //procStatusInit = new InitProcessStatus((min, max, start, step) =>
             //    {
@@ -220,10 +223,12 @@ namespace Communication.Service
         /// Writes binary data to device memory.
         /// </summary>
         /// <param name="binaryData">Data to write.</param>
-        public void WriteFile(List<byte> binaryData)
+        public void WriteFile(List<byte> binaryData, Logger logger = null)
         {
             lock (_longOperation)
             {
+                LogMessage(String.Format("Начало записи проекта. {0}", binaryData.Count), Common.Log.MessageType.Debug);
+
                 Busy = true;
                 SetStatus(ConnectionStatus.Uploading);
                 try
@@ -231,7 +236,8 @@ namespace Communication.Service
                     List<byte> buffer = new List<byte>();
 
                     // switch to write mode
-                    DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_IDATA_MODE, BitConverter.GetBytes(binaryData.Count)));
+                    UInt32 size = (UInt32)binaryData.Count;
+                    DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_IDATA_MODE, BitConverter.GetBytes(size)));
 
                     // write data
                     foreach (byte b in binaryData)
@@ -251,9 +257,24 @@ namespace Communication.Service
 
                     // quit from write mode
                     DoSession(new PixelDevicePacket(PixelDeviceCommand.END_WRITE_DATA));
+                    LogMessage("Запись проекта успешно завершена", Common.Log.MessageType.Debug);
                 }
-                catch (Exception ex) { if (Logger != null) Logger.WriteException(ex); }
-                finally { Busy = false; SetStatus(ConnectionStatus.Online); }
+                catch (Exception ex) 
+                {
+                    if (Logger != null) Logger.WriteException(ex);
+                    try
+                    {
+                        // quit from write mode
+                        DoSession(new PixelDevicePacket(PixelDeviceCommand.END_WRITE_DATA));
+                    }
+                    catch { }
+                    SetStatus(ConnectionStatus.Error); 
+                }
+                finally
+                {
+                    Busy = false;
+                    if (Status != ConnectionStatus.Error) SetStatus(ConnectionStatus.Online);
+                }
             }
         }
 

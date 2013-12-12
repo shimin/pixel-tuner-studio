@@ -138,10 +138,6 @@ namespace Communication.Service
                     LogMessage("Result:  " + BytesToString(receiveBuf), Common.Log.MessageType.Debug);
                 }
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
             finally
             {
                 OnSessionFinished(this, received);

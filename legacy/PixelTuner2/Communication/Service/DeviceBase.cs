@@ -30,6 +30,11 @@ namespace Communication.Service
                 Logger.NewMessage(message, mType, level);
             }
         }
+        
+        protected void LogException(Exception ex)
+        {
+            if (Logger != null) Logger.WriteException(ex);
+        }
 
         protected string BytesToString(byte[] buf)
         {
