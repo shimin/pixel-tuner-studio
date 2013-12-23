@@ -36,18 +36,6 @@ namespace Communication.Service
             if (Logger != null) Logger.WriteException(ex);
         }
 
-        protected string BytesToString(byte[] buf)
-        {
-            string result = "";
-            foreach (byte b in buf) result += b.ToString("X2") + " ";
-            return result;
-        }
-
-        protected string BytesToString(List<byte> buf)
-        {
-            return BytesToString(buf.ToArray());
-        } 
-
         #endregion
     }
 }

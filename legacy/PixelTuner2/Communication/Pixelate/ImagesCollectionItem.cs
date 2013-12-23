@@ -85,9 +85,13 @@ namespace Communication.Pixelate
             if (File.Exists(_path))
             {
                 _bitmap = Bitmap.FromFile(_path) as Bitmap;
-                var size = GetSize(targetHeight);
-                _binary = new List<byte>(new byte[size]);
             }
+            else
+            {
+                _bitmap = new Bitmap(1, targetHeight);
+            }
+            var size = GetSize(targetHeight);
+            _binary = new List<byte>(new byte[size]);
         }
 
         #endregion
