@@ -248,6 +248,9 @@
       <DependentUpon>DrawControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Drawing\TextDialog.resx">
+      <DependentUpon>TextDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
@@ -278,6 +281,10 @@
     <ProjectReference Include="..\Workspace\Workspace.csproj">
       <Project>{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}</Project>
       <Name>Workspace</Name>
+    </ProjectReference>
+    <ProjectReference Include="libs\Xceed.Wpf.Toolkit\Toolkit.csproj">
+      <Project>{72E591D6-8F83-4D8C-8F67-9C325E623234}</Project>
+      <Name>Toolkit</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -629,6 +636,8 @@
     <Content Include="Content\80_batterfly_009.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\pipette_tool.ico" />
+    <Resource Include="Images\DrawingTool\pipette.png" />
     <Resource Include="Images\timelineCloneDisabled.png" />
     <Resource Include="Images\timelineCloneLight.png" />
     <Resource Include="Images\timelineClone.png" />

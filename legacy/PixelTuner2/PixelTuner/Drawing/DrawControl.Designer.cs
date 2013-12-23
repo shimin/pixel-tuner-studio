@@ -28,7 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.boxPipette = new System.Windows.Forms.Button();
             this.boxLabelWidth = new System.Windows.Forms.Label();
             this.boxWidth = new System.Windows.Forms.NumericUpDown();
             this.boxScaleLabel = new System.Windows.Forms.Label();
@@ -45,6 +47,7 @@
             this.boxTableLayout = new System.Windows.Forms.TableLayoutPanel();
             this.boxCanvasHolder = new System.Windows.Forms.Panel();
             this.boxSplit = new System.Windows.Forms.SplitContainer();
+            this.boxPipetteTT = new System.Windows.Forms.ToolTip(this.components);
             this.boxCanvas = new PixelTuner.Drawing.PixelCanvas();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
@@ -73,6 +76,7 @@
             // 
             // splitContainer.Panel1
             // 
+            this.splitContainer.Panel1.Controls.Add(this.boxPipette);
             this.splitContainer.Panel1.Controls.Add(this.boxLabelWidth);
             this.splitContainer.Panel1.Controls.Add(this.boxWidth);
             this.splitContainer.Panel1.Controls.Add(this.boxScaleLabel);
@@ -95,18 +99,35 @@
             this.splitContainer.SplitterWidth = 2;
             this.splitContainer.TabIndex = 0;
             // 
+            // boxPipette
+            // 
+            this.boxPipette.BackColor = System.Drawing.SystemColors.Control;
+            this.boxPipette.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.boxPipette.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.boxPipette.FlatAppearance.BorderSize = 0;
+            this.boxPipette.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.boxPipette.Font = new System.Drawing.Font("Georgia", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.boxPipette.Location = new System.Drawing.Point(136, 5);
+            this.boxPipette.Name = "boxPipette";
+            this.boxPipette.Size = new System.Drawing.Size(19, 19);
+            this.boxPipette.TabIndex = 37;
+            this.boxPipette.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.boxPipetteTT.SetToolTip(this.boxPipette, "Color Sampler Tool (P)");
+            this.boxPipette.UseVisualStyleBackColor = false;
+            this.boxPipette.Click += new System.EventHandler(this.boxPipette_Click);
+            // 
             // boxLabelWidth
             // 
             this.boxLabelWidth.AutoSize = true;
-            this.boxLabelWidth.Location = new System.Drawing.Point(382, 7);
+            this.boxLabelWidth.Location = new System.Drawing.Point(399, 7);
             this.boxLabelWidth.Name = "boxLabelWidth";
-            this.boxLabelWidth.Size = new System.Drawing.Size(52, 13);
+            this.boxLabelWidth.Size = new System.Drawing.Size(46, 13);
             this.boxLabelWidth.TabIndex = 36;
             this.boxLabelWidth.Text = "Ширина";
             // 
             // boxWidth
             // 
-            this.boxWidth.Location = new System.Drawing.Point(427, 5);
+            this.boxWidth.Location = new System.Drawing.Point(444, 5);
             this.boxWidth.Maximum = new decimal(new int[] {
             10,
             0,
@@ -118,7 +139,7 @@
             0,
             0});
             this.boxWidth.Name = "boxWidth";
-            this.boxWidth.Size = new System.Drawing.Size(52, 22);
+            this.boxWidth.Size = new System.Drawing.Size(52, 20);
             this.boxWidth.TabIndex = 35;
             this.boxWidth.Value = new decimal(new int[] {
             10,
@@ -130,15 +151,15 @@
             // boxScaleLabel
             // 
             this.boxScaleLabel.AutoSize = true;
-            this.boxScaleLabel.Location = new System.Drawing.Point(152, 7);
+            this.boxScaleLabel.Location = new System.Drawing.Point(169, 7);
             this.boxScaleLabel.Name = "boxScaleLabel";
-            this.boxScaleLabel.Size = new System.Drawing.Size(55, 13);
+            this.boxScaleLabel.Size = new System.Drawing.Size(53, 13);
             this.boxScaleLabel.TabIndex = 34;
             this.boxScaleLabel.Text = "Масштаб";
             // 
             // boxPointSize
             // 
-            this.boxPointSize.Location = new System.Drawing.Point(205, 5);
+            this.boxPointSize.Location = new System.Drawing.Point(222, 5);
             this.boxPointSize.Maximum = new decimal(new int[] {
             12,
             0,
@@ -150,7 +171,7 @@
             0,
             0});
             this.boxPointSize.Name = "boxPointSize";
-            this.boxPointSize.Size = new System.Drawing.Size(52, 22);
+            this.boxPointSize.Size = new System.Drawing.Size(52, 20);
             this.boxPointSize.TabIndex = 33;
             this.boxPointSize.Value = new decimal(new int[] {
             6,
@@ -162,7 +183,7 @@
             // boxLImageLinesCountLabel
             // 
             this.boxLImageLinesCountLabel.AutoSize = true;
-            this.boxLImageLinesCountLabel.Location = new System.Drawing.Point(268, 7);
+            this.boxLImageLinesCountLabel.Location = new System.Drawing.Point(285, 7);
             this.boxLImageLinesCountLabel.Name = "boxLImageLinesCountLabel";
             this.boxLImageLinesCountLabel.Size = new System.Drawing.Size(45, 13);
             this.boxLImageLinesCountLabel.TabIndex = 32;
@@ -175,14 +196,14 @@
             0,
             0,
             0});
-            this.boxHeight.Location = new System.Drawing.Point(313, 5);
+            this.boxHeight.Location = new System.Drawing.Point(330, 5);
             this.boxHeight.Minimum = new decimal(new int[] {
             10,
             0,
             0,
             0});
             this.boxHeight.Name = "boxHeight";
-            this.boxHeight.Size = new System.Drawing.Size(52, 22);
+            this.boxHeight.Size = new System.Drawing.Size(52, 20);
             this.boxHeight.TabIndex = 30;
             this.boxHeight.Value = new decimal(new int[] {
             10,
@@ -204,6 +225,7 @@
             this.boxBmpImport.Size = new System.Drawing.Size(20, 19);
             this.boxBmpImport.TabIndex = 29;
             this.boxBmpImport.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.boxPipetteTT.SetToolTip(this.boxBmpImport, "Import picture (I)");
             this.boxBmpImport.UseVisualStyleBackColor = false;
             this.boxBmpImport.Click += new System.EventHandler(this.boxBmpImport_Click);
             // 
@@ -220,6 +242,7 @@
             this.boxSelect.Size = new System.Drawing.Size(20, 19);
             this.boxSelect.TabIndex = 28;
             this.boxSelect.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.boxPipetteTT.SetToolTip(this.boxSelect, "Selection Tool (M)");
             this.boxSelect.UseVisualStyleBackColor = false;
             this.boxSelect.Click += new System.EventHandler(this.buttonSelect_Click);
             // 
@@ -236,6 +259,7 @@
             this.boxTextButton.Size = new System.Drawing.Size(20, 19);
             this.boxTextButton.TabIndex = 27;
             this.boxTextButton.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.boxPipetteTT.SetToolTip(this.boxTextButton, "Pixelate Text (T)");
             this.boxTextButton.UseVisualStyleBackColor = false;
             this.boxTextButton.Click += new System.EventHandler(this.boxTextButton_Click);
             // 
@@ -405,5 +429,7 @@
         private System.Windows.Forms.NumericUpDown boxPointSize;
         private System.Windows.Forms.Label boxLabelWidth;
         private System.Windows.Forms.NumericUpDown boxWidth;
+        private System.Windows.Forms.Button boxPipette;
+        private System.Windows.Forms.ToolTip boxPipetteTT;
     }
 }

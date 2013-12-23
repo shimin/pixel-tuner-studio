@@ -1625,14 +1625,8 @@ namespace PixelTuner.Controls
         void item_PreviewEditButtonDown(object sender, MouseButtonEventArgs e)
         {
             var ctrl = sender as TimeLineItemControl;
-            //ctrl.NormalBackground = new SolidColorBrush(Color.FromRgb(0, 160, 0));
-
             _action = ctrl.GetClickAction();
-            if (_action == TimeLineAction.StretchEnd || 
-                _action == TimeLineAction.StretchStart)
-            {
-                (sender as TimeLineItemControl).CaptureMouse();
-            }
+            (sender as TimeLineItemControl).CaptureMouse();
         }
 
         #region key down and up
@@ -1641,21 +1635,21 @@ namespace PixelTuner.Controls
         protected void OnKeyDown(Object sender, KeyEventArgs e)
         {
             base.OnKeyDown(e);
-            if (e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl)
-            {
-                _rightCtrlDown = e.Key == Key.RightCtrl;
-                _leftCtrlDown = e.Key == Key.LeftCtrl;
-                ManipulationMode = TimeLineManipulationMode.Linked;
-            }
+            //if (e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl)
+            //{
+            //    _rightCtrlDown = e.Key == Key.RightCtrl;
+            //    _leftCtrlDown = e.Key == Key.LeftCtrl;
+            //    ManipulationMode = TimeLineManipulationMode.Linked;
+            //}
         }
         protected void OnKeyUp(Object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.LeftCtrl)
-                _leftCtrlDown = false;
-            if (e.Key == Key.RightCtrl)
-                _rightCtrlDown = false;
-            if (!_leftCtrlDown && !_rightCtrlDown)
-                ManipulationMode = TimeLineManipulationMode.Linked;
+            //if (e.Key == Key.LeftCtrl)
+            //    _leftCtrlDown = false;
+            //if (e.Key == Key.RightCtrl)
+            //    _rightCtrlDown = false;
+            //if (!_leftCtrlDown && !_rightCtrlDown)
+            //    ManipulationMode = TimeLineManipulationMode.Linked;
         }
 
         internal void HandleItemManipulation(TimeLineItemControl ctrl, TimeLineItemChangedEventArgs e)
@@ -1974,7 +1968,7 @@ namespace PixelTuner.Controls
 
             //When we pressed, this lost focus and we therefore didn't capture any changes to the key status
             //so we check it again after our manipulation finishes.  That way we can be linked and go out of or back into it while dragging
-            ManipulationMode = TimeLineManipulationMode.Linked;
+            //ManipulationMode = TimeLineManipulationMode.Linked;
             _leftCtrlDown = Keyboard.IsKeyDown(Key.LeftCtrl);
             _rightCtrlDown = Keyboard.IsKeyDown(Key.RightCtrl);
             if (_leftCtrlDown || _rightCtrlDown)
@@ -1983,8 +1977,6 @@ namespace PixelTuner.Controls
             }
             #endregion
         }
-
-
 
         #region get children methods
 
@@ -2118,8 +2110,6 @@ namespace PixelTuner.Controls
         }
 
         #endregion
-
-
 
     }
 }

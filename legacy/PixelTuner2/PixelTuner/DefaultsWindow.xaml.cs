@@ -14,6 +14,7 @@ using PixelTuner.Properties;
 using System.ComponentModel;
 using Communication.Service;
 using Communication.Pixelate;
+using PixelTuner.ViewModel;
 
 namespace PixelTuner
 {
@@ -26,6 +27,9 @@ namespace PixelTuner
         {
             this.DataContext = this;
             InitializeComponent();
+
+            RaisePropertyChanged("Stretching");
+            RaisePropertyChanged("DefaultDuration");
 
             var depth = ColorDepth.Bit24;
             try { 
@@ -40,14 +44,14 @@ namespace PixelTuner
         public int Stretching
         {
             get { return _stretching; }
-            set { _stretching = value; }
+            set { _stretching = value; RaisePropertyChanged("Stretching"); }
         }
 
-        int _defaultDuration = (int)Settings.Default.DefaultDuration;
-        public int DefaultDuration
+        float _defaultDuration = (float)Settings.Default.DefaultDuration;
+        public float DefaultDuration
         {
             get { return _defaultDuration; }
-            set { _defaultDuration = value; }
+            set { _defaultDuration = value; RaisePropertyChanged("DefaultDuration"); }
         }
 
         bool _useTimeSpan = Settings.Default.TimeSpanMode;
@@ -61,6 +65,26 @@ namespace PixelTuner
             {
                 _useTimeSpan = value;
             }
+        }
+
+        bool _collapseGaps = Settings.Default.CollapseGaps;
+        public bool CollapseGaps
+        {
+            get
+            {
+                return _collapseGaps;
+            }
+            set
+            {
+                _collapseGaps = value;
+            }
+        }
+
+        bool _exitMenuOnDoubleClick = Settings.Default.ExitMenuOnDoubleClick;
+        public bool ExitMenuOnDoubleClick
+        {
+            get { return _exitMenuOnDoubleClick; }
+            set { _exitMenuOnDoubleClick = value; }
         }
 
         byte _fadeDownMenuAfter = Settings.Default.FadeDownMenuAfter;
@@ -117,15 +141,12 @@ namespace PixelTuner
             Settings.Default.DefaultStretching = Stretching;
             Settings.Default.TimeSpanMode = UseTimeSpan;
             Settings.Default.ColorDepth = ((ColorDepth)Compression).ToString();
+            Settings.Default.ExitMenuOnDoubleClick = ExitMenuOnDoubleClick;
+            Settings.Default.CollapseGaps = CollapseGaps;
             Settings.Default.Save();
             
             PixelTuner.ViewModel.RootViewModel.NotifySettingsChanged();
 
-            List<DeviceFeature> settings = new List<DeviceFeature>();
-            settings.Add(new DeviceFeature(1, FadeDownMenuAfter));
-            settings.Add(new DeviceFeature(2, Settings.Default.ShutdownAfterIdle));
-            
-            DeviceHelper.WriteSettings(settings);
             this.Close();
         }
 
@@ -153,6 +174,40 @@ namespace PixelTuner
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
         public event PropertyChangedEventHandler PropertyChanged;
+
+
+        #region WriteSettingsCommand
+        RelayCommand _writeSettingsCommand = null;
+        public ICommand WriteSettingsCommand
+        {
+            get
+            {
+                if (_writeSettingsCommand == null)
+                {
+                    _writeSettingsCommand = new RelayCommand((p) => OnWriteSettings(p), (p) => CanWriteSettings(p));
+                }
+
+                return _writeSettingsCommand;
+            }
+        }
+
+        private bool CanWriteSettings(object parameter)
+        {
+            return true;
+        }
+
+        private void OnWriteSettings(object parameter)
+        {
+            List<DeviceFeature> settings = new List<DeviceFeature>();
+            settings.Add(new DeviceFeature(1, FadeDownMenuAfter));
+            settings.Add(new DeviceFeature(2, Settings.Default.ShutdownAfterIdle));
+            settings.Add(new DeviceFeature(3, (ushort)(ExitMenuOnDoubleClick ? 1 : 0)));
+
+            DeviceHelper.WriteSettings(settings);
+        }
+
+        
+        #endregion 
 
     }
 }

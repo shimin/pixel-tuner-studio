@@ -399,7 +399,7 @@ namespace PixelTuner.ViewModel
             byte projectHeight = (byte)targetHeight;
 
             ColorDepth depth;
-            PixelProjectFile project = CreateProjectFile(knownPaths, out depth);            
+            PixelProjectFile project = CreateProjectFile(knownPaths, out depth, Settings.Default.CollapseGaps);
             ImagesCollection c = new ImagesCollection(knownPaths, projectHeight, depth);
             var buf = project.GetBinary(c, projectHeight);
 #if(DEBUG)
@@ -411,21 +411,31 @@ namespace PixelTuner.ViewModel
             return buf;
         }
 
-        private PixelProjectFile CreateProjectFile(List<string> knownPaths, out ColorDepth depth)
+        private PixelProjectFile CreateProjectFile(List<string> knownPaths, out ColorDepth depth, bool collapseGaps = true)
         {
             var project = new PixelProjectFile();
             foreach (TimeLineViewModel tl in _timeLines)
             {
                 if (tl.Items.Count == 0) continue;
                 var tlf = new PixelTimelineFile();
-
+                
+                var start = tl.Start.Value;
                 foreach (PixelTuner.ViewModel.TimeLineItemViewModel item in tl.Items)
                 {
                     string path = item.FullName.ToLower();
-                    UInt16 duration = (UInt16)(((TimeSpan)(item.EndTime - item.StartTime)).TotalMilliseconds / 100);
+                    if (!collapseGaps && (item.StartTime.Value - start).TotalMilliseconds > Settings.Default.GapMinimumSize)
+                    {
+                        UInt16 gapDuration = (UInt16)((item.StartTime.Value - start).TotalMilliseconds / 100);
+                        var blankImage = new PixelImageFile(null, (UInt16)item.Stretching, gapDuration);
+                        knownPaths.Add(null);
+                        tlf.Images.Add(blankImage);
+                    }
+                    DateTime startTimeStamp = collapseGaps ? start : item.StartTime.Value;
+                    UInt16 duration = (UInt16)(((TimeSpan)(item.EndTime - startTimeStamp)).TotalMilliseconds / 100);
                     var imgf = new PixelImageFile(path, (UInt16)item.Stretching, duration);
                     knownPaths.Add(path);
                     tlf.Images.Add(imgf);
+                    start = item.EndTime.Value;
                 }
                 project.TimeLines.Add(tlf);
             }

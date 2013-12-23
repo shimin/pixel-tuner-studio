@@ -50,9 +50,9 @@ namespace PixelTuner.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("10")]
-        public double DefaultDuration {
+        public float DefaultDuration {
             get {
-                return ((double)(this["DefaultDuration"]));
+                return ((float)(this["DefaultDuration"]));
             }
             set {
                 this["DefaultDuration"] = value;
@@ -116,6 +116,42 @@ namespace PixelTuner.Properties {
             }
             set {
                 this["ColorDepth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ExitMenuOnDoubleClick {
+            get {
+                return ((bool)(this["ExitMenuOnDoubleClick"]));
+            }
+            set {
+                this["ExitMenuOnDoubleClick"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("200")]
+        public int GapMinimumSize {
+            get {
+                return ((int)(this["GapMinimumSize"]));
+            }
+            set {
+                this["GapMinimumSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool CollapseGaps {
+            get {
+                return ((bool)(this["CollapseGaps"]));
+            }
+            set {
+                this["CollapseGaps"] = value;
             }
         }
     }

@@ -5,11 +5,16 @@
     <system:String x:Key="Menu_Settings_Defaults_CompressionMedium">(среднее)</system:String>
     <system:String x:Key="Menu_Settings_Defaults_CompressionNone">(нет)</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Compression">Сжатие</system:String>
+    <system:String x:Key="Menu_Settings_Defaults_CollapseGaps">Удалять паузы между картинками.</system:String>
     <system:String x:Key="Menu_Settings_Defaults_UseTimespan">Длительность вместо времени конца картинки.</system:String>
+    <system:String x:Key="Menu_Settings_Defaults_ExitMenuOnDoubleClick">Выход в меню двойным щелчком.</system:String>
     <system:String x:Key="Menu_Settings_Defaults_DontTurnOff">Не выключать меню выбора таймлайна на устройстве</system:String>
     <system:String x:Key="Menu_Settings_Defaults_TurnOffAfter">Отключать меню выбора таймлайна на устройстве после {0} c.</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Duration">Длительность в секундах</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Stretching">Горизонтальное растяжение</system:String>
+    <system:String x:Key="Menu_Settings_Defaults_WriteDeviceSettings">Записать в подключенные устройства</system:String>
+    <system:String x:Key="Menu_Settings_Defaults_Device">Устройство</system:String>
+    <system:String x:Key="Menu_Settings_Defaults_Software">Программа</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Window">Значения по умолчанию</system:String>
     <system:String x:Key="Menu_Settings_Defaults">Значения по умолчанию</system:String>
     <system:String x:Key="Menu_Settings">Настройки</system:String>

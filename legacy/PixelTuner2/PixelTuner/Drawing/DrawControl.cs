@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Windows.Media.Imaging;
+using Common.Helpers;
 //using PixelTuner.Drawing.Properties;
 
 namespace PixelTuner.Drawing
@@ -18,9 +19,13 @@ namespace PixelTuner.Drawing
 
         bool _mouseSelecting = false;
         bool _startSelection = false;
+        bool _btnControlPressed = false;
+        bool _btnAltPressed = false;
+        bool _btnShiftPressed = false;
         private static Image _duplicatedFragment = null;
         Rectangle _selection = new Rectangle(0, 0, 0, 0);
         Rectangle _invalidationArea = new Rectangle(0, 0, 0, 0);
+        Cursor _curPipette = null;
         Point _mousePoint = Point.Empty;
         const int MAX_UNDO_STACK_SIZE = 256;
 
@@ -143,11 +148,17 @@ namespace PixelTuner.Drawing
                     new Uri("pack://application:,,,/Images/DrawingTool/copy.png", UriKind.Absolute));
             var bmp = new System.Windows.Media.Imaging.BitmapImage(
                     new Uri("pack://application:,,,/Images/DrawingTool/bmp.png", UriKind.Absolute));
+            var pip = new System.Windows.Media.Imaging.BitmapImage(
+                    new Uri("pack://application:,,,/Images/DrawingTool/pipette.png", UriKind.Absolute));
+            var pipCursor = new System.Windows.Media.Imaging.BitmapImage(
+                    new Uri("pack://application:,,,/Images/pipette_tool.ico", UriKind.Absolute));
 
             boxFillBG.BackgroundImage = BitmapImage2Bitmap<PngBitmapEncoder>(bucket);
             boxTextButton.BackgroundImage = BitmapImage2Bitmap<PngBitmapEncoder>(text);
             boxSelect.BackgroundImage = BitmapImage2Bitmap<PngBitmapEncoder>(copy);
             boxBmpImport.BackgroundImage = BitmapImage2Bitmap<PngBitmapEncoder>(bmp);
+            boxPipette.BackgroundImage = BitmapImage2Bitmap<PngBitmapEncoder>(pip);
+            _curPipette = CursorHelper.CreateCursorNoResize(BitmapImage2Bitmap<PngBitmapEncoder>(pipCursor), 1, 15);
 
             this.DoubleBuffered = true;
             this.Configuration = item;
@@ -417,7 +428,17 @@ namespace PixelTuner.Drawing
         private void boxCanvas_MouseDown(object sender, MouseEventArgs e)
         {
             if (_item == null || _item.Image == null) return;
-            Push();
+
+            if (boxCanvas.Cursor == _curPipette)
+            {
+                var b = _item.Image as Bitmap;
+                if (e.Button == MouseButtons.Left)
+                    BrushFrontColor = b.GetPixel(e.X, e.Y);
+                else
+                    BrushBackColor = b.GetPixel(e.X, e.Y);
+                boxCanvas.Cursor = Cursors.Default;
+                return;
+            }
 
             if (_startSelection)
             {
@@ -427,6 +448,8 @@ namespace PixelTuner.Drawing
                     e.Y / _item.PointSize * _item.PointSize, 1, 1);
                 return;
             }
+
+            Push();
 
             if (_duplicatedFragment != null)
             {
@@ -470,6 +493,7 @@ namespace PixelTuner.Drawing
 
         private void boxCanvas_MouseMove(object sender, MouseEventArgs e)
         {
+            if (_btnShiftPressed && boxCanvas.Cursor == Cursors.Default) boxCanvas.Cursor = _curPipette;
             if (_mouseSelecting)
             {
                 int w = Math.Abs(e.X / _item.PointSize * _item.PointSize - _selection.X);
@@ -547,6 +571,11 @@ namespace PixelTuner.Drawing
 
         #region Обработка кнопок формы
 
+        private void boxPipette_Click(object sender, EventArgs e)
+        {
+            boxCanvas.Cursor = _curPipette;
+        }
+
         private void buttonSelect_Click(object sender, EventArgs e)
         {
             _duplicatedFragment = null;
@@ -561,7 +590,7 @@ namespace PixelTuner.Drawing
 
         private void boxTextButton_Click(object sender, EventArgs e)
         {
-            TextDialog td = new TextDialog(_item, DefaultFont, _item.PointSize, BrushFrontColor);
+            TextDialog td = new TextDialog(_item, DefaultFont, _item.PatternLines, BrushFrontColor);
             Application.RemoveMessageFilter(this);
             if (td.ShowDialog() == DialogResult.OK)
             {
@@ -746,6 +775,22 @@ namespace PixelTuner.Drawing
         {
             Keys keyCode = (Keys)(int)m.WParam & Keys.KeyCode;
             //Keys.Modifiers mod = (Keys.Modifiers)(int)m.WParam & Keys.ModifierKeys;
+            _btnAltPressed = false;
+            _btnControlPressed = false;
+            _btnShiftPressed = false;
+            if (m.Msg == WM_KEYDOWN && keyCode == Keys.Alt)
+            {
+                // not working
+                _btnAltPressed = true;
+            }
+            if (m.Msg == WM_KEYDOWN && keyCode == Keys.ControlKey)
+            {
+                _btnControlPressed = true;
+            }
+            if (m.Msg == WM_KEYDOWN && keyCode == Keys.ShiftKey)
+            {
+                _btnShiftPressed = true;
+            }
             if (m.Msg == WM_KEYDOWN && keyCode == Keys.Escape)
             {
                 _duplicatedFragment = null;
@@ -755,6 +800,22 @@ namespace PixelTuner.Drawing
                 boxCanvas.Refresh();
                 return true;
             }
+            if (m.Msg == WM_KEYDOWN && keyCode == Keys.P)
+            {
+                boxPipette_Click(boxPipette, new EventArgs());
+                return true;
+            }
+            if (m.Msg == WM_KEYDOWN && keyCode == Keys.I)
+            {
+                boxBmpImport_Click(boxBmpImport, new EventArgs());
+                return true;
+            }
+            if (m.Msg == WM_KEYDOWN && keyCode == Keys.M)
+            {
+                buttonSelect_Click(boxSelect, new EventArgs());
+                return true;
+            }
+
             if (m.Msg == WM_KEYDOWN && keyCode == Keys.Z)
             {
                 Undo();
@@ -789,6 +850,6 @@ namespace PixelTuner.Drawing
         } 
 
         #endregion
-
+        
     }
 }

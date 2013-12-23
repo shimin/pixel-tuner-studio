@@ -56,7 +56,7 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="20" />
+                        <ColumnDefinition Width="16" />
                     </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Horizontal">
                         <Border Width="15" Height="15">
@@ -64,8 +64,7 @@
                         </Border>
                         <TextBlock Grid.Column="0" Text="{Binding Path=Start}" />
                     </StackPanel>
-                    
-                    <Button Grid.Column="1" Margin="0,2,0,0" Command="{Binding DisposeMe}">
+                    <Button Grid.Column="1" Margin="0,2,0,0" Command="{Binding DisposeMe}" PreviewMouseLeftButtonDown="ChildPreviewMouseLeftButtonDown">
                         <Button.Template>
                             <ControlTemplate>
                                 <Border Width="16" Height="14">
@@ -80,7 +79,7 @@
                         </Button.Template>
                     </Button>
                 </Grid>
-                    <Button>
+                    <Button Name="boxImageButton" MouseDoubleClick="boxImageButton_MouseDoubleClick">
                         <Button.Template>
                             <ControlTemplate>
                                 <Border Height="44" MinWidth="200">
@@ -109,6 +108,7 @@
                                            MinValue="4" 
                                            MaxValue="46" 
                                            Margin="0,2,4,0"
+                                           PreviewMouseLeftButtonDown="ChildPreviewMouseLeftButtonDown"
                                            Value="{Binding Path=Parent.DataContext.Stretching, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                 </StackPanel>
@@ -142,7 +142,7 @@
                         Height="116"
                         ViewLevel="Seconds"
                         HorizontalAlignment="Left"
-                        ManipulationMode="Linked"
+                        ManipulationMode="Free"
                         MinimumUnitWidth="20"
                         DrawTimeGrid="False"
                         FocusOnItem="False"

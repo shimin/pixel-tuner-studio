@@ -214,6 +214,13 @@ namespace PixelTuner.ViewModel
                 RaisePropertyChanged("Stretching");
             }
         }
+
+        byte _brightness = 100;
+        public byte Brightness
+        {
+            get { return _brightness; }
+            set { _brightness = value; }
+        }
         
         #region ReplaceCommand
         RelayCommand _replaceCommand = null;

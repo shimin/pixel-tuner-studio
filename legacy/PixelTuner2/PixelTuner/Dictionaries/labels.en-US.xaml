@@ -5,11 +5,16 @@
     <system:String x:Key="Menu_Settings_Defaults_CompressionMedium">(medium)</system:String>
     <system:String x:Key="Menu_Settings_Defaults_CompressionNone">(none)</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Compression">Compression</system:String>
+    <system:String x:Key="Menu_Settings_Defaults_CollapseGaps">Remove gaps between pictures.</system:String>
     <system:String x:Key="Menu_Settings_Defaults_UseTimespan">Use span instead of end time.</system:String>
+    <system:String x:Key="Menu_Settings_Defaults_ExitMenuOnDoubleClick">Exit playback on double click.</system:String>
     <system:String x:Key="Menu_Settings_Defaults_DontTurnOff">Don't turn off device (choose timeline) menu.</system:String>
     <system:String x:Key="Menu_Settings_Defaults_TurnOffAfter">Turn off device (choose timeline) menu after {0} sec.</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Duration">Default duration (sec)</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Stretching">Default stretching</system:String>
+    <system:String x:Key="Menu_Settings_Defaults_WriteDeviceSettings">Write to connected batons</system:String>
+    <system:String x:Key="Menu_Settings_Defaults_Device">Device</system:String>
+    <system:String x:Key="Menu_Settings_Defaults_Software">Software</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Window">Default values</system:String>
     <system:String x:Key="Menu_Settings_Defaults">Set default values</system:String>
     <system:String x:Key="Menu_Settings">Settings</system:String>

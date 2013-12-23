@@ -18,6 +18,7 @@ namespace PixelTuner.Drawing
         float emSize = 14;
         string _displayedText = "";        
         int _targetPointSize = 6;
+        int _linesCount = 25;
         Color GridColorLight = Color.FromArgb(255, 60, 60, 60);
         Color _drawColor = Color.White;
         Font _font = new Font("Arial", 24);
@@ -63,16 +64,18 @@ namespace PixelTuner.Drawing
             get { return 2 * PointSize; }
         }
 
-        public TextDialog(ConfigurationItem item, Font initialValues, int targetPointSize, Color c)
+        public TextDialog(ConfigurationItem item, Font initialValues, int linesCount, Color c)
         {
             _drawColor = c;
             _item = item;
-            _targetPointSize = targetPointSize;
+            _linesCount = linesCount;
             //emSize = initialValues.Size;
 
             InitDictionary();
-            MakeImage();
             InitializeComponent();
+            PointSize = _targetPointSize = (boxCanvas.Height - 20) / linesCount;
+            PatternLength = boxCanvas.Width / PointSize;
+            MakeImage();
             InitControls();
 
             _cursorPosition = new Rectangle(CursorStartPosition + _cursorDelta, 0, 2, (int)boxHeight.Value * PointSize);
@@ -183,13 +186,17 @@ namespace PixelTuner.Drawing
         private void DrawGrid(Graphics graphics)
         {
             if (graphics == null) return;
+
+            // vertical
             for (int i = 0; i < boxCanvas.Width; ++i)
                 graphics.DrawLine(new Pen(GridColorLight),
                     i * PointSize,
                     0,
                     i * PointSize,
-                    boxCanvas.Height);
-            for (int i = 0; i < boxCanvas.Width; ++i)
+                    PointSize * _linesCount);
+
+            // horizontal
+            for (int i = 0; i < _linesCount; ++i)
                 graphics.DrawLine(new Pen(GridColorLight),
                     0,
                     i * PointSize,
@@ -243,10 +250,6 @@ namespace PixelTuner.Drawing
         {
 
         }
-
-
-
-
 
         private void boxFontType_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -307,12 +310,12 @@ namespace PixelTuner.Drawing
             }
         }
 
-        private void DrawText(Graphics g, string text, int targetPoinSize)
+        private void DrawText(Graphics g, string text, int targetPointSize)
         {
             for (int i = 0; i < text.Length; i++)
             {
-                position += DrawLetter(g, text[i], _font, targetPoinSize,
-                    (int)boxHeight.Value, position) + (int)boxSpacing.Value * targetPoinSize;
+                position += DrawLetter(g, text[i], _font, targetPointSize,
+                    (int)boxHeight.Value, position) + (int)boxSpacing.Value * targetPointSize;
                 
                 _cursorPosition = new Rectangle(position + _cursorDelta, _cursorPosition.Y, 
                     _cursorPosition.Width, _cursorPosition.Height);
@@ -323,7 +326,7 @@ namespace PixelTuner.Drawing
 
         private int DrawLetter(Graphics g, char letter, Font font, int pointSize, int height, int position)
         {
-            Bitmap uncuttedLetterPic = new Bitmap(50, 40);
+            Bitmap uncuttedLetterPic = new Bitmap(200, 200);
             //g.DrawString(letter.ToString(), font, new SolidBrush(Color.White), new PointF(0, 0));
             //return 50;
 
@@ -366,7 +369,7 @@ namespace PixelTuner.Drawing
 
             // уточнить коэффициэнт или коррекцию при вычислении ширины: 4 * width * pointSize
             // влияет на правую границу
-            float k = 1 / emSize * 120; // придуман навскидку, весьма примерен
+            float k = 1 / emSize * 240; // придуман навскидку, весьма примерен
             Bitmap result = new Bitmap( (int)k * width * pointSize, b.Height * pointSize );
             Graphics g = Graphics.FromImage(result);
 

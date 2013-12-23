@@ -152,7 +152,14 @@ namespace ConnectionTester
                     {
                         for (int i = 0; i < boxRepeatCount.Value; i++)
                         {
-                            _device.WriteFile(binaryData);
+                            if (_device.Port != null)
+                                _device.WriteFile(binaryData);
+                            else
+                            {
+                                _logTarget.NewMessage("Port is null, trying to make new.", Common.Log.MessageType.Alert, "ConnectionTester", 0);
+                                try { boxConnect_LinkClicked(null, null); }
+                                catch { }
+                            }
                             System.Threading.Thread.Sleep((int)boxDelay.Value);
                         }
                     }

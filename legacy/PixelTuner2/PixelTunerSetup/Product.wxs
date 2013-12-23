@@ -5,7 +5,7 @@
   <?define RTMProductVersion="1.0.0" ?>
   <?define UpgradeCode="{df1086f7-6803-4697-b66c-74dd2733c092}"?>
   <?define Manufacturer="shiningpromo.ru"?>
-  <?define ProductCode="{4A046E60-46C9-4D9E-A13E-E9836E29B1B9}"?>
+  <?define ProductCode="{164483F2-4DF8-4823-9FED-434F5878CB38}"?>
   <?define PackageCode="*"?>
 
   <Product Id="$(var.ProductCode)" Name="PixelTuner" Language="1031" Codepage="1251" Version="$(var.ProductVersion)" Manufacturer="PixelTuner" UpgradeCode="$(var.UpgradeCode)">
@@ -41,6 +41,7 @@
             <File Id="AutoUpdaterLib" Source="..\PixelTuner\bin\$(var.Configuration)\AutoUpdater.dll" />
             <File Id="AutoUpdaterCfg" Source="..\PixelTuner\bin\$(var.Configuration)\Autoupdater.config" />
             <File Id="CommonLib" Source="..\PixelTuner\bin\$(var.Configuration)\Common.dll" />
+            <File Id="ToolkitLib" Source="..\PixelTuner\bin\$(var.Configuration)\Toolkit.dll" />
             <File Id="CommunicationLib" Source="..\PixelTuner\bin\$(var.Configuration)\Communication.dll" />
             <File Id="CoreLib" Source="..\PixelTuner\bin\$(var.Configuration)\Core.dll" />
             <File Id="WorkspaceLib" Source="..\PixelTuner\bin\$(var.Configuration)\Workspace.dll" />

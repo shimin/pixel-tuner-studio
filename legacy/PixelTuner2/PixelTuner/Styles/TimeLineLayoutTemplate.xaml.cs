@@ -18,5 +18,20 @@ namespace PixelTuner.Styles
             foreach (var t in timelines)
                 t.Width = t.MinWidth = g.ActualWidth - 26;
         }
+
+        private void boxImageButton_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            MessageBox.Show("");
+        }
+
+        private void ChildPreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var s = sender as IInputElement;
+            if (s != null)
+            {
+                s.CaptureMouse();
+                s.ReleaseMouseCapture();
+            }
+        }
     }
 }

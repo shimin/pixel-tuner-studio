@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TextDialog));
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.label4 = new System.Windows.Forms.Label();
             this.boxLetters = new System.Windows.Forms.TextBox();
@@ -81,8 +80,8 @@
             // splitContainer.Panel2
             // 
             this.splitContainer.Panel2.Controls.Add(this.boxCanvas);
-            this.splitContainer.Size = new System.Drawing.Size(957, 144);
-            this.splitContainer.SplitterDistance = 259;
+            this.splitContainer.Size = new System.Drawing.Size(1315, 301);
+            this.splitContainer.SplitterDistance = 261;
             this.splitContainer.SplitterWidth = 2;
             this.splitContainer.TabIndex = 0;
             // 
@@ -251,7 +250,7 @@
             this.boxCanvas.Location = new System.Drawing.Point(0, 0);
             this.boxCanvas.Margin = new System.Windows.Forms.Padding(0);
             this.boxCanvas.Name = "boxCanvas";
-            this.boxCanvas.Size = new System.Drawing.Size(696, 144);
+            this.boxCanvas.Size = new System.Drawing.Size(1052, 301);
             this.boxCanvas.TabIndex = 0;
             this.boxCanvas.TabStop = true;
             this.boxCanvas.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.boxCanvas_PreviewKeyDown);
@@ -265,10 +264,9 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(957, 144);
+            this.ClientSize = new System.Drawing.Size(1315, 301);
             this.Controls.Add(this.splitContainer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            //this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "TextDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Ввод текста";

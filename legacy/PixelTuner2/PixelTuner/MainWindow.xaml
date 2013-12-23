@@ -160,7 +160,7 @@
                 <MenuItem Header="{StaticResource Menu_Window_Images}" IsCheckable="True" IsChecked="{Binding ImagesModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
             </MenuItem>
             <MenuItem Header="{StaticResource Menu_Settings}">
-                <MenuItem Header="{StaticResource Menu_Settings_Defaults}" Command="{Binding AdjustDefaultsCommand}"/>
+                <MenuItem Header="{StaticResource Menu_Settings_Defaults}" Command="{Binding AdjustDefaultsCommand}" InputGestureText="Alt+P"/>
             </MenuItem>
         </Menu>
 
@@ -249,5 +249,6 @@
         <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveCommand}"></KeyBinding>
         <KeyBinding Gesture="Ctrl+Shift+S" Command="{Binding SaveAsCommand}"></KeyBinding>
         <KeyBinding Gesture="Ctrl+W" Command="{Binding CloseCommand}"></KeyBinding>
+        <KeyBinding Gesture="Alt+P" Command="{Binding AdjustDefaultsCommand}"></KeyBinding>
     </Window.InputBindings>
 </Window>
