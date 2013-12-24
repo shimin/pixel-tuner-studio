@@ -356,33 +356,49 @@ namespace PixelTuner.ViewModel
             w.Top = location.Y - w.Height / 2;
             if (w.ShowDialog() == true)
             {
-                ApplyChanges(w.Start, w.Duration, w.Stretching, w.Brightness, w.ForAll);
+                ApplyChanges(w.Start, w.Duration, w.Stretching, w.Brightness, w.ForAll, w.DurationChanged, w.StretchingChanged, w.BrightnessChanged);
             }
             if (w.NeedRefresh) RootViewModel.NotifySettingsChanged();
         }
 
-        private void ApplyChanges(DateTime start, TimeSpan duration, int stretching, byte brightness, bool forAll)
+        private void ApplyChanges(DateTime start, TimeSpan duration, int stretching, byte brightness, bool forAll, bool durationChanged, bool stretchChanged, bool brightnessChanged)
         {
-            this.StartTime = start;
+            var p = Parent as TimeLineViewModel;
+            int idx = p.Items.IndexOf(this) + 1;
+
+            this.StartTime = start > p.Start.Value ? start : p.Start.Value;
             this.EndTime = this.StartTime + duration;
             this.Stretching = stretching;
             this.Brightness = brightness;
-            var p = Parent as TimeLineViewModel;
-            int idx = p.Items.IndexOf(this) + 1;
+            
+            List<ITimeLineDataItem> toRemove = new List<ITimeLineDataItem>();
+            for (int i = idx - 2; i >= 0; i--)
+            {
+                if (p.Items[i].StartTime.Value >= this.StartTime.Value) toRemove.Add(p.Items[i]);
+                else if (p.Items[i].EndTime.Value > this.StartTime.Value) p.Items[i].EndTime = this.StartTime;
+            }
+
+            for (int i = idx; i < p.Items.Count && !forAll; i++)
+            {
+                if (p.Items[i].EndTime.Value <= this.EndTime.Value) toRemove.Add(p.Items[i]);
+                else if (p.Items[i].StartTime.Value < this.EndTime.Value) { p.Items[i].StartTime = this.EndTime; p.Items[i].EndTime = p.Items[i].EndTime; }
+            }
+            toRemove.ForEach((killedItem) => { p.Items.Remove(killedItem); });
+
             DateTime lastUsed = this.EndTime.Value;
             while (forAll && idx < p.Items.Count)
             {
                 var itm = (p.Items[idx] as TimeLineItemViewModel);
-                p.Items[idx].StartTime = lastUsed;
-                p.Items[idx].EndTime = p.Items[idx].StartTime.Value.Add(duration);
-                itm.Stretching = stretching;
-                itm.Brightness = brightness;
+                if (durationChanged)
+                {
+                    p.Items[idx].StartTime = lastUsed;
+                    p.Items[idx].EndTime = lastUsed.Add(duration);
+                }
+                if (stretchChanged) itm.Stretching = stretching;
+                if (brightnessChanged) itm.Brightness = brightness;
                 lastUsed = itm.EndTime.Value;
                 idx++;
             }
-            //p.TrimTimeSpaces();
-            //Console.WriteLine(String.Format("Start: {0}, End: {1}, Duration: {2}, Stretching: {3}, Brightness: {4}, ForAll: {5}",
-            //    start, start + duration, duration, stretching, brightness, forAll));
         }
 
         #endregion 

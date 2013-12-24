@@ -11,39 +11,119 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using PixelTuner.ViewModel;
+using System.ComponentModel;
 
 namespace PixelTuner
 {
     /// <summary>
     /// Interaction logic for ItemWindow.xaml
     /// </summary>
-    public partial class ItemWindow : Window
+    public partial class ItemWindow : Window, INotifyPropertyChanged
     {
         TimeLineItemViewModel item = null;
 
+        private DateTime _initialStart;
         public DateTime Start { get; set; }
-        
+
+        public bool StartTimeChanged
+        {
+            get
+            {
+                return !(_initialStart.Minute == boxStartMin.Value
+                        && _initialStart.Second == boxStartSec.Value
+                        && _initialStart.Millisecond == boxStartMs.Value);
+            }
+        }
+
+        public bool DurationChanged
+        {
+            get
+            {
+                return !(_initialDuration.Minutes == boxLengthMin.Value
+                            && _initialDuration.Seconds == boxLengthSec.Value
+                            && _initialDuration.Milliseconds == boxLengthMs.Value);
+            }
+        }
+
+        public bool StretchingChanged
+        {
+            get
+            {
+                return !(boxStretching.Value == _initialStretching);
+            }
+        }
+
+        public bool BrightnessChanged
+        {
+            get
+            {
+                return !(boxBrightness.Value == _initialBrightness);
+            }
+        }
+
+        private DateTime _initialEnd;
         public DateTime End { get; set; }
 
+        private TimeSpan _initialDuration;
         public TimeSpan Duration { get; set; }
 
+        private int _initialStretching;
         public int Stretching { get; set; }
 
+        private byte _initialBrightness;
         public byte Brightness { get; set; }
 
         public bool ForAll { get; set; }
 
         public bool NeedRefresh { get; set; }
 
+        #region Controls style
+
+        public FontWeight StartWeight
+        {
+            get
+            {
+                return StartTimeChanged ? FontWeights.Bold : FontWeights.Normal;
+            }
+        }
+
+        public FontWeight DurationWeight
+        {
+            get
+            {
+                return DurationChanged ? FontWeights.Bold : FontWeights.Normal;
+            }
+        }
+
+        public FontWeight StretchingWeight
+        {
+            get
+            {
+                return StretchingChanged ? FontWeights.Bold : FontWeights.Normal;
+            }
+        }
+
+        public FontWeight BrightnessWeight
+        {
+            get
+            {
+                return BrightnessChanged ? FontWeights.Bold : FontWeights.Normal;
+            }
+        }
+
+        #endregion
+
         public ItemWindow(TimeLineItemViewModel context)
         {
             item = context;
-            Start = context.StartTime.Value;
-            End = context.EndTime.Value;
-            Stretching = context.Stretching;
-            Brightness = context.Brightness;
+            _initialStart = Start = context.StartTime.Value;
+            _initialEnd = End = context.EndTime.Value;
+            _initialDuration = _initialEnd - _initialStart;
+            _initialStretching = Stretching = context.Stretching;
+            _initialBrightness = Brightness = context.Brightness;
             InitializeComponent();
             Initialize();
+            DataContext = this;
             this.Closing += new System.ComponentModel.CancelEventHandler(ItemWindow_Closing);
         }
         
@@ -78,6 +158,7 @@ namespace PixelTuner
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
+            NotifyBindings();
             switch (e.Key)
             {
                 case Key.Escape: e.Handled = true; this.Close(); break;
@@ -85,9 +166,34 @@ namespace PixelTuner
             }
         }
 
+        private void NotifyBindings()
+        {
+            RaisePropertyChanged("StartWeight");
+            RaisePropertyChanged("DurationWeight");
+            RaisePropertyChanged("StretchingWeight");
+            RaisePropertyChanged("BrightnessWeight");
+        }
+
         private void Window_ContentRendered(object sender, EventArgs e)
         {
             boxStartMin.Focus();
         }
+
+        #region INotifyPropertyChanged Members
+
+        protected virtual void RaisePropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion
+
+        private void numericValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            NotifyBindings();
+        }
+
     }
 }
