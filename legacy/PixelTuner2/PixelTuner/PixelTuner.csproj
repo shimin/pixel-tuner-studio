@@ -117,6 +117,9 @@
     <Compile Include="Converters\ActiveTimeLineConverter.cs" />
     <Compile Include="Controls\SearchTextBox\SearchTextBox.cs" />
     <Compile Include="Controls\ThumbListView\ImageView.cs" />
+    <Compile Include="ItemWindow.xaml.cs">
+      <DependentUpon>ItemWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ReplaceItemWindow.xaml.cs">
       <DependentUpon>ReplaceItemWindow.xaml</DependentUpon>
     </Compile>
@@ -170,6 +173,10 @@
       <DependentUpon>TriangleSlider.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\RootViewModel.cs" />
+    <Page Include="ItemWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ReplaceItemWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -636,6 +643,8 @@
     <Content Include="Content\80_batterfly_009.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\PenEdit.png" />
+    <Resource Include="Images\PenEdit_Dark.png" />
     <Resource Include="Images\pipette_tool.ico" />
     <Resource Include="Images\DrawingTool\pipette.png" />
     <Resource Include="Images\timelineCloneDisabled.png" />

@@ -132,12 +132,21 @@ namespace PixelTuner.ViewModel.Serialization
             set { _stretching = value; }
         }
 
+        byte _brightness = 100;
+        [XmlAttribute]
+        public byte Brightness
+        {
+            get { return _brightness; }
+            set { _brightness = value; }
+        }
+
         public static implicit operator TimeLineItemViewModel(TimeLineItem item)
         {
             var v = new PixelTuner.ViewModel.TimeLineItemViewModel(new System.IO.FileInfo(item.FullName));
             v.StartTime = item.StartTime;
             v.EndTime = item.EndTime;
             v.Stretching = item.Stretching;
+            v.Brightness = item.Brightness;
             return v;
         }
 

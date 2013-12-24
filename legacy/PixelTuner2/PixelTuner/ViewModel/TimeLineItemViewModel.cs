@@ -221,6 +221,25 @@ namespace PixelTuner.ViewModel
             get { return _brightness; }
             set { _brightness = value; }
         }
+
+        INotifyPropertyChanged _parent;
+        [XmlIgnore]
+        public INotifyPropertyChanged Parent
+        {
+            get { return _parent; }
+            set { _parent = value; }
+        }
+
+        public object Clone()
+        {
+            TimeLineItemViewModel result = new TimeLineItemViewModel(this._fi);
+            result.StartTime = this.StartTime;
+            result.EndTime = this.EndTime;
+            result.TimelineViewExpanded = this.TimelineViewExpanded;
+            result.Stretching = this.Stretching;
+            result.Brightness = this.Brightness;
+            return result;
+        }
         
         #region ReplaceCommand
         RelayCommand _replaceCommand = null;
@@ -270,16 +289,6 @@ namespace PixelTuner.ViewModel
 
         #endregion
 
-        public object Clone()
-        {
-            TimeLineItemViewModel result = new TimeLineItemViewModel(this._fi);
-            result.StartTime = this.StartTime;
-            result.EndTime = this.EndTime;
-            result.TimelineViewExpanded = this.TimelineViewExpanded;
-            result.Stretching = this.Stretching;
-            return result;
-        }
-        
         #region DisposeMe
         RelayCommand _disposeMeCommand = null;
         public ICommand DisposeMe
@@ -317,15 +326,67 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        INotifyPropertyChanged _parent;
-        [XmlIgnore]
-        public INotifyPropertyChanged Parent
+        #endregion 
+
+        #region EditMe
+        RelayCommand _editMeCommand = null;
+        public ICommand EditMe
         {
-            get { return _parent; }
-            set { _parent = value; }
+            get
+            {
+                if (_editMeCommand == null)
+                {
+                    _editMeCommand = new RelayCommand((p) => OnEditMe(p), (p) => CanEditMe(p));
+                }
+
+                return _editMeCommand;
+            }
+        }
+
+        private bool CanEditMe(object parameter)
+        {
+            return true;
+        }
+
+        private void OnEditMe(object parameter)
+        {
+            ItemWindow w = new ItemWindow(this);
+            var location = Application.Current.MainWindow.PointToScreen( Mouse.GetPosition(Application.Current.MainWindow));
+            w.Left = location.X - w.Width / 2;
+            w.Top = location.Y - w.Height / 2;
+            if (w.ShowDialog() == true)
+            {
+                ApplyChanges(w.Start, w.Duration, w.Stretching, w.Brightness, w.ForAll);
+            }
+            if (w.NeedRefresh) RootViewModel.NotifySettingsChanged();
+        }
+
+        private void ApplyChanges(DateTime start, TimeSpan duration, int stretching, byte brightness, bool forAll)
+        {
+            this.StartTime = start;
+            this.EndTime = this.StartTime + duration;
+            this.Stretching = stretching;
+            this.Brightness = brightness;
+            var p = Parent as TimeLineViewModel;
+            int idx = p.Items.IndexOf(this) + 1;
+            DateTime lastUsed = this.EndTime.Value;
+            while (forAll && idx < p.Items.Count)
+            {
+                var itm = (p.Items[idx] as TimeLineItemViewModel);
+                p.Items[idx].StartTime = lastUsed;
+                p.Items[idx].EndTime = p.Items[idx].StartTime.Value.Add(duration);
+                itm.Stretching = stretching;
+                itm.Brightness = brightness;
+                lastUsed = itm.EndTime.Value;
+                idx++;
+            }
+            //p.TrimTimeSpaces();
+            //Console.WriteLine(String.Format("Start: {0}, End: {1}, Duration: {2}, Stretching: {3}, Brightness: {4}, ForAll: {5}",
+            //    start, start + duration, duration, stretching, brightness, forAll));
         }
 
         #endregion 
+
 
         #region INotifyPropertyChanged Members
 
@@ -394,6 +455,7 @@ namespace PixelTuner.ViewModel
             result.EndTime = item.EndTime;
             result.FullName = item.FullName;
             result.Stretching = item.Stretching;
+            result.Brightness = item.Brightness;
             return result;
         }
 
