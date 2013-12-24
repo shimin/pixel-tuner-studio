@@ -26,7 +26,7 @@ namespace Communication.Pixelate
             bin.Add((byte)Images.Count);
             foreach (var v in Images)
             {
-                var desc = imgCollection.GetItem(v.Path);
+                var desc = imgCollection.GetItem(v.Key);
                 if (desc != null)
                 {
                     v.StartAddress = desc.StartAddress;

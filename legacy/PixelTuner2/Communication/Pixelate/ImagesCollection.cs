@@ -17,19 +17,19 @@ namespace Communication.Pixelate
 
         #region Constructors
 
-        public ImagesCollection(List<string> imageFilePaths, byte targetHeight, ColorDepth depth)
-        {
-            _descriptors = new Dictionary<string, ImagesCollectionItem>();
-            foreach (var path in imageFilePaths)
-            {
-                string filename = String.IsNullOrEmpty(path) ? emptyFileName.ToString() : path;
-                // don't add/rewrite already existing images
-                if (!_descriptors.ContainsKey(filename))
-                {
-                    _descriptors.Add(filename, new ImagesCollectionItem(filename, targetHeight, depth));
-                }
-            }
-        }
+        //public ImagesCollection(List<string> imageFilePaths, byte targetHeight, ColorDepth depth)
+        //{
+        //    _descriptors = new Dictionary<string, ImagesCollectionItem>();
+        //    foreach (var path in imageFilePaths)
+        //    {
+        //        string filename = String.IsNullOrEmpty(path) ? emptyFileName.ToString() : path;
+        //        // don't add/rewrite already existing images
+        //        if (!_descriptors.ContainsKey(filename))
+        //        {
+        //            _descriptors.Add(filename, new ImagesCollectionItem(filename, targetHeight, depth));
+        //        }
+        //    }
+        //}
 
         public ImagesCollection(List<ImagesCollectionItem> descriptors)
         {
@@ -37,7 +37,7 @@ namespace Communication.Pixelate
             foreach (var descriptor in descriptors)
             {
                 // don't add/rewrite already existing images
-                string filename = String.IsNullOrEmpty(descriptor.Path) ? emptyFileName.ToString() : descriptor.Path;
+                string filename = String.IsNullOrEmpty(descriptor.Path) ? emptyFileName.ToString() : descriptor.Key;
                 if (!_descriptors.ContainsKey(filename))
                 {
                     _descriptors.Add(filename, descriptor);
