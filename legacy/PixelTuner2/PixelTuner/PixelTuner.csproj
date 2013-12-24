@@ -643,6 +643,8 @@
     <Content Include="Content\80_batterfly_009.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\DrawingTool\flip_horizontal.png" />
+    <Resource Include="Images\DrawingTool\flip_vertical.png" />
     <Resource Include="Images\PenEdit.png" />
     <Resource Include="Images\PenEdit_Dark.png" />
     <Resource Include="Images\pipette_tool.ico" />

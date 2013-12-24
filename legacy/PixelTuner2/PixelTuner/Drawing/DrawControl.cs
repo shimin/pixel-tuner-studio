@@ -150,6 +150,10 @@ namespace PixelTuner.Drawing
                     new Uri("pack://application:,,,/Images/DrawingTool/bmp.png", UriKind.Absolute));
             var pip = new System.Windows.Media.Imaging.BitmapImage(
                     new Uri("pack://application:,,,/Images/DrawingTool/pipette.png", UriKind.Absolute));
+            var flipVImg = new System.Windows.Media.Imaging.BitmapImage(
+                    new Uri("pack://application:,,,/Images/DrawingTool/flip_vertical.png", UriKind.Absolute));
+            var flipHImg = new System.Windows.Media.Imaging.BitmapImage(
+                    new Uri("pack://application:,,,/Images/DrawingTool/flip_horizontal.png", UriKind.Absolute));
             var pipCursor = new System.Windows.Media.Imaging.BitmapImage(
                     new Uri("pack://application:,,,/Images/pipette_tool.ico", UriKind.Absolute));
 
@@ -158,6 +162,8 @@ namespace PixelTuner.Drawing
             boxSelect.BackgroundImage = BitmapImage2Bitmap<PngBitmapEncoder>(copy);
             boxBmpImport.BackgroundImage = BitmapImage2Bitmap<PngBitmapEncoder>(bmp);
             boxPipette.BackgroundImage = BitmapImage2Bitmap<PngBitmapEncoder>(pip);
+            boxFlipV.BackgroundImage = BitmapImage2Bitmap<PngBitmapEncoder>(flipVImg);
+            boxFlipH.BackgroundImage = BitmapImage2Bitmap<PngBitmapEncoder>(flipHImg);
             _curPipette = CursorHelper.CreateCursorNoResize(BitmapImage2Bitmap<PngBitmapEncoder>(pipCursor), 1, 15);
 
             this.DoubleBuffered = true;
@@ -590,7 +596,7 @@ namespace PixelTuner.Drawing
 
         private void boxTextButton_Click(object sender, EventArgs e)
         {
-            TextDialog td = new TextDialog(_item, DefaultFont, _item.PatternLines, BrushFrontColor);
+            TextDialog td = new TextDialog(_item, DefaultFont, _item.PointSize, _item.PatternLines, BrushFrontColor);
             Application.RemoveMessageFilter(this);
             if (td.ShowDialog() == DialogResult.OK)
             {
@@ -598,8 +604,6 @@ namespace PixelTuner.Drawing
             }
             Application.AddMessageFilter(this);
         }
-
-        int threshold = 25;
 
         private void boxBmpImport_Click(object sender, EventArgs e)
         {
@@ -650,6 +654,44 @@ namespace PixelTuner.Drawing
                 }
             boxFillBG.BackgroundImage = b;
             boxFillBG.Refresh();
+        }
+        
+        private void boxFlipV_Click(object sender, EventArgs e)
+        {
+            if (_duplicatedFragment != null)
+            {
+                Graphics g = Graphics.FromImage(_duplicatedFragment);
+                var clone = _duplicatedFragment.Clone() as Image;
+                g.Clear(Color.FromArgb(0));
+                g.DrawImage(clone, 0, clone.Height, clone.Width, -clone.Height);
+                boxCanvas.Invalidate();
+            }
+            else
+            {
+                Push();
+                Graphics g = Graphics.FromImage(_item.Image);
+                g.DrawImage(_item.Image, 0, _item.Image.Height, _item.Image.Width, -_item.Image.Height);
+                boxCanvas.Refresh();
+            }
+        }
+
+        private void boxFlipH_Click(object sender, EventArgs e)
+        {
+            if (_duplicatedFragment != null)
+            {
+                Graphics g = Graphics.FromImage(_duplicatedFragment);
+                var clone = _duplicatedFragment.Clone() as Image;
+                g.Clear(Color.FromArgb(0));
+                g.DrawImage(clone, clone.Width, 0, -clone.Width, clone.Height);
+                boxCanvas.Invalidate();
+            }
+            else
+            {
+                Push();
+                Graphics g = Graphics.FromImage(_item.Image);
+                g.DrawImage(_item.Image, _item.Image.Width, 0, -_item.Image.Width, _item.Image.Height);
+                boxCanvas.Refresh();
+            }
         }
 
         #endregion
@@ -815,7 +857,21 @@ namespace PixelTuner.Drawing
                 buttonSelect_Click(boxSelect, new EventArgs());
                 return true;
             }
-
+            if (m.Msg == WM_KEYDOWN && keyCode == Keys.Back)
+            {
+                boxFillBG_Click(boxFillBG, new EventArgs());
+                return true;
+            }
+            if (m.Msg == WM_KEYDOWN && keyCode == Keys.H)
+            {
+                boxFlipH_Click(boxFillBG, new EventArgs());
+                return true;
+            }
+            if (m.Msg == WM_KEYDOWN && keyCode == Keys.V)
+            {
+                boxFlipV_Click(boxFillBG, new EventArgs());
+                return true;
+            }
             if (m.Msg == WM_KEYDOWN && keyCode == Keys.Z)
             {
                 Undo();

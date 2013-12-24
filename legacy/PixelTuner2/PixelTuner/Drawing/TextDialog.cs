@@ -64,7 +64,7 @@ namespace PixelTuner.Drawing
             get { return 2 * PointSize; }
         }
 
-        public TextDialog(ConfigurationItem item, Font initialValues, int linesCount, Color c)
+        public TextDialog(ConfigurationItem item, Font initialValues, int pointSize, int linesCount, Color c)
         {
             _drawColor = c;
             _item = item;
@@ -73,7 +73,8 @@ namespace PixelTuner.Drawing
 
             InitDictionary();
             InitializeComponent();
-            PointSize = _targetPointSize = (boxCanvas.Height - 20) / linesCount;
+            PointSize = pointSize;
+            //PointSize = _targetPointSize = (boxCanvas.Height - 20) / linesCount;
             PatternLength = boxCanvas.Width / PointSize;
             MakeImage();
             InitControls();

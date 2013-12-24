@@ -30,6 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.boxFlipH = new System.Windows.Forms.Button();
+            this.boxFlipV = new System.Windows.Forms.Button();
             this.boxPipette = new System.Windows.Forms.Button();
             this.boxLabelWidth = new System.Windows.Forms.Label();
             this.boxWidth = new System.Windows.Forms.NumericUpDown();
@@ -47,8 +49,8 @@
             this.boxTableLayout = new System.Windows.Forms.TableLayoutPanel();
             this.boxCanvasHolder = new System.Windows.Forms.Panel();
             this.boxSplit = new System.Windows.Forms.SplitContainer();
-            this.boxPipetteTT = new System.Windows.Forms.ToolTip(this.components);
             this.boxCanvas = new PixelTuner.Drawing.PixelCanvas();
+            this.boxPipetteTT = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
@@ -76,6 +78,8 @@
             // 
             // splitContainer.Panel1
             // 
+            this.splitContainer.Panel1.Controls.Add(this.boxFlipH);
+            this.splitContainer.Panel1.Controls.Add(this.boxFlipV);
             this.splitContainer.Panel1.Controls.Add(this.boxPipette);
             this.splitContainer.Panel1.Controls.Add(this.boxLabelWidth);
             this.splitContainer.Panel1.Controls.Add(this.boxWidth);
@@ -99,6 +103,40 @@
             this.splitContainer.SplitterWidth = 2;
             this.splitContainer.TabIndex = 0;
             // 
+            // boxFlipH
+            // 
+            this.boxFlipH.BackColor = System.Drawing.SystemColors.Control;
+            this.boxFlipH.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.boxFlipH.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.boxFlipH.FlatAppearance.BorderSize = 0;
+            this.boxFlipH.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.boxFlipH.Font = new System.Drawing.Font("Georgia", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.boxFlipH.Location = new System.Drawing.Point(184, 5);
+            this.boxFlipH.Name = "boxFlipH";
+            this.boxFlipH.Size = new System.Drawing.Size(19, 19);
+            this.boxFlipH.TabIndex = 39;
+            this.boxFlipH.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.boxPipetteTT.SetToolTip(this.boxFlipH, "Flip Horizontal (H)");
+            this.boxFlipH.UseVisualStyleBackColor = false;
+            this.boxFlipH.Click += new System.EventHandler(this.boxFlipH_Click);
+            // 
+            // boxFlipV
+            // 
+            this.boxFlipV.BackColor = System.Drawing.SystemColors.Control;
+            this.boxFlipV.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.boxFlipV.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.boxFlipV.FlatAppearance.BorderSize = 0;
+            this.boxFlipV.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.boxFlipV.Font = new System.Drawing.Font("Georgia", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.boxFlipV.Location = new System.Drawing.Point(160, 5);
+            this.boxFlipV.Name = "boxFlipV";
+            this.boxFlipV.Size = new System.Drawing.Size(19, 19);
+            this.boxFlipV.TabIndex = 38;
+            this.boxFlipV.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.boxPipetteTT.SetToolTip(this.boxFlipV, "Flip Vertical (V)");
+            this.boxFlipV.UseVisualStyleBackColor = false;
+            this.boxFlipV.Click += new System.EventHandler(this.boxFlipV_Click);
+            // 
             // boxPipette
             // 
             this.boxPipette.BackColor = System.Drawing.SystemColors.Control;
@@ -119,7 +157,7 @@
             // boxLabelWidth
             // 
             this.boxLabelWidth.AutoSize = true;
-            this.boxLabelWidth.Location = new System.Drawing.Point(399, 7);
+            this.boxLabelWidth.Location = new System.Drawing.Point(444, 7);
             this.boxLabelWidth.Name = "boxLabelWidth";
             this.boxLabelWidth.Size = new System.Drawing.Size(46, 13);
             this.boxLabelWidth.TabIndex = 36;
@@ -127,7 +165,7 @@
             // 
             // boxWidth
             // 
-            this.boxWidth.Location = new System.Drawing.Point(444, 5);
+            this.boxWidth.Location = new System.Drawing.Point(489, 5);
             this.boxWidth.Maximum = new decimal(new int[] {
             10,
             0,
@@ -151,7 +189,7 @@
             // boxScaleLabel
             // 
             this.boxScaleLabel.AutoSize = true;
-            this.boxScaleLabel.Location = new System.Drawing.Point(169, 7);
+            this.boxScaleLabel.Location = new System.Drawing.Point(214, 7);
             this.boxScaleLabel.Name = "boxScaleLabel";
             this.boxScaleLabel.Size = new System.Drawing.Size(53, 13);
             this.boxScaleLabel.TabIndex = 34;
@@ -159,7 +197,7 @@
             // 
             // boxPointSize
             // 
-            this.boxPointSize.Location = new System.Drawing.Point(222, 5);
+            this.boxPointSize.Location = new System.Drawing.Point(267, 5);
             this.boxPointSize.Maximum = new decimal(new int[] {
             12,
             0,
@@ -183,7 +221,7 @@
             // boxLImageLinesCountLabel
             // 
             this.boxLImageLinesCountLabel.AutoSize = true;
-            this.boxLImageLinesCountLabel.Location = new System.Drawing.Point(285, 7);
+            this.boxLImageLinesCountLabel.Location = new System.Drawing.Point(330, 7);
             this.boxLImageLinesCountLabel.Name = "boxLImageLinesCountLabel";
             this.boxLImageLinesCountLabel.Size = new System.Drawing.Size(45, 13);
             this.boxLImageLinesCountLabel.TabIndex = 32;
@@ -196,7 +234,7 @@
             0,
             0,
             0});
-            this.boxHeight.Location = new System.Drawing.Point(330, 5);
+            this.boxHeight.Location = new System.Drawing.Point(375, 5);
             this.boxHeight.Minimum = new decimal(new int[] {
             10,
             0,
@@ -274,6 +312,7 @@
             this.boxFillBG.Name = "boxFillBG";
             this.boxFillBG.Size = new System.Drawing.Size(20, 19);
             this.boxFillBG.TabIndex = 0;
+            this.boxPipetteTT.SetToolTip(this.boxFillBG, "Fill Background (Backspace)");
             this.boxFillBG.UseVisualStyleBackColor = false;
             this.boxFillBG.Click += new System.EventHandler(this.boxFillBG_Click);
             // 
@@ -388,7 +427,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer);
             this.Margin = new System.Windows.Forms.Padding(0);
-            this.MinimumSize = new System.Drawing.Size(500, 200);
+            this.MinimumSize = new System.Drawing.Size(660, 200);
             this.Name = "DrawControl";
             this.Size = new System.Drawing.Size(872, 241);
             this.Load += new System.EventHandler(this.DrawControl_Load);
@@ -431,5 +470,7 @@
         private System.Windows.Forms.NumericUpDown boxWidth;
         private System.Windows.Forms.Button boxPipette;
         private System.Windows.Forms.ToolTip boxPipetteTT;
+        private System.Windows.Forms.Button boxFlipH;
+        private System.Windows.Forms.Button boxFlipV;
     }
 }
