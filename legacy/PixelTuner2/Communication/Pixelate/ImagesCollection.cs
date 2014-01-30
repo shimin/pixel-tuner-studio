@@ -11,23 +11,25 @@ namespace Communication.Pixelate
         #region Fields
 
         Dictionary<string, ImagesCollectionItem> _descriptors = null;
+        Guid emptyFileName = Guid.NewGuid();
 
         #endregion
 
         #region Constructors
 
-        public ImagesCollection(List<string> imageFilePaths, byte targetHeight, ColorDepth depth)
-        {
-            _descriptors = new Dictionary<string, ImagesCollectionItem>();
-            foreach (var path in imageFilePaths)
-            {
-                // don't add/rewrite already existing images
-                if (!_descriptors.ContainsKey(path))
-                {
-                    _descriptors.Add(path, new ImagesCollectionItem(path, targetHeight, depth));
-                }
-            }
-        }
+        //public ImagesCollection(List<string> imageFilePaths, byte targetHeight, ColorDepth depth)
+        //{
+        //    _descriptors = new Dictionary<string, ImagesCollectionItem>();
+        //    foreach (var path in imageFilePaths)
+        //    {
+        //        string filename = String.IsNullOrEmpty(path) ? emptyFileName.ToString() : path;
+        //        // don't add/rewrite already existing images
+        //        if (!_descriptors.ContainsKey(filename))
+        //        {
+        //            _descriptors.Add(filename, new ImagesCollectionItem(filename, targetHeight, depth));
+        //        }
+        //    }
+        //}
 
         public ImagesCollection(List<ImagesCollectionItem> descriptors)
         {
@@ -35,9 +37,10 @@ namespace Communication.Pixelate
             foreach (var descriptor in descriptors)
             {
                 // don't add/rewrite already existing images
-                if (!_descriptors.ContainsKey(descriptor.Path))
+                string filename = String.IsNullOrEmpty(descriptor.Path) ? emptyFileName.ToString() : descriptor.Key;
+                if (!_descriptors.ContainsKey(filename))
                 {
-                    _descriptors.Add(descriptor.Path, descriptor);
+                    _descriptors.Add(filename, descriptor);
                 }
             }
         }
@@ -93,8 +96,10 @@ namespace Communication.Pixelate
 
         public ImagesCollectionItem GetItem(string path)
         {
-            if (_descriptors.ContainsKey(path))
-                return _descriptors[path];
+            string filename = String.IsNullOrEmpty(path) ? emptyFileName.ToString() : path;
+            
+            if (_descriptors.ContainsKey(filename))
+                return _descriptors[filename];
 
             return null;
         }

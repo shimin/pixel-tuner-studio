@@ -30,18 +30,11 @@ namespace Communication.Service
                 Logger.NewMessage(message, mType, level);
             }
         }
-
-        protected string BytesToString(byte[] buf)
+        
+        protected void LogException(Exception ex)
         {
-            string result = "";
-            foreach (byte b in buf) result += b.ToString("X2") + " ";
-            return result;
+            if (Logger != null) Logger.WriteException(ex);
         }
-
-        protected string BytesToString(List<byte> buf)
-        {
-            return BytesToString(buf.ToArray());
-        } 
 
         #endregion
     }

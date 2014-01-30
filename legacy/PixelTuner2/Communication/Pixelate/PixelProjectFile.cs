@@ -68,7 +68,8 @@ namespace Communication.Pixelate
 
         private void SetBinarySize(List<byte> result)
         {
-            byte[] sizeBytes = BitConverter.GetBytes(result.Count);
+            UInt32 size = (UInt32)result.Count;
+            byte[] sizeBytes = BitConverter.GetBytes(size);
             for (int i = projectPrefix.Count; i < projectPrefix.Count + sizeBytes.Length; i++)
                 result[i] = sizeBytes[i - projectPrefix.Count];
         }

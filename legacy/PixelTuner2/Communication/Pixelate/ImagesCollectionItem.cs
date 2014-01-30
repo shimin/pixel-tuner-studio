@@ -20,6 +20,14 @@ namespace Communication.Pixelate
 
         #region Fields
 
+        public string Key
+        {
+            get
+            {
+                return string.IsNullOrEmpty(Path) ? null : Path + "_" + Brightness.ToString();
+            }
+        }
+
         string _path;
         public string Path
         {
@@ -31,6 +39,8 @@ namespace Communication.Pixelate
         {
             get { return _bitmap; }
         }
+
+        public byte Brightness { get; set; }
 
         UInt32 _startAddress;
         /// <summary>
@@ -85,9 +95,13 @@ namespace Communication.Pixelate
             if (File.Exists(_path))
             {
                 _bitmap = Bitmap.FromFile(_path) as Bitmap;
-                var size = GetSize(targetHeight);
-                _binary = new List<byte>(new byte[size]);
             }
+            else
+            {
+                _bitmap = new Bitmap(1, targetHeight);
+            }
+            var size = GetSize(targetHeight);
+            _binary = new List<byte>(new byte[size]);
         }
 
         #endregion
@@ -200,9 +214,9 @@ namespace Communication.Pixelate
             {
                 List<Color> columnColors = new List<Color>();
                 GetColumn(targetHeight, column, columnColors);
-                foreach (var c in columnColors) binary.Add(c.R);
-                foreach (var c in columnColors) binary.Add(c.G);
-                foreach (var c in columnColors) binary.Add(c.B);
+                foreach (var c in columnColors) binary.Add(Map8To8(c.R));
+                foreach (var c in columnColors) binary.Add(Map8To8(c.G));
+                foreach (var c in columnColors) binary.Add(Map8To8(c.B));
             }
             return binary;
         }
@@ -266,12 +280,22 @@ namespace Communication.Pixelate
 
         private IList<byte> Map8To12(byte p)
         {
+            float colorMult = (float)Brightness / 100;
+            p = (byte)(p * colorMult);
             return BitConverter.GetBytes((UInt16)(4095 * p / byte.MaxValue));
+        }
+
+        private byte Map8To8(byte p)
+        {
+            float colorMult = (float)Brightness / 100;
+            p = (byte)(p * colorMult);
+            return p;
         }
 
         private IList<byte> Map8To4(byte p)
         {
-            //p = (byte)(p / 2);
+            float colorMult = (float)Brightness / 100;
+            p = (byte)(p * colorMult);
             return BitConverter.GetBytes((byte)(15 * p / byte.MaxValue));
         }
 

@@ -103,7 +103,7 @@ namespace Communication.Service
         protected byte[] DoSession(byte[] query)
         {
             OnSessionStarted(this, new List<byte>(query));
-            LogMessage("Request: " + BytesToString(query), Common.Log.MessageType.Debug);
+            LogMessage("Request: " + Common.Log.Logger.BytesToString(query), Common.Log.MessageType.Debug);
             List<byte> received = new List<byte>();
             try
             {
@@ -135,12 +135,8 @@ namespace Communication.Service
 
                     if (bytesGot != len) throw new TimeoutException("Incorrect packet length " + bytesGot.ToString() + " (expected " + len.ToString() + ")");
                     received.AddRange(receiveBuf);
-                    LogMessage("Result:  " + BytesToString(receiveBuf), Common.Log.MessageType.Debug);
+                    LogMessage("Result:  " + Common.Log.Logger.BytesToString(receiveBuf), Common.Log.MessageType.Debug);
                 }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
             }
             finally
             {

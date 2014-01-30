@@ -9,6 +9,16 @@ namespace Communication.Pixelate
     {
         #region Fields
 
+        public byte Brightness { get; set; }
+
+        public string Key
+        {
+            get
+            {
+                return string.IsNullOrEmpty(Path) ? null : Path + "_" + Brightness.ToString();
+            }
+        }
+
         string _path;
         public string Path
         {
