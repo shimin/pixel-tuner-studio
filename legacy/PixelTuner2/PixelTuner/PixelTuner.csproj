@@ -282,10 +282,6 @@
       <Project>{DA6AD361-E034-4A14-BA94-8605A21D2E70}</Project>
       <Name>Communication</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Core\Core.csproj">
-      <Project>{7439A26A-46E1-42A0-9D58-2E38289675F6}</Project>
-      <Name>Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Workspace\Workspace.csproj">
       <Project>{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}</Project>
       <Name>Workspace</Name>

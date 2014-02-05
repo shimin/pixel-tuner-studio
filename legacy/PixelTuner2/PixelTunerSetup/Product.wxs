@@ -43,7 +43,6 @@
             <File Id="CommonLib" Source="..\PixelTuner\bin\$(var.Configuration)\Common.dll" />
             <File Id="ToolkitLib" Source="..\PixelTuner\bin\$(var.Configuration)\Toolkit.dll" />
             <File Id="CommunicationLib" Source="..\PixelTuner\bin\$(var.Configuration)\Communication.dll" />
-            <File Id="CoreLib" Source="..\PixelTuner\bin\$(var.Configuration)\Core.dll" />
             <File Id="WorkspaceLib" Source="..\PixelTuner\bin\$(var.Configuration)\Workspace.dll" />
             <File Id="PixelTuner.exe" Name="PixelTuner.exe" Source="..\PixelTuner\bin\$(var.Configuration)\PixelTuner.exe" KeyPath='yes'>
               <Shortcut Id="startmenuPixelTuner" Directory="ProgramMenuDir" Name="PixelTuner 2"

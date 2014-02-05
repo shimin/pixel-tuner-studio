@@ -12,7 +12,6 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Xml.Serialization;
 
-using Core;
 using PixelTuner.Properties;
 using PixelTuner.Controls;
 using PixelTuner.ViewModel.Serialization;

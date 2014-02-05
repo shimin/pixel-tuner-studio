@@ -12,7 +12,7 @@ using System.Windows.Shapes;
 using System.Windows.Documents;
 using System.Windows.Controls.Primitives;
 
-using Core.DragDrop;
+using Common.DragDrop;
 
 namespace PixelTuner.Controls
 {
@@ -1290,7 +1290,7 @@ namespace PixelTuner.Controls
             else
             {//Core.DragDrop
 
-                var d2 = e.Data.GetData("Core.DragDropHelper");
+                var d2 = e.Data.GetData("Common.DragDropHelper");
                 if (d2 != null)
                 {
                     if (Manager != null)
@@ -1353,7 +1353,7 @@ namespace PixelTuner.Controls
             ITimeLineDataItem dropData = null;
             if (dropper == null)
             {
-                dropData = e.Data.GetData("Core.DragDropHelper") as ITimeLineDataItem;
+                dropData = e.Data.GetData("Common.DragDropHelper") as ITimeLineDataItem;
                 if (dropData != null)
                 {
                     dropData = (ITimeLineDataItem)dropData.Clone();

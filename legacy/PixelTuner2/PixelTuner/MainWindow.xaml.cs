@@ -19,7 +19,6 @@ using PixelTuner.Properties;
 using Workspace.Layout;
 using Workspace.Layout.Serialization;
 
-using Core;
 using Communication.Service;
 using PixelTuner.ViewModel;
 using PixelTunerAutoupdater;

@@ -7,7 +7,7 @@
         Style="{DynamicResource WindowStyle}"
         
         xmlns:avalonDock="http://avalondock.codeplex.com"
-        xmlns:dd="clr-namespace:Core.DragDrop;assembly=Core"
+        xmlns:dd="clr-namespace:Common.DragDrop;assembly=Common"
         xmlns:tlw="clr-namespace:PixelTuner.Controls.ThumbListView"
         
         xmlns:pt="clr-namespace:PixelTuner"
