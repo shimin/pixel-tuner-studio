@@ -270,6 +270,18 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\wpftools\Toolkit\Toolkit.csproj">
+      <Project>{72E591D6-8F83-4D8C-8F67-9C325E623234}</Project>
+      <Name>Toolkit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\wpftools\Workspace.Themes\Workspace.Themes.csproj">
+      <Project>{D422C9D7-B4EA-4154-949B-FAC4D9DC89D2}</Project>
+      <Name>Workspace.Themes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\wpftools\Workspace\Workspace.csproj">
+      <Project>{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}</Project>
+      <Name>Workspace</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AutoUpdater\AutoUpdater.csproj">
       <Project>{4BA4719C-C6AB-49BA-9754-848CA24C1FD6}</Project>
       <Name>AutoUpdater</Name>
@@ -281,14 +293,6 @@
     <ProjectReference Include="..\Communication\Communication.csproj">
       <Project>{DA6AD361-E034-4A14-BA94-8605A21D2E70}</Project>
       <Name>Communication</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Workspace\Workspace.csproj">
-      <Project>{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}</Project>
-      <Name>Workspace</Name>
-    </ProjectReference>
-    <ProjectReference Include="libs\Xceed.Wpf.Toolkit\Toolkit.csproj">
-      <Project>{72E591D6-8F83-4D8C-8F67-9C325E623234}</Project>
-      <Name>Toolkit</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -664,9 +668,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
