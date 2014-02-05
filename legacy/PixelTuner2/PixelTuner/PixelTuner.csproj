@@ -644,6 +644,7 @@
     <Content Include="Content\80_batterfly_009.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\scale-stretching.png" />
     <Resource Include="Images\DrawingTool\flip_horizontal.png" />
     <Resource Include="Images\DrawingTool\flip_vertical.png" />
     <Resource Include="Images\PenEdit.png" />

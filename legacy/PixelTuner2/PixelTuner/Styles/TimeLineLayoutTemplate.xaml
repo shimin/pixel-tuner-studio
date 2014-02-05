@@ -87,12 +87,15 @@
                         <TextBlock Text="{Binding Path=End}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{StaticResource Item_Stretching}" Margin="0,2,4,0"/>
-                        <ct:TriangleSlider Height="12" 
+                            <Border Width="16" Height="16" Margin="-1,0,0,0" ToolTip="{StaticResource Item_Stretching}">
+                                <Image Source="/PixelTuner;component/Images/scale-stretching.png"/>
+                            </Border>
+                            <ct:TriangleSlider Height="12" 
                                            Width="48"
                                            MinValue="4" 
                                            MaxValue="46" 
-                                           Margin="0,2,4,0"
+                                           Margin="-2,2,4,0"
+                                           ToolTip="{StaticResource Item_Stretching}"
                                            PreviewMouseLeftButtonDown="ChildPreviewMouseLeftButtonDown"
                                            Value="{Binding Path=Parent.DataContext.Stretching, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
