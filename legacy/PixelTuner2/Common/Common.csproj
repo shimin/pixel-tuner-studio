@@ -31,11 +31,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -47,6 +50,22 @@
     <Compile Include="Collections\DelegatedList.cs" />
     <Compile Include="Collections\SafeObservable.cs" />
     <Compile Include="Collections\StreamHelper.cs" />
+    <Compile Include="DragDrop\DefaultDragHandler.cs" />
+    <Compile Include="DragDrop\DefaultDropHandler.cs" />
+    <Compile Include="DragDrop\DragAdorner.cs" />
+    <Compile Include="DragDrop\DragDropHelper.cs" />
+    <Compile Include="DragDrop\DragInfo.cs" />
+    <Compile Include="DragDrop\DropInfo.cs" />
+    <Compile Include="DragDrop\DropTargetAdorner.cs" />
+    <Compile Include="DragDrop\DropTargetAdorners.cs" />
+    <Compile Include="DragDrop\DropTargetHighlightAdorner.cs" />
+    <Compile Include="DragDrop\DropTargetInsertionAdorner.cs" />
+    <Compile Include="DragDrop\IDragSource.cs" />
+    <Compile Include="DragDrop\IDropTarget.cs" />
+    <Compile Include="DragDrop\IInvokeProvider.cs" />
+    <Compile Include="DragDrop\Utilities\ItemsControlExtensions.cs" />
+    <Compile Include="DragDrop\Utilities\TypeUtilities.cs" />
+    <Compile Include="DragDrop\Utilities\VisualTreeExtensions.cs" />
     <Compile Include="Helpers\CursorHelper.cs" />
     <Compile Include="Helpers\EnumHelper.cs" />
     <Compile Include="Log\ConsoleTarget.cs" />
