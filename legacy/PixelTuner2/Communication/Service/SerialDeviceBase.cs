@@ -1,216 +1,283 @@
-﻿using System;
+﻿using Common.Log;
+using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO.Ports;
 using System.Management;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using System.IO.Ports;
 
 namespace Communication.Service
 {
-    public abstract class SerialDeviceBase : DeviceBase
+    public class SerialDeviceBase : DeviceBase
     {
-        #region Properties
-
-        object _syncSession = new object();
-
         protected SerialPort _port = null;
-        public SerialPort Port
-        {
-            get { return _port; }
-            set { _port = value; }
-        }
+        private string _portName = null;
+        private ConnectionStatus _status = ConnectionStatus.Offline;
+        private object _syncSession = new object();
+        private int _writeReadDelay = 10;
+        private ManagementEventWatcher w = null;
 
-        int _writeReadDelay = 10;
-        /// <summary>
-        /// Задержка в мсиллисекундах между операцей записи и чтения.
-        /// </summary>
-        public int WriteReadDelay
-        {
-            get { return _writeReadDelay; }
-            set { _writeReadDelay = value; }
-        }
+        public event DisconnectedDelegate Disconnected;
 
-        ConnectionStatus _status = ConnectionStatus.Offline;
-        public ConnectionStatus Status
-        {
-            get { return _status; }
-        }
+        public event SessionDelegate SessionFinished;
 
-        #endregion
-        
-        #region Constructor
-        
+        public event SessionDelegate SessionStarted;
+
+        public event StatusDelegate StatusChanged;
+
         public SerialDeviceBase(SerialPort port)
         {
-            _port = port;
-            if (_port != null)
+            this._port = port;
+            if (this._port != null)
             {
-                _port.ReadTimeout = (int)PixelDeviceTimeout.Long;
-                _port.WriteTimeout = 2000;
+                this._portName = this._port.PortName;
+                this._port.ReadTimeout = 0x7530;
+                this._port.WriteTimeout = 0x7d0;
             }
-            AddRemoveUSBHandler();
+            this.AddRemoveUSBHandler();
         }
-        
-        #endregion
-
-        #region DisconnectWatcher
-
-        private ManagementEventWatcher w = null;
 
         protected void AddRemoveUSBHandler()
         {
-            WqlEventQuery q;
-            ManagementScope scope = new ManagementScope("root\\CIMV2");
-            scope.Options.EnablePrivileges = true;
-
+            ManagementScope scope = new ManagementScope(@"root\CIMV2")
+            {
+                Options = { EnablePrivileges = true }
+            };
             try
             {
-                q = new WqlEventQuery();
-                q.EventClassName = "__InstanceDeletionEvent";
-                q.WithinInterval = new TimeSpan(0, 0, 3);
-                q.Condition = "TargetInstance ISA 'Win32_USBControllerdevice'";
-                w = new ManagementEventWatcher(scope, q);
-                w.EventArrived += USBRemoved;
-
-                w.Start();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                if (w != null)
+                WqlEventQuery query = new WqlEventQuery
                 {
-                    w.Stop();
+                    EventClassName = "__InstanceDeletionEvent",
+                    WithinInterval = new TimeSpan(0, 0, 3),
+                    Condition = "TargetInstance ISA 'Win32_USBControllerdevice'"
+                };
+                this.w = new ManagementEventWatcher(scope, query);
+                this.w.EventArrived += new EventArrivedEventHandler(this.USBRemoved);
+                this.w.Start();
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.Message);
+                if (this.w != null)
+                {
+                    this.w.Stop();
                 }
             }
+        }
+
+        public virtual void Disconnect()
+        {
+            lock (this._syncSession)
+            {
+                if (this._port != null)
+                {
+                    try
+                    {
+                        this._port.Close();
+                        this._port = null;
+                        this.SetStatus(ConnectionStatus.Offline);
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+        }
+
+        protected byte[] DoSession(byte[] query)
+        {
+            this.OnSessionStarted(this, new List<byte>(query));
+            base.LogMessage("Request: " + Logger.BytesToString(query), MessageType.Debug);
+            List<byte> data = new List<byte>();
+            try
+            {
+                lock (this._syncSession)
+                {
+                    this._port.DiscardInBuffer();
+                    this._port.DiscardOutBuffer();
+                    this._port.Write(query, 0, query.Length);
+                    Thread.Sleep(this.WriteReadDelay);
+                    int num = -1;
+                    try
+                    {
+                        num = this._port.ReadByte();
+                        data.Add((byte)num);
+                    }
+                    catch
+                    {
+                        throw new TimeoutException("Packet ID reading timeout.");
+                    }
+                    if (num != query[0])
+                    {
+                        throw new ArgumentException(string.Format("Wrong answer {0} on request {1}.", num.ToString("X2"), query[0].ToString("X2")));
+                    }
+                    int count = -1;
+                    try
+                    {
+                        count = this._port.ReadByte();
+                        data.Add((byte)count);
+                    }
+                    catch
+                    {
+                        throw new TimeoutException("Packet length reading timeout.");
+                    }
+                    byte[] buffer = new byte[count];
+                    int num3 = 0;
+                    try
+                    {
+                        num3 = this._port.Read(buffer, 0, count);
+                    }
+                    catch
+                    {
+                    }
+                    if (num3 != count)
+                    {
+                        throw new TimeoutException("Incorrect packet length " + num3.ToString() + " (expected " + count.ToString() + ")");
+                    }
+                    data.AddRange(buffer);
+                    base.LogMessage("Result:  " + Logger.BytesToString(buffer), MessageType.Debug);
+                }
+            }
+            catch (Exception exception)
+            {
+                throw exception;
+            }
+            finally
+            {
+                this.OnSessionFinished(this, data);
+            }
+            return data.ToArray();
+        }
+
+        protected PixelDevicePacket DoSession(PixelDevicePacket request)
+        {
+            return new PixelDevicePacket(new List<byte>(this.DoSession(request.RawData.ToArray())));
+        }
+
+        public virtual string GetName(out bool bootMode)
+        {
+            this.SetStatus(ConnectionStatus.Downloading);
+            string str = "";
+            bootMode = false;
+            try
+            {
+                PixelDevicePacket request = new PixelDevicePacket(PixelDeviceCommand.WHO_IS_IT, null);
+                PixelDevicePacket packet2 = this.DoSession(request);
+                str = Encoding.ASCII.GetString(packet2.Data.ToArray());
+                if (str.ToLower().Contains("boot"))
+                {
+                    bootMode = true;
+                }
+                base.LogMessage("Device name: " + str, MessageType.Info);
+            }
+            catch (Exception exception)
+            {
+                if (base.Logger != null)
+                {
+                    base.Logger.WriteException(exception);
+                }
+            }
+            finally
+            {
+                this.SetStatus(ConnectionStatus.Online);
+            }
+            return str;
+        }
+
+        private void OnDisconnected()
+        {
+            if (this.Disconnected != null)
+            {
+                this.Disconnected(new EventArgs());
+            }
+        }
+
+        private void OnSessionFinished(DeviceBase d, List<byte> data)
+        {
+            if (this.SessionFinished != null)
+            {
+                this.SessionFinished(new DeviceSessionEventArgs(d, data));
+            }
+        }
+
+        private void OnSessionStarted(DeviceBase d, List<byte> data)
+        {
+            if (this.SessionStarted != null)
+            {
+                this.SessionStarted(new DeviceSessionEventArgs(d, data));
+            }
+        }
+
+        private void OnStatusChanged()
+        {
+            if (this.StatusChanged != null)
+            {
+                this.StatusChanged(new EventArgs());
+            }
+        }
+
+        protected void SetStatus(ConnectionStatus status)
+        {
+            this._status = status;
+            this.OnStatusChanged();
         }
 
         private void USBRemoved(object sender, EventArgs e)
         {
             this.Disconnect();
-            OnDisconnected();
+            this.OnDisconnected();
         }
 
-        #endregion
-
-        /// <summary>
-        /// Returns device answer on user's query.
-        /// </summary>
-        /// <param name="query">Request bytes.</param>
-        /// <exception cref="ArgumentException">Thrown when requested and received packet ID mismatch.</exception>
-        /// <exception cref="TimeoutException">Thrown when ID, length or data reading timeout.</exception>
-        /// <returns>Answer bytes.</returns>
-        protected byte[] DoSession(byte[] query)
+        public SerialPort Port
         {
-            OnSessionStarted(this, new List<byte>(query));
-            LogMessage("Request: " + Common.Log.Logger.BytesToString(query), Common.Log.MessageType.Debug);
-            List<byte> received = new List<byte>();
-            try
+            get
             {
-                lock (_syncSession)
-                {
-                    _port.DiscardInBuffer();
-                    _port.DiscardOutBuffer();
-                    _port.Write(query, 0, query.Length);
-                    Thread.Sleep(WriteReadDelay);
-
-                    int packetID = -1;
-                    try { packetID = _port.ReadByte(); received.Add((byte)packetID); }
-                    catch { throw new TimeoutException("Packet ID reading timeout."); }
-
-                    if (packetID != query[0])   // если идентификатор пакета неверный
-                    {
-                        throw new ArgumentException(
-                            String.Format("Wrong answer {0} on request {1}.", packetID.ToString("X2"), query[0].ToString("X2")));
-                    }
-
-                    int len = -1;
-                    try { len = _port.ReadByte(); received.Add((byte)len); }
-                    catch { throw new TimeoutException("Packet length reading timeout."); }
-
-                    byte[] receiveBuf = new byte[len];
-                    int bytesGot = 0;
-                    try { bytesGot = _port.Read(receiveBuf, 0, len); }
-                    catch { }
-
-                    if (bytesGot != len) throw new TimeoutException("Incorrect packet length " + bytesGot.ToString() + " (expected " + len.ToString() + ")");
-                    received.AddRange(receiveBuf);
-                    LogMessage("Result:  " + Common.Log.Logger.BytesToString(receiveBuf), Common.Log.MessageType.Debug);
-                }
+                return this._port;
             }
-            finally
+            set
             {
-                OnSessionFinished(this, received);
+                this._port = value;
             }
-            return received.ToArray();
         }
 
-        protected PixelDevicePacket DoSession(PixelDevicePacket request)
+        public string PortName
         {
-            return new PixelDevicePacket(new List<byte>(DoSession(request.RawData.ToArray())));
+            get
+            {
+                return this._portName;
+            }
+            set
+            {
+                this._portName = value;
+            }
         }
 
-        public abstract void Disconnect();
-
-        protected void SetStatus(ConnectionStatus status)
+        public ConnectionStatus Status
         {
-            _status = status;
-            OnStatusChanged();
+            get
+            {
+                return this._status;
+            }
         }
 
-        #region Events
-
-        /// <summary>
-        /// Occures when device disconnected.
-        /// </summary>
-        public event DisconnectedDelegate Disconnected;
-
-        /// <summary>
-        /// Occurs before sending bytes.
-        /// </summary>
-        public event SessionDelegate SessionFinished;
-
-        /// <summary>
-        /// Occurs after all bytes received or receive timeout.
-        /// </summary>
-        public event SessionDelegate SessionStarted;
-
-        /// <summary>
-        /// Occurs after all bytes received or receive timeout.
-        /// </summary>
-        public event StatusDelegate StatusChanged;
-
-        public delegate void StatusDelegate(EventArgs e);
+        public int WriteReadDelay
+        {
+            get
+            {
+                return this._writeReadDelay;
+            }
+            set
+            {
+                this._writeReadDelay = value;
+            }
+        }
 
         public delegate void DisconnectedDelegate(EventArgs e);
 
         public delegate void SessionDelegate(DeviceSessionEventArgs e);
 
-        private void OnStatusChanged()
-        {
-            if (StatusChanged != null)
-                StatusChanged(new EventArgs());
-        }
-
-        private void OnDisconnected()
-        {
-            if (Disconnected != null)
-                Disconnected(new EventArgs());
-        }
-
-        private void OnSessionStarted(DeviceBase d, List<byte> data)
-        {
-            if (SessionStarted != null)
-                SessionStarted(new DeviceSessionEventArgs(d, data));
-        }
-
-        private void OnSessionFinished(DeviceBase d, List<byte> data)
-        {
-            if (SessionFinished != null)
-                SessionFinished(new DeviceSessionEventArgs(d, data));
-        }
-
-        #endregion
-
+        public delegate void StatusDelegate(EventArgs e);
     }
 }

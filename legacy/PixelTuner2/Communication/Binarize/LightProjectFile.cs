@@ -42,7 +42,7 @@ namespace Communication.Binarize
             result.AddRange(new byte[4]);                                               // binary total size field
             result.AddRange(BitConverter.GetBytes(samplesSectionAddress));              // start address samples section
             result.Add((byte)notEmptyLines.Count);                                      // timelines count            
-            result.AddRange(BitConverter.GetBytes((UInt16)rate));                       // rate
+            result.Add((byte)rate);                                                     // rate
             result.Add((byte)pointSize);                                                // pointSize
 
             DateTime start = DateTime.MinValue.AddYears(1);
@@ -55,9 +55,11 @@ namespace Communication.Binarize
             channels = new List<List<byte>>();
             notEmptyLines.ForEach((tl) => { channels.Add(tl.GetBinary(samplesCount, rate)); });
 
+            result.AddRange(BitConverter.GetBytes((UInt16)samplesCount));               // last! sample number
             UInt32 nullSize = samplesSectionAddress - (UInt32)result.Count;
             result.AddRange(new byte[nullSize]);                                        // arrange samples section
 
+            //int newSamplesCount = ThinSamples(channels);
             List<byte> prevSample = null;
             List<byte> nextSample = null;
             for (UInt16 i = 0; i < samplesCount; i++)
@@ -72,6 +74,10 @@ namespace Communication.Binarize
                 {
                     result.AddRange(BitConverter.GetBytes(i));                          // sample number 2 bytes
                     result.AddRange(nextSample);                                        // sample data
+                }
+                else
+                {
+                    //Console.WriteLine("Skipped sample: " + i.ToString());
                 }
                 prevSample = nextSample;
             }

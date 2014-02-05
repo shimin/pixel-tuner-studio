@@ -7,116 +7,70 @@ using System.IO.Ports;
 
 namespace Communication.Service
 {
-    public class UdmxDevice : SerialDeviceBase
+    public class UdmxDevice : PixelDevice
     {
-        object _longOperation = new object();
-
-        /// <summary>
-        /// Показывает, находится ли устройство в ржиме бутлоадера.
-        /// </summary>
-        public bool BootMode { get; private set; }
-
-        public bool Busy { get; private set; }
-
-        public string Name { get; set; }
-
-        public UdmxDeviceInfo Info { get; private set; }
+        private object _longOperation;
 
         public UdmxDevice(SerialPort port)
             : base(port)
         {
+            this._longOperation = new object();
+        }
 
+        public UdmxDeviceInfo GetInfo()
+        {
+            lock (this._longOperation)
+            {
+                base.Busy = true;
+                base.SetStatus(ConnectionStatus.Downloading);
+                UdmxDeviceInfo info = new UdmxDeviceInfo();
+                try
+                {
+                    List<byte> data = base.DoSession(new PixelDevicePacket(PixelDeviceCommand.INFO, null)).Data;
+                    int num = (data[4] << 8) | data[5];
+                    info.PlatformVersion = data[0];
+                    info.EnergyLevel = num;
+                    info.BootVersion = data[1];
+                    info.FirmwareVersion = data[2];
+                    info.LedsTotal = data[3];
+                    int num2 = (((data[6] << 0x18) | (data[7] << 0x10)) | (data[8] << 8)) | data[9];
+                    info.MaxMemory = (num2 / 0x186a0) * 0x186a0;
+                }
+                catch (Exception exception)
+                {
+                    if (base.Logger != null)
+                    {
+                        base.Logger.WriteException(exception);
+                    }
+                }
+                finally
+                {
+                    base.Busy = false;
+                    base.SetStatus(ConnectionStatus.Online);
+                }
+                return info;
+            }
+        }
+
+        public override string GetName(out bool bootMode)
+        {
+            lock (this._longOperation)
+            {
+                return base.GetName(out bootMode);
+            }
         }
 
         public override void Initialize(object parameter)
         {
+            bool flag;
             base.Initialize(parameter);
-            bool bootModeFlag;
-            Name = GetName(out bootModeFlag);
-            BootMode = bootModeFlag;
-            Info = GetInfo();
-            SetStatus(ConnectionStatus.Online);
+            base.Name = this.GetName(out flag);
+            base.BootMode = flag;
+            this.Info = this.GetInfo();
+            base.SetStatus(ConnectionStatus.Online);
         }
 
-        #region Protocol
-
-        /// <summary>
-        /// Retreives device info.
-        /// </summary>
-        /// <returns>DeviceInfo structure.</returns>
-        public UdmxDeviceInfo GetInfo()
-        {
-            lock (_longOperation)
-            {
-                Busy = true;
-                SetStatus(ConnectionStatus.Downloading);
-                var result = new UdmxDeviceInfo();
-                try
-                {
-                    var buffer = DoSession(new PixelDevicePacket(PixelDeviceCommand.INFO)).Data;
-                    int Uizm = (buffer[4] << 8 | buffer[5]);
-                    //result.PlatformVersion = buffer[0];
-                    //result.EnergyLevel = Uizm;
-                    //result.BootVersion = buffer[1];
-                    //result.FirmwareVersion = buffer[2];
-                    //result.LedsTotal = buffer[3];
-                    //int memoryBytes = buffer[6] << 24 | buffer[7] << 16 | buffer[8] << 8 | buffer[9]; // в байтах
-                    //result.MaxMemory = (memoryBytes / 100000) * 100000;
-                }
-                catch (Exception ex) { if (Logger != null) Logger.WriteException(ex); }
-                finally { Busy = false; SetStatus(ConnectionStatus.Online); }
-                return result;
-            }
-        }
-
-        /// <summary>
-        /// Retrieves name from device.
-        /// </summary>
-        /// <returns>Name string.</returns>
-        public string GetName(out bool bootMode)
-        {
-            lock (_longOperation)
-            {
-                SetStatus(ConnectionStatus.Downloading);
-                string result = "";
-                bootMode = false;
-                Busy = true;
-                try
-                {
-                    PixelDevicePacket request = new PixelDevicePacket(PixelDeviceCommand.WHO_IS_IT);
-                    var answer = DoSession(request);
-                    result = Encoding.ASCII.GetString(answer.Data.ToArray());
-
-                    if (result.ToLower().Contains("boot")) bootMode = true;
-                    LogMessage("Device name: " + result, MessageType.Info);
-                }
-                catch (Exception ex) { if (Logger != null) Logger.WriteException(ex); }
-                finally { Busy = false; SetStatus(ConnectionStatus.Online); }
-                return result;
-            }
-        }
-
-        /// <summary>
-        /// Simply releases port.
-        /// </summary>
-        override public void Disconnect()
-        {
-            lock (_longOperation)
-            {
-                if (_port != null)
-                {
-                    try
-                    {
-                        _port.Close();
-                        _port = null;
-                        SetStatus(ConnectionStatus.Offline);
-                    }
-                    catch { }
-                }
-            }
-        }
-    
-        #endregion
-
+        public UdmxDeviceInfo Info { get; private set; }
     }
 }
+

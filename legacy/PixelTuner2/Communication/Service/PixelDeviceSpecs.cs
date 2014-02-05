@@ -7,17 +7,30 @@ namespace Communication.Service
 {
     public static class PixelDeviceSpecs
     {
-        static Dictionary<string, string> idNamePairs = new Dictionary<string, string>
+        private static Dictionary<string, string> idNamePairs;
+
+        static PixelDeviceSpecs()
         {
-            {"\0\r", "Pixel Poi (Very First Version)"},
-            {"STM32BOOT", "Pixel Poi 2 (Boot mode)"},
-            {"STM32FW", "Pixel Poi 2"}
-        };
+            Dictionary<string, string> dictionary = new Dictionary<string, string>();
+            dictionary.Add("\0\r", "Pixel Poi (Very First Version)");
+            dictionary.Add("STM32BOOT", "Pixel Poi 2 (Boot mode)");
+            dictionary.Add("STM32FW", "Pixel Poi 2");
+            dictionary.Add("PP2BOOT", "Pixel Poi 2 (Boot mode)");
+            dictionary.Add("PP2FW", "Pixel Poi 2");
+            dictionary.Add("UDMXBOOT", "uDmx master (Boot mode)");
+            dictionary.Add("UDMXFW", "uDmx master");
+            dictionary.Add("LRBOOT", "Light master (Boot mode)");
+            dictionary.Add("LRFW", "Light master");
+            idNamePairs = dictionary;
+        }
 
         public static string TryGetName(string id)
         {
-            if (idNamePairs.ContainsKey(id)) return idNamePairs[id];
-            else return "Unknown Device";
+            if (!(string.IsNullOrEmpty(id) || !idNamePairs.ContainsKey(id)))
+            {
+                return idNamePairs[id];
+            }
+            return "Unknown Device";
         }
     }
 }
