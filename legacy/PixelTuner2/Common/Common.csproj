@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -50,6 +51,17 @@
     <Compile Include="Collections\DelegatedList.cs" />
     <Compile Include="Collections\SafeObservable.cs" />
     <Compile Include="Collections\StreamHelper.cs" />
+    <Compile Include="Controls\NumericUpDown\NumericUpDown.xaml.cs">
+      <DependentUpon>NumericUpDown.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SearchTextBox\SearchTextBox.cs" />
+    <Compile Include="Controls\TimeLine\ITimeLineDataItem.cs" />
+    <Compile Include="Controls\TimeLine\ITimeLineManager.cs" />
+    <Compile Include="Controls\TimeLine\TimeLineControl.cs" />
+    <Compile Include="Controls\TimeLine\TimeLineItemControl.cs" />
+    <Compile Include="Controls\TriangleSlider\TriangleSlider.xaml.cs">
+      <DependentUpon>TriangleSlider.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DragDrop\DefaultDragHandler.cs" />
     <Compile Include="DragDrop\DefaultDropHandler.cs" />
     <Compile Include="DragDrop\DragAdorner.cs" />
@@ -75,6 +87,36 @@
     <Compile Include="Log\TargetBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Controls\NumericUpDown\NumericUpDown.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\TriangleSlider\TriangleSlider.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\SearchTextBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\TimeLineItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\_grey_Arrow-Down.png" />
+    <Resource Include="Images\_grey_Arrow-DownDisabled.png" />
+    <Resource Include="Images\_grey_Arrow-DownLight.png" />
+    <Resource Include="Images\_grey_Arrow-Up.png" />
+    <Resource Include="Images\_grey_Arrow-UpDisabled.png" />
+    <Resource Include="Images\_grey_Arrow-UpLight.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
