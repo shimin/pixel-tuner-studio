@@ -14,7 +14,7 @@ namespace PixelTuner.Styles
         void grid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             var g = (Grid)sender;
-            var timelines = g.Children.OfType<TimeLineControl>().ToList();
+            var timelines = g.Children.OfType<Common.Controls.TimeLineControl>().ToList();
             foreach (var t in timelines)
                 t.Width = t.MinWidth = g.ActualWidth - 26;
         }

@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Xml.Serialization;
 
 using PixelTuner.Properties;
-using PixelTuner.Controls;
+using Common.Controls;
 using PixelTuner.ViewModel.Serialization;
 
 namespace PixelTuner.ViewModel
@@ -151,6 +151,18 @@ namespace PixelTuner.ViewModel
                     end.Value.Minute.ToString("D2"), end.Value.Second.ToString("D2"),
                     end.Value.Millisecond.ToString("D3")) 
                     : "";
+            }
+        }
+
+        public System.Windows.Media.Brush NormalBackground
+        {
+            get
+            {
+                return new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(10, 10, 200));
+            }
+            set
+            {
+
             }
         }
 

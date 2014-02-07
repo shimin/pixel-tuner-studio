@@ -5,10 +5,16 @@
         Height="356" 
         Width="699"
         Background="#FFF0F0F0" 
-        xmlns:c="clr-namespace:PixelTuner.Controls"
+        xmlns:c="clr-namespace:Common.Controls;assembly=Common"
         xmlns:tlw="clr-namespace:PixelTuner.Controls.ThumbListView">
-    <Window.Resources>    
-        <tlw:ImageView x:Key="ImageView"/>
+    <Window.Resources>
+        <ResourceDictionary >
+            <tlw:ImageView x:Key="ImageView"/>
+            
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Common;component/Styles/SearchTextBox.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary >
     </Window.Resources>
     <Grid Margin="4" Background="Transparent">
         <Grid.RowDefinitions>

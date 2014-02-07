@@ -2,12 +2,13 @@
                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     
-                    xmlns:ct="clr-namespace:PixelTuner.Controls"
+                    xmlns:ct="clr-namespace:Common.Controls;assembly=Common"
                     xmlns:vm="clr-namespace:PixelTuner.ViewModel"
                     xmlns:tlw="clr-namespace:PixelTuner.Controls.ThumbListView">
 
 
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Common;component/Styles/TimeLineItem.xaml"></ResourceDictionary>
         <ResourceDictionary Source="/PixelTuner;component/Styles/SharedStyles.xaml" />
     </ResourceDictionary.MergedDictionaries>
 

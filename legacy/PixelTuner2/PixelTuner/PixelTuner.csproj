@@ -110,13 +110,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Controls\TimeLine\ITimeLineDataItem.cs" />
-    <Compile Include="Controls\TimeLine\ITimeLineManager.cs" />
-    <Compile Include="Controls\TimeLine\TimeLineControl.cs" />
-    <Compile Include="Controls\TimeLine\TimeLineItemControl.cs" />
     <Compile Include="Converters\ActiveDocumentConverter.cs" />
     <Compile Include="Converters\ActiveTimeLineConverter.cs" />
-    <Compile Include="Controls\SearchTextBox\SearchTextBox.cs" />
     <Compile Include="Controls\ThumbListView\ImageView.cs" />
     <Compile Include="ItemWindow.xaml.cs">
       <DependentUpon>ItemWindow.xaml</DependentUpon>
@@ -159,9 +154,6 @@
     </Compile>
     <Compile Include="ViewModel\ImagesViewModel.cs" />
     <Compile Include="Converters\MathConverter.cs" />
-    <Compile Include="Controls\NumericUpDown\NumericUpDown.xaml.cs">
-      <DependentUpon>NumericUpDown.xaml</DependentUpon>
-    </Compile>
     <Compile Include="PictureEditor.xaml.cs">
       <DependentUpon>PictureEditor.xaml</DependentUpon>
     </Compile>
@@ -170,9 +162,6 @@
     <Compile Include="ViewModel\PixelDeviceViewModel.cs" />
     <Compile Include="ViewModel\TimeLineViewModel.cs" />
     <Compile Include="ViewModel\ToolViewModel.cs" />
-    <Compile Include="Controls\TriangleSlider\TriangleSlider.xaml.cs">
-      <DependentUpon>TriangleSlider.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ViewModel\RootViewModel.cs" />
     <Page Include="ItemWindow.xaml">
       <SubType>Designer</SubType>
@@ -190,10 +179,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\SearchTextBox.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Styles\SharedStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -206,15 +191,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\NumericUpDown\NumericUpDown.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="PictureEditor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\TriangleSlider\TriangleSlider.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -300,18 +277,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\PinClose.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\_grey_Arrow-Down.png" />
-    <Resource Include="Images\_grey_Arrow-DownLight.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\_grey_Arrow-DownDisabled.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\_grey_Arrow-Up.png" />
-    <Resource Include="Images\_grey_Arrow-UpDisabled.png" />
-    <Resource Include="Images\_grey_Arrow-UpLight.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\red_cross.png" />
@@ -644,6 +609,13 @@
     <Content Include="Content\80_batterfly_009.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\_grey_Arrow-Down.png" />
+    <Resource Include="Images\_grey_Arrow-DownDisabled.png" />
+    <Resource Include="Images\_grey_Arrow-DownLight.png" />
+    <Resource Include="Images\_grey_Arrow-Up.png" />
+    <Resource Include="Images\_grey_Arrow-UpDisabled.png" />
+    <Resource Include="Images\_grey_Arrow-UpLight.png" />
+    <Resource Include="Images\document.png" />
     <Resource Include="Images\scale-stretching.png" />
     <Resource Include="Images\DrawingTool\flip_horizontal.png" />
     <Resource Include="Images\DrawingTool\flip_vertical.png" />
@@ -657,10 +629,6 @@
     <Resource Include="Images\timeEnd.png" />
     <Resource Include="Images\timeLength.png" />
     <Resource Include="Images\timeStart.png" />
-    <Page Include="Styles\TimeLineItem.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Styles\TimeLineLayoutTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

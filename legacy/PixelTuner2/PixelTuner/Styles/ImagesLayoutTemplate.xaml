@@ -2,12 +2,13 @@
     x:Class="PixelTuner.Controls.ThumbListView.ThumbnailListView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:ct="clr-namespace:PixelTuner.Controls"
+                    xmlns:ct="clr-namespace:Common.Controls;assembly=Common"
                     xmlns:dd="clr-namespace:Common.DragDrop;assembly=Common"
                     xmlns:tlw="clr-namespace:PixelTuner.Controls.ThumbListView">
     
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/PixelTuner;component/Styles/SharedStyles.xaml" />
+        <ResourceDictionary Source="/Common;component/Styles/SearchTextBox.xaml"></ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
 
     <tlw:ImageView x:Key="ImageView"/>
