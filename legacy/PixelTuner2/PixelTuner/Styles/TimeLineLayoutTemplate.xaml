@@ -65,7 +65,7 @@
                         </Border>
                         <TextBlock Grid.Column="0" Text="{Binding Path=Start}" />
                     </StackPanel>
-                    <Button Name="boxImageButton" MouseDoubleClick="boxImageButton_MouseDoubleClick">
+                    <Button Name="boxImageButton">
                         <Button.Template>
                             <ControlTemplate>
                                 <Border Height="44" MinWidth="200">

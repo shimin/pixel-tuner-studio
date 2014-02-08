@@ -174,7 +174,7 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        Double _maxUnitSize = 60.0;
+        Double _maxUnitSize = 160.0;
         [XmlAttribute]
         public Double MaxUnitSize
         {

@@ -4,7 +4,7 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         Focusable="True"
         PreviewKeyDown="Window_KeyDown"
-        Height="136" Width="170" WindowStyle="None" WindowStartupLocation="Manual" ContentRendered="Window_ContentRendered" ResizeMode="NoResize" ShowInTaskbar="False" Topmost="True">
+        Height="161" Width="170" WindowStyle="None" WindowStartupLocation="Manual" ContentRendered="Window_ContentRendered" ResizeMode="NoResize" ShowInTaskbar="False" Topmost="True">
     <Grid Margin="6,3,0,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20" />
@@ -16,6 +16,7 @@
             <ColumnDefinition Width="2" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="25" />
             <RowDefinition Height="25" />
             <RowDefinition Height="25" />
             <RowDefinition Height="25" />
@@ -42,5 +43,9 @@
         <Label Content="stretching" Grid.Column="2" Grid.ColumnSpan="4" Grid.Row="2" Height="28" Margin="2,0,0,0" />
         <Label Content="% brightness" Grid.Column="2" Grid.ColumnSpan="4" Grid.Row="3" Height="28" Margin="2,0,0,0" />
         <CheckBox Name="boxForAll" Content="for all" Grid.ColumnSpan="3" Grid.Row="4" Height="16" HorizontalAlignment="Left" Margin="0,6,0,0" VerticalAlignment="Top" TabIndex="80" />
+        <StackPanel Grid.Row="5" Grid.ColumnSpan="6" Orientation="Horizontal">
+            <Button Content="OK" TabIndex="90" Width="74" IsDefault="True" Click="OKButton_Click" />
+            <Button Content="Cancel" TabIndex="100" Width="74" IsCancel="True" />
+        </StackPanel>
     </Grid>
 </Window>
