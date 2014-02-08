@@ -10,6 +10,7 @@ namespace Common.Controls
 		DateTime? StartTime { get; set; }
 		DateTime? EndTime { get; set; }
         Boolean TimelineViewExpanded { get; set; }
+        bool IsSelected { get; set; }
         object Clone();
         System.ComponentModel.INotifyPropertyChanged Parent { get; set; }
 	}
