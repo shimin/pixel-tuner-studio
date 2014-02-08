@@ -186,14 +186,13 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        Double _unitSize = 10.0;
         [XmlAttribute]
         public Double UnitSize
         {
-            get { return _unitSize; }
+            get { return Settings.Default.UnitSize; }
             set
             {
-                _unitSize = value;
+                Settings.Default.UnitSize = value;
                 RaisePropertyChanged("UnitSize");
             }
         }

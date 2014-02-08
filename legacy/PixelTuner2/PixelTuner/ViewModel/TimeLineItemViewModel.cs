@@ -40,6 +40,8 @@ namespace PixelTuner.ViewModel
             RaisePropertyChanged("Start");
             RaisePropertyChanged("End");
         }
+        
+        #region Properties
 
         public object StartIcon
         {
@@ -102,7 +104,7 @@ namespace PixelTuner.ViewModel
                 }
                 _startTime = value;
                 RaisePropertyChanged("StartTime");
-                RaisePropertyChanged("Start");                
+                RaisePropertyChanged("Start");
             }
         }
 
@@ -112,7 +114,7 @@ namespace PixelTuner.ViewModel
             {
                 return _startTime.HasValue ? String.Format("{0}:{1}:{2}.{3}", _startTime.Value.Hour.ToString("D2"),
                     _startTime.Value.Minute.ToString("D2"), _startTime.Value.Second.ToString("D2"),
-                    _startTime.Value.Millisecond.ToString("D3")) 
+                    _startTime.Value.Millisecond.ToString("D3"))
                     : "";
             }
         }
@@ -149,7 +151,7 @@ namespace PixelTuner.ViewModel
                 }
                 return end.HasValue ? String.Format("{0}:{1}:{2}.{3}", end.Value.Hour.ToString("D2"),
                     end.Value.Minute.ToString("D2"), end.Value.Second.ToString("D2"),
-                    end.Value.Millisecond.ToString("D3")) 
+                    end.Value.Millisecond.ToString("D3"))
                     : "";
             }
         }
@@ -240,6 +242,8 @@ namespace PixelTuner.ViewModel
             get { return _parent; }
             set { _parent = value; }
         }
+
+        #endregion
 
         public object Clone()
         {
@@ -414,7 +418,6 @@ namespace PixelTuner.ViewModel
 
         #endregion 
 
-
         #region INotifyPropertyChanged Members
 
         protected virtual void RaisePropertyChanged(string propertyName)
@@ -474,6 +477,8 @@ namespace PixelTuner.ViewModel
             _fi.Refresh();
         } 
         #endregion
+
+        #region Type Conversion
 
         public static implicit operator TimeLineItem(TimeLineItemViewModel item)
         {
@@ -575,11 +580,7 @@ namespace PixelTuner.ViewModel
             throw new NotImplementedException();
         }
 
-        internal void RaiseMouseDown()
-        {
-            //foreach (TimeLineItemViewModel i in ((TimeLineViewModel)Parent).Items)
-            //    i.IsSelected = false;
-            this.IsSelected = true;
-        }
+        #endregion
+        
     }
 }
