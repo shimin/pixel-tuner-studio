@@ -42,9 +42,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Binarize\LightImageFile.cs" />
+    <Compile Include="Binarize\LightEffectFile.cs" />
+    <Compile Include="Binarize\LightFileBase.cs" />
+    <Compile Include="Binarize\LightColorFile.cs" />
     <Compile Include="Binarize\LightProjectFile.cs" />
     <Compile Include="Binarize\LightTimeLineFile.cs" />
+    <Compile Include="Binarize\LightTransitionFile.cs" />
     <Compile Include="Service\DeviceEventArgs.cs" />
     <Compile Include="Service\DeviceSessionEventArgs.cs" />
     <Compile Include="Service\DeviceStatus.cs" />

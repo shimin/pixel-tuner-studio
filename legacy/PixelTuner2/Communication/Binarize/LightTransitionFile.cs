@@ -6,53 +6,22 @@ using System.Drawing;
 
 namespace Communication.Binarize
 {
-    public class LightImageFile
+    public class LightTransitionFile : LightFileBase
     {
-        #region Fields
+        #region Properties
 
-        string _name;
-        public string Name
+        Color _colorFirst = Color.Black;
+        public Color ColorFirst
         {
-            get { return _name; }
-            set { _name = value; }
+            get { return _colorFirst; }
+            set { _colorFirst = value; }
         }
 
-        UInt32 _startAddress;
-        public UInt32 StartAddress
+        Color _colorLast = Color.Black;
+        public Color ColorLast
         {
-            get { return _startAddress; }
-            set { _startAddress = value; }
-        }
-
-        public DateTime StartTime
-        {
-            get;
-            set;
-        }
-
-        public DateTime EndTime
-        {
-            get;
-            set;
-        }
-
-        // null если это переход
-        Color? _color = null;
-        public Color? Color
-        {
-            get { return _color; }
-            set { _color = value; }
-        }
-
-        public static int Size
-        {
-            get
-            {
-                return
-                    sizeof(UInt32) + // duration
-                    3 * sizeof(byte) + // step rgb
-                    3 * sizeof(byte); // target color rgb
-            }
+            get { return _colorLast; }
+            set { _colorLast = value; }
         }
 
         #endregion
@@ -62,17 +31,29 @@ namespace Communication.Binarize
         /// <summary>
         /// Creates object
         /// </summary>
-        /// <param name="path">path to bitmap file</param>
-        /// <param name="stretching">column repeat count</param>
-        /// <param name="duration">duration in 100ms intervals</param>
-        public LightImageFile(string name, DateTime startTime, DateTime endTime)
+        /// <param name="name">Name of transition</param>
+        /// <param name="startTime">Start time</param>
+        /// <param name="endTime">End time</param>
+        public LightTransitionFile(string name, DateTime startTime, DateTime endTime)
+            :base(name, startTime, endTime)
         {
-            _name = name;
-            StartTime = startTime;
-            EndTime = endTime;
+
         }
 
         #endregion
+
+        public override List<byte> GetBinary(int rate)
+        {
+            List<byte> result = new List<byte>();
+
+            DateTime time = this.StartTime;
+            while (time < this.EndTime)
+            {
+                result.AddRange(GetColor(time, this.ColorFirst, this.ColorLast));
+                time = time.AddMilliseconds(rate);
+            }
+            return result;
+        }
 
         /// <summary>
         /// returns color by time marker
@@ -99,17 +80,6 @@ namespace Communication.Binarize
             color.Add((byte)(startColor.R + xR));
             color.Add((byte)(startColor.G + xG));
             color.Add((byte)(startColor.B + xB));
-
-            return color;
-        }
-
-        internal static IEnumerable<byte> ColorToBinary(Color c)
-        {
-            List<byte> color = new List<byte>();
-
-            color.Add((byte)c.R);
-            color.Add((byte)c.G);
-            color.Add((byte)c.B);
 
             return color;
         }

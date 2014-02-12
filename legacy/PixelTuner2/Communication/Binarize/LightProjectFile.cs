@@ -98,8 +98,8 @@ namespace Communication.Binarize
 
         private DateTime GetLongestDuration(List<LightTimelineFile> notEmptyLines)
         {
-            DateTime result = notEmptyLines.FirstOrDefault<LightTimelineFile>().Images.LastOrDefault<LightImageFile>().EndTime;
-            notEmptyLines.ForEach((tl) => { if (tl.Images.Last<LightImageFile>().EndTime > result) result = tl.Images.Last<LightImageFile>().EndTime; });
+            DateTime result = notEmptyLines.FirstOrDefault<LightTimelineFile>().Images.LastOrDefault<LightFileBase>().EndTime;
+            notEmptyLines.ForEach((tl) => { if (tl.Images.Last<LightFileBase>().EndTime > result) result = tl.Images.Last<LightFileBase>().EndTime; });
             return result;
         }
 
