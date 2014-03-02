@@ -131,6 +131,18 @@
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
+                    <Button Margin="0,2,0,0" Command="{Binding SwitchLaserOn}" PreviewMouseLeftButtonDown="ChildPreviewMouseLeftButtonDown" ToolTip="{StaticResource Item_SwitchLaserOnOffToolTip}">
+                        <Button.Template>
+                            <ControlTemplate>
+                                <Border Width="16" Height="14">
+                                    <Grid>
+                                        <Ellipse Fill="{Binding LaserOnButtonColor, Mode=OneWay}" Height="12" Width="12" Stroke="Black"></Ellipse>
+                                        <TextBlock HorizontalAlignment="Center" Text="L" FontSize="8" FontWeight="Bold" TextAlignment="Center" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
                 </StackPanel>
             </Grid>
         </Border>

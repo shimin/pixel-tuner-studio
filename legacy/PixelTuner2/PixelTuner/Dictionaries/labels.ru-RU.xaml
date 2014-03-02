@@ -37,6 +37,7 @@
     <system:String x:Key="Doc_Open_AccessError">Нет доступа к файлу.</system:String>
     <system:String x:Key="Doc_Open_DeserializeError">Ошибка открытия файла. Возможно файл поврежден.</system:String>
     <system:String x:Key="Item_Stretching">Растяжение</system:String>
+    <system:String x:Key="Item_SwitchLaserOnOffToolTip">лазер вкл/выкл</system:String>
     <system:String x:Key="Item_Menu_Replace">заменить</system:String>
     <system:String x:Key="Dev_Menu_RefreshBrain">Освежить мозги</system:String>
     <system:String x:Key="Dev_Menu_Upload">Загрузить проект</system:String>

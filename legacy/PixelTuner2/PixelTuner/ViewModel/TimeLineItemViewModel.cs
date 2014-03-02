@@ -15,6 +15,7 @@ using System.Xml.Serialization;
 using PixelTuner.Properties;
 using Common.Controls;
 using PixelTuner.ViewModel.Serialization;
+using System.Windows.Media;
 
 namespace PixelTuner.ViewModel
 {
@@ -235,6 +236,22 @@ namespace PixelTuner.ViewModel
             set { _brightness = value; }
         }
 
+        private bool _laserOn;
+        public bool LaserOn
+        {
+            get { return _laserOn; }
+            set { _laserOn = value; RaisePropertyChanged("LaserOnButtonColor"); }
+        }
+
+        public Brush LaserOnButtonColor
+        {
+            get
+            {
+                if (LaserOn) return new SolidColorBrush(Color.FromRgb(200, 140, 100));
+                else return new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+            }
+        }
+
         INotifyPropertyChanged _parent;
         [XmlIgnore]
         public INotifyPropertyChanged Parent
@@ -253,6 +270,7 @@ namespace PixelTuner.ViewModel
             result.TimelineViewExpanded = this.TimelineViewExpanded;
             result.Stretching = this.Stretching;
             result.Brightness = this.Brightness;
+            result.LaserOn = this.LaserOn;
             return result;
         }
         
@@ -371,12 +389,14 @@ namespace PixelTuner.ViewModel
             w.Top = location.Y - w.Height / 2;
             if (w.ShowDialog() == true)
             {
-                ApplyChanges(w.Start, w.Duration, w.Stretching, w.Brightness, w.ForAll, w.DurationChanged, w.StretchingChanged, w.BrightnessChanged);
+                ApplyChanges(w.Start, w.Duration, w.Stretching, w.Brightness, w.LaserOn, w.ForAll, w.DurationChanged, w.StretchingChanged, w.BrightnessChanged, w.LaserOnChanged);
             }
             if (w.NeedRefresh) RootViewModel.NotifySettingsChanged();
         }
 
-        private void ApplyChanges(DateTime start, TimeSpan duration, int stretching, byte brightness, bool forAll, bool durationChanged, bool stretchChanged, bool brightnessChanged)
+        private void ApplyChanges(DateTime start, TimeSpan duration, 
+            int stretching, byte brightness, bool laserOn, bool forAll, bool durationChanged,
+            bool stretchChanged, bool brightnessChanged, bool laserOnChanged)
         {
             var p = Parent as TimeLineViewModel;
             int idx = p.Items.IndexOf(this) + 1;
@@ -385,6 +405,7 @@ namespace PixelTuner.ViewModel
             this.EndTime = this.StartTime + duration;
             this.Stretching = stretching;
             this.Brightness = brightness;
+            this.LaserOn = laserOn;
             
             List<ITimeLineDataItem> toRemove = new List<ITimeLineDataItem>();
             for (int i = idx - 2; i >= 0; i--)
@@ -411,9 +432,39 @@ namespace PixelTuner.ViewModel
                 }
                 if (stretchChanged) itm.Stretching = stretching;
                 if (brightnessChanged) itm.Brightness = brightness;
+                if (laserOnChanged) itm.LaserOn = laserOn;
                 lastUsed = itm.EndTime.Value;
                 idx++;
             }
+        }
+
+        #endregion 
+        
+        #region SwitchLaserOn
+        RelayCommand _switchLaserOnCommand = null;
+        public ICommand SwitchLaserOn
+        {
+            get
+            {
+                if (_switchLaserOnCommand == null)
+                {
+                    _switchLaserOnCommand = new RelayCommand((p) => OnSwitchLaserOn(p), (p) => CanSwitchLaserOn(p));
+                }
+
+                return _switchLaserOnCommand;
+            }
+        }
+
+        private bool CanSwitchLaserOn(object parameter)
+        {
+            return true;
+        }
+
+        private void OnSwitchLaserOn(object parameter)
+        {
+            LaserOn = !LaserOn;
+            RaisePropertyChanged("LaserOn");
+            RaisePropertyChanged("LaserOnButtonColor");
         }
 
         #endregion 
@@ -488,6 +539,7 @@ namespace PixelTuner.ViewModel
             result.FullName = item.FullName;
             result.Stretching = item.Stretching;
             result.Brightness = item.Brightness;
+            result.LaserOn = item.LaserOn;
             return result;
         }
 

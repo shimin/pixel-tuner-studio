@@ -28,6 +28,9 @@ namespace PixelTuner.ViewModel.Serialization
         }
 
         [XmlAttribute]
+        public bool LaserOn { get; set; }
+
+        [XmlAttribute]
         public string Start
         {
             get
@@ -146,6 +149,7 @@ namespace PixelTuner.ViewModel.Serialization
             v.EndTime = item.EndTime;
             v.Stretching = item.Stretching;
             v.Brightness = item.Brightness;
+            v.LaserOn = item.LaserOn;
             return v;
         }
 

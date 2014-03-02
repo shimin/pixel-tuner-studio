@@ -440,6 +440,7 @@ namespace PixelTuner.ViewModel
                     var imgf = new PixelImageFile(path, (UInt16)item.Stretching, duration);
                     descriptors.Add(new ImagesCollectionItem(path, targetHeight, depth));
                     imgf.Brightness = descriptors[descriptors.Count - 1].Brightness = item.Brightness;
+                    descriptors[descriptors.Count - 1].LaserOn = item.LaserOn;
                     tlf.Images.Add(imgf);
                     start = item.EndTime.Value;
                 }

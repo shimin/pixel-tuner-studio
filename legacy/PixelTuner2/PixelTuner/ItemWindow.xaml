@@ -4,7 +4,7 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         Focusable="True"
         PreviewKeyDown="Window_KeyDown"
-        Height="161" Width="170" WindowStyle="None" WindowStartupLocation="Manual" ContentRendered="Window_ContentRendered" ResizeMode="NoResize" ShowInTaskbar="False" Topmost="True">
+        Height="187" Width="170" WindowStyle="None" WindowStartupLocation="Manual" ContentRendered="Window_ContentRendered" ResizeMode="NoResize" ShowInTaskbar="False" Topmost="True">
     <Grid Margin="6,3,0,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20" />
@@ -22,6 +22,7 @@
             <RowDefinition Height="25" />
             <RowDefinition Height="25" />
             <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <Border Grid.Row="0" Width="15" Height="15">
             <Image Source="/PixelTuner;component/Images/timeStart.png"/>
@@ -29,21 +30,22 @@
         <Border Grid.Row="1" Width="15" Height="15">
             <Image Source="/PixelTuner;component/Images/timeLength.png"/>
         </Border>
-        <xctk:DoubleUpDown Name="boxStartMin" ValueChanged="numericValueChanged" FontWeight="{Binding StartWeight, Mode=OneWay}" Grid.Column="1" Grid.Row="0" Minimum="0" Maximum="59" IsTabStop="True" Margin="0,1,0,1" TabIndex="0" ParsingNumberStyle="Integer" RenderTransformOrigin="0,0" SelectAllOnGotFocus="True" FormatString=""></xctk:DoubleUpDown>
-        <xctk:DoubleUpDown Name="boxStartSec" ValueChanged="numericValueChanged" FontWeight="{Binding StartWeight, Mode=OneWay}" Grid.Column="3" Grid.Row="0" Minimum="0" Maximum="59" IsTabStop="True" Margin="0,1,0,1" TabIndex="10" ParsingNumberStyle="Integer" RenderTransformOrigin="0,0" SelectAllOnGotFocus="True" FormatString=""></xctk:DoubleUpDown>
-        <xctk:DoubleUpDown Name="boxStartMs"  ValueChanged="numericValueChanged" FontWeight="{Binding StartWeight, Mode=OneWay}" Grid.Column="5" Minimum="0" Maximum="999" IsTabStop="True" Margin="0,1,0,0" TabIndex="20" ParsingNumberStyle="Integer" RenderTransformOrigin="0,0" SelectAllOnGotFocus="True" FormatString="" Height="23" VerticalAlignment="Top"></xctk:DoubleUpDown>
+        <xctk:DoubleUpDown Name="boxStartMin" ValueChanged="controlValueChanged" FontWeight="{Binding StartWeight, Mode=OneWay}" Grid.Column="1" Grid.Row="0" Minimum="0" Maximum="59" IsTabStop="True" Margin="0,1,0,1" TabIndex="0" ParsingNumberStyle="Integer" RenderTransformOrigin="0,0" SelectAllOnGotFocus="True" FormatString=""></xctk:DoubleUpDown>
+        <xctk:DoubleUpDown Name="boxStartSec" ValueChanged="controlValueChanged" FontWeight="{Binding StartWeight, Mode=OneWay}" Grid.Column="3" Grid.Row="0" Minimum="0" Maximum="59" IsTabStop="True" Margin="0,1,0,1" TabIndex="10" ParsingNumberStyle="Integer" RenderTransformOrigin="0,0" SelectAllOnGotFocus="True" FormatString=""></xctk:DoubleUpDown>
+        <xctk:DoubleUpDown Name="boxStartMs"  ValueChanged="controlValueChanged" FontWeight="{Binding StartWeight, Mode=OneWay}" Grid.Column="5" Minimum="0" Maximum="999" IsTabStop="True" Margin="0,1,0,0" TabIndex="20" ParsingNumberStyle="Integer" RenderTransformOrigin="0,0" SelectAllOnGotFocus="True" FormatString="" Height="23" VerticalAlignment="Top"></xctk:DoubleUpDown>
 
-        <xctk:DoubleUpDown Name="boxLengthMin" ValueChanged="numericValueChanged" FontWeight="{Binding DurationWeight, Mode=OneWay}" Grid.Column="1" Grid.Row="1" Minimum="0" Maximum="59" IsTabStop="True" Margin="0,1,0,1" TabIndex="30" ParsingNumberStyle="Integer" RenderTransformOrigin="0,0" SelectAllOnGotFocus="True" FormatString=""></xctk:DoubleUpDown>
-        <xctk:DoubleUpDown Name="boxLengthSec" ValueChanged="numericValueChanged" FontWeight="{Binding DurationWeight, Mode=OneWay}" Grid.Column="3" Grid.Row="1" Minimum="0" Maximum="59" IsTabStop="True" Margin="0,1,0,1" TabIndex="40" ParsingNumberStyle="Integer" RenderTransformOrigin="0,0" SelectAllOnGotFocus="True" FormatString=""></xctk:DoubleUpDown>
-        <xctk:DoubleUpDown Name="boxLengthMs"  ValueChanged="numericValueChanged" FontWeight="{Binding DurationWeight, Mode=OneWay}" Grid.Column="5" Grid.Row="1" Minimum="0" Maximum="999" IsTabStop="True" Margin="0,1,0,1" TabIndex="50" ParsingNumberStyle="Integer" RenderTransformOrigin="0,0" SelectAllOnGotFocus="True" FormatString=""></xctk:DoubleUpDown>
+        <xctk:DoubleUpDown Name="boxLengthMin" ValueChanged="controlValueChanged" FontWeight="{Binding DurationWeight, Mode=OneWay}" Grid.Column="1" Grid.Row="1" Minimum="0" Maximum="59" IsTabStop="True" Margin="0,1,0,1" TabIndex="30" ParsingNumberStyle="Integer" RenderTransformOrigin="0,0" SelectAllOnGotFocus="True" FormatString=""></xctk:DoubleUpDown>
+        <xctk:DoubleUpDown Name="boxLengthSec" ValueChanged="controlValueChanged" FontWeight="{Binding DurationWeight, Mode=OneWay}" Grid.Column="3" Grid.Row="1" Minimum="0" Maximum="59" IsTabStop="True" Margin="0,1,0,1" TabIndex="40" ParsingNumberStyle="Integer" RenderTransformOrigin="0,0" SelectAllOnGotFocus="True" FormatString=""></xctk:DoubleUpDown>
+        <xctk:DoubleUpDown Name="boxLengthMs"  ValueChanged="controlValueChanged" FontWeight="{Binding DurationWeight, Mode=OneWay}" Grid.Column="5" Grid.Row="1" Minimum="0" Maximum="999" IsTabStop="True" Margin="0,1,0,1" TabIndex="50" ParsingNumberStyle="Integer" RenderTransformOrigin="0,0" SelectAllOnGotFocus="True" FormatString=""></xctk:DoubleUpDown>
 
-        <xctk:DoubleUpDown Name="boxStretching" ValueChanged="numericValueChanged" FontWeight="{Binding StretchingWeight, Mode=OneWay}" Grid.Column="0" Grid.Row="2" Minimum="4" Maximum="56" Grid.ColumnSpan="2" IsTabStop="True" Margin="0,1,0,1" TabIndex="60" ParsingNumberStyle="Integer" RenderTransformOrigin="0,0" SelectAllOnGotFocus="True" FormatString=""></xctk:DoubleUpDown>
-        <xctk:DoubleUpDown Name="boxBrightness" ValueChanged="numericValueChanged" FontWeight="{Binding BrightnessWeight, Mode=OneWay}" Grid.Column="0" Grid.Row="3" Minimum="0" Maximum="100" Grid.ColumnSpan="2" IsTabStop="True" Margin="0,1,0,1" TabIndex="70" ParsingNumberStyle="Integer" RenderTransformOrigin="0,0" SelectAllOnGotFocus="True" FormatString=""></xctk:DoubleUpDown>
+        <xctk:DoubleUpDown Name="boxStretching" ValueChanged="controlValueChanged" FontWeight="{Binding StretchingWeight, Mode=OneWay}" Grid.Column="0" Grid.Row="2" Minimum="4" Maximum="56" Grid.ColumnSpan="2" IsTabStop="True" Margin="0,1,0,1" TabIndex="60" ParsingNumberStyle="Integer" RenderTransformOrigin="0,0" SelectAllOnGotFocus="True" FormatString=""></xctk:DoubleUpDown>
+        <xctk:DoubleUpDown Name="boxBrightness" ValueChanged="controlValueChanged" FontWeight="{Binding BrightnessWeight, Mode=OneWay}" Grid.Column="0" Grid.Row="3" Minimum="0" Maximum="100" Grid.ColumnSpan="2" IsTabStop="True" Margin="0,1,0,1" TabIndex="70" ParsingNumberStyle="Integer" RenderTransformOrigin="0,0" SelectAllOnGotFocus="True" FormatString=""></xctk:DoubleUpDown>
 
         <Label Content="stretching" Grid.Column="2" Grid.ColumnSpan="4" Grid.Row="2" Height="28" Margin="2,0,0,0" />
         <Label Content="% brightness" Grid.Column="2" Grid.ColumnSpan="4" Grid.Row="3" Height="28" Margin="2,0,0,0" />
-        <CheckBox Name="boxForAll" Content="for all" Grid.ColumnSpan="3" Grid.Row="4" Height="16" HorizontalAlignment="Left" Margin="0,6,0,0" VerticalAlignment="Top" TabIndex="80" />
-        <StackPanel Grid.Row="5" Grid.ColumnSpan="6" Orientation="Horizontal">
+        <CheckBox Name="boxLaserOn" IsChecked="{Binding LaserOn}" Checked="boxLaserOn_Checked" Unchecked="boxLaserOn_Unchecked" Content="turn laser on" Grid.ColumnSpan="5" Grid.Row="4" Height="16" HorizontalAlignment="Left" Margin="0,6,0,0" VerticalAlignment="Top" TabIndex="80" FontWeight="{Binding LaserOnWeight, Mode=OneWay}" />
+        <CheckBox Name="boxForAll" Content="for all" Grid.ColumnSpan="3" Grid.Row="5" Height="16" HorizontalAlignment="Left" Margin="0,6,0,0" VerticalAlignment="Top" TabIndex="80" />
+        <StackPanel Grid.Row="6" Grid.ColumnSpan="6" Orientation="Horizontal">
             <Button Content="OK" TabIndex="90" Width="74" IsDefault="True" Click="OKButton_Click" />
             <Button Content="Cancel" TabIndex="100" Width="74" IsCancel="True" />
         </StackPanel>
