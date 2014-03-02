@@ -4,3 +4,6 @@
 [submodule "Communication"]
 	path = Communication
 	url = https://shimin@bitbucket.org/shimin/communication.git
+[submodule "WpfTools"]
+	path = WpfTools
+	url = https://shimin@bitbucket.org/shimin/wpftools.git
