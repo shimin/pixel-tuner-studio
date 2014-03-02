@@ -16,7 +16,7 @@ namespace Communication.Pixelate
 
     public class ImagesCollectionItem
     {
-        const int ParametersFieldSize = 1;
+        const int ParametersFieldSize = 2;
 
         #region Fields
 
@@ -83,6 +83,8 @@ namespace Communication.Pixelate
         List<byte> _binary = null;
 
         ColorDepth _depth = ColorDepth.Bit24;
+        
+        public bool LaserOn { get; set; }
 
         #endregion
 
@@ -138,7 +140,7 @@ namespace Communication.Pixelate
                 if (Bitmap == null) _bitmap = Bitmap.FromFile(_path) as Bitmap;
 
                 var parameters = new List<byte>();
-                AttachParameters(parameters, _depth);
+                AttachParameters(parameters, _depth, LaserOn);
                 size += parameters.Count;
 
                 if (_depth == ColorDepth.Bit36)
@@ -190,7 +192,7 @@ namespace Communication.Pixelate
         private List<byte> GetBinary36(byte targetHeight)
         {
             List<byte> binary = new List<byte>();
-            AttachParameters(binary, ColorDepth.Bit36);
+            AttachParameters(binary, ColorDepth.Bit36, LaserOn);
             int binaryLength = Bitmap.Width * targetHeight * 3 * 2;         // 2 bytes on each color part
             binary.AddRange(BitConverter.GetBytes((UInt32)(StartAddress + binaryLength + 4)));
             for (int column = 0; column < Bitmap.Width; column++)
@@ -207,7 +209,7 @@ namespace Communication.Pixelate
         private List<byte> GetBinary24(byte targetHeight)
         {
             List<byte> binary = new List<byte>();
-            AttachParameters(binary, ColorDepth.Bit24);
+            AttachParameters(binary, ColorDepth.Bit24, LaserOn);
             int binaryLength = Bitmap.Width * targetHeight * 3;             // 1 byte on each color part
             binary.AddRange(BitConverter.GetBytes((UInt32)(StartAddress + binaryLength + 4)));
             for (int column = 0; column < Bitmap.Width; column++)
@@ -224,7 +226,7 @@ namespace Communication.Pixelate
         private List<byte> GetBinary12(byte targetHeight)
         {
             List<byte> binary = new List<byte>();
-            AttachParameters(binary, ColorDepth.Bit12);
+            AttachParameters(binary, ColorDepth.Bit12, LaserOn);
             // 0.5 bytes on each color part 
             int binaryLength = (Bitmap.Width * targetHeight * 3) / 2 + (Bitmap.Width * targetHeight * 3) % 2;
             binary.AddRange(BitConverter.GetBytes((UInt32)(StartAddress + binaryLength + 4)));
@@ -299,8 +301,11 @@ namespace Communication.Pixelate
             return BitConverter.GetBytes((byte)(15 * p / byte.MaxValue));
         }
 
-        private static void AttachParameters(List<byte> binary, ColorDepth depth)
+        private static void AttachParameters(List<byte> binary, ColorDepth depth, bool laserOn)
         {
+            if (laserOn) binary.Add(1);
+            else binary.Add(0);
+
             if (depth == ColorDepth.Bit12) { binary.Add(4); }
             else if (depth == ColorDepth.Bit24) { binary.Add(8); }
             else if (depth == ColorDepth.Bit36) { binary.Add(12); }

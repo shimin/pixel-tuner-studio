@@ -47,11 +47,15 @@ namespace Communication.Pixelate
             set { _duration = value; }
         }
 
+        public bool LaserOn { get; set; }
+
         public static int Size
         {
             get
             {
-                return sizeof(UInt32) + 2 * sizeof(UInt16);
+                return
+                    sizeof(UInt32) +    // start address
+                    2 * sizeof(UInt16); // duration and stretching
             }
         }
 
