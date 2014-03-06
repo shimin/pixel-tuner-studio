@@ -19,7 +19,6 @@ using PixelTuner.Properties;
 using Workspace.Layout;
 using Workspace.Layout.Serialization;
 
-using Core;
 using Communication.Service;
 using PixelTuner.ViewModel;
 using PixelTunerAutoupdater;
@@ -31,6 +30,8 @@ namespace PixelTuner
     /// </summary>
     public partial class MainWindow : Window
     {
+        string AppID = "PixelTuner";
+
         string _layoutString = Settings.Default.LayoutString;
         System.ComponentModel.BackgroundWorker _updatesCheckWorker = new System.ComponentModel.BackgroundWorker();
 
@@ -54,8 +55,23 @@ namespace PixelTuner
 
         private void Window_Loaded(object sender, RoutedEventArgs ev)
         {
+            var serializer = new Workspace.Layout.Serialization.XmlLayoutSerializer(dockManager);
+            serializer.LayoutSerializationCallback += (s, args) =>
+            {
+                args.Content = args.Content;
+            };
+
+            if (File.Exists(@".\" + AppID + "Dock.config"))
+                serializer.Deserialize(@".\" + AppID + "Dock.config");
+            
             _updatesCheckWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(_updatesCheckWorker_DoWork);
             _updatesCheckWorker.RunWorkerAsync();
+        }
+        
+        private void MainWnd_Unloaded(object sender, RoutedEventArgs e)
+        {
+            var serializer = new Workspace.Layout.Serialization.XmlLayoutSerializer(dockManager);
+            serializer.Serialize(@".\" + AppID + "Dock.config");
         }
 
         private static void UiInvoke(Action a)

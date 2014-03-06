@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary x:Class="PixelTuner.Styles.FileLayoutTemplate"
                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:ct="clr-namespace:PixelTuner.Controls"
+                    xmlns:ct="clr-namespace:Common.Controls;assembly=Common"
                     xmlns:vm="clr-namespace:PixelTuner.ViewModel">
 
     <ResourceDictionary.MergedDictionaries>

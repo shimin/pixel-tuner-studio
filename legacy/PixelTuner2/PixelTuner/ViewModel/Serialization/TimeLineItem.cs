@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Core;
 using System.Xml.Serialization;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
@@ -27,6 +26,9 @@ namespace PixelTuner.ViewModel.Serialization
                 _startTime = value;
             }
         }
+
+        [XmlAttribute]
+        public bool LaserOn { get; set; }
 
         [XmlAttribute]
         public string Start
@@ -147,6 +149,7 @@ namespace PixelTuner.ViewModel.Serialization
             v.EndTime = item.EndTime;
             v.Stretching = item.Stretching;
             v.Brightness = item.Brightness;
+            v.LaserOn = item.LaserOn;
             return v;
         }
 

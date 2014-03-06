@@ -11,7 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 
 using Common.Collections;
-using PixelTuner.Controls;
+using Common.Controls;
 using PixelTuner.ViewModel.Serialization;
 
 namespace PixelTuner.ViewModel

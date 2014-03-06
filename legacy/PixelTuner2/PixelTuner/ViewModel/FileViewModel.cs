@@ -11,7 +11,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Serialization;
 
-using Core;
 using Communication.Pixelate;
 using Communication.Service;
 using PixelTuner.Properties;
@@ -175,7 +174,7 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        Double _maxUnitSize = 60.0;
+        Double _maxUnitSize = 160.0;
         [XmlAttribute]
         public Double MaxUnitSize
         {
@@ -187,14 +186,13 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        Double _unitSize = 10.0;
         [XmlAttribute]
         public Double UnitSize
         {
-            get { return _unitSize; }
+            get { return Settings.Default.UnitSize; }
             set
             {
-                _unitSize = value;
+                Settings.Default.UnitSize = value;
                 RaisePropertyChanged("UnitSize");
             }
         }
@@ -442,6 +440,7 @@ namespace PixelTuner.ViewModel
                     var imgf = new PixelImageFile(path, (UInt16)item.Stretching, duration);
                     descriptors.Add(new ImagesCollectionItem(path, targetHeight, depth));
                     imgf.Brightness = descriptors[descriptors.Count - 1].Brightness = item.Brightness;
+                    descriptors[descriptors.Count - 1].LaserOn = item.LaserOn;
                     tlf.Images.Add(imgf);
                     start = item.EndTime.Value;
                 }

@@ -10,7 +10,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Dictionaries/labels.ru-RU.xaml" />
                 <ResourceDictionary Source="Dictionaries/labels.en-US.xaml" />
-                <ResourceDictionary Source="Styles/SearchTextBox.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <local:RootViewModel x:Key="RootContext" x:Name="RootContext"></local:RootViewModel>
         </ResourceDictionary>

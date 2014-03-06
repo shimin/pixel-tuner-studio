@@ -2,12 +2,12 @@
         x:Name="MainWnd"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="PixelTuner" Height="525" Width="960" WindowStyle="SingleBorderWindow" 
+        Title="PixelTuner" MinHeight="525" MinWidth="960" WindowStyle="SingleBorderWindow" 
         Icon="/PixelTuner;component/Files/PixelTuner.ico"
         Style="{DynamicResource WindowStyle}"
         
-        xmlns:avalonDock="http://avalondock.codeplex.com"
-        xmlns:dd="clr-namespace:Core.DragDrop;assembly=Core"
+        xmlns:avalonDock="http://schemas.xceed.com/wpf/xaml/avalondock"
+        xmlns:dd="clr-namespace:Common.DragDrop;assembly=Common"
         xmlns:tlw="clr-namespace:PixelTuner.Controls.ThumbListView"
         
         xmlns:pt="clr-namespace:PixelTuner"
@@ -17,7 +17,7 @@
         xmlns:sl="clr-namespace:PixelTuner.Selectors"
 
         Activated="MainWnd_Activated"
-        Loaded="Window_Loaded" Closing="Window_Closing">
+        Loaded="Window_Loaded" Closing="Window_Closing" Unloaded="MainWnd_Unloaded">
     
     <Window.Resources>
         <ResourceDictionary >
@@ -217,9 +217,9 @@
             <avalonDock:LayoutRoot>
                 <avalonDock:LayoutPanel Orientation="Horizontal">
                     <avalonDock:LayoutAnchorablePaneGroup Orientation="Vertical" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120">
-                        <avalonDock:LayoutAnchorablePane TargetContentID="ProjectsTool" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120">
+                        <avalonDock:LayoutAnchorablePane Name="ProjectsTool" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120">
                         </avalonDock:LayoutAnchorablePane>
-                        <avalonDock:LayoutAnchorablePane TargetContentID="DevicesTool" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120">
+                        <avalonDock:LayoutAnchorablePane Name="DevicesTool" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120">
                         </avalonDock:LayoutAnchorablePane>
                     </avalonDock:LayoutAnchorablePaneGroup>
                     <avalonDock:LayoutPanel Orientation="Vertical" >
@@ -227,7 +227,7 @@
                             <avalonDock:LayoutDocumentPane />
                         </avalonDock:LayoutDocumentPaneGroup>
                         <avalonDock:LayoutAnchorablePaneGroup DockWidth="100" DockHeight="120" DockMinHeight="80" DockMinWidth="80">
-                            <avalonDock:LayoutAnchorablePane TargetContentID="ImagesTool" />
+                            <avalonDock:LayoutAnchorablePane Name="ImagesTool" />
                         </avalonDock:LayoutAnchorablePaneGroup>
                     </avalonDock:LayoutPanel>
                 </avalonDock:LayoutPanel>

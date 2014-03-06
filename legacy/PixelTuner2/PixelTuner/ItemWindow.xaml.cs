@@ -61,6 +61,17 @@ namespace PixelTuner
             }
         }
 
+        public bool LaserOnChanged
+        {
+            get
+            {
+                return !(boxLaserOn.IsChecked == _initialLaserOn);
+            }
+        }
+
+        private bool _initialLaserOn;
+        public bool LaserOn { get; set; }
+
         private DateTime _initialEnd;
         public DateTime End { get; set; }
 
@@ -111,6 +122,13 @@ namespace PixelTuner
             }
         }
 
+        public FontWeight LaserOnWeight
+        {
+            get
+            {
+                return LaserOnChanged ? FontWeights.Bold : FontWeights.Normal;
+            }
+        }
         #endregion
 
         public ItemWindow(TimeLineItemViewModel context)
@@ -121,6 +139,7 @@ namespace PixelTuner
             _initialDuration = _initialEnd - _initialStart;
             _initialStretching = Stretching = context.Stretching;
             _initialBrightness = Brightness = context.Brightness;
+            _initialLaserOn = LaserOn = context.LaserOn;
             InitializeComponent();
             Initialize();
             DataContext = this;
@@ -190,9 +209,25 @@ namespace PixelTuner
 
         #endregion
 
-        private void numericValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        private void controlValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             NotifyBindings();
+        }
+
+        private void OKButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.DialogResult = true; 
+            this.Close(); 
+        }
+
+        private void boxLaserOn_Checked(object sender, RoutedEventArgs e)
+        {
+            RaisePropertyChanged("LaserOnWeight");
+        }
+
+        private void boxLaserOn_Unchecked(object sender, RoutedEventArgs e)
+        {
+            RaisePropertyChanged("LaserOnWeight");
         }
 
     }

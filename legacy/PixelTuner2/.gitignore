@@ -9,3 +9,4 @@ Release/
 *.pdb
 *.user
 SetAssemblyInfoTool.exe
+*.stackdump

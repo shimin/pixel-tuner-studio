@@ -154,5 +154,17 @@ namespace PixelTuner.Properties {
                 this["CollapseGaps"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("20")]
+        public double UnitSize {
+            get {
+                return ((double)(this["UnitSize"]));
+            }
+            set {
+                this["UnitSize"] = value;
+            }
+        }
     }
 }

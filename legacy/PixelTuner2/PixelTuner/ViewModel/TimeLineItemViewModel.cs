@@ -12,10 +12,10 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Xml.Serialization;
 
-using Core;
 using PixelTuner.Properties;
-using PixelTuner.Controls;
+using Common.Controls;
 using PixelTuner.ViewModel.Serialization;
+using System.Windows.Media;
 
 namespace PixelTuner.ViewModel
 {
@@ -41,6 +41,8 @@ namespace PixelTuner.ViewModel
             RaisePropertyChanged("Start");
             RaisePropertyChanged("End");
         }
+        
+        #region Properties
 
         public object StartIcon
         {
@@ -103,7 +105,7 @@ namespace PixelTuner.ViewModel
                 }
                 _startTime = value;
                 RaisePropertyChanged("StartTime");
-                RaisePropertyChanged("Start");                
+                RaisePropertyChanged("Start");
             }
         }
 
@@ -113,7 +115,7 @@ namespace PixelTuner.ViewModel
             {
                 return _startTime.HasValue ? String.Format("{0}:{1}:{2}.{3}", _startTime.Value.Hour.ToString("D2"),
                     _startTime.Value.Minute.ToString("D2"), _startTime.Value.Second.ToString("D2"),
-                    _startTime.Value.Millisecond.ToString("D3")) 
+                    _startTime.Value.Millisecond.ToString("D3"))
                     : "";
             }
         }
@@ -150,8 +152,20 @@ namespace PixelTuner.ViewModel
                 }
                 return end.HasValue ? String.Format("{0}:{1}:{2}.{3}", end.Value.Hour.ToString("D2"),
                     end.Value.Minute.ToString("D2"), end.Value.Second.ToString("D2"),
-                    end.Value.Millisecond.ToString("D3")) 
+                    end.Value.Millisecond.ToString("D3"))
                     : "";
+            }
+        }
+
+        public System.Windows.Media.Brush NormalBackground
+        {
+            get
+            {
+                return new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(10, 10, 200));
+            }
+            set
+            {
+
             }
         }
 
@@ -222,6 +236,22 @@ namespace PixelTuner.ViewModel
             set { _brightness = value; }
         }
 
+        private bool _laserOn;
+        public bool LaserOn
+        {
+            get { return _laserOn; }
+            set { _laserOn = value; RaisePropertyChanged("LaserOnButtonColor"); }
+        }
+
+        public Brush LaserOnButtonColor
+        {
+            get
+            {
+                if (LaserOn) return new SolidColorBrush(Color.FromRgb(200, 140, 100));
+                else return new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+            }
+        }
+
         INotifyPropertyChanged _parent;
         [XmlIgnore]
         public INotifyPropertyChanged Parent
@@ -229,6 +259,8 @@ namespace PixelTuner.ViewModel
             get { return _parent; }
             set { _parent = value; }
         }
+
+        #endregion
 
         public object Clone()
         {
@@ -238,6 +270,7 @@ namespace PixelTuner.ViewModel
             result.TimelineViewExpanded = this.TimelineViewExpanded;
             result.Stretching = this.Stretching;
             result.Brightness = this.Brightness;
+            result.LaserOn = this.LaserOn;
             return result;
         }
         
@@ -356,12 +389,14 @@ namespace PixelTuner.ViewModel
             w.Top = location.Y - w.Height / 2;
             if (w.ShowDialog() == true)
             {
-                ApplyChanges(w.Start, w.Duration, w.Stretching, w.Brightness, w.ForAll, w.DurationChanged, w.StretchingChanged, w.BrightnessChanged);
+                ApplyChanges(w.Start, w.Duration, w.Stretching, w.Brightness, w.LaserOn, w.ForAll, w.DurationChanged, w.StretchingChanged, w.BrightnessChanged, w.LaserOnChanged);
             }
             if (w.NeedRefresh) RootViewModel.NotifySettingsChanged();
         }
 
-        private void ApplyChanges(DateTime start, TimeSpan duration, int stretching, byte brightness, bool forAll, bool durationChanged, bool stretchChanged, bool brightnessChanged)
+        private void ApplyChanges(DateTime start, TimeSpan duration, 
+            int stretching, byte brightness, bool laserOn, bool forAll, bool durationChanged,
+            bool stretchChanged, bool brightnessChanged, bool laserOnChanged)
         {
             var p = Parent as TimeLineViewModel;
             int idx = p.Items.IndexOf(this) + 1;
@@ -370,6 +405,7 @@ namespace PixelTuner.ViewModel
             this.EndTime = this.StartTime + duration;
             this.Stretching = stretching;
             this.Brightness = brightness;
+            this.LaserOn = laserOn;
             
             List<ITimeLineDataItem> toRemove = new List<ITimeLineDataItem>();
             for (int i = idx - 2; i >= 0; i--)
@@ -396,13 +432,42 @@ namespace PixelTuner.ViewModel
                 }
                 if (stretchChanged) itm.Stretching = stretching;
                 if (brightnessChanged) itm.Brightness = brightness;
+                if (laserOnChanged) itm.LaserOn = laserOn;
                 lastUsed = itm.EndTime.Value;
                 idx++;
             }
         }
 
         #endregion 
+        
+        #region SwitchLaserOn
+        RelayCommand _switchLaserOnCommand = null;
+        public ICommand SwitchLaserOn
+        {
+            get
+            {
+                if (_switchLaserOnCommand == null)
+                {
+                    _switchLaserOnCommand = new RelayCommand((p) => OnSwitchLaserOn(p), (p) => CanSwitchLaserOn(p));
+                }
 
+                return _switchLaserOnCommand;
+            }
+        }
+
+        private bool CanSwitchLaserOn(object parameter)
+        {
+            return true;
+        }
+
+        private void OnSwitchLaserOn(object parameter)
+        {
+            LaserOn = !LaserOn;
+            RaisePropertyChanged("LaserOn");
+            RaisePropertyChanged("LaserOnButtonColor");
+        }
+
+        #endregion 
 
         #region INotifyPropertyChanged Members
 
@@ -464,6 +529,8 @@ namespace PixelTuner.ViewModel
         } 
         #endregion
 
+        #region Type Conversion
+
         public static implicit operator TimeLineItem(TimeLineItemViewModel item)
         {
             var result = new TimeLineItem();
@@ -472,6 +539,7 @@ namespace PixelTuner.ViewModel
             result.FullName = item.FullName;
             result.Stretching = item.Stretching;
             result.Brightness = item.Brightness;
+            result.LaserOn = item.LaserOn;
             return result;
         }
 
@@ -564,11 +632,7 @@ namespace PixelTuner.ViewModel
             throw new NotImplementedException();
         }
 
-        internal void RaiseMouseDown()
-        {
-            //foreach (TimeLineItemViewModel i in ((TimeLineViewModel)Parent).Items)
-            //    i.IsSelected = false;
-            this.IsSelected = true;
-        }
+        #endregion
+        
     }
 }

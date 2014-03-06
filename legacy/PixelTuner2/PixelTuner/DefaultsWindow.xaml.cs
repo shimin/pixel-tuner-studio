@@ -155,26 +155,12 @@ namespace PixelTuner
             this.Close();
         }
 
-        private void numeric_KeyDown(object sender, KeyEventArgs e)
-        {
-            var c = sender as PixelTuner.Controls.NumericUpDownControl;
-            if (c != null && e.Key == Key.Up)
-            {
-                c.Value = c.Value < c.MaxValue ? c.Value + 1 : c.MaxValue;
-            }
-            if (c != null && e.Key == Key.Down)
-            {
-                c.Value = c.Value > c.MinValue ? c.Value - 1 : c.MinValue;
-            }
-        }
-
         protected virtual void RaisePropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
         public event PropertyChangedEventHandler PropertyChanged;
-
 
         #region WriteSettingsCommand
         RelayCommand _writeSettingsCommand = null;
@@ -206,7 +192,6 @@ namespace PixelTuner
             DeviceHelper.WriteSettings(settings);
         }
 
-        
         #endregion 
 
     }

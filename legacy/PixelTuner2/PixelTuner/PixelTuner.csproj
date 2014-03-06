@@ -11,7 +11,8 @@
     <RootNamespace>PixelTuner</RootNamespace>
     <AssemblyName>PixelTuner</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -109,13 +110,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Controls\TimeLine\ITimeLineDataItem.cs" />
-    <Compile Include="Controls\TimeLine\ITimeLineManager.cs" />
-    <Compile Include="Controls\TimeLine\TimeLineControl.cs" />
-    <Compile Include="Controls\TimeLine\TimeLineItemControl.cs" />
     <Compile Include="Converters\ActiveDocumentConverter.cs" />
     <Compile Include="Converters\ActiveTimeLineConverter.cs" />
-    <Compile Include="Controls\SearchTextBox\SearchTextBox.cs" />
     <Compile Include="Controls\ThumbListView\ImageView.cs" />
     <Compile Include="ItemWindow.xaml.cs">
       <DependentUpon>ItemWindow.xaml</DependentUpon>
@@ -158,9 +154,6 @@
     </Compile>
     <Compile Include="ViewModel\ImagesViewModel.cs" />
     <Compile Include="Converters\MathConverter.cs" />
-    <Compile Include="Controls\NumericUpDown\NumericUpDown.xaml.cs">
-      <DependentUpon>NumericUpDown.xaml</DependentUpon>
-    </Compile>
     <Compile Include="PictureEditor.xaml.cs">
       <DependentUpon>PictureEditor.xaml</DependentUpon>
     </Compile>
@@ -169,9 +162,6 @@
     <Compile Include="ViewModel\PixelDeviceViewModel.cs" />
     <Compile Include="ViewModel\TimeLineViewModel.cs" />
     <Compile Include="ViewModel\ToolViewModel.cs" />
-    <Compile Include="Controls\TriangleSlider\TriangleSlider.xaml.cs">
-      <DependentUpon>TriangleSlider.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ViewModel\RootViewModel.cs" />
     <Page Include="ItemWindow.xaml">
       <SubType>Designer</SubType>
@@ -189,10 +179,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\SearchTextBox.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Styles\SharedStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -205,15 +191,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\NumericUpDown\NumericUpDown.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="PictureEditor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\TriangleSlider\TriangleSlider.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -269,6 +247,18 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\WpfTools\Toolkit\Toolkit.csproj">
+      <Project>{72E591D6-8F83-4D8C-8F67-9C325E623234}</Project>
+      <Name>Toolkit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WpfTools\Workspace.Themes\Workspace.Themes.csproj">
+      <Project>{D422C9D7-B4EA-4154-949B-FAC4D9DC89D2}</Project>
+      <Name>Workspace.Themes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WpfTools\Workspace\Workspace.csproj">
+      <Project>{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}</Project>
+      <Name>Workspace</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AutoUpdater\AutoUpdater.csproj">
       <Project>{4BA4719C-C6AB-49BA-9754-848CA24C1FD6}</Project>
       <Name>AutoUpdater</Name>
@@ -281,36 +271,12 @@
       <Project>{DA6AD361-E034-4A14-BA94-8605A21D2E70}</Project>
       <Name>Communication</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Core\Core.csproj">
-      <Project>{7439A26A-46E1-42A0-9D58-2E38289675F6}</Project>
-      <Name>Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Workspace\Workspace.csproj">
-      <Project>{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}</Project>
-      <Name>Workspace</Name>
-    </ProjectReference>
-    <ProjectReference Include="libs\Xceed.Wpf.Toolkit\Toolkit.csproj">
-      <Project>{72E591D6-8F83-4D8C-8F67-9C325E623234}</Project>
-      <Name>Toolkit</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\PinClose_Dark.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\PinClose.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\_grey_Arrow-Down.png" />
-    <Resource Include="Images\_grey_Arrow-DownLight.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\_grey_Arrow-DownDisabled.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\_grey_Arrow-Up.png" />
-    <Resource Include="Images\_grey_Arrow-UpDisabled.png" />
-    <Resource Include="Images\_grey_Arrow-UpLight.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\red_cross.png" />
@@ -643,6 +609,14 @@
     <Content Include="Content\80_batterfly_009.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\_grey_Arrow-Down.png" />
+    <Resource Include="Images\_grey_Arrow-DownDisabled.png" />
+    <Resource Include="Images\_grey_Arrow-DownLight.png" />
+    <Resource Include="Images\_grey_Arrow-Up.png" />
+    <Resource Include="Images\_grey_Arrow-UpDisabled.png" />
+    <Resource Include="Images\_grey_Arrow-UpLight.png" />
+    <Resource Include="Images\document.png" />
+    <Resource Include="Images\scale-stretching.png" />
     <Resource Include="Images\DrawingTool\flip_horizontal.png" />
     <Resource Include="Images\DrawingTool\flip_vertical.png" />
     <Resource Include="Images\PenEdit.png" />
@@ -655,10 +629,6 @@
     <Resource Include="Images\timeEnd.png" />
     <Resource Include="Images\timeLength.png" />
     <Resource Include="Images\timeStart.png" />
-    <Page Include="Styles\TimeLineItem.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Styles\TimeLineLayoutTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -667,9 +637,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
