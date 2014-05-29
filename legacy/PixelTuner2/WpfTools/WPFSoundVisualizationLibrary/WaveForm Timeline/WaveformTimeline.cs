@@ -721,10 +721,10 @@ namespace WPFSoundVisualizationLib
                 }
 
                 sender.soundPlayer = e.NewValue as IWaveformPlayer;
-                
+
                 if (sender.soundPlayer != null)
                 {
-                    sender.soundPlayer.PropertyChanged -= sender.soundPlayer_PropertyChanged;
+                    sender.soundPlayer.PropertyChanged += sender.soundPlayer_PropertyChanged;
                 }
             }
         }
