@@ -57,6 +57,7 @@
     <Compile Include="Controls\SearchTextBox\SearchTextBox.cs" />
     <Compile Include="Controls\TimeLine\ITimeLineDataItem.cs" />
     <Compile Include="Controls\TimeLine\ITimeLineManager.cs" />
+    <Compile Include="Controls\TimeLine\ITimeLineMeta.cs" />
     <Compile Include="Controls\TimeLine\TimeLineControl.cs" />
     <Compile Include="Controls\TimeLine\TimeLineItemControl.cs" />
     <Compile Include="Controls\TriangleSlider\TriangleSlider.xaml.cs">

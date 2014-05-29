@@ -429,6 +429,25 @@ namespace Common.Controls
 
         #endregion
 
+        #region meta template
+        private DataTemplate _metatemplate;
+        public DataTemplate MetaTemplate
+        {
+            get { return (DataTemplate)GetValue(MetaTemplateProperty); }
+            set { SetValue(MetaTemplateProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for ItemTemplate.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty MetaTemplateProperty =
+            DependencyProperty.Register("MetaTemplate", typeof(DataTemplate), typeof(TimeLineControl),
+            new UIPropertyMetadata(null,
+                new PropertyChangedCallback(OnMetaTemplateChanged)));
+        private static void OnMetaTemplateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+
+        }
+        #endregion
+
         #region Items
         public ObservableCollection<ITimeLineDataItem> Items
         {
@@ -1293,49 +1312,91 @@ namespace Common.Controls
                 var d2 = e.Data.GetData("Common.DragDropHelper");
                 if (d2 != null)
                 {
-                    if (Manager != null)
-                    {
-                        var tmpDAC = new TimeLineItemControl();
-                        tmpDAC.UnitSize = UnitSize;
-                        tmpDAC.StartTime = StartDate.Add(tmpDAC.ConvertDistanceToTime((Double)e.GetPosition(this).X));
-                        if (!Manager.CanAddToTimeLine(d2 as ITimeLineDataItem, tmpDAC.StartTime))
-                        {
-                            e.Effects = DragDropEffects.None;
-                            e.Handled = true;
-                            if (Children.Contains(_tmpDraggAdornerControl)) Children.Remove(_tmpDraggAdornerControl);
-                            _tmpDraggAdornerControl = null;
-                            return;
-                        }
-                    }
-
-                    e.Effects = DragDropEffects.Move;
-                    if (DragAdorner == null)
-                    {
-                        //we are dragging from an external source and we don't have a timeline item control of any sort
-                        Children.Remove(_tmpDraggAdornerControl);
-                        //in order to get an adornment layer the control has to be somewhere
-                        _tmpDraggAdornerControl = new TimeLineItemControl();
-                        _tmpDraggAdornerControl.UnitSize = UnitSize;
-                        Children.Add(_tmpDraggAdornerControl);
-                        _tmpDraggAdornerControl.Visibility = Visibility.Hidden;
-                        Canvas.SetLeft(_tmpDraggAdornerControl, -1000000);
-                        _tmpDraggAdornerControl.DataContext = d2;
-                        _tmpDraggAdornerControl.StartTime = StartDate.Add(_tmpDraggAdornerControl.ConvertDistanceToTime((Double)e.GetPosition(this).X));
-                        
-                        _tmpDraggAdornerControl.DefaultTimeInterval = DefaultTimeInterval;
-                        _tmpDraggAdornerControl.InitializeDefaultLength();
-                        _tmpDraggAdornerControl.ContentTemplate = ItemTemplate;
-
-                        _dragAdorner = new TimeLineDragAdorner(_tmpDraggAdornerControl, ItemTemplate);
-                    }
-                    if (_tmpDraggAdornerControl != null)
-                    {
-                        DragAdorner.MousePosition = e.GetPosition(_tmpDraggAdornerControl);
-                        DragAdorner.InvalidateVisual();
-                    }
+                    if (d2 is ITimeLineMeta) 
+                        DragTimeLineMeta(e, d2);
+                    else
+                        DragNewTimeLineItem(e, d2);
                 }
             }
             DragScroll(e);
+        }
+
+        private void DragTimeLineMeta(DragEventArgs e, object d2)
+        {
+            if (Manager != null)
+            {
+                var tmpDAC = new TimeLineItemControl();
+                tmpDAC.UnitSize = UnitSize;
+                tmpDAC.StartTime = StartDate.Add(tmpDAC.ConvertDistanceToTime((Double)e.GetPosition(this).X));
+            }
+
+            e.Effects = DragDropEffects.Move;
+            
+            if (DragAdorner == null)
+            {
+                Children.Remove(_tmpDraggAdornerControl);
+                _tmpDraggAdornerControl = new TimeLineItemControl();
+                _tmpDraggAdornerControl.UnitSize = UnitSize;
+                Children.Add(_tmpDraggAdornerControl);
+                _tmpDraggAdornerControl.Visibility = Visibility.Hidden;
+                Canvas.SetLeft(_tmpDraggAdornerControl, -1000000);
+                _tmpDraggAdornerControl.DataContext = d2;
+                _tmpDraggAdornerControl.StartTime = StartDate.Add(_tmpDraggAdornerControl.ConvertDistanceToTime((Double)e.GetPosition(this).X));
+
+                _tmpDraggAdornerControl.DefaultTimeInterval = DefaultTimeInterval;
+                _tmpDraggAdornerControl.ContentTemplate = MetaTemplate;
+
+                _dragAdorner = new TimeLineDragAdorner(_tmpDraggAdornerControl, MetaTemplate);
+            }
+            if (_tmpDraggAdornerControl != null)
+            {
+                DragAdorner.MousePosition = e.GetPosition(_tmpDraggAdornerControl);
+                DragAdorner.InvalidateVisual();
+            }
+        }
+
+        private void DragNewTimeLineItem(DragEventArgs e, object d2)
+        {
+            if (Manager != null)
+            {
+                var tmpDAC = new TimeLineItemControl();
+                tmpDAC.UnitSize = UnitSize;
+                tmpDAC.StartTime = StartDate.Add(tmpDAC.ConvertDistanceToTime((Double)e.GetPosition(this).X));
+                if (!Manager.CanAddToTimeLine(d2 as ITimeLineDataItem, tmpDAC.StartTime))
+                {
+                    e.Effects = DragDropEffects.None;
+                    e.Handled = true;
+                    if (Children.Contains(_tmpDraggAdornerControl)) Children.Remove(_tmpDraggAdornerControl);
+                    _tmpDraggAdornerControl = null;
+                    return;
+                }
+            }
+
+            e.Effects = DragDropEffects.Move;
+            if (DragAdorner == null)
+            {
+                //we are dragging from an external source and we don't have a timeline item control of any sort
+                Children.Remove(_tmpDraggAdornerControl);
+                //in order to get an adornment layer the control has to be somewhere
+                _tmpDraggAdornerControl = new TimeLineItemControl();
+                _tmpDraggAdornerControl.UnitSize = UnitSize;
+                Children.Add(_tmpDraggAdornerControl);
+                _tmpDraggAdornerControl.Visibility = Visibility.Hidden;
+                Canvas.SetLeft(_tmpDraggAdornerControl, -1000000);
+                _tmpDraggAdornerControl.DataContext = d2;
+                _tmpDraggAdornerControl.StartTime = StartDate.Add(_tmpDraggAdornerControl.ConvertDistanceToTime((Double)e.GetPosition(this).X));
+
+                _tmpDraggAdornerControl.DefaultTimeInterval = DefaultTimeInterval;
+                _tmpDraggAdornerControl.InitializeDefaultLength();
+                _tmpDraggAdornerControl.ContentTemplate = ItemTemplate;
+
+                _dragAdorner = new TimeLineDragAdorner(_tmpDraggAdornerControl, ItemTemplate);
+            }
+            if (_tmpDraggAdornerControl != null)
+            {
+                DragAdorner.MousePosition = e.GetPosition(_tmpDraggAdornerControl);
+                DragAdorner.InvalidateVisual();
+            }
         }
 
         void TimeLineControL_DragLeave(object sender, DragEventArgs e)
