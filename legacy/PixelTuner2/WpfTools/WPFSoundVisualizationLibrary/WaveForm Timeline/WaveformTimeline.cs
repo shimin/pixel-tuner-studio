@@ -835,7 +835,7 @@ namespace WPFSoundVisualizationLib
 
         private void timelineCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            UpdateTimeline();
+            //UpdateTimeline();
         }       
         #endregion
 
@@ -1037,16 +1037,10 @@ namespace WPFSoundVisualizationLib
             if (soundPlayer == null || timelineCanvas == null)
                 return;
 
-            foreach (TextBlock textblock in timestampTextBlocks)
-            {
-                timelineCanvas.Children.Remove(textblock);
-            }
+            var rect = timelineCanvas.Children[0];
+            timelineCanvas.Children.Clear();
+            timelineCanvas.Children.Add(rect);
             timestampTextBlocks.Clear();
-
-            foreach (Line line in timeLineTicks)
-            {
-                timelineCanvas.Children.Remove(line);
-            }
             timeLineTicks.Clear();
 
             double bottomLoc = timelineCanvas.RenderSize.Height - 1;
@@ -1133,7 +1127,7 @@ namespace WPFSoundVisualizationLib
                         };
                         timestampTextBlocks.Add(timestampText);
                         timelineCanvas.Children.Add(timestampText);
-                        UpdateLayout(); // Needed so that we know the width of the textblock.
+                        //UpdateLayout(); // Needed so that we know the width of the textblock.
                     }
                     else // If still on the text block, draw a minor tick mark instead of a major.
                     {
