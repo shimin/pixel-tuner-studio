@@ -34,6 +34,11 @@ namespace WPFSoundVisualizationLib
         double ChannelPosition { get; set; }
 
         /// <summary>
+        /// Gets or sets the first playback position.
+        /// </summary>
+        double InitialChannelPosition { get; set; }
+
+        /// <summary>
         /// Gets the total channel length in seconds.
         /// </summary>
         double ChannelLength { get; }

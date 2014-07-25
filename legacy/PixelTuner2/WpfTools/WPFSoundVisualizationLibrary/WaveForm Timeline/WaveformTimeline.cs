@@ -881,14 +881,14 @@ namespace WPFSoundVisualizationLib
                 if (PointInRepeatRegion(mouseDownPoint))
                 {
                     double position = (currentPoint.X / RenderSize.Width) * soundPlayer.ChannelLength;
-                    soundPlayer.ChannelPosition = Math.Min(soundPlayer.ChannelLength, Math.Max(0, position));
+                    soundPlayer.InitialChannelPosition = soundPlayer.ChannelPosition = Math.Min(soundPlayer.ChannelLength, Math.Max(0, position));
                 }
                 else
                 {
                     soundPlayer.SelectionBegin = TimeSpan.Zero;
                     soundPlayer.SelectionEnd = TimeSpan.Zero;
                     double position = (currentPoint.X / RenderSize.Width) * soundPlayer.ChannelLength;
-                    soundPlayer.ChannelPosition = Math.Min(soundPlayer.ChannelLength, Math.Max(0, position));
+                    soundPlayer.InitialChannelPosition =  soundPlayer.ChannelPosition = Math.Min(soundPlayer.ChannelLength, Math.Max(0, position));
                     startLoopRegion = -1;
                     endLoopRegion = -1;
                     updateRepeatRegion = true;
@@ -899,7 +899,7 @@ namespace WPFSoundVisualizationLib
                 soundPlayer.SelectionBegin = TimeSpan.FromSeconds(startLoopRegion);
                 soundPlayer.SelectionEnd = TimeSpan.FromSeconds(endLoopRegion);
                 double position = startLoopRegion;
-                soundPlayer.ChannelPosition = Math.Min(soundPlayer.ChannelLength, Math.Max(0, position));
+                soundPlayer.InitialChannelPosition = soundPlayer.ChannelPosition = Math.Min(soundPlayer.ChannelLength, Math.Max(0, position));
                 updateRepeatRegion = true;
             }
 
