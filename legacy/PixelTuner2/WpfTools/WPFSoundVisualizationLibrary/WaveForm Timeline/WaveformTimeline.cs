@@ -58,6 +58,8 @@ namespace WPFSoundVisualizationLib
         private readonly Rectangle timelineBackgroundRegion = new Rectangle();
         private readonly List<TextBlock> timestampTextBlocks = new List<TextBlock>();
         private bool isMouseDown;
+        private bool isMouseScaling;
+        private Point mouseScalingPoint;
         private Point mouseDownPoint;
         private Point currentPoint;
         private double startLoopRegion = -1;
@@ -699,6 +701,29 @@ namespace WPFSoundVisualizationLib
         }
         #endregion
 
+        #region ScalingCommand
+
+        public static DependencyProperty ScalingCommandProperty
+            = DependencyProperty.Register(
+            "ScalingCommand",
+            typeof(ICommand),
+            typeof(WaveformTimeline));
+
+        public ICommand ScalingCommand
+        {
+            get
+            {
+                return (ICommand)GetValue(ScalingCommandProperty);
+            }
+
+            set
+            {
+                SetValue(ScalingCommandProperty, value);
+            }
+        }
+
+        #endregion
+
         #region soundplayer
         public IWaveformPlayer SoundPlayer
         {
@@ -751,6 +776,7 @@ namespace WPFSoundVisualizationLib
             waveformCanvas.Children.Add(rightPath);
 
             timelineCanvas = GetTemplateChild("PART_Timeline") as Canvas;
+            timelineCanvas.Background = new SolidColorBrush(Color.FromArgb(8,255,255,255));
             timelineCanvas.Children.Add(timelineBackgroundRegion);
             timelineCanvas.SizeChanged += timelineCanvas_SizeChanged;
 
@@ -858,9 +884,19 @@ namespace WPFSoundVisualizationLib
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             base.OnMouseLeftButtonDown(e);
-            CaptureMouse();
-            isMouseDown = true;
+            
             mouseDownPoint = e.GetPosition(waveformCanvas);
+            CaptureMouse();
+
+            if (mouseDownPoint.Y >= 0)
+            {
+                isMouseDown = true;
+            }
+            else
+            {
+                isMouseScaling = true;
+                mouseScalingPoint = mouseDownPoint;
+            }
         }
 
         /// <summary>
@@ -869,13 +905,19 @@ namespace WPFSoundVisualizationLib
         /// <param name="e">The MouseButtonEventArgs that contains the event data. The event data reports that the left mouse button was released.</param>
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
         {
-            base.OnMouseLeftButtonUp(e);            
-            if (!isMouseDown)
+            base.OnMouseLeftButtonUp(e);
+            ReleaseMouseCapture();
+            if (!isMouseDown && !isMouseScaling)
                 return;
+
+            if (isMouseScaling)
+            {
+                isMouseScaling = false;
+                return;
+            }
 
             bool updateRepeatRegion = false;
             isMouseDown = false;
-            ReleaseMouseCapture();
             if (Math.Abs(currentPoint.X - mouseDownPoint.X) < mouseMoveTolerance)
             {
                 if (PointInRepeatRegion(mouseDownPoint))
@@ -915,6 +957,15 @@ namespace WPFSoundVisualizationLib
         {
             base.OnMouseMove(e);
             currentPoint = e.GetPosition(waveformCanvas);
+
+            if (isMouseScaling)
+            {
+                double offset = currentPoint.Y - mouseScalingPoint.Y;
+                if (ScalingCommand != null && ScalingCommand.CanExecute(offset))
+                    ScalingCommand.Execute(offset);
+
+                mouseScalingPoint = currentPoint;
+            }
 
             if (isMouseDown && AllowRepeatRegions)
             {
@@ -1050,17 +1101,22 @@ namespace WPFSoundVisualizationLib
 
             double minorTickDuration = 5.00d; // Major tick = 5 seconds, Minor tick = 1.00 second
             double majorTickDuration = 25.00d;
-            if (this.Width / soundPlayer.ChannelLength >= 500.0d) // Major tick = 1 minute, Minor tick = 15 seconds.
+            if (this.Width / soundPlayer.ChannelLength >= 600.0d) // Major tick = 250 ms, Minor tick = 50 ms.
+            {
+                minorTickDuration = 0.05d;
+                majorTickDuration = 0.25d;
+            }
+            else if (this.Width / soundPlayer.ChannelLength >= 200.0d) // Major tick = 0.5 sec, Minor tick = 100 ms.
             {
                 minorTickDuration = 0.1d;
                 majorTickDuration = 0.5d;
             }
-            else if (this.Width / soundPlayer.ChannelLength >= 100.0d) // Major tick = 30 seconds, Minor tick = 5.0 seconds.
+            else if (this.Width / soundPlayer.ChannelLength >= 60.0d) // Major tick = 1 seconds, Minor tick = 200 seconds.
             {
                 minorTickDuration = 0.2d;
                 majorTickDuration = 1.0d;
             }
-            else if (this.Width / soundPlayer.ChannelLength >= 30.0d) // Major tick = 10 seconds, Minor tick = 2.0 seconds.
+            else if (this.Width / soundPlayer.ChannelLength >= 30.0d) // Major tick = 10 seconds, Minor tick = 1.0 seconds.
             {
                 minorTickDuration = 1.0d;
                 majorTickDuration = 5.0d;
