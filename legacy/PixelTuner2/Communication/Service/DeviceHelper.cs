@@ -113,7 +113,7 @@ namespace Communication.Service
                 {
                     lock (PortList) { if (PortList.ContainsKey(portName)) PortList.Remove(portName); }
                     if (_devices.Count == 0) break;
-                    PixelDevice aDevice = _devices.First(dev => _devices.Count == 0 || dev.Port == null ? false : dev.Port.PortName == portName);
+                    PixelDevice aDevice = _devices.First(dev => dev.Port == null || dev.Port.PortName == portName);
                     List<PixelDevice> devsWithNullPorts = new List<PixelDevice>();
                     // и поудалять все устройства у которых порт null
                     foreach (var d in _devices) { if (d.Port == null) devsWithNullPorts.Add(d); }
