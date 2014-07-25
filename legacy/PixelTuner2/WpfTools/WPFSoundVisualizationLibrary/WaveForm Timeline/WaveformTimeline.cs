@@ -1054,19 +1054,24 @@ namespace WPFSoundVisualizationLib
             timelineBackgroundRegion.Width = timelineCanvas.RenderSize.Width;
             timelineBackgroundRegion.Height = timelineCanvas.RenderSize.Height;
 
-            double minorTickDuration = 1.00d; // Major tick = 5 seconds, Minor tick = 1.00 second
-            double majorTickDuration = 5.00d;
-            if (soundPlayer.ChannelLength >= 120.0d) // Major tick = 1 minute, Minor tick = 15 seconds.
+            double minorTickDuration = 5.00d; // Major tick = 5 seconds, Minor tick = 1.00 second
+            double majorTickDuration = 25.00d;
+            if (this.Width / soundPlayer.ChannelLength >= 500.0d) // Major tick = 1 minute, Minor tick = 15 seconds.
             {
-                minorTickDuration = 15.0d;
-                majorTickDuration = 60.0d;
+                minorTickDuration = 0.1d;
+                majorTickDuration = 0.5d;
             }
-            else if (soundPlayer.ChannelLength >= 60.0d) // Major tick = 30 seconds, Minor tick = 5.0 seconds.
+            else if (this.Width / soundPlayer.ChannelLength >= 100.0d) // Major tick = 30 seconds, Minor tick = 5.0 seconds.
             {
-                minorTickDuration = 5.0d;
-                majorTickDuration = 30.0d;
+                minorTickDuration = 0.2d;
+                majorTickDuration = 1.0d;
             }
-            else if (soundPlayer.ChannelLength >= 30.0d) // Major tick = 10 seconds, Minor tick = 2.0 seconds.
+            else if (this.Width / soundPlayer.ChannelLength >= 30.0d) // Major tick = 10 seconds, Minor tick = 2.0 seconds.
+            {
+                minorTickDuration = 1.0d;
+                majorTickDuration = 5.0d;
+            }
+            else if (this.Width / soundPlayer.ChannelLength >= 10.0d) // Major tick = 10 seconds, Minor tick = 2.0 seconds.
             {
                 minorTickDuration = 2.0d;
                 majorTickDuration = 10.0d;
@@ -1124,7 +1129,7 @@ namespace WPFSoundVisualizationLib
                             FontStretch = this.FontStretch,
                             FontSize = this.FontSize,
                             Foreground = this.Foreground,
-                            Text = (timeSpan.TotalHours >= 1.0d) ? string.Format(@"{0:hh\:mm\:ss}", timeSpan) : string.Format(@"{0:mm\:ss}", timeSpan)
+                            Text = (timeSpan.TotalHours >= 1.0d) ? string.Format(@"{0:hh\:mm\:ss\:fff}", timeSpan) : string.Format(@"{0:mm\:ss\:fff}", timeSpan)
                         };
                         timestampTextBlocks.Add(timestampText);
                         timelineCanvas.Children.Add(timestampText);
