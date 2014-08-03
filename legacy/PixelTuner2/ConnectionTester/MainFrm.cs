@@ -264,7 +264,7 @@ namespace ConnectionTester
             boxActualColor.BackColor = Color.FromArgb(r, g, b);
             if (_device != null)
             {
-                _device.SetColor(boxActualColor.BackColor, (byte)boxLedIndex.Value);
+                _device.SetColor(boxActualColor.BackColor, (byte)boxPixelNumber.Value);
             }
         }
 
@@ -279,7 +279,7 @@ namespace ConnectionTester
             boxActualColor.BackColor = Color.FromArgb(r, g, b);
             if (_device != null)
             {
-                _device.SetColor(boxActualColor.BackColor, (byte)boxLedIndex.Value);
+                _device.SetColor(boxActualColor.BackColor, (byte)boxPixelNumber.Value);
             }
         }
 
@@ -294,7 +294,7 @@ namespace ConnectionTester
             boxActualColor.BackColor = Color.FromArgb(r, g, b);
             if (_device != null)
             {
-                _device.SetColor(boxActualColor.BackColor, (byte)boxLedIndex.Value);
+                _device.SetColor(boxActualColor.BackColor, (byte)boxPixelNumber.Value);
             }
         }
 
@@ -392,6 +392,42 @@ namespace ConnectionTester
             }
             if (_device != null)
                 _device.Logger = new Common.Log.Logger(_logTarget);
+        }
+
+        private void boxEnterTest_Click(object sender, EventArgs e)
+        {
+            if (_device != null && _device.Port.IsOpen)
+            {
+                _device.EnterTestMode();
+            }
+            else
+            {
+                MessageBox.Show("Нет связи");
+            }
+        }
+
+        private void boxExitTest_Click(object sender, EventArgs e)
+        {
+            if (_device != null && _device.Port.IsOpen)
+            {
+                _device.ExitTestMode();
+            }
+            else
+            {
+                MessageBox.Show("Нет связи");
+            }
+        }
+
+        private void boxSetPixel_Click(object sender, EventArgs e)
+        {
+            if (_device != null && _device.Port.IsOpen)
+            {
+                _device.SetPixelColor(boxPixelNumber.Value, boxSampleColor.BackColor);
+            }
+            else
+            {
+                MessageBox.Show("Нет связи");
+            }
         }
     }
 }

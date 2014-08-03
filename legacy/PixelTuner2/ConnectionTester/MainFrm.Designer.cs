@@ -75,8 +75,10 @@
             this.boxSampleR = new System.Windows.Forms.TrackBar();
             this.boxActualColor = new System.Windows.Forms.Panel();
             this.boxSampleColor = new System.Windows.Forms.Panel();
-            this.boxLedIndex = new System.Windows.Forms.NumericUpDown();
-            this.label11 = new System.Windows.Forms.Label();
+            this.boxEnterTest = new System.Windows.Forms.Button();
+            this.boxExitTest = new System.Windows.Forms.Button();
+            this.boxPixelNumber = new System.Windows.Forms.NumericUpDown();
+            this.boxSetPixel = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.boxTab.SuspendLayout();
             this.boxTabPage1.SuspendLayout();
@@ -96,7 +98,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.boxSampleB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxSampleG)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxSampleR)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.boxLedIndex)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.boxPixelNumber)).BeginInit();
             this.SuspendLayout();
             // 
             // statusStrip1
@@ -322,8 +324,8 @@
             // 
             // boxPathProject
             // 
-            this.boxPathProject.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.boxPathProject.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.boxPathProject.Location = new System.Drawing.Point(124, 34);
             this.boxPathProject.Name = "boxPathProject";
             this.boxPathProject.Size = new System.Drawing.Size(413, 20);
@@ -363,8 +365,8 @@
             // 
             // boxPathFW
             // 
-            this.boxPathFW.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.boxPathFW.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.boxPathFW.Location = new System.Drawing.Point(124, 60);
             this.boxPathFW.Name = "boxPathFW";
             this.boxPathFW.Size = new System.Drawing.Size(413, 20);
@@ -421,8 +423,10 @@
             // boxTabPage2
             // 
             this.boxTabPage2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.boxTabPage2.Controls.Add(this.label11);
-            this.boxTabPage2.Controls.Add(this.boxLedIndex);
+            this.boxTabPage2.Controls.Add(this.boxSetPixel);
+            this.boxTabPage2.Controls.Add(this.boxPixelNumber);
+            this.boxTabPage2.Controls.Add(this.boxExitTest);
+            this.boxTabPage2.Controls.Add(this.boxEnterTest);
             this.boxTabPage2.Controls.Add(this.boxActualBnum);
             this.boxTabPage2.Controls.Add(this.boxActualGnum);
             this.boxTabPage2.Controls.Add(this.boxActualRnum);
@@ -452,13 +456,14 @@
             // 
             // boxActualBnum
             // 
-            this.boxActualBnum.Location = new System.Drawing.Point(435, 221);
+            this.boxActualBnum.Location = new System.Drawing.Point(507, 187);
             this.boxActualBnum.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
             this.boxActualBnum.Name = "boxActualBnum";
+            this.boxActualBnum.ReadOnly = true;
             this.boxActualBnum.Size = new System.Drawing.Size(44, 20);
             this.boxActualBnum.TabIndex = 19;
             this.boxActualBnum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -466,13 +471,14 @@
             // 
             // boxActualGnum
             // 
-            this.boxActualGnum.Location = new System.Drawing.Point(385, 221);
+            this.boxActualGnum.Location = new System.Drawing.Point(457, 187);
             this.boxActualGnum.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
             this.boxActualGnum.Name = "boxActualGnum";
+            this.boxActualGnum.ReadOnly = true;
             this.boxActualGnum.Size = new System.Drawing.Size(44, 20);
             this.boxActualGnum.TabIndex = 18;
             this.boxActualGnum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -480,13 +486,14 @@
             // 
             // boxActualRnum
             // 
-            this.boxActualRnum.Location = new System.Drawing.Point(335, 221);
+            this.boxActualRnum.Location = new System.Drawing.Point(407, 187);
             this.boxActualRnum.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
             this.boxActualRnum.Name = "boxActualRnum";
+            this.boxActualRnum.ReadOnly = true;
             this.boxActualRnum.Size = new System.Drawing.Size(44, 20);
             this.boxActualRnum.TabIndex = 17;
             this.boxActualRnum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -494,13 +501,14 @@
             // 
             // boxSampleBnum
             // 
-            this.boxSampleBnum.Location = new System.Drawing.Point(233, 221);
+            this.boxSampleBnum.Location = new System.Drawing.Point(305, 187);
             this.boxSampleBnum.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
             this.boxSampleBnum.Name = "boxSampleBnum";
+            this.boxSampleBnum.ReadOnly = true;
             this.boxSampleBnum.Size = new System.Drawing.Size(44, 20);
             this.boxSampleBnum.TabIndex = 16;
             this.boxSampleBnum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -508,13 +516,14 @@
             // 
             // boxSampleGnum
             // 
-            this.boxSampleGnum.Location = new System.Drawing.Point(183, 221);
+            this.boxSampleGnum.Location = new System.Drawing.Point(255, 187);
             this.boxSampleGnum.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
             this.boxSampleGnum.Name = "boxSampleGnum";
+            this.boxSampleGnum.ReadOnly = true;
             this.boxSampleGnum.Size = new System.Drawing.Size(44, 20);
             this.boxSampleGnum.TabIndex = 15;
             this.boxSampleGnum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -522,13 +531,14 @@
             // 
             // boxSampleRnum
             // 
-            this.boxSampleRnum.Location = new System.Drawing.Point(133, 221);
+            this.boxSampleRnum.Location = new System.Drawing.Point(205, 187);
             this.boxSampleRnum.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
             this.boxSampleRnum.Name = "boxSampleRnum";
+            this.boxSampleRnum.ReadOnly = true;
             this.boxSampleRnum.Size = new System.Drawing.Size(44, 20);
             this.boxSampleRnum.TabIndex = 14;
             this.boxSampleRnum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -538,7 +548,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.ForeColor = System.Drawing.SystemColors.Info;
-            this.label5.Location = new System.Drawing.Point(444, 203);
+            this.label5.Location = new System.Drawing.Point(516, 169);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(14, 13);
             this.label5.TabIndex = 13;
@@ -548,7 +558,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.ForeColor = System.Drawing.SystemColors.Info;
-            this.label6.Location = new System.Drawing.Point(392, 203);
+            this.label6.Location = new System.Drawing.Point(464, 169);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(15, 13);
             this.label6.TabIndex = 12;
@@ -558,7 +568,7 @@
             // 
             this.label7.AutoSize = true;
             this.label7.ForeColor = System.Drawing.SystemColors.Info;
-            this.label7.Location = new System.Drawing.Point(342, 203);
+            this.label7.Location = new System.Drawing.Point(414, 169);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(15, 13);
             this.label7.TabIndex = 11;
@@ -568,7 +578,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.ForeColor = System.Drawing.SystemColors.Info;
-            this.label4.Location = new System.Drawing.Point(244, 203);
+            this.label4.Location = new System.Drawing.Point(316, 169);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(14, 13);
             this.label4.TabIndex = 10;
@@ -578,7 +588,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.ForeColor = System.Drawing.SystemColors.Info;
-            this.label3.Location = new System.Drawing.Point(192, 203);
+            this.label3.Location = new System.Drawing.Point(264, 169);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(15, 13);
             this.label3.TabIndex = 9;
@@ -588,7 +598,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.ForeColor = System.Drawing.SystemColors.Info;
-            this.label2.Location = new System.Drawing.Point(142, 203);
+            this.label2.Location = new System.Drawing.Point(214, 169);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(15, 13);
             this.label2.TabIndex = 8;
@@ -596,7 +606,7 @@
             // 
             // boxActualB
             // 
-            this.boxActualB.Location = new System.Drawing.Point(441, 95);
+            this.boxActualB.Location = new System.Drawing.Point(513, 61);
             this.boxActualB.Maximum = 255;
             this.boxActualB.Name = "boxActualB";
             this.boxActualB.Orientation = System.Windows.Forms.Orientation.Vertical;
@@ -607,7 +617,7 @@
             // 
             // boxActualG
             // 
-            this.boxActualG.Location = new System.Drawing.Point(390, 95);
+            this.boxActualG.Location = new System.Drawing.Point(462, 61);
             this.boxActualG.Maximum = 255;
             this.boxActualG.Name = "boxActualG";
             this.boxActualG.Orientation = System.Windows.Forms.Orientation.Vertical;
@@ -618,7 +628,7 @@
             // 
             // boxActualR
             // 
-            this.boxActualR.Location = new System.Drawing.Point(339, 95);
+            this.boxActualR.Location = new System.Drawing.Point(411, 61);
             this.boxActualR.Maximum = 255;
             this.boxActualR.Name = "boxActualR";
             this.boxActualR.Orientation = System.Windows.Forms.Orientation.Vertical;
@@ -629,7 +639,7 @@
             // 
             // boxSampleB
             // 
-            this.boxSampleB.Location = new System.Drawing.Point(240, 95);
+            this.boxSampleB.Location = new System.Drawing.Point(312, 61);
             this.boxSampleB.Maximum = 255;
             this.boxSampleB.Name = "boxSampleB";
             this.boxSampleB.Orientation = System.Windows.Forms.Orientation.Vertical;
@@ -640,7 +650,7 @@
             // 
             // boxSampleG
             // 
-            this.boxSampleG.Location = new System.Drawing.Point(189, 95);
+            this.boxSampleG.Location = new System.Drawing.Point(261, 61);
             this.boxSampleG.Maximum = 255;
             this.boxSampleG.Name = "boxSampleG";
             this.boxSampleG.Orientation = System.Windows.Forms.Orientation.Vertical;
@@ -651,7 +661,7 @@
             // 
             // boxSampleR
             // 
-            this.boxSampleR.Location = new System.Drawing.Point(138, 95);
+            this.boxSampleR.Location = new System.Drawing.Point(210, 61);
             this.boxSampleR.Maximum = 255;
             this.boxSampleR.Name = "boxSampleR";
             this.boxSampleR.Orientation = System.Windows.Forms.Orientation.Vertical;
@@ -663,7 +673,7 @@
             // boxActualColor
             // 
             this.boxActualColor.ForeColor = System.Drawing.Color.Transparent;
-            this.boxActualColor.Location = new System.Drawing.Point(339, 44);
+            this.boxActualColor.Location = new System.Drawing.Point(411, 10);
             this.boxActualColor.Name = "boxActualColor";
             this.boxActualColor.Size = new System.Drawing.Size(147, 45);
             this.boxActualColor.TabIndex = 1;
@@ -671,33 +681,47 @@
             // boxSampleColor
             // 
             this.boxSampleColor.ForeColor = System.Drawing.Color.Transparent;
-            this.boxSampleColor.Location = new System.Drawing.Point(138, 44);
+            this.boxSampleColor.Location = new System.Drawing.Point(210, 10);
             this.boxSampleColor.Name = "boxSampleColor";
             this.boxSampleColor.Size = new System.Drawing.Size(147, 45);
             this.boxSampleColor.TabIndex = 0;
             // 
-            // boxLedIndex
+            // boxEnterTest
             // 
-            this.boxLedIndex.Location = new System.Drawing.Point(435, 257);
-            this.boxLedIndex.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-            this.boxLedIndex.Name = "boxLedIndex";
-            this.boxLedIndex.Size = new System.Drawing.Size(44, 20);
-            this.boxLedIndex.TabIndex = 20;
-            this.boxLedIndex.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.boxEnterTest.Location = new System.Drawing.Point(8, 6);
+            this.boxEnterTest.Name = "boxEnterTest";
+            this.boxEnterTest.Size = new System.Drawing.Size(118, 24);
+            this.boxEnterTest.TabIndex = 20;
+            this.boxEnterTest.Text = "Тестовый режим";
+            this.boxEnterTest.UseVisualStyleBackColor = true;
+            this.boxEnterTest.Click += new System.EventHandler(this.boxEnterTest_Click);
             // 
-            // label11
+            // boxExitTest
             // 
-            this.label11.AutoSize = true;
-            this.label11.ForeColor = System.Drawing.SystemColors.Info;
-            this.label11.Location = new System.Drawing.Point(342, 259);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(88, 13);
-            this.label11.TabIndex = 21;
-            this.label11.Text = "LED index to set:";
+            this.boxExitTest.Location = new System.Drawing.Point(8, 32);
+            this.boxExitTest.Name = "boxExitTest";
+            this.boxExitTest.Size = new System.Drawing.Size(118, 24);
+            this.boxExitTest.TabIndex = 21;
+            this.boxExitTest.Text = "Нормальный режим";
+            this.boxExitTest.UseVisualStyleBackColor = true;
+            this.boxExitTest.Click += new System.EventHandler(this.boxExitTest_Click);
+            // 
+            // boxPixelNumber
+            // 
+            this.boxPixelNumber.Location = new System.Drawing.Point(205, 223);
+            this.boxPixelNumber.Name = "boxPixelNumber";
+            this.boxPixelNumber.Size = new System.Drawing.Size(64, 20);
+            this.boxPixelNumber.TabIndex = 22;
+            // 
+            // boxSetPixel
+            // 
+            this.boxSetPixel.Location = new System.Drawing.Point(276, 221);
+            this.boxSetPixel.Name = "boxSetPixel";
+            this.boxSetPixel.Size = new System.Drawing.Size(75, 23);
+            this.boxSetPixel.TabIndex = 23;
+            this.boxSetPixel.Text = "set pixel";
+            this.boxSetPixel.UseVisualStyleBackColor = true;
+            this.boxSetPixel.Click += new System.EventHandler(this.boxSetPixel_Click);
             // 
             // MainFrm
             // 
@@ -732,7 +756,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.boxSampleB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxSampleG)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxSampleR)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.boxLedIndex)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.boxPixelNumber)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -787,8 +811,10 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.CheckBox boxLogToFile;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.NumericUpDown boxLedIndex;
+        private System.Windows.Forms.Button boxExitTest;
+        private System.Windows.Forms.Button boxEnterTest;
+        private System.Windows.Forms.Button boxSetPixel;
+        private System.Windows.Forms.NumericUpDown boxPixelNumber;
     }
 }
 

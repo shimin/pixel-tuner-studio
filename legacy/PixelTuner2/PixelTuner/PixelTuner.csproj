@@ -247,15 +247,15 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\wpftools\Toolkit\Toolkit.csproj">
+    <ProjectReference Include="..\WpfTools\Toolkit\Toolkit.csproj">
       <Project>{72E591D6-8F83-4D8C-8F67-9C325E623234}</Project>
       <Name>Toolkit</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\wpftools\Workspace.Themes\Workspace.Themes.csproj">
+    <ProjectReference Include="..\WpfTools\Workspace.Themes\Workspace.Themes.csproj">
       <Project>{D422C9D7-B4EA-4154-949B-FAC4D9DC89D2}</Project>
       <Name>Workspace.Themes</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\wpftools\Workspace\Workspace.csproj">
+    <ProjectReference Include="..\WpfTools\Workspace\Workspace.csproj">
       <Project>{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}</Project>
       <Name>Workspace</Name>
     </ProjectReference>
