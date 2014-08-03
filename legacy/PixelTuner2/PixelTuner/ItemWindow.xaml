@@ -27,9 +27,26 @@
         <Border Grid.Row="0" Width="15" Height="15">
             <Image Source="/PixelTuner;component/Images/timeStart.png"/>
         </Border>
-        <Border Grid.Row="1" Width="15" Height="15">
-            <Image Source="/PixelTuner;component/Images/timeLength.png"/>
-        </Border>
+        <Button Name="boxSwitchTimeMode" Padding="0" Grid.Row="1" Width="16" Height="16" Click="boxSwitchTimeMode_Click">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                <Border Margin="-1,-1,0,0" Padding="0" Width="15" Height="15">
+                    <Image Name="boxDurationIcon" Margin="0">
+                        <Image.Style>
+                            <Style TargetType="{x:Type Image}">
+                                <Setter Property="Source" Value="/PixelTuner;component/Images/timeEnd.png"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding UseTimeDuration}" Value="true">
+                                        <Setter Property="Source" Value="/PixelTuner;component/Images/timeLength.png"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
+                </Border>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
         <xctk:DoubleUpDown Name="boxStartMin" ValueChanged="controlValueChanged" FontWeight="{Binding StartWeight, Mode=OneWay}" Grid.Column="1" Grid.Row="0" Minimum="0" Maximum="59" IsTabStop="True" Margin="0,1,0,1" TabIndex="0" ParsingNumberStyle="Integer" RenderTransformOrigin="0,0" SelectAllOnGotFocus="True" FormatString=""></xctk:DoubleUpDown>
         <xctk:DoubleUpDown Name="boxStartSec" ValueChanged="controlValueChanged" FontWeight="{Binding StartWeight, Mode=OneWay}" Grid.Column="3" Grid.Row="0" Minimum="0" Maximum="59" IsTabStop="True" Margin="0,1,0,1" TabIndex="10" ParsingNumberStyle="Integer" RenderTransformOrigin="0,0" SelectAllOnGotFocus="True" FormatString=""></xctk:DoubleUpDown>
         <xctk:DoubleUpDown Name="boxStartMs"  ValueChanged="controlValueChanged" FontWeight="{Binding StartWeight, Mode=OneWay}" Grid.Column="5" Minimum="0" Maximum="999" IsTabStop="True" Margin="0,1,0,0" TabIndex="20" ParsingNumberStyle="Integer" RenderTransformOrigin="0,0" SelectAllOnGotFocus="True" FormatString="" Height="23" VerticalAlignment="Top"></xctk:DoubleUpDown>

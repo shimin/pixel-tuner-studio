@@ -94,7 +94,7 @@
                             <ct:TriangleSlider Height="12" 
                                            Width="48"
                                            MinValue="4" 
-                                           MaxValue="46" 
+                                           MaxValue="100" 
                                            Margin="-2,2,4,0"
                                            ToolTip="{StaticResource Item_Stretching}"
                                            PreviewMouseLeftButtonDown="ChildPreviewMouseLeftButtonDown"
