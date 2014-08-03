@@ -153,7 +153,7 @@ namespace Communication.Service
             base.SetStatus(ConnectionStatus.Online);
         }
 
-        public void SetColor(Color c)
+        public void SetColor(Color c, byte ledIndex)
         {
             lock (this._longOperation)
             {
@@ -163,11 +163,12 @@ namespace Communication.Service
                     PixelDevicePacket request = new PixelDevicePacket(PixelDeviceCommand.WHO_IS_IT, null);
                     List<byte> rawData = new List<byte> {
                         0x52,
-                        3,
-                        c.R,
-                        c.G,
-                        c.B
+                        0x07,
+                        ledIndex
                     };
+                    rawData.AddRange(Map8To12(c.R));
+                    rawData.AddRange(Map8To12(c.G));
+                    rawData.AddRange(Map8To12(c.B));
                     request = new PixelDevicePacket(rawData);
                     PixelDevicePacket packet2 = base.DoSession(request);
                 }
@@ -184,6 +185,12 @@ namespace Communication.Service
                     base.SetStatus(ConnectionStatus.Online);
                 }
             }
+        }
+
+        private IList<byte> Map8To12(byte p)
+        {
+            UInt16 scaledValue = Communication.Pixelate.ImagesCollectionItem.calibrationTable[p];
+            return BitConverter.GetBytes(scaledValue);
         }
 
         public void SwitchToBoot()
