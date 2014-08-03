@@ -264,7 +264,7 @@ namespace ConnectionTester
             boxActualColor.BackColor = Color.FromArgb(r, g, b);
             if (_device != null)
             {
-                _device.SetColor(boxActualColor.BackColor);
+                _device.SetColor(boxActualColor.BackColor, (byte)boxLedIndex.Value);
             }
         }
 
@@ -279,7 +279,7 @@ namespace ConnectionTester
             boxActualColor.BackColor = Color.FromArgb(r, g, b);
             if (_device != null)
             {
-                _device.SetColor(boxActualColor.BackColor);
+                _device.SetColor(boxActualColor.BackColor, (byte)boxLedIndex.Value);
             }
         }
 
@@ -294,7 +294,7 @@ namespace ConnectionTester
             boxActualColor.BackColor = Color.FromArgb(r, g, b);
             if (_device != null)
             {
-                _device.SetColor(boxActualColor.BackColor);
+                _device.SetColor(boxActualColor.BackColor, (byte)boxLedIndex.Value);
             }
         }
 

@@ -32,6 +32,12 @@
             this.boxStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.boxTab = new System.Windows.Forms.TabControl();
             this.boxTabPage1 = new System.Windows.Forms.TabPage();
+            this.boxLogToFile = new System.Windows.Forms.CheckBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.boxDelay = new System.Windows.Forms.NumericUpDown();
+            this.boxRepeatCount = new System.Windows.Forms.NumericUpDown();
+            this.label8 = new System.Windows.Forms.Label();
             this.boxSendRequest = new System.Windows.Forms.LinkLabel();
             this.boxDeleteRequest = new System.Windows.Forms.LinkLabel();
             this.boxRequest = new System.Windows.Forms.ComboBox();
@@ -69,15 +75,13 @@
             this.boxSampleR = new System.Windows.Forms.TrackBar();
             this.boxActualColor = new System.Windows.Forms.Panel();
             this.boxSampleColor = new System.Windows.Forms.Panel();
-            this.label8 = new System.Windows.Forms.Label();
-            this.boxRepeatCount = new System.Windows.Forms.NumericUpDown();
-            this.boxDelay = new System.Windows.Forms.NumericUpDown();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.boxLogToFile = new System.Windows.Forms.CheckBox();
+            this.boxLedIndex = new System.Windows.Forms.NumericUpDown();
+            this.label11 = new System.Windows.Forms.Label();
             this.statusStrip1.SuspendLayout();
             this.boxTab.SuspendLayout();
             this.boxTabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.boxDelay)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.boxRepeatCount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxPortNum)).BeginInit();
             this.boxTabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.boxActualBnum)).BeginInit();
@@ -92,8 +96,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.boxSampleB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxSampleG)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxSampleR)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.boxRepeatCount)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.boxDelay)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.boxLedIndex)).BeginInit();
             this.SuspendLayout();
             // 
             // statusStrip1
@@ -153,6 +156,94 @@
             this.boxTabPage1.TabIndex = 0;
             this.boxTabPage1.Text = "Прошивка и загрузка проекта";
             this.boxTabPage1.UseVisualStyleBackColor = true;
+            // 
+            // boxLogToFile
+            // 
+            this.boxLogToFile.AutoSize = true;
+            this.boxLogToFile.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.boxLogToFile.Location = new System.Drawing.Point(524, 128);
+            this.boxLogToFile.Name = "boxLogToFile";
+            this.boxLogToFile.Size = new System.Drawing.Size(81, 17);
+            this.boxLogToFile.TabIndex = 36;
+            this.boxLogToFile.Text = "лог в файл";
+            this.boxLogToFile.UseVisualStyleBackColor = true;
+            this.boxLogToFile.CheckedChanged += new System.EventHandler(this.boxLogToFile_CheckedChanged);
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(428, 123);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(21, 13);
+            this.label10.TabIndex = 35;
+            this.label10.Text = "мс";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(222, 123);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(75, 13);
+            this.label9.TabIndex = 34;
+            this.label9.Text = "с задержкой:";
+            // 
+            // boxDelay
+            // 
+            this.boxDelay.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.boxDelay.Location = new System.Drawing.Point(302, 121);
+            this.boxDelay.Maximum = new decimal(new int[] {
+            20000,
+            0,
+            0,
+            0});
+            this.boxDelay.Minimum = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            this.boxDelay.Name = "boxDelay";
+            this.boxDelay.Size = new System.Drawing.Size(120, 20);
+            this.boxDelay.TabIndex = 33;
+            this.boxDelay.Value = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            // 
+            // boxRepeatCount
+            // 
+            this.boxRepeatCount.Location = new System.Drawing.Point(77, 121);
+            this.boxRepeatCount.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.boxRepeatCount.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.boxRepeatCount.Name = "boxRepeatCount";
+            this.boxRepeatCount.Size = new System.Drawing.Size(120, 20);
+            this.boxRepeatCount.TabIndex = 32;
+            this.boxRepeatCount.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(12, 123);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(64, 13);
+            this.label8.TabIndex = 31;
+            this.label8.Text = "Повторить:";
             // 
             // boxSendRequest
             // 
@@ -330,6 +421,8 @@
             // boxTabPage2
             // 
             this.boxTabPage2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.boxTabPage2.Controls.Add(this.label11);
+            this.boxTabPage2.Controls.Add(this.boxLedIndex);
             this.boxTabPage2.Controls.Add(this.boxActualBnum);
             this.boxTabPage2.Controls.Add(this.boxActualGnum);
             this.boxTabPage2.Controls.Add(this.boxActualRnum);
@@ -353,7 +446,7 @@
             this.boxTabPage2.Location = new System.Drawing.Point(4, 22);
             this.boxTabPage2.Name = "boxTabPage2";
             this.boxTabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.boxTabPage2.Size = new System.Drawing.Size(613, 338);
+            this.boxTabPage2.Size = new System.Drawing.Size(613, 368);
             this.boxTabPage2.TabIndex = 1;
             this.boxTabPage2.Text = "Калибровка цвета";
             // 
@@ -583,93 +676,28 @@
             this.boxSampleColor.Size = new System.Drawing.Size(147, 45);
             this.boxSampleColor.TabIndex = 0;
             // 
-            // label8
+            // boxLedIndex
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(12, 123);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(64, 13);
-            this.label8.TabIndex = 31;
-            this.label8.Text = "Повторить:";
-            // 
-            // boxRepeatCount
-            // 
-            this.boxRepeatCount.Location = new System.Drawing.Point(77, 121);
-            this.boxRepeatCount.Maximum = new decimal(new int[] {
-            1000,
+            this.boxLedIndex.Location = new System.Drawing.Point(435, 257);
+            this.boxLedIndex.Maximum = new decimal(new int[] {
+            255,
             0,
             0,
             0});
-            this.boxRepeatCount.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.boxRepeatCount.Name = "boxRepeatCount";
-            this.boxRepeatCount.Size = new System.Drawing.Size(120, 20);
-            this.boxRepeatCount.TabIndex = 32;
-            this.boxRepeatCount.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+            this.boxLedIndex.Name = "boxLedIndex";
+            this.boxLedIndex.Size = new System.Drawing.Size(44, 20);
+            this.boxLedIndex.TabIndex = 20;
+            this.boxLedIndex.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
-            // boxDelay
+            // label11
             // 
-            this.boxDelay.Increment = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.boxDelay.Location = new System.Drawing.Point(302, 121);
-            this.boxDelay.Maximum = new decimal(new int[] {
-            20000,
-            0,
-            0,
-            0});
-            this.boxDelay.Minimum = new decimal(new int[] {
-            30,
-            0,
-            0,
-            0});
-            this.boxDelay.Name = "boxDelay";
-            this.boxDelay.Size = new System.Drawing.Size(120, 20);
-            this.boxDelay.TabIndex = 33;
-            this.boxDelay.Value = new decimal(new int[] {
-            30,
-            0,
-            0,
-            0});
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(222, 123);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(75, 13);
-            this.label9.TabIndex = 34;
-            this.label9.Text = "с задержкой:";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(428, 123);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(21, 13);
-            this.label10.TabIndex = 35;
-            this.label10.Text = "мс";
-            // 
-            // boxLogToFile
-            // 
-            this.boxLogToFile.AutoSize = true;
-            this.boxLogToFile.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.boxLogToFile.Location = new System.Drawing.Point(524, 128);
-            this.boxLogToFile.Name = "boxLogToFile";
-            this.boxLogToFile.Size = new System.Drawing.Size(81, 17);
-            this.boxLogToFile.TabIndex = 36;
-            this.boxLogToFile.Text = "лог в файл";
-            this.boxLogToFile.UseVisualStyleBackColor = true;
-            this.boxLogToFile.CheckedChanged += new System.EventHandler(this.boxLogToFile_CheckedChanged);
+            this.label11.AutoSize = true;
+            this.label11.ForeColor = System.Drawing.SystemColors.Info;
+            this.label11.Location = new System.Drawing.Point(342, 259);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(88, 13);
+            this.label11.TabIndex = 21;
+            this.label11.Text = "LED index to set:";
             // 
             // MainFrm
             // 
@@ -687,6 +715,8 @@
             this.boxTab.ResumeLayout(false);
             this.boxTabPage1.ResumeLayout(false);
             this.boxTabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.boxDelay)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.boxRepeatCount)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxPortNum)).EndInit();
             this.boxTabPage2.ResumeLayout(false);
             this.boxTabPage2.PerformLayout();
@@ -702,8 +732,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.boxSampleB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxSampleG)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxSampleR)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.boxRepeatCount)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.boxDelay)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.boxLedIndex)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -758,6 +787,8 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.CheckBox boxLogToFile;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.NumericUpDown boxLedIndex;
     }
 }
 
