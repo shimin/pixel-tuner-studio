@@ -597,15 +597,37 @@ namespace Common.Controls
         #endregion
 
         #region manipulation mode
+        private TimeLineManipulationMode _actualManipulationMode;
+
         public TimeLineManipulationMode ManipulationMode
         {
             get { return (TimeLineManipulationMode)GetValue(ManipulationModeProperty); }
-            set { SetValue(ManipulationModeProperty, value); }
+            set { SetValue(ManipulationModeProperty, value); _actualManipulationMode = value; }
         }
 
         // Using a DependencyProperty as the backing store for ManipulationMode.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ManipulationModeProperty =
             DependencyProperty.Register("ManipulationMode", typeof(TimeLineManipulationMode), typeof(TimeLineControl), new UIPropertyMetadata(TimeLineManipulationMode.Free));
+        #endregion
+
+        #region Anchor step
+
+        public int AnchorStep
+        {
+            get { return (int)GetValue(AnchorStepProperty); }
+            set { SetValue(AnchorStepProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for UnitSize.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty AnchorStepProperty =
+            DependencyProperty.Register("AnchorStep", typeof(int), typeof(TimeLineControl),
+            new UIPropertyMetadata(50, new PropertyChangedCallback(OnAnchorStepChanged)));
+
+        private static void OnAnchorStepChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            TimeLineItemControl.AnchorStep = (int)e.NewValue;
+        }
+
         #endregion
 
         #endregion
@@ -739,7 +761,7 @@ namespace Common.Controls
                         break;
                     }
                 }
-                if (ManipulationMode == TimeLineManipulationMode.Linked)
+                if (_actualManipulationMode == TimeLineManipulationMode.Linked)
                     TrimTimeSpaces();
             }
         }
@@ -1245,7 +1267,7 @@ namespace Common.Controls
             _dragStartPosition.X = double.MinValue;
             _dragStartPosition.Y = double.MinValue;
             _dragObject = null;
-            if (ManipulationMode == TimeLineManipulationMode.Linked) 
+            if (_actualManipulationMode == TimeLineManipulationMode.Linked) 
                 TrimTimeSpaces();
         }
 
@@ -1268,6 +1290,7 @@ namespace Common.Controls
                             {
                                 data.StartTime = prev.EndTime.Value;
                             }
+                            // this should occur only when "apply to all" selected
                             data.EndTime = data.StartTime.Value.AddTicks(duration.Ticks);
                             prev = data;
                         }
@@ -1844,8 +1867,6 @@ namespace Common.Controls
                             {
                                 ctrl.MoveStartTime(useDeltaX);
                             }
-
-
                             break;
                             #endregion
                         case TimeLineManipulationMode.Free:
@@ -1854,19 +1875,16 @@ namespace Common.Controls
                             doStretch = direction > 0;
                             if (direction < 0)
                             {
-                                //disallow us from free stretching into another item
-
-                                if (previous != null)
+                                double pend = 0;
+                                if (previous != null)   //disallow us from free stretching into another item
                                 {
                                     Double pLeft = 0;
                                     Double pWidth = 0;
                                     Double pEnd = 0;
                                     previous.GetPlacementInfo(ref pLeft, ref pWidth, ref pEnd);
                                     gap = cLeft - pEnd;
-
-
+                                    pend = pEnd;
                                 }
-
                                 else
                                 {
                                     //don't allow us to stretch further than the gap between current and start time
@@ -1874,9 +1892,21 @@ namespace Common.Controls
                                     gap = cLeft;
                                 }
                                 doStretch = gap > _bumpThreshold;
+                                //Console.WriteLine("pEnd: " + pend.ToString() + "\t gap: " + gap.ToString(), "\t useDeltaX: " + useDeltaX.ToString());
                                 if (gap < useDeltaX)
                                 {
                                     useDeltaX = gap;
+                                }
+                            }
+                            else
+                            {
+                                if (previous != null)   //disallow us from free stretching into another item
+                                {
+                                    Double pLeft = 0;
+                                    Double pWidth = 0;
+                                    Double pEnd = 0;
+                                    previous.GetPlacementInfo(ref pLeft, ref pWidth, ref pEnd);
+                                    doStretch = cLeft + useDeltaX >= pEnd + _bumpThreshold;
                                 }
                             }
 
@@ -1936,20 +1966,26 @@ namespace Common.Controls
                             #region free
                             Double nextGap = Double.MaxValue;
                             doStretch = true;
-                            if (direction > 0 && after != null)
+                            if (after != null)
                             {
                                 //disallow us from free stretching into another item
                                 Double nLeft = 0;
                                 Double nWidth = 0;
                                 Double nEnd = 0;
                                 after.GetPlacementInfo(ref nLeft, ref nWidth, ref nEnd);
-                                nextGap = nLeft - cEnd;
-                                doStretch = nextGap > _bumpThreshold;
-                                if (nextGap < useDeltaX)
-                                    useDeltaX = nextGap;
+
+                                if (direction > 0)
+                                {
+                                    nextGap = nLeft - cEnd;
+                                    doStretch = nextGap > _bumpThreshold;
+                                    if (nextGap < useDeltaX)
+                                        useDeltaX = nextGap;
+                                }
+                                else
+                                {
+                                    doStretch = cEnd + useDeltaX <= nLeft - _bumpThreshold;
+                                }
                             }
-
-
                             doStretch &= ctrl.CanDelta(1, useDeltaX);
                             if (doStretch)
                             {
@@ -1982,14 +2018,12 @@ namespace Common.Controls
             chainW += leadBuffer;
             if (direction > 0)
             {
-
                 first.BringIntoView(new Rect(new Point(0, 0), new Point(chainW, Height)));
             }
             else
             {
                 first.BringIntoView(new Rect(new Point(-leadBuffer, 0), new Point(chainW, Height)));
             }
-
         }
 
         #endregion
@@ -2015,26 +2049,33 @@ namespace Common.Controls
             Double mouseX = Mouse.GetPosition(null).X;
             Double deltaX = mouseX - _curX;
             TimeSpan deltaT = ctrl.GetDeltaTime(deltaX);
-            var curMode = (TimeLineManipulationMode)GetValue(ManipulationModeProperty);
-            HandleItemManipulation(ctrl, new TimeLineItemChangedEventArgs()
+            //Console.WriteLine("_curX: " + _curX.ToString() + "deltaX: " + deltaX.ToString() + "\t deltaT: " + deltaT.ToString());
+            if (deltaT.TotalMilliseconds != 0)
             {
-                Action = _action,
-                DeltaTime = deltaT,
-                DeltaX = deltaX,
-                Mode = curMode
-            });
+                HandleItemManipulation(ctrl, new TimeLineItemChangedEventArgs()
+                {
+                    Action = _action,
+                    DeltaTime = deltaT,
+                    DeltaX = deltaX,
+                    Mode = _actualManipulationMode
+                });
 
-            DrawBackGround();
-            _curX = mouseX;
+                DrawBackGround();
+                _curX = mouseX;
+            }
 
-            //When we pressed, this lost focus and we therefore didn't capture any changes to the key status
-            //so we check it again after our manipulation finishes.  That way we can be linked and go out of or back into it while dragging
-            //ManipulationMode = TimeLineManipulationMode.Linked;
             _leftCtrlDown = Keyboard.IsKeyDown(Key.LeftCtrl);
             _rightCtrlDown = Keyboard.IsKeyDown(Key.RightCtrl);
             if (_leftCtrlDown || _rightCtrlDown)
             {
-                ManipulationMode = TimeLineManipulationMode.Linked;
+                if (ManipulationMode == TimeLineManipulationMode.Linked)
+                    _actualManipulationMode = TimeLineManipulationMode.Free;
+                else
+                    _actualManipulationMode = TimeLineManipulationMode.Linked;
+            }
+            else
+            {
+                _actualManipulationMode = ManipulationMode;
             }
             #endregion
         }

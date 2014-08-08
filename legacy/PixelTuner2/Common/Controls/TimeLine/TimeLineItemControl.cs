@@ -26,12 +26,16 @@ namespace Common.Controls
         {
         }
 
+        public static int AnchorStep = 50;
+
         Double _defaultTimeInterval;
         public Double DefaultTimeInterval
         {
             get { return _defaultTimeInterval; }
             set { _defaultTimeInterval = value; }
         }
+
+        private int _itemThresholdDevisor = 10; // sets minimum item length
 
 		private Boolean _ready = true;
 		internal Boolean ReadyToDraw
@@ -68,13 +72,11 @@ namespace Common.Controls
 
 		private static void OnUnitSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
-			
 			TimeLineItemControl ctrl = d as TimeLineItemControl;
 			if (ctrl != null)
 			{
 				ctrl.PlaceOnCanvas();
 			}
-			
 		}
 		#endregion
 
@@ -326,23 +328,26 @@ namespace Common.Controls
 
 		internal TimeSpan ConvertDistanceToTime(Double distance)
 		{
-			
 			TimeLineViewLevel lvl = (TimeLineViewLevel)GetValue(ViewLevelProperty);
 			Double unitSize = (Double)GetValue(UnitSizeProperty);
 			double seconds, minutes, hours, days, weeks, months, years, milliseconds = 0;
-
+            int millisecondStep = AnchorStep;
 			switch (lvl)
 			{
                 case TimeLineViewLevel.Seconds:
-                    //value = span.TotalMinutes * unitSize;
-                    seconds = Math.Round((distance / unitSize), 3);
-                    //Int64 secInt = (Int64)(seconds * 1000);
-                    //secInt = (secInt / 50) * 50;
-                    //seconds = (Double)secInt / 1000;
-                    //Console.WriteLine(string.Format("distance={0}\tunitSize={1}\tseconds={2}\troundedSeconds={3}\tMath.Round((distance / unitSize), 3)",
-                        //distance, unitSize, distance / unitSize, seconds));
-                    //convert to milliseconds
-                    milliseconds = (seconds * 1000) - ((seconds * 1000) % 10);
+                    seconds = distance / unitSize;
+                    milliseconds = seconds * 1000;
+                    double residue = milliseconds % millisecondStep;
+                    
+                    //correct step:
+                    milliseconds = milliseconds - residue;
+                    if (Math.Abs(residue) >= millisecondStep / 2)
+                    {
+                        if (distance >= 0)
+                            milliseconds += millisecondStep;
+                        else
+                            milliseconds -= millisecondStep;
+                    }
                     break;
 				case TimeLineViewLevel.Minutes:
 					//value = span.TotalMinutes * unitSize;
@@ -379,14 +384,10 @@ namespace Common.Controls
 				default:
 					break;
 			}
-			long ticks = (long)milliseconds* 10000; 
+			long ticks = (long)(milliseconds* 10000);
 			TimeSpan returner = new TimeSpan(ticks);
 			return returner;
-
-			//return new TimeSpan(0, 0, 0, 0, (int)milliseconds);
-			
-
-		}
+        }
 
 		#endregion
         private void SetIndicators(System.Windows.Visibility left, System.Windows.Visibility right)
@@ -449,7 +450,7 @@ namespace Common.Controls
 		internal bool CanDelta(int StartOrEnd, Double deltaX)
 		{
 			Double unitS = (Double)GetValue(UnitSizeProperty);
-			Double threshold = unitS / 3.0;
+			Double threshold = unitS / _itemThresholdDevisor;
 			Double newW = unitS;
 			if (StartOrEnd == 0)//we are moving the start
 			{
@@ -515,7 +516,7 @@ namespace Common.Controls
             Double unitS = (Double)GetValue(UnitSizeProperty);
             //Console.WriteLine(String.Format("MoveEndTime delta={0} MousePositionX={1}", delta, Mouse.GetPosition(null).X));
             //Console.WriteLine(String.Format("MoveEndTime delta={0} WidthBeforeChanges={2} MouseXPositionOnControl={1}", delta, Mouse.GetPosition(this).X, Width));
-			Double threshold = unitS / 3.0;
+			Double threshold = unitS / _itemThresholdDevisor;
             if (Width + delta > threshold)
             {
                 Width += delta;
