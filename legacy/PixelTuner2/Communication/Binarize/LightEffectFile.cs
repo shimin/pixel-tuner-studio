@@ -71,15 +71,16 @@ namespace Communication.Binarize
         {
             List<byte> result = new List<byte>();
 
-            int dR = ColorFirst.R - ColorLast.R;
-            int dG = ColorFirst.G - ColorLast.G;
-            int dB = ColorFirst.B - ColorLast.B;
+            int dR = ColorLast.R - ColorFirst.R;
+            int dG = ColorLast.G - ColorFirst.G;
+            int dB = ColorLast.B - ColorFirst.B;
 
             DateTime time = this.StartTime;
             while (time < this.EndTime)
             {
                 switch (Name)
                 {
+                    case "Linear Transition": result.AddRange(GetLinearTransition(time, rate, ColorFirst, ColorLast, dR, dG, dB)); break;
                     case "Sine Wave": result.AddRange(GetColorSine(time, rate, ColorFirst, ColorLast, dR, dG, dB)); break;
                     case "Square Wave": result.AddRange(GetColorSquare(time, rate, ColorFirst, ColorLast, dR, dG, dB)); break;
                     case "Saw-tooth Wave": result.AddRange(GetColorSaw(time, rate, ColorFirst, ColorLast, dR, dG, dB)); break;
@@ -87,6 +88,25 @@ namespace Communication.Binarize
                 time = time.AddMilliseconds(rate);
             }
             return result;
+        }
+
+        private IEnumerable<byte> GetLinearTransition(DateTime time, int rate, Color ColorFirst, Color ColorLast, int dR, int dG, int dB)
+        {
+            List<byte> color = new List<byte>();
+
+            double durationMS = (EndTime - StartTime).TotalMilliseconds;
+            double timepointMS = (time - StartTime).TotalMilliseconds;
+
+            // для линейного перехода, линейная пропорция
+            int xR = (int)(dR * timepointMS / durationMS);
+            int xG = (int)(dG * timepointMS / durationMS);
+            int xB = (int)(dB * timepointMS / durationMS);
+
+            color.Add((byte)(ColorFirst.R + xR));
+            color.Add((byte)(ColorFirst.G + xG));
+            color.Add((byte)(ColorFirst.B + xB));
+
+            return color;
         }
 
         private IEnumerable<byte> GetColorSaw(DateTime time, int rate, Color ColorFirst, Color ColorLast, int dR, int dG, int dB)
