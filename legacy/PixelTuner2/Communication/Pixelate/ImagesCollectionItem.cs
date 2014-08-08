@@ -18,6 +18,13 @@ namespace Communication.Pixelate
     {
         const int ParametersFieldSize = 2;
 
+        private enum ColorComponent
+        {
+            R,
+            G,
+            B
+        }
+
         #region Fields
 
         public string Key
@@ -199,9 +206,9 @@ namespace Communication.Pixelate
             {
                 List<Color> columnColors = new List<Color>();
                 GetColumn(targetHeight, column, columnColors);
-                foreach (var c in columnColors) binary.AddRange(Map8To12(c.R));
-                foreach (var c in columnColors) binary.AddRange(Map8To12(c.G));
-                foreach (var c in columnColors) binary.AddRange(Map8To12(c.B));
+                foreach (var c in columnColors) binary.AddRange(Map8To12(c.R, ColorComponent.R)); // 400 mcd
+                foreach (var c in columnColors) binary.AddRange(Map8To12(c.G, ColorComponent.G)); // 800 mcd
+                foreach (var c in columnColors) binary.AddRange(Map8To12(c.B, ColorComponent.B)); // 200 mcd
             }
             return binary;
         }
@@ -216,9 +223,9 @@ namespace Communication.Pixelate
             {
                 List<Color> columnColors = new List<Color>();
                 GetColumn(targetHeight, column, columnColors);
-                foreach (var c in columnColors) binary.Add(Map8To8(c.R));
-                foreach (var c in columnColors) binary.Add(Map8To8(c.G));
-                foreach (var c in columnColors) binary.Add(Map8To8(c.B));
+                foreach (var c in columnColors) binary.Add(Map8To8(c.R, ColorComponent.R));
+                foreach (var c in columnColors) binary.Add(Map8To8(c.G, ColorComponent.G));   
+                foreach (var c in columnColors) binary.Add(Map8To8(c.B, ColorComponent.B));   
             }
             return binary;
         }
@@ -280,17 +287,275 @@ namespace Communication.Pixelate
             return binary;
         }
 
-        private IList<byte> Map8To12(byte p)
+        private IList<byte> Map8To12(byte p, ColorComponent cc)
         {
-            float colorMult = (float)Brightness / 100;
-            p = (byte)(p * colorMult);
-            return BitConverter.GetBytes((UInt16)(4095 * p / byte.MaxValue));
+            UInt16 scaledValue = calibrationTable[p];
+            return BitConverter.GetBytes(scaledValue);
         }
 
-        private byte Map8To8(byte p)
+        internal static UInt16[] calibrationTable = new UInt16[] {  0
+                                                    ,1
+                                                    ,2
+                                                    ,3
+                                                    ,4
+                                                    ,5
+                                                    ,6
+                                                    ,7
+                                                    ,8
+                                                    ,9
+                                                    ,10
+                                                    ,11
+                                                    ,12
+                                                    ,13
+                                                    ,14
+                                                    ,15
+                                                    ,16
+                                                    ,17
+                                                    ,18
+                                                    ,19
+                                                    ,20
+                                                    ,21
+                                                    ,23
+                                                    ,25
+                                                    ,27
+                                                    ,29
+                                                    ,31
+                                                    ,33
+                                                    ,35
+                                                    ,37
+                                                    ,39
+                                                    ,41
+                                                    ,43
+                                                    ,45
+                                                    ,47
+                                                    ,49
+                                                    ,51
+                                                    ,53
+                                                    ,55
+                                                    ,63
+                                                    ,71
+                                                    ,79
+                                                    ,87
+                                                    ,95
+                                                    ,103
+                                                    ,111
+                                                    ,119
+                                                    ,127
+                                                    ,135
+                                                    ,143
+                                                    ,151
+                                                    ,159
+                                                    ,167
+                                                    ,175
+                                                    ,183
+                                                    ,191
+                                                    ,199
+                                                    ,207
+                                                    ,215
+                                                    ,223
+                                                    ,231
+                                                    ,239
+                                                    ,247
+                                                    ,255
+                                                    ,263
+                                                    ,271
+                                                    ,279
+                                                    ,287
+                                                    ,295
+                                                    ,303
+                                                    ,311
+                                                    ,319
+                                                    ,327
+                                                    ,335
+                                                    ,343
+                                                    ,351
+                                                    ,359
+                                                    ,367
+                                                    ,375
+                                                    ,383
+                                                    ,399
+                                                    ,415
+                                                    ,431
+                                                    ,447
+                                                    ,463
+                                                    ,479
+                                                    ,495
+                                                    ,511
+                                                    ,527
+                                                    ,543
+                                                    ,559
+                                                    ,575
+                                                    ,591
+                                                    ,607
+                                                    ,623
+                                                    ,639
+                                                    ,655
+                                                    ,671
+                                                    ,687
+                                                    ,703
+                                                    ,719
+                                                    ,735
+                                                    ,751
+                                                    ,767
+                                                    ,783
+                                                    ,799
+                                                    ,815
+                                                    ,831
+                                                    ,847
+                                                    ,863
+                                                    ,879
+                                                    ,895
+                                                    ,911
+                                                    ,927
+                                                    ,943
+                                                    ,959
+                                                    ,975
+                                                    ,991
+                                                    ,1007
+                                                    ,1023
+                                                    ,1039
+                                                    ,1055
+                                                    ,1071
+                                                    ,1087
+                                                    ,1103
+                                                    ,1119
+                                                    ,1135
+                                                    ,1151
+                                                    ,1167
+                                                    ,1183
+                                                    ,1199
+                                                    ,1215
+                                                    ,1231
+                                                    ,1247
+                                                    ,1263
+                                                    ,1279
+                                                    ,1295
+                                                    ,1311
+                                                    ,1327
+                                                    ,1343
+                                                    ,1359
+                                                    ,1375
+                                                    ,1391
+                                                    ,1407
+                                                    ,1423
+                                                    ,1439
+                                                    ,1455
+                                                    ,1471
+                                                    ,1487
+                                                    ,1503
+                                                    ,1519
+                                                    ,1535
+                                                    ,1551
+                                                    ,1567
+                                                    ,1583
+                                                    ,1599
+                                                    ,1615
+                                                    ,1631
+                                                    ,1647
+                                                    ,1663
+                                                    ,1679
+                                                    ,1695
+                                                    ,1711
+                                                    ,1727
+                                                    ,1743
+                                                    ,1759
+                                                    ,1775
+                                                    ,1791
+                                                    ,1807
+                                                    ,1823
+                                                    ,1839
+                                                    ,1855
+                                                    ,1871
+                                                    ,1887
+                                                    ,1903
+                                                    ,1919
+                                                    ,1935
+                                                    ,1951
+                                                    ,1967
+                                                    ,1983
+                                                    ,1999
+                                                    ,2015
+                                                    ,2031
+                                                    ,2047
+                                                    ,2063
+                                                    ,2079
+                                                    ,2095
+                                                    ,2111
+                                                    ,2127
+                                                    ,2143
+                                                    ,2159
+                                                    ,2175
+                                                    ,2191
+                                                    ,2207
+                                                    ,2223
+                                                    ,2239
+                                                    ,2255
+                                                    ,2271
+                                                    ,2287
+                                                    ,2303
+                                                    ,2335
+                                                    ,2367
+                                                    ,2399
+                                                    ,2431
+                                                    ,2463
+                                                    ,2495
+                                                    ,2527
+                                                    ,2559
+                                                    ,2591
+                                                    ,2623
+                                                    ,2655
+                                                    ,2687
+                                                    ,2719
+                                                    ,2751
+                                                    ,2783
+                                                    ,2815
+                                                    ,2847
+                                                    ,2879
+                                                    ,2911
+                                                    ,2943
+                                                    ,2975
+                                                    ,3007
+                                                    ,3039
+                                                    ,3071
+                                                    ,3103
+                                                    ,3135
+                                                    ,3167
+                                                    ,3199
+                                                    ,3231
+                                                    ,3263
+                                                    ,3295
+                                                    ,3327
+                                                    ,3359
+                                                    ,3391
+                                                    ,3423
+                                                    ,3455
+                                                    ,3487
+                                                    ,3519
+                                                    ,3551
+                                                    ,3583
+                                                    ,3615
+                                                    ,3647
+                                                    ,3679
+                                                    ,3711
+                                                    ,3743
+                                                    ,3775
+                                                    ,3807
+                                                    ,3839
+                                                    ,3871
+                                                    ,3903
+                                                    ,3935
+                                                    ,3967
+                                                    ,3999
+                                                    ,4031
+                                                    ,4063
+                                                    ,4095
+        };
+
+        private byte Map8To8(byte p, ColorComponent cc)
         {
             float colorMult = (float)Brightness / 100;
             p = (byte)(p * colorMult);
+            if (cc == ColorComponent.G) p /= 2;
             return p;
         }
 
