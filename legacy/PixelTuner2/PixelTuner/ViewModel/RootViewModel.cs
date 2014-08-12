@@ -27,6 +27,13 @@ namespace PixelTuner.ViewModel
         public RootViewModel()
         {
             this.Id = Guid.NewGuid();
+            _anchorStepCollection = new Dictionary<int, string>(){
+                {20, "20 ms"},
+                {50, "50 ms"},
+                {100, "100 ms"},
+                {250, "250 ms"},
+                {500, "500 ms"},
+                {1000, "1 s"}};
 #if DEBUG
             Logger = new Logger(new FileTarget("log.txt"));
 #endif
@@ -101,6 +108,21 @@ namespace PixelTuner.ViewModel
         }
 
         XmlSerializer _projectSerializer = new XmlSerializer(typeof(FileViewModel), FileViewModel.ExtraTypes.ToArray());
+
+        /// <summary>
+        /// Step of rulers on timelines to link with items borders
+        /// </summary>
+        public int AnchorStep
+        {
+            get { return Settings.Default.AnchorStep; }
+            set { Settings.Default.AnchorStep = value; RaisePropertyChanged("AnchorStep"); }
+        }
+
+        private Dictionary<int, string> _anchorStepCollection;
+        public Dictionary<int, string> AnchorStepCollection
+        {
+            get { return _anchorStepCollection; }
+        }
 
         #endregion
 

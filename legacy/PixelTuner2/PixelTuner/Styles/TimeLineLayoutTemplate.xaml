@@ -179,6 +179,7 @@
                         DrawTimeGrid="False"
                         FocusOnItem="False"
                         SynchedWithSiblings="True"
+                        AnchorStep="{Binding Source={StaticResource RootContext}, Path=AnchorStep}"
                         Background="{Binding Background}"
                         DefaultTimeInterval="{Binding DefaultTimeInterval}" 
                         StartDate="{Binding Start, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
