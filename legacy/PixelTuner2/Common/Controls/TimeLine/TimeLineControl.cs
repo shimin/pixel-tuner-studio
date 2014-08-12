@@ -1700,8 +1700,10 @@ namespace Common.Controls
         #region edit events etc
         private Double _curX = 0;
         private TimeLineAction _action;
+        private Point _firstClickPosition = new Point(0,0);
         void item_PreviewEditButtonUp(object sender, MouseButtonEventArgs e)
         {
+            _firstClickPosition = new Point(0, 0);
             (sender as TimeLineItemControl).ReleaseMouseCapture();
             Keyboard.Focus(this);
         }
@@ -1710,7 +1712,8 @@ namespace Common.Controls
         {
             var ctrl = sender as TimeLineItemControl;
             _action = ctrl.GetClickAction();
-            (sender as TimeLineItemControl).CaptureMouse();
+            ctrl.CaptureMouse();
+            _firstClickPosition = Mouse.GetPosition(ctrl);
         }
 
         #region key down and up
@@ -1771,6 +1774,7 @@ namespace Common.Controls
                             break;
                         case TimeLineManipulationMode.Free:
                             #region Free
+                                useDeltaX = Mouse.GetPosition(ctrl).X - _firstClickPosition.X;
                                 Double chainGap = Double.MaxValue;
                                 if (direction > 0)
                                 {
@@ -1784,7 +1788,6 @@ namespace Common.Controls
                                     {
                                         ti.MoveMe(useDeltaX);
                                     }
-
                                     //find the size of our chain so we bring it into view
                                     var first = afterChain[0];
                                     var last = afterChain[afterChain.Count - 1];
@@ -2049,7 +2052,6 @@ namespace Common.Controls
             Double mouseX = Mouse.GetPosition(null).X;
             Double deltaX = mouseX - _curX;
             TimeSpan deltaT = ctrl.GetDeltaTime(deltaX);
-            //Console.WriteLine("_curX: " + _curX.ToString() + "deltaX: " + deltaX.ToString() + "\t deltaT: " + deltaT.ToString());
             if (deltaT.TotalMilliseconds != 0)
             {
                 HandleItemManipulation(ctrl, new TimeLineItemChangedEventArgs()

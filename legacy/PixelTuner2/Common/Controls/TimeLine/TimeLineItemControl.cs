@@ -341,7 +341,7 @@ namespace Common.Controls
                     
                     //correct step:
                     milliseconds = milliseconds - residue;
-                    if (Math.Abs(residue) >= millisecondStep / 2)
+                    if (Math.Abs(residue) >= millisecondStep)
                     {
                         if (distance >= 0)
                             milliseconds += millisecondStep;
