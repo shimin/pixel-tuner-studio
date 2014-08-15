@@ -178,5 +178,17 @@ namespace PixelTuner.Properties {
                 this["AnchorStep"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ApplySharpening {
+            get {
+                return ((bool)(this["ApplySharpening"]));
+            }
+            set {
+                this["ApplySharpening"] = value;
+            }
+        }
     }
 }

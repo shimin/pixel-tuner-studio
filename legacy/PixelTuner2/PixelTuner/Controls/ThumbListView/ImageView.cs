@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using PixelTuner.ViewModel;
 using System.Text;
 using PixelTuner.Properties;
+using Common.Imaging.UnsharpMask;
 
 namespace PixelTuner.Controls.ThumbListView
 {
@@ -24,23 +25,34 @@ namespace PixelTuner.Controls.ThumbListView
                     try
                     {
                         System.Drawing.Image img = System.Drawing.Image.FromFile(p);
-                        if (img.Height > 150 || img.Width > 2000)
+                        var testFileName = GenerateFileName(sourcePath, p);
+                        if (img.Height != Settings.Default.LineHeight)
                         {
-                            sb.AppendLine(String.Format("Wrong picture size. File: {0}", p));
-                            continue;
-                        }
-                        string destFileName = "";
-                        var shortName = Path.GetFileName(p);
-                        var testFileName = destFileName = Path.Combine(sourcePath, shortName);
+                            var cropWindow = new CroppingWindow(new Uri(p));
+                            if (cropWindow.ShowDialog() == true)
+                            {
+                                //using (FileStream fs = new FileStream(testFileName, FileMode.Create, FileAccess.Write))
+                                //{
+                                //    BinaryWriter bw = new BinaryWriter(fs);
+                                //    bw.Write(cropWindow.ResizedImageBytes);
+                                //    bw.Close();
+                                //}
 
-                        int idx = 0;
-                        while (File.Exists(testFileName))
-                        {
-                            idx++;
-                            testFileName = Path.Combine(sourcePath, Path.GetFileNameWithoutExtension(destFileName) +
-                                "_" + idx.ToString() + Path.GetExtension(destFileName));
+                                //Common.Imaging.ImageUtilities.SaveBmp(
+                                //    testFileName.Replace(".", "_unsharped."), cropWindow.ResizedImageGDI);
+
+                                //System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(cropWindow.ResizedImageGDI);
+                                //Common.Imaging.ImageUtilities.SaveBmp(testFileName, bmp.UnsharpGaussian3x3(1.0f));
+                                System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(cropWindow.ResizedImageGDI);
+                                if (cropWindow.ApplySharpening)
+                                    bmp = bmp.UnsharpGaussian3x3(1.0f);
+                                Common.Imaging.ImageUtilities.SaveBmp(testFileName, bmp.UnsharpGaussian3x3(1.0f));
+                            }
                         }
-                        File.Copy(p, testFileName);
+                        else
+                        {
+                            File.Copy(p, testFileName);
+                        }
                     }
                     catch
                     {
@@ -50,6 +62,23 @@ namespace PixelTuner.Controls.ThumbListView
                 imagesModel.RefreshImagesCollection(PixelTuner.Properties.Settings.Default.LineHeight);
                 if (sender is UIElement) (sender as UIElement).Focus();
             }
+        }
+
+        private static string GenerateFileName(string baseDirectory, string dropFileName)
+        {
+            string destFileName = "";
+            var shortName = Path.GetFileNameWithoutExtension(dropFileName);
+            shortName += ".bmp";
+            var testFileName = destFileName = Path.Combine(baseDirectory, shortName);
+
+            int idx = 0;
+            while (File.Exists(testFileName))
+            {
+                idx++;
+                testFileName = Path.Combine(baseDirectory, Path.GetFileNameWithoutExtension(destFileName) +
+                    "_" + idx.ToString() + Path.GetExtension(destFileName));
+            }
+            return testFileName;
         }
 
         private void boxThumbnails_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
