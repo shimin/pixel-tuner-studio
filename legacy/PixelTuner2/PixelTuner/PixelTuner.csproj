@@ -113,6 +113,9 @@
     <Compile Include="Converters\ActiveDocumentConverter.cs" />
     <Compile Include="Converters\ActiveTimeLineConverter.cs" />
     <Compile Include="Controls\ThumbListView\ImageView.cs" />
+    <Compile Include="CroppingWindow.xaml.cs">
+      <DependentUpon>CroppingWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ItemWindow.xaml.cs">
       <DependentUpon>ItemWindow.xaml</DependentUpon>
     </Compile>
@@ -163,6 +166,10 @@
     <Compile Include="ViewModel\TimeLineViewModel.cs" />
     <Compile Include="ViewModel\ToolViewModel.cs" />
     <Compile Include="ViewModel\RootViewModel.cs" />
+    <Page Include="CroppingWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="ItemWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
