@@ -51,6 +51,8 @@
     <Compile Include="Collections\DelegatedList.cs" />
     <Compile Include="Collections\SafeObservable.cs" />
     <Compile Include="Collections\StreamHelper.cs" />
+    <Compile Include="Controls\CroppingAdorner\CroppingAdorner.cs" />
+    <Compile Include="Controls\CroppingAdorner\PuncturedRect.cs" />
     <Compile Include="Controls\NumericUpDown\NumericUpDown.xaml.cs">
       <DependentUpon>NumericUpDown.xaml</DependentUpon>
     </Compile>
@@ -81,6 +83,11 @@
     <Compile Include="DragDrop\Utilities\VisualTreeExtensions.cs" />
     <Compile Include="Helpers\CursorHelper.cs" />
     <Compile Include="Helpers\EnumHelper.cs" />
+    <Compile Include="Imaging\ImageManipulator.cs" />
+    <Compile Include="Imaging\ImageProcessor.cs" />
+    <Compile Include="Imaging\ImageUtilities.cs" />
+    <Compile Include="Imaging\UnsharpMask\ExtBitmap.cs" />
+    <Compile Include="Imaging\UnsharpMask\Matrix.cs" />
     <Compile Include="Log\ConsoleTarget.cs" />
     <Compile Include="Log\FileTarget.cs" />
     <Compile Include="Log\Logger.cs" />
