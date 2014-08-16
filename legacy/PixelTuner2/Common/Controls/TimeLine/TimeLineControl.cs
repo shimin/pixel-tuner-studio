@@ -1717,8 +1717,8 @@ namespace Common.Controls
         }
 
         #region key down and up
-        Boolean _rightCtrlDown = false;
-        Boolean _leftCtrlDown = false;
+        Boolean _rightAltDown = false;
+        Boolean _leftAltDown = false;
         protected void OnKeyDown(Object sender, KeyEventArgs e)
         {
             base.OnKeyDown(e);
@@ -2066,9 +2066,9 @@ namespace Common.Controls
                 _curX = mouseX;
             }
 
-            _leftCtrlDown = Keyboard.IsKeyDown(Key.LeftCtrl);
-            _rightCtrlDown = Keyboard.IsKeyDown(Key.RightCtrl);
-            if (_leftCtrlDown || _rightCtrlDown)
+            _leftAltDown = Keyboard.IsKeyDown(Key.LeftAlt);
+            _rightAltDown = Keyboard.IsKeyDown(Key.RightAlt);
+            if (_leftAltDown || _rightAltDown)
             {
                 if (ManipulationMode == TimeLineManipulationMode.Linked)
                     _actualManipulationMode = TimeLineManipulationMode.Free;
