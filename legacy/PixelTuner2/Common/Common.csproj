@@ -83,6 +83,7 @@
     <Compile Include="DragDrop\Utilities\VisualTreeExtensions.cs" />
     <Compile Include="Helpers\CursorHelper.cs" />
     <Compile Include="Helpers\EnumHelper.cs" />
+    <Compile Include="Imaging\ImageManipulator.cs" />
     <Compile Include="Imaging\ImageProcessor.cs" />
     <Compile Include="Imaging\ImageUtilities.cs" />
     <Compile Include="Imaging\UnsharpMask\ExtBitmap.cs" />
