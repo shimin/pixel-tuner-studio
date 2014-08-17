@@ -49,6 +49,7 @@ namespace WPFSoundVisualizationLib
         private readonly Rectangle decimalRectangle = new Rectangle();
         private readonly Rectangle subSecondRectangle1 = new Rectangle();
         private readonly Rectangle subSecondRectangle2 = new Rectangle();
+        private readonly Rectangle subSecondRectangle3 = new Rectangle();
 
         private readonly VisualBrush oneBrush = new VisualBrush();
         private readonly VisualBrush twoBrush = new VisualBrush();
@@ -469,6 +470,16 @@ namespace WPFSoundVisualizationLib
                 clockGrid.Children.Add(subSecondRectangle2);
                 gridLength += 60;
                 columnIndex++;
+
+                // Third subseconds digit
+                ColumnDefinition subSeconds3Column = new ColumnDefinition();
+                subSeconds3Column.Width = new GridLength(50, GridUnitType.Star);
+                clockColumns.Add(subSeconds3Column);
+                subSecondRectangle3.Margin = digitMargin;
+                Grid.SetColumn(subSecondRectangle3, columnIndex);
+                clockGrid.Children.Add(subSecondRectangle3);
+                gridLength += 60;
+                columnIndex++;
             }
 
             clockGrid.Width = gridLength;
@@ -494,9 +505,10 @@ namespace WPFSoundVisualizationLib
             secondRectangle1.Fill = GetDigitElement(secondsString[0]);
             secondRectangle2.Fill = GetDigitElement(secondsString[1]);
 
-            string subSecondsString = (Time.Milliseconds / 1000.0d).ToString("0.00");
+            string subSecondsString = (Time.Milliseconds / 1000.0d).ToString("0.000");
             subSecondRectangle1.Fill = GetDigitElement(subSecondsString[2]);
             subSecondRectangle2.Fill = GetDigitElement(subSecondsString[3]);
+            subSecondRectangle3.Fill = GetDigitElement(subSecondsString[4]);
         }
 
         private VisualBrush GetDigitElement(char digitChar)

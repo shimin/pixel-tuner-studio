@@ -1045,7 +1045,7 @@
                         </Canvas>
                     </ControlTemplate.Resources>
                     <Border BorderBrush="Black"
-                            BorderThickness="1"
+                            BorderThickness="0"
                             CornerRadius="5">
                         <Viewbox Stretch="Uniform"
                                  VerticalAlignment="Center"
