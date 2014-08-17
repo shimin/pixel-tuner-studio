@@ -31,21 +31,8 @@ namespace PixelTuner.Controls.ThumbListView
                             var cropWindow = new CroppingWindow(new Uri(p));
                             if (cropWindow.ShowDialog() == true)
                             {
-                                //using (FileStream fs = new FileStream(testFileName, FileMode.Create, FileAccess.Write))
-                                //{
-                                //    BinaryWriter bw = new BinaryWriter(fs);
-                                //    bw.Write(cropWindow.ResizedImageBytes);
-                                //    bw.Close();
-                                //}
-
-                                //Common.Imaging.ImageUtilities.SaveBmp(
-                                //    testFileName.Replace(".", "_unsharped."), cropWindow.ResizedImageGDI);
-
-                                //System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(cropWindow.ResizedImageGDI);
-                                //Common.Imaging.ImageUtilities.SaveBmp(testFileName, bmp.UnsharpGaussian3x3(1.0f));
                                 System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(cropWindow.ResizedImageGDI);
-                                if (cropWindow.ApplySharpening)
-                                    bmp = bmp.UnsharpGaussian3x3(1.0f);
+                                if (cropWindow.ApplySharpening) bmp = bmp.UnsharpGaussian3x3(1.0f);
                                 Common.Imaging.ImageUtilities.SaveBmp(testFileName, bmp.UnsharpGaussian3x3(1.0f));
                             }
                         }
@@ -139,7 +126,6 @@ namespace PixelTuner.Controls.ThumbListView
                             newItem.EndTime = newItem.StartTime.Value.AddSeconds(Settings.Default.DefaultDuration);
                             fm.SelectedTimeline.Items.Insert(insertPosition, newItem);
                         }
-                        fm.SelectedTimeline.TrimTimeSpaces();
                     }
                     break;
                 }

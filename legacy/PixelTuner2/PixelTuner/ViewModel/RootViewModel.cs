@@ -124,6 +124,16 @@ namespace PixelTuner.ViewModel
             get { return _anchorStepCollection; }
         }
 
+        /// <summary>
+        /// Switches insertion mode: false if inserted items moves all the rest timeline items
+        /// if true inserted time interval replaces the rest items
+        /// </summary>
+        public bool CutNextItems
+        {
+            get { return Settings.Default.CutNextItems; }
+            set { Settings.Default.CutNextItems = value; RaisePropertyChanged("CutNextItems"); }
+        }
+
         #endregion
 
         #region View models

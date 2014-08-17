@@ -190,5 +190,17 @@ namespace PixelTuner.Properties {
                 this["ApplySharpening"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CutNextItems {
+            get {
+                return ((bool)(this["CutNextItems"]));
+            }
+            set {
+                this["CutNextItems"] = value;
+            }
+        }
     }
 }

@@ -84,6 +84,9 @@
     <ApplicationIcon>Files\PixelTuner.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NAudio">
+      <HintPath>..\WpfTools\NAudio\NAudio.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -98,6 +101,9 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="taglib-sharp">
+      <HintPath>..\WpfTools\NAudio\taglib-sharp.dll</HintPath>
+    </Reference>
     <Reference Include="UIAutomationClient" />
     <Reference Include="UIAutomationProvider" />
     <Reference Include="WindowsBase" />
@@ -110,6 +116,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Audio\NAudioEngine.cs" />
+    <Compile Include="Audio\SampleAggregator.cs" />
     <Compile Include="Converters\ActiveDocumentConverter.cs" />
     <Compile Include="Converters\ActiveTimeLineConverter.cs" />
     <Compile Include="Controls\ThumbListView\ImageView.cs" />
@@ -254,6 +262,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{3C6806B7-698D-45CD-B131-EB84845CC938}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WpfTools\Toolkit\Toolkit.csproj">
       <Project>{72E591D6-8F83-4D8C-8F67-9C325E623234}</Project>
       <Name>Toolkit</Name>
@@ -270,13 +282,13 @@
       <Project>{4BA4719C-C6AB-49BA-9754-848CA24C1FD6}</Project>
       <Name>AutoUpdater</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Common\Common.csproj">
-      <Project>{3C6806B7-698D-45CD-B131-EB84845CC938}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Communication\Communication.csproj">
       <Project>{DA6AD361-E034-4A14-BA94-8605A21D2E70}</Project>
       <Name>Communication</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WpfTools\WPFSoundVisualizationLibrary\WPFSoundVisualizationLib.csproj">
+      <Project>{90F96222-1C39-4A19-ABE8-1B00FB330985}</Project>
+      <Name>WPFSoundVisualizationLib</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -616,6 +628,17 @@
     <Content Include="Content\80_batterfly_009.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\cutTheRest.png" />
+    <Resource Include="Images\moveTheRest.png" />
+    <Resource Include="Images\stop.png" />
+    <Resource Include="Images\stopDisabled.png" />
+    <Resource Include="Images\stopLight.png" />
+    <Resource Include="Images\play.png" />
+    <Resource Include="Images\playDisabled.png" />
+    <Resource Include="Images\playLight.png" />
+    <Resource Include="Images\pause.png" />
+    <Resource Include="Images\pauseDisabled.png" />
+    <Resource Include="Images\pauseLight.png" />
     <Resource Include="Images\_grey_Arrow-Down.png" />
     <Resource Include="Images\_grey_Arrow-DownDisabled.png" />
     <Resource Include="Images\_grey_Arrow-DownLight.png" />

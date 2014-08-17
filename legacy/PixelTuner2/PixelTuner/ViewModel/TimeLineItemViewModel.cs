@@ -313,7 +313,6 @@ namespace PixelTuner.ViewModel
                         newItem.Stretching = this.Stretching;
                         p.Items.Remove(this);
                         p.Items.Insert(idx, newItem);
-                        p.TrimTimeSpaces();
                         p.IsChanged = true;
                     }
                 }

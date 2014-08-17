@@ -14,7 +14,67 @@
         <Setter Property="MinHeight" Value="12"></Setter>
         <Setter Property="Margin" Value="0,0,0,2"></Setter>
     </Style>
-    
+
+    <Style x:Key="ButtonPlayStyle" TargetType="{x:Type Button}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border Width="16">
+                        <Image x:Name="img" Source="/PixelTuner;component/Images/play.png"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Source" Value="/PixelTuner;component/Images/playLight.png" TargetName="img"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Source" Value="/PixelTuner;component/Images/playDisabled.png" TargetName="img"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ButtonPauseStyle" TargetType="{x:Type Button}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border Width="17">
+                        <Image x:Name="img" Source="/PixelTuner;component/Images/pause.png"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Source" Value="/PixelTuner;component/Images/pauseLight.png" TargetName="img"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Source" Value="/PixelTuner;component/Images/pauseDisabled.png" TargetName="img"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ButtonStopStyle" TargetType="{x:Type Button}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border Width="16">
+                        <Image x:Name="img" Source="/PixelTuner;component/Images/stop.png"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Source" Value="/PixelTuner;component/Images/stopLight.png" TargetName="img"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Source" Value="/PixelTuner;component/Images/stopDisabled.png" TargetName="img"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="ButtonCloneStyle" TargetType="{x:Type Button}">
         <Setter Property="Template">
             <Setter.Value>

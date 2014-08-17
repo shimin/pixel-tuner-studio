@@ -126,5 +126,48 @@ namespace PixelTuner
             this.Focus();   // без явной установки фокуса не работают горячие клавиши
         }
 
+        #region Обработка нажатий кнопок клавиатуры
+
+        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        {
+            base.OnPreviewKeyDown(e);
+            if (e.Key == Key.Space)
+            {
+                var doc = RootViewModel.This.ActiveDocument;
+                if (doc != null)
+                {
+                    if (doc.SoundPlayer.IsPlaying)
+                    {
+                        if (doc.StopAudio.CanExecute(null))
+                            doc.StopAudio.Execute(null);
+                    }
+                    else
+                    {
+                        if (doc.PlayAudio.CanExecute(null))
+                            doc.PlayAudio.Execute(null);
+                    }
+                }
+            }
+            else if (e.KeyboardDevice.Modifiers == ModifierKeys.Control)
+            {
+                switch (e.Key)
+                {
+                    case Key.Z:
+                        //RootViewModel.This.ActiveDocument.Undo();
+                        break;
+                    case Key.Y:
+                        //RootViewModel.This.ActiveDocument.Redo();
+                        break;
+                }
+            }
+        }
+
+        #endregion
+
+        private void boxSwitchInsertMode_Click(object sender, RoutedEventArgs e)
+        {
+            RootViewModel.This.CutNextItems = !RootViewModel.This.CutNextItems;
+        }
+
     }
 }

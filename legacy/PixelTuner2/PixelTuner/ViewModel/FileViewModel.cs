@@ -15,11 +15,16 @@ using Communication.Pixelate;
 using Communication.Service;
 using PixelTuner.Properties;
 using Common.Collections;
+using WPFSoundVisualizationLib;
+using NAudio;
+using Common.Controls;
 
 namespace PixelTuner.ViewModel
 {
     public class FileViewModel : PaneViewModel
     {
+        public delegate void InitializePlaybackDelegate(NAudioEngine soundEngine);
+
         public FileViewModel()
             : this(Path.GetTempFileName())
         {
@@ -38,6 +43,11 @@ namespace PixelTuner.ViewModel
             DeviceHelper.Devices.ForEach((d) => { DeviceHelper_DeviceFound(new DeviceEventArgs(d)); });
             DeviceHelper.DeviceFound += new DeviceHelper.DeviceChangedDelegate(DeviceHelper_DeviceFound);
             DeviceHelper.DeviceLost += new DeviceHelper.DeviceChangedDelegate(DeviceHelper_DeviceLost);
+
+            NAudioEngine soundEngine = new NAudioEngine();
+            if (InitializePlayback != null) InitializePlayback.Invoke(soundEngine);
+            soundEngine.PropertyChanged += NAudioEngine_PropertyChanged;
+            SoundPlayer = soundEngine;
         }
 
         void DeviceHelper_DeviceFound(DeviceEventArgs e)
@@ -194,6 +204,7 @@ namespace PixelTuner.ViewModel
             {
                 Settings.Default.UnitSize = value;
                 RaisePropertyChanged("UnitSize");
+                RaisePropertyChanged("WaveFormLength");
             }
         }
 
@@ -251,6 +262,36 @@ namespace PixelTuner.ViewModel
                 return null;
             }
         }
+
+        #region SoundPlayer
+
+        [XmlAttribute]
+        public string AudioPath { get; set; }
+
+        [XmlIgnore]
+        public Double WaveFormLength
+        {
+            get
+            {
+                return SoundPlayer != null ? PixelTuner.Properties.Settings.Default.UnitSize * SoundPlayer.ChannelLength : 0;
+            }
+            set
+            {
+            }
+        }
+
+        [XmlIgnore]
+        public InitializePlaybackDelegate InitializePlayback = null;
+
+        IWaveformPlayer _soundPlayer;
+        [XmlIgnore]
+        public IWaveformPlayer SoundPlayer
+        {
+            get { return _soundPlayer; }
+            set { _soundPlayer = value; RaisePropertyChanged("SoundPlayer"); }
+        }
+
+        #endregion
 
         #endregion
 
@@ -380,6 +421,179 @@ namespace PixelTuner.ViewModel
         }
 
         #endregion 
+        
+        #region OpenAudioCommand
+        RelayCommand _openAudioCommand = null;
+        public ICommand OpenAudio
+        {
+            get
+            {
+                if (_openAudioCommand == null)
+                {
+                    _openAudioCommand = new RelayCommand((p) => OnOpenAudio(p), (p) => CanOpenAudio(p));
+                }
+
+                return _openAudioCommand;
+            }
+        }
+
+        private bool CanOpenAudio(object parameter)
+        {
+            return true;
+        }
+
+        private void OnOpenAudio(object parameter)
+        {
+            var dlg = new OpenFileDialog();
+            dlg.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            dlg.Filter = "Audio file|*.mp3";
+            string path = parameter as string;
+            if (path == null || !File.Exists(path))
+            {
+                if (dlg.ShowDialog() == true && File.Exists(dlg.FileName))
+                {
+                    ((NAudioEngine)SoundPlayer).OpenFile(dlg.FileName);
+                    RaisePropertyChanged("WaveFormLength");
+                    AudioPath = dlg.FileName;
+                }
+            }
+            else
+            {
+                ((NAudioEngine)SoundPlayer).OpenFile(path);
+                RaisePropertyChanged("WaveFormLength");
+            }
+        }
+
+        #endregion
+
+        #region PlayAudioCommand
+        RelayCommand _playAudioCommand = null;
+        public ICommand PlayAudio
+        {
+            get
+            {
+                if (_playAudioCommand == null)
+                {
+                    _playAudioCommand = new RelayCommand((p) => OnPlayAudio(p), (p) => CanPlayAudio(p));
+                }
+
+                return _playAudioCommand;
+            }
+        }
+
+        private bool CanPlayAudio(object parameter)
+        {
+            return SoundPlayer != null && ((NAudioEngine)SoundPlayer).CanPlay;
+        }
+
+        private void OnPlayAudio(object parameter)
+        {
+            var player = ((NAudioEngine)SoundPlayer);
+            player.Play();
+        }
+
+        #endregion
+
+        #region PauseAudioCommand
+        RelayCommand _pauseAudioCommand = null;
+        public ICommand PauseAudio
+        {
+            get
+            {
+                if (_pauseAudioCommand == null)
+                {
+                    _pauseAudioCommand = new RelayCommand((p) => OnPauseAudio(p), (p) => CanPauseAudio(p));
+                }
+
+                return _pauseAudioCommand;
+            }
+        }
+
+        private bool CanPauseAudio(object parameter)
+        {
+            return SoundPlayer != null && (((NAudioEngine)SoundPlayer).CanPause);
+        }
+
+        private void OnPauseAudio(object parameter)
+        {
+            ((NAudioEngine)SoundPlayer).Pause();
+        }
+
+        #endregion
+
+        #region StopAudioCommand
+        RelayCommand _stopAudioCommand = null;
+        public ICommand StopAudio
+        {
+            get
+            {
+                if (_stopAudioCommand == null)
+                {
+                    _stopAudioCommand = new RelayCommand((p) => OnStopAudio(p), (p) => CanStopAudio(p));
+                }
+
+                return _stopAudioCommand;
+            }
+        }
+
+        private bool CanStopAudio(object parameter)
+        {
+            return SoundPlayer != null && ((NAudioEngine)SoundPlayer).CanStop;
+        }
+
+        private void OnStopAudio(object parameter)
+        {
+            var player = (NAudioEngine)SoundPlayer;
+            player.ChannelPosition = player.InitialChannelPosition;
+            player.Stop();
+        }
+
+        #endregion
+
+        #region ScalingCommand
+        RelayCommand _scalingCommand = null;
+        public ICommand Scaling
+        {
+            get
+            {
+                if (_scalingCommand == null)
+                {
+                    _scalingCommand = new RelayCommand((p) => OnScaling(p), (p) => CanScaling(p));
+                }
+
+                return _scalingCommand;
+            }
+        }
+
+        private bool CanScaling(object parameter)
+        {
+            return SoundPlayer != null && ((NAudioEngine)SoundPlayer).WaveformData != null;
+        }
+
+        private void OnScaling(object parameter)
+        {
+            var scaleDelta = GetScaleRate(((double)parameter) * 8, UnitSize);
+            if (UnitSize + scaleDelta >= MinUnitSize && UnitSize + scaleDelta <= MaxUnitSize)
+                UnitSize += scaleDelta;
+        }
+
+        #endregion
+
+        #region NAudio Engine Events
+        private void NAudioEngine_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            NAudioEngine engine = NAudioEngine.Instance;
+            switch (e.PropertyName)
+            {
+                case "ChannelPosition":
+                    //clockDisplay.Time = TimeSpan.FromSeconds(engine.ChannelPosition);
+                    break;
+                default:
+                    // Do Nothing
+                    break;
+            }
+        }
+        #endregion
         
         public int EvaluateBinarySize(byte targetHeight)
         {
@@ -513,6 +727,15 @@ namespace PixelTuner.ViewModel
             return String.Format("{0} < {1} >", this.FileName, this.FilePath);
         }
 
+        public static double GetScaleRate(double delta, double unitSize)
+        {
+            var result = delta / 50;
+            if (unitSize > 100) result = delta / 10;
+            if (unitSize > 500) result = delta / 2;
+            if (unitSize > 1000) result = delta;
+            return result;
+        }
+
         #region Selection
 
         List<TimeLineItemViewModel> _selectedItems = new List<TimeLineItemViewModel>();
@@ -580,8 +803,8 @@ namespace PixelTuner.ViewModel
             }
             if (selectedLine != null)
             {
-                TimeLineItemViewModel selected = null;
-                foreach (TimeLineItemViewModel i in selectedLine.Items)
+                ITimeLineDataItem selected = null;
+                foreach (ITimeLineDataItem i in selectedLine.Items)
                     if (i.IsSelected)
                     {
                         selected = i;
@@ -591,14 +814,39 @@ namespace PixelTuner.ViewModel
                 int insertIndex = selectedLine.Items.Count;
                 if (selected != null) insertIndex = selectedLine.Items.IndexOf(selected);
 
-                foreach (var i in RootViewModel.This.CopiedItems)
-                {
-                    var clone = (TimeLineItemViewModel)i.Clone();
-                    selectedLine.Items.Insert(insertIndex, clone);
-                }
-                selectedLine.TrimTimeSpaces();
+                selectedLine.InsertItems(RootViewModel.This.CopiedItems, insertIndex);
             }
         }
+
+        //internal void PasteSelectedItems()
+        //{
+        //    TimeLineViewModel selectedLine = null;
+        //    foreach (var line in TimeLines)
+        //    {
+        //        selectedLine = line.IsSelected ? line : null;
+        //        if (selectedLine != null) break;
+        //    }
+        //    if (selectedLine != null)
+        //    {
+        //        TimeLineItemViewModel selected = null;
+        //        foreach (TimeLineItemViewModel i in selectedLine.Items)
+        //            if (i.IsSelected)
+        //            {
+        //                selected = i;
+        //                break;
+        //            }
+
+        //        int insertIndex = selectedLine.Items.Count;
+        //        if (selected != null) insertIndex = selectedLine.Items.IndexOf(selected);
+
+        //        foreach (var i in RootViewModel.This.CopiedItems)
+        //        {
+        //            var clone = (TimeLineItemViewModel)i.Clone();
+        //            selectedLine.Items.Insert(insertIndex, clone);
+        //        }
+        //        selectedLine.TrimTimeSpaces();
+        //    }
+        //}
 
         internal void DeleteSelectedItems()
         {

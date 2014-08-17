@@ -2,13 +2,33 @@
                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:ct="clr-namespace:Common.Controls;assembly=Common"
-                    xmlns:vm="clr-namespace:PixelTuner.ViewModel">
+                    xmlns:vm="clr-namespace:PixelTuner.ViewModel"
+                    xmlns:svl="clr-namespace:WPFSoundVisualizationLib;assembly=WPFSoundVisualizationLib">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/PixelTuner;component/Styles/SharedStyles.xaml" />
         <ResourceDictionary Source="/PixelTuner;component/Styles/TimeLineLayoutTemplate.xaml" />
     </ResourceDictionary.MergedDictionaries>
-    
+
+    <!-- Region: WaveformTimeline -->
+    <LinearGradientBrush x:Key="WaveformRightLevelBrush"
+                         EndPoint="1,1"
+                         StartPoint="1,0">
+        <GradientStop Color="#6EBBE7"
+                      Offset="0" />
+        <GradientStop Color="#BFE2F8"
+                      Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="WaveformLeftLevelBrush"
+                         EndPoint="1,0"
+                         StartPoint="1,1">
+        <GradientStop Color="#3171B1"
+                      Offset="0" />
+        <GradientStop Color="#5CA2D5"
+                      Offset="1" />
+    </LinearGradientBrush>
+
     <DataTemplate x:Key="FileLayoutTemplate" DataType="{x:Type vm:FileViewModel}">
         <Grid PreviewMouseDown="Grid_PreviewMouseDown" PreviewKeyDown="Grid_PreviewKeyDown" PreviewKeyUp="Grid_PreviewKeyUp" PreviewMouseWheel="Grid_PreviewMouseWheel">
             <Grid.RowDefinitions>
@@ -21,7 +41,7 @@
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="66" />
                 <ColumnDefinition Width="120" />
-                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="60" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
@@ -34,6 +54,14 @@
             <TextBlock Grid.Row="0" Grid.Column="1" Margin="16,4,4,0" Foreground="{StaticResource TextBrush}" Text="{StaticResource Doc_Lbl_Scale}"/>
             <Slider Grid.Row="0" Grid.Column="2" x:Name="Slider_Scale" Margin="2" Minimum="{Binding MinUnitSize}" Maximum="{Binding MaxUnitSize}" Value="{Binding UnitSize}"/>
             <TextBlock Grid.Column="3" Margin="16,4,4,0" Foreground="{StaticResource TextBrush}" Text="{StaticResource Doc_Lbl_Height}" />
+            <StackPanel Grid.Row="0" Grid.Column="5" Margin="12,-2,1,1"  Orientation="Horizontal" Height="26">
+                <Button Name="boxOpenAudioButton" Width="80" Height="22" Margin="0,0,8,0" Command="{Binding OpenAudio}" Content="Import track" Focusable="False"></Button>
+                <Button Name="boxPlayButton" Width="20" Height="20" Command="{Binding PlayAudio}" Style="{StaticResource ButtonPlayStyle}" Focusable="False"/>
+                <Button Name="boxPauseButton" Width="20" Height="20" Command="{Binding PauseAudio}" Style="{StaticResource ButtonPauseStyle}" Focusable="False"/>
+                <Button Name="boxStopButton" Width="20" Height="20" Command="{Binding StopAudio}" Style="{StaticResource ButtonStopStyle}"  Focusable="False"/>
+                <svl:DigitalClock Name="boxTime" Margin="8,1,0,0" Time="{Binding Path=SoundPlayer.CurrentTime}" ShowHours="False" ShowSubSeconds="True" SnapsToDevicePixels="True" BorderBrush="#00000000" Focusable="False"></svl:DigitalClock>
+                <!--<TextBlock Name="boxTimeDisplay" Margin="8,4,0,0" Foreground="White" Text="{Binding Path=SoundPlayer.CurrentTime}" />-->
+            </StackPanel>
             <ct:NumericUpDownControl 
                                         Grid.Column="4" 
                                         Margin="4,2,2,0" 
@@ -43,10 +71,13 @@
                                         IsEnabled="{Binding Path=Parent.DataContext.LineHeightChangingAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                         Value="{Binding Path=Parent.DataContext.LineHeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-            <Grid x:Name="MemoryGrid" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="6"
-                                                Height="{Binding MemoryListHeight, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+            <Grid x:Name="MemoryGrid" 
+                  Grid.Row="1" 
+                  Grid.Column="0" 
+                  Grid.ColumnSpan="6"
+                  Height="{Binding MemoryListHeight, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="14"/>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
@@ -92,15 +123,47 @@
                           Grid.ColumnSpan="6"
                           Grid.RowSpan="1"
                           HorizontalAlignment="Stretch"
-                          HorizontalScrollBarVisibility="Auto"
-                          VerticalScrollBarVisibility="Auto"
-                          VerticalAlignment="Stretch"
-                          >
-                <StackPanel x:Name="timelineStackPanel" Orientation="Vertical">
-                    <ItemsControl Grid.Row="2" 
-                                  ItemTemplate="{StaticResource TimeLineLayoutTemplate}"
-                                  ItemsSource="{Binding Path=TimeLines, Mode=TwoWay}" />
-                </StackPanel>
+                          HorizontalScrollBarVisibility="Auto" 
+                          VerticalScrollBarVisibility="Disabled">
+                <Grid RequestBringIntoView="boxGrid_RequestBringIntoView">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="100" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <svl:WaveformTimeline
+                        Grid.Row="0" 
+                        Name="boxWaveform" 
+                        Height="Auto"
+                        Margin="26,0,0,0"
+                        HorizontalAlignment="Left" 
+                        VerticalAlignment="Stretch"
+                        Width="{Binding WaveFormLength}" 
+                        Opacity="0.5"
+                        BorderThickness="1" 
+                        SoundPlayer="{Binding SoundPlayer}" 
+                        LeftLevelBrush="{StaticResource WaveformLeftLevelBrush}" 
+                        RightLevelBrush="{StaticResource WaveformRightLevelBrush}" 
+                        ScalingCommand="{Binding Scaling}"/>
+
+                    <GridSplitter Grid.Row="1" 
+                        HorizontalAlignment="Stretch" 
+                        VerticalAlignment="Top"
+                        Background="#2fffffff" 
+                        ShowsPreview="true"
+                        ResizeDirection="Rows"
+                        Height="4"/>
+
+                    <ScrollViewer 
+                        Grid.Row="2" 
+                        HorizontalScrollBarVisibility="Disabled" 
+                        VerticalScrollBarVisibility="Auto">
+                        <StackPanel x:Name="timelineStackPanel" Orientation="Vertical">
+                            <ItemsControl Grid.Row="2" ItemTemplate="{StaticResource TimeLineLayoutTemplate}" ItemsSource="{Binding Path=TimeLines, Mode=TwoWay}" />
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
             </ScrollViewer>
         </Grid>
     </DataTemplate>

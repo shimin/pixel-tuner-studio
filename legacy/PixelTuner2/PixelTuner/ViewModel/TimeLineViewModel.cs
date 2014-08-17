@@ -293,24 +293,64 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        internal void TrimTimeSpaces()
+        internal void InsertItems(ObservableCollection<TimeLineItemViewModel> itemsToPaste, int insertIndex)
         {
-            // time borders correction
-            TimeLineItemViewModel prevItem = null;
-            foreach (TimeLineItemViewModel i in this.Items)
+            if (itemsToPaste.Count > 0)
             {
-                var ts = i.EndTime.Value - i.StartTime.Value;
-                if (prevItem != null)
+                DateTime? startTime = GetStartTimeByIndex(insertIndex);
+                TimeSpan delta = startTime.Value - itemsToPaste.First().StartTime.Value;
+
+                List<ITimeLineDataItem> copiedItems = new List<ITimeLineDataItem>();
+                foreach (var i in itemsToPaste)
                 {
-                    i.StartTime = prevItem.EndTime;
+                    var clone = (ITimeLineDataItem)i.Clone();
+                    clone.StartTime = clone.StartTime + delta;
+                    clone.EndTime = clone.EndTime + delta;
+                    copiedItems.Add(clone);
+                }
+
+                var keyTimeEnd = copiedItems.Last().EndTime;
+                var keyTimeStart = copiedItems.First().StartTime;
+                if (PixelTuner.Properties.Settings.Default.CutNextItems)
+                {
+                    List<ITimeLineDataItem> itemsToRemove = new List<ITimeLineDataItem>();
+                    foreach (var i in Items)
+                    {
+                        if (i.EndTime < keyTimeEnd && i.StartTime >= keyTimeStart) itemsToRemove.Add(i);
+                        else if (i.StartTime < keyTimeEnd && i.StartTime >= keyTimeStart) i.StartTime = keyTimeEnd;
+                    }
+                    itemsToRemove.ForEach(i => { (i as TimeLineItemViewModel).DisposeMe.Execute(null); });
                 }
                 else
                 {
-                    i.StartTime = DateTime.MinValue.AddYears(1);
+                    if (insertIndex < Items.Count && Items[insertIndex].StartTime < keyTimeEnd)
+                    {
+                        TimeSpan moveItemsDelta = keyTimeEnd.Value - Items[insertIndex].StartTime.Value;
+                        for (int i = insertIndex; i < Items.Count; i++)
+                        {
+                            Items[i].StartTime = Items[i].StartTime + moveItemsDelta;
+                            Items[i].EndTime = Items[i].EndTime + moveItemsDelta;
+                        }
+                    }
                 }
-                i.EndTime = i.StartTime.Value.AddTicks(ts.Ticks);
-                prevItem = i;
+
+                foreach (var i in copiedItems)
+                {
+                    Items.Insert(insertIndex, i);
+                    insertIndex++;
+                }
             }
+        }
+
+        private DateTime? GetStartTimeByIndex(int idx)
+        {
+            if (Items.Count == 0)
+                return this.Start;
+            else if (idx >= Items.Count)
+                return Items.Last().EndTime;
+            else if (idx == 0)
+                return this.Start;
+            else return Items[idx - 1].EndTime;
         }
     }
 }
