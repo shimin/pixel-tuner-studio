@@ -173,7 +173,7 @@ namespace PixelTuner.ViewModel
         Brush _lightLineColor = new SolidColorBrush(Color.FromArgb(255, 70, 70, 70));
 
         Double _minUnitSize = 1.0;
-        [XmlAttribute]
+        [XmlIgnore]
         public Double MinUnitSize
         {
             get { return _minUnitSize; }
@@ -185,7 +185,7 @@ namespace PixelTuner.ViewModel
         }
 
         Double _maxUnitSize = 160.0;
-        [XmlAttribute]
+        [XmlIgnore]
         public Double MaxUnitSize
         {
             get { return _maxUnitSize; }
@@ -202,7 +202,10 @@ namespace PixelTuner.ViewModel
             get { return Settings.Default.UnitSize; }
             set
             {
-                Settings.Default.UnitSize = value;
+                if (value > MaxUnitSize) Settings.Default.UnitSize = MaxUnitSize;
+                else if (value < MinUnitSize) Settings.Default.UnitSize = MinUnitSize;
+                else Settings.Default.UnitSize = value;
+
                 RaisePropertyChanged("UnitSize");
                 RaisePropertyChanged("WaveFormLength");
             }
@@ -788,14 +791,26 @@ namespace PixelTuner.ViewModel
         internal void CopySelectedItems()
         {
             RootViewModel.This.CopiedItems.Clear();
-            _selectedItems = _selectedItems.OrderByDescending(i => i.StartTime).ToList();
+            RootViewModel.This.CopiedTimeline = null;
+            _selectedItems = _selectedItems.OrderBy(i => i.StartTime).ToList();
             foreach (var i in _selectedItems) RootViewModel.This.CopiedItems.Add((TimeLineItemViewModel)i.Clone());
+            if (RootViewModel.This.CopiedItems.Count == 0)
+            {
+                TimeLineViewModel tl = null;
+                try { tl = TimeLines.First((line) => { return line.IsSelected == true; }); }
+                catch { }
+                if (tl != null) RootViewModel.This.CopiedTimeline = tl;
+            }
             ClearSelection();
         }
 
         internal void PasteSelectedItems()
         {
             TimeLineViewModel selectedLine = null;
+            if (RootViewModel.This.CopiedTimeline != null)
+            {
+                TimeLines.Add(RootViewModel.This.CopiedTimeline);
+            }
             foreach (var line in TimeLines)
             {
                 selectedLine = line.IsSelected ? line : null;
@@ -817,36 +832,6 @@ namespace PixelTuner.ViewModel
                 selectedLine.InsertItems(RootViewModel.This.CopiedItems, insertIndex);
             }
         }
-
-        //internal void PasteSelectedItems()
-        //{
-        //    TimeLineViewModel selectedLine = null;
-        //    foreach (var line in TimeLines)
-        //    {
-        //        selectedLine = line.IsSelected ? line : null;
-        //        if (selectedLine != null) break;
-        //    }
-        //    if (selectedLine != null)
-        //    {
-        //        TimeLineItemViewModel selected = null;
-        //        foreach (TimeLineItemViewModel i in selectedLine.Items)
-        //            if (i.IsSelected)
-        //            {
-        //                selected = i;
-        //                break;
-        //            }
-
-        //        int insertIndex = selectedLine.Items.Count;
-        //        if (selected != null) insertIndex = selectedLine.Items.IndexOf(selected);
-
-        //        foreach (var i in RootViewModel.This.CopiedItems)
-        //        {
-        //            var clone = (TimeLineItemViewModel)i.Clone();
-        //            selectedLine.Items.Insert(insertIndex, clone);
-        //        }
-        //        selectedLine.TrimTimeSpaces();
-        //    }
-        //}
 
         internal void DeleteSelectedItems()
         {

@@ -33,7 +33,6 @@ namespace PixelTuner.ViewModel
                     item.Parent = this;
                 }
             }
-            CanCloneLine(null);
         }
 
         FileViewModel _parent;

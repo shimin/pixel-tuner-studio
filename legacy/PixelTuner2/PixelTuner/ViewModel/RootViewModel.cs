@@ -107,6 +107,13 @@ namespace PixelTuner.ViewModel
             set { _copiedItems = value; RaisePropertyChanged("CopiedItems"); }
         }
 
+        private TimeLineViewModel _copiedTimeline = null;
+        public TimeLineViewModel CopiedTimeline
+        {
+            get { return _copiedTimeline; }
+            set { _copiedTimeline = value; RaisePropertyChanged("CopiedTimeline"); }
+        }
+
         XmlSerializer _projectSerializer = new XmlSerializer(typeof(FileViewModel), FileViewModel.ExtraTypes.ToArray());
 
         /// <summary>
@@ -417,6 +424,8 @@ namespace PixelTuner.ViewModel
                             var file = (FileViewModel)_projectSerializer.Deserialize(tr);
                             file.FilePath = path;
                             this._files.Add(file);
+                            if (!string.IsNullOrEmpty(file.AudioPath))
+                                file.OpenAudio.Execute(file.AudioPath);
                             ActiveDocument = file;
                             ActiveDocument.IsDirty = false;
                         }
