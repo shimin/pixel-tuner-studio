@@ -244,8 +244,15 @@ namespace Common.Controls
 		protected override void OnInitialized(EventArgs e)
 		{
 			base.OnInitialized(e);
-
 		}
+
+        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        {
+            // to prohibit item moving when space bar is pressed
+            if (e.Key == Key.Space) e.Handled = true;
+            base.OnPreviewKeyDown(e);
+        }
+
         private ContentPresenter _LeftIndicator;
         private ContentPresenter _RightIndicator;
         public override void OnApplyTemplate()
