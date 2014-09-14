@@ -1701,6 +1701,7 @@ namespace Common.Controls
         private Double _curX = 0;
         private TimeLineAction _action;
         private Point _firstClickPosition = new Point(0,0);
+        private Double _stretchEndCorrection = 0;
         void item_PreviewEditButtonUp(object sender, MouseButtonEventArgs e)
         {
             _firstClickPosition = new Point(0, 0);
@@ -1714,6 +1715,7 @@ namespace Common.Controls
             _action = ctrl.GetClickAction();
             ctrl.CaptureMouse();
             _firstClickPosition = Mouse.GetPosition(ctrl);
+            _stretchEndCorrection = ctrl.Width - _firstClickPosition.X;
         }
 
         #region key down and up
@@ -1774,26 +1776,28 @@ namespace Common.Controls
                             break;
                         case TimeLineManipulationMode.Free:
                             #region Free
-                                useDeltaX = Mouse.GetPosition(ctrl).X - _firstClickPosition.X;
+                            useDeltaX = Mouse.GetPosition(ctrl).X - _firstClickPosition.X;
                                 Double chainGap = Double.MaxValue;
                                 if (direction > 0)
                                 {
+                                    doStretch = useDeltaX > 0;
                                     //find chain connecteds that are after this one
                                     //delta each one in that chain that we are pushing
                                     List<TimeLineItemControl> afterChain = GetTimeLineForwardChain(ctrl, afterIndex, ref chainGap);
-
                                     if (chainGap < useDeltaX)
                                         useDeltaX = chainGap;
-                                    foreach (var ti in afterChain)
+
+                                    if (doStretch)
                                     {
-                                        ti.MoveMe(useDeltaX);
+                                        foreach (var ti in afterChain)
+                                        {
+                                            ti.MoveMe(useDeltaX);
+                                        }
+                                        //find the size of our chain so we bring it into view
+                                        var first = afterChain[0];
+                                        var last = afterChain[afterChain.Count - 1];
+                                        BringChainIntoView(first, last, direction);
                                     }
-                                    //find the size of our chain so we bring it into view
-                                    var first = afterChain[0];
-                                    var last = afterChain[afterChain.Count - 1];
-                                    BringChainIntoView(first, last, direction);
-
-
                                 }
                                 if (direction < 0)
                                 {
@@ -1801,7 +1805,7 @@ namespace Common.Controls
                                     List<TimeLineItemControl> previousChain = GetTimeLineBackwardsChain(ctrl, previousIndex, ref previousBackToStart, ref chainGap);
                                     if (-chainGap > useDeltaX)
                                     {
-                                        useDeltaX = chainGap;
+                                        useDeltaX = -chainGap;
                                     }
                                     if (!previousBackToStart)
                                     {
@@ -1809,10 +1813,10 @@ namespace Common.Controls
                                         {
                                             ti.MoveMe(useDeltaX);
                                         }
+                                        var first = previousChain[0];//previousChain[previousChain.Count - 1];
+                                        var last = previousChain[previousChain.Count - 1];
+                                        BringChainIntoView(last, first, direction);
                                     }
-                                    var first = previousChain[0];//previousChain[previousChain.Count - 1];
-                                    var last = previousChain[previousChain.Count - 1];
-                                    BringChainIntoView(last, first, direction);
                                 }
                                 #endregion
                             break;
@@ -1928,7 +1932,7 @@ namespace Common.Controls
                     break;
                 case TimeLineAction.StretchEnd:
                     // bugfix of wrong delta calculation
-                    useDeltaX = Mouse.GetPosition(ctrl).X - ctrl.Width;
+                    useDeltaX += _stretchEndCorrection;
                     switch (e.Mode)
                     {
                         #region stretchend
@@ -2054,6 +2058,7 @@ namespace Common.Controls
             TimeSpan deltaT = ctrl.GetDeltaTime(deltaX);
             if (deltaT.TotalMilliseconds != 0)
             {
+                //Console.WriteLine("_curX: " + _curX.ToString() + "deltaX: " + deltaX.ToString() + "\t deltaT: " + deltaT.ToString());
                 HandleItemManipulation(ctrl, new TimeLineItemChangedEventArgs()
                 {
                     Action = _action,
