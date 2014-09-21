@@ -93,6 +93,10 @@
     <Compile Include="Log\Logger.cs" />
     <Compile Include="Log\MessageType.cs" />
     <Compile Include="Log\TargetBase.cs" />
+    <Compile Include="ProjectPlayer\PixelTwister\PixelTwisterWindow.xaml.cs">
+      <DependentUpon>PixelTwisterWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectPlayer\PixelTwister\PolarShaderEffect.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\UIHelper.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
@@ -103,6 +107,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\TriangleSlider\TriangleSlider.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ProjectPlayer\PixelTwister\PixelTwisterWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -126,6 +134,13 @@
     <Resource Include="Images\_grey_Arrow-Up.png" />
     <Resource Include="Images\_grey_Arrow-UpDisabled.png" />
     <Resource Include="Images\_grey_Arrow-UpLight.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="ProjectPlayer\PixelTwister\Round.fx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ProjectPlayer\PixelTwister\Round.fxo" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
