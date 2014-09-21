@@ -143,7 +143,7 @@ namespace Common.Imaging
                 imageSource.PixelWidth, imageSource.PixelHeight, filename);
         }
 
-        private static void RotateImage(string filename, double angle)
+        public static void RotateImage(string filename, double angle)
         {
             string extension = Path.GetExtension(filename);
             string rootFilename = Path.GetDirectoryName(filename)
@@ -215,7 +215,54 @@ namespace Common.Imaging
             fs.Close();
         }
 
-        private static BitmapSource CreateImage(byte[] imageData, int decodePixelWidth, int decodePixelHeight)
+
+        public static System.Drawing.Bitmap BitmapImage2Bitmap<EncoderType>(BitmapSource bitmapImage)
+            where EncoderType : BitmapEncoder, new()
+        {
+            using (MemoryStream outStream = new MemoryStream())
+            {
+                var enc = new EncoderType();
+                enc.Frames.Add(BitmapFrame.Create(bitmapImage));
+                enc.Save(outStream);
+                System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(outStream);
+                return new System.Drawing.Bitmap(bitmap);
+            }
+        }
+
+        public static BitmapImage CreateImage(Uri path)
+        {
+            BitmapImage image = new BitmapImage();
+
+            try
+            {
+                image.BeginInit();
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                image.UriSource = path;
+                image.EndInit();
+            }
+            catch
+            {
+                return null;
+            }
+
+            return image;
+        }
+
+        public static BitmapSource CreateImage(System.Drawing.Bitmap image)
+        {
+            MemoryStream ms = new MemoryStream();
+            image.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+            return CreateImage(ms, image.Width, image.Height);
+        }
+
+        public static BitmapSource CreateImage(byte[] imageData, int decodePixelWidth, int decodePixelHeight)
+        {
+            MemoryStream ms = new MemoryStream(imageData);
+            return CreateImage(ms, decodePixelWidth, decodePixelHeight);
+        }
+        
+        public static BitmapSource CreateImage(Stream imageData, int decodePixelWidth, int decodePixelHeight)
         {
             if (imageData == null) return null;
 
@@ -229,7 +276,7 @@ namespace Common.Imaging
             {
                 result.DecodePixelHeight = decodePixelHeight;
             }
-            result.StreamSource = new MemoryStream(imageData);
+            result.StreamSource = imageData;
             result.CreateOptions = BitmapCreateOptions.None;
             result.CacheOption = BitmapCacheOption.Default;
             result.EndInit();
