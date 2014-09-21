@@ -23,6 +23,7 @@ namespace Communication.Service
             : base(port)
         {
             this._longOperation = new object();
+            this.WriteReadDelay = 0;
             this._fullName = "dkjashfkjasdh";
             this.Name = PixelDeviceSpecs.TryGetName("");
         }
@@ -189,7 +190,7 @@ namespace Communication.Service
 
         private IList<byte> Map8To12(byte p)
         {
-            UInt16 scaledValue = Communication.Pixelate.ImagesCollectionItem.calibrationTable[p];
+            UInt16 scaledValue = Communication.Pixelate.ColorProfile.R[p];
             return BitConverter.GetBytes(scaledValue);
         }
 
