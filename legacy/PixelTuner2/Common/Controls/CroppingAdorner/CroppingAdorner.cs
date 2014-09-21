@@ -395,9 +395,11 @@ namespace Common.Controls
 
 			// It appears that CroppedBitmap indexes from the upper left of the margin whereas RenderTargetBitmap renders the
 			// control exclusive of the margin.  Hence our need to take the margins into account here...
-
-			Point pxFromPos = UnitsToPx(rcInterior.Left + margin.Left, rcInterior.Top + margin.Top);
-			Point pxWhole = UnitsToPx(AdornedElement.RenderSize.Width + margin.Left, AdornedElement.RenderSize.Height + margin.Left);
+            
+            // sets top left point of cropped area relatively to top left corner of parent control (ex. Grid) which contains Image control
+            // instead of getting top left point relatively Image top left corner
+            Point pxFromPos = UnitsToPx(rcInterior.Left + margin.Left, rcInterior.Top + margin.Top);
+			Point pxWhole = UnitsToPx(AdornedElement.RenderSize.Width + margin.Left, AdornedElement.RenderSize.Height + margin.Top);
 			pxFromSize.X = Math.Max(Math.Min(pxWhole.X - pxFromPos.X, pxFromSize.X), 0);
 			pxFromSize.Y = Math.Max(Math.Min(pxWhole.Y - pxFromPos.Y, pxFromSize.Y), 0);
 			if (pxFromSize.X == 0 || pxFromSize.Y == 0)
