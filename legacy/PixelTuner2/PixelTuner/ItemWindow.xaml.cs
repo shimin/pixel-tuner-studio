@@ -222,8 +222,25 @@ namespace PixelTuner
             switch (e.Key)
             {
                 case Key.Escape: e.Handled = true; this.Close(); break;
-                case Key.Enter: e.Handled = true; this.DialogResult = true; this.Close(); break;
+                case Key.Enter:
+                    {
+                        e.Handled = true;
+                        TryClose();
+                        break;
+                    }
             }
+        }
+
+        private void TryClose()
+        {
+            GetDuraionControlValues();
+            if (Duration.TotalMilliseconds < 100)
+            {
+                MessageBox.Show("Too short time interval. Should be longer than 100 ms.");
+                return;
+            }
+            this.DialogResult = true;
+            this.Close();
         }
 
         private void NotifyBindings()
@@ -257,8 +274,7 @@ namespace PixelTuner
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
-            this.DialogResult = true; 
-            this.Close(); 
+            TryClose();
         }
 
         private void boxLaserOn_Checked(object sender, RoutedEventArgs e)
