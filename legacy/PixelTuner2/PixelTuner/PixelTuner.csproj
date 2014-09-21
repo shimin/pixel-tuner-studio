@@ -121,8 +121,21 @@
     <Compile Include="Converters\ActiveDocumentConverter.cs" />
     <Compile Include="Converters\ActiveTimeLineConverter.cs" />
     <Compile Include="Controls\ThumbListView\ImageView.cs" />
-    <Compile Include="CroppingWindow.xaml.cs">
+    <Compile Include="Import\ColorAdjustPage.xaml.cs">
+      <DependentUpon>ColorAdjustPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Import\CropPage.xaml.cs">
+      <DependentUpon>CropPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Import\CroppingWindow.xaml.cs">
       <DependentUpon>CroppingWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Import\ImportWindow.xaml.cs">
+      <DependentUpon>ImportWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Import\IPicturePage.cs" />
+    <Compile Include="Import\TransformPage.xaml.cs">
+      <DependentUpon>TransformPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ItemWindow.xaml.cs">
       <DependentUpon>ItemWindow.xaml</DependentUpon>
@@ -136,6 +149,7 @@
     <Compile Include="Styles\TimeLineLayoutTemplate.xaml.cs">
       <DependentUpon>TimeLineLayoutTemplate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModel\ProjectPlayerViewModel.cs" />
     <Compile Include="ViewModel\Serialization\TimeLineItem.cs" />
     <Compile Include="ViewModel\TimeLineItemViewModel.cs" />
     <Compile Include="DefaultsWindow.xaml.cs">
@@ -174,9 +188,25 @@
     <Compile Include="ViewModel\TimeLineViewModel.cs" />
     <Compile Include="ViewModel\ToolViewModel.cs" />
     <Compile Include="ViewModel\RootViewModel.cs" />
-    <Page Include="CroppingWindow.xaml">
+    <Page Include="Import\ColorAdjustPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Import\CropPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Import\CroppingWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Import\ImportWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Import\TransformPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ItemWindow.xaml">
       <SubType>Designer</SubType>
@@ -191,6 +221,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Styles\ImagesLayoutTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\ProjectPlayerLayoutTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -269,6 +303,10 @@
     <ProjectReference Include="..\WpfTools\Toolkit\Toolkit.csproj">
       <Project>{72E591D6-8F83-4D8C-8F67-9C325E623234}</Project>
       <Name>Toolkit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WpfTools\Workspace.PageTransitions\Workspace.PageTransitions.csproj">
+      <Project>{22A46D61-1D40-43A9-802C-B9D43DADD9EC}</Project>
+      <Name>Workspace.PageTransitions</Name>
     </ProjectReference>
     <ProjectReference Include="..\WpfTools\Workspace.Themes\Workspace.Themes.csproj">
       <Project>{D422C9D7-B4EA-4154-949B-FAC4D9DC89D2}</Project>

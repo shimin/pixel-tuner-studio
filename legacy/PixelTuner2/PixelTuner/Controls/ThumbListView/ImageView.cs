@@ -7,6 +7,9 @@ using PixelTuner.ViewModel;
 using System.Text;
 using PixelTuner.Properties;
 using Common.Imaging.UnsharpMask;
+using System.ComponentModel;
+using System.Windows.Media.Imaging;
+using Common.Imaging;
 
 namespace PixelTuner.Controls.ThumbListView
 {
@@ -14,41 +17,61 @@ namespace PixelTuner.Controls.ThumbListView
     {
         private void boxThumbnails_Drop(object sender, DragEventArgs e)
         {
-            var imagesModel = ((ListView)sender).DataContext as ImagesViewModel;
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 string[] droppedFilePaths = e.Data.GetData(DataFormats.FileDrop, true) as string[];
-                StringBuilder sb = new StringBuilder();
-                string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content");
-                foreach (var p in droppedFilePaths)
+                BackgroundWorker bgw = new BackgroundWorker();
+                bgw.DoWork += new DoWorkEventHandler(DropFiles);
+                bgw.RunWorkerAsync(new object[] { sender, droppedFilePaths });
+            }
+        }
+
+        private void DropFiles(object sender, DoWorkEventArgs ea)
+        {
+            object[] args = (object[])ea.Argument;
+
+            ListView imagesView = (ListView)args[0];
+            string[] fileNames = (string[])args[1];
+
+            ImagesViewModel imagesModel = null;
+            imagesView.Dispatcher.Invoke(new Action(() => imagesModel = imagesView.DataContext as ImagesViewModel ));
+
+            string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content");
+
+            StringBuilder sb = new StringBuilder();
+            
+            foreach (var p in fileNames)
+            {
+                try
                 {
-                    try
+                    System.Drawing.Image img = System.Drawing.Image.FromFile(p);
+                    var testFileName = GenerateFileName(sourcePath, p);
+                    if (img.Height != Settings.Default.LineHeight)
                     {
-                        System.Drawing.Image img = System.Drawing.Image.FromFile(p);
-                        var testFileName = GenerateFileName(sourcePath, p);
-                        if (img.Height != Settings.Default.LineHeight)
+                        Application.Current.Dispatcher.Invoke(new Action(() =>
                         {
-                            var cropWindow = new CroppingWindow(new Uri(p));
-                            if (cropWindow.ShowDialog() == true)
+                            var importWindow = new Import.ImportWindow(new Uri(p));
+                            if (importWindow.ShowDialog() == true)
                             {
-                                System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(cropWindow.ResizedImageGDI);
-                                if (cropWindow.ApplySharpening) bmp = bmp.UnsharpGaussian3x3(1.0f);
-                                Common.Imaging.ImageUtilities.SaveBmp(testFileName, bmp.UnsharpGaussian3x3(1.0f));
+                                System.Drawing.Bitmap bmp = ImageManipulator.BitmapImage2Bitmap<BmpBitmapEncoder>(importWindow.ResultImage);
+                                Common.Imaging.ImageUtilities.SaveBmp(testFileName, bmp);
                             }
-                        }
-                        else
-                        {
-                            File.Copy(p, testFileName);
-                        }
+                        }));
                     }
-                    catch
+                    else
                     {
-                        sb.AppendLine(String.Format("Error copying image. File: {0}", p));
+                        File.Copy(p, testFileName);
                     }
                 }
-                imagesModel.RefreshImagesCollection(PixelTuner.Properties.Settings.Default.LineHeight);
-                if (sender is UIElement) (sender as UIElement).Focus();
+                catch
+                {
+                    sb.AppendLine(String.Format("Error copying image. File: {0}", p));
+                }
             }
+            
+            if (sb.Length > 0) MessageBox.Show(sb.ToString());
+            imagesModel.RefreshImagesCollection(PixelTuner.Properties.Settings.Default.LineHeight);
+            imagesView.Dispatcher.Invoke(new Action(() => imagesView.Focus()));
         }
 
         private static string GenerateFileName(string baseDirectory, string dropFileName)
@@ -110,21 +133,26 @@ namespace PixelTuner.Controls.ThumbListView
                         {
                             var newItem = (TimeLineItemViewModel)src.Clone();
                             int insertPosition = fm.SelectedTimeline.Items.Count;
-                            foreach (TimeLineItemViewModel i in fm.SelectedTimeline.Items)
+                            foreach (TimeLineItemViewModel i in fm.SelectedTimeline.Items) {
                                 if (i.IsSelected)
                                 {
                                     insertPosition = fm.SelectedTimeline.Items.IndexOf(i); break;
                                 }
-                            if (insertPosition == 0)
-                            {
-                                newItem.StartTime = fm.SelectedTimeline.Start;
                             }
-                            else
-                            {
-                                newItem.StartTime = fm.SelectedTimeline.Items[insertPosition - 1].EndTime;
-                            }
+                            var itemCollection = new ObservableCollection<TimeLineItemViewModel>(
+                                new System.Collections.Generic.List<TimeLineItemViewModel> { newItem });
                             newItem.EndTime = newItem.StartTime.Value.AddSeconds(Settings.Default.DefaultDuration);
-                            fm.SelectedTimeline.Items.Insert(insertPosition, newItem);
+                            fm.SelectedTimeline.InsertItems(itemCollection, insertPosition);
+                            //if (insertPosition == 0)
+                            //{
+                            //    newItem.StartTime = fm.SelectedTimeline.Start;
+                            //}
+                            //else
+                            //{
+                            //    newItem.StartTime = fm.SelectedTimeline.Items[insertPosition - 1].EndTime;
+                            //}
+                            //newItem.EndTime = newItem.StartTime.Value.AddSeconds(Settings.Default.DefaultDuration);
+                            //fm.SelectedTimeline.Items.Insert(insertPosition, newItem);
                         }
                     }
                     break;

@@ -208,7 +208,7 @@ namespace PixelTuner.ViewModel
             {
                 if (_tools == null)
                     _tools = new ToolViewModel[] { //FileStats,
-                        DevicesModel, ProjectsModel, ImagesModel
+                        DevicesModel, ProjectsModel, ImagesModel, ProjectPlayerModel
                     };
                 return _tools;
             }
@@ -242,7 +242,22 @@ namespace PixelTuner.ViewModel
                 return _projectsModel;
             }
         }
-        
+
+        ProjectPlayerViewModel _projectPlayerModel = null;
+        public ProjectPlayerViewModel ProjectPlayerModel
+        {
+            get
+            {
+                if (_projectPlayerModel == null)
+                {
+                    _projectPlayerModel = new ProjectPlayerViewModel(
+                        (String)Application.Current.TryFindResource("Menu_Window_ProjectPlayer"));
+                }
+
+                return _projectPlayerModel;
+            }
+        }
+
         #region Images model
 
         ImagesViewModel _imagesModel = null;

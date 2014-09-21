@@ -35,6 +35,12 @@ namespace PixelTuner.Selectors
             set;
         }
 
+        public DataTemplate ProjectPlayerViewTemplate
+        {
+            get;
+            set;
+        }
+
         public DataTemplate ImagesViewTemplate
         {
             get;
@@ -54,8 +60,8 @@ namespace PixelTuner.Selectors
             if (item is FileViewModel)
                 return FileViewTemplate;
 
-            //if (item is FileStatsViewModel)
-            //    return FileStatsViewTemplate;
+            if (item is ProjectPlayerViewModel)
+                return ProjectPlayerViewTemplate;
 
             if (item is DevicesViewModel)
                 return DevicesViewTemplate;

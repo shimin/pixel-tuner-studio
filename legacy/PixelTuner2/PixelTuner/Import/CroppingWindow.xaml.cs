@@ -15,7 +15,7 @@ using System.IO;
 using Common.Imaging;
 
 
-namespace PixelTuner
+namespace PixelTuner.Import
 {
 	/// <summary>
 	/// Interaction logic for Window1.xaml
@@ -192,78 +192,5 @@ namespace PixelTuner
             this.DialogResult = false;
             this.Close();
         }
-
-        #region Picture processing
-
-        private static byte[] GetEncodedImageData(ImageSource image, string preferredFormat)
-        {
-            byte[] result = null;
-            BitmapEncoder encoder = null;
-            switch (preferredFormat.ToLower())
-            {
-                case ".jpg":
-                case ".jpeg":
-                    encoder = new JpegBitmapEncoder();
-                    break;
-
-                case ".bmp":
-                    encoder = new BmpBitmapEncoder();
-                    break;
-
-                case ".png":
-                    encoder = new PngBitmapEncoder();
-                    break;
-
-                case ".tif":
-                case ".tiff":
-                    encoder = new TiffBitmapEncoder();
-                    break;
-
-                case ".gif":
-                    encoder = new GifBitmapEncoder();
-                    break;
-
-                case ".wmp":
-                    encoder = new WmpBitmapEncoder();
-                    break;
-            }
-
-            if (image is BitmapSource)
-            {
-                MemoryStream stream = new MemoryStream();
-                encoder.Frames.Add(BitmapFrame.Create(image as BitmapSource));
-                encoder.Save(stream);
-                stream.Seek(0, SeekOrigin.Begin);
-                result = new byte[stream.Length];
-                BinaryReader br = new BinaryReader(stream);
-                br.Read(result, 0, (int)stream.Length);
-                br.Close();
-                stream.Close();
-            }
-            return result;
-        }
-
-        private static BitmapSource CreateImage(byte[] imageData, int decodePixelWidth, int decodePixelHeight)
-        {
-            if (imageData == null) return null;
-
-            BitmapImage result = new BitmapImage();
-            result.BeginInit();
-            if (decodePixelWidth > 0)
-            {
-                result.DecodePixelWidth = decodePixelWidth;
-            }
-            if (decodePixelHeight > 0)
-            {
-                result.DecodePixelHeight = decodePixelHeight;
-            }
-            result.StreamSource = new MemoryStream(imageData);
-            result.CreateOptions = BitmapCreateOptions.None;
-            result.CacheOption = BitmapCacheOption.Default;
-            result.EndInit();
-            return result;
-        }
-
-        #endregion
 	}
 }

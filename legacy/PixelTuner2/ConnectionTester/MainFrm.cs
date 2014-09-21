@@ -10,6 +10,8 @@ using System.IO.Ports;
 using ConnectionTester.Properties;
 using System.IO;
 using Communication.Service;
+using LibHID;
+using System.Threading;
 
 namespace ConnectionTester
 {
@@ -17,7 +19,11 @@ namespace ConnectionTester
     {
         PixelDeviceTest _device = null;
 
+        USBInterface _usbDevice = null;
+
         Common.Log.TargetBase _logTarget = null;
+        Common.Log.TargetBase _logTargetHID = null;
+        Common.Log.Logger _logger = null;
 
         List<string> requestsSource = new List<string>();
 
@@ -30,13 +36,22 @@ namespace ConnectionTester
             boxLogToFile.Checked = Settings.Default.logToFile;
             boxRequest.DataSource = requestsSource;
             boxActualColor.BackColor = boxSampleColor.BackColor = Color.Black;
+
+            boxVendorID.Text = Settings.Default.vendorID;
+            boxProductID.Text = Settings.Default.productID;
+            boxChooseFileToUploadHID.Text = string.IsNullOrEmpty(Settings.Default.fileToUploadHID) ? boxChooseFileToUploadHID.Text : Settings.Default.fileToUploadHID;
+            boxLogToFileHID.Checked = Settings.Default.logToFileHID;
+            boxFilterNull.Checked = Settings.Default.filterNull;
+
             if (boxLogToFile.Checked)
             {
                 _logTarget = new Common.Log.FileTarget("connection.log");
+                _logTargetHID = new Common.Log.FileTarget("connectionHID.log");
             }
             else
             {
                 _logTarget = new LoggerRichTextBox(boxLog);
+                _logTargetHID = new LoggerRichTextBox(boxLogHID);
             }
             boxRequest.SelectedIndexChanged += boxRequest_SelectedIndexChanged;
             boxPortNum.Value = Settings.Default.port;
@@ -46,6 +61,7 @@ namespace ConnectionTester
         
         private void boxConnect_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
+            _logger = new Common.Log.Logger(_logTarget);
             SetStatus("Открытие порта", Common.Log.MessageType.Info, 0);
             SerialPort port = new SerialPort("COM" + boxPortNum.Value.ToString(), 19200, Parity.None, 8, StopBits.One);
             port.ReadTimeout = 4000;
@@ -78,7 +94,8 @@ namespace ConnectionTester
 
         private void SetStatus(string p, Common.Log.MessageType messageType, int depth)
         {
-            _logTarget.NewMessage(p, messageType, null, 0);
+            if (_logger == null) _logger = new Common.Log.Logger(_logTargetHID);
+            _logger.NewMessage(p, messageType, null, 0);
         }
 
         private void MainFrm_FormClosing(object sender, FormClosingEventArgs e)
@@ -98,6 +115,13 @@ namespace ConnectionTester
             {
                 Settings.Default.requests.Add(s);
             }
+
+
+            Settings.Default.logToFileHID = boxLogToFileHID.Checked;
+            Settings.Default.fileToUploadHID = boxChooseFileToUploadHID.Text;
+            Settings.Default.productID = boxProductID.Text;
+            Settings.Default.vendorID = boxVendorID.Text;
+            Settings.Default.filterNull = boxFilterNull.Checked;
             Settings.Default.Save();
         }
 
@@ -140,7 +164,10 @@ namespace ConnectionTester
             }
 
             if (!File.Exists(boxPathProject.Text))
+            {
                 MessageBox.Show("Файл не существует");
+                return;
+            }
 
             List<byte> binaryData = new List<byte>(File.ReadAllBytes(boxPathProject.Text));
 
@@ -385,10 +412,12 @@ namespace ConnectionTester
             if (boxLogToFile.Checked)
             {
                 _logTarget = new Common.Log.FileTarget("connection.log");
+                _logger = new Common.Log.Logger(_logTarget);
             }
             else
             {
                 _logTarget = new LoggerRichTextBox(boxLog);
+                _logger = new Common.Log.Logger(_logTarget);
             }
             if (_device != null)
                 _device.Logger = new Common.Log.Logger(_logTarget);
@@ -429,5 +458,165 @@ namespace ConnectionTester
                 MessageBox.Show("Нет связи");
             }
         }
+
+        #region HID
+
+        private void boxConnectHID_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(boxVendorID.Text))
+            {
+                MessageBox.Show("VendorID должен быть не пустой.");
+                return;
+            }
+
+            _logger = new Common.Log.Logger(_logTargetHID);
+            try
+            {
+                if (string.IsNullOrEmpty(boxProductID.Text))
+                {
+                    _usbDevice = new USBInterface(boxVendorID.Text);
+                }
+                else
+                {
+                    _usbDevice = new USBInterface(boxVendorID.Text, boxProductID.Text);
+                }
+                _usbDevice.enableUsbBufferEvent(new EventHandler(BufferChangedHandler));
+                _usbDevice.startRead();
+                SetStatus("Подключено.", Common.Log.MessageType.Info, 0);
+            }
+            catch (Exception ex)
+            {
+                _logger.WriteException(ex);
+            }
+        }
+
+        private void boxDisconnectHID_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (_usbDevice != null)
+            {
+                _usbDevice.stopRead();
+                _usbDevice.Disconnect();
+                _usbDevice = null;
+                SetStatus("Отключено.", Common.Log.MessageType.Info, 0);
+            }
+        }
+
+        private void BufferChangedHandler(object sender, EventArgs e)
+        {
+            byte[][] buf = (byte[][])USBInterface.usbBuffer.ToArray(typeof(byte[]));
+            var lastBytes = buf.Last<byte[]>();
+
+            if (boxFilterNull.Checked)
+            {
+                int checkSum = 0;
+                for (int i = 0; i < lastBytes.Count<byte>(); i++)
+                    checkSum += lastBytes[i];
+
+                if (checkSum > 0)
+                {
+                    string bufStr = Common.Log.Logger.BytesToString(lastBytes);
+                    SetStatus("Buffer: " + bufStr, Common.Log.MessageType.Debug, 0);
+                }
+            }
+            else
+            {
+                string bufStr = Common.Log.Logger.BytesToString(lastBytes);
+                SetStatus("Buffer: " + bufStr, Common.Log.MessageType.Debug, 0);
+            }
+        }
+
+        private void boxGetDeviceListHID_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (_usbDevice != null)
+            {
+                List<string> answerList = new List<string>(_usbDevice.getDeviceList());
+                answerList.ForEach((s) =>
+                {
+                    SetStatus(s, Common.Log.MessageType.Info, 0);
+                });
+            }
+            else
+            {
+                SetStatus("Нет подключенных устройств.", Common.Log.MessageType.Alert, 0);
+            }
+        }
+
+        #region LOG
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            boxLogHID.Clear();
+        }
+
+        private void boxLogToFileHID_CheckedChanged(object sender, EventArgs e)
+        {
+            if (boxLogToFileHID.Checked)
+            {
+                _logTargetHID = new Common.Log.FileTarget("connectionHID.log");
+                _logger = new Common.Log.Logger(_logTargetHID);
+            }
+            else
+            {
+                _logTarget = new LoggerRichTextBox(boxLog);
+                _logger = new Common.Log.Logger(_logTargetHID);
+            }
+        }
+
+        #endregion
+
+        private void boxChooseFileToUploadHID_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.InitialDirectory = Application.StartupPath;
+            ofd.Filter = "binary files|*.bin";
+            if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                boxChooseFileToUploadHID.Text = ofd.FileName;
+            }
+        }
+
+        BackgroundWorker bw = null;
+
+        private void boxUploadFileHID_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (File.Exists(boxChooseFileToUploadHID.Text))
+            {
+                if (_usbDevice == null)
+                {
+                    SetStatus("Не подключено устройство HID.", Common.Log.MessageType.Alert, 0);
+                    return;
+                }
+
+                List<byte> binaryData = new List<byte>(File.ReadAllBytes(boxChooseFileToUploadHID.Text));
+
+                try
+                {
+                    if (bw != null && bw.IsBusy)
+                    {
+                        SetStatus("Запись уже выполняется.", Common.Log.MessageType.Alert, 0);
+                        return;
+                    }
+
+                    bw = new BackgroundWorker();
+                    bw.DoWork += (obj, ea) =>
+                    {
+                        USBInterface.usbBuffer.Clear();
+                        _usbDevice.write(binaryData.ToArray());
+                    };
+                    bw.RunWorkerAsync();
+                }
+                catch (Exception ex)
+                {
+                    _logger.WriteException(ex);
+                }
+            }
+            else
+            {
+                SetStatus("Файл не существует.", Common.Log.MessageType.Alert, 0);
+            }
+        }
+
+        #endregion
+
     }
 }

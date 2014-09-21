@@ -66,5 +66,5 @@
             <Button Content="OK" TabIndex="90" Width="74" IsDefault="True" Click="OKButton_Click" />
             <Button Content="Cancel" TabIndex="100" Width="74" IsCancel="True" />
         </StackPanel>
-    </Grid>
+   </Grid>
 </Window>

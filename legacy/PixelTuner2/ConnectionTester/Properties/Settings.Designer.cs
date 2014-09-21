@@ -85,5 +85,65 @@ namespace ConnectionTester.Properties {
                 this["logToFile"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string vendorID {
+            get {
+                return ((string)(this["vendorID"]));
+            }
+            set {
+                this["vendorID"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string productID {
+            get {
+                return ((string)(this["productID"]));
+            }
+            set {
+                this["productID"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string fileToUploadHID {
+            get {
+                return ((string)(this["fileToUploadHID"]));
+            }
+            set {
+                this["fileToUploadHID"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool logToFileHID {
+            get {
+                return ((bool)(this["logToFileHID"]));
+            }
+            set {
+                this["logToFileHID"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool filterNull {
+            get {
+                return ((bool)(this["filterNull"]));
+            }
+            set {
+                this["filterNull"] = value;
+            }
+        }
     }
 }

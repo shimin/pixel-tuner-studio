@@ -20,6 +20,7 @@
     <system:String x:Key="Menu_Settings">Настройки</system:String>
     <system:String x:Key="Menu_Window_Devices">Устройства</system:String>
     <system:String x:Key="Menu_Window_Projects">Проекты</system:String>
+    <system:String x:Key="Menu_Window_ProjectPlayer">Просмотр</system:String>
     <system:String x:Key="Menu_Window_Images">Изображения</system:String>
     <system:String x:Key="Menu_Window">Вид</system:String>
     <system:String x:Key="Menu_File_New">Новый проект</system:String>

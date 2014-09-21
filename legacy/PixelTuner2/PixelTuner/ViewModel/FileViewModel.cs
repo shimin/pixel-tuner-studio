@@ -785,6 +785,10 @@ namespace PixelTuner.ViewModel
                     item.IsSelected = true;
                     ((TimeLineViewModel)item.Parent).IsSelected = true;
                 }
+                if (item.IsSelected)
+                {
+                    RootViewModel.This.ProjectPlayerModel.DisplayModel = item;
+                }
             }
         }
 

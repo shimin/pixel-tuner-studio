@@ -1,0 +1,44 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:ptw="clr-namespace:Common.ProjectPlayer.PixelTwister;assembly=Common"
+                    xmlns:vm="clr-namespace:PixelTuner.ViewModel">
+    
+    <DataTemplate x:Key="ProjectPlayerLayoutTemplate" DataType="{x:Type vm:ProjectPlayerViewModel}">
+        <Grid Background="Black">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="80"/>
+            </Grid.RowDefinitions>
+            <Border RenderTransformOrigin="0.5,0.5" Grid.Row="0">
+                <Border.Effect>
+                    <ptw:PolarShaderEffect Dot="1.00" Dash="0.00" TilingX="{Binding TilingX}"/>
+                </Border.Effect>
+                <Border.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleY="-1" ScaleX="1"/>
+                        <SkewTransform AngleY="0"/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Border.RenderTransform>
+                <Border.Background>
+                    <VisualBrush>
+                        <VisualBrush.Visual>
+                            <Image Name="PixelImage" Source="{Binding Image}" Stretch="Fill"/>
+                        </VisualBrush.Visual>
+                    </VisualBrush>
+                </Border.Background>
+            </Border>
+            <StackPanel Grid.Row="1" Orientation="Vertical">
+                <StackPanel Orientation="Horizontal">
+                    <Slider Name="boxStretchingSlider" Width="260" Value="{Binding Stretching}" Minimum="0.001" Maximum="5"/>
+                    <Label Foreground="White" Content="{Binding Stretching}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Slider Name="boxStretchingSliderActual" Width="260" Value="{Binding ModelStretching}" Minimum="4" Maximum="125"/>
+                    <Label Foreground="White" Content="{Binding ModelStretching}"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

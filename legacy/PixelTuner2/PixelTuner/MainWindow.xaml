@@ -22,6 +22,7 @@
         <ResourceDictionary >
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/PixelTuner;component/Styles/FileLayoutTemplate.xaml" />
+                <ResourceDictionary Source="/PixelTuner;component/Styles/ProjectPlayerLayoutTemplate.xaml" />
                 <ResourceDictionary Source="/PixelTuner;component/Styles/ImagesLayoutTemplate.xaml" />
                 <ResourceDictionary Source="/PixelTuner;component/Styles/SharedStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
@@ -212,6 +213,9 @@
                             <ListBox x:Name="boxProjectsList" MinWidth="120" MinHeight="120" ItemsSource="{Binding Files}"></ListBox>
                         </DataTemplate>
                     </sl:PanesTemplateSelector.ProjectsViewTemplate>
+                    <sl:PanesTemplateSelector.ProjectPlayerViewTemplate>
+                        <StaticResource ResourceKey="ProjectPlayerLayoutTemplate"></StaticResource>
+                    </sl:PanesTemplateSelector.ProjectPlayerViewTemplate>
                     <sl:PanesTemplateSelector.ImagesViewTemplate>
                         <StaticResource ResourceKey="ImagesLayoutTemplate"></StaticResource>
                     </sl:PanesTemplateSelector.ImagesViewTemplate>
@@ -246,6 +250,8 @@
                         <avalonDock:LayoutAnchorablePane Name="ProjectsTool" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120">
                         </avalonDock:LayoutAnchorablePane>
                         <avalonDock:LayoutAnchorablePane Name="DevicesTool" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120">
+                        </avalonDock:LayoutAnchorablePane>
+                        <avalonDock:LayoutAnchorablePane Name="ProjectPlayerTool" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120">
                         </avalonDock:LayoutAnchorablePane>
                     </avalonDock:LayoutAnchorablePaneGroup>
                     <avalonDock:LayoutPanel Orientation="Vertical" >

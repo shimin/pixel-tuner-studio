@@ -57,6 +57,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="MainFrm.resx">
       <DependentUpon>MainFrm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -91,6 +92,10 @@
     <ProjectReference Include="..\PixelTuner\PixelTuner.csproj">
       <Project>{B086FF41-D6AB-42FD-9609-7E1004470DD2}</Project>
       <Name>PixelTuner</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WpfTools\libHID\LibHID.csproj">
+      <Project>{58F64D08-1159-4A19-9EC4-DDD5ED056946}</Project>
+      <Name>LibHID</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
