@@ -405,20 +405,18 @@ namespace PixelTuner.ViewModel
             this.Stretching = stretching;
             this.Brightness = brightness;
             this.LaserOn = laserOn;
-            
-            List<ITimeLineDataItem> toRemove = new List<ITimeLineDataItem>();
-            for (int i = idx - 2; i >= 0; i--)
-            {
-                if (p.Items[i].StartTime.Value >= this.StartTime.Value) toRemove.Add(p.Items[i]);
-                else if (p.Items[i].EndTime.Value > this.StartTime.Value) p.Items[i].EndTime = this.StartTime;
-            }
 
-            for (int i = idx; i < p.Items.Count && !forAll; i++)
+            var thisIdx = p.Items.IndexOf(this);
+            if (thisIdx < p.Items.Count - 1 && !forAll && this.EndTime.Value > p.Items[thisIdx + 1].StartTime.Value)
+            if (PixelTuner.Properties.Settings.Default.CutNextItems)
             {
-                if (p.Items[i].EndTime.Value <= this.EndTime.Value) toRemove.Add(p.Items[i]);
-                else if (p.Items[i].StartTime.Value < this.EndTime.Value) { p.Items[i].StartTime = this.EndTime; p.Items[i].EndTime = p.Items[i].EndTime; }
+                p.CutItemsWithinInterval(p.Items[thisIdx + 1].StartTime, this.EndTime);
             }
-            toRemove.ForEach((killedItem) => { p.Items.Remove(killedItem); });
+            else
+            {
+                TimeSpan moveInterval = EndTime.Value - p.Items[thisIdx + 1].StartTime.Value;
+                p.MoveItemsAfterIndex(p.Items[thisIdx + 1].StartTime, moveInterval);
+            }
 
             DateTime lastUsed = this.EndTime.Value;
             while (forAll && idx < p.Items.Count)

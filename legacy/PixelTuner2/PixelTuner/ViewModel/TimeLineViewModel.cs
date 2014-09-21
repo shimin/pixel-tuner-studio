@@ -312,31 +312,54 @@ namespace PixelTuner.ViewModel
                 var keyTimeStart = copiedItems.First().StartTime;
                 if (PixelTuner.Properties.Settings.Default.CutNextItems)
                 {
-                    List<ITimeLineDataItem> itemsToRemove = new List<ITimeLineDataItem>();
-                    foreach (var i in Items)
-                    {
-                        if (i.EndTime < keyTimeEnd && i.StartTime >= keyTimeStart) itemsToRemove.Add(i);
-                        else if (i.StartTime < keyTimeEnd && i.StartTime >= keyTimeStart) i.StartTime = keyTimeEnd;
-                    }
-                    itemsToRemove.ForEach(i => { (i as TimeLineItemViewModel).DisposeMe.Execute(null); });
+                    CutItemsWithinInterval(keyTimeStart, keyTimeEnd);
                 }
-                else
+                else if (insertIndex < Items.Count)
                 {
-                    if (insertIndex < Items.Count && Items[insertIndex].StartTime < keyTimeEnd)
-                    {
-                        TimeSpan moveItemsDelta = keyTimeEnd.Value - Items[insertIndex].StartTime.Value;
-                        for (int i = insertIndex; i < Items.Count; i++)
-                        {
-                            Items[i].StartTime = Items[i].StartTime + moveItemsDelta;
-                            Items[i].EndTime = Items[i].EndTime + moveItemsDelta;
-                        }
-                    }
+                    TimeSpan duration = keyTimeEnd.Value - Items[insertIndex].StartTime.Value;
+                    MoveItemsAfterIndex(keyTimeStart, duration);
                 }
 
                 foreach (var i in copiedItems)
                 {
                     Items.Insert(insertIndex, i);
                     insertIndex++;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Removes item if it's fully within time interval and adjusts only start time otherwise.
+        /// </summary>
+        /// <param name="start">Start of time interval</param>
+        /// <param name="end">End of time interval</param>
+        internal void CutItemsWithinInterval(DateTime? start, DateTime? end)
+        {
+            List<ITimeLineDataItem> itemsToRemove = new List<ITimeLineDataItem>();
+            foreach (var i in Items)
+            {
+                if (i.EndTime <= end && i.StartTime >= start) itemsToRemove.Add(i);
+                else if (i.StartTime < end && i.StartTime >= start) i.StartTime = end;
+            }
+            itemsToRemove.ForEach(i => { (i as TimeLineItemViewModel).DisposeMe.Execute(null); });
+        }
+
+        /// <summary>
+        /// Moves all timeline items after start time point
+        /// </summary>
+        /// <param name="start">Start time point</param>
+        /// <param name="moveInterval">Borders move interval</param>
+        internal void MoveItemsAfterIndex(DateTime? start, TimeSpan moveInterval)
+        {
+            if (moveInterval.TotalMilliseconds > 0)
+            {
+                foreach (var i in Items)
+                {
+                    if (i.StartTime >= start)
+                    {
+                        i.StartTime = i.StartTime + moveInterval;
+                        i.EndTime = i.EndTime + moveInterval;
+                    }
                 }
             }
         }

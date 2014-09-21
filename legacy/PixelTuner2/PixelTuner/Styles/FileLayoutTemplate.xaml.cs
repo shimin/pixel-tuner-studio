@@ -87,6 +87,8 @@ namespace PixelTuner.Styles
                 if (fm == null) fm = RootViewModel.This.ActiveDocument as FileViewModel;
                 fm.PasteSelectedItems();
             }
+            // first handled by MainForm than by GridControl...
+            // MainForm -> ActiveDocumentLayout -> Grid -> TimeLineControl -> TimeLineItem
         }
 
         private void Grid_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
