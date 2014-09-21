@@ -9,6 +9,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Windows.Media.Imaging;
 using Common.Helpers;
+using Common.Imaging;
 //using PixelTuner.Drawing.Properties;
 
 namespace PixelTuner.Drawing
@@ -157,32 +158,19 @@ namespace PixelTuner.Drawing
             var pipCursor = new System.Windows.Media.Imaging.BitmapImage(
                     new Uri("pack://application:,,,/Images/pipette_tool.ico", UriKind.Absolute));
 
-            boxFillBG.BackgroundImage = BitmapImage2Bitmap<PngBitmapEncoder>(bucket);
-            boxTextButton.BackgroundImage = BitmapImage2Bitmap<PngBitmapEncoder>(text);
-            boxSelect.BackgroundImage = BitmapImage2Bitmap<PngBitmapEncoder>(copy);
-            boxBmpImport.BackgroundImage = BitmapImage2Bitmap<PngBitmapEncoder>(bmp);
-            boxPipette.BackgroundImage = BitmapImage2Bitmap<PngBitmapEncoder>(pip);
-            boxFlipV.BackgroundImage = BitmapImage2Bitmap<PngBitmapEncoder>(flipVImg);
-            boxFlipH.BackgroundImage = BitmapImage2Bitmap<PngBitmapEncoder>(flipHImg);
-            _curPipette = CursorHelper.CreateCursorNoResize(BitmapImage2Bitmap<PngBitmapEncoder>(pipCursor), 1, 15);
+            boxFillBG.BackgroundImage = ImageManipulator.BitmapImage2Bitmap<PngBitmapEncoder>(bucket);
+            boxTextButton.BackgroundImage = ImageManipulator.BitmapImage2Bitmap<PngBitmapEncoder>(text);
+            boxSelect.BackgroundImage = ImageManipulator.BitmapImage2Bitmap<PngBitmapEncoder>(copy);
+            boxBmpImport.BackgroundImage = ImageManipulator.BitmapImage2Bitmap<PngBitmapEncoder>(bmp);
+            boxPipette.BackgroundImage = ImageManipulator.BitmapImage2Bitmap<PngBitmapEncoder>(pip);
+            boxFlipV.BackgroundImage = ImageManipulator.BitmapImage2Bitmap<PngBitmapEncoder>(flipVImg);
+            boxFlipH.BackgroundImage = ImageManipulator.BitmapImage2Bitmap<PngBitmapEncoder>(flipHImg);
+            _curPipette = CursorHelper.CreateCursorNoResize(ImageManipulator.BitmapImage2Bitmap<PngBitmapEncoder>(pipCursor), 1, 15);
 
             this.DoubleBuffered = true;
             this.Configuration = item;
         }
-
-        private Bitmap BitmapImage2Bitmap<EncoderType>(BitmapImage bitmapImage)
-            where EncoderType : BitmapEncoder, new()
-        {
-            using (MemoryStream outStream = new MemoryStream())
-            {
-                var enc = new EncoderType();
-                enc.Frames.Add(BitmapFrame.Create(bitmapImage));
-                enc.Save(outStream);
-                System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(outStream);
-                return new Bitmap(bitmap);
-            }
-        }
-
+        
         private Color ChooseColor(Color changingColor)
         {
             ColorDialog cd = new ColorDialog();

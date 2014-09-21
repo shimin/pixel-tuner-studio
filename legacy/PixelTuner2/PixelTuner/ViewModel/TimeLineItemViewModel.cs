@@ -16,6 +16,7 @@ using PixelTuner.Properties;
 using Common.Controls;
 using PixelTuner.ViewModel.Serialization;
 using System.Windows.Media;
+using Common.Imaging;
 
 namespace PixelTuner.ViewModel
 {
@@ -48,21 +49,8 @@ namespace PixelTuner.ViewModel
         {
             get
             {
-                BitmapImage image = new BitmapImage();
-
-                try
-                {
-                    image.BeginInit();
-                    image.CacheOption = BitmapCacheOption.OnLoad;
-                    image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-                    image.UriSource = new Uri("pack://application:,,,/Images/timeStart.png", UriKind.Absolute);
-                    image.EndInit();
-                }
-                catch
-                {
-                    return DependencyProperty.UnsetValue;
-                }
-
+                BitmapImage image = ImageManipulator.CreateImage(new Uri("pack://application:,,,/Images/timeStart.png", UriKind.Absolute));
+                if (image == null) return DependencyProperty.UnsetValue;
                 return image;
             }
         }
@@ -71,23 +59,10 @@ namespace PixelTuner.ViewModel
         {
             get
             {
-                BitmapImage image = new BitmapImage();
-
-                try
-                {
-                    image.BeginInit();
-                    image.CacheOption = BitmapCacheOption.OnLoad;
-                    image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-                    string path = "pack://application:,,,/Images/timeEnd.png";
-                    if (Settings.Default.TimeSpanMode) path = "pack://application:,,,/Images/timeLength.png";
-                    image.UriSource = new Uri(path, UriKind.Absolute);
-                    image.EndInit();
-                }
-                catch
-                {
-                    return DependencyProperty.UnsetValue;
-                }
-
+                string path = "pack://application:,,,/Images/timeEnd.png";
+                if (Settings.Default.TimeSpanMode) path = "pack://application:,,,/Images/timeLength.png";
+                BitmapImage image = ImageManipulator.CreateImage(new Uri(path, UriKind.Absolute));
+                if (image == null) return DependencyProperty.UnsetValue;
                 return image;
             }
         }
@@ -173,21 +148,8 @@ namespace PixelTuner.ViewModel
         {
             get
             {
-                BitmapImage image = new BitmapImage();
-
-                try
-                {
-                    image.BeginInit();
-                    image.CacheOption = BitmapCacheOption.OnLoad;
-                    image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-                    image.UriSource = new Uri(FullName, UriKind.Absolute);
-                    image.EndInit();
-                }
-                catch
-                {
-                    return DependencyProperty.UnsetValue;
-                }
-
+                BitmapImage image = ImageManipulator.CreateImage(new Uri(FullName, UriKind.Absolute));
+                if (image == null) return DependencyProperty.UnsetValue;
                 return image;
             }
         }
