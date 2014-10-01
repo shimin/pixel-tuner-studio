@@ -180,9 +180,9 @@ namespace PixelTuner.Import
             int top = (int)Math.Round((rc.Top / boxImage.ActualHeight) * srcImage.Height);
             int bottom = (int)Math.Round((rc.Bottom / boxImage.ActualHeight) * srcImage.Height);
             
-            var crpImage = ImageUtilities.CropImage(srcImage, left, top, right, bottom);
+            var crpImage = ImageHelper.CropImage(srcImage, left, top, right, bottom);
             double aspect = (double)crpImage.Width / (double)crpImage.Height;
-            _resizedImageGDI = ImageUtilities.ResizeImage(crpImage, (int)Math.Round(ResizeHeightValue * aspect), ResizeHeightValue);
+            _resizedImageGDI = ImageHelper.ResizeImage(crpImage, (int)Math.Round(ResizeHeightValue * aspect), ResizeHeightValue);
 
             this.Close();
         }

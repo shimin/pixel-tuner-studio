@@ -39,10 +39,11 @@ namespace PixelTuner.Import
             set { Settings.Default.ApplySharpening = value; }
         }
 
-        Uri _imageToCrop;
-        public Uri ImageToCrop
+        ImageSource _imageToCrop;
+        public ImageSource ImageToCrop
         {
             get { return _imageToCrop; }
+            private set { _imageToCrop = value; RaisePropertyChanged("ImageToCrop"); }
         }
 
         private ImageSource _croppedImage;
@@ -73,9 +74,9 @@ namespace PixelTuner.Import
         }
         #endregion
 
-        public CropPage(Uri imageToCropURI)
+        public CropPage(ImageSource src)
         {
-            _imageToCrop = imageToCropURI;
+            _imageToCrop = src;
             _resizeHeightValue = Settings.Default.LineHeight;
             DataContext = this;
             InitializeComponent();
@@ -200,18 +201,18 @@ namespace PixelTuner.Import
         public void ApplyChanges()
         {
             var rc = _cropAdorner.ClippingRectangle;
-            var srcImage = System.Drawing.Image.FromFile(_imageToCrop.LocalPath);
+            var srcImage = ImageHelper.BitmapImageToBitmap<BmpBitmapEncoder>((BitmapSource)ImageToCrop); //System.Drawing.Image.FromFile(_imageToCrop.LocalPath);
 
             int left = (int)Math.Round((rc.Left / boxImage.ActualWidth) * srcImage.Width);
             int right = (int)Math.Round((rc.Right / boxImage.ActualWidth) * srcImage.Width);
             int top = (int)Math.Round((rc.Top / boxImage.ActualHeight) * srcImage.Height);
             int bottom = (int)Math.Round((rc.Bottom / boxImage.ActualHeight) * srcImage.Height);
 
-            var crpImage = ImageUtilities.CropImage(srcImage, left, top, right, bottom);
+            var crpImage = ImageHelper.CropImage(srcImage, left, top, right, bottom);
             double aspect = (double)crpImage.Width / (double)crpImage.Height;
 
-            ResizedImageGDI = ImageUtilities.ResizeImage(crpImage, (int)Math.Round(ResizeHeightValue * aspect), ResizeHeightValue);
-            ResizedImage = ImageManipulator.CreateImage(ResizedImageGDI);
+            ResizedImageGDI = ImageHelper.ResizeImage(crpImage, (int)Math.Round(ResizeHeightValue * aspect), ResizeHeightValue);
+            ResizedImage = ImageHelper.BitmapImageFromBitmap(ResizedImageGDI);
         }
 
         public void SetSource(BitmapSource bmp)

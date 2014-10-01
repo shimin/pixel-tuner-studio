@@ -41,7 +41,6 @@
                         <xctk:DoubleUpDown x:Name="boxHeight" Value="{Binding ResizeHeightValue}" Increment="5" Minimum="25" Maximum="200" />
                         <TextBlock Text="px" Margin="5,1,5,0"/>
                     </StackPanel>
-                    <CheckBox x:Name="boxApplySharpening" Content="Apply Sharpening" IsChecked="{Binding ApplySharpening}" Foreground="#ffffffff" />
                 </StackPanel>
             </GroupBox>
         </StackPanel>

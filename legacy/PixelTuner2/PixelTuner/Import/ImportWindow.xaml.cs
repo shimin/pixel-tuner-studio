@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using PixelTuner.ViewModel;
+using Common.Imaging;
 
 namespace PixelTuner.Import
 {
@@ -28,12 +29,12 @@ namespace PixelTuner.Import
             get { return _resultImage; }
         }
 
-        public ImportWindow(Uri imageToCropURI)
+        public ImportWindow(ImageSource imageToCrop)
         {
             DataContext = this;
             //pagesNext.Push(new TransformPage());
             pagesNext.Push(new ColorAdjustPage());
-            pagesNext.Push(new CropPage(imageToCropURI));
+            pagesNext.Push(new CropPage(imageToCrop));
             InitializeComponent();
             pageTransitionControl.ShowPage(pagesNext.Peek());
         }
@@ -114,6 +115,22 @@ namespace PixelTuner.Import
         {
             this.DialogResult = false;
             Close();
+        }
+
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.V && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
+                var img = ImageHelper.ImageFromClipboard();
+                if (img != null)
+                {
+                    pagesNext.Clear();
+                    pagesPrev.Clear();
+                    pagesNext.Push(new ColorAdjustPage());
+                    pagesNext.Push(new CropPage(img));
+                    pageTransitionControl.ShowPage(pagesNext.Peek());
+                }
+            }
         }
     }
 }

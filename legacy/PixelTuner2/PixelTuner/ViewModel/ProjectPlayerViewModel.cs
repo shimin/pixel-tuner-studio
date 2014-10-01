@@ -75,7 +75,7 @@ namespace PixelTuner.ViewModel
         {
             BitmapSource rotated = new TransformedBitmap(value, new System.Windows.Media.RotateTransform(180));
             
-            var bmp = ImageManipulator.BitmapImage2Bitmap<BmpBitmapEncoder>(rotated);
+            var bmp = ImageHelper.BitmapImageToBitmap<BmpBitmapEncoder>(rotated);
             
             Bitmap bg = new Bitmap(bmp.Width, bmp.Height + _blackFieldHeight + 1);
             using (Graphics g = Graphics.FromImage(bg))
@@ -89,7 +89,7 @@ namespace PixelTuner.ViewModel
                 //} 
                 //while (totalWidth <= bg.Width);
             }
-            var result = (BitmapImage)ImageManipulator.CreateImage(bg);
+            var result = (BitmapImage)ImageHelper.BitmapImageFromBitmap(bg);
             return result;
         }
     }

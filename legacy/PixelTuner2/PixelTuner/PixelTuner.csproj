@@ -130,6 +130,7 @@
     <Compile Include="Import\CroppingWindow.xaml.cs">
       <DependentUpon>CroppingWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Import\HistoryEntry.cs" />
     <Compile Include="Import\ImportWindow.xaml.cs">
       <DependentUpon>ImportWindow.xaml</DependentUpon>
     </Compile>

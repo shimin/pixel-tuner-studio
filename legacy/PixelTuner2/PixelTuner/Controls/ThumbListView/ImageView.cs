@@ -6,10 +6,11 @@ using System.Windows.Controls;
 using PixelTuner.ViewModel;
 using System.Text;
 using PixelTuner.Properties;
-using Common.Imaging.UnsharpMask;
 using System.ComponentModel;
 using System.Windows.Media.Imaging;
 using Common.Imaging;
+using System.Runtime.InteropServices;
+using System.Windows.Input;
 
 namespace PixelTuner.Controls.ThumbListView
 {
@@ -50,11 +51,11 @@ namespace PixelTuner.Controls.ThumbListView
                     {
                         Application.Current.Dispatcher.Invoke(new Action(() =>
                         {
-                            var importWindow = new Import.ImportWindow(new Uri(p));
+                            var importWindow = new Import.ImportWindow(new BitmapImage(new Uri(p)));
                             if (importWindow.ShowDialog() == true)
                             {
-                                System.Drawing.Bitmap bmp = ImageManipulator.BitmapImage2Bitmap<BmpBitmapEncoder>(importWindow.ResultImage);
-                                Common.Imaging.ImageUtilities.SaveBmp(testFileName, bmp);
+                                System.Drawing.Bitmap bmp = ImageHelper.BitmapImageToBitmap<BmpBitmapEncoder>(importWindow.ResultImage);
+                                Common.Imaging.ImageHelper.SaveBmp(testFileName, bmp);
                             }
                         }));
                     }
@@ -105,6 +106,25 @@ namespace PixelTuner.Controls.ThumbListView
                     if (itemToRemove != null && answer == MessageBoxResult.Yes)
                     {
                         RootViewModel.This.DeleteItem(itemToRemove);
+                    }
+                }
+            }
+            else if (e.Key == Key.V && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
+                var img = ImageHelper.ImageFromClipboard();
+                if (img != null)
+                {
+                    var importWindow = new Import.ImportWindow(img);
+                    if (importWindow.ShowDialog() == true)
+                    {
+                        System.Drawing.Bitmap bmp = ImageHelper.BitmapImageToBitmap<BmpBitmapEncoder>(importWindow.ResultImage);
+                        var saveDialog = new System.Windows.Forms.SaveFileDialog();
+                        saveDialog.InitialDirectory = System.Windows.Forms.Application.StartupPath + "\\Content";
+                        saveDialog.Filter = "Bmp files|*.bmp";
+                        if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                        {
+                            Common.Imaging.ImageHelper.SaveBmp(saveDialog.FileName, bmp);
+                        }
                     }
                 }
             }

@@ -158,14 +158,14 @@ namespace PixelTuner.Drawing
             var pipCursor = new System.Windows.Media.Imaging.BitmapImage(
                     new Uri("pack://application:,,,/Images/pipette_tool.ico", UriKind.Absolute));
 
-            boxFillBG.BackgroundImage = ImageManipulator.BitmapImage2Bitmap<PngBitmapEncoder>(bucket);
-            boxTextButton.BackgroundImage = ImageManipulator.BitmapImage2Bitmap<PngBitmapEncoder>(text);
-            boxSelect.BackgroundImage = ImageManipulator.BitmapImage2Bitmap<PngBitmapEncoder>(copy);
-            boxBmpImport.BackgroundImage = ImageManipulator.BitmapImage2Bitmap<PngBitmapEncoder>(bmp);
-            boxPipette.BackgroundImage = ImageManipulator.BitmapImage2Bitmap<PngBitmapEncoder>(pip);
-            boxFlipV.BackgroundImage = ImageManipulator.BitmapImage2Bitmap<PngBitmapEncoder>(flipVImg);
-            boxFlipH.BackgroundImage = ImageManipulator.BitmapImage2Bitmap<PngBitmapEncoder>(flipHImg);
-            _curPipette = CursorHelper.CreateCursorNoResize(ImageManipulator.BitmapImage2Bitmap<PngBitmapEncoder>(pipCursor), 1, 15);
+            boxFillBG.BackgroundImage = ImageHelper.BitmapImageToBitmap<PngBitmapEncoder>(bucket);
+            boxTextButton.BackgroundImage = ImageHelper.BitmapImageToBitmap<PngBitmapEncoder>(text);
+            boxSelect.BackgroundImage = ImageHelper.BitmapImageToBitmap<PngBitmapEncoder>(copy);
+            boxBmpImport.BackgroundImage = ImageHelper.BitmapImageToBitmap<PngBitmapEncoder>(bmp);
+            boxPipette.BackgroundImage = ImageHelper.BitmapImageToBitmap<PngBitmapEncoder>(pip);
+            boxFlipV.BackgroundImage = ImageHelper.BitmapImageToBitmap<PngBitmapEncoder>(flipVImg);
+            boxFlipH.BackgroundImage = ImageHelper.BitmapImageToBitmap<PngBitmapEncoder>(flipHImg);
+            _curPipette = CursorHelper.CreateCursorNoResize(ImageHelper.BitmapImageToBitmap<PngBitmapEncoder>(pipCursor), 1, 15);
 
             this.DoubleBuffered = true;
             this.Configuration = item;
