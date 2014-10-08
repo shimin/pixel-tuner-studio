@@ -37,7 +37,7 @@ namespace PixelTuner.ViewModel
 
         FileViewModel _parent;
         [XmlIgnore]
-        internal FileViewModel Parent
+        public FileViewModel Parent
         {
             get { return _parent; }
             set { _parent = value; }
@@ -373,6 +373,53 @@ namespace PixelTuner.ViewModel
             else if (idx == 0)
                 return this.Start;
             else return Items[idx - 1].EndTime;
+        }
+
+        TimeLineItemViewModel _lastFoundItem = null;
+        public TimeLineItemViewModel FindItemByTime(DateTime timePoint)
+        {
+            TimeLineItemViewModel result = null;
+            if (_lastFoundItem != null)
+            {
+                if (_lastFoundItem.StartTime.Value <= timePoint && _lastFoundItem.EndTime.Value > timePoint)
+                {
+                    result = _lastFoundItem;
+                }
+                else
+                {
+                    int idx = Items.IndexOf(_lastFoundItem);
+                    for (; idx < Items.Count; idx++)
+                    {
+                        if (timePoint >= Items[idx].StartTime.Value && timePoint < Items[idx].EndTime.Value)
+                        {
+                            result = _lastFoundItem = (TimeLineItemViewModel)Items[idx];
+                            break;
+                        }
+                        else if (timePoint < Items[idx].StartTime.Value)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            if (result == null)
+            {
+                // if still not found anything
+                foreach (var i in Items)
+                {
+                    if (i.StartTime.Value <= timePoint && i.EndTime.Value > timePoint)
+                    {
+                        result = _lastFoundItem = (TimeLineItemViewModel)i;
+                        break;
+                    }
+                    else if (timePoint < i.StartTime.Value)
+                    {
+                        break;
+                    }
+                }
+            }
+            return result;
         }
     }
 }

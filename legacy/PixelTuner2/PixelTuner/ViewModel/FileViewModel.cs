@@ -101,6 +101,16 @@ namespace PixelTuner.ViewModel
             OnFileChanged(sender, e);
         }
 
+        internal void UpdatePreview(TimeSpan timeSpan)
+        {
+            var line = SelectedTimeline;
+            if (line != null)
+            {
+                var timePoint = line.Start.Value.Add(timeSpan);
+                RootViewModel.This.ProjectPlayerModel.DisplayModel = line.FindItemByTime(timePoint);
+            }
+        }
+
         #region Properties
 
         [XmlIgnore]
@@ -593,11 +603,11 @@ namespace PixelTuner.ViewModel
         #region NAudio Engine Events
         private void NAudioEngine_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            NAudioEngine engine = NAudioEngine.Instance;
             switch (e.PropertyName)
             {
                 case "ChannelPosition":
                     //clockDisplay.Time = TimeSpan.FromSeconds(engine.ChannelPosition);
+                    UpdatePreview(SoundPlayer.CurrentTime);
                     break;
                 default:
                     // Do Nothing

@@ -219,6 +219,12 @@ namespace NAudio
             //    }
             //}
         }
+
+        public TimeSpan CurrentTime
+        {
+            get { return ActiveStream == null ? new TimeSpan() : ActiveStream.CurrentTime; }
+        }
+
         #endregion
 
         #region INotifyPropertyChanged
@@ -523,10 +529,6 @@ namespace NAudio
             }
         }
 
-        public TimeSpan CurrentTime
-        {
-            get { return ActiveStream.CurrentTime; }
-        }
         #endregion
 
         #region Event Handlers
