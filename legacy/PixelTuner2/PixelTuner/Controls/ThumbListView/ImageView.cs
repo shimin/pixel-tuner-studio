@@ -45,24 +45,16 @@ namespace PixelTuner.Controls.ThumbListView
             {
                 try
                 {
-                    System.Drawing.Image img = System.Drawing.Image.FromFile(p);
                     var testFileName = GenerateFileName(sourcePath, p);
-                    if (img.Height != Settings.Default.LineHeight)
+                    Application.Current.Dispatcher.Invoke(new Action(() =>
                     {
-                        Application.Current.Dispatcher.Invoke(new Action(() =>
+                        var importWindow = new Import.ImportWindow(new BitmapImage(new Uri(p)));
+                        if (importWindow.ShowDialog() == true)
                         {
-                            var importWindow = new Import.ImportWindow(new BitmapImage(new Uri(p)));
-                            if (importWindow.ShowDialog() == true)
-                            {
-                                System.Drawing.Bitmap bmp = ImageHelper.BitmapImageToBitmap<BmpBitmapEncoder>(importWindow.ResultImage);
-                                Common.Imaging.ImageHelper.SaveBmp(testFileName, bmp);
-                            }
-                        }));
-                    }
-                    else
-                    {
-                        File.Copy(p, testFileName);
-                    }
+                            System.Drawing.Bitmap bmp = ImageHelper.BitmapImageToBitmap<BmpBitmapEncoder>(importWindow.ResultImage);
+                            Common.Imaging.ImageHelper.SaveBmp(testFileName, bmp);
+                        }
+                    }));
                 }
                 catch
                 {
