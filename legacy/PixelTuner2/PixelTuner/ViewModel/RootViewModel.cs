@@ -23,6 +23,14 @@ namespace PixelTuner.ViewModel
 #if DEBUG
         public static Logger Logger = null;
 #endif
+        internal delegate void LastUsedFileChangedDelegate(string path);
+
+        private LastUsedFileChangedDelegate _lastUsedFileHandler;
+        internal LastUsedFileChangedDelegate LastUsedFileHandler
+        {
+            get { return _lastUsedFileHandler; }
+            set { _lastUsedFileHandler = value; }
+        }
 
         public RootViewModel()
         {
@@ -443,6 +451,9 @@ namespace PixelTuner.ViewModel
                                 file.OpenAudio.Execute(file.AudioPath);
                             ActiveDocument = file;
                             ActiveDocument.IsDirty = false;
+
+                            if (LastUsedFileHandler != null)
+                                LastUsedFileHandler.Invoke(path);
                         }
                         catch (Exception ex)
                         {
@@ -526,7 +537,11 @@ namespace PixelTuner.ViewModel
                 dlg.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 dlg.Filter = "PixelTuner project file|*.ptp";
                 if (dlg.ShowDialog() == true)
+                {
                     fileToSave.FilePath = dlg.FileName;
+                    if (LastUsedFileHandler != null)
+                        LastUsedFileHandler.Invoke(dlg.FileName);
+                }
                 else
                 {
                     return;

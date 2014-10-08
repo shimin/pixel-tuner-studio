@@ -7,6 +7,7 @@
         Style="{DynamicResource WindowStyle}"
         
         xmlns:avalonDock="http://schemas.xceed.com/wpf/xaml/avalondock"
+        xmlns:ct="clr-namespace:Common.Controls;assembly=Common"
         xmlns:dd="clr-namespace:Common.DragDrop;assembly=Common"
         xmlns:tlw="clr-namespace:PixelTuner.Controls.ThumbListView"
         
@@ -19,7 +20,7 @@
         Loaded="Window_Loaded" Closing="Window_Closing" Unloaded="MainWnd_Unloaded">
     
     <Window.Resources>
-        <ResourceDictionary >
+        <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/PixelTuner;component/Styles/FileLayoutTemplate.xaml" />
                 <ResourceDictionary Source="/PixelTuner;component/Styles/ProjectPlayerLayoutTemplate.xaml" />
@@ -153,9 +154,11 @@
                 <MenuItem Header="{StaticResource Menu_File_Save}" Command="{Binding SaveCommand}" InputGestureText="Ctrl+S"/>
                 <MenuItem Header="{StaticResource Menu_File_SaveAs}" Command="{Binding SaveAsCommand}" InputGestureText="Ctrl+Shift+S"/>
                 <MenuItem Header="{StaticResource Menu_File_Close}" Command="{Binding CloseCommand}" InputGestureText="Ctrl+W"/>
+                <ct:RecentFileList x:Name="RecentFileList" MaxNumberOfFiles="4"/>
                 <MenuItem Header="{StaticResource Menu_File_Exit}" Click="ExitApplication"/>
             </MenuItem>
             <MenuItem Header="{StaticResource Menu_Window}">
+                <MenuItem Header="{StaticResource Menu_Window_ProjectPlayer}" IsCheckable="True" IsChecked="{Binding ProjectPlayerModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                 <MenuItem Header="{StaticResource Menu_Window_Projects}" IsCheckable="True" IsChecked="{Binding ProjectsModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                 <MenuItem Header="{StaticResource Menu_Window_Devices}" IsCheckable="True" IsChecked="{Binding DevicesModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                 <MenuItem Header="{StaticResource Menu_Window_Images}" IsCheckable="True" IsChecked="{Binding ImagesModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>

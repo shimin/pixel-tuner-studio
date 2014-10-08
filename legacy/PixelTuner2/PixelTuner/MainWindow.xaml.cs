@@ -51,6 +51,8 @@ namespace PixelTuner
             Application.Current.Resources.MergedDictionaries.Add(d);
             InitializeComponent();
             this.DataContext = RootViewModel.This = (RootViewModel)Application.Current.TryFindResource("RootContext");
+            RecentFileList.MenuClick += (s, e) => RootViewModel.This.Open(e.Filepath);
+            RootViewModel.This.LastUsedFileHandler = (p) => RecentFileList.InsertFile(p);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs ev)
