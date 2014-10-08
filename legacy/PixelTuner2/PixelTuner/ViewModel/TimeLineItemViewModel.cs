@@ -222,6 +222,12 @@ namespace PixelTuner.ViewModel
             set { _parent = value; }
         }
 
+        [XmlIgnore]
+        public int ActualHeight
+        {
+            get { return ImageSource == null ? 0 : (int)((BitmapImage)ImageSource).PixelHeight; }
+        }
+
         #endregion
 
         public object Clone()

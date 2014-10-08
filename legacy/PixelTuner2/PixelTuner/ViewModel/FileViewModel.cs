@@ -818,16 +818,19 @@ namespace PixelTuner.ViewModel
 
         internal void PasteSelectedItems()
         {
-            TimeLineViewModel selectedLine = null;
             if (RootViewModel.This.CopiedTimeline != null)
             {
+                var tl = RootViewModel.This.CopiedTimeline;
+                if (tl.Items.Count > 0 && ((TimeLineItemViewModel)tl.Items[0]).ActualHeight != this.LineHeight)
+                {
+                    MessageBox.Show((String)Application.Current.TryFindResource("Global_ImagesHeightMismatch"));
+                    return;
+                }
                 TimeLines.Add(RootViewModel.This.CopiedTimeline);
             }
-            foreach (var line in TimeLines)
-            {
-                selectedLine = line.IsSelected ? line : null;
-                if (selectedLine != null) break;
-            }
+
+
+            TimeLineViewModel selectedLine = SelectedTimeline;
             if (selectedLine != null)
             {
                 ITimeLineDataItem selected = null;
@@ -841,6 +844,14 @@ namespace PixelTuner.ViewModel
                 int insertIndex = selectedLine.Items.Count;
                 if (selected != null) insertIndex = selectedLine.Items.IndexOf(selected);
 
+                foreach (var item in RootViewModel.This.CopiedItems)
+                {
+                    if (((TimeLineItemViewModel)item).ActualHeight != LineHeight)
+                    {
+                        MessageBox.Show(((String)Application.Current.TryFindResource("Global_ImagesHeightMismatch")).Replace("\"", ""));
+                        return;
+                    }
+                }
                 selectedLine.InsertItems(RootViewModel.This.CopiedItems, insertIndex);
             }
         }
@@ -866,6 +877,5 @@ namespace PixelTuner.ViewModel
                 FileChanged(sender, e);
         }
         public event EventHandler FileChanged;
-
     }
 }
