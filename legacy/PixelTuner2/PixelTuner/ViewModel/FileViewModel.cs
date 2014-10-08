@@ -172,7 +172,7 @@ namespace PixelTuner.ViewModel
 
         Brush _lightLineColor = new SolidColorBrush(Color.FromArgb(255, 70, 70, 70));
 
-        Double _minUnitSize = 1.0;
+        Double _minUnitSize = 17.88;
         [XmlIgnore]
         public Double MinUnitSize
         {
@@ -184,7 +184,7 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        Double _maxUnitSize = 160.0;
+        Double _maxUnitSize = 140;
         [XmlIgnore]
         public Double MaxUnitSize
         {
@@ -196,17 +196,25 @@ namespace PixelTuner.ViewModel
             }
         }
 
+        [XmlIgnore]
+        public Double UnitSizeStep
+        {
+            get { return 0.1; }
+        }
+
         [XmlAttribute]
         public Double UnitSize
         {
             get { return Settings.Default.UnitSize; }
             set
             {
-                if (value > MaxUnitSize) Settings.Default.UnitSize = MaxUnitSize;
-                else if (value < MinUnitSize) Settings.Default.UnitSize = MinUnitSize;
-                else Settings.Default.UnitSize = value;
+                //if (value > MaxUnitSize) Settings.Default.UnitSize = MaxUnitSize;
+                //else if (value < MinUnitSize) Settings.Default.UnitSize = MinUnitSize;
+                //else 
+                Settings.Default.UnitSize = Math.Round(value, 1);
 
                 RaisePropertyChanged("UnitSize");
+                RaisePropertyChanged("UnitSizeStep");
                 RaisePropertyChanged("WaveFormLength");
             }
         }

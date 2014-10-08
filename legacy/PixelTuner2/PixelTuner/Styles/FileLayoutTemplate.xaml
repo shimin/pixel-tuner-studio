@@ -2,13 +2,17 @@
                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:ct="clr-namespace:Common.Controls;assembly=Common"
+                    xmlns:cv="clr-namespace:PixelTuner.Converters"
                     xmlns:vm="clr-namespace:PixelTuner.ViewModel"
                     xmlns:svl="clr-namespace:WPFSoundVisualizationLib;assembly=WPFSoundVisualizationLib">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/PixelTuner;component/Styles/SharedStyles.xaml" />
+        <ResourceDictionary Source="/PixelTuner;component/Styles/SliderStyles.xaml" />
         <ResourceDictionary Source="/PixelTuner;component/Styles/TimeLineLayoutTemplate.xaml" />
     </ResourceDictionary.MergedDictionaries>
+
+    <cv:LogConverter x:Key="LogUnitSizeConverter"/>
 
     <!-- Region: WaveformTimeline -->
     <LinearGradientBrush x:Key="WaveformRightLevelBrush"
@@ -39,7 +43,7 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="80" />
-                <ColumnDefinition Width="66" />
+                <ColumnDefinition Width="70" />
                 <ColumnDefinition Width="120" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="60" />
@@ -52,7 +56,9 @@
                     Content="{StaticResource Doc_Btn_AddLine}" 
                     Command="{Binding AddLine}"/>
             <TextBlock Grid.Row="0" Grid.Column="1" Margin="16,4,4,0" Foreground="{StaticResource TextBrush}" Text="{StaticResource Doc_Lbl_Scale}"/>
-            <Slider Grid.Row="0" Grid.Column="2" x:Name="Slider_Scale" Margin="2" Minimum="{Binding MinUnitSize}" Maximum="{Binding MaxUnitSize}" Value="{Binding UnitSize}"/>
+            <Slider x:Name="Slider_Scale" Grid.Row="0" Grid.Column="2" Margin="2" 
+                                Minimum="{Binding MinUnitSize}" Maximum="{Binding MaxUnitSize}" 
+                                Value="{Binding UnitSize, Converter={StaticResource LogUnitSizeConverter}}"/>
             <TextBlock Grid.Column="3" Margin="16,4,4,0" Foreground="{StaticResource TextBrush}" Text="{StaticResource Doc_Lbl_Height}" />
             <StackPanel Grid.Row="0" Grid.Column="5" Margin="12,-2,1,1"  Orientation="Horizontal" Height="26">
                 <Button Name="boxOpenAudioButton" Width="80" Height="22" Margin="0,0,8,0" Command="{Binding OpenAudio}" Content="Import track" Focusable="False"></Button>
