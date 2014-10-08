@@ -57,6 +57,7 @@
     <Compile Include="Controls\NumericUpDown\NumericUpDown.xaml.cs">
       <DependentUpon>NumericUpDown.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\RecentFileList.cs" />
     <Compile Include="Controls\SearchTextBox\SearchTextBox.cs" />
     <Compile Include="Controls\TimeLine\ITimeLineDataItem.cs" />
     <Compile Include="Controls\TimeLine\ITimeLineManager.cs" />
