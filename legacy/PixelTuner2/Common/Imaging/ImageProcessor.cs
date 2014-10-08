@@ -638,7 +638,28 @@ namespace Common.Imaging
 
         public void ApplyUnsharpGaussian(float factor = 1f)
         {
-            bitmapImage = UnsharpGaussian3x3(bitmapImage, factor);
+            if (bitmapImage != null)
+            {
+                Bitmap src = new Bitmap(bitmapImage.Width + 2, bitmapImage.Height + 2);
+                using (Graphics g = Graphics.FromImage(src))
+                {
+                    // to fix border artifacts
+                    for (int c = 0; c < 3; c++)
+                    {
+                        for (int r = 0; r < 3; r++)
+                        {
+                            g.DrawImage(bitmapImage, (2 + c) % 3, (2 + r) % 3);
+                        }
+                    }
+                }
+
+                src = UnsharpGaussian3x3(src, factor);
+
+                using (Graphics g = Graphics.FromImage(bitmapImage))
+                {
+                    g.DrawImage(src, -1, -1);
+                }
+            }
         }
 
         public void ApplyGaussianBlur(double peakValue)
