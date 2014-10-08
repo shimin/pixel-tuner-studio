@@ -44,6 +44,11 @@ namespace WPFSoundVisualizationLib
         double ChannelLength { get; }
 
         /// <summary>
+        /// Returns current playback time
+        /// </summary>
+        TimeSpan CurrentTime { get; }
+
+        /// <summary>
         /// Gets the raw level data for the waveform.
         /// </summary>
         /// <remarks>

@@ -259,7 +259,7 @@ namespace WPFSoundVisualizationLib
             }
         }
         #endregion
-
+        
         #region ProgressBarThickness
         /// <summary>
         /// Identifies the <see cref="ProgressBarThickness" /> dependency property. 
@@ -611,6 +611,7 @@ namespace WPFSoundVisualizationLib
         protected virtual void OnTimelineTickBrushChanged(Brush oldValue, Brush newValue)
         {
             UpdateTimeline();
+            InitTimeLabels();
         }
 
         /// <summary>
@@ -724,7 +725,7 @@ namespace WPFSoundVisualizationLib
 
         #endregion
 
-        #region soundplayer
+        #region Soundplayer
         public IWaveformPlayer SoundPlayer
         {
             get { return (IWaveformPlayer)GetValue(SoundPlayerProperty); }
@@ -754,6 +755,7 @@ namespace WPFSoundVisualizationLib
             }
         }
         #endregion
+
         #endregion
 
         #region Template Overrides
@@ -855,6 +857,7 @@ namespace WPFSoundVisualizationLib
                     startLoopRegion = -1;
                     endLoopRegion = -1;
                     UpdateAllRegions();
+                    InitTimeLabels();
                     break;
             }
         }
@@ -875,6 +878,7 @@ namespace WPFSoundVisualizationLib
             base.OnRenderSizeChanged(sizeInfo);
             UpdateWaveformCacheScaling();
             UpdateAllRegions();
+            if (timelineCanvas != null && timelineCanvas.Children.Count > 0) InitTimeLabels();
         }
 
         /// <summary>
@@ -1083,24 +1087,17 @@ namespace WPFSoundVisualizationLib
             repeatRegion.Height = repeatCanvas.RenderSize.Height;
         }
 
+        double minorTickDuration = 0.05d; // Major tick = 5 seconds, Minor tick = 1.00 second
+        double majorTickDuration = 0.25d;
+
         private void UpdateTimeline()
         {
             if (soundPlayer == null || timelineCanvas == null)
                 return;
 
-            var rect = timelineCanvas.Children[0];
-            timelineCanvas.Children.Clear();
-            timelineCanvas.Children.Add(rect);
-            timestampTextBlocks.Clear();
-            timeLineTicks.Clear();
-
-            double bottomLoc = timelineCanvas.RenderSize.Height - 1;
-
             timelineBackgroundRegion.Width = timelineCanvas.RenderSize.Width;
             timelineBackgroundRegion.Height = timelineCanvas.RenderSize.Height;
 
-            double minorTickDuration = 5.00d; // Major tick = 5 seconds, Minor tick = 1.00 second
-            double majorTickDuration = 25.00d;
             if (this.Width / soundPlayer.ChannelLength >= 600.0d) // Major tick = 250 ms, Minor tick = 50 ms.
             {
                 minorTickDuration = 0.05d;
@@ -1126,9 +1123,23 @@ namespace WPFSoundVisualizationLib
                 minorTickDuration = 2.0d;
                 majorTickDuration = 10.0d;
             }
+        }
+
+        private void InitTimeLabels()
+        {
+            if (soundPlayer == null || timelineCanvas == null)
+                return;
 
             if (soundPlayer.ChannelLength < minorTickDuration)
                 return;
+
+            var rect = timelineCanvas.Children[0];
+            timelineCanvas.Children.Clear();
+            timelineCanvas.Children.Add(rect);
+            timestampTextBlocks.Clear();
+            timeLineTicks.Clear();
+
+            double bottomLoc = timelineCanvas.RenderSize.Height - 1;
 
             int minorTickCount = (int)(soundPlayer.ChannelLength / minorTickDuration);
             for (int i = 1; i <= minorTickCount; i++)
@@ -1147,6 +1158,7 @@ namespace WPFSoundVisualizationLib
                     if (timestampTextBlocks.Count != 0)
                     {
                         TextBlock lastTextBlock = timestampTextBlocks[timestampTextBlocks.Count - 1];
+
                         lastTimestampEnd = lastTextBlock.Margin.Left + lastTextBlock.ActualWidth;
                     }
                     else
@@ -1315,5 +1327,6 @@ namespace WPFSoundVisualizationLib
             }
         }
         #endregion
+
     }
 }
