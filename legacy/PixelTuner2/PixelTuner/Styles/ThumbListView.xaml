@@ -15,7 +15,7 @@
                             Background="{TemplateBinding Background}" 
                             Margin="{TemplateBinding Margin}">
                         <ScrollViewer Margin="{TemplateBinding Padding}">
-                            <WrapPanel ItemWidth="160" 
+                            <WrapPanel ItemWidth="120" 
                                        IsItemsHost="True" 
                                        MinWidth="100"
                                        Width="{Binding ActualWidth,RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}">
@@ -38,7 +38,7 @@
             <Setter.Value>
                 <DataTemplate>
                     <Border Background="White">
-                        <Image Height="60" Margin="3">
+                        <Image Height="50" Margin="2">
                             <Image.Source>
                                 <BitmapImage UriSource="{Binding FullName}" CacheOption="OnLoad" />
                             </Image.Source>
