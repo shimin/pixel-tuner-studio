@@ -2,8 +2,11 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:ptw="clr-namespace:Common.ProjectPlayer.PixelTwister;assembly=Common"
                     xmlns:vm="clr-namespace:PixelTuner.ViewModel">
-    
-    <DataTemplate x:Key="ProjectPlayerLayoutTemplate" DataType="{x:Type vm:ProjectPlayerViewModel}">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/PixelTuner;component/Styles/SliderStyles.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+        <DataTemplate x:Key="ProjectPlayerLayoutTemplate" DataType="{x:Type vm:ProjectPlayerViewModel}">
         <Grid Background="Black">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>

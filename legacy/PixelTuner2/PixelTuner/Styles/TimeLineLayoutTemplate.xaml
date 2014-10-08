@@ -3,6 +3,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     
                     xmlns:ct="clr-namespace:Common.Controls;assembly=Common"
+                    xmlns:cv="clr-namespace:PixelTuner.Converters"
                     xmlns:vm="clr-namespace:PixelTuner.ViewModel"
                     xmlns:tlw="clr-namespace:PixelTuner.Controls.ThumbListView">
 
@@ -12,6 +13,8 @@
         <ResourceDictionary Source="/PixelTuner;component/Styles/SharedStyles.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
+    <cv:LogConverter x:Key="LogUnitSizeConverter"/>
+    
     <SolidColorBrush x:Key="NormalItemBrush" Color="#bababa" />
     
     <LinearGradientBrush x:Key="ControlsBackBrush" StartPoint="0,0" EndPoint="1,0" MappingMode="Absolute">
@@ -94,7 +97,7 @@
                             <ct:TriangleSlider Height="12" 
                                            Width="48"
                                            MinValue="4" 
-                                           MaxValue="100" 
+                                           MaxValue="40" 
                                            Margin="-2,2,4,0"
                                            ToolTip="{StaticResource Item_Stretching}"
                                            PreviewMouseLeftButtonDown="ChildPreviewMouseLeftButtonDown"
@@ -183,7 +186,7 @@
                         Background="{Binding Background}"
                         DefaultTimeInterval="{Binding DefaultTimeInterval}" 
                         StartDate="{Binding Start, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        UnitSize="{Binding ElementName=Slider_Scale, Path=Value}"
+                        UnitSize="{Binding Path=Parent.UnitSize}"
                         Items="{Binding Items, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         ItemTemplate="{StaticResource TimelineItemTemplate}"/>
                 </Grid>
