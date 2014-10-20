@@ -58,6 +58,7 @@
     <system:String x:Key="Dev_Props_State_ProductID">Идентификатор:</system:String>
     <system:String x:Key="Dev_Props_State_WriteReadDelay">Пауза запись/чтение:</system:String>
     <system:String x:Key="Dev_Props_State_Error">Ошибка связи.</system:String>
+    <system:String x:Key="Preview_Animate">Анимировать</system:String>
     <system:String x:Key="Global_ImagesHeightMismatch">"Не совпадает высота картинок и проекта."</system:String>
     <system:String x:Key="Global_SaveChanges">"Сохранить изменения '{0}'?"</system:String>
     <system:String x:Key="Global_NotEnoughtSpace">Недостаточно памяти устройства.</system:String>

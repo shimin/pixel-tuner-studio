@@ -56,6 +56,9 @@ namespace PixelTuner.ViewModel
                     {
                         Image = ImageHelper.BitmapImageFromBitmap(new System.Drawing.Bitmap(50, 50));
                     }
+                    RaisePropertyChanged("Dash");
+                    RaisePropertyChanged("Dot");
+                }
             }
         }
 
@@ -70,6 +73,38 @@ namespace PixelTuner.ViewModel
         {
             get { return _tilingX; }
             set { _tilingX = value + 0.272; RaisePropertyChanged("TilingX"); RaisePropertyChanged("Image"); }
+        }
+
+        public double Dash
+        {
+            get
+            {
+                double dash = 0;
+                if (_displayModel != null)
+                {
+                    if (_displayModel.ActualHeight < 50)
+                        dash = 0.01;
+                    else if (_displayModel.ActualHeight < 65)
+                        dash = 0.005;
+                }
+                
+                return dash;
+            }
+            set { }
+        }
+
+        public double Dot
+        {
+            get
+            {
+                double dot = 0.01;
+                if (_displayModel != null)
+                {
+                    if (_displayModel.ActualHeight < 50)
+                        dot = 0.02;
+                }
+                return dot;
+            }
         }
 
         double _stretching = 1.0;

@@ -58,6 +58,7 @@
     <system:String x:Key="Dev_Props_State_ProductID">ProductID:</system:String>
     <system:String x:Key="Dev_Props_State_WriteReadDelay">Write/read pause:</system:String>
     <system:String x:Key="Dev_Props_State_Error">Communication error.</system:String>
+    <system:String x:Key="Preview_Animate">Animate</system:String>
     <system:String x:Key="Global_ImagesHeightMismatch">"Copied images doesn't match project height."</system:String>
     <system:String x:Key="Global_SaveChanges">"Save changes for file '{0}'?"</system:String>
     <system:String x:Key="Global_NotEnoughtSpace">Not enough device memory.</system:String>

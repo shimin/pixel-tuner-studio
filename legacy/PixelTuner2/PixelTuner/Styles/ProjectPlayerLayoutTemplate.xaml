@@ -14,7 +14,15 @@
             </Grid.RowDefinitions>
             <Border RenderTransformOrigin="0.5,0.5" Grid.Row="0">
                 <Border.Effect>
-                    <ptw:PolarShaderEffect Dot="1.00" Dash="0.00" TilingX="{Binding TilingX}"/>
+                    <ptw:PolarShaderEffect x:Name="twistEffect" 
+                                           TilingX="{Binding TilingX}" 
+                                           Dot="{Binding Dot}" 
+                                           Dash="{Binding Dash}" 
+                                           ArcLength="1" 
+                                           ArcPosition="0"
+                                           PoiWidth="0.01"
+                                           ClampValue="1.5"
+                                           MinimalIntensity="0.1"/>
                 </Border.Effect>
                 <Border.RenderTransform>
                     <TransformGroup>
@@ -31,6 +39,32 @@
                         </VisualBrush.Visual>
                     </VisualBrush>
                 </Border.Background>
+                <Border.Style>
+                    <Style>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=boxAnimate, Path=IsChecked}" Value="true">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard Name="animation">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="Effect.(ptw:PolarShaderEffect.ArcPosition)"
+                                                             From="1.0" To="0.0" By="0.01" Duration="0:0:2" RepeatBehavior="Forever" />
+
+                                            <!--<DoubleAnimation Storyboard.TargetProperty="RenderTransform.Children[2].Angle" From="0" To="360" 
+                                                             Duration="0:0:5" BeginTime="0:0:0.000" RepeatBehavior="Forever"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="Effect.(ptw:PolarShaderEffect.LowThreshold)" From="0" To="1" 
+                                                             Duration="0:0:5" BeginTime="0:0:0.000" RepeatBehavior="Forever" />
+                                            <DoubleAnimation Storyboard.TargetProperty="Effect.(ptw:PolarShaderEffect.HighThreshold)" From="0" To="1" 
+                                                             Duration="0:0:5" BeginTime="0:0:1.000" RepeatBehavior="Forever"/>-->
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                                <DataTrigger.ExitActions>
+                                    <StopStoryboard BeginStoryboardName="animation"></StopStoryboard>
+                                </DataTrigger.ExitActions>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
             </Border>
             <StackPanel Grid.Row="1" Orientation="Vertical">
                 <StackPanel Visibility="Hidden" Orientation="Horizontal">
@@ -43,6 +77,7 @@
                     <Slider Name="boxStretchingSliderActual" Width="260" Value="{Binding ModelStretching}" Margin="3" Minimum="4" Maximum="50"/>
                     <Label Foreground="White" Content="{Binding ModelStretching}"/>
                 </StackPanel>
+                <CheckBox Name="boxAnimate" IsChecked="True" Margin="6,0" Content="{StaticResource Preview_Animate}" Foreground="White"/>
             </StackPanel>
         </Grid>
     </DataTemplate>
