@@ -71,4 +71,26 @@
     <system:String x:Key="PictureEditor_Delete">Löschen</system:String>
     <system:String x:Key="PictureEditor_Update">Aktualisieren</system:String>
     <system:String x:Key="PictureEditor_Search">Suchen</system:String>
+    <system:String x:Key="ColorAdjustPage_BrightnessContrast">Яркость/Контраст</system:String>
+    <system:String x:Key="ColorAdjustPage_Brightness">Яркость</system:String>
+    <system:String x:Key="ColorAdjustPage_Contrast">Контраст</system:String>
+    <system:String x:Key="ColorAdjustPage_Color">Цвет</system:String>
+    <system:String x:Key="ColorAdjustPage_Hue">Оттенок</system:String>
+    <system:String x:Key="ColorAdjustPage_Saturation">Насыщенность</system:String>
+    <system:String x:Key="ColorAdjustPage_Sharpen">Резкость</system:String>
+    <system:String x:Key="ColorAdjustPage_ApplySharpen">Сделать четче</system:String>
+    <system:String x:Key="ColorAdjustPage_Level">Уровень</system:String>
+    <system:String x:Key="ColorAdjustPage_Other">Прочее</system:String>
+    <system:String x:Key="ColorAdjustPage_Invert">Инвертировать</system:String>
+    <system:String x:Key="ColorAdjustPage_Monochrome">Монохром</system:String>
+    <system:String x:Key="ColorAdjustPage_Zoom">Масштаб:&#160;</system:String>
+    <system:String x:Key="ColorAdjustPage_History">История действий</system:String>
+    <system:String x:Key="ColorAdjustPage_Apply">Применить</system:String>
+    <system:String x:Key="ColorAdjustPage_Reset">Сброс</system:String>
+    <system:String x:Key="CropPage_ResizeToFit">Подогнать под размер</system:String>
+    <system:String x:Key="CropPage_Height">Высота</system:String>
+    <system:String x:Key="CropPage_ClippingRectangle">Область кадрирования:</system:String>
+    <system:String x:Key="ImportWindow_Next">далее</system:String>
+    <system:String x:Key="ImportWindow_Back">назад</system:String>
+    <system:String x:Key="ImportWindow_Header">Импорт</system:String>
 </ResourceDictionary>

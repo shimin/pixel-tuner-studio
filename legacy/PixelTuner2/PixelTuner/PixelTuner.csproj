@@ -190,6 +190,10 @@
     <Compile Include="ViewModel\TimeLineViewModel.cs" />
     <Compile Include="ViewModel\ToolViewModel.cs" />
     <Compile Include="ViewModel\RootViewModel.cs" />
+    <Page Include="Dictionaries\labels.de-DE.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Import\ColorAdjustPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

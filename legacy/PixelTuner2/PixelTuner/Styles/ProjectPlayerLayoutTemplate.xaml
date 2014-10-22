@@ -48,13 +48,6 @@
                                         <Storyboard>
                                             <DoubleAnimation Storyboard.TargetProperty="Effect.(ptw:PolarShaderEffect.ArcPosition)"
                                                              From="1.0" To="0.0" By="0.01" Duration="0:0:2" RepeatBehavior="Forever" />
-
-                                            <!--<DoubleAnimation Storyboard.TargetProperty="RenderTransform.Children[2].Angle" From="0" To="360" 
-                                                             Duration="0:0:5" BeginTime="0:0:0.000" RepeatBehavior="Forever"/>
-                                            <DoubleAnimation Storyboard.TargetProperty="Effect.(ptw:PolarShaderEffect.LowThreshold)" From="0" To="1" 
-                                                             Duration="0:0:5" BeginTime="0:0:0.000" RepeatBehavior="Forever" />
-                                            <DoubleAnimation Storyboard.TargetProperty="Effect.(ptw:PolarShaderEffect.HighThreshold)" From="0" To="1" 
-                                                             Duration="0:0:5" BeginTime="0:0:1.000" RepeatBehavior="Forever"/>-->
                                         </Storyboard>
                                     </BeginStoryboard>
                                 </DataTrigger.EnterActions>

@@ -71,4 +71,26 @@
     <system:String x:Key="PictureEditor_Delete">Delete</system:String>
     <system:String x:Key="PictureEditor_Update">Refresh</system:String>
     <system:String x:Key="PictureEditor_Search">Search</system:String>
+    <system:String x:Key="ColorAdjustPage_BrightnessContrast">Brightness/Contrast</system:String>
+    <system:String x:Key="ColorAdjustPage_Brightness">Brightness</system:String>
+    <system:String x:Key="ColorAdjustPage_Contrast">Contrast</system:String>
+    <system:String x:Key="ColorAdjustPage_Color">Color</system:String>
+    <system:String x:Key="ColorAdjustPage_Hue">Hue</system:String>
+    <system:String x:Key="ColorAdjustPage_Saturation">Saturation</system:String>
+    <system:String x:Key="ColorAdjustPage_Sharpen">Sharpen</system:String>
+    <system:String x:Key="ColorAdjustPage_ApplySharpen">Apply filter</system:String>
+    <system:String x:Key="ColorAdjustPage_Level">Level</system:String>
+    <system:String x:Key="ColorAdjustPage_Other">Other</system:String>
+    <system:String x:Key="ColorAdjustPage_Invert">Invert</system:String>
+    <system:String x:Key="ColorAdjustPage_Monochrome">Monochrome</system:String>
+    <system:String x:Key="ColorAdjustPage_Zoom">Zoom:&#160;</system:String>
+    <system:String x:Key="ColorAdjustPage_History">Actions</system:String>
+    <system:String x:Key="ColorAdjustPage_Apply">Apply</system:String>
+    <system:String x:Key="ColorAdjustPage_Reset">Reset</system:String>
+    <system:String x:Key="CropPage_ResizeToFit">Resize to fit</system:String>
+    <system:String x:Key="CropPage_Height">Height</system:String>
+    <system:String x:Key="CropPage_ClippingRectangle">Clipping rectangle:</system:String>
+    <system:String x:Key="ImportWindow_Next">next</system:String>
+    <system:String x:Key="ImportWindow_Back">back</system:String>
+    <system:String x:Key="ImportWindow_Header">Import</system:String>
 </ResourceDictionary>

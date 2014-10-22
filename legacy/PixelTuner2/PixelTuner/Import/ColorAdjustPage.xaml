@@ -56,20 +56,20 @@
                     <Setter Property="Margin" Value="5,5,5,5"/>
                 </Style>
             </StackPanel.Resources>
-            <Expander Foreground="#FFFFFFFF" Header="Яркость/Контраст">
+            <Expander Foreground="#FFFFFFFF" Header="{StaticResource ColorAdjustPage_BrightnessContrast}">
                 <StackPanel Height="Auto">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="66"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <Label Content="Яркость" Foreground="White" />
+                        <Label Content="{StaticResource ColorAdjustPage_Brightness}" Foreground="White" />
                         <Slider Grid.Column="1" Margin="2,3" Name="boxBrightnessSlider" ValueChanged="boxBrightnessSlider_ValueChanged" Interval="50" LargeChange="10" Maximum="255" Minimum="-255" SmallChange="1" />
-                        <Label Grid.Row="1" Content="Контраст" Foreground="White" />
+                        <Label Grid.Row="1" Content="{StaticResource ColorAdjustPage_Contrast}" Foreground="White" />
                         <Slider Grid.Row="1" Grid.Column="1" Margin="2,3" Name="boxContrastSlider" ValueChanged="boxContrastSlider_ValueChanged" Interval="1" Maximum="100" Minimum="-100" LargeChange="0.1" SmallChange="0.02" />
                     </Grid>
                     <Grid>
@@ -77,12 +77,12 @@
                             <ColumnDefinition Width="1*"/>
                             <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
-                        <Button Name="boxApplyBC" Grid.Column="0" Content="Apply" Click="boxApplyBC_Click" />
-                        <Button Name="boxCancelBC" Grid.Column="1" Content="Reset" Click="boxCancelBC_Click" />
+                        <Button Name="boxApplyBC" Grid.Column="0" Content="{StaticResource ColorAdjustPage_Apply}" Click="boxApplyBC_Click" />
+                        <Button Name="boxCancelBC" Grid.Column="1" Content="{StaticResource ColorAdjustPage_Reset}" Click="boxCancelBC_Click" />
                     </Grid>
                 </StackPanel>
             </Expander>
-            <Expander Foreground="#FFFFFFFF" Header="Цвет">
+            <Expander Foreground="#FFFFFFFF" Header="{StaticResource ColorAdjustPage_Color}">
                 <StackPanel Height="Auto">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -97,13 +97,13 @@
                             <RowDefinition Height="*" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <Label Content="Оттенок" Foreground="White" />
+                        <Label Content="{StaticResource ColorAdjustPage_Hue}" Foreground="White" />
                         <TextBox Name="boxColorHueText" Grid.Column="1" HorizontalAlignment="Left" Width="50" Text="{Binding ElementName=boxColorHue, Path=Value}" b:InputBindingsManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text" PreviewKeyDown="boxColorHueText_PreviewKeyDown" />
                         <Slider Grid.Row="1" Grid.ColumnSpan="2" Margin="2,3" Name="boxColorHue" ValueChanged="boxColorHue_ValueChanged" Minimum="-180" Maximum="180" SmallChange="1" LargeChange="10" IsSnapToTickEnabled="True" />
-                        <Label Grid.Row="2" Content="Насыщенность" Foreground="White" />
+                        <Label Grid.Row="2" Content="{StaticResource ColorAdjustPage_Saturation}" Foreground="White" />
                         <TextBox Name="boxColorSatText" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Width="50" Text="{Binding ElementName=boxColorSaturation, Path=Value}" b:InputBindingsManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text" PreviewKeyDown="boxColorSatText_PreviewKeyDown" />
                         <Slider Grid.Row="3" Grid.ColumnSpan="2" Margin="2,3" Name="boxColorSaturation" ValueChanged="boxColorSaturation_ValueChanged" Minimum="-100" Maximum="100" LargeChange="10" SmallChange="11" Value="0" TickFrequency="1" IsSnapToTickEnabled="True" />
-                        <Label Grid.Row="4" Content="Яркость" Foreground="White" />
+                        <Label Grid.Row="4" Content="{StaticResource ColorAdjustPage_Brightness}" Foreground="White" />
                         <TextBox Name="boxColorValueText" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" Width="50" Text="{Binding ElementName=boxColorValue, Path=Value}" b:InputBindingsManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text" PreviewKeyDown="boxColorValueText_PreviewKeyDown" />
                         <Slider Grid.Row="5" Grid.ColumnSpan="2" Margin="2,3" Name="boxColorValue" ValueChanged="boxColorValue_ValueChanged" Minimum="-100" Maximum="100" LargeChange="10" SmallChange="1" Value="0" TickFrequency="1" IsSnapToTickEnabled="True" />
                     </Grid>
@@ -112,14 +112,14 @@
                             <ColumnDefinition Width="1*"/>
                             <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
-                        <Button Name="boxApplyColor" Grid.Column="0" Content="Apply" Click="boxApplyColor_Click" />
-                        <Button Name="boxCancelColor" Grid.Column="1" Content="Reset" Click="boxCancelColor_Click" />
+                        <Button Name="boxApplyColor" Grid.Column="0" Content="{StaticResource ColorAdjustPage_Apply}" Click="boxApplyColor_Click" />
+                        <Button Name="boxCancelColor" Grid.Column="1" Content="{StaticResource ColorAdjustPage_Reset}" Click="boxCancelColor_Click" />
                     </Grid>
                 </StackPanel>
             </Expander>
-            <Expander Foreground="White" Header="Резкость">
+            <Expander Foreground="White" Header="{StaticResource ColorAdjustPage_Sharpen}">
                 <StackPanel Height="Auto">
-                    <CheckBox x:Name="boxApplySharpening" Margin="4,2,0,0" Content="Сделать четче" IsChecked="{Binding ApplySharpening}" Foreground="#ffffffff" Checked="boxApplySharpening_Checked" Unchecked="boxApplySharpening_Unchecked" />
+                    <CheckBox x:Name="boxApplySharpening" Margin="4,2,0,0" Content="{StaticResource ColorAdjustPage_ApplySharpen}" IsChecked="{Binding ApplySharpening}" Foreground="#ffffffff" Checked="boxApplySharpening_Checked" Unchecked="boxApplySharpening_Unchecked" />
                     <Grid IsEnabled="{Binding ElementName=boxApplySharpening, Path=IsChecked}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="60"/>
@@ -134,7 +134,7 @@
                                 </Style.Triggers>
                             </Style>
                         </Grid.Style>
-                        <Label Foreground="White" Content="Уровень"/>
+                        <Label Foreground="White" Content="{StaticResource ColorAdjustPage_Level}"/>
                         <Slider Grid.Column="1" Name="boxSharpAmount" Margin="2,3" Value="1" Minimum="0.1" Maximum="10" ValueChanged="boxSharpAmount_ValueChanged"></Slider>
                     </Grid>
                     <Grid>
@@ -142,15 +142,15 @@
                             <ColumnDefinition Width="1*"/>
                             <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
-                        <Button Name="boxApplySharpen" Grid.Column="0" Content="Apply" Click="boxApplySharpen_Click" />
-                        <Button Name="boxCancelSharpen" Grid.Column="1" Content="Reset" Click="boxCancelSharpen_Click" />
+                        <Button Name="boxApplySharpen" Grid.Column="0" Content="{StaticResource ColorAdjustPage_Apply}" Click="boxApplySharpen_Click" />
+                        <Button Name="boxCancelSharpen" Grid.Column="1" Content="{StaticResource ColorAdjustPage_Reset}" Click="boxCancelSharpen_Click" />
                     </Grid>
                 </StackPanel>
             </Expander>
-            <Expander Header="Прочее" Foreground="#FFFFFFFF" >
+            <Expander Header="{StaticResource ColorAdjustPage_Other}" Foreground="#FFFFFFFF" >
                 <StackPanel Height="Auto">
-                    <CheckBox Content="Инвертировать" Foreground="#ffffffff" Margin="4,2,0,0" Name="boxInvert" Checked="boxInvert_Checked" Unchecked="boxInvert_Checked" />
-                    <CheckBox Content="Монохром" Foreground="#ffffffff" Margin="4,2,0,0" Name="boxMono" Checked="boxMono_Checked" Unchecked="boxMono_Checked" />
+                    <CheckBox Content="{StaticResource ColorAdjustPage_Invert}" Foreground="#ffffffff" Margin="4,2,0,0" Name="boxInvert" Checked="boxInvert_Checked" Unchecked="boxInvert_Checked" />
+                    <CheckBox Content="{StaticResource ColorAdjustPage_Monochrome}" Foreground="#ffffffff" Margin="4,2,0,0" Name="boxMono" Checked="boxMono_Checked" Unchecked="boxMono_Checked" />
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="50" />
@@ -173,17 +173,17 @@
                             <ColumnDefinition Width="1*"/>
                             <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
-                        <Button Name="boxApplyOther" Grid.Column="0" Content="Apply" Click="boxApplyOther_Click" />
-                        <Button Name="boxCancelOther" Grid.Column="1" Content="Reset" Click="boxCancelOther_Click" />
+                        <Button Name="boxApplyOther" Grid.Column="0" Content="{StaticResource ColorAdjustPage_Apply}" Click="boxApplyOther_Click" />
+                        <Button Name="boxCancelOther" Grid.Column="1" Content="{StaticResource ColorAdjustPage_Reset}" Click="boxCancelOther_Click" />
                     </Grid>
                 </StackPanel>
             </Expander>
-            <GroupBox BorderThickness="0.25" Foreground="White" Header="История">
+            <GroupBox BorderThickness="0.25" Foreground="White" Header="{StaticResource ColorAdjustPage_History}">
                 <ListBox Name="boxHistoryList" ItemsSource="{Binding HistoryStack}" Height="240" SelectionChanged="boxHistoryList_SelectionChanged"></ListBox>
             </GroupBox>
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal" Grid.ColumnSpan="2" Margin="0,0,170,0">
-            <Label Foreground="White" Content="Zoom: "/>
+            <Label Foreground="White" Content="{StaticResource ColorAdjustPage_Zoom}"/>
             <Slider Name="boxZoomSlider" HorizontalAlignment="Stretch" Width="200" Minimum="50" Maximum="1000" Value="50" />
         </StackPanel>
     </Grid>

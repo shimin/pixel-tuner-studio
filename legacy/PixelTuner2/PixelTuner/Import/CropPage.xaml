@@ -44,6 +44,6 @@
                 </StackPanel>
             </GroupBox>
         </StackPanel>
-        <TextBlock HorizontalAlignment="Stretch" Grid.Row="1" Margin="5,0,0,5" x:Name="boxClippingRectangleInfo" Width="Auto" Height="Auto" Foreground="#FFFFFFFF" Text="ClippingRectangle" TextWrapping="Wrap"/>
+        <TextBlock HorizontalAlignment="Stretch" Grid.Row="1" Margin="5,0,0,5" x:Name="boxClippingRectangleInfo" Width="Auto" Height="Auto" Foreground="#FFFFFFFF" Text="{StaticResource CropPage_ClippingRectangle}" TextWrapping="Wrap"/>
     </Grid>
 </UserControl>
