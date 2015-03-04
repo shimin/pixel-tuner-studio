@@ -82,28 +82,6 @@ namespace Communication.Pixelate
             }
         }
 
-        UInt32 _startAddressCompressed;
-        /// <summary>
-        /// Адрес начала сжатой картинки. Влияет на поле EndAddress.
-        /// </summary>
-        public UInt32 StartAddressCompressed
-        {
-            get { return _startAddressCompressed + ParametersFieldSize; }
-            set
-            {
-                _startAddressCompressed = value;
-                if (_binaryCompressed != null && _binaryCompressed.Count > 3 + ParametersFieldSize)
-                {
-                    // 4 bytes of end address in binary representation
-                    var bytes = BitConverter.GetBytes((UInt32)(_startAddressCompressed + _binaryCompressed.Count - ParametersFieldSize));
-                    _binaryCompressed[0 + ParametersFieldSize] = bytes[0];
-                    _binaryCompressed[1 + ParametersFieldSize] = bytes[1];
-                    _binaryCompressed[2 + ParametersFieldSize] = bytes[2];
-                    _binaryCompressed[3 + ParametersFieldSize] = bytes[3];
-                }
-            }
-        }
-
         /// <summary>
         /// Фактическая длина бинарной части.
         /// </summary>
@@ -112,17 +90,7 @@ namespace Communication.Pixelate
             get { return _binary == null ? 0 : (UInt32)_binary.Count; }
         }
 
-        /// <summary>
-        /// Фактическая длина сжатой бинарной части.
-        /// </summary>
-        public UInt32 BinaryLengthCompressed
-        {
-            get { return _binaryCompressed == null ? 0 : (UInt32)_binaryCompressed.Count; }
-        }
-
         List<byte> _binary = null;
-
-        List<byte> _binaryCompressed = null;
 
         ColorDepth _depth = ColorDepth.Bit24;
         
@@ -392,56 +360,7 @@ namespace Communication.Pixelate
             else if (depth == ColorDepth.Bit24) { binary.Add(8); }
             else if (depth == ColorDepth.Bit36) { binary.Add(12); }
         }
-
-        public List<byte> GetBinaryCompressed(byte targetHeight)
-        {
-            if (Bitmap != null)
-            {
-                _binaryCompressed = new List<byte>();
-                var data = new List<byte>();
-                AttachDataCompressed(data);
-
-                AttachParameters(_binaryCompressed, ColorDepth.Bit24, LaserOn);
-                AttachSize(_binaryCompressed, data.Count);
-                _binaryCompressed.AddRange(data);
-
-                ////////////////////////////////////////////////
-                // check back
-                ////////////////////////////////////////////////
-                List<UInt32> dataF = new List<UInt32>();
-                for (int i = 0; i < data.Count - 1; i += 4)
-                    dataF.Add(BitConverter.ToUInt32(new byte[] { data[i], data[i + 1], data[i + 2], data[i + 3] }, 0));
-
-                var decompressedString = Decompress(dataF);
-                var decompressedBytesHalves = Encoding.ASCII.GetBytes(decompressedString);
-                var decompressedBytes = new byte[decompressedBytesHalves.Length];
-                for (int i = 0; i < decompressedBytesHalves.Length; i++)
-                    decompressedBytes[i] = (byte)(decompressedBytesHalves[i] * 2);
-                File.WriteAllBytes("c:\\02_dec.bin", decompressedBytes.ToArray());
-
-                Bitmap b = new Bitmap(Bitmap.Width, Bitmap.Height, Bitmap.PixelFormat);
-                System.Drawing.Imaging.BitmapData bd = b.LockBits(new Rectangle(0, 0, b.Width, b.Height), 
-                    System.Drawing.Imaging.ImageLockMode.WriteOnly, b.PixelFormat);
-                var dataTmp = ImageToBytes(Bitmap);
-                System.Runtime.InteropServices.Marshal.Copy(decompressedBytes, 0, bd.Scan0, decompressedBytes.Length);
-                b.UnlockBits(bd);
-                b.Save("c:\\" + System.IO.Path.GetFileName(_path));
-                ////////////////////////////////////////////////
-            }
-            return _binaryCompressed;
-        }
-
-        private void AttachDataCompressed(List<byte> binary)
-        {
-            var src = ImageToBytes(Bitmap);
-            var srcHalves = new List<byte>();
-            foreach (var b in src) { srcHalves.Add((byte)(b / 2)); }
-            var srcString = Encoding.ASCII.GetString(srcHalves.ToArray());
-            var compressed = Compress(srcString);
-            compressed.ForEach((i) => { binary.AddRange(BitConverter.GetBytes(i)); });
-            File.WriteAllBytes("c:\\01_src.bin", srcHalves.ToArray());
-        }
-
+        
         private class StringHelper
         {
             public static byte[] GetBytes(string str)
@@ -483,85 +402,5 @@ namespace Communication.Pixelate
         }
 
         #endregion
-
-        #region LZW compression
-
-        public static List<UInt32> Compress(string uncompressed)
-        {
-            // build the dictionary
-            Dictionary<string, UInt32> dictionary = new Dictionary<string, UInt32>();
-            for (UInt32 i = 0; i < 256; i++)
-                dictionary.Add(((char)i).ToString(), i);
-
-            string w = string.Empty;
-            List<UInt32> compressed = new List<UInt32>();
-
-            foreach (char c in uncompressed)
-            {
-                string wc = w + c;
-                if (dictionary.ContainsKey(wc))
-                {
-                    w = wc;
-                }
-                else
-                {
-                    // write w to output
-                    compressed.Add(dictionary[w]);
-                    // wc is a new sequence; add it to the dictionary
-                    dictionary.Add(wc, (UInt32)dictionary.Count);
-                    w = c.ToString();
-                }
-            }
-
-            // write remaining output if necessary
-            if (!string.IsNullOrEmpty(w))
-                compressed.Add(dictionary[w]);
-
-            return compressed;
-        }
-
-        public static string Decompress(List<UInt32> compressed)
-        {
-            // build the dictionary
-            Dictionary<UInt32, string> dictionary = new Dictionary<UInt32, string>();
-            for (UInt32 i = 0; i < 256; i++)
-                dictionary.Add(i, ((char)i).ToString());
-
-            string w = dictionary[compressed[0]];
-            compressed.RemoveAt(0);
-            StringBuilder decompressed = new StringBuilder(w);
-
-            foreach (UInt32 k in compressed)
-            {
-                string entry = null;
-                if (dictionary.ContainsKey(k))
-                    entry = dictionary[k];
-                else if (k == dictionary.Count)
-                    entry = w + w[0];
-
-                decompressed.Append(entry);
-
-                // new sequence; add it to the dictionary
-                dictionary.Add((UInt32)dictionary.Count, w + entry[0]);
-
-                w = entry;
-            }
-
-            return decompressed.ToString();
-        }
-
-        #endregion
-
-        internal int GetCompressedSize(byte targetHeight)
-        {
-            int size = 0;
-            if (Bitmap != null || File.Exists(_path))
-            {
-                if (Bitmap == null) _bitmap = Bitmap.FromFile(_path) as Bitmap;
-                GetBinaryCompressed(targetHeight);
-                size += _binaryCompressed.Count;
-            }
-            return size;
-        }
     }
 }

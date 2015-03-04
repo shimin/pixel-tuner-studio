@@ -61,8 +61,6 @@ namespace Communication.Pixelate
             {
                 kvp.Value.StartAddress = adr;
                 adr += kvp.Value.BinaryLength;
-                kvp.Value.StartAddressCompressed = adr;
-                adr += kvp.Value.BinaryLengthCompressed;
                 //Console.WriteLine(string.Format("Dec: adr={0}, adrLen={1}, end-start={2}, len={3} ||| Hex: adr={4}, adrLen={5}, end-start={6}, len={7}", 
                 //    adr.ToString("D8"), 
                 //    adrLen.ToString("D8"), 
@@ -108,24 +106,5 @@ namespace Communication.Pixelate
 
         #endregion
 
-        internal int GetCompressedSize(byte targetHeight)
-        {
-            int size = 0;
-            foreach (var desc in _descriptors.Values)
-            {
-                size += desc.GetCompressedSize(targetHeight);
-            }
-            return size;
-        }
-
-        public List<byte> GetBinaryCompressed(byte targetHeight)
-        {
-            List<byte> result = new List<byte>();
-            foreach (var desc in _descriptors.Values)
-            {
-                result.AddRange(desc.GetBinaryCompressed(targetHeight));
-            }
-            return result;
-        }
     }
 }
