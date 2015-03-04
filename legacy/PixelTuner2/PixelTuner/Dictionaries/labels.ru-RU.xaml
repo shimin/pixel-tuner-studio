@@ -12,6 +12,7 @@
     <system:String x:Key="Menu_Settings_Defaults_TurnOffAfter">Отключать меню выбора таймлайна на устройстве после {0} c.</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Duration">Длительность в секундах</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Stretching">Горизонтальное растяжение</system:String>
+    <system:String x:Key="Menu_Settings_Defaults_MaxStretching">Макс. возможное горизонтальное растяжение</system:String>
     <system:String x:Key="Menu_Settings_Defaults_WriteDeviceSettings">Записать в подключенные устройства</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Device">Устройство</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Software">Программа</system:String>
@@ -27,6 +28,8 @@
     <system:String x:Key="Menu_File_Open">Открыть проект</system:String>
     <system:String x:Key="Menu_File_Save">Сохранить</system:String>
     <system:String x:Key="Menu_File_SaveAs">Сохранить как..</system:String>
+    <system:String x:Key="Menu_File_Export">Экспорт..</system:String>
+    <system:String x:Key="Menu_File_ExportCompressed">Экспорт сжатого..</system:String>
     <system:String x:Key="Menu_File_Close">Закрыть</system:String>
     <system:String x:Key="Menu_File_Exit">Выход</system:String>
     <system:String x:Key="Menu_File">Файл</system:String>
@@ -34,12 +37,15 @@
     <system:String x:Key="Doc_Lbl_Scale">Масштаб</system:String>
     <system:String x:Key="Doc_Lbl_Height">Высота</system:String>
     <system:String x:Key="Doc_Lbl_MemoryUsed">Использовано памяти</system:String>
+    <system:String x:Key="Doc_Lbl_ImportTrack">Импорт аудио</system:String>
     <system:String x:Key="Doc_Hdr_Default">Без имени</system:String>
     <system:String x:Key="Doc_Open_AccessError">Нет доступа к файлу.</system:String>
     <system:String x:Key="Doc_Open_DeserializeError">Ошибка открытия файла. Возможно файл поврежден.</system:String>
     <system:String x:Key="Item_Stretching">Растяжение</system:String>
     <system:String x:Key="Item_SwitchLaserOnOffToolTip">лазер вкл/выкл</system:String>
     <system:String x:Key="Item_Menu_Replace">заменить</system:String>
+    <system:String x:Key="Item_Menu_Split">разделить</system:String>
+    <system:String x:Key="Item_Menu_SetRepeatCount">задать число повторов</system:String>
     <system:String x:Key="Dev_Menu_RefreshBrain">Освежить мозги</system:String>
     <system:String x:Key="Dev_Menu_Upload">Загрузить проект</system:String>
     <system:String x:Key="Dev_Props_Name">Устройство:</system:String>
