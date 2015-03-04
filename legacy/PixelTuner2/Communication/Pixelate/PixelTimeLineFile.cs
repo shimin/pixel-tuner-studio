@@ -37,5 +37,23 @@ namespace Communication.Pixelate
             }
             return bin;
         }
+
+        internal IEnumerable<byte> GetBinaryCompressed(ImagesCollection imgCollection)
+        {
+            var bin = new List<byte>();
+            bin.Add((byte)Images.Count);
+            foreach (var v in Images)
+            {
+                var desc = imgCollection.GetItem(v.Key);
+                if (desc != null)
+                {
+                    v.StartAddressCompressed = desc.StartAddressCompressed;
+                    bin.AddRange(BitConverter.GetBytes(v.StartAddressCompressed));    // 4 bytes
+                    bin.AddRange(BitConverter.GetBytes(v.Stretching));      // 2 bytes
+                    bin.AddRange(BitConverter.GetBytes(v.Duration));        // 2 bytes
+                }
+            }
+            return bin;
+        }
     }
 }

@@ -16,6 +16,8 @@ namespace Communication.Service
             dictionary.Add("STM32BOOT", "Pixel Poi 2 (Boot mode)");
             dictionary.Add("STM32FW", "Pixel Poi 2");
             dictionary.Add("PP2BOOT", "Pixel Poi 2 (Boot mode)");
+            dictionary.Add("E-PIC_FW", "Pixel Poi 3");
+            dictionary.Add("E-PICBOOT", "Pixel Poi 3 (Boot mode)");
             dictionary.Add("PP2FW", "Pixel Poi 2");
             dictionary.Add("UDMXBOOT", "uDmx master (Boot mode)");
             dictionary.Add("UDMXFW", "uDmx master");

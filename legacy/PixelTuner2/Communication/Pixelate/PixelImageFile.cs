@@ -33,6 +33,13 @@ namespace Communication.Pixelate
             set { _startAddress = value; }
         }
 
+        UInt32 _startAddressCompressed;
+        public UInt32 StartAddressCompressed
+        {
+            get { return _startAddressCompressed; }
+            set { _startAddressCompressed = value; }
+        }
+
         UInt16 _stretching;
         public UInt16 Stretching
         {

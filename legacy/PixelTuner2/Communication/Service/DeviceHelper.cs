@@ -109,20 +109,27 @@ namespace Communication.Service
                 }
                 justAdded.Sort(ComparePorts);
                 // удалить исчезнувшие порты и отключенные устройства
-                foreach (var portName in justRemoved)
+                try
                 {
-                    lock (PortList) { if (PortList.ContainsKey(portName)) PortList.Remove(portName); }
-                    if (_devices.Count == 0) break;
-                    PixelDevice aDevice = _devices.First(dev => dev.Port == null || dev.Port.PortName == portName);
-                    List<PixelDevice> devsWithNullPorts = new List<PixelDevice>();
-                    // и поудалять все устройства у которых порт null
-                    foreach (var d in _devices) { if (d.Port == null) devsWithNullPorts.Add(d); }
-                    foreach (var d in devsWithNullPorts) { _devices.Remove(d); }
-                    if (aDevice != null)
+                    foreach (var portName in justRemoved)
                     {
-                        _devices.Remove(aDevice);
-                        OnDeviceLost(aDevice);
+                        lock (PortList) { if (PortList.ContainsKey(portName)) PortList.Remove(portName); }
+                        if (_devices.Count == 0) break;
+                        PixelDevice aDevice = _devices.First(dev => dev.Port == null || dev.Port.PortName == portName);
+                        List<PixelDevice> devsWithNullPorts = new List<PixelDevice>();
+                        // и поудалять все устройства у которых порт null
+                        foreach (var d in _devices) { if (d.Port == null) devsWithNullPorts.Add(d); }
+                        foreach (var d in devsWithNullPorts) { _devices.Remove(d); }
+                        if (aDevice != null)
+                        {
+                            _devices.Remove(aDevice);
+                            OnDeviceLost(aDevice);
+                        }
                     }
+                }
+                catch
+                {
+                    _devices.ForEach((d) => { OnDeviceLost(d); });
                 }
                 // проверить обнаруженные порты
                 foreach (var portName in justAdded)
@@ -287,7 +294,11 @@ namespace Communication.Service
         private static void OnDeviceLost(DeviceBase d)
         {
             if (DeviceLost != null)
-                DeviceLost(new DeviceEventArgs(d));
+                try
+                {
+                    DeviceLost(new DeviceEventArgs(d));
+                }
+                catch { }
         } 
 
         #endregion

@@ -101,5 +101,40 @@ namespace Communication.Pixelate
         }
 
         #endregion
+
+
+        public int GetBinaryCompressedSize(ImagesCollection images, byte targetHeight)
+        {
+            int size = 0;
+            var notEmptyLines = new List<PixelTimelineFile>();
+            TimeLines.ForEach((tl) => { if (tl.Images.Count > 0) notEmptyLines.Add(tl); });
+
+            List<byte> result = CreateProjectHeader(notEmptyLines);
+            size = (int)SetTimelineRefs(notEmptyLines, result);
+            size += images.GetCompressedSize(targetHeight);
+
+            return size;
+        }
+
+
+        public List<byte> GetBinaryCompressed(ImagesCollection images, byte targetHeight)
+        {
+            // ignore empty timelines
+            var notEmptyLines = new List<PixelTimelineFile>();
+            TimeLines.ForEach((tl) => { if (tl.Images.Count > 0) notEmptyLines.Add(tl); });
+
+            List<byte> result = CreateProjectHeader(notEmptyLines);
+
+            var firstFreeAddress = SetTimelineRefs(notEmptyLines, result);              // timeline addresses
+            images.SetBlockAddress(firstFreeAddress);
+
+            notEmptyLines.ForEach((tl) => { result.AddRange(tl.GetBinaryCompressed(images)); });  // timelines data
+            result.AddRange(images.GetBinaryCompressed(targetHeight));                            // images data
+
+            SetBinarySize(result);
+
+            return result;
+        }
+
     }
 }

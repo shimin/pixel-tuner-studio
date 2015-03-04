@@ -14,6 +14,8 @@ using System.Drawing;
 
 namespace Communication.Service
 {
+    using sp = Communication.Pixelate;
+
     public class PixelDevice : SerialDeviceBase
     {
         private string _fullName;
@@ -167,9 +169,10 @@ namespace Communication.Service
                         0x07,
                         ledIndex
                     };
-                    rawData.AddRange(Map8To12(c.R));
-                    rawData.AddRange(Map8To12(c.G));
-                    rawData.AddRange(Map8To12(c.B));
+                    var cp = new sp.ColorProfile();
+                    rawData.AddRange(Map8To12(c, sp.ImagesCollectionItem.ColorComponent.R, cp));
+                    rawData.AddRange(Map8To12(c, sp.ImagesCollectionItem.ColorComponent.G, cp));
+                    rawData.AddRange(Map8To12(c, sp.ImagesCollectionItem.ColorComponent.R, cp));
                     request = new PixelDevicePacket(rawData);
                     PixelDevicePacket packet2 = base.DoSession(request);
                 }
@@ -188,9 +191,15 @@ namespace Communication.Service
             }
         }
 
-        private IList<byte> Map8To12(byte p)
+        private IList<byte> Map8To12(Color c, sp.ImagesCollectionItem.ColorComponent cc, sp.ColorProfile cp)
         {
-            UInt16 scaledValue = Communication.Pixelate.ColorProfile.R[p];
+            UInt16 scaledValue = 0;
+            switch (cc)
+            {
+                case sp.ImagesCollectionItem.ColorComponent.R: scaledValue = cp.R[c.R]; break;
+                case sp.ImagesCollectionItem.ColorComponent.G: scaledValue = cp.G[c.G]; break;
+                case sp.ImagesCollectionItem.ColorComponent.B: scaledValue = cp.B[c.B]; break;
+            }
             return BitConverter.GetBytes(scaledValue);
         }
 

@@ -49,6 +49,7 @@
     <Compile Include="Binarize\LightTimeLineFile.cs" />
     <Compile Include="Binarize\LightTransitionFile.cs" />
     <Compile Include="Pixelate\ColorProfile.cs" />
+    <Compile Include="Pixelate\ColorProfile3528.cs" />
     <Compile Include="Service\DeviceEventArgs.cs" />
     <Compile Include="Service\DeviceSessionEventArgs.cs" />
     <Compile Include="Service\DeviceStatus.cs" />

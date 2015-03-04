@@ -7,7 +7,22 @@ namespace Communication.Pixelate
 {
     internal class ColorProfile
     {
-        internal static UInt16[] B = new UInt16[] {  0
+        public virtual UInt16[] R
+        {
+            get { return _generic; }
+        }
+
+        public virtual UInt16[] G
+        {
+            get { return _generic; }
+        }
+
+        public virtual UInt16[] B
+        {
+            get { return _generic; }
+        }
+
+        protected UInt16[] _b = new UInt16[] {  0
                                                     ,4
                                                     ,5
                                                     ,6
@@ -265,7 +280,7 @@ namespace Communication.Pixelate
                                                     ,3600
         };
 
-        internal static UInt16[] G = new UInt16[] {  0
+        protected UInt16[] _g = new UInt16[] {  0
                                                     ,1
                                                     ,2
                                                     ,3
@@ -523,7 +538,7 @@ namespace Communication.Pixelate
                                                     ,3059
         };
 
-        internal static UInt16[] R = new UInt16[] {  0
+        protected UInt16[] _r = new UInt16[] {  0
                                                     ,1
                                                     ,2
                                                     ,3
@@ -781,7 +796,7 @@ namespace Communication.Pixelate
                                                     ,4095
         };
 
-        internal static UInt16[] Generic = new UInt16[] {  0
+        protected UInt16[] _generic = new UInt16[] {  0
                                                     ,1
                                                     ,2
                                                     ,3
@@ -1038,5 +1053,6 @@ namespace Communication.Pixelate
                                                     ,4063
                                                     ,4095
         };
+
     }
 }
