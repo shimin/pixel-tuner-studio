@@ -887,5 +887,6 @@ namespace PixelTuner.ViewModel
                 FileChanged(sender, e);
         }
         public event EventHandler FileChanged;
+
     }
 }

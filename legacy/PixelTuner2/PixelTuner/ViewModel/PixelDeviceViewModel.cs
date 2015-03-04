@@ -35,7 +35,21 @@ namespace PixelTuner.ViewModel
             get { return Device == null || Device.Info == null ? false : Device.Busy; }
         }
 
-        static int FirmwareFileVersion { get; set; }
+        public int DeviceVersion
+        {
+            get 
+            {
+                int v = 100;
+                if (Device != null && Device.Info != null)
+                    if (int.TryParse(Name.Substring(10, 1), out v) == true)
+                        return v;
+                return v; 
+            }
+        }
+
+        static int FirmwareFileVersionV2 { get; set; }
+
+        static int FirmwareFileVersionV3 { get; set; }
 
         public int ActiveProjectSize
         {
@@ -122,7 +136,11 @@ namespace PixelTuner.ViewModel
         {
             get
             {
-                return (this.FirmwareVersion < FirmwareFileVersion) && !this.BootMode;
+                if (DeviceVersion == 2)
+                    return (this.FirmwareVersion < FirmwareFileVersionV2) && !this.BootMode;
+                else if (DeviceVersion == 3)
+                    return (this.FirmwareVersion < FirmwareFileVersionV3) && !this.BootMode;
+                return false;
             }
         }
         #endregion
@@ -190,7 +208,11 @@ namespace PixelTuner.ViewModel
         {
             var streamInfo = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash.bin"));
             var firmwareBytes = Common.Collections.StreamHelper.ReadFully(streamInfo.Stream);
-            FirmwareFileVersion = firmwareBytes[52];
+            FirmwareFileVersionV2 = firmwareBytes[52];
+
+            streamInfo = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash_v3.bin"));
+            firmwareBytes = Common.Collections.StreamHelper.ReadFully(streamInfo.Stream);
+            FirmwareFileVersionV3 = firmwareBytes[52];
         }
 
         public PixelDeviceViewModel(PixelDevice device)
@@ -397,7 +419,8 @@ namespace PixelTuner.ViewModel
 
         private void OnUpdatePostponeCommand(object parameter)
         {
-            FirmwareFileVersion = this.FirmwareVersion;
+            if (DeviceVersion == 2) FirmwareFileVersionV2 = this.FirmwareVersion;
+            else if (DeviceVersion == 3) FirmwareFileVersionV3 = this.FirmwareVersion;
             RaisePropertyChanged("UpdateNeeded");
         }
 

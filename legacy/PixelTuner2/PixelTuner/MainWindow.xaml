@@ -152,6 +152,7 @@
                 <MenuItem Header="{StaticResource Menu_File_New}" Command="{Binding NewCommand}" InputGestureText="Ctrl+N"/>
                 <MenuItem Header="{StaticResource Menu_File_Open}" Command="{Binding OpenCommand}" InputGestureText="Ctrl+O"/>
                 <MenuItem Header="{StaticResource Menu_File_Save}" Command="{Binding SaveCommand}" InputGestureText="Ctrl+S"/>
+                <MenuItem Header="{StaticResource Menu_File_Export}" Command="{Binding ExportCommand}" Visibility="{Binding ExportCommandVisibility}" />
                 <MenuItem Header="{StaticResource Menu_File_SaveAs}" Command="{Binding SaveAsCommand}" InputGestureText="Ctrl+Shift+S"/>
                 <MenuItem Header="{StaticResource Menu_File_Close}" Command="{Binding CloseCommand}" InputGestureText="Ctrl+W"/>
                 <ct:RecentFileList x:Name="RecentFileList" MaxNumberOfFiles="4"/>

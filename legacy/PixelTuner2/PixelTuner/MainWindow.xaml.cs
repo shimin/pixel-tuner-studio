@@ -39,7 +39,6 @@ namespace PixelTuner
         {
             Settings.Default.Reload();
             string culture = System.Threading.Thread.CurrentThread.CurrentUICulture.Name;
-            DeviceHelper.StartSeeking();
             ResourceDictionary d = null;
             
             foreach (ResourceDictionary dictionary in Application.Current.Resources.MergedDictionaries)
@@ -49,6 +48,7 @@ namespace PixelTuner
             }
             Application.Current.Resources.MergedDictionaries.Clear();
             Application.Current.Resources.MergedDictionaries.Add(d);
+            Loaded += (s, e) => { DeviceHelper.StartSeeking(); };
             InitializeComponent();
             this.DataContext = RootViewModel.This = (RootViewModel)Application.Current.TryFindResource("RootContext");
             RecentFileList.MenuClick += (s, e) => RootViewModel.This.Open(e.Filepath);

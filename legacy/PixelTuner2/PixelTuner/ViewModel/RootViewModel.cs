@@ -593,6 +593,58 @@ namespace PixelTuner.ViewModel
 
         #endregion 
 
+        #region ExportCommand
+#if DEBUG
+        RelayCommand _exportCommand = null;
+        public ICommand ExportCommand
+        {
+            get
+            {
+                if (_exportCommand == null)
+                {
+                    _exportCommand = new RelayCommand((p) => OnExport(p), (p) => CanExport(p));
+                }
+
+                return _exportCommand;
+            }
+        }
+
+        private bool CanExport(object parameter)
+        {
+            return ActiveDocument != null;
+        }
+
+        private void OnExport(object parameter)
+        {
+            var sfd = new SaveFileDialog();
+            sfd.Filter = "Binary file|*.bin";
+            if (true == sfd.ShowDialog())
+            {
+                var b = ActiveDocument.GetBinaryPresentation(ActiveDocument.LineHeight);
+                File.WriteAllBytes(sfd.FileName, b.ToArray());
+            }
+        }
+
+        public Visibility ExportCommandVisibility
+        {
+            get
+            {
+                return Visibility.Visible;
+            }
+        }
+#else
+        public Visibility ExportCommandVisibility
+        {
+            get
+            {
+                return Visibility.Collapsed;
+            }
+        }
+#endif
+
+
+        #endregion
+
         #region CloseCommand
         RelayCommand _closeCommand = null;
         public ICommand CloseCommand

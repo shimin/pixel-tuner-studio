@@ -45,7 +45,11 @@ namespace PixelTuner.ViewModel
             }
             if (pixelDevice.BootMode && ContinueUpdate())
             {
-                var streamInfo = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash.bin"));
+                var streamInfo = new System.Windows.Resources.StreamResourceInfo();
+
+                if (pdvm.DeviceVersion == 2) streamInfo = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash.bin"));
+                else if (pdvm.DeviceVersion == 3) streamInfo = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash_v3.bin"));
+
                 pdvm.UploadFirmwareCommand.Execute(StreamHelper.ReadFully(streamInfo.Stream));
             }
         }

@@ -288,6 +288,87 @@ namespace PixelTuner.ViewModel
         }
 
         #endregion
+        
+        #region SplitCommand
+        RelayCommand _splitCommand = null;
+        public ICommand SplitCommand
+        {
+            get
+            {
+                if (_splitCommand == null)
+                {
+                    _splitCommand = new RelayCommand((p) => OnSplit(p), (p) => CanSplit(p));
+                }
+
+                return _splitCommand;
+            }
+        }
+
+        private bool CanSplit(object parameter)
+        {
+            return (this.EndTime.Value - this.StartTime.Value).TotalMilliseconds >= 100;
+        }
+
+        private void OnSplit(object parameter)
+        {
+            SplitItemWindow w = new SplitItemWindow(this);
+            SetWindowPosition(w);
+
+            if (w.ShowDialog() == true)
+            {
+                if (w.Duration < (this.EndTime - this.StartTime) && w.Duration.TotalMilliseconds > 50)
+                    Split(w.Duration);
+            }
+            if (w.NeedRefresh) RootViewModel.NotifySettingsChanged();
+        }
+
+        private void Split(TimeSpan timeSpan)
+        {
+            var p = (this.Parent as TimeLineViewModel);
+            int idxToPaste = p.Items.IndexOf(this);
+            var splittedPart = (TimeLineItemViewModel)this.Clone();
+            this.StartTime = this.StartTime + timeSpan;
+            splittedPart.EndTime = splittedPart.StartTime + timeSpan;
+
+            p.Items.Insert(idxToPaste, splittedPart);
+            //p.IsChanged = true;
+        }
+
+        #endregion
+
+        #region RepeatCommand
+        RelayCommand _repeatCommand = null;
+        public ICommand RepeatCommand
+        {
+            get
+            {
+                if (_repeatCommand == null)
+                {
+                    _repeatCommand = new RelayCommand((p) => OnRepeat(p), (p) => CanRepeat(p));
+                }
+
+                return _repeatCommand;
+            }
+        }
+
+        private bool CanRepeat(object parameter)
+        {
+            return true;
+        }
+
+        private void OnRepeat(object parameter)
+        {
+            RepeatItemWindow w = new RepeatItemWindow(this);
+            SetWindowPosition(w);
+
+            if (w.ShowDialog() == true)
+            {
+                this.Stretching = w.Stretching;
+            }
+            RootViewModel.NotifySettingsChanged();
+        }
+
+        #endregion
 
         #region DisposeMe
         RelayCommand _disposeMeCommand = null;
@@ -598,6 +679,23 @@ namespace PixelTuner.ViewModel
         }
 
         #endregion
-        
+
+        #region Misc
+
+        private static void SetWindowPosition(Window w)
+        {
+            var location = Application.Current.MainWindow.PointToScreen(Mouse.GetPosition(Application.Current.MainWindow));
+
+            w.Left = location.X - w.Width / 2;
+            w.Top = location.Y - w.Height / 2;
+
+            if (w.Left + w.Width > Application.Current.MainWindow.Left + Application.Current.MainWindow.Width)
+                w.Left = location.X - w.Width;
+
+            if (w.Top + w.Height > Application.Current.MainWindow.Top + Application.Current.MainWindow.Height)
+                w.Top = location.Y - w.Height;
+        }
+
+        #endregion
     }
 }

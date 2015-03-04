@@ -53,7 +53,7 @@
                 BorderBrush="White"
                 CornerRadius="3"
                 Margin="0,10,0,10"
-                Height="96"
+                Height="80"
                 Background="{StaticResource NormalItemBrush}">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -78,6 +78,8 @@
                                     <Border.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="{StaticResource Item_Menu_Replace}" Command="{Binding ReplaceCommand}"/>
+                                            <MenuItem Header="{StaticResource Item_Menu_Split}" Command="{Binding SplitCommand}"/>
+                                            <MenuItem Header="{StaticResource Item_Menu_SetRepeatCount}" Command="{Binding RepeatCommand}"/>
                                         </ContextMenu>
                                     </Border.ContextMenu>
                                 </Border>
@@ -90,15 +92,17 @@
                         </Border>
                         <TextBlock Text="{Binding Path=End}" />
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" Visibility="Collapsed">
                             <Border Width="16" Height="16" Margin="-1,0,0,0" ToolTip="{StaticResource Item_Stretching}">
                                 <Image Source="/PixelTuner;component/Images/scale-stretching.png"/>
                             </Border>
                             <ct:TriangleSlider Height="12" 
                                            Width="48"
-                                           MinValue="4" 
+                                           MinValue="0" 
                                            MaxValue="40" 
                                            Margin="-2,2,4,0"
+                                           IsEnabled="False"
+                                           Opacity="0.1"
                                            ToolTip="{StaticResource Item_Stretching}"
                                            PreviewMouseLeftButtonDown="ChildPreviewMouseLeftButtonDown"
                                            Value="{Binding Path=Parent.DataContext.Stretching, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -174,7 +178,7 @@
                         x:Name="TimeLine"
                         Grid.Column="1" 
                         Grid.RowSpan="3" 
-                        Height="116"
+                        Height="100"
                         ViewLevel="Seconds"
                         HorizontalAlignment="Left"
                         ManipulationMode="Free"

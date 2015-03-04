@@ -202,5 +202,17 @@ namespace PixelTuner.Properties {
                 this["CutNextItems"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        public int MaximumStretching {
+            get {
+                return ((int)(this["MaximumStretching"]));
+            }
+            set {
+                this["MaximumStretching"] = value;
+            }
+        }
     }
 }

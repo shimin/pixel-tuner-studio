@@ -122,6 +122,9 @@
     <Compile Include="Converters\ActiveTimeLineConverter.cs" />
     <Compile Include="Controls\ThumbListView\ImageView.cs" />
     <Compile Include="Converters\LogConverter.cs" />
+    <Compile Include="RepeatItemWindow.xaml.cs">
+      <DependentUpon>RepeatItemWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Import\ColorAdjustPage.xaml.cs">
       <DependentUpon>ColorAdjustPage.xaml</DependentUpon>
     </Compile>
@@ -144,6 +147,9 @@
     </Compile>
     <Compile Include="ReplaceItemWindow.xaml.cs">
       <DependentUpon>ReplaceItemWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SplitItemWindow.xaml.cs">
+      <DependentUpon>SplitItemWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Styles\FileLayoutTemplate.xaml.cs">
       <DependentUpon>FileLayoutTemplate.xaml</DependentUpon>
@@ -190,6 +196,10 @@
     <Compile Include="ViewModel\TimeLineViewModel.cs" />
     <Compile Include="ViewModel\ToolViewModel.cs" />
     <Compile Include="ViewModel\RootViewModel.cs" />
+    <Page Include="RepeatItemWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Dictionaries\labels.de-DE.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -221,6 +231,10 @@
     <Page Include="ReplaceItemWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SplitItemWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Styles\FileLayoutTemplate.xaml">
       <SubType>Designer</SubType>
@@ -299,6 +313,7 @@
       <SubType>Designer</SubType>
     </None>
     <Resource Include="Files\Flash.bin" />
+    <Resource Include="Files\Flash_v3.bin" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

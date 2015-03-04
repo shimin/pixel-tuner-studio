@@ -130,15 +130,27 @@ namespace PixelTuner.ViewModel
 
                     if (_displayModel.ActualHeight <= 50)
                     {
-                        Stretching = TilingConverter50[Math.Max(4, Math.Min(50, value))];
+                        var s = TilingConverter50.Last().Value;
+                        TilingConverter50.TryGetValue(Math.Max(0, Math.Min(255, value)), out s);
+                        Stretching = s;
                     }
                     else if (_displayModel.ActualHeight <= 70)
                     {
-                        Stretching = TilingConverter65[Math.Max(4, Math.Min(50, value))];
+                        var s = TilingConverter65.Last().Value;
+                        TilingConverter65.TryGetValue(Math.Max(0, Math.Min(255, value)), out s);
+                        Stretching = s;
                     }
                     else if (_displayModel.ActualHeight <= 100)
                     {
-                        Stretching = TilingConverter80[Math.Max(4, Math.Min(50, value))];
+                        var s = TilingConverter80.Last().Value;
+                        TilingConverter80.TryGetValue(Math.Max(0, Math.Min(255, value)), out s);
+                        Stretching = s;
+                    }
+                    else if (_displayModel.ActualHeight <= 200)
+                    {
+                        var s = TilingConverter100.Last().Value;
+                        TilingConverter100.TryGetValue(Math.Max(0, Math.Min(255, value)), out s);
+                        Stretching = s;
                     }
 
                     RaisePropertyChanged("ModelStretching"); 
@@ -156,13 +168,6 @@ namespace PixelTuner.ViewModel
             using (Graphics g = Graphics.FromImage(bg))
             {
                 g.DrawImage(bmp, new Point(0, _blackFieldHeight));
-                //int totalWidth = 0;
-                //do
-                //{
-                //    g.DrawImage(bmp, new Point(totalWidth, _fieldWidth));
-                //    totalWidth += bmp.Width;
-                //} 
-                //while (totalWidth <= bg.Width);
             }
             var result = (BitmapImage)ImageHelper.BitmapImageFromBitmap(bg);
             return result;
@@ -170,6 +175,10 @@ namespace PixelTuner.ViewModel
 
         private Dictionary<int, double> TilingConverter50 = new Dictionary<int, double>()
         {
+            {0, 5.8},
+            {1, 4.2},
+            {2, 3.1},
+            {3, 2.4},
             {4, 2.16},
             {5, 1.79},
             {6, 1.42},
@@ -221,6 +230,10 @@ namespace PixelTuner.ViewModel
 
         private Dictionary<int, double> TilingConverter65 = new Dictionary<int, double>()
         {
+            {0, 3.1},
+            {1, 2.76},
+            {2, 2.54},
+            {3, 2.34},
             {4, 1.19},
             {5, 1.005},
             {6, 0.82},
@@ -272,6 +285,65 @@ namespace PixelTuner.ViewModel
 
         private Dictionary<int, double> TilingConverter80 = new Dictionary<int, double>()
         {
+            {0, 2.44},
+            {1, 2.14},
+            {2, 1.85},
+            {3, 1.64},
+            {4, 1.49},
+            {5, 1.32},
+            {6, 1.15},
+            {7, 1},
+            {8, 0.85},
+            {9, 0.735},
+            {10, 0.65},
+            {11, 0.585},
+            {12, 0.52},
+            {13, 0.47},
+            {14, 0.42},
+            {15, 0.385},
+            {16, 0.35},
+            {17, 0.315},
+            {18, 0.285},
+            {19, 0.26},
+            {20, 0.24},
+            {21, 0.225},
+            {22, 0.21},
+            {23, 0.2},
+            {24, 0.19},
+            {25, 0.18},
+            {26, 0.17},
+            {27, 0.16},
+            {28, 0.15},
+            {29, 0.14},
+            {30, 0.13},
+            {31, 0.12},
+            {32, 0.11},
+            {33, 0.105},
+            {34, 0.1},
+            {35, 0.095},
+            {36, 0.09},
+            {37, 0.085},
+            {38, 0.08},
+            {39, 0.075},
+            {40, 0.07},
+            {41, 0.065},
+            {42, 0.06},
+            {43, 0.055},
+            {44, 0.05},
+            {45, 0.045},
+            {46, 0.04},
+            {47, 0.035},
+            {48, 0.03},
+            {49, 0.025},
+            {50, 0.02}
+        };
+
+        private Dictionary<int, double> TilingConverter100 = new Dictionary<int, double>()
+        {
+            {0, 2.44},
+            {1, 2.14},
+            {2, 1.85},
+            {3, 1.64},
             {4, 1.49},
             {5, 1.32},
             {6, 1.15},
