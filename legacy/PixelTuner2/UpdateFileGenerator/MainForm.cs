@@ -92,5 +92,31 @@ namespace UpdateFileGenerator
                 }
             }
         }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                StringBuilder str = new StringBuilder();
+
+                var paths = Directory.GetFiles(fbd.SelectedPath);
+                foreach (var p in paths)
+                    str.AppendLine(GenerateLine(boxPrefix.Text, Path.GetFileName(p)));
+
+                boxResults.Text = str.ToString();
+            }
+        }
+
+        private string GenerateLine(string source, string path)
+        {
+            string template = "<File Id=\"{0}\" Source=\"{1}\" />";
+
+            int d;            
+            string id = path;
+            if (int.TryParse(path[0].ToString(), out d)) id = "_" + id;
+
+            return string.Format(template, id.Replace(".", "_").Replace("-", "_"), source + path);
+        }
     }
 }

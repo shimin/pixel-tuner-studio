@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 
-  <?define ProductVersion="2.0.4.15" ?>
+  <?define ProductVersion="2.0.4.16" ?>
   <?define RTMProductVersion="1.0.0" ?>
   <?define UpgradeCode="{df1086f7-6803-4697-b66c-74dd2733c092}"?>
   <?define Manufacturer="shiningpromo.ru"?>
-  <?define ProductCode="{AABB5C02-BF29-4E19-A7C5-D579C5A6D221}"?>
+  <?define ProductCode="{34BDCB6A-C3A7-403A-87BD-0EA0AEA88ACE}"?>
   <?define PackageCode="*"?>
 
   <Product Id="$(var.ProductCode)" Name="PixelTuner" Language="1031" Codepage="1251" Version="$(var.ProductVersion)" Manufacturer="PixelTuner" UpgradeCode="$(var.UpgradeCode)">
@@ -41,87 +41,532 @@
             <File Id="AutoUpdaterLib" Source="..\PixelTuner\bin\$(var.Configuration)\AutoUpdater.dll" />
             <File Id="AutoUpdaterCfg" Source="..\PixelTuner\bin\$(var.Configuration)\Autoupdater.config" />
             <File Id="CommonLib" Source="..\PixelTuner\bin\$(var.Configuration)\Common.dll" />
-            <File Id="ToolkitLib" Source="..\PixelTuner\bin\$(var.Configuration)\Toolkit.dll" />
             <File Id="CommunicationLib" Source="..\PixelTuner\bin\$(var.Configuration)\Communication.dll" />
-            <File Id="WorkspaceLib" Source="..\PixelTuner\bin\$(var.Configuration)\Workspace.dll" />
-            <File Id="WorkspaceThemesLib" Source="..\PixelTuner\bin\$(var.Configuration)\Workspace.Themes.dll" />
+            <File Id="NAudioLib" Source="..\PixelTuner\bin\$(var.Configuration)\NAudio.dll" />
+            <File Id="TagLib" Source="..\PixelTuner\bin\$(var.Configuration)\taglib-sharp.dll" />
             <File Id="PixelTuner.exe" Name="PixelTuner.exe" Source="..\PixelTuner\bin\$(var.Configuration)\PixelTuner.exe" KeyPath='yes'>
               <Shortcut Id="startmenuPixelTuner" Directory="ProgramMenuDir" Name="PixelTuner 2"
                    WorkingDirectory='INSTALLLOCATION' Icon="PixelTuner.exe" IconIndex="0" Advertise="yes" />
               <Shortcut Id="desktopPixelTuner" Directory="DesktopFolder" Name="PixelTuner 2"
                 WorkingDirectory='INSTALLLOCATION' Icon="PixelTuner.exe" IconIndex="0" Advertise="yes" />
             </File>
+            <File Id="PixelTunerDock" Source="..\PixelTuner\bin\$(var.Configuration)\PixelTunerDock.config" />
+            <File Id="ToolkitLib" Source="..\PixelTuner\bin\$(var.Configuration)\Toolkit.dll" />
+            <File Id="WorkspaceLib" Source="..\PixelTuner\bin\$(var.Configuration)\Workspace.dll" />
+            <File Id="WorkspacePageTransitionsLib" Source="..\PixelTuner\bin\$(var.Configuration)\Workspace.PageTransitions.dll" />
+            <File Id="WorkspaceThemesLib" Source="..\PixelTuner\bin\$(var.Configuration)\Workspace.Themes.dll" />
+            <File Id="WPFSoundVisualizationLib" Source="..\PixelTuner\bin\$(var.Configuration)\WPFSoundVisualizationLib.dll" />
           </Component>
           <Directory Id="ResourceLocation_en_US" Name="en-US">
             <Component Id="PixelTuner.com.en_US" Guid="872F9BE8-C7CA-485A-83AF-CF822255135E">
               <File Id="Rosources_en_US" Source="..\PixelTuner\bin\$(var.Configuration)\en-US\PixelTuner.resources.dll" />
             </Component>
           </Directory>
+
+          <Directory Id="ResourceLocation_de" Name="de">
+            <Component Id="PixelTuner.com.de" Guid="734B1DAE-D31C-41B8-A49E-A623249E59B2">
+              <File Id="Rosources_de" Source="..\PixelTuner\bin\$(var.Configuration)\de\Workspace.resources.dll" />
+            </Component>
+          </Directory>
+
+          <Directory Id="ResourceLocation_es" Name="es">
+            <Component Id="PixelTuner.com.es" Guid="FFFE2969-59C2-4A42-B4B7-6D5473F8131C">
+              <File Id="Rosources_es" Source="..\PixelTuner\bin\$(var.Configuration)\es\Workspace.resources.dll" />
+            </Component>
+          </Directory>
+
+          <Directory Id="ResourceLocation_fr" Name="fr">
+            <Component Id="PixelTuner.com.fr" Guid="97ED9B40-435E-455F-9B8D-9C9D836E4205">
+              <File Id="Rosources_fr" Source="..\PixelTuner\bin\$(var.Configuration)\fr\Workspace.resources.dll" />
+            </Component>
+          </Directory>
+
+          <Directory Id="ResourceLocation_hu" Name="hu">
+            <Component Id="PixelTuner.com.hu" Guid="67CAF05E-044E-41E9-901F-7AA5CCA87F3C">
+              <File Id="Rosources_hu" Source="..\PixelTuner\bin\$(var.Configuration)\hu\Workspace.resources.dll" />
+            </Component>
+          </Directory>
+
+          <Directory Id="ResourceLocation_it" Name="it">
+            <Component Id="PixelTuner.com.it" Guid="7076224B-CF85-43B0-9F9E-BE16A57AFEC7">
+              <File Id="Rosources_it" Source="..\PixelTuner\bin\$(var.Configuration)\it\Workspace.resources.dll" />
+            </Component>
+          </Directory>
+
+          <Directory Id="ResourceLocation_pt_BR" Name="pt-BR">
+            <Component Id="PixelTuner.com.pt_BR" Guid="F80E9D5F-EFF8-432F-B2B7-8C2F66EC3774">
+              <File Id="Rosources_pt_BR" Source="..\PixelTuner\bin\$(var.Configuration)\pt-BR\Workspace.resources.dll" />
+            </Component>
+          </Directory>
+
+          <Directory Id="ResourceLocation_ro" Name="ro">
+            <Component Id="PixelTuner.com.ro" Guid="B49C6C63-FDA3-4A0F-8933-2D94B5563A70">
+              <File Id="Rosources_ro" Source="..\PixelTuner\bin\$(var.Configuration)\ro\Workspace.resources.dll" />
+            </Component>
+          </Directory>
+
+          <Directory Id="ResourceLocation_ru" Name="ru">
+            <Component Id="PixelTuner.com.ru" Guid="17E725A4-77AC-4C54-BA69-BA4A757B29D3">
+              <File Id="Rosources_ru" Source="..\PixelTuner\bin\$(var.Configuration)\ru\Workspace.resources.dll" />
+            </Component>
+          </Directory>
+
+          <Directory Id="ResourceLocation_sv" Name="sv">
+            <Component Id="PixelTuner.com.sv" Guid="5857153D-D897-471B-8CD9-1934D05BA2FC">
+              <File Id="Rosources_sv" Source="..\PixelTuner\bin\$(var.Configuration)\sv\Workspace.resources.dll" />
+            </Component>
+          </Directory>
+
+          <Directory Id="ResourceLocation_zh_Hans" Name="zh-Hans">
+            <Component Id="PixelTuner.com.zh_Hans" Guid="EE6163A2-0845-46B1-A34F-8F3AD594F0ED">
+              <File Id="Rosources_zh_Hans" Source="..\PixelTuner\bin\$(var.Configuration)\zh-Hans\Workspace.resources.dll" />
+            </Component>
+          </Directory>
+          
           <Directory Id="ContentDir" Name="Content">
             <Component Id="DefaultContent" Guid="114E4EA1-8D2F-464C-B017-3952BD1AB67D">
               <CreateFolder></CreateFolder>
+              <File Id="_100_2_waves_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_2_waves.bmp" />
+              <File Id="_100_hearts_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_hearts.bmp" />
+              <File Id="_100_mickey_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_mickey.bmp" />
+              <File Id="_100_mosaic_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_mosaic.bmp" />
+              <File Id="_100_mosaic2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_mosaic2.bmp" />
+              <File Id="_100_mosaic3_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_mosaic3.bmp" />
+              <File Id="_100_mosaic_hole_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_mosaic_hole.bmp" />
+              <File Id="_100_pattern_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_pattern.bmp" />
+              <File Id="_100_pattern2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_pattern2.bmp" />
+              <File Id="_100_pattern3_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_pattern3.bmp" />
+              <File Id="_100_pattern4_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_pattern4.bmp" />
+              <File Id="_100_patternBulbs_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_patternBulbs.bmp" />
+              <File Id="_100_stain_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_stain.bmp" />
+              <File Id="_100_stain2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_stain2.bmp" />
+              <File Id="_100_stars_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_stars.bmp" />
+              <File Id="_100_steps_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_steps.bmp" />
+              <File Id="_100_waves_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_waves.bmp" />
+              <File Id="_100_white_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_white.bmp" />
+              <File Id="_100_wing_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_wing.bmp" />
+              <File Id="_20_simple_white_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\20_simple_white.bmp" />
+              <File Id="_25_Aquarius_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Aquarius.bmp" />
+              <File Id="_25_Aries_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Aries.bmp" />
+              <File Id="_25_Bart_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Bart.bmp" />
+              <File Id="_25_Batman_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Batman.bmp" />
+              <File Id="_25_border_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_border.bmp" />
+              <File Id="_25_Bounty_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Bounty.bmp" />
+              <File Id="_25_BubblesPattern_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_BubblesPattern.bmp" />
+              <File Id="_25_BubblesPattern2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_BubblesPattern2.bmp" />
+              <File Id="_25_Cake_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Cake.bmp" />
+              <File Id="_25_Cake2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Cake2.bmp" />
+              <File Id="_25_Cancer_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Cancer.bmp" />
+              <File Id="_25_Capricorn_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Capricorn.bmp" />
+              <File Id="_25_cards_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_cards.bmp" />
+              <File Id="_25_Crusty_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Crusty.bmp" />
+              <File Id="_25_EtnoAfricaPattern_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_EtnoAfricaPattern.bmp" />
+              <File Id="_25_EtnoAfricaPattern2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_EtnoAfricaPattern2.bmp" />
+              <File Id="_25_Evolution_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Evolution.bmp" />
+              <File Id="_25_Fire_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Fire.bmp" />
+              <File Id="_25_Fire2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Fire2.bmp" />
+              <File Id="_25_fish_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_fish.bmp" />
+              <File Id="_25_FloraPattern2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_FloraPattern2.bmp" />
+              <File Id="_25_FloraPattern3_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_FloraPattern3.bmp" />
+              <File Id="_25_FloraPettern_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_FloraPettern.bmp" />
+              <File Id="_25_foliage_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_foliage.bmp" />
+              <File Id="_25_Gemini_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Gemini.bmp" />
               <File Id="_25_hearts_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_hearts.bmp" />
+              <File Id="_25_Hearts2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Hearts2.bmp" />
+              <File Id="_25_iPoi_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_iPoi.bmp" />
+              <File Id="_25_leaf_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_leaf.bmp" />
+              <File Id="_25_Leo_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Leo.bmp" />
+              <File Id="_25_Libra_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Libra.bmp" />
+              <File Id="_25_LisaSimpson_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_LisaSimpson.bmp" />
+              <File Id="_25_London_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_London.bmp" />
               <File Id="_25_love_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_love.bmp" />
+              <File Id="_25_Moscow_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Moscow.bmp" />
+              <File Id="_25_NyanCat_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_NyanCat.bmp" />
+              <File Id="_25_pacman_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_pacman.bmp" />
+              <File Id="_25_Panda_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Panda.bmp" />
+              <File Id="_25_Paris_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Paris.bmp" />
+              <File Id="_25_Piano_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Piano.bmp" />
+              <File Id="_25_pikachu_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_pikachu.bmp" />
+              <File Id="_25_pikachu_1_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_pikachu_1.bmp" />
+              <File Id="_25_pikachu_2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_pikachu_2.bmp" />
+              <File Id="_25_Pisces_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Pisces.bmp" />
+              <File Id="_25_PSY_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_PSY.bmp" />
+              <File Id="_25_red_arrows_right_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_red_arrows_right.bmp" />
+              <File Id="_25_Rome_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Rome.bmp" />
+              <File Id="_25_RoundPattern_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_RoundPattern.bmp" />
+              <File Id="_25_Russia_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Russia.bmp" />
+              <File Id="_25_Sagittarius_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Sagittarius.bmp" />
+              <File Id="_25_samson_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_samson.bmp" />
+              <File Id="_25_santorini_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_santorini.bmp" />
+              <File Id="_25_Scorpio_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Scorpio.bmp" />
+              <File Id="_25_smiles_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_smiles.bmp" />
+              <File Id="_25_Sonic_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Sonic.bmp" />
+              <File Id="_25_SquarePattern_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_SquarePattern.bmp" />
+              <File Id="_25_SquarePattern2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_SquarePattern2.bmp" />
+              <File Id="_25_Star_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Star.bmp" />
               <File Id="_25_stars_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_stars.bmp" />
               <File Id="_25_stripes_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_stripes.bmp" />
+              <File Id="_25_Taurus_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Taurus.bmp" />
               <File Id="_25_triangle_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_triangle.bmp" />
-
-              <File Id="_25_cards_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_cards.bmp" />
-              <File Id="_25_red_arrows_right_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_red_arrows_right.bmp" />
+              <File Id="_25_triangle2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_triangle2.bmp" />
+              <File Id="_25_Virgo_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Virgo.bmp" />
+              <File Id="_25_Water_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\25_Water.bmp" />
+              <File Id="_30_red_line_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\30_red_line.bmp" />
+              <File Id="_3d_ocean_wallpaper_hd_background_10_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\3d-ocean-wallpaper-hd-background-10.jpg" />
+              <File Id="_3d_wallpaper_fire_hd_1080p_14_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\3d-wallpaper-fire-hd-1080p-14.jpg" />
+              <File Id="_3d_wallpaper_fire_hd_background_10_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\3d-wallpaper-fire-hd-background-10.jpg" />
+              <File Id="_3d_wallpaper_fire_hd_background_wallpaper_27_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\3d-wallpaper-fire-hd-background-wallpaper-27.jpg" />
+              <File Id="_3d_wallpaper_fire_widescreen_2_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\3d-wallpaper-fire-widescreen-2.jpg" />
+              <File Id="_3d_wallpaper_red_blue_hd_background_10_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\3d-wallpaper-red-blue-hd-background-10.jpg" />
+              <File Id="_40_AudioLevels_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\40_AudioLevels.bmp" />
               <File Id="_40_audio_levels_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\40_audio_levels.bmp" />
               <File Id="_40_hearts_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\40_hearts.bmp" />
               <File Id="_40_new_year_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\40_new_year.bmp" />
               <File Id="_40_steps2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\40_steps2.bmp" />
-              
-              <File Id="_50_2_waves_png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_2_waves.bmp" />
+              <File Id="_50_2_waves_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_2_waves.bmp" />
+              <File Id="_50_angrybird_red_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_angrybird_red.bmp" />
+              <File Id="_50_angrybird_yellow_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_angrybird_yellow.bmp" />
+              <File Id="_50_Aquarius_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Aquarius.bmp" />
+              <File Id="_50_Aries_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Aries.bmp" />
+              <File Id="_50_audio_levels_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_audio_levels.bmp" />
+              <File Id="_50_background_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_background.bmp" />
+              <File Id="_50_Bart_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Bart.bmp" />
+              <File Id="_50_Batman_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Batman.bmp" />
+              <File Id="_50_border_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_border.bmp" />
+              <File Id="_50_Bounty_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Bounty.bmp" />
+              <File Id="_50_BubblesPattern_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_BubblesPattern.bmp" />
+              <File Id="_50_BubblesPattern2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_BubblesPattern2.bmp" />
+              <File Id="_50_Cake_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Cake.bmp" />
+              <File Id="_50_Cake2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Cake2.bmp" />
+              <File Id="_50_Cancer_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Cancer.bmp" />
+              <File Id="_50_Capricorn_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Capricorn.bmp" />
+              <File Id="_50_cards_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_cards.bmp" />
+              <File Id="_50_Crusty_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Crusty.bmp" />
+              <File Id="_50_EtnoAfricaPattern_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_EtnoAfricaPattern.bmp" />
+              <File Id="_50_EtnoAfricaPattern2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_EtnoAfricaPattern2.bmp" />
+              <File Id="_50_Evolution_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Evolution.bmp" />
+              <File Id="_50_Fire_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Fire.bmp" />
+              <File Id="_50_Fire2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Fire2.bmp" />
+              <File Id="_50_FloraPattern2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_FloraPattern2.bmp" />
+              <File Id="_50_FloraPattern3_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_FloraPattern3.bmp" />
+              <File Id="_50_FloraPettern_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_FloraPettern.bmp" />
+              <File Id="_50_foliage_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_foliage.bmp" />
+              <File Id="_50_Gemini_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Gemini.bmp" />
+              <File Id="_50_girlface_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_girlface.bmp" />
+              <File Id="_50_hearts_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_hearts.bmp" />
+              <File Id="_50_iPoi_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_iPoi.bmp" />
+              <File Id="_50_justMarried_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_justMarried.bmp" />
+              <File Id="_50_justMarriedEn_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_justMarriedEn.bmp" />
+              <File Id="_50_Leo_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Leo.bmp" />
+              <File Id="_50_Libra_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Libra.bmp" />
+              <File Id="_50_LisaSimpson_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_LisaSimpson.bmp" />
+              <File Id="_50_London_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_London.bmp" />
+              <File Id="_50_microsoft_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_microsoft.bmp" />
+              <File Id="_50_microsoft2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_microsoft2.bmp" />
+              <File Id="_50_Moscow_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Moscow.bmp" />
+              <File Id="_50_new_year_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_new_year.bmp" />
+              <File Id="_50_NyanCat_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_NyanCat.bmp" />
+              <File Id="_50_pacman_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_pacman.bmp" />
+              <File Id="_50_Panda_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Panda.bmp" />
+              <File Id="_50_Paris_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Paris.bmp" />
+              <File Id="_50_pattern_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_pattern.bmp" />
+              <File Id="_50_pattern2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_pattern2.bmp" />
+              <File Id="_50_pattern3_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_pattern3.bmp" />
+              <File Id="_50_patternBulbs_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_patternBulbs.bmp" />
+              <File Id="_50_patternCubesRainbow_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_patternCubesRainbow.bmp" />
+              <File Id="_50_patternFireworks_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_patternFireworks.bmp" />
+              <File Id="_50_Piano_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Piano.bmp" />
+              <File Id="_50_Pisces_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Pisces.bmp" />
+              <File Id="_50_PSY_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_PSY.bmp" />
               <File Id="_50_rainbow_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_rainbow.bmp" />
+              <File Id="_50_redcloud_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_redcloud.bmp" />
+              <File Id="_50_red_arrows_right_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_red_arrows_right.bmp" />
+              <File Id="_50_Rome_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Rome.bmp" />
+              <File Id="_50_RoundPattern_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_RoundPattern.bmp" />
+              <File Id="_50_ruflag_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_ruflag.bmp" />
+              <File Id="_50_ruler_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_ruler.bmp" />
+              <File Id="_50_Russia_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Russia.bmp" />
+              <File Id="_50_Sagittarius_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Sagittarius.bmp" />
+              <File Id="_50_santa_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_santa.bmp" />
+              <File Id="_50_Scorpio_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Scorpio.bmp" />
+              <File Id="_50_snake_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_snake.bmp" />
+              <File Id="_50_Sonic_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Sonic.bmp" />
+              <File Id="_50_SquarePattern_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_SquarePattern.bmp" />
+              <File Id="_50_SquarePattern2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_SquarePattern2.bmp" />
+              <File Id="_50_square_circle_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_square_circle.bmp" />
+              <File Id="_50_Star_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Star.bmp" />
+              <File Id="_50_stars_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_stars.bmp" />
+              <File Id="_50_steps_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_steps.bmp" />
+              <File Id="_50_steps2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_steps2.bmp" />
               <File Id="_50_stork2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_stork2.bmp" />
               <File Id="_50_stork3_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_stork3.bmp" />
-
-              <File Id="_50_AudioLevels.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_audio_levels.bmp" />
-              <File Id="_50_cards.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_cards.bmp" />
-              <File Id="_50_santa.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_santa.bmp" />
-              <File Id="_50_new_year.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_new_year.bmp" />
-              <File Id="_50_red_arrows_right.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_red_arrows_right.bmp" />
-              <File Id="_50_snake.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_snake.bmp" />
-              <File Id="_50_square_circle.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_square_circle.bmp" />
-              <File Id="_50_steps2.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_steps2.bmp" />
-
-              <File Id="_70_audio_levels.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_audio_levels.bmp" />
-              <File Id="_70_hearts.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_hearts.bmp" />
-              <File Id="_70_rainbow.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_rainbow.bmp" />
-              <File Id="_70_rainbow2.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_rainbow2.bmp" />
-              <File Id="_70_red_arrows_right.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_red_arrows_right.bmp" />
-              <File Id="_70_stars.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_stars.bmp" />
-              <File Id="_70_steps2.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_steps2.bmp" />
-              <File Id="_70_stripes.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_stripes.bmp" />
-              <File Id="_70_triangle.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_triangle.bmp" />
-
-              <File Id="_80_batterfly_002.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_batterfly_002.bmp" />
-              <File Id="_80_batterfly_003.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_batterfly_003.bmp" />
-              <File Id="_80_batterfly_004.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_batterfly_004.bmp" />
-              <File Id="_80_batterfly_005.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_batterfly_005.bmp" />
-              <File Id="_80_batterfly_006.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_batterfly_006.bmp" />
-              <File Id="_80_batterfly_007.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_batterfly_007.bmp" />
-              <File Id="_80_batterfly_008.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_batterfly_008.bmp" />
-              <File Id="_80_batterfly_009.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_batterfly_009.bmp" />
-
-              <File Id="_100_2_waves.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_2_waves.bmp" />
-              <File Id="_100_black.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_black.bmp" />
-              <File Id="_100_hearts.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_hearts.bmp" />
-              <File Id="_100_hub1.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_hub1.bmp" />
-              <File Id="_100_mickey.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_mickey.bmp" />
-              <File Id="_100_mosaic.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_mosaic.bmp" />
-              <File Id="_100_mosaic2.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_mosaic2.bmp" />
-              <File Id="_100_mosaic3.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_mosaic3.bmp" />
-              <File Id="_100_pattern.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_pattern.bmp" />
-              <File Id="_100_stain.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_stain.bmp" />
-              <File Id="_100_stain2.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_stain2.bmp" />
-              <File Id="_100_stars.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_stars.bmp" />
-              <File Id="_100_steps.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_steps.bmp" />
-              <File Id="_100_white.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_white.bmp" />
-              <File Id="_100_wing.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_wing.bmp" />
-              <File Id="_100_mosaic_hole.bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\100_mosaic_hole.bmp" />
+              <File Id="_50_sunFlower_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_sunFlower.bmp" />
+              <File Id="_50_Taurus_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Taurus.bmp" />
+              <File Id="_50_triangle_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_triangle.bmp" />
+              <File Id="_50_Virgo_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Virgo.bmp" />
+              <File Id="_50_Volkswagen_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Volkswagen.bmp" />
+              <File Id="_50_Volkswagen_blue_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Volkswagen_blue.bmp" />
+              <File Id="_50_Volkswagen_text_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Volkswagen_text.bmp" />
+              <File Id="_50_Water_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_Water.bmp" />
+              <File Id="_50_waves_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_waves.bmp" />
+              <File Id="_50_white_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\50_white.bmp" />
+              <File Id="_55_2_waves_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\55_2_waves.bmp" />
+              <File Id="_65_3d_ocean_wallpaper_hd_background_10_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_3d-ocean-wallpaper-hd-background-10.bmp" />
+              <File Id="_65_3d_wallpaper_fire_hd_1080p_14_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_3d-wallpaper-fire-hd-1080p-14.bmp" />
+              <File Id="_65_3d_wallpaper_fire_hd_background_wallpaper_27_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_3d-wallpaper-fire-hd-background-wallpaper-27.bmp" />
+              <File Id="_65_3d_wallpaper_fire_widescreen_2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_3d-wallpaper-fire-widescreen-2.bmp" />
+              <File Id="_65_3d_wallpaper_red_blue_hd_background_10_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_3d-wallpaper-red-blue-hd-background-10.bmp" />
+              <File Id="_65_abstract_art_faces_black_and_white_hd_images_3_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_abstract-art-faces-black-and-white-hd-images-3.bmp" />
+              <File Id="_65_abstract_art_faces_for_desktop_16_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_abstract-art-faces-for-desktop-16.bmp" />
+              <File Id="_65_abstract_art_faces_for_desktop_background_15_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_abstract-art-faces-for-desktop-background-15.bmp" />
+              <File Id="_65_abstract_art_faces_hd_1080p_14_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_abstract-art-faces-hd-1080p-14.bmp" />
+              <File Id="_65_abstract_art_faces_hd_free_13_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_abstract-art-faces-hd-free-13.bmp" />
+              <File Id="_65_abstract_art_faces_images_7_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_abstract-art-faces-images-7.bmp" />
+              <File Id="_65_abstract_music_wallpapers_hd_desktop_10_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_abstract-music-wallpapers-hd-desktop-10.bmp" />
+              <File Id="_65_abstract_music_wallpapers_hd_pictures_4_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_abstract-music-wallpapers-hd-pictures-4.bmp" />
+              <File Id="_65_anime_music_wallpaper_1920x1080_hd_pictures_4_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_anime-music-wallpaper-1920x1080-hd-pictures-4.bmp" />
+              <File Id="_65_anime_music_wallpaper_for_desktop_background_13_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_anime-music-wallpaper-for-desktop-background-13.bmp" />
+              <File Id="_65_anime_music_wallpaper_hd_background_wallpaper_28_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_anime-music-wallpaper-hd-background-wallpaper-28.bmp" />
+              <File Id="_65_anime_music_wallpaper_hd_background_wallpaper_32_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_anime-music-wallpaper-hd-background-wallpaper-32.bmp" />
+              <File Id="_65_anime_violin_wallpaper_hd_widescreen_11_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_anime-violin-wallpaper-hd-widescreen-11.bmp" />
+              <File Id="_65_anime_violin_wallpaper_pictures_5_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_anime-violin-wallpaper-pictures-5.bmp" />
+              <File Id="_65_Aquarius_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Aquarius.bmp" />
+              <File Id="_65_Aries_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Aries.bmp" />
+              <File Id="_65_Bart_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Bart.bmp" />
+              <File Id="_65_Batman_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Batman.bmp" />
+              <File Id="_65_border_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_border.bmp" />
+              <File Id="_65_boum_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_boum.bmp" />
+              <File Id="_65_Bounty_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Bounty.bmp" />
+              <File Id="_65_BubblesPattern_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_BubblesPattern.bmp" />
+              <File Id="_65_BubblesPattern2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_BubblesPattern2.bmp" />
+              <File Id="_65_Cake_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Cake.bmp" />
+              <File Id="_65_Cake2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Cake2.bmp" />
+              <File Id="_65_Cancer_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Cancer.bmp" />
+              <File Id="_65_Capricorn_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Capricorn.bmp" />
+              <File Id="_65_cartoon_images_of_spongebob_hd_desktop_10_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_cartoon-images-of-spongebob-hd-desktop-10.bmp" />
+              <File Id="_65_cloud_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_cloud.bmp" />
+              <File Id="_65_cloud_text_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_cloud_text.bmp" />
+              <File Id="_65_comics_characters_face_widescreen_2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_comics-characters-face-widescreen-2.bmp" />
+              <File Id="_65_comics_characters_face_widescreen_3_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_comics-characters-face-widescreen-3.bmp" />
+              <File Id="_65_Crusty_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Crusty.bmp" />
+              <File Id="_65_cute_anime_angel_wallpaper_background_1_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_cute-anime-angel-wallpaper-background-1.bmp" />
+              <File Id="_65_cute_anime_angel_wallpaper_hd_background_9_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_cute-anime-angel-wallpaper-hd-background-9.bmp" />
+              <File Id="_65_EtnoAfricaPattern_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_EtnoAfricaPattern.bmp" />
+              <File Id="_65_EtnoAfricaPattern2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_EtnoAfricaPattern2.bmp" />
+              <File Id="_65_Evolution_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Evolution.bmp" />
+              <File Id="_65_Fire_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Fire.bmp" />
+              <File Id="_65_Fire2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Fire2.bmp" />
+              <File Id="_65_FloraPattern2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_FloraPattern2.bmp" />
+              <File Id="_65_FloraPattern3_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_FloraPattern3.bmp" />
+              <File Id="_65_FloraPettern_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_FloraPettern.bmp" />
+              <File Id="_65_foliage_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_foliage.bmp" />
+              <File Id="_65_funny_face_cartoon_images_background_1_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_funny-face-cartoon-images-background-1.bmp" />
+              <File Id="_65_Gemini_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Gemini.bmp" />
+              <File Id="_65_geometric_abstract_sculpture_hd_images_3_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_geometric-abstract-sculpture-hd-images-3.bmp" />
+              <File Id="_65_Hearts_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Hearts.bmp" />
+              <File Id="_65_iPoi_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_iPoi.bmp" />
+              <File Id="_65_Leo_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Leo.bmp" />
+              <File Id="_65_Libra_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Libra.bmp" />
+              <File Id="_65_LisaSimpson_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_LisaSimpson.bmp" />
+              <File Id="_65_London_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_London.bmp" />
+              <File Id="_65_Moscow_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Moscow.bmp" />
+              <File Id="_65_music_wallpaper_hd_background_wallpaper_54_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_music-wallpaper-hd-background-wallpaper-54.bmp" />
+              <File Id="_65_music_wallpaper_hd_for_desktop_images_6_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_music-wallpaper-hd-for-desktop-images-6.bmp" />
+              <File Id="_65_neon_wallpaper_free_desktop_8_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_neon-wallpaper-free-desktop-8.bmp" />
+              <File Id="_65_neon_wallpaper_hd_cool_7_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_neon-wallpaper-hd-cool-7.bmp" />
+              <File Id="_65_neon_wallpaper_images_6_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_neon-wallpaper-images-6.bmp" />
+              <File Id="_65_NyanCat_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_NyanCat.bmp" />
+              <File Id="_65_pacman_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_pacman.bmp" />
+              <File Id="_65_Panda_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Panda.bmp" />
+              <File Id="_65_Paris_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Paris.bmp" />
+              <File Id="_65_Piano_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Piano.bmp" />
+              <File Id="_65_picasso_abstract_art_faces_pictures_6_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_picasso-abstract-art-faces-pictures-6.bmp" />
+              <File Id="_65_Pisces_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Pisces.bmp" />
+              <File Id="_65_PSY_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_PSY.bmp" />
+              <File Id="_65_quote1_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_quote1.bmp" />
+              <File Id="_65_quote1_empty_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_quote1_empty.bmp" />
+              <File Id="_65_return_of_the_hulk_l_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_return-of-the-hulk-l.bmp" />
+              <File Id="_65_Rome_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Rome.bmp" />
+              <File Id="_65_RoundPattern_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_RoundPattern.bmp" />
+              <File Id="_65_Russia_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Russia.bmp" />
+              <File Id="_65_Sagittarius_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Sagittarius.bmp" />
+              <File Id="_65_sb1_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_sb1.bmp" />
+              <File Id="_65_sb2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_sb2.bmp" />
+              <File Id="_65_sb3_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_sb3.bmp" />
+              <File Id="_65_sb4_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_sb4.bmp" />
+              <File Id="_65_sb5_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_sb5.bmp" />
+              <File Id="_65_sb6_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_sb6.bmp" />
+              <File Id="_65_sb7_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_sb7.bmp" />
+              <File Id="_65_sb8_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_sb8.bmp" />
+              <File Id="_65_Scorpio_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Scorpio.bmp" />
+              <File Id="_65_simple_abstract_art_shapes_hd_pictures_4_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_simple-abstract-art-shapes-hd-pictures-4.bmp" />
+              <File Id="_65_simple_abstract_art_shapes_widescreen_2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_simple-abstract-art-shapes-widescreen-2.bmp" />
+              <File Id="_65_Sonic_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Sonic.bmp" />
+              <File Id="_65_SquarePatter2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_SquarePatter2.bmp" />
+              <File Id="_65_SquarePattern_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_SquarePattern.bmp" />
+              <File Id="_65_Star_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Star.bmp" />
+              <File Id="_65_superman_comic_wallpaper_background_1_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_superman-comic-wallpaper-background-1.bmp" />
+              <File Id="_65_superman_comic_wallpaper_images_6_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_superman-comic-wallpaper-images-6.bmp" />
+              <File Id="_65_superman_comic_wallpaper_widescreen_2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_superman-comic-wallpaper-widescreen-2.bmp" />
+              <File Id="_65_Taurus_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Taurus.bmp" />
+              <File Id="_65_triangle_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_triangle.bmp" />
+              <File Id="_65_Virgo_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Virgo.bmp" />
+              <File Id="_65_wallpaper_hd_hd_background_wallpaper_53_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_wallpaper-hd-hd-background-wallpaper-53.bmp" />
+              <File Id="_65_wallpaper_hd_hd_background_wallpaper_78_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_wallpaper-hd-hd-background-wallpaper-78.bmp" />
+              <File Id="_65_Water_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Water.bmp" />
+              <File Id="_65_Water2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\65_Water2.bmp" />
+              <File Id="_70_audio_levels_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_audio_levels.bmp" />
+              <File Id="_70_hearts_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_hearts.bmp" />
+              <File Id="_70_rainbow_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_rainbow.bmp" />
+              <File Id="_70_rainbow2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_rainbow2.bmp" />
+              <File Id="_70_red_arrows_right_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_red_arrows_right.bmp" />
+              <File Id="_70_stars_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_stars.bmp" />
+              <File Id="_70_steps2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_steps2.bmp" />
+              <File Id="_70_stork2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_stork2.bmp" />
+              <File Id="_70_stripes_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_stripes.bmp" />
+              <File Id="_70_triangle_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\70_triangle.bmp" />
+              <File Id="_80_2_waves_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_2_waves.bmp" />
+              <File Id="_80_Aquarius_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Aquarius.bmp" />
+              <File Id="_80_Aries_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Aries.bmp" />
+              <File Id="_80_Bart_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Bart.bmp" />
+              <File Id="_80_Batman_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Batman.bmp" />
+              <File Id="_80_batterfly_002_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_batterfly_002.bmp" />
+              <File Id="_80_batterfly_003_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_batterfly_003.bmp" />
+              <File Id="_80_batterfly_004_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_batterfly_004.bmp" />
+              <File Id="_80_batterfly_005_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_batterfly_005.bmp" />
+              <File Id="_80_batterfly_006_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_batterfly_006.bmp" />
+              <File Id="_80_batterfly_007_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_batterfly_007.bmp" />
+              <File Id="_80_batterfly_008_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_batterfly_008.bmp" />
+              <File Id="_80_batterfly_009_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_batterfly_009.bmp" />
+              <File Id="_80_border_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_border.bmp" />
+              <File Id="_80_Bounty_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Bounty.bmp" />
+              <File Id="_80_BubblesPattern_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_BubblesPattern.bmp" />
+              <File Id="_80_BubblesPattern2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_BubblesPattern2.bmp" />
+              <File Id="_80_Cake_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Cake.bmp" />
+              <File Id="_80_Cake2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Cake2.bmp" />
+              <File Id="_80_Cancer_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Cancer.bmp" />
+              <File Id="_80_Capricorn_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Capricorn.bmp" />
+              <File Id="_80_Crusty_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Crusty.bmp" />
+              <File Id="_80_EtnoAfricaPattern_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_EtnoAfricaPattern.bmp" />
+              <File Id="_80_EtnoAfricaPattern2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_EtnoAfricaPattern2.bmp" />
+              <File Id="_80_Evolution_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Evolution.bmp" />
+              <File Id="_80_Fire_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Fire.bmp" />
+              <File Id="_80_Fire2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Fire2.bmp" />
+              <File Id="_80_FloraPattern2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_FloraPattern2.bmp" />
+              <File Id="_80_FloraPattern3_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_FloraPattern3.bmp" />
+              <File Id="_80_FloraPettern_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_FloraPettern.bmp" />
+              <File Id="_80_foliage_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_foliage.bmp" />
+              <File Id="_80_Gemini_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Gemini.bmp" />
+              <File Id="_80_Hearts_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Hearts.bmp" />
+              <File Id="_80_iPoi_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_iPoi.bmp" />
+              <File Id="_80_Leo_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Leo.bmp" />
+              <File Id="_80_Libra_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Libra.bmp" />
+              <File Id="_80_LisaSimpson_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_LisaSimpson.bmp" />
+              <File Id="_80_London_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_London.bmp" />
+              <File Id="_80_Moscow_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Moscow.bmp" />
+              <File Id="_80_NyanCat_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_NyanCat.bmp" />
+              <File Id="_80_pacman_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_pacman.bmp" />
+              <File Id="_80_Panda_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Panda.bmp" />
+              <File Id="_80_Paris_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Paris.bmp" />
+              <File Id="_80_Piano_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Piano.bmp" />
+              <File Id="_80_Pisces_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Pisces.bmp" />
+              <File Id="_80_PSY_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_PSY.bmp" />
+              <File Id="_80_Rome_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Rome.bmp" />
+              <File Id="_80_RoundPattern_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_RoundPattern.bmp" />
+              <File Id="_80_Russia_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Russia.bmp" />
+              <File Id="_80_Sagittarius_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Sagittarius.bmp" />
+              <File Id="_80_Scorpio_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Scorpio.bmp" />
+              <File Id="_80_Sonic_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Sonic.bmp" />
+              <File Id="_80_SquarePattern_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_SquarePattern.bmp" />
+              <File Id="_80_SquarePattern2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_SquarePattern2.bmp" />
+              <File Id="_80_Star_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Star.bmp" />
+              <File Id="_80_Taurus_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Taurus.bmp" />
+              <File Id="_80_triangle_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_triangle.bmp" />
+              <File Id="_80_Virgo_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Virgo.bmp" />
+              <File Id="_80_Water_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\80_Water.bmp" />
+              <File Id="abstract_art_faces_black_and_white_hd_images_3_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\abstract-art-faces-black-and-white-hd-images-3.bmp" />
+              <File Id="abstract_art_faces_black_and_white_hd_images_3_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\abstract-art-faces-black-and-white-hd-images-3.jpg" />
+              <File Id="abstract_art_faces_for_desktop_16_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\abstract-art-faces-for-desktop-16.bmp" />
+              <File Id="abstract_art_faces_for_desktop_16_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\abstract-art-faces-for-desktop-16.jpg" />
+              <File Id="abstract_art_faces_for_desktop_background_15_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\abstract-art-faces-for-desktop-background-15.bmp" />
+              <File Id="abstract_art_faces_for_desktop_background_15_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\abstract-art-faces-for-desktop-background-15.jpg" />
+              <File Id="abstract_art_faces_hd_1080p_14_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\abstract-art-faces-hd-1080p-14.bmp" />
+              <File Id="abstract_art_faces_hd_1080p_14_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\abstract-art-faces-hd-1080p-14.jpg" />
+              <File Id="abstract_art_faces_hd_free_13_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\abstract-art-faces-hd-free-13.bmp" />
+              <File Id="abstract_art_faces_hd_free_13_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\abstract-art-faces-hd-free-13.jpg" />
+              <File Id="abstract_art_faces_images_7_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\abstract-art-faces-images-7.bmp" />
+              <File Id="abstract_art_faces_images_7_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\abstract-art-faces-images-7.jpg" />
+              <File Id="abstract_music_wallpapers_hd_desktop_10_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\abstract-music-wallpapers-hd-desktop-10.bmp" />
+              <File Id="abstract_music_wallpapers_hd_desktop_10_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\abstract-music-wallpapers-hd-desktop-10.jpg" />
+              <File Id="abstract_music_wallpapers_hd_pictures_4_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\abstract-music-wallpapers-hd-pictures-4.bmp" />
+              <File Id="abstract_music_wallpapers_hd_pictures_4_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\abstract-music-wallpapers-hd-pictures-4.jpg" />
+              <File Id="anime_music_wallpaper_1920x1080_hd_pictures_4_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\anime-music-wallpaper-1920x1080-hd-pictures-4.bmp" />
+              <File Id="anime_music_wallpaper_1920x1080_hd_pictures_4_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\anime-music-wallpaper-1920x1080-hd-pictures-4.jpg" />
+              <File Id="anime_music_wallpaper_for_desktop_background_13_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\anime-music-wallpaper-for-desktop-background-13.bmp" />
+              <File Id="anime_music_wallpaper_for_desktop_background_13_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\anime-music-wallpaper-for-desktop-background-13.jpg" />
+              <File Id="anime_music_wallpaper_hd_background_wallpaper_28_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\anime-music-wallpaper-hd-background-wallpaper-28.bmp" />
+              <File Id="anime_music_wallpaper_hd_background_wallpaper_28_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\anime-music-wallpaper-hd-background-wallpaper-28.jpg" />
+              <File Id="anime_music_wallpaper_hd_background_wallpaper_32_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\anime-music-wallpaper-hd-background-wallpaper-32.bmp" />
+              <File Id="anime_music_wallpaper_hd_background_wallpaper_32_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\anime-music-wallpaper-hd-background-wallpaper-32.jpg" />
+              <File Id="anime_violin_wallpaper_hd_widescreen_11_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\anime-violin-wallpaper-hd-widescreen-11.bmp" />
+              <File Id="anime_violin_wallpaper_hd_widescreen_11_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\anime-violin-wallpaper-hd-widescreen-11.jpg" />
+              <File Id="anime_violin_wallpaper_pictures_5_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\anime-violin-wallpaper-pictures-5.bmp" />
+              <File Id="anime_violin_wallpaper_pictures_5_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\anime-violin-wallpaper-pictures-5.jpg" />
+              <File Id="batman_and_joker_comic_strip_background_1_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\batman-and-joker-comic-strip-background-1.jpg" />
+              <File Id="batman_and_joker_comic_strip_pictures_5_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\batman-and-joker-comic-strip-pictures-5.bmp" />
+              <File Id="boum_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\boum.bmp" />
+              <File Id="cartoon_images_of_spongebob_hd_desktop_10_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\cartoon-images-of-spongebob-hd-desktop-10.bmp" />
+              <File Id="cartoon_images_of_spongebob_hd_desktop_10_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\cartoon-images-of-spongebob-hd-desktop-10.jpg" />
+              <File Id="cloud_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\cloud.bmp" />
+              <File Id="cloud_text_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\cloud_text.bmp" />
+              <File Id="comics_characters_face_widescreen_2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\comics-characters-face-widescreen-2.bmp" />
+              <File Id="comics_characters_face_widescreen_3_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\comics-characters-face-widescreen-3.bmp" />
+              <File Id="cute_anime_angel_wallpaper_background_1_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\cute-anime-angel-wallpaper-background-1.bmp" />
+              <File Id="cute_anime_angel_wallpaper_background_1_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\cute-anime-angel-wallpaper-background-1.jpg" />
+              <File Id="cute_anime_angel_wallpaper_hd_background_9_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\cute-anime-angel-wallpaper-hd-background-9.bmp" />
+              <File Id="cute_anime_angel_wallpaper_hd_background_9_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\cute-anime-angel-wallpaper-hd-background-9.jpg" />
+              <File Id="disney_princess_characters_to_draw_hd_pictures_4_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\disney-princess-characters-to-draw-hd-pictures-4.bmp" />
+              <File Id="face1_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\face1.bmp" />
+              <File Id="face1_png" Source="..\PixelTuner\bin\$(var.Configuration)\Content\face1.png" />
+              <File Id="face2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\face2.bmp" />
+              <File Id="face3_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\face3.bmp" />
+              <File Id="face4_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\face4.bmp" />
+              <File Id="face5_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\face5.bmp" />
+              <File Id="face6_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\face6.bmp" />
+              <File Id="face7_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\face7.bmp" />
+              <File Id="face8_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\face8.bmp" />
+              <File Id="face9_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\face9.bmp" />
+              <File Id="face91_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\face91.bmp" />
+              <File Id="face92_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\face92.bmp" />
+              <File Id="face93_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\face93.bmp" />
+              <File Id="face94_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\face94.bmp" />
+              <File Id="funny_face_cartoon_images_background_1_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\funny-face-cartoon-images-background-1.bmp" />
+              <File Id="geometric_abstract_sculpture_hd_images_3_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\geometric-abstract-sculpture-hd-images-3.bmp" />
+              <File Id="music_wallpaper_hd_background_wallpaper_54_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\music-wallpaper-hd-background-wallpaper-54.bmp" />
+              <File Id="music_wallpaper_hd_for_desktop_images_6_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\music-wallpaper-hd-for-desktop-images-6.bmp" />
+              <File Id="neon_wallpaper_free_desktop_8_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\neon-wallpaper-free-desktop-8.bmp" />
+              <File Id="neon_wallpaper_hd_cool_7_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\neon-wallpaper-hd-cool-7.bmp" />
+              <File Id="neon_wallpaper_images_6_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\neon-wallpaper-images-6.bmp" />
+              <File Id="picasso_abstract_art_faces_pictures_6_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\picasso-abstract-art-faces-pictures-6.bmp" />
+              <File Id="quote1_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\quote1.bmp" />
+              <File Id="quote1_empty_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\quote1_empty.bmp" />
+              <File Id="return_of_the_hulk_l_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\return-of-the-hulk-l.bmp" />
+              <File Id="sb1_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\sb1.bmp" />
+              <File Id="sb2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\sb2.bmp" />
+              <File Id="sb3_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\sb3.bmp" />
+              <File Id="sb4_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\sb4.bmp" />
+              <File Id="sb5_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\sb5.bmp" />
+              <File Id="sb6_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\sb6.bmp" />
+              <File Id="sb7_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\sb7.bmp" />
+              <File Id="sb8_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\sb8.bmp" />
+              <File Id="simple_abstract_art_shapes_hd_pictures_4_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\simple-abstract-art-shapes-hd-pictures-4.bmp" />
+              <File Id="simple_abstract_art_shapes_widescreen_2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\simple-abstract-art-shapes-widescreen-2.bmp" />
+              <File Id="superman_comic_wallpaper_background_1_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\superman-comic-wallpaper-background-1.bmp" />
+              <File Id="superman_comic_wallpaper_images_6_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\superman-comic-wallpaper-images-6.bmp" />
+              <File Id="superman_comic_wallpaper_widescreen_2_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\superman-comic-wallpaper-widescreen-2.bmp" />
+              <File Id="superman_comic_wallpaper_widescreen_2_jpg" Source="..\PixelTuner\bin\$(var.Configuration)\Content\superman-comic-wallpaper-widescreen-2.jpg" />
+              <File Id="wallpaper_hd_hd_background_wallpaper_53_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\wallpaper-hd-hd-background-wallpaper-53.bmp" />
+              <File Id="wallpaper_hd_hd_background_wallpaper_78_bmp" Source="..\PixelTuner\bin\$(var.Configuration)\Content\wallpaper-hd-hd-background-wallpaper-78.bmp" />
             </Component>
           </Directory>
         </Directory>
@@ -145,6 +590,16 @@
       <ComponentRef Id="InstallPathRegWriter" />
       <ComponentRef Id="PixelTuner.com" />
       <ComponentRef Id="PixelTuner.com.en_US" />
+      <ComponentRef Id="PixelTuner.com.de" />
+      <ComponentRef Id="PixelTuner.com.es" />
+      <ComponentRef Id="PixelTuner.com.fr" />
+      <ComponentRef Id="PixelTuner.com.hu" />
+      <ComponentRef Id="PixelTuner.com.it" />
+      <ComponentRef Id="PixelTuner.com.pt_BR" />
+      <ComponentRef Id="PixelTuner.com.ro" />
+      <ComponentRef Id="PixelTuner.com.ru" />
+      <ComponentRef Id="PixelTuner.com.sv" />
+      <ComponentRef Id="PixelTuner.com.zh_Hans" />
       <ComponentRef Id='ProgramMenuDir' />
       <ComponentRef Id="DefaultContent" />
 

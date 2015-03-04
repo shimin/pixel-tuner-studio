@@ -4,8 +4,8 @@
       Name="PixelTuner"
       Version="$(var.PackageVersion)"
       IconSourceFile="PixelTuner.ico"
-      AboutUrl="http://shiningpromo.ru/pixel_poi/"
-      UpdateUrl="http://shiningpromo.ru/pixel_poi/downloads/"
+      AboutUrl="http://e-pic.ru/pixel-poi-2/pixel-poi-2-guide/"
+      UpdateUrl="http://e-pic.ru/downloads/"
       UpgradeCode="{df1086f7-6803-4697-b66c-74dd2733c092}"
       Compressed="no">
     <BootstrapperApplicationRef Id="ManagedBootstrapperApplicationHost">

@@ -25,9 +25,12 @@ namespace PixelTunerAutoupdater
     {
         public static string SystemBinUrl = AppDomain.CurrentDomain.BaseDirectory;
 
-        public static void RestartApplication(System.Windows.Window mainForm)
+        public static void RestartApplication(System.Windows.Window mainForm, string msiPath = "")
         {
-            Process.Start(Application.ExecutablePath);
+            if (string.IsNullOrEmpty(msiPath))
+                Process.Start(Application.ExecutablePath);
+            else Process.Start(msiPath);
+
             mainForm.Close();
         }
 

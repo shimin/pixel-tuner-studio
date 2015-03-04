@@ -32,6 +32,9 @@
             this.bpxChooseDir = new System.Windows.Forms.LinkLabel();
             this.boxBaseUrl = new System.Windows.Forms.TextBox();
             this.boxGenerate = new System.Windows.Forms.LinkLabel();
+            this.boxResults = new System.Windows.Forms.RichTextBox();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.boxPrefix = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // boxBaseDir
@@ -72,11 +75,41 @@
             this.boxGenerate.Text = "Генерировать";
             this.boxGenerate.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.boxGenerate_LinkClicked);
             // 
+            // boxResults
+            // 
+            this.boxResults.Location = new System.Drawing.Point(11, 90);
+            this.boxResults.Name = "boxResults";
+            this.boxResults.Size = new System.Drawing.Size(553, 240);
+            this.boxResults.TabIndex = 5;
+            this.boxResults.Text = "";
+            // 
+            // linkLabel1
+            // 
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.Location = new System.Drawing.Point(12, 74);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(120, 13);
+            this.linkLabel1.TabIndex = 6;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "Файлы для установки";
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+            // 
+            // boxPrefix
+            // 
+            this.boxPrefix.Location = new System.Drawing.Point(138, 71);
+            this.boxPrefix.Name = "boxPrefix";
+            this.boxPrefix.Size = new System.Drawing.Size(426, 20);
+            this.boxPrefix.TabIndex = 7;
+            this.boxPrefix.Text = "..\\PixelTuner\\bin\\$(var.Configuration)\\Content\\";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(576, 342);
+            this.Controls.Add(this.boxPrefix);
+            this.Controls.Add(this.linkLabel1);
+            this.Controls.Add(this.boxResults);
             this.Controls.Add(this.boxGenerate);
             this.Controls.Add(this.boxBaseUrl);
             this.Controls.Add(this.bpxChooseDir);
@@ -97,6 +130,9 @@
         private System.Windows.Forms.LinkLabel bpxChooseDir;
         private System.Windows.Forms.TextBox boxBaseUrl;
         private System.Windows.Forms.LinkLabel boxGenerate;
+        private System.Windows.Forms.RichTextBox boxResults;
+        private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.TextBox boxPrefix;
     }
 }
 
