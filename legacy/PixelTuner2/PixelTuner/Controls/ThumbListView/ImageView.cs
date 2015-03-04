@@ -138,7 +138,7 @@ namespace PixelTuner.Controls.ThumbListView
                 if (item != null)
                 {
                     var fm = RootViewModel.This.ActiveDocument;
-                    if (fm.SelectedTimeline != null)
+                    if (fm != null && fm.SelectedTimeline != null)
                     {
                         var src = item.DataContext as TimeLineItemViewModel;
                         if (src != null)
