@@ -33,12 +33,12 @@
                     <Setter Property="Margin" Value="5,5,5,5"/>
                 </Style>
             </StackPanel.Resources>
-            <Image x:Name="imgCrop" Width="130" Height="100" Margin="0,5,5,0"/>
+            <Image x:Name="imgCrop" Width="280" Height="200" Margin="0,5,5,0"/>
             <GroupBox Foreground="#FFFFFFFF" Header="Resize to fit" Margin="0,5,5,0" BorderThickness="0.25" BorderBrush="#FFFFFFFF">
                 <StackPanel Height="Auto">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Height" Margin="0,1,5,0"/>
-                        <xctk:DoubleUpDown x:Name="boxHeight" Value="{Binding ResizeHeightValue}" Increment="5" Minimum="25" Maximum="200" />
+                        <TextBlock Text="Height" Margin="0,1,10,0"/>
+                        <xctk:DoubleUpDown x:Name="boxHeight" Value="{Binding ResizeHeightValue}" Increment="5" Minimum="25" Maximum="200" Width="64"/>
                         <TextBlock Text="px" Margin="5,1,5,0"/>
                     </StackPanel>
                 </StackPanel>

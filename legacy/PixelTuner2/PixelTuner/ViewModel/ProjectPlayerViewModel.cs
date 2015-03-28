@@ -26,7 +26,7 @@ namespace PixelTuner.ViewModel
         public BitmapImage Image
         {
             get { return _image; }
-            protected set
+            set
             {
                 _image = FormatImage(value);
                 TilingX = ((double)400 / (double)_image.Width) * Stretching;
@@ -164,10 +164,10 @@ namespace PixelTuner.ViewModel
             
             var bmp = ImageHelper.BitmapImageToBitmap<BmpBitmapEncoder>(rotated);
             
-            Bitmap bg = new Bitmap(bmp.Width, bmp.Height + _blackFieldHeight + 1);
+            Bitmap bg = new Bitmap(bmp.Width, bmp.Height + (bmp.Height / 2) + 1);
             using (Graphics g = Graphics.FromImage(bg))
             {
-                g.DrawImage(bmp, new Point(0, _blackFieldHeight));
+                g.DrawImage(bmp, new Point(0, (bmp.Height / 2)));
             }
             var result = (BitmapImage)ImageHelper.BitmapImageFromBitmap(bg);
             return result;
@@ -342,7 +342,7 @@ namespace PixelTuner.ViewModel
         {
             {0, 2.44},
             {1, 2.14},
-            {2, 1.85},
+            {2, 1.75},
             {3, 1.64},
             {4, 1.49},
             {5, 1.32},

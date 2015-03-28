@@ -64,6 +64,7 @@
     <system:String x:Key="Dev_Props_State_ProductID">Identifikator:</system:String>
     <system:String x:Key="Dev_Props_State_WriteReadDelay">Pause Aufnahme/Lesen:</system:String>
     <system:String x:Key="Dev_Props_State_Error">Kommunikationsfehler.</system:String>
+    <system:String x:Key="Dev_Props_State_UploadError">Laden fehler.</system:String>
     <system:String x:Key="Preview_Animate">Animieren</system:String>
     <system:String x:Key="Global_ImagesHeightMismatch">"Frame's Höhe passt mit Projekthöhe nicht zusammen."</system:String>
     <system:String x:Key="Global_SaveChanges">"Möchten Sie Änderungen in '{0}' speichern?"</system:String>

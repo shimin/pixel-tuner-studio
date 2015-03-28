@@ -72,6 +72,8 @@ namespace PixelTuner.Import
             get { return _resizeHeightValue; }
             set { _resizeHeightValue = value; RaisePropertyChanged("ResizeHeightValue"); }
         }
+
+        private Rect _lastCropState = Rect.Empty;
         #endregion
 
         public CropPage(ImageSource src)
@@ -101,6 +103,10 @@ namespace PixelTuner.Import
                 fel.ActualHeight * 0.0,
                 fel.ActualWidth * 1.0,
                 fel.ActualHeight * 1.0);
+
+            //if (_lastCropState != Rect.Empty) rcInterior = _lastCropState;
+            if (_cropAdorner != null && _cropAdorner.ClippingRectangle != Rect.Empty)
+                rcInterior = _cropAdorner.ClippingRectangle;
 
             AdornerLayer aly = AdornerLayer.GetAdornerLayer(fel);
             _cropAdorner = new CroppingAdorner(fel, rcInterior);
@@ -200,7 +206,7 @@ namespace PixelTuner.Import
 
         public void ApplyChanges()
         {
-            var rc = _cropAdorner.ClippingRectangle;
+            var rc = _lastCropState = _cropAdorner.ClippingRectangle;
             var srcImage = ImageHelper.BitmapImageToBitmap<BmpBitmapEncoder>((BitmapSource)ImageToCrop); //System.Drawing.Image.FromFile(_imageToCrop.LocalPath);
 
             int left = (int)Math.Round((rc.Left / boxImage.ActualWidth) * srcImage.Width);

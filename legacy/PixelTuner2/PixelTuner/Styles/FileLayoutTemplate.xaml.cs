@@ -110,7 +110,7 @@ namespace PixelTuner.Styles
             var dc = ((Grid)(sender));
             var element = VisualTreeHelper.HitTest(dc, e.GetPosition(dc)).VisualHit as System.Windows.FrameworkElement;
             var fm = RootViewModel.This.ActiveDocument as FileViewModel;
-            if (element.DataContext is TimeLineViewModel || element.DataContext is TimeLineItemViewModel)
+            if (element != null && (element.DataContext is TimeLineViewModel || element.DataContext is TimeLineItemViewModel))
             {
                 fm.SetSelection(element.DataContext, ctrlHold, shiftHold, altHold);
             }

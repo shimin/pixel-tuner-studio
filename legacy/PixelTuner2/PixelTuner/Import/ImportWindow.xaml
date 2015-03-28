@@ -2,9 +2,20 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:pts="clr-namespace:Workspace.PageTransitions;assembly=Workspace.PageTransitions"
+        xmlns:ptw="clr-namespace:Common.ProjectPlayer.PixelTwister;assembly=Common"
+        xmlns:properties="clr-namespace:PixelTuner.Properties"
+        xmlns:vm="clr-namespace:PixelTuner.ViewModel"
         Keyboard.PreviewKeyDown="Window_PreviewKeyDown"
+        Name="boxWindow"
         Title="{StaticResource ImportWindow_Header}" Width="900" Height="600" Background="#FF323232">
-    <Grid>
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/PixelTuner;component/Styles/ProjectPlayerLayoutTemplate.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid Name="boxGrid">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="724*" />
@@ -15,9 +26,13 @@
                 <RowDefinition Height="39" />
                 <RowDefinition Height="30" />
             </Grid.RowDefinitions>
-
-            <pts:PageTransition Grid.ColumnSpan="2" Name="pageTransitionControl" Margin="0" TransitionType="Fade" />
-
+            <TabControl Name="boxTabs" Grid.ColumnSpan="2" Background="Transparent" BorderThickness="0">
+                <TabItem Header="Operation" >
+                    <pts:PageTransition Name="pageTransitionControl" Margin="0" TransitionType="Fade" />
+                </TabItem>
+                <TabItem Name="boxPreviewTab" Header="Preview" ContentTemplate="{StaticResource ProjectPlayerLayoutTemplate}">
+                </TabItem>
+            </TabControl>
             <Grid Grid.Row="1" Grid.RowSpan="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="612*" />

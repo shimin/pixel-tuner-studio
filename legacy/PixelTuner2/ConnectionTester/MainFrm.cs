@@ -12,6 +12,7 @@ using System.IO;
 using Communication.Service;
 using LibHID;
 using System.Threading;
+using System.Text.RegularExpressions;
 
 namespace ConnectionTester
 {
@@ -71,6 +72,7 @@ namespace ConnectionTester
                 port.Open();
                 _device = new PixelDeviceTest(port);
                 _device.Logger = new Common.Log.Logger(_logTarget);
+                _device.SessionFinished += new SerialDeviceBase.SessionDelegate(_device_SessionFinished);
                 SetStatus("Порт открыт", Common.Log.MessageType.Info, 0);
             }
             catch
@@ -90,6 +92,13 @@ namespace ConnectionTester
             {
                 SetStatus("Ошибка чтения" + port.PortName, Common.Log.MessageType.Error, 0);
             }
+        }
+
+        List<byte> receivedData = new List<byte>();
+
+        void _device_SessionFinished(DeviceSessionEventArgs e)
+        {
+            receivedData.AddRange(e.Data);
         }
 
         private void SetStatus(string p, Common.Log.MessageType messageType, int depth)
@@ -153,6 +162,7 @@ namespace ConnectionTester
         private void boxClear_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             boxLog.Clear();
+            receivedData.Clear();
         }
 
         private void boxLoadProj_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -546,6 +556,7 @@ namespace ConnectionTester
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             boxLogHID.Clear();
+            receivedData.Clear();
         }
 
         private void boxLogToFileHID_CheckedChanged(object sender, EventArgs e)
@@ -617,6 +628,25 @@ namespace ConnectionTester
         }
 
         #endregion
+
+        private void boxSaveBIN_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            //Regex hexRx = new Regex(@"[0-9a-fA-F]{2}\s");
+            //StringBuilder sb = new StringBuilder();
+            //var ms = hexRx.Matches(boxLog.Text);
+            //List<byte> bin = new List<byte>();
+            //foreach (var m in ms) {
+            //    var s = m.ToString().Trim();
+            //    sb.Append(s + " ");
+            //    bin.Add(byte.Parse(s, System.Globalization.NumberStyles.HexNumber));
+            //}
+            var sfd = new SaveFileDialog();
+            if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                //File.WriteAllBytes(sfd.FileName, bin.ToArray());
+                File.WriteAllBytes(sfd.FileName, receivedData.ToArray());
+            }
+        }
 
     }
 }

@@ -6,16 +6,17 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/PixelTuner;component/Styles/SliderStyles.xaml" />
     </ResourceDictionary.MergedDictionaries>
-
         <DataTemplate x:Key="ProjectPlayerLayoutTemplate" DataType="{x:Type vm:ProjectPlayerViewModel}">
-        <Grid Background="Black">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="80"/>
-            </Grid.RowDefinitions>
-            <Border RenderTransformOrigin="0.5,0.5" Grid.Row="0">
-                <Border.Effect>
-                    <ptw:PolarShaderEffect x:Name="twistEffect" 
+            <Grid Background="Black" DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.ProjectPlayerModel}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="80"/>
+                </Grid.RowDefinitions>
+            <Viewbox Grid.Row="0" Stretch="Uniform">
+                <Grid Width="600" Height="600" VerticalAlignment="Top" HorizontalAlignment="Left">
+                <Border RenderTransformOrigin="0.5,0.5">
+                    <Border.Effect>
+                        <ptw:PolarShaderEffect x:Name="twistEffect" 
                                            TilingX="{Binding TilingX}" 
                                            Dot="{Binding Dot}" 
                                            Dash="{Binding Dash}" 
@@ -24,61 +25,63 @@
                                            PoiWidth="0.01"
                                            ClampValue="1.5"
                                            MinimalIntensity="0.1"/>
-                </Border.Effect>
-                <Border.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform ScaleY="-1" ScaleX="1"/>
-                        <SkewTransform AngleY="0"/>
-                        <RotateTransform/>
-                        <TranslateTransform/>
-                    </TransformGroup>
-                </Border.RenderTransform>
-                <Border.Background>
-                    <VisualBrush>
-                        <VisualBrush.Visual>
-                            <Image Name="PixelImage" Source="{Binding Image}" Stretch="Fill"/>
-                        </VisualBrush.Visual>
-                    </VisualBrush>
-                </Border.Background>
-                <Border.Style>
-                    <Style>
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding ElementName=boxAnimate, Path=IsChecked}" Value="true">
-                                <DataTrigger.EnterActions>
-                                    <BeginStoryboard Name="animation">
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetProperty="Effect.(ptw:PolarShaderEffect.ArcPosition)"
+                    </Border.Effect>
+                    <Border.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleY="-1" ScaleX="1"/>
+                            <SkewTransform AngleY="0"/>
+                            <RotateTransform/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Border.RenderTransform>
+                    <Border.Background>
+                        <VisualBrush>
+                            <VisualBrush.Visual>
+                                <Image Name="PixelImage" Source="{Binding Image}" Stretch="Fill"/>
+                            </VisualBrush.Visual>
+                        </VisualBrush>
+                    </Border.Background>
+                    <Border.Style>
+                        <Style>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=boxAnimate, Path=IsChecked}" Value="true">
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard Name="animation">
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetProperty="Effect.(ptw:PolarShaderEffect.ArcPosition)"
                                                              From="1.0" To="0.0" By="0.01" Duration="0:0:2" RepeatBehavior="Forever" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </DataTrigger.EnterActions>
-                                <DataTrigger.ExitActions>
-                                    <StopStoryboard BeginStoryboardName="animation"></StopStoryboard>
-                                </DataTrigger.ExitActions>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Border.Style>
-            </Border>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.EnterActions>
+                                    <DataTrigger.ExitActions>
+                                        <StopStoryboard BeginStoryboardName="animation"></StopStoryboard>
+                                    </DataTrigger.ExitActions>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                </Border>
+                </Grid>
+            </Viewbox>
             <StackPanel Grid.Row="1" Orientation="Vertical">
-                <StackPanel Visibility="Hidden" Orientation="Horizontal">
-                    <Label Content="A:" Foreground="White" />
-                    <Slider Name="boxStretchingSlider" Width="260" Value="{Binding Stretching, Mode=OneWay}" 
+                    <StackPanel Visibility="Hidden" Orientation="Horizontal">
+                        <Label Content="A:" Foreground="White" />
+                        <Slider Name="boxStretchingSlider" Width="260" Value="{Binding Stretching, Mode=OneWay}" 
                             Minimum="0.01" 
                             SmallChange="0.01" 
                             LargeChange="0.1" 
                             TickFrequency="0.01" 
                             IsSnapToTickEnabled="True" 
                             Maximum="5"/>
-                    <Label Foreground="White" Content="{Binding Stretching}"/>
+                        <Label Foreground="White" Content="{Binding Stretching}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="{StaticResource Item_Stretching}" Foreground="White" />
+                        <Slider Name="boxStretchingSliderActual" Width="260" Value="{Binding ModelStretching}" Margin="3" Minimum="2" Maximum="{Binding Source={x:Static properties:Settings.Default}, Path=MaximumStretching}"/>
+                        <Label Foreground="White" Content="{Binding ModelStretching}"/>
+                    </StackPanel>
+                    <CheckBox Name="boxAnimate" IsChecked="True" Margin="6,0" Content="{StaticResource Preview_Animate}" Foreground="White"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="{StaticResource Item_Stretching}" Foreground="White" />
-                    <Slider Name="boxStretchingSliderActual" Width="260" Value="{Binding ModelStretching}" Margin="3" Minimum="0" Maximum="{Binding Source={x:Static properties:Settings.Default}, Path=MaximumStretching}"/>
-                    <Label Foreground="White" Content="{Binding ModelStretching}"/>
-                </StackPanel>
-                <CheckBox Name="boxAnimate" IsChecked="True" Margin="6,0" Content="{StaticResource Preview_Animate}" Foreground="White"/>
-            </StackPanel>
-        </Grid>
+            </Grid>
     </DataTemplate>
 </ResourceDictionary>

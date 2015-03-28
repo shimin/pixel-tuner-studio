@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using PixelTuner.ViewModel;
 using Common.Imaging;
+using System.ComponentModel;
 
 namespace PixelTuner.Import
 {
@@ -37,7 +38,34 @@ namespace PixelTuner.Import
             pagesNext.Push(new CropPage(imageToCrop));
             InitializeComponent();
             pageTransitionControl.ShowPage(pagesNext.Peek());
+            boxTabs.SelectionChanged += new SelectionChangedEventHandler(boxTabs_SelectionChanged);
+            //ProjectPlayerModel.Image = (BitmapImage)imageToCrop;
         }
+
+        void boxTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (boxTabs.SelectedIndex == 1)
+            {
+                var p = (IPicturePage)pagesNext.Peek();
+                p.ApplyChanges();
+                if (p != null && p.Result != null)
+                {
+                    //ProjectPlayerModel.Image = (BitmapImage)p.Result;
+                    var tPath = System.IO.Path.GetTempFileName();
+                    ImageHelper.SaveImageData(ImageHelper.BitmapImageToBytes<BmpBitmapEncoder>(p.Result), tPath);
+                    ProjectPlayerModel.DisplayModel = new PixelTuner.ViewModel.TimeLineItemViewModel(new System.IO.FileInfo(tPath));
+                    RaisePropertyChanged("ProjectPlayerModel");
+                }
+            }
+        }
+        protected virtual void RaisePropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #region BackCommand
         
@@ -101,6 +129,21 @@ namespace PixelTuner.Import
         }
 
         #endregion 
+        
+        ProjectPlayerViewModel _projectPlayerModel = null;
+        public ProjectPlayerViewModel ProjectPlayerModel
+        {
+            get
+            {
+                if (_projectPlayerModel == null)
+                {
+                    _projectPlayerModel = new ProjectPlayerViewModel(
+                        (String)Application.Current.TryFindResource("Menu_Window_ProjectPlayer"));
+                }
+
+                return _projectPlayerModel;
+            }
+        }
 
         private void boxOK_Click(object sender, RoutedEventArgs e)
         {

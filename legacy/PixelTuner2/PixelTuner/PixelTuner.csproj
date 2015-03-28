@@ -122,6 +122,9 @@
     <Compile Include="Converters\ActiveTimeLineConverter.cs" />
     <Compile Include="Controls\ThumbListView\ImageView.cs" />
     <Compile Include="Converters\LogConverter.cs" />
+    <Compile Include="Import\PreviewPage.xaml.cs">
+      <DependentUpon>PreviewPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="RepeatItemWindow.xaml.cs">
       <DependentUpon>RepeatItemWindow.xaml</DependentUpon>
     </Compile>
@@ -196,6 +199,10 @@
     <Compile Include="ViewModel\TimeLineViewModel.cs" />
     <Compile Include="ViewModel\ToolViewModel.cs" />
     <Compile Include="ViewModel\RootViewModel.cs" />
+    <Page Include="Import\PreviewPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="RepeatItemWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
