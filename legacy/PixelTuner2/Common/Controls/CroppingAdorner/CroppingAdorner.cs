@@ -326,31 +326,52 @@ namespace Common.Controls
 				intWidth = rcInterior.Width,
 				intHeight = rcInterior.Height;
 
-			if (rcInterior.Left > fel.RenderSize.Width)
-			{
-				intLeft = fel.RenderSize.Width;
-				intWidth = 0;
-				fFixupRequired = true;
-			}
+            {
+                var rate = e.NewSize.Width / e.PreviousSize.Width;
+                intLeft = intLeft * rate;
+                fFixupRequired = true;
+            }
+            //if (rcInterior.Left > fel.RenderSize.Width)
+            //{
+            //    intLeft = fel.RenderSize.Width;
+            //    intWidth = 0;
+            //    fFixupRequired = true;
+            //}
 
-			if (rcInterior.Top > fel.RenderSize.Height)
-			{
-				intTop = fel.RenderSize.Height;
-				intHeight = 0;
-				fFixupRequired = true;
-			}
+            {
+                var rate = e.NewSize.Height / e.PreviousSize.Height;
+                intTop = intTop * rate;
+                fFixupRequired = true;
+            }
+            //if (rcInterior.Top > fel.RenderSize.Height)
+            //{
+            //    intTop = fel.RenderSize.Height;
+            //    intHeight = 0;
+            //    fFixupRequired = true;
+            //}
 
-			if (rcInterior.Right > fel.RenderSize.Width)
-			{
-				intWidth = Math.Max(0, fel.RenderSize.Width - intLeft);
-				fFixupRequired = true;
-			}
+            {
+                var rate = e.NewSize.Width / e.PreviousSize.Width;
+                intWidth = intWidth * rate;
+                fFixupRequired = true;
+            }
+            //if (rcInterior.Right > fel.RenderSize.Width)
+            //{
+            //    intWidth = Math.Max(0, fel.RenderSize.Width - intLeft);
+            //    fFixupRequired = true;
+            //}
 
-			if (rcInterior.Bottom > fel.RenderSize.Height)
-			{
-				intHeight = Math.Max(0, fel.RenderSize.Height - intTop);
-				fFixupRequired = true;
-			}
+            {
+                var rate = e.NewSize.Height / e.PreviousSize.Height;
+                intHeight = intHeight * rate;
+                fFixupRequired = true;
+            }
+            //if (rcInterior.Bottom > fel.RenderSize.Height)
+            //{
+            //    intHeight = Math.Max(0, fel.RenderSize.Height - intTop);
+            //    fFixupRequired = true;
+            //}
+
 			if (fFixupRequired)
 			{
 				_prCropMask.RectInterior = new Rect(intLeft, intTop, intWidth, intHeight);
@@ -359,7 +380,7 @@ namespace Common.Controls
 		#endregion
 
 		#region Arranging/positioning
-		private void SetThumbs(Rect rc)
+		public void SetThumbs(Rect rc)
 		{
 			_crtBottomRight.SetPos(rc.Right - _cpxThumbWidth, rc.Bottom - _cpxThumbWidth);
 			_crtTopLeft.SetPos(rc.Left, rc.Top);

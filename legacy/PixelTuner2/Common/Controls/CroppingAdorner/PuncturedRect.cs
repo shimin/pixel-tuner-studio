@@ -33,8 +33,8 @@ namespace Common.Controls
 			Rect rcProposed = (Rect)value;
 			double left = Math.Max(rcProposed.Left, rcExterior.Left);
 			double top = Math.Max(rcProposed.Top, rcExterior.Top);
-			double width = Math.Min(rcProposed.Right, rcExterior.Right) - left;
-			double height = Math.Min(rcProposed.Bottom, rcExterior.Bottom) - top;
+			double width = Math.Max(Math.Min(rcProposed.Right, rcExterior.Right) - left, 0);
+			double height = Math.Max(Math.Min(rcProposed.Bottom, rcExterior.Bottom) - top, 0);
 			rcProposed = new Rect(left, top, width, height);
 			return rcProposed;
 		}
