@@ -237,10 +237,16 @@ namespace Communication.Service
             {
                 this.Busy = true;
                 base.SetStatus(ConnectionStatus.Uploading);
+                bool noExceptions = false;
                 try
                 {
                     List<byte> data = new List<byte>();
-                    base.DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_IDATA_MODE, BitConverter.GetBytes(binaryData.Count)));
+                    var answer = base.DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_IDATA_MODE, BitConverter.GetBytes(binaryData.Count)));
+                    if (answer.Data[0] == 0x00) {
+                        base.SetStatus(ConnectionStatus.UploadError);
+                        this.Busy = false;
+                        throw new Exception("Upload error");
+                    }
                     foreach (byte num in binaryData)
                     {
                         data.Add(num);
@@ -256,18 +262,21 @@ namespace Communication.Service
                         data.Clear();
                     }
                     base.DoSession(new PixelDevicePacket(PixelDeviceCommand.END_WRITE_DATA, null));
+                    noExceptions = true;
                 }
                 catch (Exception exception)
                 {
                     if (base.Logger != null)
                     {
                         base.Logger.WriteException(exception);
+                        base.SetStatus(ConnectionStatus.UploadError);
                     }
                 }
                 finally
                 {
-                    this.Busy = false;
-                    base.SetStatus(ConnectionStatus.Online);
+                     this.Busy = false;
+                    if (noExceptions)
+                        base.SetStatus(ConnectionStatus.Online);
                 }
             }
         }

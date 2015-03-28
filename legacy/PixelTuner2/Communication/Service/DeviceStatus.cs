@@ -20,5 +20,7 @@ namespace Communication.Service
         Offline = 4,
         [DescriptionAttribute("Dev_Props_State_Error")]
         Error = 5,
+        [DescriptionAttribute("Dev_Props_State_UploadError")]
+        UploadError = 6,
     }
 }
