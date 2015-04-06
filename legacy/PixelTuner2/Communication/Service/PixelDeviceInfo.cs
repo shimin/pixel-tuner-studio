@@ -8,13 +8,18 @@ namespace Communication.Service
 {
     public class PixelDeviceInfo
     {
-        int _maxMemory;
+        long _maxMemory;
         /// <summary>
         /// Доступный максимум памяти в байтах
         /// </summary>
-        public int MaxMemory
+        public long MaxMemory
         {
-            get { return _maxMemory; }
+            get
+            {
+                if (_maxMemory > 3800000) _maxMemory = 3800000;
+                if (_platformVersion == 2) return _maxMemory / 1024;
+                else return _maxMemory;
+            }
             set { _maxMemory = value; }
         }
 
