@@ -56,7 +56,7 @@ namespace PixelTuner.ViewModel
             get
             {
                 return RootViewModel.This.ActiveDocument != null ?
-                    RootViewModel.This.ActiveDocument.EvaluateBinarySize(LedsTotal) : 0;
+                    RootViewModel.This.ActiveDocument.EvaluateBinarySize(LedsTotal) / 1024 : 0;
             }
         }
 
@@ -78,7 +78,7 @@ namespace PixelTuner.ViewModel
         /// <summary>
         /// Доступный максимум памяти в байтах
         /// </summary>
-        public int MaxMemory
+        public long MaxMemory
         {
             get { return Device == null || Device.Info == null ? 0 : Device.Info.MaxMemory; }
             private set { RaisePropertyChanged("MaxMemory"); }
