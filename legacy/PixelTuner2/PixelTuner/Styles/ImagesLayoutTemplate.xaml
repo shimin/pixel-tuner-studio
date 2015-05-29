@@ -35,6 +35,7 @@
                 BorderThickness="0"
                 AllowDrop="True"
                 MouseDoubleClick="ListView_MouseDoubleClick"
+                SelectionChanged="ListView_SelectionChanged"
                 KeyDown="boxThumbnails_KeyDown"
                 Drop="boxThumbnails_Drop"
                 dd:DragDropHelper.IsDragSource="True" 

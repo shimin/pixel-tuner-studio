@@ -173,6 +173,15 @@ namespace PixelTuner.Controls.ThumbListView
             }
         }
 
+        private void ListView_SelectionChanged(object sender, System.EventArgs e)
+        {
+            var item = (sender as ListView).SelectedItem as TimeLineItemViewModel;
+            if (item != null)
+            {
+                RootViewModel.This.ProjectPlayerModel.DisplayModel = new TimeLineItemViewModel(new FileInfo(item.FullName));
+            }
+        }
+
         #region Picture editor
 
         private void Create_Button_Click(object sender, RoutedEventArgs e)
