@@ -323,7 +323,7 @@ namespace PixelTuner.ViewModel
             List<byte> data = file.GetBinaryPresentation(this.LedsTotal);
             InitializeProgressBar(data);
             RaisePropertyChanged("ProgressMax");
-            if (ValidateProject(file, data.Count))
+            if (ValidateProject(file, data.Count / 1024)) // project size in KB
             {
                 BackgroundWorker bgWorker = new BackgroundWorker();
                 bgWorker.DoWork += (x, e) => Device.WriteFile(data);

@@ -60,17 +60,21 @@
                 <StackPanel Height="Auto">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="66"/>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="60"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
                             <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <Label Content="{StaticResource ColorAdjustPage_Brightness}" Foreground="White" />
-                        <Slider Grid.Column="1" Margin="2,3" Name="boxBrightnessSlider" ValueChanged="boxBrightnessSlider_ValueChanged" Interval="50" LargeChange="10" Maximum="255" Minimum="-255" SmallChange="1" />
-                        <Label Grid.Row="1" Content="{StaticResource ColorAdjustPage_Contrast}" Foreground="White" />
-                        <Slider Grid.Row="1" Grid.Column="1" Margin="2,3" Name="boxContrastSlider" ValueChanged="boxContrastSlider_ValueChanged" Interval="1" Maximum="100" Minimum="-100" LargeChange="0.1" SmallChange="0.02" />
+                        <xctk:DoubleUpDown Name="boxBrightnessText" Grid.Column="1" HorizontalAlignment="Left" Width="50" Value="{Binding ElementName=boxBrightnessSlider, Path=Value}" />
+                        <Slider Grid.ColumnSpan="2" Grid.Row="1" Margin="2,3" Name="boxBrightnessSlider" ValueChanged="boxBrightnessSlider_ValueChanged" Interval="50" LargeChange="10" Maximum="255" Minimum="-255" SmallChange="1" />
+                        <Label Grid.Row="2" Content="{StaticResource ColorAdjustPage_Contrast}" Foreground="White" />
+                        <xctk:DoubleUpDown Name="boxContrastText" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Width="50" Value="{Binding ElementName=boxContrastSlider, Path=Value}" />
+                        <Slider Grid.Row="3" Grid.ColumnSpan="2" Margin="2,3" Name="boxContrastSlider" ValueChanged="boxContrastSlider_ValueChanged" Interval="1" Maximum="100" Minimum="-100" LargeChange="0.1" SmallChange="0.02" />
                     </Grid>
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -98,13 +102,13 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <Label Content="{StaticResource ColorAdjustPage_Hue}" Foreground="White" />
-                        <TextBox Name="boxColorHueText" Grid.Column="1" HorizontalAlignment="Left" Width="50" Text="{Binding ElementName=boxColorHue, Path=Value}" b:InputBindingsManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text" PreviewKeyDown="boxColorHueText_PreviewKeyDown" />
+                        <xctk:DoubleUpDown Name="boxColorHueText" Grid.Column="1" HorizontalAlignment="Left" Width="50" Value="{Binding ElementName=boxColorHue, Path=Value}" />
                         <Slider Grid.Row="1" Grid.ColumnSpan="2" Margin="2,3" Name="boxColorHue" ValueChanged="boxColorHue_ValueChanged" Minimum="-180" Maximum="180" SmallChange="1" LargeChange="10" IsSnapToTickEnabled="True" />
                         <Label Grid.Row="2" Content="{StaticResource ColorAdjustPage_Saturation}" Foreground="White" />
-                        <TextBox Name="boxColorSatText" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Width="50" Text="{Binding ElementName=boxColorSaturation, Path=Value}" b:InputBindingsManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text" PreviewKeyDown="boxColorSatText_PreviewKeyDown" />
-                        <Slider Grid.Row="3" Grid.ColumnSpan="2" Margin="2,3" Name="boxColorSaturation" ValueChanged="boxColorSaturation_ValueChanged" Minimum="-100" Maximum="100" LargeChange="10" SmallChange="11" Value="0" TickFrequency="1" IsSnapToTickEnabled="True" />
+                        <xctk:DoubleUpDown Name="boxColorSatText" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Width="50" Value="{Binding ElementName=boxColorSaturation, Path=Value}" />
+                        <Slider Grid.Row="3" Grid.ColumnSpan="2" Margin="2,3" Name="boxColorSaturation" ValueChanged="boxColorSaturation_ValueChanged" Minimum="-100" Maximum="100" LargeChange="10" SmallChange="1" Value="0" TickFrequency="1" IsSnapToTickEnabled="True" />
                         <Label Grid.Row="4" Content="{StaticResource ColorAdjustPage_Brightness}" Foreground="White" />
-                        <TextBox Name="boxColorValueText" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" Width="50" Text="{Binding ElementName=boxColorValue, Path=Value}" b:InputBindingsManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text" PreviewKeyDown="boxColorValueText_PreviewKeyDown" />
+                        <xctk:DoubleUpDown Name="boxColorValueText" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" Width="50" Value="{Binding ElementName=boxColorValue, Path=Value}" />
                         <Slider Grid.Row="5" Grid.ColumnSpan="2" Margin="2,3" Name="boxColorValue" ValueChanged="boxColorValue_ValueChanged" Minimum="-100" Maximum="100" LargeChange="10" SmallChange="1" Value="0" TickFrequency="1" IsSnapToTickEnabled="True" />
                     </Grid>
                     <Grid>

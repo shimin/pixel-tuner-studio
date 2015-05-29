@@ -100,4 +100,6 @@
     <system:String x:Key="ImportWindow_Next">weiter</system:String>
     <system:String x:Key="ImportWindow_Back">zurück</system:String>
     <system:String x:Key="ImportWindow_Header">Import</system:String>
+    <system:String x:Key="ImportWindow_EditHeader">Bearbeiten</system:String>
+    <system:String x:Key="ImportWindow_PreviewHeader">Vorschau</system:String>
 </ResourceDictionary>

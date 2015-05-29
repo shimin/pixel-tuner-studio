@@ -244,30 +244,6 @@ namespace PixelTuner.Import
             return boxColorHue.Value == 0 && boxColorSaturation.Value == 0 && boxColorValue.Value == 0;
         }
 
-        private void boxColorValueText_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Up)
-                boxColorValue.Value += 1;
-            else if (e.Key == Key.Down)
-                boxColorValue.Value -= 1;
-        }
-
-        private void boxColorSatText_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Up)
-                boxColorSaturation.Value += 1;
-            else if (e.Key == Key.Down)
-                boxColorSaturation.Value -= 1;
-        }
-
-        private void boxColorHueText_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Up)
-                boxColorHue.Value += 1;
-            else if (e.Key == Key.Down)
-                boxColorHue.Value -= 1;
-        }  
-
         #endregion
 
         #region Sharpening
