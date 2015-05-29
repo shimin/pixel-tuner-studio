@@ -17,6 +17,8 @@
   &lt;string&gt;...&lt;/string&gt;
   &lt;string&gt;53 00 0D&lt;/string&gt;
   &lt;string&gt;54&lt;/string&gt;
+  &lt;string&gt;62 00 0D&lt;/string&gt;
+  &lt;string&gt;4B 00 0D&lt;/string&gt;
 &lt;/ArrayOfString&gt;</Value>
     </Setting>
     <Setting Name="logToFile" Type="System.Boolean" Scope="User">
