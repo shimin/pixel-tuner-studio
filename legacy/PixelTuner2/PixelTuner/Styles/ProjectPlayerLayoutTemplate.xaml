@@ -80,7 +80,7 @@
                         <Slider Name="boxStretchingSliderActual" Width="260" Value="{Binding ModelStretching}" Margin="3" Minimum="2" Maximum="{Binding Source={x:Static properties:Settings.Default}, Path=MaximumStretching}"/>
                         <Label Foreground="White" Content="{Binding ModelStretching}"/>
                     </StackPanel>
-                    <CheckBox Name="boxAnimate" IsChecked="True" Margin="6,0" Content="{StaticResource Preview_Animate}" Foreground="White"/>
+                    <CheckBox Name="boxAnimate" IsChecked="{Binding IsAnimate}" Margin="6,0" Content="{StaticResource Preview_Animate}" Foreground="White"/>
                 </StackPanel>
             </Grid>
     </DataTemplate>

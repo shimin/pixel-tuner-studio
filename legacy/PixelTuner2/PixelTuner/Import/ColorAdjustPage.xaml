@@ -61,6 +61,7 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
                             <ColumnDefinition Width="60"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
@@ -70,11 +71,12 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <Label Content="{StaticResource ColorAdjustPage_Brightness}" Foreground="White" />
-                        <xctk:DoubleUpDown Name="boxBrightnessText" Grid.Column="1" HorizontalAlignment="Left" Width="50" Value="{Binding ElementName=boxBrightnessSlider, Path=Value}" />
-                        <Slider Grid.ColumnSpan="2" Grid.Row="1" Margin="2,3" Name="boxBrightnessSlider" ValueChanged="boxBrightnessSlider_ValueChanged" Interval="50" LargeChange="10" Maximum="255" Minimum="-255" SmallChange="1" />
+                        <CheckBox Name="boxMidtonesOnly" IsChecked="True" Grid.Column="1" ToolTip="Midtones only" />
+                        <xctk:DoubleUpDown Name="boxBrightnessText" Grid.Column="2" HorizontalAlignment="Left" Width="50" Value="{Binding ElementName=boxBrightnessSlider, Path=Value}" />
+                        <Slider Grid.ColumnSpan="3" Grid.Row="1" Margin="2,3" Name="boxBrightnessSlider" ValueChanged="boxBrightnessSlider_ValueChanged" Interval="50" LargeChange="10" Maximum="255" Minimum="-255" SmallChange="1" IsSnapToTickEnabled="True" />
                         <Label Grid.Row="2" Content="{StaticResource ColorAdjustPage_Contrast}" Foreground="White" />
-                        <xctk:DoubleUpDown Name="boxContrastText" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Width="50" Value="{Binding ElementName=boxContrastSlider, Path=Value}" />
-                        <Slider Grid.Row="3" Grid.ColumnSpan="2" Margin="2,3" Name="boxContrastSlider" ValueChanged="boxContrastSlider_ValueChanged" Interval="1" Maximum="100" Minimum="-100" LargeChange="0.1" SmallChange="0.02" />
+                        <xctk:DoubleUpDown Name="boxContrastText" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" Width="50" Value="{Binding ElementName=boxContrastSlider, Path=Value}" />
+                        <Slider Grid.Row="3" Grid.ColumnSpan="3" Margin="2,3" Name="boxContrastSlider" ValueChanged="boxContrastSlider_ValueChanged" Interval="1" Maximum="100" Minimum="-100" LargeChange="0.1" SmallChange="0.02" IsSnapToTickEnabled="True"/>
                     </Grid>
                     <Grid>
                         <Grid.ColumnDefinitions>

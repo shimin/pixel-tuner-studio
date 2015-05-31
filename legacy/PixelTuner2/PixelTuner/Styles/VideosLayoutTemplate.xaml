@@ -1,0 +1,44 @@
+﻿<ResourceDictionary 
+    x:Class="PixelTuner.Controls.ThumbListView.ThumbnailVideoListView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:ct="clr-namespace:Common.Controls;assembly=Common"
+                    xmlns:dd="clr-namespace:Common.DragDrop;assembly=Common"
+                    xmlns:tlw="clr-namespace:PixelTuner.Controls.ThumbListView">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/PixelTuner;component/Styles/SharedStyles.xaml" />
+        <ResourceDictionary Source="/Common;component/Styles/SearchTextBox.xaml"></ResourceDictionary>
+    </ResourceDictionary.MergedDictionaries>
+
+    <tlw:VideoView x:Key="VideoView"/>
+
+    <DataTemplate x:Key="VideosLayoutTemplate">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <DockPanel LastChildFill="True" Margin="1,0,0,-2" Background="#00ffffff">
+                <Button Style="{StaticResource WhiteLinkButton}" DockPanel.Dock="Left" Content="{StaticResource PictureEditor_Delete}" Click="Delete_Button_Click" Margin="4,2,4,0" IsEnabled="{Binding ElementName=boxThumbnails, Path=DataContext.IsSomethingSelected, Mode=OneWay}"></Button>
+                <Button Style="{StaticResource WhiteLinkButton}" DockPanel.Dock="Left" Content="{StaticResource PictureEditor_Update}" Click="Resfresh_Button_Click" Margin="4,2,4,0"></Button>
+                <ct:SearchTextBox Height="20" Margin="8,2,0,0" VerticalAlignment="Top" HorizontalAlignment="Stretch" Search="SearchHandler"></ct:SearchTextBox>
+            </DockPanel>
+            <ListView 
+                x:Name="boxThumbnails"
+                Grid.Row="1"
+                View="{DynamicResource VideoView}"
+                SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}"
+                SelectionMode="Extended" 
+                BorderThickness="0"
+                AllowDrop="True"
+                MouseDoubleClick="ListView_MouseDoubleClick"
+                KeyDown="boxThumbnails_KeyDown"
+                Drop="boxThumbnails_Drop"
+                dd:DragDropHelper.IsDragSource="True" 
+                ItemsSource="{Binding VideosCollection, Mode=OneWay}">
+            </ListView>
+        </Grid>
+    </DataTemplate>
+
+</ResourceDictionary>

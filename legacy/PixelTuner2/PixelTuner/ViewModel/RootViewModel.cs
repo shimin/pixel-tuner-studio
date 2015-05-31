@@ -320,6 +320,25 @@ namespace PixelTuner.ViewModel
 
         #endregion
 
+        #region Videos model
+
+        VideosViewModel _videosModel = null;
+        public VideosViewModel VideosModel
+        {
+            get
+            {
+                if (_videosModel == null)
+                {
+                    _videosModel = new VideosViewModel(
+                        (String)Application.Current.TryFindResource("Menu_Window_Videos"));
+                }
+
+                return _videosModel;
+            }
+        }
+
+        #endregion
+
         #endregion
 
         #region UpdateCommand

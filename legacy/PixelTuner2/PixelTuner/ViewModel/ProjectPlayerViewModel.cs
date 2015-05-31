@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows.Media.Imaging;
 using Common.Imaging;
 using System.Drawing;
+using PixelTuner.Properties;
 
 namespace PixelTuner.ViewModel
 {
@@ -59,6 +60,19 @@ namespace PixelTuner.ViewModel
                     RaisePropertyChanged("Dash");
                     RaisePropertyChanged("Dot");
                 }
+            }
+        }
+
+        public bool IsAnimate
+        {
+            get
+            {
+                return Settings.Default.IsAnimate;
+            }
+            set
+            {
+                if (Settings.Default.IsAnimate != value)
+                    Settings.Default.IsAnimate = value;
             }
         }
 

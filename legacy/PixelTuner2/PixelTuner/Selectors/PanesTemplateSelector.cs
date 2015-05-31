@@ -47,6 +47,12 @@ namespace PixelTuner.Selectors
             set;
         }
 
+        public DataTemplate VideosViewTemplate
+        {
+            get;
+            set;
+        }
+
         public DataTemplate FileStatsViewTemplate
         {
             get;
@@ -71,6 +77,9 @@ namespace PixelTuner.Selectors
 
             if (item is ImagesViewModel)
                 return ImagesViewTemplate;
+
+            if (item is VideosViewModel)
+                return VideosViewTemplate;
 
             return base.SelectTemplate(item, container);
         }

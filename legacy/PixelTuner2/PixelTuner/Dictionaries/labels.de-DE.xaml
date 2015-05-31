@@ -23,6 +23,7 @@
     <system:String x:Key="Menu_Window_Projects">Projekten</system:String>
     <system:String x:Key="Menu_Window_ProjectPlayer">Anschauen</system:String>
     <system:String x:Key="Menu_Window_Images">Frames</system:String>
+    <system:String x:Key="Menu_Window_Videos">Video</system:String>
     <system:String x:Key="Menu_Window">Ansicht</system:String>
     <system:String x:Key="Menu_File_New">Neues Projekt</system:String>
     <system:String x:Key="Menu_File_Open">Projekt öffnen</system:String>

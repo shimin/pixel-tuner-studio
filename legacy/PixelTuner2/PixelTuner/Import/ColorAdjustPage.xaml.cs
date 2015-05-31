@@ -124,7 +124,14 @@ namespace PixelTuner.Import
             {
                 ResetAll(false, ResetBrightnessControls);
                 _processor.SetImage(_currentBitmap);
-                _processor.ApplyBrightness(b);
+                if (boxMidtonesOnly.IsChecked == true)
+                {
+                    _processor.ApplyBrightness(b, 100);
+                }
+                else
+                {
+                    _processor.ApplyBrightness(b);
+                }
                 _processor.ApplyContrast(c);
             }
         }

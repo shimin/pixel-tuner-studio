@@ -214,5 +214,17 @@ namespace PixelTuner.Properties {
                 this["MaximumStretching"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsAnimate {
+            get {
+                return ((bool)(this["IsAnimate"]));
+            }
+            set {
+                this["IsAnimate"] = value;
+            }
+        }
     }
 }

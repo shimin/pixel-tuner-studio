@@ -25,6 +25,7 @@
                 <ResourceDictionary Source="/PixelTuner;component/Styles/FileLayoutTemplate.xaml" />
                 <ResourceDictionary Source="/PixelTuner;component/Styles/ProjectPlayerLayoutTemplate.xaml" />
                 <ResourceDictionary Source="/PixelTuner;component/Styles/ImagesLayoutTemplate.xaml" />
+                <ResourceDictionary Source="/PixelTuner;component/Styles/VideosLayoutTemplate.xaml" />
                 <ResourceDictionary Source="/PixelTuner;component/Styles/SharedStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
         
@@ -163,6 +164,7 @@
                 <MenuItem Header="{StaticResource Menu_Window_Projects}" IsCheckable="True" IsChecked="{Binding ProjectsModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                 <MenuItem Header="{StaticResource Menu_Window_Devices}" IsCheckable="True" IsChecked="{Binding DevicesModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                 <MenuItem Header="{StaticResource Menu_Window_Images}" IsCheckable="True" IsChecked="{Binding ImagesModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                <MenuItem Header="{StaticResource Menu_Window_Videos}" IsCheckable="True" IsChecked="{Binding VideosModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
             </MenuItem>
             <MenuItem Header="{StaticResource Menu_Settings}">
                 <MenuItem Header="{StaticResource Menu_Settings_Defaults}" Command="{Binding AdjustDefaultsCommand}" InputGestureText="Alt+P"/>
@@ -223,6 +225,9 @@
                     <sl:PanesTemplateSelector.ImagesViewTemplate>
                         <StaticResource ResourceKey="ImagesLayoutTemplate"></StaticResource>
                     </sl:PanesTemplateSelector.ImagesViewTemplate>
+                    <sl:PanesTemplateSelector.VideosViewTemplate>
+                        <StaticResource ResourceKey="VideosLayoutTemplate"></StaticResource>
+                    </sl:PanesTemplateSelector.VideosViewTemplate>
                 </sl:PanesTemplateSelector>
             </avalonDock:DockingManager.LayoutItemTemplateSelector>
             
@@ -262,8 +267,9 @@
                         <avalonDock:LayoutDocumentPaneGroup>
                             <avalonDock:LayoutDocumentPane />
                         </avalonDock:LayoutDocumentPaneGroup>
-                        <avalonDock:LayoutAnchorablePaneGroup DockWidth="100" DockHeight="120" DockMinHeight="80" DockMinWidth="80">
+                        <avalonDock:LayoutAnchorablePaneGroup DockHeight="120" DockMinHeight="80" DockMinWidth="80">
                             <avalonDock:LayoutAnchorablePane Name="ImagesTool" />
+                            <avalonDock:LayoutAnchorablePane Name="VideosTool" />
                         </avalonDock:LayoutAnchorablePaneGroup>
                     </avalonDock:LayoutPanel>
                 </avalonDock:LayoutPanel>
