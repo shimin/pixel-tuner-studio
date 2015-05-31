@@ -415,5 +415,23 @@ namespace PixelTuner.Import
         {
         }
 
+        private void imgageResult_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var img = sender as Image;
+            img.Opacity = 0;
+        }
+
+        private void imgageResult_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var img = sender as Image;
+            img.Opacity = 1;
+        }
+
+        private void imgageResult_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            var img = sender as Image;
+            img.Opacity = 1;
+        }
+
     }
 }
