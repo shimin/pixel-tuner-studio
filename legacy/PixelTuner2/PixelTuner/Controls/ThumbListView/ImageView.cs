@@ -251,6 +251,34 @@ namespace PixelTuner.Controls.ThumbListView
             }
         }
 
+        private void Crop_Button_Click(object sender, RoutedEventArgs e)
+        {
+            var thumbItem = RootViewModel.This.ImagesModel.SelectedItem;
+
+            if (thumbItem != null)
+            {
+                var image = System.Drawing.Image.FromFile(thumbItem.FullName);
+                if (image != null)
+                {
+                    var iw = new PixelTuner.Import.ImportWindow((System.Windows.Media.ImageSource)thumbItem.ImageSource);
+                    iw.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
+                    iw.Owner = Application.Current.MainWindow;
+                    iw.ShowDialog();
+                    var img = iw.ResultImage;
+                    var saveDialog = new System.Windows.Forms.SaveFileDialog();
+                    saveDialog.FileName = thumbItem.Name;
+                    saveDialog.InitialDirectory = System.Windows.Forms.Application.StartupPath + "\\Content";
+                    saveDialog.Filter = "Bmp files|*.bmp";
+                    if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        System.Drawing.Bitmap bmp = ImageHelper.BitmapImageToBitmap<BmpBitmapEncoder>(iw.ResultImage);
+                        Common.Imaging.ImageHelper.SaveBmp(saveDialog.FileName, bmp);
+                    }
+                    RootViewModel.This.ImagesModel.RefreshImagesCollection();
+                }
+            }
+        }
+
         #endregion
     }
     /// <summary>

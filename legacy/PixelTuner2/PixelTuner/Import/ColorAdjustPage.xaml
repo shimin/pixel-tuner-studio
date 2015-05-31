@@ -123,7 +123,7 @@
                     </Grid>
                 </StackPanel>
             </Expander>
-            <Expander Foreground="White" Header="{StaticResource ColorAdjustPage_Sharpen}">
+            <Expander Foreground="White" Header="{StaticResource ColorAdjustPage_Sharpen}" IsExpanded="True">
                 <StackPanel Height="Auto">
                     <CheckBox x:Name="boxApplySharpening" Margin="4,2,0,0" Content="{StaticResource ColorAdjustPage_ApplySharpen}" IsChecked="{Binding ApplySharpening}" Foreground="#ffffffff" Checked="boxApplySharpening_Checked" Unchecked="boxApplySharpening_Unchecked" />
                     <Grid IsEnabled="{Binding ElementName=boxApplySharpening, Path=IsChecked}">

@@ -76,6 +76,7 @@
     <system:String x:Key="PictureEditor_WindowTitle">Picture editor</system:String>
     <system:String x:Key="PictureEditor_Create">Create</system:String>
     <system:String x:Key="PictureEditor_Change">Edit</system:String>
+    <system:String x:Key="PictureEditor_CropAdjust">Crop/Adjust</system:String>
     <system:String x:Key="PictureEditor_Delete">Delete</system:String>
     <system:String x:Key="PictureEditor_Update">Refresh</system:String>
     <system:String x:Key="PictureEditor_Search">Search</system:String>

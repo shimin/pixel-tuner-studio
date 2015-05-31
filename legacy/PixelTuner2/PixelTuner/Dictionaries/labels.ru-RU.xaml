@@ -76,6 +76,7 @@
     <system:String x:Key="PictureEditor_WindowTitle">Редактор картинок</system:String>
     <system:String x:Key="PictureEditor_Create">Создать</system:String>
     <system:String x:Key="PictureEditor_Change">Изменить</system:String>
+    <system:String x:Key="PictureEditor_CropAdjust">Обрезать/Исправить</system:String>
     <system:String x:Key="PictureEditor_Delete">Удалить</system:String>
     <system:String x:Key="PictureEditor_Update">Обновить</system:String>
     <system:String x:Key="PictureEditor_Search">Поиск</system:String>
