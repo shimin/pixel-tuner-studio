@@ -299,39 +299,77 @@ namespace Common.Imaging
                     pixelColor = bitmapImage.GetPixel(x, y);
                     A = pixelColor.A;
                     R =  pixelColor.R + brightness;
-                    if (R > 255)
-                    {
-                        R = 255;
-                    }
-                    else if (R < 0)
-                    {
-                        R = 0;
-                    }
+                    R = ValidateColorPart(R);
 
                     G = pixelColor.G + brightness;
-                    if (G > 255)
-                    {
-                        G = 255;
-                    }
-                    else if (G < 0)
-                    {
-                        G = 0;
-                    }
+                    G = ValidateColorPart(G);
 
                     B = pixelColor.B + brightness;
-                    if (B > 255)
-                    {
-                        B = 255;
-                    }
-                    else if (B < 0)
-                    {
-                        B = 0;
-                    }
+                    B = ValidateColorPart(B);
 
                     bitmapImage.SetPixel(x, y, Color.FromArgb(A, R, G, B));
                 }
             }
+        }
 
+        private static int CorrectColorPart(int brightness, int threshold, int cp)
+        {
+            int colorPart;
+            if (cp < Math.Abs(threshold * 0.25))
+            {
+                colorPart = cp + (int)(brightness * 0.1);
+            }
+            else if (cp < Math.Abs(threshold * 0.5))
+            {
+                colorPart = cp + (int)(brightness * 0.3);
+            }
+            else if (cp < Math.Abs(threshold * 0.75))
+            {
+                colorPart = cp + (int)(brightness * 0.6);
+            }
+            else if (cp < Math.Abs(threshold))
+            {
+                colorPart = cp + (int)(brightness * 0.8);
+            }
+            else colorPart = cp + brightness;
+            colorPart = ValidateColorPart(colorPart);
+            return colorPart;
+        }
+
+        private static int ValidateColorPart(int p)
+        {
+            if (p > 255)
+            {
+                p = 255;
+            }
+            else if (p < 0)
+            {
+                p = 0;
+            }
+            return p;
+        }
+
+        /// <summary>
+        /// Applies brightness
+        /// </summary>
+        /// <param name="brightness">-255..255</param>
+        public void ApplyBrightness(int brightness, int threshold)
+        {
+            int A, R, G, B;
+            Color pixelColor;
+
+            for (int y = 0; y < bitmapImage.Height; y++)
+            {
+                for (int x = 0; x < bitmapImage.Width; x++)
+                {
+                    pixelColor = bitmapImage.GetPixel(x, y);
+                    A = pixelColor.A;
+                    R = CorrectColorPart(brightness, threshold, pixelColor.R);
+                    G = CorrectColorPart(brightness, threshold, pixelColor.G);
+                    B = CorrectColorPart(brightness, threshold, pixelColor.B);
+                    bitmapImage.SetPixel(x, y, Color.FromArgb(A, R, G, B));
+                }
+            }
         }
 
         /// <summary>
