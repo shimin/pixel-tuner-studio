@@ -41,6 +41,68 @@
                         <xctk:DoubleUpDown x:Name="boxHeight" Value="{Binding ResizeHeightValue}" Increment="5" Minimum="25" Maximum="200" Width="64"/>
                         <TextBlock Text="px" Margin="5,1,5,0"/>
                     </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,4">
+                        <Button Name="boxFlipVertical" Click="boxFlipVertical_Click">
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <Border Name="FlipVBtnImageBorder" Width="22" Height="22" Opacity="0.75" Margin="2" ToolTip="Flip vertically">
+                                        <Image x:Name="FlipVBtnImage" Source="/PixelTuner;component/Images/flipVertically.png"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="true">
+                                            <Setter Property="Source" Value="/PixelTuner;component/Images/flipVertically.png" TargetName="FlipVBtnImage"/>
+                                            <Setter Property="Opacity" Value="1" TargetName="FlipVBtnImageBorder"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        <Button Name="boxFlipHorizontal" Click="boxFlipHorizontal_Click">
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <Border Name="FlipHBtnImageBorder" Opacity="0.75" Width="22" Height="22" Margin="2" ToolTip="Flip horizontally">
+                                        <Image x:Name="FlipHBtnImage" Source="/PixelTuner;component/Images/flipHorizontally.png"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="true">
+                                            <Setter Property="Source" Value="/PixelTuner;component/Images/flipHorizontally.png" TargetName="FlipHBtnImage"/>
+                                            <Setter Property="Opacity" Value="1" TargetName="FlipHBtnImageBorder"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        <Button Name="boxRotateLeft" Click="boxRotateLeft_Click">
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <Border Name="rotateLeftImageBorder" Opacity="0.75" Width="20" Height="20" Margin="2" ToolTip="Rotate 90&#176; left">
+                                        <Image x:Name="rotateLeftImage" Source="/PixelTuner;component/Images/RotateLeft.png"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="true">
+                                            <Setter Property="Source" Value="/PixelTuner;component/Images/RotateLeft.png" TargetName="rotateLeftImage"/>
+                                            <Setter Property="Opacity" Value="1" TargetName="rotateLeftImageBorder"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        <Button Name="boxRotateRight" Click="boxRotateRight_Click">
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <Border Name="rotateRightImageBorder" Opacity="0.75" Width="20" Height="20" Margin="2" ToolTip="Rotate 90&#176; right">
+                                        <Image x:Name="rotateRightImage" Source="/PixelTuner;component/Images/rotateRight.png"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="true">
+                                            <Setter Property="Source" Value="/PixelTuner;component/Images/rotateRight.png" TargetName="rotateRightImage"/>
+                                            <Setter Property="Opacity" Value="1" TargetName="rotateRightImageBorder"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
                 </StackPanel>
             </GroupBox>
         </StackPanel>

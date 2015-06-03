@@ -227,5 +227,53 @@ namespace PixelTuner.Import
         } 
 
         #endregion
+
+        private void boxFlipVertical_Click(object sender, RoutedEventArgs e)
+        {
+            ImageToCrop = ImageHelper.Flip((BitmapSource)ImageToCrop, true);
+
+            var bw = new BackgroundWorker();
+            bw.DoWork += backgroundWorker1_DoWork;
+            bw.RunWorkerAsync();
+        }
+
+        private void boxFlipHorizontal_Click(object sender, RoutedEventArgs e)
+        {
+            ImageToCrop = ImageHelper.Flip((BitmapSource)ImageToCrop, false);
+
+            var bw = new BackgroundWorker();
+            bw.DoWork += backgroundWorker1_DoWork;
+            bw.RunWorkerAsync();
+        }
+
+        private void boxRotateLeft_Click(object sender, RoutedEventArgs e)
+        {
+            ImageToCrop = ImageHelper.Rotate((BitmapImage)ImageToCrop, -90);
+            AddCropToElement(boxImage);
+
+            var bw = new BackgroundWorker();
+            bw.DoWork += backgroundWorker1_DoWork;
+            bw.RunWorkerAsync();
+        }
+
+        private void boxRotateRight_Click(object sender, RoutedEventArgs e)
+        {
+            ImageToCrop = ImageHelper.Rotate((BitmapImage)ImageToCrop, 90);
+            AddCropToElement(boxImage);
+
+            var bw = new BackgroundWorker();
+            bw.DoWork += backgroundWorker1_DoWork;
+            bw.RunWorkerAsync();
+        }
+
+        private void backgroundWorker1_DoWork(object sender,
+            DoWorkEventArgs e)
+        {
+            System.Threading.Thread.Sleep(100);
+            boxImage.Dispatcher.Invoke(new Action(() => {
+                    RefreshCropImage();
+                })
+            );
+        }
     }
 }

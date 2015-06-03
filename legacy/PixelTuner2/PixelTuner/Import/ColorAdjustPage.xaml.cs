@@ -419,6 +419,7 @@ namespace PixelTuner.Import
         {
             var img = sender as Image;
             img.Opacity = 0;
+            boxZoomSlider.Focus();
         }
 
         private void imgageResult_MouseLeave(object sender, MouseEventArgs e)
@@ -431,6 +432,7 @@ namespace PixelTuner.Import
         {
             var img = sender as Image;
             img.Opacity = 1;
+            boxZoomSlider.Focus();
         }
 
     }
