@@ -231,6 +231,24 @@ namespace Common.Imaging
 
         #endregion
 
+        public static BitmapImage GetBitmapImage<T>(BitmapSource bitmapSource) where T : BitmapEncoder, new()
+        {
+            MemoryStream memoryStream = new MemoryStream();
+            BitmapImage bImg = new BitmapImage();
+
+            var encoder = new T();
+            encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+            encoder.Save(memoryStream);
+
+            bImg.BeginInit();
+            bImg.StreamSource = new MemoryStream(memoryStream.ToArray());
+            bImg.EndInit();
+
+            memoryStream.Close();
+
+            return bImg;
+        }
+
         #region System.Drawing
 
         #region Save/Load
@@ -464,6 +482,39 @@ namespace Common.Imaging
 
         #endregion
 
+        #region BitmapImage
 
+        public static BitmapImage Rotate(BitmapSource source, int degree)
+        {
+            // Create the TransformedBitmap
+            TransformedBitmap transformBmp = new TransformedBitmap();
+
+
+            // Properties must be set between BeginInit and EndInit
+            transformBmp.BeginInit();
+            transformBmp.Source = source;
+            RotateTransform transform = new RotateTransform(degree);
+            transformBmp.Transform = transform;
+            transformBmp.EndInit();
+
+            return GetBitmapImage<BmpBitmapEncoder>(transformBmp);
+        }
+
+        public static BitmapImage Flip(BitmapSource source, bool vertically)
+        {
+            // Create the TransformedBitmap
+            TransformedBitmap transformBmp = new TransformedBitmap();
+
+            // Properties must be set between BeginInit and EndInit
+            transformBmp.BeginInit();
+            transformBmp.Source = source;
+            ScaleTransform transform = new ScaleTransform(vertically ? 1 : -1, vertically ? -1 : 1);
+            transformBmp.Transform = transform;
+            transformBmp.EndInit();
+
+            return GetBitmapImage<BmpBitmapEncoder>(transformBmp);
+        }
+
+        #endregion
     }
 }
