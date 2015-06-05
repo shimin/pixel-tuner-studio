@@ -49,9 +49,11 @@ namespace PixelTuner.ViewModel
                     
                     if (value != null)
                     {
+                        _displayModel.PropertyChanged -= _displayModel_PropertyChanged;
                         _displayModel.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(_displayModel_PropertyChanged);
                         Image = (BitmapImage)value.ImageSource;
                         ModelStretching = value.Stretching;
+                        Opacity = (double)value.Brightness / 100.0;
                     }
                     else
                     {
@@ -80,6 +82,8 @@ namespace PixelTuner.ViewModel
         {
             if (e.PropertyName == "Stretching")
                 ModelStretching = _displayModel.Stretching;
+            if (e.PropertyName == "Brightness")
+                Opacity = (double)_displayModel.Brightness / 100.0;
         }
 
         double _tilingX;
@@ -131,6 +135,13 @@ namespace PixelTuner.ViewModel
                 RaisePropertyChanged("Stretching");
                 TilingX = ((double)400 / (double)_image.Width) * Stretching;
             }
+        }
+
+        double _opacity = 1.0;
+        public double Opacity
+        {
+            get { return _opacity; }
+            set { _opacity = value; RaisePropertyChanged("Opacity"); }
         }
 
         public int ModelStretching

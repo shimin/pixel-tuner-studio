@@ -195,7 +195,7 @@ namespace PixelTuner.ViewModel
         public byte Brightness
         {
             get { return _brightness; }
-            set { _brightness = value; }
+            set { _brightness = value; RaisePropertyChanged("Brightness"); }
         }
 
         private bool _laserOn;

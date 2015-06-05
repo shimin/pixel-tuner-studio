@@ -37,7 +37,7 @@
                     <Border.Background>
                         <VisualBrush>
                             <VisualBrush.Visual>
-                                <Image Name="PixelImage" Source="{Binding Image}" Stretch="Fill"/>
+                                <Image Name="PixelImage" Opacity="{Binding Opacity}" Source="{Binding Image}" Stretch="Fill"/>
                             </VisualBrush.Visual>
                         </VisualBrush>
                     </Border.Background>
