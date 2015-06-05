@@ -118,6 +118,7 @@
     </ApplicationDefinition>
     <Compile Include="Audio\NAudioEngine.cs" />
     <Compile Include="Audio\SampleAggregator.cs" />
+    <Compile Include="Controls\ThumbListView\VideoView.cs" />
     <Compile Include="Converters\ActiveDocumentConverter.cs" />
     <Compile Include="Converters\ActiveTimeLineConverter.cs" />
     <Compile Include="Controls\ThumbListView\ImageView.cs" />
@@ -199,6 +200,7 @@
     <Compile Include="ViewModel\TimeLineViewModel.cs" />
     <Compile Include="ViewModel\ToolViewModel.cs" />
     <Compile Include="ViewModel\RootViewModel.cs" />
+    <Compile Include="ViewModel\VideosViewModel.cs" />
     <Page Include="Import\PreviewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2198,6 +2200,10 @@
     <Content Include="Content\80_batterfly_009.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\rotateLeft.png" />
+    <Resource Include="Images\rotateRight.png" />
+    <Resource Include="Images\flipHorizontally.png" />
+    <Resource Include="Images\flipVertically.png" />
     <Resource Include="Images\cutTheRest.png" />
     <Resource Include="Images\moveTheRest.png" />
     <Resource Include="Images\stop.png" />
@@ -2230,6 +2236,10 @@
     <Resource Include="Images\timeLength.png" />
     <Resource Include="Images\timeStart.png" />
     <Page Include="Styles\TimeLineLayoutTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\VideosLayoutTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
