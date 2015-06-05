@@ -48,6 +48,13 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AttachedCommandBehavior\BehaviorBinding.cs" />
+    <Compile Include="AttachedCommandBehavior\CommandBehavior.cs" />
+    <Compile Include="AttachedCommandBehavior\CommandBehaviorBinding.cs" />
+    <Compile Include="AttachedCommandBehavior\CommandBehaviorCollection.cs" />
+    <Compile Include="AttachedCommandBehavior\EventHandlerGenerator.cs" />
+    <Compile Include="AttachedCommandBehavior\ExecutionStrategy.cs" />
+    <Compile Include="AttachedCommandBehavior\SimpleCommand.cs" />
     <Compile Include="Collections\DelegatedList.cs" />
     <Compile Include="Collections\SafeObservable.cs" />
     <Compile Include="Collections\StreamHelper.cs" />
