@@ -29,12 +29,14 @@ namespace PixelTuner.Drawing
         int position = 12;
         Image _tempImage = null;
         Image _result = null;
+
+        Dictionary<int, float> _pointsToEMSize = new Dictionary<int, float>();
+
         public Image TextImage
         {
             get { return _result; }
         }
 
-        Dictionary<int, float> _pointsToEMSize = new Dictionary<int, float>();
         void InitDictionary()
         {
             _pointsToEMSize.Clear();
