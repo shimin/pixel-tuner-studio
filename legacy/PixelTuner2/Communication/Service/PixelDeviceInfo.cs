@@ -16,9 +16,10 @@ namespace Communication.Service
         {
             get
             {
-                if (_maxMemory > 3800000) _maxMemory = 3800000;
-                if (_platformVersion == 2) return _maxMemory / 1024;
-                else return _maxMemory;
+                //if (_maxMemory > 3800000) _maxMemory = 3800000;
+                //if (_platformVersion == 2) return _maxMemory / 1024;
+                //else return _maxMemory;
+                return _maxMemory;
             }
             set { _maxMemory = value; }
         }
@@ -35,7 +36,7 @@ namespace Communication.Service
 
         int _firmwareVersion = 0;
         /// <summary>
-        /// Версия прошивки
+        /// Версия прошивки (младшая цифра версии x.x.X)
         /// </summary>
         public int FirmwareVersion
         {
@@ -45,7 +46,7 @@ namespace Communication.Service
 
         int _bootVersion = 0;
         /// <summary>
-        /// Версия загрузчика
+        /// Версия загрузчика (средняя цифра версии x.X.x)
         /// </summary>
         public int BootVersion
         {
@@ -55,7 +56,7 @@ namespace Communication.Service
 
         int _platformVersion = 0;
         /// <summary>
-        /// Версия платформы
+        /// Версия платформы (старшая цифра версии X.x.x)
         /// </summary>
         public int PlatformVersion
         {
