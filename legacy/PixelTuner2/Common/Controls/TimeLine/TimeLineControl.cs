@@ -254,7 +254,16 @@ namespace Common.Controls
 
         // Using a DependencyProperty as the backing store for MinWidth.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty MinWidthProperty =
-            DependencyProperty.Register("MinWidth", typeof(Double), typeof(TimeLineControl), new UIPropertyMetadata(0.0));
+            DependencyProperty.Register("MinWidth", typeof(Double), typeof(TimeLineControl), new UIPropertyMetadata(0.0, new PropertyChangedCallback(OnMinWidthChanged)));
+
+        private static void OnMinWidthChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            TimeLineControl tc = d as TimeLineControl;
+            if (tc != null)
+            {
+                tc.ReDrawChildren();
+            }
+        }
         #endregion
 
         #region minheight
@@ -470,6 +479,27 @@ namespace Common.Controls
                 tc._itemsInitialized = true;
 
                 tc.DrawBackGround();
+            }
+        }
+        #endregion
+
+        #region MetaData
+        public ITimeLineMeta MetaData
+        {
+            get { return (ITimeLineMeta)GetValue(MetaDataProperty); }
+            set { SetValue(MetaDataProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Items.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty MetaDataProperty =
+            DependencyProperty.Register("MetaData", typeof(ITimeLineMeta), typeof(TimeLineControl),
+            new UIPropertyMetadata(null,
+                new PropertyChangedCallback(OnMetaChanged)));
+        private static void OnMetaChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            TimeLineControl tc = d as TimeLineControl;
+            if (tc != null)
+            {
             }
         }
         #endregion
@@ -1456,6 +1486,16 @@ namespace Common.Controls
                     Children.Remove(_tmpDraggAdornerControl);
                     _tmpDraggAdornerControl = null;
 
+                }
+                else
+                {
+                    ITimeLineMeta meta = e.Data.GetData("Common.DragDropHelper") as ITimeLineMeta;
+                    if (meta != null)
+                    {
+                        MetaData = (ITimeLineMeta)meta.Clone();
+                        
+                        e.Handled = true;
+                    }
                 }
             }
             var dropX = e.GetPosition(this).X;

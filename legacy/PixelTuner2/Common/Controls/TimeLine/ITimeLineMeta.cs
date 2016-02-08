@@ -7,5 +7,6 @@ namespace Common.Controls
 {
     public interface ITimeLineMeta
     {
+        object Clone();
     }
 }
