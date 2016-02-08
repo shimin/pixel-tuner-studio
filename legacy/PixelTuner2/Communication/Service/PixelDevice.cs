@@ -19,24 +19,24 @@ namespace Communication.Service
     public class PixelDevice : SerialDeviceBase
     {
         private string _fullName;
-        private object _longOperation;
+        public string FullName
+        {
+            get
+            {
+                return this._fullName;
+            }
+            set
+            {
+                this._fullName = value;
+            }
+        }
 
         public PixelDevice(SerialPort port)
             : base(port)
         {
-            this._longOperation = new object();
             this.WriteReadDelay = 0;
-            this._fullName = "dkjashfkjasdh";
-            this.Name = PixelDeviceSpecs.TryGetName("");
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is PixelDevice)
-            {
-                return ((obj as PixelDevice).PortName == base.PortName);
-            }
-            return base.Equals(obj);
+            this._fullName = "";
+            this.Name = SupportedDevices.TryGetName("");
         }
 
         public static int EstimateRequestsCount(int transmissionDataSize)
@@ -44,66 +44,7 @@ namespace Communication.Service
             return ((transmissionDataSize / UsualPacketSize) + (((transmissionDataSize % UsualPacketSize) == 0) ? 2 : 3));
         }
 
-        private List<byte> GetCommandBytes(PixelDeviceCommand command, IList<byte> args = null)
-        {
-            List<byte> list = new List<byte> {
-                (byte) command
-            };
-            switch (command)
-            {
-                case PixelDeviceCommand.WRITE_BLOCK:
-                case PixelDeviceCommand.WRITE_SETTINGS:
-                    if (args == null)
-                    {
-                        throw new ArgumentNullException("Dispatching bytes array wasn't specified", "args");
-                    }
-                    if (args.Count > UsualPacketSize)
-                    {
-                        throw new ArgumentOutOfRangeException(string.Format("Packet length is over maximum {0}", UsualPacketSize), "args");
-                    }
-                    list.Add((byte)args.Count);
-                    list.AddRange(args);
-                    break;
-
-                case PixelDeviceCommand.END_WRITE_FLASH:
-                    list.Add(0);
-                    break;
-
-                case PixelDeviceCommand.WRITE_IFLASH_MODE:
-                    list.Add(0);
-                    break;
-
-                case PixelDeviceCommand.INFO:
-                    list.Add(0);
-                    break;
-
-                case PixelDeviceCommand.SWITCH_TO_BOOT:
-                    list.Add(0);
-                    break;
-
-                case PixelDeviceCommand.END_WRITE_DATA:
-                    list.Add(0);
-                    break;
-
-                case PixelDeviceCommand.WRITE_IDATA_MODE:
-                    list.Add((byte)args.Count);
-                    list.AddRange(args);
-                    break;
-
-                case PixelDeviceCommand.WHO_IS_IT:
-                    list.Add(0);
-                    break;
-            }
-            list.Add(13);
-            return list;
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
-        public PixelDeviceInfo GetInfo()
+        public override SerialDeviceInfo GetInfo()
         {
             lock (this._longOperation)
             {
@@ -138,22 +79,43 @@ namespace Communication.Service
             }
         }
 
-        public override string GetName(out bool bootMode)
+        public virtual void WriteSettings(List<DeviceFeature> settings)
         {
             lock (this._longOperation)
             {
-                return base.GetName(out bootMode);
+                this.Busy = true;
+                base.SetStatus(ConnectionStatus.Uploading);
+                try
+                {
+                    List<byte> data = new List<byte>();
+                    foreach (DeviceFeature feature in settings)
+                    {
+                        data.AddRange(feature.GetBytes());
+                        if (data.Count >= 60)
+                        {
+                            base.DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_SETTINGS, data));
+                            data.Clear();
+                        }
+                    }
+                    if (data.Count > 0)
+                    {
+                        base.DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_SETTINGS, data));
+                        data.Clear();
+                    }
+                }
+                catch (Exception exception)
+                {
+                    if (base.Logger != null)
+                    {
+                        base.Logger.WriteException(exception);
+                    }
+                }
+                finally
+                {
+                    this.Busy = false;
+                    base.SetStatus(ConnectionStatus.Online);
+                }
             }
-        }
-
-        public override void Initialize(object parameter)
-        {
-            bool flag;
-            base.Initialize(parameter);
-            this.Name = this.GetName(out flag);
-            this.BootMode = flag;
-            this.Info = this.GetInfo();
-            base.SetStatus(ConnectionStatus.Online);
         }
 
         public void SetColor(Color c, byte ledIndex)
@@ -203,27 +165,20 @@ namespace Communication.Service
             return BitConverter.GetBytes(scaledValue);
         }
 
-        public void SwitchToBoot()
+        #region Enumeration
+
+        public override bool Equals(object obj)
         {
-            lock (this._longOperation)
+            if (obj is PixelDevice)
             {
-                if (base.Port != null)
-                {
-                    try
-                    {
-                        base.Port.ReadTimeout = 500;
-                        base.DoSession(new PixelDevicePacket(PixelDeviceCommand.SWITCH_TO_BOOT, null));
-                        base.Port.ReadTimeout = 0x7530;
-                    }
-                    catch (Exception exception)
-                    {
-                        if (base.Logger != null)
-                        {
-                            base.Logger.WriteException(exception);
-                        }
-                    }
-                }
+                return ((obj as PixelDevice).PortName == base.PortName);
             }
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
 
         public override string ToString()
@@ -231,163 +186,6 @@ namespace Communication.Service
             return this.Name;
         }
 
-        public void WriteFile(List<byte> binaryData)
-        {
-            lock (this._longOperation)
-            {
-                this.Busy = true;
-                base.SetStatus(ConnectionStatus.Uploading);
-                bool noExceptions = false;
-                try
-                {
-                    List<byte> data = new List<byte>();
-                    var answer = base.DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_IDATA_MODE, BitConverter.GetBytes(binaryData.Count)));
-                    if (answer.Data[0] == 0x00) {
-                        base.SetStatus(ConnectionStatus.UploadError);
-                        this.Busy = false;
-                        throw new Exception("Upload error");
-                    }
-                    foreach (byte num in binaryData)
-                    {
-                        data.Add(num);
-                        if (data.Count == UsualPacketSize)
-                        {
-                            base.DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_BLOCK, data));
-                            data.Clear();
-                        }
-                    }
-                    if (data.Count > 0)
-                    {
-                        base.DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_BLOCK, data));
-                        data.Clear();
-                    }
-                    base.DoSession(new PixelDevicePacket(PixelDeviceCommand.END_WRITE_DATA, null));
-                    noExceptions = true;
-                }
-                catch (Exception exception)
-                {
-                    if (base.Logger != null)
-                    {
-                        base.Logger.WriteException(exception);
-                        base.SetStatus(ConnectionStatus.UploadError);
-                    }
-                }
-                finally
-                {
-                     this.Busy = false;
-                    if (noExceptions)
-                        base.SetStatus(ConnectionStatus.Online);
-                }
-            }
-        }
-
-        public void WriteFirmware(List<byte> binaryData)
-        {
-            lock (this._longOperation)
-            {
-                this.Busy = true;
-                base.SetStatus(ConnectionStatus.Uploading);
-                try
-                {
-                    List<byte> data = new List<byte>();
-                    base.DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_IFLASH_MODE, null));
-                    foreach (byte num in binaryData)
-                    {
-                        data.Add(num);
-                        if (data.Count == UsualPacketSize)
-                        {
-                            base.DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_BLOCK, data));
-                            data.Clear();
-                        }
-                    }
-                    if (data.Count > 0)
-                    {
-                        base.DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_BLOCK, data));
-                        data.Clear();
-                    }
-                    List<byte> rawData = new PixelDevicePacket(PixelDeviceCommand.END_WRITE_FLASH, null).RawData;
-                    base._port.Write(rawData.ToArray(), 0, rawData.Count);
-                }
-                catch (Exception exception)
-                {
-                    if (base.Logger != null)
-                    {
-                        base.Logger.WriteException(exception);
-                    }
-                }
-                finally
-                {
-                    this.Busy = false;
-                    base.SetStatus(ConnectionStatus.Online);
-                }
-            }
-        }
-
-        public void WriteSettings(List<DeviceFeature> settings)
-        {
-            lock (this._longOperation)
-            {
-                this.Busy = true;
-                base.SetStatus(ConnectionStatus.Uploading);
-                try
-                {
-                    List<byte> data = new List<byte>();
-                    foreach (DeviceFeature feature in settings)
-                    {
-                        data.AddRange(feature.GetBytes());
-                        if (data.Count >= 60)
-                        {
-                            base.DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_SETTINGS, data));
-                            data.Clear();
-                        }
-                    }
-                    if (data.Count > 0)
-                    {
-                        base.DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_SETTINGS, data));
-                        data.Clear();
-                    }
-                }
-                catch (Exception exception)
-                {
-                    if (base.Logger != null)
-                    {
-                        base.Logger.WriteException(exception);
-                    }
-                }
-                finally
-                {
-                    this.Busy = false;
-                    base.SetStatus(ConnectionStatus.Online);
-                }
-            }
-        }
-
-        public bool BootMode { get; protected set; }
-
-        public bool Busy { get; protected set; }
-
-        public string FullName
-        {
-            get
-            {
-                return this._fullName;
-            }
-            set
-            {
-                this._fullName = value;
-            }
-        }
-
-        public virtual PixelDeviceInfo Info { get; private set; }
-
-        public string Name { get; set; }
-
-        public static int UsualPacketSize
-        {
-            get
-            {
-                return 60;
-            }
-        }
+        #endregion
     }
 }

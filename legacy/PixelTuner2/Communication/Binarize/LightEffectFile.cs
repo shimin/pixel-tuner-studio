@@ -172,9 +172,9 @@ namespace Communication.Binarize
             List<byte> color = new List<byte>();
             
             double t = (time - StartTime).TotalMilliseconds;
-            double xR = (dR / 2) * Math.Sin(2 * Math.PI * t / T1 ) + (dR / 2) + startColor.R;
-            double xG = (dG / 2) * Math.Sin(2 * Math.PI * t / T1 ) + (dG / 2) + startColor.G;
-            double xB = (dB / 2) * Math.Sin(2 * Math.PI * t / T1 ) + (dB / 2) + startColor.B;
+            double xR = (dR / 2) * Math.Sin(2 * Math.PI * t / T1 - Math.PI / 2) + (dR / 2) + startColor.R;
+            double xG = (dG / 2) * Math.Sin(2 * Math.PI * t / T1 - Math.PI / 2) + (dG / 2) + startColor.G;
+            double xB = (dB / 2) * Math.Sin(2 * Math.PI * t / T1 - Math.PI / 2) + (dB / 2) + startColor.B;
 
             color.Add((byte)Math.Abs(xR));
             color.Add((byte)Math.Abs(xG));

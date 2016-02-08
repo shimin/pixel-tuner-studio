@@ -47,5 +47,67 @@ namespace Communication.Service
             RawData = rawData;
             Data = rawData.GetRange(2, PacketLength);
         }
+
+        public PixelDevicePacket(byte[] rawData)
+        {
+            if (rawData.Length < 3) throw new ArgumentException("Binary data size should be grather then 3.");
+            RawData = new List<byte>(rawData);
+            Data = RawData.GetRange(2, PacketLength);
+        }
+
+        private List<byte> GetCommandBytes(PixelDeviceCommand command, IList<byte> args = null)
+        {
+            List<byte> list = new List<byte> {
+                (byte) command
+            };
+            switch (command)
+            {
+                case PixelDeviceCommand.WRITE_BLOCK:
+                case PixelDeviceCommand.WRITE_SETTINGS:
+                    if (args == null)
+                    {
+                        throw new ArgumentNullException("Dispatching bytes array wasn't specified", "args");
+                    }
+                    if (args.Count > SerialDeviceBase.UsualPacketSize)
+                    {
+                        throw new ArgumentOutOfRangeException(string.Format("Packet length is over maximum {0}", SerialDeviceBase.UsualPacketSize), "args");
+                    }
+                    list.Add((byte)args.Count);
+                    list.AddRange(args);
+                    break;
+
+                case PixelDeviceCommand.END_WRITE_FLASH:
+                    list.Add(0);
+                    break;
+
+                case PixelDeviceCommand.WRITE_IFLASH_MODE:
+                    list.Add(0);
+                    break;
+
+                case PixelDeviceCommand.INFO:
+                    list.Add(0);
+                    break;
+
+                case PixelDeviceCommand.SWITCH_TO_BOOT:
+                    list.Add(0);
+                    break;
+
+                case PixelDeviceCommand.END_WRITE_DATA:
+                    list.Add(0);
+                    break;
+
+                case PixelDeviceCommand.WRITE_IDATA_MODE:
+                    list.Add((byte)args.Count);
+                    list.AddRange(args);
+                    break;
+
+                case PixelDeviceCommand.WHO_IS_IT:
+                    list.Add(0);
+                    break;
+            }
+            list.Add(13);
+            return list;
+        }
+
     }
 }

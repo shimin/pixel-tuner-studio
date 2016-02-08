@@ -16,9 +16,9 @@ namespace Communication.Service
         static bool _keepSeeking = false;
         static Dictionary<string, SerialPort> PortList = new Dictionary<string, SerialPort>();
         static List<BackgroundWorker> CheckPortWorkers = new List<BackgroundWorker>();
-        
-        private static List<PixelDevice> _devices = new List<PixelDevice>();
-        public static List<PixelDevice> Devices
+
+        private static List<SerialDeviceBase> _devices = new List<SerialDeviceBase>();
+        public static List<SerialDeviceBase> Devices
         {
             get
             {
@@ -115,8 +115,8 @@ namespace Communication.Service
                     {
                         lock (PortList) { if (PortList.ContainsKey(portName)) PortList.Remove(portName); }
                         if (_devices.Count == 0) break;
-                        PixelDevice aDevice = _devices.First(dev => dev.Port == null || dev.Port.PortName == portName);
-                        List<PixelDevice> devsWithNullPorts = new List<PixelDevice>();
+                        SerialDeviceBase aDevice = _devices.First(dev => dev.Port == null || dev.Port.PortName == portName);
+                        List<SerialDeviceBase> devsWithNullPorts = new List<SerialDeviceBase>();
                         // и поудалять все устройства у которых порт null
                         foreach (var d in _devices) { if (d.Port == null) devsWithNullPorts.Add(d); }
                         foreach (var d in devsWithNullPorts) { _devices.Remove(d); }
@@ -174,18 +174,11 @@ namespace Communication.Service
                     port = PortList[portName];
                 }
 
-                PixelDevice aDevice = new PixelDevice(port);
-                lock (_devices)
+                if (!port.IsOpen)
                 {
-                    if (!_devices.Contains(aDevice)) { if (!port.IsOpen) port.Open(); }
+                    port.Open();
                 }
-
-                bool bootModeFlag;
-                if (!string.IsNullOrEmpty(aDevice.GetName(out bootModeFlag)))
-                {
-                    state.Device = aDevice;
-                    //aDevice.UpdateInfo();
-                }
+                state.Device = SerialDeviceBase.Create(port);
             }
             catch (InvalidOperationException)
             {
@@ -214,8 +207,8 @@ namespace Communication.Service
                 set { _portName = value; }
             }
 
-            PixelDevice _device = null;
-            public PixelDevice Device
+            SerialDeviceBase _device = null;
+            public SerialDeviceBase Device
             {
                 get { return _device; }
                 set { _device = value; }

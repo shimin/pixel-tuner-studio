@@ -6,7 +6,7 @@ using Common.ViewModel;
 
 namespace Communication.Service
 {
-    public class PixelDeviceInfo
+    public class PixelDeviceInfo : SerialDeviceInfo
     {
         long _maxMemory;
         /// <summary>
@@ -31,36 +31,6 @@ namespace Communication.Service
         {
             get { return _energyLevel; }
             set { _energyLevel = value; }
-        }
-
-        int _firmwareVersion = 0;
-        /// <summary>
-        /// Версия прошивки
-        /// </summary>
-        public int FirmwareVersion
-        {
-            get { return _firmwareVersion; }
-            set { _firmwareVersion = value; }
-        }
-
-        int _bootVersion = 0;
-        /// <summary>
-        /// Версия загрузчика
-        /// </summary>
-        public int BootVersion
-        {
-            get { return _bootVersion; }
-            set { _bootVersion = value; }
-        }
-
-        int _platformVersion = 0;
-        /// <summary>
-        /// Версия платформы
-        /// </summary>
-        public int PlatformVersion
-        {
-            get { return _platformVersion; }
-            set { _platformVersion = value; }
         }
 
         byte _ledsTotal = 0;

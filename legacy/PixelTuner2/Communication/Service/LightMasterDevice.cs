@@ -7,23 +7,21 @@ using System.IO.Ports;
 
 namespace Communication.Service
 {
-    public class UdmxDevice : PixelDevice
+    public class LightMasterDevice : SerialDeviceBase
     {
-        private object _longOperation;
-
-        public UdmxDevice(SerialPort port)
+        public LightMasterDevice(SerialPort port)
             : base(port)
         {
-            this._longOperation = new object();
+            WriteReadDelay = 5;
         }
 
-        public UdmxDeviceInfo GetInfo()
+        public override SerialDeviceInfo GetInfo()
         {
             lock (this._longOperation)
             {
                 base.Busy = true;
                 base.SetStatus(ConnectionStatus.Downloading);
-                UdmxDeviceInfo info = new UdmxDeviceInfo();
+                LightMasterDeviceInfo info = new LightMasterDeviceInfo();
                 try
                 {
                     List<byte> data = base.DoSession(new PixelDevicePacket(PixelDeviceCommand.INFO, null)).Data;
@@ -32,9 +30,13 @@ namespace Communication.Service
                     info.EnergyLevel = num;
                     info.BootVersion = data[1];
                     info.FirmwareVersion = data[2];
-                    info.LedsTotal = data[3];
-                    int num2 = (((data[6] << 0x18) | (data[7] << 0x10)) | (data[8] << 8)) | data[9];
-                    info.MaxMemory = (num2 / 0x186a0) * 0x186a0;
+                    info.ChannelsTotal = data[3];
+                    info.BatteryLevel = BitConverter.ToUInt16(data.ToArray(), 4);
+                    info.MemoryAvailable = BitConverter.ToUInt32(data.ToArray(), 6);
+                    data.CopyTo(10, info.Mac, 0, 8);
+                    info.PanID = BitConverter.ToUInt16(data.ToArray(), 18);
+                    info.ChannelID = data[19];
+                    data.CopyTo(20, info.ServerMac, 0, 8);
                 }
                 catch (Exception exception)
                 {
@@ -52,25 +54,6 @@ namespace Communication.Service
             }
         }
 
-        public override string GetName(out bool bootMode)
-        {
-            lock (this._longOperation)
-            {
-                return base.GetName(out bootMode);
-            }
-        }
-
-        public override void Initialize(object parameter)
-        {
-            bool flag;
-            base.Initialize(parameter);
-            base.Name = this.GetName(out flag);
-            base.BootMode = flag;
-            this.Info = this.GetInfo();
-            base.SetStatus(ConnectionStatus.Online);
-        }
-
-        public UdmxDeviceInfo Info { get; private set; }
     }
 }
 

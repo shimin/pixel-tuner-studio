@@ -18,5 +18,6 @@ namespace Communication.Service
         END_WRITE_DATA = 0x63,
         SWITCH_TO_BOOT = 0x62,
         WRITE_SETTINGS = 0x73,
+        PLAYBACK_CONTROL = 0x50
     }
 }

@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Binarize\LightBinaryParser.cs" />
     <Compile Include="Binarize\LightEffectFile.cs" />
     <Compile Include="Binarize\LightFileBase.cs" />
     <Compile Include="Binarize\LightColorFile.cs" />
@@ -53,7 +54,6 @@
     <Compile Include="Service\DeviceEventArgs.cs" />
     <Compile Include="Service\DeviceSessionEventArgs.cs" />
     <Compile Include="Service\DeviceStatus.cs" />
-    <Compile Include="Service\MasterModuleDevice.cs" />
     <Compile Include="Pixelate\ImagesCollection.cs" />
     <Compile Include="Pixelate\ImagesCollectionItem.cs" />
     <Compile Include="Pixelate\PixelImageFile.cs" />
@@ -63,15 +63,19 @@
     <Compile Include="Service\DeviceBase.cs" />
     <Compile Include="Service\DeviceFeature.cs" />
     <Compile Include="Service\DeviceHelper.cs" />
+    <Compile Include="Service\GenericSerialDevice.cs" />
+    <Compile Include="Service\IlluminatorDevice.cs" />
+    <Compile Include="Service\IlluminatorDeviceInfo.cs" />
     <Compile Include="Service\PixelDevicePacket.cs" />
     <Compile Include="Service\PixelDeviceInfo.cs" />
     <Compile Include="Service\PixelDevice.cs" />
     <Compile Include="Service\PixelDeviceCommand.cs" />
-    <Compile Include="Service\PixelDeviceSpecs.cs" />
+    <Compile Include="Service\SerialDeviceInfo.cs" />
+    <Compile Include="Service\SupportedDevices.cs" />
     <Compile Include="Service\PixelDeviceTimeout.cs" />
     <Compile Include="Service\SerialDeviceBase.cs" />
-    <Compile Include="Service\UdmxDevice.cs" />
-    <Compile Include="Service\UdmxDeviceInfo.cs" />
+    <Compile Include="Service\LightMasterDevice.cs" />
+    <Compile Include="Service\LightMasterDeviceInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">

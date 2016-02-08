@@ -42,20 +42,21 @@ namespace Communication.Binarize
             result.AddRange(new byte[4]);                                               // binary total size field
             result.AddRange(BitConverter.GetBytes(samplesSectionAddress));              // start address samples section
             result.Add((byte)notEmptyLines.Count);                                      // timelines count            
-            result.Add((byte)rate);                                                     // rate
+            //result.Add((byte)rate);                                                     // rate
             result.Add((byte)pointSize);                                                // pointSize
 
             DateTime start = DateTime.MinValue.AddYears(1);
             DateTime end = GetLongestDuration(notEmptyLines);
             
-            int duration = (int)(end - start).TotalMilliseconds;
+            var duration = (end - start).TotalMilliseconds;
             if (duration % rate != 0) duration = (duration / rate) * (rate + 1);
-            int samplesCount = duration / rate + 1;
+            int samplesCount = (int)(duration / rate) + 1;
 
             channels = new List<List<byte>>();
             notEmptyLines.ForEach((tl) => { channels.Add(tl.GetBinary(samplesCount, rate)); });
 
-            result.AddRange(BitConverter.GetBytes((UInt16)samplesCount));               // last! sample number
+            //result.AddRange(BitConverter.GetBytes((UInt16)samplesCount));               // last! sample number
+            result.AddRange(BitConverter.GetBytes((UInt32)duration));                   // last sample timestamp
             UInt32 nullSize = samplesSectionAddress - (UInt32)result.Count;
             result.AddRange(new byte[nullSize]);                                        // arrange samples section
 
@@ -72,7 +73,8 @@ namespace Communication.Binarize
                 // filter samples to store only non-repeating sets
                 if (prevSample == null || !Equals(prevSample, nextSample) || i == samplesCount - 1)
                 {
-                    result.AddRange(BitConverter.GetBytes(i));                          // sample number 2 bytes
+                    //result.AddRange(BitConverter.GetBytes(i));                        // sample number 2 bytes
+                    result.AddRange(BitConverter.GetBytes((UInt32)(i * rate)));         // sample timestamp 4 bytes
                     result.AddRange(nextSample);                                        // sample data
                 }
                 else
@@ -98,8 +100,12 @@ namespace Communication.Binarize
 
         private DateTime GetLongestDuration(List<LightTimelineFile> notEmptyLines)
         {
-            DateTime result = notEmptyLines.FirstOrDefault<LightTimelineFile>().Images.LastOrDefault<LightFileBase>().EndTime;
-            notEmptyLines.ForEach((tl) => { if (tl.Images.Last<LightFileBase>().EndTime > result) result = tl.Images.Last<LightFileBase>().EndTime; });
+            DateTime result = DateTime.MinValue.AddYears(1);
+            if (notEmptyLines.Count > 0)
+            {
+                result = notEmptyLines.FirstOrDefault<LightTimelineFile>().Images.LastOrDefault<LightFileBase>().EndTime;
+                notEmptyLines.ForEach((tl) => { if (tl.Images.Last<LightFileBase>().EndTime > result) result = tl.Images.Last<LightFileBase>().EndTime; });
+            }
             return result;
         }
 
