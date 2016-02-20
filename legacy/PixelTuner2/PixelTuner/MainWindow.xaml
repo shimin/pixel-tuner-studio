@@ -22,6 +22,7 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/PixelTuner;component/Styles/DevicesLayoutTemplate.xaml" />
                 <ResourceDictionary Source="/PixelTuner;component/Styles/FileLayoutTemplate.xaml" />
                 <ResourceDictionary Source="/PixelTuner;component/Styles/ProjectPlayerLayoutTemplate.xaml" />
                 <ResourceDictionary Source="/PixelTuner;component/Styles/ImagesLayoutTemplate.xaml" />
@@ -29,113 +30,6 @@
                 <ResourceDictionary Source="/PixelTuner;component/Styles/SharedStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
         
-            <DataTemplate x:Key="DevicesLayoutTemplate" DataType="{x:Type vm:DevicesViewModel}">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"></RowDefinition>
-                        <RowDefinition Height="100"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <ListBox x:Name="boxDevicesList" MinWidth="120" MinHeight="120"
-                                             Grid.Row="0"
-                                             ItemsSource="{Binding Devices, UpdateSourceTrigger=PropertyChanged}"
-                                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                             SelectionMode="Single">
-                        <ListBox.Style>
-                            <Style>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ElementName=boxDevicesList, Path=SelectedItem.Busy}" Value="true">
-                                        <Setter Property="ListBox.IsEnabled" Value="false"></Setter>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ListBox.Style>
-                        <ListBox.ItemContainerStyle>
-                            <Style TargetType="ListBoxItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            </Style>
-                        </ListBox.ItemContainerStyle>
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Name}">
-                                    <TextBlock.ContextMenu>
-                                        <ContextMenu DataContext="{Binding RelativeSource={RelativeSource Mode=Self}, Path=PlacementTarget.DataContext}">
-                                            <MenuItem Header="{StaticResource Dev_Menu_RefreshBrain}" Command="{Binding UploadFirmwareCommand}"></MenuItem>
-                                            <MenuItem Header="{StaticResource Dev_Menu_Upload}"
-                                                        x:Name="UploadMainMenu"
-                                                        ItemsSource="{Binding Source={StaticResource RootContext}, Path=Files}"
-                                                        ItemContainerStyle="{StaticResource DeviceUploadMenuItemStyle}"
-                                                        Style="{StaticResource DeviceUploadMainMenuItemStyle}">
-                                            </MenuItem>
-                                        </ContextMenu>
-                                    </TextBlock.ContextMenu>
-                                </TextBlock>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                    <Canvas Grid.Row="1" >
-                        <Canvas.Style>
-                            <Style>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ElementName=boxDevicesList, Path=SelectedItems.Count}" Value="0">
-                                        <Setter Property="Canvas.Visibility" Value="Collapsed"></Setter>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Canvas.Style>
-                        <StackPanel DataContext="{Binding ElementName=boxDevicesList, Path=SelectedItem}" Orientation="Vertical">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="82"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*"></RowDefinition>
-                                    <RowDefinition Height="{Binding ElementName=UploadProgressBar, Path=Height}"></RowDefinition>
-                                    <RowDefinition Height="16"></RowDefinition>
-                                    <RowDefinition Height="16"></RowDefinition>
-                                </Grid.RowDefinitions>
-                                <StackPanel x:Name="descriptionsStack" Grid.Row="0" Grid.Column="0" Orientation="Vertical">
-                                    <TextBlock Text="{StaticResource Dev_Props_Name}" Margin="0,2,0,0" />
-                                    <TextBlock Text="{StaticResource Dev_Props_Power}" />
-                                    <TextBlock Text="{StaticResource Dev_Props_Length}" />
-                                    <TextBlock Text="{StaticResource Dev_Props_Status}" />
-                                </StackPanel>
-                                <StackPanel x:Name="valuesStack" Grid.Row="0" Grid.Column="1" Orientation="Vertical">
-                                    <TextBlock Text="{Binding FullName}" Margin="0,3,0,0"/>
-                                    <ProgressBar Value="{Binding EnergyLevel, Mode=OneWay}" Margin="0,3,0,0" Style="{StaticResource ProgressBarStyle}"/>
-                                    <TextBlock Text="{Binding LedsTotal}" Margin="0,0,0,0"/>
-                                    <TextBlock Text="{Binding Status}" Margin="0,0,0,0"/>
-                                </StackPanel>
-                                <ProgressBar 
-                                                    x:Name="UploadProgressBar"
-                                                    Value="{Binding Progress}" 
-                                                    Minimum="{Binding ProgressMin}" 
-                                                    Maximum="{Binding ProgressMax}" 
-                                                    Style="{StaticResource OperationProgressBarStyle}"
-                                                    Grid.ColumnSpan="2"
-                                                    Grid.Row="1"
-                                                    Margin="0,2,0,0" />
-                                <TextBlock Text="{StaticResource Dev_Props_UpdateNeeded}" 
-                                                           Foreground="#d0d010" 
-                                                           Margin="0,2,0,0" 
-                                                           Visibility="{Binding UpdateNeeded, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Hidden}}"
-                                                           Grid.Row="2" Grid.ColumnSpan="2"/>
-                                <Button Style="{StaticResource WhiteLinkButton}" 
-                                                        Content="{StaticResource Dev_Props_Update}" 
-                                                        Command="{Binding AutoUpdateCommand}" 
-                                                        Visibility="{Binding UpdateNeeded, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Hidden}}"
-                                                        Grid.Row="3" Margin="8,0,0,0" />
-                                <Button Style="{StaticResource WhiteLinkButton}" 
-                                                        Content="{StaticResource Dev_Props_Postpone}" 
-                                                        Command="{Binding UpdatePostponeCommand}" 
-                                                        Visibility="{Binding UpdateNeeded, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Hidden}}"
-                                                        Grid.Row="3" Grid.Column="1" />
-                            </Grid>
-                        </StackPanel>
-                    </Canvas>
-                </Grid>
-            </DataTemplate>
-
             <cv:ActiveDocumentConverter x:Key="ActiveDocumentConverter"/>
         
         </ResourceDictionary>
