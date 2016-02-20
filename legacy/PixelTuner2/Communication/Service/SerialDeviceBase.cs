@@ -27,6 +27,11 @@ namespace Communication.Service
             return dev;
         }
 
+        public static int EstimateRequestsCount(int transmissionDataSize)
+        {
+            return ((transmissionDataSize / UsualPacketSize) + (((transmissionDataSize % UsualPacketSize) == 0) ? 2 : 3));
+        }
+
         private static byte[] GetNameBytes(SerialPort p)
         {
             p.DiscardInBuffer();

@@ -78,11 +78,6 @@ namespace Communication.Service
             this.Name = SupportedDevices.TryGetName("");
         }
 
-        public static int EstimateRequestsCount(int transmissionDataSize)
-        {
-            return ((transmissionDataSize / UsualPacketSize) + (((transmissionDataSize % UsualPacketSize) == 0) ? 2 : 3));
-        }
-
         public virtual void WriteSettings(List<DeviceFeature> settings)
         {
             lock (this._longOperation)
