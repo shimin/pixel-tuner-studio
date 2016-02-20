@@ -584,7 +584,7 @@ namespace PixelTuner.Drawing
 
         private void boxTextButton_Click(object sender, EventArgs e)
         {
-            TextDialog2 td = new TextDialog2(_item, DefaultFont, _item.PointSize, _item.PatternLines, BrushFrontColor);
+            TextDialog td = new TextDialog(_item, DefaultFont, _item.PointSize, _item.PatternLines, BrushFrontColor);
             Application.RemoveMessageFilter(this);
             if (td.ShowDialog() == DialogResult.OK)
             {
