@@ -16,6 +16,40 @@ namespace Communication.Service
             seek = 5
         }
 
+        #region Properties
+        
+        byte[] _mac = new byte[8];
+        /// <summary>
+        /// 8-bytes mac address
+        /// </summary>
+        public byte[] Mac
+        {
+            get { return _mac; }
+            set { _mac = value; }
+        }
+
+        UInt16 _panID;
+        /// <summary>
+        /// Network alias
+        /// </summary>
+        public UInt16 PanID
+        {
+            get { return _panID; }
+            set { _panID = value; }
+        }
+
+        byte _channel;
+        /// <summary>
+        /// Wireless channel
+        /// </summary>
+        public byte Channel
+        {
+            get { return _channel; }
+            set { _channel = value; }
+        }
+
+        #endregion
+
         public IlluminatorDevice(SerialPort port)
             : base(port)
         {
@@ -46,22 +80,21 @@ namespace Communication.Service
             WriteCommand(PlaybackCommand.seek, timePoint);
         }
 
-        public override SerialDeviceInfo GetInfo()
+        public override void GetInfo()
         {
             lock (this._longOperation)
             {
                 base.Busy = true;
                 base.SetStatus(ConnectionStatus.Downloading);
-                IlluminatorDeviceInfo info = new IlluminatorDeviceInfo();
                 try
                 {
                     List<byte> data = base.DoSession(new PixelDevicePacket(PixelDeviceCommand.INFO, null)).Data;
-                    info.PlatformVersion = data[0];
-                    info.BootVersion = data[1];
-                    info.FirmwareVersion = data[2];
-                    data.CopyTo(3, info.Mac, 0, 8);
-                    info.PanID = BitConverter.ToUInt16(data.ToArray(), 11);
-                    info.Channel = data[13];
+                    PlatformVersion = data[0];
+                    BootVersion = data[1];
+                    FirmwareVersion = data[2];
+                    data.CopyTo(3, Mac, 0, 8);
+                    PanID = BitConverter.ToUInt16(data.ToArray(), 11);
+                    Channel = data[13];
                 }
                 catch (Exception exception)
                 {
@@ -75,7 +108,6 @@ namespace Communication.Service
                     base.Busy = false;
                     base.SetStatus(ConnectionStatus.Online);
                 }
-                return info;
             }
         }
 

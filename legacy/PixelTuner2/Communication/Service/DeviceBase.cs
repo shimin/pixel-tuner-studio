@@ -12,7 +12,7 @@ namespace Communication.Service
 
     public abstract class DeviceBase
     {
-        public virtual void Initialize(object parameter) { }
+        public abstract void Initialize(object parameter);
 
         #region Logging
 

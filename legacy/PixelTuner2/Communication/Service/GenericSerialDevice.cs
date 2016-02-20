@@ -14,19 +14,19 @@ namespace Communication.Service
 
         }
 
-        public override SerialDeviceInfo GetInfo()
+        
+        public override void GetInfo()
         {
             lock (this._longOperation)
             {
                 base.Busy = true;
                 base.SetStatus(ConnectionStatus.Downloading);
-                SerialDeviceInfo info = new SerialDeviceInfo();
                 try
                 {
                     List<byte> data = base.DoSession(new PixelDevicePacket(PixelDeviceCommand.INFO, null)).Data;
-                    info.PlatformVersion = data[0];
-                    info.BootVersion = data[1];
-                    info.FirmwareVersion = data[2];
+                    PlatformVersion = data[0];
+                    BootVersion = data[1];
+                    FirmwareVersion = data[2];
                 }
                 catch (Exception exception)
                 {
@@ -40,7 +40,6 @@ namespace Communication.Service
                     base.Busy = false;
                     base.SetStatus(ConnectionStatus.Online);
                 }
-                return info;
             }
         }
     }

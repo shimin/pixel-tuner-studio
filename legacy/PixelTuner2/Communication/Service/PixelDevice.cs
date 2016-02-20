@@ -18,6 +18,8 @@ namespace Communication.Service
 
     public class PixelDevice : SerialDeviceBase
     {
+        #region Properties
+
         private string _fullName;
         public string FullName
         {
@@ -31,6 +33,43 @@ namespace Communication.Service
             }
         }
 
+        long _maxMemory;
+        /// <summary>
+        /// Доступный максимум памяти в байтах
+        /// </summary>
+        public long MaxMemory
+        {
+            get
+            {
+                if (_maxMemory > 3800000) _maxMemory = 3800000;
+                if (_platformVersion == 2) return _maxMemory / 1024;
+                else return _maxMemory;
+            }
+            set { _maxMemory = value; }
+        }
+
+        float _energyLevel = 0;
+        /// <summary>
+        /// Уровень заряда аккумулятора (1..100)
+        /// </summary>
+        public float EnergyLevel
+        {
+            get { return _energyLevel; }
+            set { _energyLevel = value; }
+        }
+
+        byte _ledsTotal = 0;
+        /// <summary>
+        /// Число диодов в устройстве
+        /// </summary>
+        public byte LedsTotal
+        {
+            get { return _ledsTotal; }
+            set { _ledsTotal = value; }
+        }
+
+        #endregion
+
         public PixelDevice(SerialPort port)
             : base(port)
         {
@@ -42,41 +81,6 @@ namespace Communication.Service
         public static int EstimateRequestsCount(int transmissionDataSize)
         {
             return ((transmissionDataSize / UsualPacketSize) + (((transmissionDataSize % UsualPacketSize) == 0) ? 2 : 3));
-        }
-
-        public override SerialDeviceInfo GetInfo()
-        {
-            lock (this._longOperation)
-            {
-                this.Busy = true;
-                base.SetStatus(ConnectionStatus.Downloading);
-                PixelDeviceInfo info = new PixelDeviceInfo();
-                try
-                {
-                    List<byte> data = base.DoSession(new PixelDevicePacket(PixelDeviceCommand.INFO, null)).Data;
-                    int num = (data[4] << 8) | data[5];
-                    info.PlatformVersion = data[0];
-                    info.EnergyLevel = num;
-                    info.BootVersion = data[1];
-                    info.FirmwareVersion = data[2];
-                    info.LedsTotal = data[3];
-                    int num2 = (((data[6] << 0x18) | (data[7] << 0x10)) | (data[8] << 8)) | data[9];
-                    info.MaxMemory = (num2 / 0x186a0) * 0x186a0;
-                }
-                catch (Exception exception)
-                {
-                    if (base.Logger != null)
-                    {
-                        base.Logger.WriteException(exception);
-                    }
-                }
-                finally
-                {
-                    this.Busy = false;
-                    base.SetStatus(ConnectionStatus.Online);
-                }
-                return info;
-            }
         }
 
         public virtual void WriteSettings(List<DeviceFeature> settings)
@@ -165,27 +169,37 @@ namespace Communication.Service
             return BitConverter.GetBytes(scaledValue);
         }
 
-        #region Enumeration
-
-        public override bool Equals(object obj)
+        public override void GetInfo()
         {
-            if (obj is PixelDevice)
+            lock (this._longOperation)
             {
-                return ((obj as PixelDevice).PortName == base.PortName);
+                this.Busy = true;
+                base.SetStatus(ConnectionStatus.Downloading);
+                try
+                {
+                    List<byte> data = base.DoSession(new PixelDevicePacket(PixelDeviceCommand.INFO, null)).Data;
+                    int num = (data[4] << 8) | data[5];
+                    PlatformVersion = data[0];
+                    EnergyLevel = num;
+                    BootVersion = data[1];
+                    FirmwareVersion = data[2];
+                    LedsTotal = data[3];
+                    byte[] memSizeArray = new byte[4] { data[9], data[8], data[7], data[6] };
+                    MaxMemory = BitConverter.ToUInt32(memSizeArray, 0);
+                }
+                catch (Exception exception)
+                {
+                    if (base.Logger != null)
+                    {
+                        base.Logger.WriteException(exception);
+                    }
+                }
+                finally
+                {
+                    this.Busy = false;
+                    base.SetStatus(ConnectionStatus.Online);
+                }
             }
-            return base.Equals(obj);
         }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
-        public override string ToString()
-        {
-            return this.Name;
-        }
-
-        #endregion
     }
 }

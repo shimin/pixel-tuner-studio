@@ -18,10 +18,12 @@ namespace Communication.Service
 
             byte[] buffer = GetNameBytes(p);
             string deviceName = Encoding.ASCII.GetString(buffer);
-            //deviceName = "ILFW";
 
-            dev = Activator.CreateInstance(Type.GetType(SupportedDevices.TryGetType(deviceName)), p) as SerialDeviceBase;
+            var devName = SupportedDevices.TryGetType(deviceName);
+            var devType = Type.GetType(devName);
+            dev = Activator.CreateInstance(devType, p) as SerialDeviceBase;
             dev.Initialize(null);
+
             return dev;
         }
 
@@ -76,7 +78,7 @@ namespace Communication.Service
             }
         }
 
-        private string _portName = null;
+        protected string _portName = null;
         public string PortName
         {
             get
@@ -110,14 +112,42 @@ namespace Communication.Service
 
         public string Name { get; set; }
 
-        public virtual SerialDeviceInfo Info { get; protected set; }
-
         public static int UsualPacketSize
         {
             get
             {
                 return 60;
             }
+        }
+
+        protected int _firmwareVersion = 0;
+        /// <summary>
+        /// Версия прошивки
+        /// </summary>
+        public int FirmwareVersion
+        {
+            get { return _firmwareVersion; }
+            set { _firmwareVersion = value; }
+        }
+
+        protected int _bootVersion = 0;
+        /// <summary>
+        /// Версия загрузчика
+        /// </summary>
+        public int BootVersion
+        {
+            get { return _bootVersion; }
+            set { _bootVersion = value; }
+        }
+
+        protected int _platformVersion = 0;
+        /// <summary>
+        /// Версия платформы
+        /// </summary>
+        public int PlatformVersion
+        {
+            get { return _platformVersion; }
+            set { _platformVersion = value; }
         }
 
         #endregion
@@ -172,6 +202,29 @@ namespace Communication.Service
 
         #endregion
 
+        #region Enumeration
+
+        public override bool Equals(object obj)
+        {
+            if (obj is SerialDeviceBase)
+            {
+                return ((obj as SerialDeviceBase).PortName == PortName);
+            }
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return this.Name;
+        }
+
+        #endregion
+
         public SerialDeviceBase(SerialPort port)
         {
             Port = port;
@@ -183,6 +236,8 @@ namespace Communication.Service
             }
             AddRemoveUSBHandler();
         }
+
+        public abstract void GetInfo();
 
         protected void SetStatus(ConnectionStatus status)
         {
@@ -277,14 +332,12 @@ namespace Communication.Service
 
         #region Communication
 
-        public virtual void Initialize(object parameter)
+        public override void Initialize(object parameter)
         {
             bool isBootMode;
-            base.Initialize(parameter);
             Name = GetName(out isBootMode);
-            //Name = "ILFW";
             BootMode = isBootMode;
-            Info = GetInfo();
+            GetInfo();
             SetStatus(ConnectionStatus.Online);
         }
 
@@ -317,8 +370,6 @@ namespace Communication.Service
             }
             return str;
         }
-
-        public abstract SerialDeviceInfo GetInfo();
 
         public virtual void SwitchToBoot()
         {
@@ -485,6 +536,5 @@ namespace Communication.Service
         }
 
         #endregion
-        
     }
 }
