@@ -26,6 +26,11 @@ namespace Communication.Service
             idClassPairs.Add("E-PIC_FW", "Communication.Service.PixelDevice");
             dictionary.Add("E-PICBOOT", "Pixel Poi 3 (Boot mode)");
             idClassPairs.Add("E-PICBOOT", "Communication.Service.PixelDevice");
+
+            dictionary.Add("E-PIC_SFW", "Simple poi");
+            dictionary.Add("E-PIC_SFW", "Communication.Service.SimplePoiDevice");
+            dictionary.Add("E-PIC_SBOOT", "Simple poi");
+            dictionary.Add("E-PIC_SBOOT", "Communication.Service.SimplePoiDevice");
             
             dictionary.Add("LRBOOT", "Light master (Boot mode)");
             idClassPairs.Add("LRBOOT", "Communication.Service.LightMasterDevice");
