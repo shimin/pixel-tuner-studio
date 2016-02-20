@@ -32,19 +32,7 @@ namespace PixelTuner.ViewModel
 
         public bool Busy
         {
-            get { return Device == null || Device.Info == null ? false : Device.Busy; }
-        }
-
-        public int DeviceVersion
-        {
-            get 
-            {
-                int v = 100;
-                if (Device != null && Device.Info != null)
-                    if (int.TryParse(Name.Substring(10, 1), out v) == true)
-                        return v;
-                return v; 
-            }
+            get { return Device == null ? false : Device.Busy; }
         }
 
         static int FirmwareFileVersionV2 { get; set; }
@@ -62,7 +50,7 @@ namespace PixelTuner.ViewModel
 
         public string FullName
         {
-            get { return String.Format("Pixel Poi {0}.{1}.{2}", this.PlatformVersion, this.BootVersion, this.FirmwareVersion); ; }
+            get { return String.Format("Pixel Poi {0}.{1}.{2}", PlatformVersion, BootVersion, FirmwareVersion); ; }
             private set { RaisePropertyChanged("FullName"); }
         }
 
@@ -70,7 +58,7 @@ namespace PixelTuner.ViewModel
         {
             get 
             {
-                return Device == null ? PixelDeviceSpecs.TryGetName("") : PixelDeviceSpecs.TryGetName(Device.Name);
+                return Device == null ? SupportedDevices.TryGetName("") : SupportedDevices.TryGetName(Device.Name);
             }
             private set { RaisePropertyChanged("Name"); }
         }
@@ -80,7 +68,7 @@ namespace PixelTuner.ViewModel
         /// </summary>
         public long MaxMemory
         {
-            get { return Device == null || Device.Info == null ? 0 : Device.Info.MaxMemory; }
+            get { return Device == null ? 0 : Device.MaxMemory; }
             private set { RaisePropertyChanged("MaxMemory"); }
         }
 
@@ -89,7 +77,7 @@ namespace PixelTuner.ViewModel
         /// </summary>
         public float EnergyLevel
         {
-            get { return Device == null || Device.Info == null ? 0.0f : Device.Info.EnergyLevel; }
+            get { return Device == null ? 0.0f : Device.EnergyLevel; }
             private set { RaisePropertyChanged("EnergyLevel"); }
         }
 
@@ -98,7 +86,7 @@ namespace PixelTuner.ViewModel
         /// </summary>
         public byte LedsTotal
         {
-            get { return Device == null || Device.Info == null ? byte.MinValue : Device.Info.LedsTotal; }
+            get { return Device == null ? byte.MinValue : Device.LedsTotal; }
             private set { RaisePropertyChanged("LedsTotal"); }
         }
 
@@ -107,7 +95,7 @@ namespace PixelTuner.ViewModel
         /// </summary>
         public int FirmwareVersion
         {
-            get { return Device == null || Device.Info == null ? 0 : Device.Info.FirmwareVersion; }
+            get { return Device == null ? 0 : Device.FirmwareVersion; }
             private set { RaisePropertyChanged("FirmwareVersion"); RaisePropertyChanged("FullName"); }
         }
 
@@ -116,7 +104,7 @@ namespace PixelTuner.ViewModel
         /// </summary>
         public int BootVersion
         {
-            get { return Device == null || Device.Info == null ? 0 : Device.Info.BootVersion; }
+            get { return Device == null ? 0 : Device.BootVersion; }
             private set { RaisePropertyChanged("BootVersion"); RaisePropertyChanged("FullName"); }
         }
         
@@ -125,7 +113,7 @@ namespace PixelTuner.ViewModel
         /// </summary>
         public int PlatformVersion
         {
-            get { return Device == null || Device.Info == null ? 0 : Device.Info.PlatformVersion; }
+            get { return Device == null ? 0 : Device.PlatformVersion; }
             private set { RaisePropertyChanged("PlatformVersion"); RaisePropertyChanged("FullName"); }
         }
 
@@ -136,10 +124,10 @@ namespace PixelTuner.ViewModel
         {
             get
             {
-                if (DeviceVersion == 2)
-                    return (this.FirmwareVersion < FirmwareFileVersionV2) && !this.BootMode;
-                else if (DeviceVersion == 3)
-                    return (this.FirmwareVersion < FirmwareFileVersionV3) && !this.BootMode;
+                if (PlatformVersion == 2)
+                    return (FirmwareVersion < FirmwareFileVersionV2) && !BootMode;
+                else if (PlatformVersion == 3)
+                    return (FirmwareVersion < FirmwareFileVersionV3) && !BootMode;
                 return false;
             }
         }
@@ -311,7 +299,7 @@ namespace PixelTuner.ViewModel
 
         private bool CanUploadCommand(object parameter)
         {
-            return Device != null && !this.BootMode;
+            return Device != null && !BootMode;
         }
 
         private void OnUploadCommand(object parameter)
@@ -320,7 +308,7 @@ namespace PixelTuner.ViewModel
             FileViewModel file = parameter as FileViewModel;
             if (file == null) return;
 
-            List<byte> data = file.GetBinaryPresentation(this.LedsTotal);
+            List<byte> data = file.GetBinaryPresentation(LedsTotal);
             InitializeProgressBar(data);
             RaisePropertyChanged("ProgressMax");
             if (ValidateProject(file, data.Count / 1024)) // project size in KB
@@ -333,33 +321,33 @@ namespace PixelTuner.ViewModel
 
         private bool ValidateProject(FileViewModel file, int projectSize)
         {
-            if (projectSize >= this.MaxMemory)
+            if (projectSize >= MaxMemory)
             {
                 MessageBox.Show((String)Application.Current.TryFindResource("Global_NotEnoughtSpace"),
                     Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Information);
                 return false;
             }
-            if (file.LineHeight > this.LedsTotal)
+            if (file.LineHeight > LedsTotal)
             {
                 if (MessageBox.Show(
                     String.Format(
                         (String)Application.Current.TryFindResource("Global_TimelineHigherThanDevice"),
                         file.LineHeight,
-                        this.LedsTotal,
-                        file.LineHeight - this.LedsTotal),
+                        LedsTotal,
+                        file.LineHeight - LedsTotal),
                     Application.Current.MainWindow.Title, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                 {
                     return false;
                 }
             }
-            if (file.LineHeight < this.LedsTotal)
+            if (file.LineHeight < LedsTotal)
             {
                 if (MessageBox.Show(
                     String.Format(
                         (String)Application.Current.TryFindResource("Global_TimelineLowerThanDevice"),
                         file.LineHeight,
-                        this.LedsTotal,
-                        this.LedsTotal - file.LineHeight),
+                        LedsTotal,
+                        LedsTotal - file.LineHeight),
                     Application.Current.MainWindow.Title, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                 {
                     return false;
@@ -419,8 +407,8 @@ namespace PixelTuner.ViewModel
 
         private void OnUpdatePostponeCommand(object parameter)
         {
-            if (DeviceVersion == 2) FirmwareFileVersionV2 = this.FirmwareVersion;
-            else if (DeviceVersion == 3) FirmwareFileVersionV3 = this.FirmwareVersion;
+            if (PlatformVersion == 2) FirmwareFileVersionV2 = FirmwareVersion;
+            else if (PlatformVersion == 3) FirmwareFileVersionV3 = FirmwareVersion;
             RaisePropertyChanged("UpdateNeeded");
         }
 
@@ -432,15 +420,15 @@ namespace PixelTuner.ViewModel
         
         public override string ToString()
         {
-            return this.Name;
+            return Name;
         }
 
         public override bool Equals(object obj)
         {
             if (obj is PixelDeviceViewModel)
             {
-                if ((obj as PixelDeviceViewModel).Device != null && this.Device != null)
-                    this.Device.Equals((obj as PixelDeviceViewModel).Device);
+                if ((obj as PixelDeviceViewModel).Device != null && Device != null)
+                    Device.Equals((obj as PixelDeviceViewModel).Device);
             }
 
             return base.Equals(obj);

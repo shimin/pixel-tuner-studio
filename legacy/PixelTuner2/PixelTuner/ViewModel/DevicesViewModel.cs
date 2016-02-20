@@ -21,6 +21,18 @@ namespace PixelTuner.ViewModel
             private set;
         }
 
+        SafeObservable<IlluminatorDeviceViewModel> _illuminators = new SafeObservable<IlluminatorDeviceViewModel>();
+        public SafeObservable<IlluminatorDeviceViewModel> Illuminators
+        {
+            get { return _illuminators; }
+        }
+
+        public SafeObservable<LightMasterDeviceViewModel> LightMasterDevices
+        {
+            get;
+            private set;
+        }
+
         #endregion
 
         public DevicesViewModel(string name)
@@ -29,29 +41,76 @@ namespace PixelTuner.ViewModel
             IsVisible = true;
             ContentId = ToolContentId;
 
-            Devices = new SafeObservable<PixelDeviceViewModel>();            
+            Devices = new SafeObservable<PixelDeviceViewModel>();
+            LightMasterDevices = new SafeObservable<LightMasterDeviceViewModel>();
+
             DeviceHelper.Devices.ForEach((d) => { DeviceHelper_DeviceFound(new DeviceEventArgs(d)); });
             DeviceHelper.DeviceFound += new DeviceHelper.DeviceChangedDelegate(DeviceHelper_DeviceFound);
             DeviceHelper.DeviceLost += new DeviceHelper.DeviceChangedDelegate(DeviceHelper_DeviceLost);
         }
-        
+
         void DeviceHelper_DeviceFound(DeviceEventArgs e)
         {
-            var pixelDevice = e.Device as PixelDevice;
-            var pdvm = new PixelDeviceViewModel(pixelDevice);
-            if (pixelDevice != null)
+            if (e.Device is LightMasterDevice)
             {
-                Devices.Add(pdvm);
+                var model = new LightMasterDeviceViewModel((LightMasterDevice)e.Device);
+                LightMasterDevices.Add(model);
             }
-            if (pixelDevice.BootMode && ContinueUpdate())
+            else if (e.Device is IlluminatorDevice)
             {
-                var streamInfo = new System.Windows.Resources.StreamResourceInfo();
-
-                if (pdvm.DeviceVersion == 2) streamInfo = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash.bin"));
-                else if (pdvm.DeviceVersion == 3) streamInfo = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash_v3.bin"));
-
-                pdvm.UploadFirmwareCommand.Execute(StreamHelper.ReadFully(streamInfo.Stream));
+                var model = new IlluminatorDeviceViewModel((IlluminatorDevice)e.Device);
+                Illuminators.Add(model);
             }
+            else if (e.Device is PixelDevice)
+            {
+                var model = new PixelDeviceViewModel(e.Device as PixelDevice);
+                Devices.Add(model);
+            }
+            else if (e.Device is GenericSerialDevice)
+            {
+                //var lightMasterDevice = new LightMasterDevice((e.Device as GenericSerialDevice).Port);
+                //lightMasterDevice.Initialize(null);
+
+                //var model = new PixelDeviceViewModel(lightMasterDevice);
+                //Devices.Add(model);
+            }
+        }
+
+        void DeviceHelper_DeviceLost(DeviceEventArgs e)
+        {
+            List<PixelDeviceViewModel> modelsToRemove = new List<PixelDeviceViewModel>();
+            for (int i = 0; i < Devices.Count; i++)
+            {
+                if (Devices[i].Device.Equals(e.Device))
+                {
+                    modelsToRemove.Add(Devices[i]);
+                    break;
+                }
+            }
+            modelsToRemove.ForEach((item) => { Devices.Remove(item); });
+
+            List<IlluminatorDeviceViewModel> illuminatorsToRemove = new List<IlluminatorDeviceViewModel>();
+            for (int i = 0; i < Illuminators.Count; i++)
+            {
+                if (Illuminators[i].Device.Equals(e.Device))
+                {
+                    illuminatorsToRemove.Add(Illuminators[i]);
+                    break;
+                }
+            }
+            illuminatorsToRemove.ForEach((item) => { Illuminators.Remove(item);});
+
+
+            List<LightMasterDeviceViewModel> lMastersToRemove = new List<LightMasterDeviceViewModel>();
+            for (int i = 0; i < LightMasterDevices.Count; i++)
+            {
+                if (LightMasterDevices[i].Device.Equals(e.Device))
+                {
+                    lMastersToRemove.Add(LightMasterDevices[i]);
+                    break;
+                }
+            }
+            lMastersToRemove.ForEach((item) => { LightMasterDevices.Remove(item); });
         }
 
         private static bool ContinueUpdate()
@@ -62,20 +121,5 @@ namespace PixelTuner.ViewModel
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question) == MessageBoxResult.Yes;
         }
-
-        void DeviceHelper_DeviceLost(DeviceEventArgs e)
-        {
-            List<PixelDeviceViewModel> modelsToRemove = new List<PixelDeviceViewModel>();
-            for (int i = 0; i < Devices.Count; i++)
-            {
-                if (Devices[i].Device == e.Device)
-                {
-                    modelsToRemove.Add(Devices[i]);
-                    break;
-                }
-            }
-            modelsToRemove.ForEach((item) => { Devices.Remove(item); });
-        }
-        
     }
 }
