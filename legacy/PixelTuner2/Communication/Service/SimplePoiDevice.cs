@@ -2,12 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO.Ports;
 
 namespace Communication.Service
 {
     public class SimplePoiDevice : SerialDeviceBase
     {
-        
+        public SimplePoiDevice(SerialPort port)
+            : base(port)
+        {
+
+        }
+   
         #region Properties
 		
         long _maxMemory;

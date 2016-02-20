@@ -28,9 +28,9 @@ namespace Communication.Service
             idClassPairs.Add("E-PICBOOT", "Communication.Service.PixelDevice");
 
             dictionary.Add("E-PIC_SFW", "Simple poi");
-            dictionary.Add("E-PIC_SFW", "Communication.Service.SimplePoiDevice");
+            idClassPairs.Add("E-PIC_SFW", "Communication.Service.SimplePoiDevice");
             dictionary.Add("E-PIC_SBOOT", "Simple poi");
-            dictionary.Add("E-PIC_SBOOT", "Communication.Service.SimplePoiDevice");
+            idClassPairs.Add("E-PIC_SBOOT", "Communication.Service.SimplePoiDevice");
             
             dictionary.Add("LRBOOT", "Light master (Boot mode)");
             idClassPairs.Add("LRBOOT", "Communication.Service.LightMasterDevice");
