@@ -16,24 +16,11 @@ using Communication.Service;
 
 namespace PixelTuner.ViewModel
 {
-    public class PixelDeviceViewModel : ViewModelBase
+    public class PixelDeviceViewModel : DeviceViewModel
     {
         #region Properties
         
-        public PixelDevice Device { get; private set; }
-
-        public bool BootMode
-        {
-            get
-            {
-                return Device != null ? Device.BootMode : false;
-            }
-        }
-
-        public bool Busy
-        {
-            get { return Device == null ? false : Device.Busy; }
-        }
+        public new PixelDevice Device { get; private set; }
 
         static int FirmwareFileVersionV2 { get; set; }
 
@@ -48,19 +35,10 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        public string FullName
+        public override string FullName
         {
             get { return String.Format("Pixel Poi {0}.{1}.{2}", PlatformVersion, BootVersion, FirmwareVersion); ; }
-            private set { RaisePropertyChanged("FullName"); }
-        }
-
-        public string Name
-        {
-            get 
-            {
-                return Device == null ? SupportedDevices.TryGetName("") : SupportedDevices.TryGetName(Device.Name);
-            }
-            private set { RaisePropertyChanged("Name"); }
+            protected set { RaisePropertyChanged("FullName"); }
         }
 
         /// <summary>
@@ -91,36 +69,9 @@ namespace PixelTuner.ViewModel
         }
 
         /// <summary>
-        /// Версия прошивки
-        /// </summary>
-        public int FirmwareVersion
-        {
-            get { return Device == null ? 0 : Device.FirmwareVersion; }
-            private set { RaisePropertyChanged("FirmwareVersion"); RaisePropertyChanged("FullName"); }
-        }
-
-        /// <summary>
-        /// Версия загрузчика
-        /// </summary>
-        public int BootVersion
-        {
-            get { return Device == null ? 0 : Device.BootVersion; }
-            private set { RaisePropertyChanged("BootVersion"); RaisePropertyChanged("FullName"); }
-        }
-        
-        /// <summary>
-        /// Версия платформы
-        /// </summary>
-        public int PlatformVersion
-        {
-            get { return Device == null ? 0 : Device.PlatformVersion; }
-            private set { RaisePropertyChanged("PlatformVersion"); RaisePropertyChanged("FullName"); }
-        }
-
-        /// <summary>
         /// Свойство определяет, показывать ли контролы, связанные с обновлением прошивки
         /// </summary>
-        public bool UpdateNeeded
+        public override bool UpdateNeeded
         {
             get
             {
@@ -133,63 +84,6 @@ namespace PixelTuner.ViewModel
         }
         #endregion
 
-        #region Status Info
-
-        public int StatusRaw
-        {
-            get
-            {
-                var status = Device == null ? ConnectionStatus.Offline : Device.Status;
-                return (int)status;
-            }
-        }
-
-        public string Status
-        {
-            get
-            {
-                var status = Device == null ? ConnectionStatus.Offline : Device.Status;
-                return (String)Application.Current.TryFindResource(Common.Helpers.EnumHelper.GetDescription(status));
-            }
-        }
-
-        private int _progressMax = 100;
-        public int ProgressMax
-        {
-            get { return _progressMax; }
-            set { RaisePropertyChanged("ProgressMax"); RaisePropertyChanged("Progress"); _progressMax = value; }
-        }
-
-        int _progressMin = 0;
-
-        public int ProgressMin
-        {
-            get { return _progressMin; }
-            set { RaisePropertyChanged("ProgressMin"); RaisePropertyChanged("Progress"); _progressMin = value; }
-        }
-
-        object _sync = new object();
-
-        int _progress = 0;
-        public int Progress
-        {
-            get { return _progress; }
-            set
-            {
-                _progress = value % (_progressMax - _progressMin);
-                RaisePropertyChanged("Progress");
-            }
-        }
-
-        int _step = 1;
-        public int Step
-        {
-            get { return _step; }
-            set { RaisePropertyChanged("Step"); RaisePropertyChanged("Progress"); _step = value; }
-        }
-
-        #endregion
-        
         #region Constructor
 
         static PixelDeviceViewModel()
@@ -204,36 +98,9 @@ namespace PixelTuner.ViewModel
         }
 
         public PixelDeviceViewModel(PixelDevice device)
+            : base (device)
         {
             Device = device;
-            device.StatusChanged += new SerialDeviceBase.StatusDelegate(device_StatusChanged);
-            device.SessionFinished += new SerialDeviceBase.SessionDelegate(device_SessionFinished);
-            
-            RootViewModel.ApplicationSettingsChanged += ProjectUpdateHandler;
-            RootViewModel.This.ActiveDocumentChanged += (x, e) => {
-                ProjectUpdateHandler(x, e);
-                if (e.OldDocument != null) e.OldDocument.FileChanged -= ProjectUpdateHandler;
-                if (e.NewDocument != null) e.NewDocument.FileChanged += ProjectUpdateHandler;
-            };
-#if DEBUG
-            Device.Logger = RootViewModel.Logger;
-#endif
-        }
-
-        void device_SessionFinished(DeviceSessionEventArgs e)
-        {
-            Progress += Step;
-        }
-
-        void device_StatusChanged(EventArgs e)
-        {
-            RaisePropertyChanged("StatusRaw");
-            RaisePropertyChanged("Status");
-        }
-
-        void ProjectUpdateHandler(object sender, EventArgs e)
-        {
-            RaisePropertyChanged("ActiveProjectSize");
         }
 
         #endregion
@@ -241,27 +108,14 @@ namespace PixelTuner.ViewModel
         #region ViewModel commands
 
         #region UploadFirmwareCommand
-        RelayCommand _uploadFirmwareCommand = null;
-        public ICommand UploadFirmwareCommand
-        {
-            get
-            {
-                if (_uploadFirmwareCommand == null)
-                {
-                    _uploadFirmwareCommand = new RelayCommand((p) => OnUploadFirmware(p), (p) => CanUploadFirmware(p));
-                }
-
-                return _uploadFirmwareCommand;
-            }
-        }
-
-        private bool CanUploadFirmware(object parameter)
+        
+        protected override bool CanUploadFirmware(object parameter)
         {
             return Device != null && Device.BootMode &&
                 File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "flash.bin"));
         }
 
-        private void OnUploadFirmware(object parameter)
+        protected override void OnUploadFirmware(object parameter)
         {
             try
             {
@@ -283,26 +137,13 @@ namespace PixelTuner.ViewModel
         #endregion 
 
         #region UploadCommand
-        RelayCommand _uploadCommand = null;
-        public ICommand UploadCommand
-        {
-            get
-            {
-                if (_uploadCommand == null)
-                {
-                    _uploadCommand = new RelayCommand((p) => OnUploadCommand(p), (p) => CanUploadCommand(p));
-                }
-
-                return _uploadCommand;
-            }
-        }
-
-        private bool CanUploadCommand(object parameter)
+        
+        protected override bool CanUploadCommand(object parameter)
         {
             return Device != null && !BootMode;
         }
 
-        private void OnUploadCommand(object parameter)
+        protected override void OnUploadCommand(object parameter)
         {
             Progress = 0;
             FileViewModel file = parameter as FileViewModel;
@@ -359,26 +200,13 @@ namespace PixelTuner.ViewModel
         #endregion
 
         #region AutoUpdateCommand
-        RelayCommand _autoUpdateCommand = null;
-        public ICommand AutoUpdateCommand
-        {
-            get
-            {
-                if (_autoUpdateCommand == null)
-                {
-                    _autoUpdateCommand = new RelayCommand((p) => OnAutoUpdateCommand(p), (p) => CanAutoUpdateCommand(p));
-                }
 
-                return _autoUpdateCommand;
-            }
-        }
-
-        private bool CanAutoUpdateCommand(object parameter)
+        protected override bool CanAutoUpdateCommand(object parameter)
         {
             return Device != null;
         }
 
-        private void OnAutoUpdateCommand(object parameter)
+        protected override void OnAutoUpdateCommand(object parameter)
         {
             Device.SwitchToBoot();
         }
@@ -386,26 +214,13 @@ namespace PixelTuner.ViewModel
         #endregion
 
         #region UpdatePostponeCommand
-        RelayCommand _updatePostponeCommand = null;
-        public ICommand UpdatePostponeCommand
-        {
-            get
-            {
-                if (_updatePostponeCommand == null)
-                {
-                    _updatePostponeCommand = new RelayCommand((p) => OnUpdatePostponeCommand(p), (p) => CanUpdatePostponeCommand(p));
-                }
 
-                return _updatePostponeCommand;
-            }
-        }
-
-        private bool CanUpdatePostponeCommand(object parameter)
+        protected override bool CanUpdatePostponeCommand(object parameter)
         {
             return Device != null;
         }
 
-        private void OnUpdatePostponeCommand(object parameter)
+        protected override void OnUpdatePostponeCommand(object parameter)
         {
             if (PlatformVersion == 2) FirmwareFileVersionV2 = FirmwareVersion;
             else if (PlatformVersion == 3) FirmwareFileVersionV3 = FirmwareVersion;
@@ -416,36 +231,5 @@ namespace PixelTuner.ViewModel
 
         #endregion
 
-        #region Misc
-        
-        public override string ToString()
-        {
-            return Name;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is PixelDeviceViewModel)
-            {
-                if ((obj as PixelDeviceViewModel).Device != null && Device != null)
-                    Device.Equals((obj as PixelDeviceViewModel).Device);
-            }
-
-            return base.Equals(obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
-        private void InitializeProgressBar(IList<byte> binaryData)
-        {
-            ProgressMin = 0;
-            ProgressMax = PixelDevice.EstimateRequestsCount(binaryData.Count) + 1;
-            Step = 1;
-        }
-
-        #endregion
     }
 }

@@ -15,7 +15,7 @@ namespace PixelTuner.ViewModel
 
         public const string ToolContentId = "DevicesTool";
 
-        public SafeObservable<PixelDeviceViewModel> Devices
+        public SafeObservable<DeviceViewModel> Devices
         {
             get;
             private set;
@@ -27,12 +27,6 @@ namespace PixelTuner.ViewModel
             get { return _illuminators; }
         }
 
-        public SafeObservable<LightMasterDeviceViewModel> LightMasterDevices
-        {
-            get;
-            private set;
-        }
-
         #endregion
 
         public DevicesViewModel(string name)
@@ -41,8 +35,7 @@ namespace PixelTuner.ViewModel
             IsVisible = true;
             ContentId = ToolContentId;
 
-            Devices = new SafeObservable<PixelDeviceViewModel>();
-            LightMasterDevices = new SafeObservable<LightMasterDeviceViewModel>();
+            Devices = new SafeObservable<DeviceViewModel>();
 
             DeviceHelper.Devices.ForEach((d) => { DeviceHelper_DeviceFound(new DeviceEventArgs(d)); });
             DeviceHelper.DeviceFound += new DeviceHelper.DeviceChangedDelegate(DeviceHelper_DeviceFound);
@@ -54,7 +47,7 @@ namespace PixelTuner.ViewModel
             if (e.Device is LightMasterDevice)
             {
                 var model = new LightMasterDeviceViewModel((LightMasterDevice)e.Device);
-                LightMasterDevices.Add(model);
+                Devices.Add(model);
             }
             else if (e.Device is IlluminatorDevice)
             {
@@ -64,6 +57,11 @@ namespace PixelTuner.ViewModel
             else if (e.Device is PixelDevice)
             {
                 var model = new PixelDeviceViewModel(e.Device as PixelDevice);
+                Devices.Add(model);
+            }
+            else if (e.Device is SimplePoiDevice)
+            {
+                var model = new SimplePoiDeviceViewModel(e.Device as SimplePoiDevice);
                 Devices.Add(model);
             }
             else if (e.Device is GenericSerialDevice)
@@ -78,7 +76,7 @@ namespace PixelTuner.ViewModel
 
         void DeviceHelper_DeviceLost(DeviceEventArgs e)
         {
-            List<PixelDeviceViewModel> modelsToRemove = new List<PixelDeviceViewModel>();
+            List<DeviceViewModel> modelsToRemove = new List<DeviceViewModel>();
             for (int i = 0; i < Devices.Count; i++)
             {
                 if (Devices[i].Device.Equals(e.Device))
@@ -99,18 +97,6 @@ namespace PixelTuner.ViewModel
                 }
             }
             illuminatorsToRemove.ForEach((item) => { Illuminators.Remove(item);});
-
-
-            List<LightMasterDeviceViewModel> lMastersToRemove = new List<LightMasterDeviceViewModel>();
-            for (int i = 0; i < LightMasterDevices.Count; i++)
-            {
-                if (LightMasterDevices[i].Device.Equals(e.Device))
-                {
-                    lMastersToRemove.Add(LightMasterDevices[i]);
-                    break;
-                }
-            }
-            lMastersToRemove.ForEach((item) => { LightMasterDevices.Remove(item); });
         }
 
         private static bool ContinueUpdate()

@@ -5,17 +5,26 @@ using System.Text;
 using Common.ViewModel;
 using Communication.Service;
 using System.Windows.Input;
+using System.Windows;
 
 namespace PixelTuner.ViewModel
 {
     public class IlluminatorDeviceViewModel : ViewModelBase
     {
-
         public IlluminatorDevice Device { get; private set; }
 
-        public IlluminatorDeviceViewModel(IlluminatorDevice device)
-            //: base(device)
+        private int FirmwareFileVersion { get; set; }
+
+        public IlluminatorDeviceViewModel()
         {
+            var streamInfo = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash_IL.bin"));
+            var firmwareBytes = Common.Collections.StreamHelper.ReadFully(streamInfo.Stream);
+            FirmwareFileVersion = firmwareBytes[52];
+        }
+
+        public IlluminatorDeviceViewModel(IlluminatorDevice device)
+        {
+            Device = device;
         }
 
         public void Play(TimeSpan time, int discreteness)

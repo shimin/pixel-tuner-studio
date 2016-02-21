@@ -161,10 +161,12 @@
     <Compile Include="Styles\TimeLineLayoutTemplate.xaml.cs">
       <DependentUpon>TimeLineLayoutTemplate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModel\DeviceViewModel.cs" />
     <Compile Include="ViewModel\IlluminatorDeviceViewModel.cs" />
     <Compile Include="ViewModel\LightMasterDeviceViewModel.cs" />
     <Compile Include="ViewModel\ProjectPlayerViewModel.cs" />
     <Compile Include="ViewModel\Serialization\TimeLineItem.cs" />
+    <Compile Include="ViewModel\SimplePoiDeviceViewModel.cs" />
     <Compile Include="ViewModel\TimeLineItemViewModel.cs" />
     <Compile Include="DefaultsWindow.xaml.cs">
       <DependentUpon>DefaultsWindow.xaml</DependentUpon>
