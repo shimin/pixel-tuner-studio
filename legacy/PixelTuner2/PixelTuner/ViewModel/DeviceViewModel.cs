@@ -194,7 +194,6 @@ namespace PixelTuner.ViewModel
 
         #endregion
 
-
         #region ViewModel commands
 
         #region UploadFirmwareCommand
@@ -307,28 +306,11 @@ namespace PixelTuner.ViewModel
 
         #endregion
 
-
         #region Misc
 
         public override string ToString()
         {
             return Name;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is DeviceViewModel)
-            {
-                if ((obj as DeviceViewModel).Device != null && Device != null)
-                    Device.Equals((obj as DeviceViewModel).Device);
-            }
-
-            return base.Equals(obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
         }
 
         #endregion

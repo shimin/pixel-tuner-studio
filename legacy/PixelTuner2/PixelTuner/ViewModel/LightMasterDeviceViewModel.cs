@@ -73,6 +73,7 @@ namespace PixelTuner.ViewModel
         }
 
         public LightMasterDeviceViewModel(LightMasterDevice device)
+            : base(device)
         {
             Device = device;
             //FirmwareVersion = 9;

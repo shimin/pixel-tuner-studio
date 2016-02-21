@@ -46,12 +46,12 @@ namespace PixelTuner.ViewModel
         {
             if (e.Device is LightMasterDevice)
             {
-                var model = new LightMasterDeviceViewModel((LightMasterDevice)e.Device);
+                var model = new LightMasterDeviceViewModel(e.Device as LightMasterDevice);
                 Devices.Add(model);
             }
             else if (e.Device is IlluminatorDevice)
             {
-                var model = new IlluminatorDeviceViewModel((IlluminatorDevice)e.Device);
+                var model = new IlluminatorDeviceViewModel(e.Device as IlluminatorDevice);
                 Illuminators.Add(model);
             }
             else if (e.Device is PixelDevice)
@@ -79,7 +79,7 @@ namespace PixelTuner.ViewModel
             List<DeviceViewModel> modelsToRemove = new List<DeviceViewModel>();
             for (int i = 0; i < Devices.Count; i++)
             {
-                if (Devices[i].Device.Equals(e.Device))
+                if (Devices[i].Device == null || Devices[i].Device.Equals(e.Device))
                 {
                     modelsToRemove.Add(Devices[i]);
                     break;
