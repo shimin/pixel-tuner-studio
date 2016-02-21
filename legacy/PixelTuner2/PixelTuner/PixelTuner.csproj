@@ -167,6 +167,7 @@
     <Compile Include="ViewModel\ProjectPlayerViewModel.cs" />
     <Compile Include="ViewModel\Serialization\TimeLineItem.cs" />
     <Compile Include="ViewModel\SimplePoiDeviceViewModel.cs" />
+    <Compile Include="ViewModel\TimelineHelper.cs" />
     <Compile Include="ViewModel\TimeLineItemViewModel.cs" />
     <Compile Include="DefaultsWindow.xaml.cs">
       <DependentUpon>DefaultsWindow.xaml</DependentUpon>

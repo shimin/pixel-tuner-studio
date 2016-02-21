@@ -783,7 +783,7 @@ namespace PixelTuner.ViewModel
                 var item = (dataContext as TimeLineItemViewModel);
                 if (_selectedItems.Count > 0)
                 {
-                    if (selectedLine != null && item.Parent == selectedLine)
+                    if (selectedLine != null)
                     {
                         if (item.IsSelected && ctrlHold)
                         {
@@ -801,7 +801,7 @@ namespace PixelTuner.ViewModel
                 {
                     _selectedItems.Add(item);
                     item.IsSelected = true;
-                    ((TimeLineViewModel)item.Parent).IsSelected = true;
+                    TimeLines.First(x => x.Items.Contains(item)).IsSelected = true;
                 }
                 if (item.IsSelected)
                 {
@@ -868,7 +868,9 @@ namespace PixelTuner.ViewModel
 
         internal void DeleteSelectedItems()
         {
-            _selectedItems.ForEach(i => { ((TimeLineViewModel)i.Parent).Items.Remove(i); });
+            _selectedItems.ForEach(i => {
+                TimeLines.All(t => t.Items.Remove(i));
+            });
             _selectedItems.Clear();
         }
 

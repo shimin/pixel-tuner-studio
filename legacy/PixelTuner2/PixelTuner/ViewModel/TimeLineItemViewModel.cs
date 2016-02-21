@@ -75,8 +75,8 @@ namespace PixelTuner.ViewModel
             {
                 if (value != _startTime)
                 {
-                    var p = Parent as TimeLineViewModel;
-                    if (p != null) { p.IsChanged = true; }
+                    var tl = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, this);
+                    if (tl != null) tl.IsChanged = true;
                 }
                 _startTime = value;
                 RaisePropertyChanged("StartTime");
@@ -106,8 +106,8 @@ namespace PixelTuner.ViewModel
             {
                 if (value != _endTime)
                 {
-                    var p = Parent as TimeLineViewModel;
-                    if (p != null) { p.IsChanged = true; }
+                    var tl = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, this);
+                    if (tl != null) tl.IsChanged = true;
                 }
                 _endTime = value;
                 RaisePropertyChanged("EndTime");
@@ -183,8 +183,8 @@ namespace PixelTuner.ViewModel
             {
                 if (value != _stretching)
                 {
-                    var p = Parent as TimeLineViewModel;
-                    if (p != null) { p.IsChanged = true; }
+                    var tl = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, this);
+                    if (tl != null) tl.IsChanged = true;
                 }
                 _stretching = value;
                 RaisePropertyChanged("Stretching");
@@ -212,14 +212,6 @@ namespace PixelTuner.ViewModel
                 if (LaserOn) return new SolidColorBrush(Color.FromRgb(200, 140, 100));
                 else return new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
             }
-        }
-
-        INotifyPropertyChanged _parent;
-        [XmlIgnore]
-        public INotifyPropertyChanged Parent
-        {
-            get { return _parent; }
-            set { _parent = value; }
         }
 
         [XmlIgnore]
@@ -272,8 +264,8 @@ namespace PixelTuner.ViewModel
                 TimeLineItemViewModel newItem = w.SelectedItem as TimeLineItemViewModel;
                 if (newItem != null)
                 {
-                    var p = Parent as TimeLineViewModel;
-                    if (p != null) 
+                    var p = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, this);
+                    if (p != null)
                     {
                         int idx = p.Items.IndexOf(this);
                         newItem.StartTime = this.StartTime;
@@ -324,14 +316,15 @@ namespace PixelTuner.ViewModel
 
         private void Split(TimeSpan timeSpan)
         {
-            var p = (this.Parent as TimeLineViewModel);
-            int idxToPaste = p.Items.IndexOf(this);
-            var splittedPart = (TimeLineItemViewModel)this.Clone();
-            this.StartTime = this.StartTime + timeSpan;
-            splittedPart.EndTime = splittedPart.StartTime + timeSpan;
-
-            p.Items.Insert(idxToPaste, splittedPart);
-            //p.IsChanged = true;
+            var p = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, this);
+            if (p != null)
+            {
+                int idxToPaste = p.Items.IndexOf(this);
+                var splittedPart = (TimeLineItemViewModel)this.Clone();
+                this.StartTime = this.StartTime + timeSpan;
+                splittedPart.EndTime = splittedPart.StartTime + timeSpan;
+                p.Items.Insert(idxToPaste, splittedPart);
+            }
         }
 
         #endregion
@@ -393,13 +386,13 @@ namespace PixelTuner.ViewModel
         private void OnDisposeMe(object parameter)
         {
             ObservableCollection<ITimeLineDataItem> parentCollection = null;
-            var p = Parent as TimeLineViewModel;
+            var p = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, this);
             if (p != null)
             {
                 p.IsChanged = true;
-                System.Reflection.PropertyInfo pi = _parent.GetType().GetProperty("Items");
+                System.Reflection.PropertyInfo pi = p.GetType().GetProperty("Items");
                 if (pi != null) parentCollection = 
-                    (ObservableCollection<ITimeLineDataItem>)pi.GetValue(_parent, null);
+                    (ObservableCollection<ITimeLineDataItem>)pi.GetValue(p, null);
             }
             if (parentCollection != null)
             {
@@ -446,41 +439,44 @@ namespace PixelTuner.ViewModel
             int stretching, byte brightness, bool laserOn, bool forAll, bool durationChanged,
             bool stretchChanged, bool brightnessChanged, bool laserOnChanged)
         {
-            var p = Parent as TimeLineViewModel;
-            int idx = p.Items.IndexOf(this) + 1;
-
-            this.StartTime = start > p.Start.Value ? start : p.Start.Value;
-            this.EndTime = this.StartTime + duration;
-            this.Stretching = stretching;
-            this.Brightness = brightness;
-            this.LaserOn = laserOn;
-
-            var thisIdx = p.Items.IndexOf(this);
-            if (thisIdx < p.Items.Count - 1 && !forAll && this.EndTime.Value > p.Items[thisIdx + 1].StartTime.Value)
-            if (PixelTuner.Properties.Settings.Default.CutNextItems)
+            var p = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, this);
+            if (p != null)
             {
-                p.CutItemsWithinInterval(p.Items[thisIdx + 1].StartTime, this.EndTime);
-            }
-            else
-            {
-                TimeSpan moveInterval = EndTime.Value - p.Items[thisIdx + 1].StartTime.Value;
-                p.MoveItemsAfterIndex(p.Items[thisIdx + 1].StartTime, moveInterval);
-            }
+                int idx = p.Items.IndexOf(this) + 1;
 
-            DateTime lastUsed = this.EndTime.Value;
-            while (forAll && idx < p.Items.Count)
-            {
-                var itm = (p.Items[idx] as TimeLineItemViewModel);
-                if (durationChanged)
+                this.StartTime = start > p.Start.Value ? start : p.Start.Value;
+                this.EndTime = this.StartTime + duration;
+                this.Stretching = stretching;
+                this.Brightness = brightness;
+                this.LaserOn = laserOn;
+
+                var thisIdx = p.Items.IndexOf(this);
+                if (thisIdx < p.Items.Count - 1 && !forAll && this.EndTime.Value > p.Items[thisIdx + 1].StartTime.Value)
+                    if (PixelTuner.Properties.Settings.Default.CutNextItems)
+                    {
+                        p.CutItemsWithinInterval(p.Items[thisIdx + 1].StartTime, this.EndTime);
+                    }
+                    else
+                    {
+                        TimeSpan moveInterval = EndTime.Value - p.Items[thisIdx + 1].StartTime.Value;
+                        p.MoveItemsAfterIndex(p.Items[thisIdx + 1].StartTime, moveInterval);
+                    }
+
+                DateTime lastUsed = this.EndTime.Value;
+                while (forAll && idx < p.Items.Count)
                 {
-                    p.Items[idx].StartTime = lastUsed;
-                    p.Items[idx].EndTime = lastUsed.Add(duration);
+                    var itm = (p.Items[idx] as TimeLineItemViewModel);
+                    if (durationChanged)
+                    {
+                        p.Items[idx].StartTime = lastUsed;
+                        p.Items[idx].EndTime = lastUsed.Add(duration);
+                    }
+                    if (stretchChanged) itm.Stretching = stretching;
+                    if (brightnessChanged) itm.Brightness = brightness;
+                    if (laserOnChanged) itm.LaserOn = laserOn;
+                    lastUsed = itm.EndTime.Value;
+                    idx++;
                 }
-                if (stretchChanged) itm.Stretching = stretching;
-                if (brightnessChanged) itm.Brightness = brightness;
-                if (laserOnChanged) itm.LaserOn = laserOn;
-                lastUsed = itm.EndTime.Value;
-                idx++;
             }
         }
 

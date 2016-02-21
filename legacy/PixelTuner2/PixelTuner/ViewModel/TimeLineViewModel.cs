@@ -13,27 +13,13 @@ using System.Windows.Media;
 using Common.Collections;
 using Common.Controls;
 using PixelTuner.ViewModel.Serialization;
+using Common.ViewModel;
 
 namespace PixelTuner.ViewModel
 {
-    public class TimeLineViewModel
-        : INotifyPropertyChanged
+    public class TimeLineViewModel : ViewModelBase
     {
-        public TimeLineViewModel() {
-            _xmlItems = new DelegatedIList<PixelTuner.ViewModel.TimeLineItemViewModel, TimeLineItem>(_items);
-            _items.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(_items_CollectionChanged);
-        }
-
-        void _items_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
-            {
-                foreach (TimeLineItemViewModel item in e.NewItems)
-                {
-                    item.Parent = this;
-                }
-            }
-        }
+        #region Properties
 
         FileViewModel _parent;
         [XmlIgnore]
@@ -75,7 +61,7 @@ namespace PixelTuner.ViewModel
             set { _defaultLength = value; RaisePropertyChanged("DefaultTimeInterval"); }
         }
 
-        // for comparasions in TimeLineControl wich all use 'DateTime.MinValue'
+        // for comparasions in TimeLineControl which all use 'DateTime.MinValue'
         DateTime? _start = DateTime.MinValue.AddYears(1);
         [XmlIgnore]
         public DateTime? Start
@@ -88,29 +74,13 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        DelegatedIList<PixelTuner.ViewModel.TimeLineItemViewModel, TimeLineItem> _xmlItems;
-        [XmlElement(ElementName = "Item", Type = typeof(TimeLineItem))]
-        public DelegatedIList<PixelTuner.ViewModel.TimeLineItemViewModel, TimeLineItem> XmlItems
-        {
-            get
-            {
-                return _xmlItems;
-            }
-            set
-            {
-                _xmlItems = value;
-            }
-        }
-
-        ObservableCollection<ITimeLineDataItem> _items = new ObservableCollection<ITimeLineDataItem>();
+        ObservableCollection<ITimeLineDataItem> _items
+            = new ObservableCollection<ITimeLineDataItem>();
         [XmlIgnore]
         public ObservableCollection<ITimeLineDataItem> Items
         {
             get
             {
-                if (_items == null)
-                    _items = new ObservableCollection<ITimeLineDataItem>();
-                
                 return _items;
             }
             set
@@ -120,18 +90,13 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        #region INotifyPropertyChanged Members
-
-        protected virtual void RaisePropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
         #endregion
-
+        
+        public TimeLineViewModel()
+        {
+            _xmlItems = new DelegatedIList<TimeLineItemViewModel, TimeLineItem>(_items);
+        }
+        
         #region Commands
 
         #region MoveUpCommand
@@ -278,6 +243,8 @@ namespace PixelTuner.ViewModel
         #endregion 
 
         #endregion
+        
+        #region Serialization
 
         [XmlIgnore]
         public static List<Type> ExtraTypes
@@ -291,6 +258,24 @@ namespace PixelTuner.ViewModel
                 return result;
             }
         }
+
+        DelegatedIList<TimeLineItemViewModel, TimeLineItem> _xmlItems;
+        [XmlElement(ElementName = "Item", Type = typeof(TimeLineItem))]
+        public DelegatedIList<TimeLineItemViewModel, TimeLineItem> XmlItems
+        {
+            get
+            {
+                return _xmlItems;
+            }
+            set
+            {
+                _xmlItems = value;
+            }
+        } 
+
+        #endregion
+        
+        #region Methods
 
         internal void InsertItems(ObservableCollection<TimeLineItemViewModel> itemsToPaste, int insertIndex)
         {
@@ -402,7 +387,7 @@ namespace PixelTuner.ViewModel
                     }
                 }
             }
-            
+
             if (result == null)
             {
                 // if still not found anything
@@ -421,5 +406,7 @@ namespace PixelTuner.ViewModel
             }
             return result;
         }
+
+        #endregion
     }
 }
