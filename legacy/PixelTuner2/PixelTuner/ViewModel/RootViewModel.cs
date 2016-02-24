@@ -222,6 +222,18 @@ namespace PixelTuner.ViewModel
             }
         }
 
+        CanvasViewModel _canvasModel = null;
+        public CanvasViewModel CanvasModel
+        {
+            get
+            {
+                if (_canvasModel == null)
+                    _canvasModel = new CanvasViewModel();
+
+                return _canvasModel;
+            }
+        }
+
         DevicesViewModel _devicesModel = null;
         public DevicesViewModel DevicesModel
         {

@@ -118,11 +118,25 @@
     </ApplicationDefinition>
     <Compile Include="Audio\NAudioEngine.cs" />
     <Compile Include="Audio\SampleAggregator.cs" />
+    <Compile Include="Auxiliary\DataPipe.cs" />
+    <Compile Include="Auxiliary\SvgHelper.cs" />
     <Compile Include="Controls\ThumbListView\VideoView.cs" />
     <Compile Include="Converters\ActiveDocumentConverter.cs" />
     <Compile Include="Converters\ActiveTimeLineConverter.cs" />
     <Compile Include="Controls\ThumbListView\ImageView.cs" />
     <Compile Include="Converters\LogConverter.cs" />
+    <Compile Include="EffectSawWindow.xaml.cs">
+      <DependentUpon>EffectSawWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="EffectSineWindow.xaml.cs">
+      <DependentUpon>EffectSineWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="EffectSquareWindow.xaml.cs">
+      <DependentUpon>EffectSquareWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="EffectTransitionWindow.xaml.cs">
+      <DependentUpon>EffectTransitionWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Import\PreviewPage.xaml.cs">
       <DependentUpon>PreviewPage.xaml</DependentUpon>
     </Compile>
@@ -161,12 +175,24 @@
     <Compile Include="Styles\TimeLineLayoutTemplate.xaml.cs">
       <DependentUpon>TimeLineLayoutTemplate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModel\CanvasElementViewModel.cs" />
+    <Compile Include="ViewModel\CanvasViewModel.cs" />
     <Compile Include="ViewModel\DeviceViewModel.cs" />
+    <Compile Include="ViewModel\EffectSawThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\EffectSineThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\EffectSquareThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\EffectThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\EffectTransitionThumbnailViewModel.cs" />
     <Compile Include="ViewModel\IlluminatorDeviceViewModel.cs" />
     <Compile Include="ViewModel\LightMasterDeviceViewModel.cs" />
+    <Compile Include="ViewModel\LightTimeLineViewModel.cs" />
     <Compile Include="ViewModel\ProjectPlayerViewModel.cs" />
     <Compile Include="ViewModel\Serialization\TimeLineItem.cs" />
+    <Compile Include="ViewModel\Serialization\TimeLineItemEffect.cs" />
+    <Compile Include="ViewModel\Serialization\TimeLineItemEffectParameters.cs" />
+    <Compile Include="ViewModel\Serialization\TimeLineItemSolid.cs" />
     <Compile Include="ViewModel\SimplePoiDeviceViewModel.cs" />
+    <Compile Include="ViewModel\SolidColorThumbnailViewModel.cs" />
     <Compile Include="ViewModel\TimelineHelper.cs" />
     <Compile Include="ViewModel\TimeLineItemViewModel.cs" />
     <Compile Include="DefaultsWindow.xaml.cs">
@@ -202,10 +228,27 @@
     <Compile Include="ViewModel\ProjectsViewModel.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
     <Compile Include="ViewModel\PixelDeviceViewModel.cs" />
+    <Compile Include="ViewModel\PixelTimeLineViewModel.cs" />
     <Compile Include="ViewModel\TimeLineViewModel.cs" />
     <Compile Include="ViewModel\ToolViewModel.cs" />
     <Compile Include="ViewModel\RootViewModel.cs" />
     <Compile Include="ViewModel\VideosViewModel.cs" />
+    <Page Include="EffectSawWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="EffectSineWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="EffectSquareWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="EffectTransitionWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Import\PreviewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -332,6 +375,8 @@
     </None>
     <Resource Include="Files\Flash.bin" />
     <Resource Include="Files\Flash_v3.bin" />
+    <None Include="Files\Flash_IL.bin" />
+    <None Include="Files\Flash_LR.bin" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -342,6 +387,42 @@
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{3C6806B7-698D-45CD-B131-EB84845CC938}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\eDmx.ArtNet\eDmx.ArtNet.csproj">
+      <Project>{82991D6F-D554-41EE-AF8B-A110FCE19D00}</Project>
+      <Name>eDmx.ArtNet</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpVectors\SharpVectorConverters\SharpVectors.Converters.csproj">
+      <Project>{E8056611-E49C-4BC3-A682-A629D5CEC11C}</Project>
+      <Name>SharpVectors.Converters</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpVectors\SharpVectorCore\SharpVectors.Core.csproj">
+      <Project>{D6BB65FC-240E-4241-B2ED-A7FB3F13E978}</Project>
+      <Name>SharpVectors.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpVectors\SharpVectorCss\SharpVectors.Css.csproj">
+      <Project>{351B0A6E-2F6B-497A-844B-DCB5A502FB0D}</Project>
+      <Name>SharpVectors.Css</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpVectors\SharpVectorDom\SharpVectors.Dom.csproj">
+      <Project>{FE34CBC0-D23C-4A95-BA64-83A031814010}</Project>
+      <Name>SharpVectors.Dom</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpVectors\SharpVectorModel\SharpVectors.Model.csproj">
+      <Project>{5D336F48-3FB9-4382-B4B9-06974C764007}</Project>
+      <Name>SharpVectors.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpVectors\SharpVectorRenderingGdi\SharpVectors.Rendering.Gdi.csproj">
+      <Project>{0AD99D97-24ED-484D-9430-9905811F8A4F}</Project>
+      <Name>SharpVectors.Rendering.Gdi</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpVectors\SharpVectorRenderingWpf\SharpVectors.Rendering.Wpf.csproj">
+      <Project>{A2576CE0-E492-490F-97E9-C0E7ABAFAF27}</Project>
+      <Name>SharpVectors.Rendering.Wpf</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpVectors\SharpVectorRuntime\SharpVectors.Runtime.csproj">
+      <Project>{2CD52982-A1C2-4A14-9D69-D64719357216}</Project>
+      <Name>SharpVectors.Runtime</Name>
     </ProjectReference>
     <ProjectReference Include="..\WpfTools\Toolkit\Toolkit.csproj">
       <Project>{72E591D6-8F83-4D8C-8F67-9C325E623234}</Project>
@@ -2209,6 +2290,10 @@
     <Content Include="Content\80_batterfly_009.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Effects\00_effect.png" />
+    <Resource Include="Effects\01_effect.png" />
+    <Resource Include="Effects\02_effect.png" />
+    <Resource Include="Effects\03_effect.png" />
     <Resource Include="Images\rotateLeft.png" />
     <Resource Include="Images\rotateRight.png" />
     <Resource Include="Images\flipHorizontally.png" />

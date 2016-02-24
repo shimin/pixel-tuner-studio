@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Xml.Serialization;
-using System.Windows;
-using System.Windows.Input;
+using System.Collections.ObjectModel;
 using System.Windows.Media;
+using System.Xml.Serialization;
 
-using Common.Collections;
 using Common.Controls;
-using PixelTuner.ViewModel.Serialization;
+using Common.Collections;
 using Common.ViewModel;
+using PixelTuner.ViewModel.Serialization;
+using System.Windows.Input;
 
 namespace PixelTuner.ViewModel
 {
@@ -74,7 +71,7 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        ObservableCollection<ITimeLineDataItem> _items
+        protected ObservableCollection<ITimeLineDataItem> _items
             = new ObservableCollection<ITimeLineDataItem>();
         [XmlIgnore]
         public ObservableCollection<ITimeLineDataItem> Items
@@ -91,12 +88,12 @@ namespace PixelTuner.ViewModel
         }
 
         #endregion
-        
+
         public TimeLineViewModel()
         {
             _xmlItems = new DelegatedIList<TimeLineItemViewModel, TimeLineItem>(_items);
         }
-        
+
         #region Commands
 
         #region MoveUpCommand
@@ -129,11 +126,11 @@ namespace PixelTuner.ViewModel
             if (Parent != null)
             {
                 int old = Parent.TimeLines.IndexOf(this);
-                Parent.TimeLines.Move(old, old-1);
+                Parent.TimeLines.Move(old, old - 1);
             }
         }
 
-        #endregion 
+        #endregion
 
         #region MoveDownCommand
 
@@ -170,7 +167,7 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        #endregion 
+        #endregion
 
         #region DeleteLineCommand
         RelayCommand _deleteLineCommand = null;
@@ -202,7 +199,7 @@ namespace PixelTuner.ViewModel
                 Parent.TimeLines.Remove(this);
         }
 
-        #endregion 
+        #endregion
 
         #region CloneLineCommand
         RelayCommand _cloneLineCommand = null;
@@ -227,7 +224,7 @@ namespace PixelTuner.ViewModel
         private void OnCloneLine(object parameter)
         {
             int idx = Parent.TimeLines.IndexOf(this);
-            Parent.TimeLines.Insert(idx +1 , this.Clone());
+            Parent.TimeLines.Insert(idx + 1, this.Clone());
         }
 
         private TimeLineViewModel Clone()
@@ -240,10 +237,10 @@ namespace PixelTuner.ViewModel
             return timelineCopy;
         }
 
-        #endregion 
+        #endregion
 
         #endregion
-        
+
         #region Serialization
 
         [XmlIgnore]
@@ -253,7 +250,10 @@ namespace PixelTuner.ViewModel
             {
                 var result = new List<Type>()
                 {
-                    typeof(TimeLineItem)
+                    typeof(TimeLineItem),
+                    typeof(TimeLineItemSolid),
+                    typeof(TimeLineItemEffect),
+                    typeof(TimeLineItemEffectParameters)
                 };
                 return result;
             }
@@ -271,7 +271,7 @@ namespace PixelTuner.ViewModel
             {
                 _xmlItems = value;
             }
-        } 
+        }
 
         #endregion
         

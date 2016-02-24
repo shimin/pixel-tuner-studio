@@ -218,7 +218,7 @@ namespace PixelTuner.ViewModel.Serialization
             throw new NotImplementedException();
         }
 
-        public object ToType(Type conversionType, IFormatProvider provider)
+        public virtual object ToType(Type conversionType, IFormatProvider provider)
         {
             if (conversionType == typeof(TimeLineItemViewModel))
             {

@@ -144,7 +144,7 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        public object ImageSource
+        public virtual object ImageSource
         {
             get
             {
@@ -220,9 +220,17 @@ namespace PixelTuner.ViewModel
             get { return ImageSource == null ? 0 : (int)((BitmapImage)ImageSource).PixelHeight; }
         }
 
+        public virtual string ContentID
+        {
+            get
+            {
+                return "PixelImageElement";
+            }
+        }
+
         #endregion
 
-        public object Clone()
+        public virtual object Clone()
         {
             TimeLineItemViewModel result = new TimeLineItemViewModel(this._fi);
             result.StartTime = this.StartTime;
@@ -233,7 +241,34 @@ namespace PixelTuner.ViewModel
             result.LaserOn = this.LaserOn;
             return result;
         }
-        
+
+        #region ThumbnailCommand
+        RelayCommand _thumbnailCommand = null;
+        public ICommand ThumbnailCommand
+        {
+            get
+            {
+                if (_thumbnailCommand == null)
+                {
+                    _thumbnailCommand = new RelayCommand((p) => OnThumbnail(p), (p) => CanThumbnail(p));
+                }
+
+                return _thumbnailCommand;
+            }
+        }
+
+        protected virtual bool CanThumbnail(object parameter)
+        {
+            return false;
+        }
+
+        protected virtual void OnThumbnail(object parameter)
+        {
+
+        }
+
+        #endregion
+
         #region ReplaceCommand
         RelayCommand _replaceCommand = null;
         public ICommand ReplaceCommand
@@ -378,12 +413,12 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        private bool CanDisposeMe(object parameter)
+        protected virtual bool CanDisposeMe(object parameter)
         {
             return true;
         }
 
-        private void OnDisposeMe(object parameter)
+        protected virtual void OnDisposeMe(object parameter)
         {
             ObservableCollection<ITimeLineDataItem> parentCollection = null;
             var p = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, this);
@@ -650,7 +685,7 @@ namespace PixelTuner.ViewModel
             throw new NotImplementedException();
         }
 
-        public object ToType(Type conversionType, IFormatProvider provider)
+        public virtual object ToType(Type conversionType, IFormatProvider provider)
         {
             if (conversionType == typeof(TimeLineItem))
             {
