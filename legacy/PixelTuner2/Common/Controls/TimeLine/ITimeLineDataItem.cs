@@ -12,6 +12,5 @@ namespace Common.Controls
         Boolean TimelineViewExpanded { get; set; }
         bool IsSelected { get; set; }
         object Clone();
-        System.ComponentModel.INotifyPropertyChanged Parent { get; set; }
 	}
 }
