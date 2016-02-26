@@ -618,25 +618,27 @@ namespace PixelTuner.ViewModel
         
         public int EvaluateBinarySize(byte targetHeight)
         {
-            var knownPaths = new List<string>();
+            ColorDepth depth = ColorDepth.Bit24;
+            try { depth = (ColorDepth)ColorDepth.Parse(typeof(ColorDepth), Settings.Default.ColorDepth); }
+            catch { }
 
-            ColorDepth depth;
-            var descriptors = new List<ImagesCollectionItem>();
-            PixelProjectFile project = CreateProjectFile(descriptors, (byte)targetHeight, out depth, Settings.Default.CollapseGaps);
-            ImagesCollection c = new ImagesCollection(descriptors);
+            var images = new List<ImagesCollectionItem>();
+            PixelProjectFile project = CreateProjectFile(images, (byte)targetHeight, depth);
+            ImagesCollection c = new ImagesCollection(images);
+
             return project.GetBinarySize(c, targetHeight);
         }
 
-        public List<byte> GetBinaryPresentation(int targetHeight)
+        public List<byte> GetBinaryPresentation(byte targetHeight)
         {
-            var knownPaths = new List<string>();
-            byte projectHeight = (byte)targetHeight;
+            ColorDepth depth = ColorDepth.Bit24;
+            try { depth = (ColorDepth)ColorDepth.Parse(typeof(ColorDepth), Settings.Default.ColorDepth); }
+            catch { }
 
-            ColorDepth depth;
-            var descriptors = new List<ImagesCollectionItem>();
-            PixelProjectFile project = CreateProjectFile(descriptors, (byte)targetHeight, out depth, Settings.Default.CollapseGaps);
-            ImagesCollection c = new ImagesCollection(descriptors);
-            var buf = project.GetBinary(c, projectHeight);
+            var images = new List<ImagesCollectionItem>();
+            PixelProjectFile project = CreateProjectFile(images, targetHeight, depth);
+            ImagesCollection c = new ImagesCollection(images);
+            var buf = project.GetBinary(c, targetHeight);
 #if(DEBUG)
             string logFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".\\Logs");
             Directory.CreateDirectory(logFolder);
@@ -646,80 +648,46 @@ namespace PixelTuner.ViewModel
             return buf;
         }
 
-        private PixelProjectFile CreateProjectFile(List<ImagesCollectionItem> descriptors, byte targetHeight, out ColorDepth depth, bool collapseGaps = true)
+        private PixelProjectFile CreateProjectFile(List<ImagesCollectionItem> imagesCollection, byte targetHeight, ColorDepth depth)
         {
             var project = new PixelProjectFile();
-            
-            depth = ColorDepth.Bit24;
-            try { depth = (ColorDepth)ColorDepth.Parse(typeof(ColorDepth), Settings.Default.ColorDepth); }
-            catch { }
 
-            foreach (TimeLineViewModel tl in _timeLines)
+            foreach (TimeLineViewModel line in _timeLines)
             {
-                if (tl.Items.Count == 0) continue;
-                var tlf = new PixelTimelineFile();
+                if (line.Items.Count == 0) continue;
+                var file = new PixelTimelineFile();
 
-                var start = tl.Start.Value;
-                foreach (PixelTuner.ViewModel.TimeLineItemViewModel item in tl.Items)
+                var currentTime = line.Start.Value;
+                foreach (TimeLineItemViewModel item in line.Items)
                 {
                     string path = item.FullName.ToLower();
-                    if (!collapseGaps && (item.StartTime.Value - start).TotalMilliseconds > Settings.Default.GapMinimumSize)
+                    double startMilliseconds = 0;
+
+                    var gapDuration = (item.StartTime.Value - currentTime).TotalMilliseconds;
+                    if (gapDuration > 0)    // if start time of the next image doesn't match end time of the current one
                     {
-                        UInt16 gapDuration = (UInt16)((item.StartTime.Value - start).TotalMilliseconds / 100);
-                        var blankImage = new PixelImageFile(null, (UInt16)item.Stretching, gapDuration);
-                        tlf.Images.Add(blankImage);
-                        descriptors.Add(new ImagesCollectionItem(null, targetHeight, depth));
+                        startMilliseconds = (item.StartTime.Value - line.Start.Value).TotalMilliseconds;
+                        var blankImageFile = new PixelImageFile(null, (UInt16)item.Stretching, (UInt32)gapDuration, (UInt32)startMilliseconds, 0);
+                        file.Images.Add(blankImageFile);
+                        imagesCollection.Add(new ImagesCollectionItem(null, targetHeight, depth));
                     }
-                    DateTime startTimeStamp = collapseGaps ? start : item.StartTime.Value;
-                    UInt16 duration = (UInt16)(((TimeSpan)(item.EndTime - startTimeStamp)).TotalMilliseconds / 100);
-                    var imgf = new PixelImageFile(path, (UInt16)item.Stretching, duration);
-                    descriptors.Add(new ImagesCollectionItem(path, targetHeight, depth));
-                    imgf.Brightness = descriptors[descriptors.Count - 1].Brightness = item.Brightness;
-                    descriptors[descriptors.Count - 1].LaserOn = item.LaserOn;
-                    tlf.Images.Add(imgf);
-                    start = item.EndTime.Value;
+
+                    var duration = (item.EndTime.Value - item.StartTime.Value).TotalMilliseconds;       // duration = end time - start time
+                    startMilliseconds = (item.StartTime.Value - line.Start.Value).TotalMilliseconds;    // start ms = start time - timeline start time
+                    UInt16 mask = item.LaserOn ? (ushort)1 : (ushort)0;
+                    var imageFile = new PixelImageFile(path, (UInt16)item.Stretching, (UInt32)duration, (UInt32)startMilliseconds, mask);
+                    var image = new ImagesCollectionItem(path, targetHeight, depth);
+                    imageFile.Brightness = image.Brightness = item.Brightness;
+                    imagesCollection.Add(image);
+
+                    file.Images.Add(imageFile);
+                    currentTime = item.EndTime.Value;
                 }
-                project.TimeLines.Add(tlf);
+                project.TimeLines.Add(file);
             }
 
             return project;
         }
-
-        //private PixelProjectFile CreateProjectFile(List<string> knownPaths, out ColorDepth depth, bool collapseGaps = true)
-        //{
-        //    var project = new PixelProjectFile();
-        //    foreach (TimeLineViewModel tl in _timeLines)
-        //    {
-        //        if (tl.Items.Count == 0) continue;
-        //        var tlf = new PixelTimelineFile();
-                
-        //        var start = tl.Start.Value;
-        //        foreach (PixelTuner.ViewModel.TimeLineItemViewModel item in tl.Items)
-        //        {
-        //            string path = item.FullName.ToLower();
-        //            if (!collapseGaps && (item.StartTime.Value - start).TotalMilliseconds > Settings.Default.GapMinimumSize)
-        //            {
-        //                UInt16 gapDuration = (UInt16)((item.StartTime.Value - start).TotalMilliseconds / 100);
-        //                var blankImage = new PixelImageFile(null, (UInt16)item.Stretching, gapDuration);
-        //                knownPaths.Add(null);
-        //                tlf.Images.Add(blankImage);
-        //            }
-        //            DateTime startTimeStamp = collapseGaps ? start : item.StartTime.Value;
-        //            UInt16 duration = (UInt16)(((TimeSpan)(item.EndTime - startTimeStamp)).TotalMilliseconds / 100);
-        //            var imgf = new PixelImageFile(path, (UInt16)item.Stretching, duration);
-        //            knownPaths.Add(path);
-        //            tlf.Images.Add(imgf);
-        //            start = item.EndTime.Value;
-        //        }
-        //        project.TimeLines.Add(tlf);
-        //    }
-        //    depth = ColorDepth.Bit24;
-
-        //    try { depth = (ColorDepth)ColorDepth.Parse(typeof(ColorDepth), Settings.Default.ColorDepth); }
-        //    catch { }
-
-        //    return project;
-        //}
 
         [XmlIgnore]
         public static List<Type> ExtraTypes

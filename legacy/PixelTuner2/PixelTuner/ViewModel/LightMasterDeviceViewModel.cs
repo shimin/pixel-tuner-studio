@@ -111,7 +111,7 @@ namespace PixelTuner.ViewModel
                 //dialog.Owner = Application.Current.MainWindow;
                 //if (dialog.ShowDialog() == true)
                 //{
-                    data = model.GetBinaryPresentation(500);
+                    data = model.GetBinaryPresentation(5);
                     InitializeProgressBar(data);
                     RaisePropertyChanged("ProgressMax");
                     BackgroundWorker worker = new BackgroundWorker();
