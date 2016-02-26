@@ -40,22 +40,41 @@ namespace Communication.Pixelate
             set { _stretching = value; }
         }
 
-        UInt16 _duration;
-        public UInt16 Duration
+        UInt32 _duration;
+        public UInt32 Duration
         {
             get { return _duration; }
             set { _duration = value; }
         }
 
-        public bool LaserOn { get; set; }
+        UInt32 _startTime = 0;
+        /// <summary>
+        /// Global start time in ms
+        /// </summary>
+        public UInt32 StartTime
+        {
+            get { return _startTime; }
+            set { _startTime = value; }
+        }
+
+        UInt16 _mask = 0;
+        /// <summary>
+        /// Options such as laser (0 bit switches it on/off)
+        /// </summary>
+        public UInt16 Mask
+        {
+            get { return _mask; }
+            set { _mask = value; }
+        }
 
         public static int Size
         {
             get
             {
                 return
-                    sizeof(UInt32) +    // start address
-                    2 * sizeof(UInt16); // duration and stretching
+                    sizeof(UInt32) +     // start address
+                    2 * sizeof(UInt16) + // stretching and 2 bytes option
+                    sizeof(UInt32);      // start time in ms
             }
         }
 
@@ -69,11 +88,13 @@ namespace Communication.Pixelate
         /// <param name="path">path to bitmap file</param>
         /// <param name="stretching">column repeat count</param>
         /// <param name="duration">duration in 100ms intervals</param>
-        public PixelImageFile(string path, UInt16 stretching, UInt16 duration)
+        public PixelImageFile(string path, UInt16 stretching, UInt32 duration, UInt32 startTime, UInt16 mask)
         {
             _path = path;
             _stretching = stretching;
             _duration = duration;
+            _startTime = startTime;
+            _mask = mask;
         }
 
         #endregion

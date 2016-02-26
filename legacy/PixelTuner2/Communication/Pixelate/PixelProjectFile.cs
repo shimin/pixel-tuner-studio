@@ -32,8 +32,8 @@ namespace Communication.Pixelate
             var notEmptyLines = new List<PixelTimelineFile>();
             TimeLines.ForEach((tl) => { if (tl.Images.Count > 0) notEmptyLines.Add(tl); });
 
-            List<byte> result = CreateProjectHeader(notEmptyLines);
-            size = (int)SetTimelineRefs(notEmptyLines, result);
+            List<byte> result = CreateProjectHeader(notEmptyLines, targetHeight);
+            size = (int)GenerateTimelineAddresses(notEmptyLines, result);
             size += images.GetSize(targetHeight);
 
             return size;
@@ -42,15 +42,15 @@ namespace Communication.Pixelate
         public List<byte> GetBinary(ImagesCollection images, byte targetHeight)
         {
             // ignore empty timelines
-            var notEmptyLines = new List<PixelTimelineFile>();
-            TimeLines.ForEach((tl) => { if (tl.Images.Count > 0) notEmptyLines.Add(tl); });
+            var nonEmptyLines = new List<PixelTimelineFile>();
+            TimeLines.ForEach(tl => { if (tl.Images.Count > 0) nonEmptyLines.Add(tl); });
 
-            List<byte> result = CreateProjectHeader(notEmptyLines);
+            List<byte> result = CreateProjectHeader(nonEmptyLines, targetHeight);
 
-            var firstFreeAddress = SetTimelineRefs(notEmptyLines, result);              // timeline addresses
+            var firstFreeAddress = GenerateTimelineAddresses(nonEmptyLines, result);              // timeline addresses
             images.SetBlockAddress(firstFreeAddress);
             
-            notEmptyLines.ForEach((tl) => { result.AddRange(tl.GetBinary(images)); });  // timelines data
+            nonEmptyLines.ForEach((tl) => { result.AddRange(tl.GetBinary(images)); });  // timelines data
             result.AddRange(images.GetBinary(targetHeight));                            // images data
 
             SetBinarySize(result);
@@ -58,46 +58,49 @@ namespace Communication.Pixelate
             return result;
         }
 
-        private List<byte> CreateProjectHeader(List<PixelTimelineFile> timeLines)
+        private List<byte> CreateProjectHeader(List<PixelTimelineFile> timeLines, byte targetHeight)
         {
             List<byte> result = new List<byte>(projectPrefix);                          // header
+            result.Add(targetHeight);                                                   // project images height
             result.AddRange(new byte[4]);                                               // binary total size field
             result.Add((byte)timeLines.Count);                                          // timelines count
             return result;
         }
 
+        /// <summary>
+        /// Completes field (4 bytes) with binary size in header
+        /// </summary>
+        /// <param name="result">Binary to complete the field</param>
         private void SetBinarySize(List<byte> result)
         {
             UInt32 size = (UInt32)result.Count;
             byte[] sizeBytes = BitConverter.GetBytes(size);
-            for (int i = projectPrefix.Count; i < projectPrefix.Count + sizeBytes.Length; i++)
-                result[i] = sizeBytes[i - projectPrefix.Count];
+            int projectHeaderOffset = projectPrefix.Count + sizeof(byte);
+            for (int i = projectHeaderOffset; i < projectHeaderOffset + sizeBytes.Length; i++)
+                result[i] = sizeBytes[i - projectHeaderOffset];
         }
 
-        private UInt32 SetTimelineRefs(List<PixelTimelineFile> notEmptyLines, List<byte> result)
+        /// <summary>
+        /// Generates timeline addresses, writes it to the binary and returns first available address after
+        /// timeline address list section
+        /// </summary>
+        /// <param name="lines">Non empty timelines</param>
+        /// <param name="result">Binary with complete timeline descriptors address list</param>
+        /// <returns>First address after section</returns>
+        private UInt32 GenerateTimelineAddresses(List<PixelTimelineFile> lines, List<byte> result)
         {
-            UInt32 currentAddress = (UInt32)(result.Count + notEmptyLines.Count * sizeof(UInt32));
-            List<UInt32> addresses = GetTimelineAddresses(currentAddress, notEmptyLines);
-            addresses.ForEach((adr) => { result.AddRange(BitConverter.GetBytes(adr)); });
-
-            uint lastTimelineSize = 0;
-            uint lastTimelineAddress = 0;
-
-            if (notEmptyLines.Count > 0) lastTimelineSize = notEmptyLines.Last<PixelTimelineFile>().GetSize();
-            if (addresses.Count > 0) lastTimelineAddress = addresses.Last<UInt32>();
+            // increase current address by timeline addresses block
+            UInt32 currentAddress = (UInt32)(result.Count + lines.Count * sizeof(UInt32));
             
-            return lastTimelineSize + lastTimelineAddress + 1;
-        }
-
-        private List<UInt32> GetTimelineAddresses(UInt32 currentAddress, List<PixelTimelineFile> lines)
-        {
-            List<UInt32> result = new List<uint>();
+            // get address of each timeline descriptor
             for (int i = 0; i < lines.Count; i++)
             {
-                result.Add(currentAddress);
-                currentAddress += lines[i].GetSize() + 1;
+                result.AddRange(BitConverter.GetBytes(currentAddress));
+                currentAddress += lines[i].GetSize();
             }
-            return result;
+
+            // return first available address after timeline addresses block
+            return currentAddress;
         }
 
         #endregion
