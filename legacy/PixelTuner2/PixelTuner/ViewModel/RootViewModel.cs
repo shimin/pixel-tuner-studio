@@ -651,7 +651,7 @@ namespace PixelTuner.ViewModel
             sfd.Filter = "Binary file|*.bin";
             if (true == sfd.ShowDialog())
             {
-                var b = ActiveDocument.GetBinaryPresentation(ActiveDocument.LineHeight);
+                var b = ActiveDocument.GetBinaryPresentation((byte)ActiveDocument.LineHeight);
                 File.WriteAllBytes(sfd.FileName, b.ToArray());
             }
         }

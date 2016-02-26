@@ -99,7 +99,7 @@ namespace PixelTuner.ViewModel
                 //dialog.Owner = Application.Current.MainWindow;
                 //if (dialog.ShowDialog() == true)
                 //{
-                data = model.GetBinaryPresentation(500);
+                data = model.GetBinaryPresentation(5);
                 if (ValidateProject(model, data.Count / 1024))
                 {
                     InitializeProgressBar(data);
