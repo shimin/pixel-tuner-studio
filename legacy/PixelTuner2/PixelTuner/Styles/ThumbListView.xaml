@@ -170,7 +170,7 @@
             <Setter.Value>
                 <DataTemplate>
                     <Border Background="White">
-                        <Image Height="50" Margin="2">
+                        <Image Height="28" Margin="2">
                             <Image.Source>
                                 <BitmapImage UriSource="{Binding FullName}" CacheOption="OnLoad" />
                             </Image.Source>

@@ -10,7 +10,7 @@
         <ResourceDictionary Source="/Common;component/Styles/SearchTextBox.xaml"></ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
 
-    <tlw:ImageView x:Key="GradientView"/>
+    <tlw:GradientView x:Key="GradientView"/>
 
     <DataTemplate x:Key="GradientsLayoutTemplate">
         <Grid>
