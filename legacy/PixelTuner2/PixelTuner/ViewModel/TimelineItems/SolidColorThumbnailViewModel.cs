@@ -37,15 +37,6 @@ namespace PixelTuner.ViewModel
             set { _colorLast = value; RaisePropertyChanged("ColorLast"); RaisePropertyChanged("ColorLastBrush"); }
         }
 
-        BitmapImage _image = null;
-        public override object ImageSource
-        {
-            get
-            {
-                return _image;
-            }
-        }
-
         //Color _bgColor = Color.FromRgb(0, 0, 0);
         public Color BackgroundColor
         {
@@ -73,14 +64,14 @@ namespace PixelTuner.ViewModel
             }
         }
 
+        protected string _uri = "pack://application:,,,/Effects/04_solid.png";
         public override string FullName
         {
             get
             {
-                return Name;
+                return _uri;
             }
         }
-        
 
         #endregion
 
@@ -99,7 +90,7 @@ namespace PixelTuner.ViewModel
             BackgroundBrush = new System.Windows.Media.SolidColorBrush(BackgroundColor);
         }
 
-        protected override void OnThumbnail(object parameter)
+        protected override void OnEditMe(object parameter)
         {
             var cd = new System.Windows.Forms.ColorDialog();
             var dr = cd.ShowDialog();
@@ -112,12 +103,6 @@ namespace PixelTuner.ViewModel
                     RaisePropertyChanged("BackgroundBrush");
                 }
             }
-            //(this.Parent as TimeLineViewModel).IsChanged = true;
-        }
-
-        protected override bool CanThumbnail(object parameter)
-        {
-            return true;
         }
 
         protected override void OnDisposeMe(object parameter)
@@ -147,12 +132,9 @@ namespace PixelTuner.ViewModel
 
         public override object Clone()
         {
-            SolidColorThumbnailViewModel result = new SolidColorThumbnailViewModel((BitmapImage)ImageSource, Name);
-            result.StartTime = this.StartTime;
-            result.EndTime = this.EndTime;
-            result.TimelineViewExpanded = this.TimelineViewExpanded;
-            result.Stretching = this.Stretching;
-            result.NormalBackground = this.NormalBackground;
+            SolidColorThumbnailViewModel result = (SolidColorThumbnailViewModel)base.Clone();
+            result._image = this._image;
+            result._name = this._name;
             result.BackgroundBrush = this.BackgroundBrush;
             return result;
         }

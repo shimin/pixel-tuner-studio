@@ -58,7 +58,7 @@ namespace PixelTuner.ViewModel
 
         public object Clone()
         {
-            var newObj = new CanvasElementViewModel();
+            var newObj = (CanvasElementViewModel)Activator.CreateInstance(GetType());
             newObj._fill = this._fill;
             newObj._geometry = this._geometry;
             newObj._path = this._path;

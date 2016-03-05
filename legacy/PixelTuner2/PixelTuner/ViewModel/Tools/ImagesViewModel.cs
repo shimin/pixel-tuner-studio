@@ -5,6 +5,9 @@ using System.Text;
 using System.IO;
 using PixelTuner.Controls.ThumbListView;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows;
+using System.Threading;
 
 namespace PixelTuner.ViewModel
 {
@@ -18,9 +21,14 @@ namespace PixelTuner.ViewModel
             RefreshImagesCollection(PixelTuner.Properties.Settings.Default.LineHeight);
         }
 
-        public const string ToolContentId = "ImagesTool";
+        private string _searchPattern;
+        public string SearchPattern
+        {
+            get { return _searchPattern; }
+            set { _searchPattern = value; RaisePropertyChanged("SearchPattern"); }
+        }
 
-        private string _lastFilter = "";
+        public const string ToolContentId = "ImagesTool";
 
         private void MenuItem_Click(object sender, System.Windows.RoutedEventArgs e)
         {
@@ -54,6 +62,9 @@ namespace PixelTuner.ViewModel
             }
         }
 
+        /// <summary>
+        /// Indicates wether something selected or not to enable/disable edit buttons 
+        /// </summary>
         public bool IsSomethingSelected
         {
             get
@@ -62,43 +73,30 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        public void ApplyFilter(string text)
+        Thread t = null;
+        public void RefreshImagesCollection(int height = 0, string itemToRemove = "")
         {
-            _lastFilter = text;
-            string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content");
-            if (!Directory.Exists(sourcePath))
+            if (t != null && t.IsAlive)
             {
-                Directory.CreateDirectory(sourcePath);
+                t.Abort();
+                t.Join();
             }
-            DirectoryInfo info = new DirectoryInfo(sourcePath);
-            List<FileSystemInfo> allfiles = new List<FileSystemInfo>(info.GetFileSystemInfos("*.png"));
-            allfiles.AddRange(info.GetFileSystemInfos("*.jpg"));
-            allfiles.AddRange(info.GetFileSystemInfos("*.bmp"));
-            List<FileSystemInfo> suitableFiles = new List<FileSystemInfo>();
-            foreach (var f in allfiles)
-            {
-                if (string.IsNullOrEmpty(text) || Path.GetFileNameWithoutExtension(f.Name.ToLower()).Contains(text.ToLower()))
+            t = new Thread((parameter) => {
+                try
                 {
-                    using (System.Drawing.Image img = System.Drawing.Image.FromFile(f.FullName))
+                    var arg = parameter as RefreshParameters;
+                    if (arg != null)
                     {
-                        if (img.Height == PixelTuner.Properties.Settings.Default.LineHeight)
-                            suitableFiles.Add(f);
+                        AsyncRefreshCollection(arg.Height, arg.ItemToRemove);
                     }
+                    else AsyncRefreshCollection();
                 }
-            }
-            allfiles = suitableFiles;
-            _images.Clear();
-
-            foreach (FileInfo fi in allfiles)
-            {
-                // exlude hidden files 
-                TimeLineItemViewModel tfi = new TimeLineItemViewModel(fi);
-                if ((fi.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
-                    _images.Add(tfi);
-            }
+                catch (ThreadAbortException) { }
+            });
+            t.Start(new RefreshParameters(height, itemToRemove));
         }
 
-        public void RefreshImagesCollection(int height = 0, string itemToRemove = "")
+        private void AsyncRefreshCollection(int height = 0, string itemToRemove = "")
         {
             string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content");
             if (!Directory.Exists(sourcePath))
@@ -114,29 +112,34 @@ namespace PixelTuner.ViewModel
                 List<FileSystemInfo> suitableFiles = new List<FileSystemInfo>();
                 foreach (var f in allfiles)
                 {
-                    using (System.Drawing.Image img = System.Drawing.Image.FromFile(f.FullName))
-                    {
-                        if (img.Height == height && f.FullName != itemToRemove)
-                            suitableFiles.Add(f);
-                    }
+                    if (string.IsNullOrEmpty(SearchPattern)
+                        || Path.GetFileNameWithoutExtension(f.Name.ToLower()).Contains(SearchPattern.ToLower()))
+                        using (System.Drawing.Image img = System.Drawing.Image.FromFile(f.FullName))
+                        {
+                            if (img.Height == height && f.FullName != itemToRemove)
+                                suitableFiles.Add(f);
+                        }
                 }
                 allfiles = suitableFiles;
             }
-            _images.Clear();
+
+            if (Application.Current == null) return;
+            Application.Current.Dispatcher.Invoke(new Action(() => { _images.Clear(); }));
+
             if (!string.IsNullOrEmpty(itemToRemove))
-            {
                 File.Delete(itemToRemove);
-            }
-            
+
             foreach (FileInfo fi in allfiles)
             {
-                // exclude hidden files 
-                TimeLineItemViewModel tfi = new TimeLineItemViewModel(fi);
+                var tfi = new PixelThumbnailViewModel(fi);
                 if ((fi.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
-                    _images.Add(tfi);
+                    if (string.IsNullOrEmpty(SearchPattern) 
+                        || Path.GetFileNameWithoutExtension(fi.Name.ToLower()).Contains(SearchPattern.ToLower()))
+                    {
+                        if (Application.Current == null) return;
+                        Application.Current.Dispatcher.Invoke(new Action(() => { _images.Add(tfi); }));
+                    }
             }
-            ApplyFilter(_lastFilter);
         }
-
     }
 }

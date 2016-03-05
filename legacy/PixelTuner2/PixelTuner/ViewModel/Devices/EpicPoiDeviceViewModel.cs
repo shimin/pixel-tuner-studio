@@ -7,7 +7,7 @@ using System.Windows;
 
 namespace PixelTuner.ViewModel
 {
-    public class SimplePoiDeviceViewModel : DeviceViewModel
+    public class EpicPoiDeviceViewModel : DeviceViewModel
     {
 
         #region Properties
@@ -67,14 +67,14 @@ namespace PixelTuner.ViewModel
         }
         #endregion
 
-        public SimplePoiDeviceViewModel()
+        public EpicPoiDeviceViewModel()
         {
             var streamInfo = Application.GetResourceStream(new Uri("pack://application:,,,/Files/SimpleFlash.bin"));
             var firmwareBytes = Common.Collections.StreamHelper.ReadFully(streamInfo.Stream);
             FirmwareFileVersion = firmwareBytes[52];
         }
 
-        public SimplePoiDeviceViewModel(SimplePoiDevice device)
+        public EpicPoiDeviceViewModel(SimplePoiDevice device)
             : base(device)
         {
 

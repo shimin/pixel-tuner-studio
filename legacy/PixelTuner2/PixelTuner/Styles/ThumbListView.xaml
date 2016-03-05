@@ -2,7 +2,7 @@
                     xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'
                     xmlns:mwt="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
                     xmlns:l="clr-namespace:PixelTuner.Controls.ThumbListView">
-    <Style x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type l:ImageView},ResourceId=ImageView}"
+    <Style x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type l:ImageView}, ResourceId=ImageView}"
          TargetType="{x:Type ListView}" BasedOn="{StaticResource {x:Type ListBox}}">
         <Setter Property="BorderBrush" Value="Black"/>
         <Setter Property="BorderThickness" Value="0.5"/>
@@ -27,7 +27,139 @@
         </Setter>
     </Style>
 
-    <Style x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type l:ImageView},ResourceId=ListViewItem}"
+    <Style x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type l:ImageView}, ResourceId=ListViewItem}"
+         TargetType="ListViewItem" BasedOn='{StaticResource {x:Type ListBoxItem}}'>
+        <Setter Property='Padding' Value='3'/>
+        <Setter Property='Margin' Value='5'/>
+        <Setter Property='HorizontalContentAlignment' Value='Center'/>
+        <Setter Property='VerticalContentAlignment' Value='Center'/>
+        <Setter Property="ToolTip" Value="{Binding Name, Mode=OneWay}" />
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <Border Background="White">
+                        <Image Height="50" Margin="2">
+                            <Image.Source>
+                                <BitmapImage UriSource="{Binding FullName}" CacheOption="OnLoad" />
+                            </Image.Source>
+                        </Image>
+                    </Border>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type l:EffectView}, ResourceId=EffectView}"
+         TargetType="{x:Type ListView}" BasedOn="{StaticResource {x:Type ListBox}}">
+        <Setter Property="BorderBrush" Value="Black"/>
+        <Setter Property="BorderThickness" Value="0.5"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border Name="bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                  Background="{TemplateBinding Background}" Margin="{TemplateBinding Margin}">
+                        <ScrollViewer Margin="{TemplateBinding Padding}">
+                            <WrapPanel ItemWidth="132" IsItemsHost="True"
+                         Width="{Binding ActualWidth,RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}">
+                            </WrapPanel>
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type l:EffectView}, ResourceId=EffectListViewItem}"
+         TargetType="ListViewItem" BasedOn='{StaticResource {x:Type ListBoxItem}}'>
+        <Setter Property='Padding' Value='2'/>
+        <Setter Property='Margin' Value='0'/>
+        <Setter Property='HorizontalContentAlignment' Value='Center'/>
+        <Setter Property="ToolTip" Value="{Binding Name, Mode=OneWay}" />
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <Border Background="White">
+                        <Image Height="44" Margin="1" Source="{Binding ImageSource}" />
+                    </Border>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type l:VideoView}, ResourceId=VideoView}"
+         TargetType="{x:Type ListView}" BasedOn="{StaticResource {x:Type ListBox}}">
+        <Setter Property="BorderBrush" Value="Black"/>
+        <Setter Property="BorderThickness" Value="0.5"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border Name="bd" 
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}" 
+                            Margin="{TemplateBinding Margin}">
+                        <ScrollViewer Margin="{TemplateBinding Padding}">
+                            <WrapPanel ItemWidth="120" 
+                                       IsItemsHost="True" 
+                                       MinWidth="100"
+                                       Width="{Binding ActualWidth,RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}">
+                            </WrapPanel>
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type l:VideoView}, ResourceId=VideoListViewItem}"
+         TargetType="ListViewItem" BasedOn='{StaticResource {x:Type ListBoxItem}}'>
+        <Setter Property='Padding' Value='3'/>
+        <Setter Property='Margin' Value='5'/>
+        <Setter Property='HorizontalContentAlignment' Value='Center'/>
+        <Setter Property='VerticalContentAlignment' Value='Center'/>
+        <Setter Property="ToolTip" Value="{Binding Name, Mode=OneWay}" />
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <Border Background="White">
+                        <Image Height="50" Margin="2">
+                            <Image.Source>
+                                <BitmapImage UriSource="{Binding FullName}" CacheOption="OnLoad" />
+                            </Image.Source>
+                        </Image>
+                    </Border>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <Style x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type l:GradientView}, ResourceId=GradientView}"
+         TargetType="{x:Type ListView}" BasedOn="{StaticResource {x:Type ListBox}}">
+        <Setter Property="BorderBrush" Value="Black"/>
+        <Setter Property="BorderThickness" Value="0.5"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border Name="bd" 
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}" 
+                            Margin="{TemplateBinding Margin}">
+                        <ScrollViewer Margin="{TemplateBinding Padding}">
+                            <WrapPanel ItemWidth="120" 
+                                       IsItemsHost="True" 
+                                       MinWidth="100"
+                                       Width="{Binding ActualWidth,RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}">
+                            </WrapPanel>
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type l:GradientView}, ResourceId=GradientListViewItem}"
          TargetType="ListViewItem" BasedOn='{StaticResource {x:Type ListBoxItem}}'>
         <Setter Property='Padding' Value='3'/>
         <Setter Property='Margin' Value='5'/>

@@ -50,11 +50,18 @@ namespace PixelTuner.ViewModel
 
         void Workspace_ActiveDocumentChanged(object sender, DocumentChangedEventArgs e)
         {
-            if (_activeDocument == null) ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
+            if (_activeDocument == null)
+            {
+                ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
+                VideosModel.RefreshVideosCollection(Settings.Default.LineHeight);
+                GradientsModel.RefreshImagesCollection();
+            }
             else
             {
                 Settings.Default.LineHeight = _activeDocument.LineHeight;
                 ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
+                VideosModel.RefreshVideosCollection(Settings.Default.LineHeight);
+                GradientsModel.RefreshImagesCollection();
                 e.NewDocument.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(NewDocument_PropertyChanged);
                 if (e.OldDocument != null)
                     e.OldDocument.PropertyChanged -= NewDocument_PropertyChanged;
@@ -68,6 +75,8 @@ namespace PixelTuner.ViewModel
                 {
                     Settings.Default.LineHeight = (sender as FileViewModel).LineHeight;
                     ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
+                    VideosModel.RefreshVideosCollection(Settings.Default.LineHeight);
+                    GradientsModel.RefreshImagesCollection();
                 }
         }
 
@@ -215,8 +224,10 @@ namespace PixelTuner.ViewModel
             get
             {
                 if (_tools == null)
-                    _tools = new ToolViewModel[] { //FileStats,
-                        DevicesModel, ProjectsModel, ImagesModel, ProjectPlayerModel
+                    _tools = new ToolViewModel[] { //FileStats, 
+                        VideosModel,
+                        GradientsModel,
+                        DevicesModel, ProjectsModel, ImagesModel, ProjectPlayerModel, EffectsModel
                     };
                 return _tools;
             }
@@ -318,6 +329,8 @@ namespace PixelTuner.ViewModel
             {
                 foreach (var timeline in fileView.TimeLines)
                 {
+                    if (timeline is LightTimeLineViewModel) continue;
+
                     List<TimeLineItemViewModel> toRemove = new List<TimeLineItemViewModel>();
                     foreach (var item in timeline.Items)
                     {
@@ -346,6 +359,45 @@ namespace PixelTuner.ViewModel
                 }
 
                 return _videosModel;
+            }
+        }
+
+        #endregion
+
+
+        #region Effects model
+
+        EffectsViewModel _effectsModel = null;
+        public EffectsViewModel EffectsModel
+        {
+            get
+            {
+                if (_effectsModel == null)
+                {
+                    _effectsModel = new EffectsViewModel(
+                        (String)Application.Current.TryFindResource("Menu_Window_Effects"));
+                }
+
+                return _effectsModel;
+            }
+        }
+
+        #endregion
+
+        #region Gradients model
+
+        GradientsViewModel _gradientsModel = null;
+        public GradientsViewModel GradientsModel
+        {
+            get
+            {
+                if (_gradientsModel == null)
+                {
+                    _gradientsModel = new GradientsViewModel(
+                        (String)Application.Current.TryFindResource("Menu_Window_Gradients"));
+                }
+
+                return _gradientsModel;
             }
         }
 
@@ -453,7 +505,6 @@ namespace PixelTuner.ViewModel
         private void OnOpen(object parameter)
         {
             Open((string)parameter);
-            RemoveBrokenReferences();
         }
 
         internal void Open(string path = null)
@@ -485,6 +536,8 @@ namespace PixelTuner.ViewModel
 
                             if (LastUsedFileHandler != null)
                                 LastUsedFileHandler.Invoke(path);
+
+                            RemoveBrokenReferences();
                         }
                         catch (Exception ex)
                         {
@@ -528,7 +581,7 @@ namespace PixelTuner.ViewModel
         private void OnNew(object parameter)
         {
             var model = new FileViewModel();
-            model.TimeLines.Add(new TimeLineViewModel());
+            model.TimeLines.Add(new PixelTimeLineViewModel());
             _files.Add(model);
             ActiveDocument = _files.Last();
         }
@@ -755,6 +808,8 @@ namespace PixelTuner.ViewModel
             dw.ShowDialog();
 
             ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
+            VideosModel.RefreshVideosCollection(Settings.Default.LineHeight);
+            GradientsModel.RefreshImagesCollection();
 
             foreach (var f in Files)
             {

@@ -50,12 +50,15 @@
                 <ColumnDefinition Width="60" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Button x:Name="NewBtn" 
-                    Grid.Row="0" 
-                    Grid.Column="0" 
-                    Margin="4,0,0,2" 
-                    Content="{StaticResource Doc_Btn_AddLine}" 
-                    Command="{Binding AddLine}"/>
+            <xctk:DropDownButton Name="boxNewTimeline" Margin="4,0,0,2" Content="{StaticResource Doc_Btn_AddLine}">
+                <xctk:DropDownButton.DropDownContent>
+                    <StackPanel MouseDown="StackPanel_MouseDown">
+                        <MenuItem Header="{StaticResource FileAddPixelTimeline}" Command="{Binding AddPixelLine}" />
+                        <MenuItem Header="{StaticResource FileAddLightTimeline}" Command="{Binding AddLightLine}" />
+                        <MenuItem Header="{StaticResource FileAddEpicTimeline}" Command="{Binding AddEpicLine}" />
+                    </StackPanel>
+                </xctk:DropDownButton.DropDownContent>
+            </xctk:DropDownButton>
             <TextBlock Grid.Row="0" Grid.Column="1" Margin="16,4,4,0" Foreground="{StaticResource TextBrush}" Text="{StaticResource Doc_Lbl_Scale}"/>
             <Slider x:Name="Slider_Scale" Grid.Row="0" Grid.Column="2" Margin="2" 
                                 Minimum="{Binding MinUnitSize}" Maximum="{Binding MaxUnitSize}" 

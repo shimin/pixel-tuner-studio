@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using PixelTuner.ViewModel;
+using PixelTuner.Properties;
 
 namespace PixelTuner
 {
@@ -48,7 +49,7 @@ namespace PixelTuner
         private void SearchHandler(object sender, RoutedEventArgs e)
         {
             var s = sender as TextBox;
-            (this.DataContext as ImagesViewModel).ApplyFilter(s.Text);
+            (this.DataContext as ImagesViewModel).RefreshImagesCollection(Settings.Default.LineHeight);
         }
 
         private void ListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)

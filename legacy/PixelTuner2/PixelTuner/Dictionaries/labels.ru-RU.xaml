@@ -24,7 +24,10 @@
     <system:String x:Key="Menu_Window_ProjectPlayer">Просмотр</system:String>
     <system:String x:Key="Menu_Window_Images">Изображения</system:String>
     <system:String x:Key="Menu_Window_Videos">Видео</system:String>
+    <system:String x:Key="Menu_Window_Gradients">Градиенты</system:String>
+    <system:String x:Key="Menu_Window_Effects">Световые эффекты</system:String>
     <system:String x:Key="Menu_Window">Вид</system:String>
+    <system:String x:Key="Menu_Window_Window">Окно</system:String>
     <system:String x:Key="Menu_File_New">Новый проект</system:String>
     <system:String x:Key="Menu_File_Open">Открыть проект</system:String>
     <system:String x:Key="Menu_File_Save">Сохранить</system:String>
@@ -42,6 +45,9 @@
     <system:String x:Key="Doc_Hdr_Default">Без имени</system:String>
     <system:String x:Key="Doc_Open_AccessError">Нет доступа к файлу.</system:String>
     <system:String x:Key="Doc_Open_DeserializeError">Ошибка открытия файла. Возможно файл поврежден.</system:String>
+    <system:String x:Key="FileAddPixelTimeline">Пиксель пой</system:String>
+    <system:String x:Key="FileAddEpicTimeline">Эпик пой</system:String>
+    <system:String x:Key="FileAddLightTimeline">Световой сегмент</system:String>
     <system:String x:Key="Item_Stretching">Растяжение</system:String>
     <system:String x:Key="Item_SwitchLaserOnOffToolTip">лазер вкл/выкл</system:String>
     <system:String x:Key="Item_Menu_Replace">заменить</system:String>

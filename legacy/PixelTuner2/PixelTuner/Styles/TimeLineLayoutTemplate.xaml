@@ -193,6 +193,7 @@
                         AnchorStep="{Binding Source={StaticResource RootContext}, Path=AnchorStep}"
                         Background="{Binding Background}"
                         DefaultTimeInterval="{Binding DefaultTimeInterval}" 
+                        Manager="{Binding DragManager}"
                         StartDate="{Binding Start, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         UnitSize="{Binding Path=Parent.UnitSize}"
                         Items="{Binding Items, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

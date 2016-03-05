@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Windows;
+using System.ComponentModel;
+using System.Threading;
 
 namespace PixelTuner.ViewModel
 {
@@ -14,15 +17,17 @@ namespace PixelTuner.ViewModel
         {
             ContentId = ToolContentId;
             IsVisible = true;
+            RefreshVideosCollection();
+        }
+
+        private string _searchPattern;
+        public string SearchPattern
+        {
+            get { return _searchPattern; }
+            set { _searchPattern = value; RaisePropertyChanged("SearchPattern"); }
         }
 
         public const string ToolContentId = "VideosTool";
-        private string _lastFilter = "";
-
-        private void MenuItem_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-
-        }
 
         ObservableCollection<TimeLineItemViewModel> _videos = new ObservableCollection<TimeLineItemViewModel>();
         ReadOnlyObservableCollection<TimeLineItemViewModel> _readonyVideosCollection = null;
@@ -51,6 +56,9 @@ namespace PixelTuner.ViewModel
             }
         }
 
+        /// <summary>
+        /// Indicates wether something selected or not to enable/disable edit buttons 
+        /// </summary>
         public bool IsSomethingSelected
         {
             get
@@ -59,66 +67,58 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        public void ApplyFilter(string text)
+        Thread t = null;
+        public void RefreshVideosCollection(int height = 0, string itemToRemove = "")
         {
-            _lastFilter = text;
-            string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content");
-            if (!Directory.Exists(sourcePath))
+            if (t != null && t.IsAlive)
             {
-                Directory.CreateDirectory(sourcePath);
+                t.Abort();
+                t.Join();
             }
+            t = new Thread((parameter) =>
+            {
+                try
+                {
+                    var arg = parameter as RefreshParameters;
+                    if (arg != null)
+                    {
+                        AsyncRefreshCollection(arg.Height, arg.ItemToRemove);
+                    }
+                    else AsyncRefreshCollection();
+                }
+                catch (ThreadAbortException) { }
+            });
+            t.Start(new RefreshParameters(height, itemToRemove));
+        }
+
+        private void AsyncRefreshCollection(int height = 0, string itemToRemove = "")
+        {
+            string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Gradients");
+            if (!Directory.Exists(sourcePath))
+                Directory.CreateDirectory(sourcePath);
+
             DirectoryInfo info = new DirectoryInfo(sourcePath);
             List<FileSystemInfo> allfiles = new List<FileSystemInfo>(info.GetFileSystemInfos("*.avi"));
             allfiles.AddRange(info.GetFileSystemInfos("*.wmv"));
             allfiles.AddRange(info.GetFileSystemInfos("*.mp4"));
             allfiles.AddRange(info.GetFileSystemInfos("*.mpg"));
-            List<FileSystemInfo> suitableFiles = new List<FileSystemInfo>();
-            foreach (var f in allfiles)
+
+            if (Application.Current == null) return;
+            Application.Current.Dispatcher.Invoke(new Action(() => { _videos.Clear(); }));
+
+            foreach (FileInfo fi in allfiles)
             {
-                if (string.IsNullOrEmpty(text) || Path.GetFileNameWithoutExtension(f.Name.ToLower()).Contains(text.ToLower()))
+                if (string.IsNullOrEmpty(SearchPattern)
+                        || Path.GetFileNameWithoutExtension(fi.Name.ToLower()).Contains(SearchPattern.ToLower()))
                 {
-                    using (System.Drawing.Image img = System.Drawing.Image.FromFile(f.FullName))
+                    var tfi = new VideoThumbnailViewModel(fi);
+                    if ((fi.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
                     {
-                        if (img.Height == PixelTuner.Properties.Settings.Default.LineHeight)
-                            suitableFiles.Add(f);
+                        if (Application.Current == null) return;
+                        Application.Current.Dispatcher.Invoke(new Action(() => { _videos.Add(tfi); }));
                     }
                 }
             }
-            allfiles = suitableFiles;
-            _videos.Clear();
-
-            foreach (FileInfo fi in allfiles)
-            {
-                // exlude hidden files 
-                TimeLineItemViewModel tfi = new TimeLineItemViewModel(fi);
-                if ((fi.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
-                    _videos.Add(tfi);
-            }
         }
-
-        public void RefreshVideosCollection(int height = 0, string itemToRemove = "")
-        {
-            string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content");
-            if (!Directory.Exists(sourcePath))
-            {
-                Directory.CreateDirectory(sourcePath);
-            }
-            DirectoryInfo info = new DirectoryInfo(sourcePath);
-            List<FileSystemInfo> allfiles = new List<FileSystemInfo>(info.GetFileSystemInfos("*.avi"));
-            allfiles.AddRange(info.GetFileSystemInfos("*.wmv"));
-            allfiles.AddRange(info.GetFileSystemInfos("*.mp4"));
-            allfiles.AddRange(info.GetFileSystemInfos("*.mpg"));
-
-            foreach (FileInfo fi in allfiles)
-            {
-                // exclude hidden files 
-                TimeLineItemViewModel tfi = new TimeLineItemViewModel(fi);
-                if ((fi.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
-                    _videos.Add(tfi);
-            }
-            ApplyFilter(_lastFilter);
-        }
-
-
     }
 }

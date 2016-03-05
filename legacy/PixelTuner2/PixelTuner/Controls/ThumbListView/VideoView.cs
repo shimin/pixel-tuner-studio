@@ -106,7 +106,7 @@ namespace PixelTuner.Controls.ThumbListView
         private void SearchHandler(object sender, RoutedEventArgs e)
         {
             var s = sender as TextBox;
-            RootViewModel.This.ImagesModel.ApplyFilter(s.Text);
+            RootViewModel.This.VideosModel.RefreshVideosCollection();
         }
 
         private void ListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -135,7 +135,12 @@ namespace PixelTuner.Controls.ThumbListView
                             var itemCollection = new ObservableCollection<TimeLineItemViewModel>(
                                 new System.Collections.Generic.List<TimeLineItemViewModel> { newItem });
                             newItem.EndTime = newItem.StartTime.Value.AddSeconds(Settings.Default.DefaultDuration);
-                            fm.SelectedTimeline.InsertItems(itemCollection, insertPosition);
+
+                            if (fm.SelectedTimeline.DragManager != null)
+                                if (fm.SelectedTimeline.DragManager.CanAddToTimeLine(newItem, newItem.StartTime.Value))
+                                {
+                                    fm.SelectedTimeline.InsertItems(itemCollection, insertPosition);
+                                }
                         }
                     }
                     break;
@@ -171,7 +176,7 @@ namespace PixelTuner.Controls.ThumbListView
 
         private void Resfresh_Button_Click(object sender, RoutedEventArgs e)
         {
-            RootViewModel.This.ImagesModel.RefreshImagesCollection();
+            RootViewModel.This.VideosModel.RefreshVideosCollection();
         }
 
         #endregion
@@ -198,7 +203,7 @@ namespace PixelTuner.Controls.ThumbListView
 
         protected override object ItemContainerDefaultStyleKey
         {
-            get { return new ComponentResourceKey(GetType(), "ListViewItem"); }
+            get { return new ComponentResourceKey(GetType(), "VideoListViewItem"); }
         }
 
         #endregion

@@ -86,8 +86,8 @@ namespace PixelTuner.ViewModel
 
             for (int i = 0; i < _timeLines.Count; i++)
             {
-                if (i % 2 == 0) _timeLines[i].Background =  _lightLineColor;
-                else _timeLines[i].Background = _darkLineColor;
+                //if (i % 2 == 0) _timeLines[i].Background =  _lightLineColor;
+                //else _timeLines[i].Background = _darkLineColor;
                 _timeLines[i].Parent = this;
                 _timeLines[i].Items.CollectionChanged -= TimeLineItems_CollectionChanged;
                 _timeLines[i].Items.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(TimeLineItems_CollectionChanged);
@@ -177,10 +177,6 @@ namespace PixelTuner.ViewModel
                 }
             }
         }
-
-        Brush _darkLineColor = new SolidColorBrush(Color.FromArgb(255, 64, 64, 64));
-
-        Brush _lightLineColor = new SolidColorBrush(Color.FromArgb(255, 70, 70, 70));
 
         Double _minUnitSize = 17.88;
         [XmlIgnore]
@@ -416,29 +412,84 @@ namespace PixelTuner.ViewModel
         }
         #endregion
 
-        #region AddLineCommand
-        RelayCommand _addLineCommand = null;
-        public ICommand AddLine
+        #region AddPixelLineCommand
+        RelayCommand _addPixelLineCommand = null;
+        public ICommand AddPixelLine
         {
             get
             {
-                if (_addLineCommand == null)
+                if (_addPixelLineCommand == null)
                 {
-                    _addLineCommand = new RelayCommand((p) => OnAddLine(p), (p) => CanAddLine(p));
+                    _addPixelLineCommand = new RelayCommand((p) => OnAddPixelLine(p), (p) => CanAddPixelLine(p));
                 }
 
-                return _addLineCommand;
+                return _addPixelLineCommand;
             }
         }
 
-        private bool CanAddLine(object parameter)
+        private bool CanAddPixelLine(object parameter)
+        {
+            bool can = TimeLines.Count(arg => { return arg is PixelTimeLineViewModel; }) <= 20;
+            return can;
+        }
+
+        private void OnAddPixelLine(object parameter)
+        {
+            _timeLines.Add(new PixelTimeLineViewModel());
+        }
+
+        #endregion 
+        
+        #region AddEpicLineCommand
+        RelayCommand _addEpicLineCommand = null;
+        public ICommand AddEpicLine
+        {
+            get
+            {
+                if (_addEpicLineCommand == null)
+                {
+                    _addEpicLineCommand = new RelayCommand((p) => OnAddEpicLine(p), (p) => CanAddEpicLine(p));
+                }
+
+                return _addEpicLineCommand;
+            }
+        }
+
+        private bool CanAddEpicLine(object parameter)
         {
             return TimeLines.Count < 254;
         }
 
-        private void OnAddLine(object parameter)
+        private void OnAddEpicLine(object parameter)
         {
-            _timeLines.Add(new TimeLineViewModel());
+            _timeLines.Add(new EpicPoiTimeLineViewModel());
+        }
+
+        #endregion 
+        
+        #region AddLightLineCommand
+        RelayCommand _addLightLineCommand = null;
+        public ICommand AddLightLine
+        {
+            get
+            {
+                if (_addLightLineCommand == null)
+                {
+                    _addLightLineCommand = new RelayCommand((p) => OnAddLightLine(p), (p) => CanAddLightLine(p));
+                }
+
+                return _addLightLineCommand;
+            }
+        }
+
+        private bool CanAddLightLine(object parameter)
+        {
+            return TimeLines.Count < 254;
+        }
+
+        private void OnAddLightLine(object parameter)
+        {
+            _timeLines.Add(new LightTimeLineViewModel());
         }
 
         #endregion 
@@ -696,7 +747,10 @@ namespace PixelTuner.ViewModel
             {
                 var result = new List<Type>()
                 {
-                    typeof(TimeLineViewModel)
+                    typeof(TimeLineViewModel),
+                    typeof(EpicPoiTimeLineViewModel),
+                    typeof(LightTimeLineViewModel),
+                    typeof(PixelTimeLineViewModel)
                 };
                 result.AddRange(TimeLineViewModel.ExtraTypes);
                 return result;

@@ -47,6 +47,18 @@ namespace PixelTuner.Selectors
             set;
         }
 
+        public DataTemplate GradientsViewTemplate
+        {
+            get;
+            set;
+        }
+
+        public DataTemplate EffectsViewTemplate
+        {
+            get;
+            set;
+        }
+
         public DataTemplate VideosViewTemplate
         {
             get;
@@ -77,6 +89,12 @@ namespace PixelTuner.Selectors
 
             if (item is ImagesViewModel)
                 return ImagesViewTemplate;
+
+            if (item is GradientsViewModel)
+                return GradientsViewTemplate;
+
+            if (item is EffectsViewModel)
+                return EffectsViewTemplate;
 
             if (item is VideosViewModel)
                 return VideosViewTemplate;

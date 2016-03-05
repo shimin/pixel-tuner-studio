@@ -14,6 +14,23 @@ using System.Windows.Input;
 
 namespace PixelTuner.ViewModel
 {
+    /// <summary>
+    /// Класс, определяющий правила переноса элементов на таймлайн.
+    /// </summary>
+    public class ItemDragDropManager : ITimeLineManager
+    {
+        protected TimeLineViewModel _line;
+        public ItemDragDropManager(TimeLineViewModel timeline)
+        {
+            _line = timeline;
+        }
+
+        public bool CanAddToTimeLine(ITimeLineDataItem item, DateTime timePoint)
+        {
+            return item is TimeLineItemViewModel;
+        }
+    }
+
     public class TimeLineViewModel : ViewModelBase
     {
         #region Properties
@@ -26,12 +43,20 @@ namespace PixelTuner.ViewModel
             set { _parent = value; }
         }
 
+        Brush _darkLineColor = new SolidColorBrush(Color.FromArgb(255, 64, 64, 64));
+
+        Brush _lightLineColor = new SolidColorBrush(Color.FromArgb(255, 70, 70, 70));
+
         Brush _backGround;
         [XmlIgnore]
         public Brush Background
         {
-            get { return _backGround; }
-            set { _backGround = value; RaisePropertyChanged("Background"); }
+            get 
+            {
+                if (Parent.TimeLines.IndexOf(this) % 2 == 0) return _lightLineColor;
+                else return _darkLineColor;
+            }
+            set { RaisePropertyChanged("Background"); }
         }
 
         private bool _isSelected = false;
@@ -71,6 +96,20 @@ namespace PixelTuner.ViewModel
             }
         }
 
+        #region ITimeLineManager Members
+
+        ITimeLineManager _dragManager;
+        public virtual ITimeLineManager DragManager
+        {
+            get
+            {
+                if (_dragManager == null) _dragManager = new ItemDragDropManager(this);
+                return _dragManager;
+            }
+        }
+
+        #endregion
+       
         protected ObservableCollection<ITimeLineDataItem> _items
             = new ObservableCollection<ITimeLineDataItem>();
         [XmlIgnore]
@@ -92,6 +131,12 @@ namespace PixelTuner.ViewModel
         public TimeLineViewModel()
         {
             _xmlItems = new DelegatedIList<TimeLineItemViewModel, TimeLineItem>(_items);
+            _items.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(_items_CollectionChanged);
+        }
+
+        void _items_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            Console.WriteLine(e.Action.ToString());
         }
 
         #region Commands
@@ -127,6 +172,7 @@ namespace PixelTuner.ViewModel
             {
                 int old = Parent.TimeLines.IndexOf(this);
                 Parent.TimeLines.Move(old, old - 1);
+                Parent.TimeLines.All(arg => { arg.RaisePropertyChanged("Background"); return false; });
             }
         }
 
@@ -164,6 +210,7 @@ namespace PixelTuner.ViewModel
             {
                 int old = Parent.TimeLines.IndexOf(this);
                 Parent.TimeLines.Move(old, old + 1);
+                Parent.TimeLines.All(arg => { arg.RaisePropertyChanged("Background"); return false; });
             }
         }
 
@@ -276,6 +323,12 @@ namespace PixelTuner.ViewModel
         #endregion
         
         #region Methods
+
+        public void SetBackgrounds(Color light, Color dark)
+        {
+            _lightLineColor = new SolidColorBrush(light);
+            _darkLineColor = new SolidColorBrush(dark);
+        }
 
         internal void InsertItems(ObservableCollection<TimeLineItemViewModel> itemsToPaste, int insertIndex)
         {

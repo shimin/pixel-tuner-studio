@@ -24,17 +24,15 @@ namespace PixelTuner.ViewModel
     /// </summary>
     public class LightItemDragDropManager : ITimeLineManager
     {
-        protected LightTimeLineViewModel _line;
-        public LightItemDragDropManager(LightTimeLineViewModel timeline)
+        protected TimeLineViewModel _line;
+        public LightItemDragDropManager(TimeLineViewModel timeline)
         {
             _line = timeline;
         }
 
         public bool CanAddToTimeLine(ITimeLineDataItem item, DateTime timePoint)
         {
-            if (_line.Items.Count == 0) return true;
             if (item is SolidColorThumbnailViewModel || item is EffectThumbnailViewModel) return true;
-
             return false;
         }
     }
@@ -46,6 +44,7 @@ namespace PixelTuner.ViewModel
             _xmlItems = new DelegatedIList<TimeLineItemViewModel, TimeLineItem>(_items);
             RootViewModel.This.PropertyChanged += new PropertyChangedEventHandler(RootModel_PropertyChanged);
             this.PropertyChanged += new PropertyChangedEventHandler(TimeLineViewModel_PropertyChanged);
+            SetBackgrounds(Color.FromRgb(60, 60, 80), Color.FromRgb(50, 50, 70));
         }
 
         void TimeLineViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -70,7 +69,7 @@ namespace PixelTuner.ViewModel
         #region ITimeLineManager Members
         
         ITimeLineManager _dragManager;
-        public ITimeLineManager DragManager
+        public override ITimeLineManager DragManager
         {
             get
             {

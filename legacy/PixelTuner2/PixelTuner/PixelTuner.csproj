@@ -120,6 +120,8 @@
     <Compile Include="Audio\SampleAggregator.cs" />
     <Compile Include="Auxiliary\DataPipe.cs" />
     <Compile Include="Auxiliary\SvgHelper.cs" />
+    <Compile Include="Controls\ThumbListView\EffectView.cs" />
+    <Compile Include="Controls\ThumbListView\GradientView.cs" />
     <Compile Include="Controls\ThumbListView\VideoView.cs" />
     <Compile Include="Converters\ActiveDocumentConverter.cs" />
     <Compile Include="Converters\ActiveTimeLineConverter.cs" />
@@ -175,30 +177,37 @@
     <Compile Include="Styles\TimeLineLayoutTemplate.xaml.cs">
       <DependentUpon>TimeLineLayoutTemplate.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\CanvasElementViewModel.cs" />
-    <Compile Include="ViewModel\CanvasViewModel.cs" />
-    <Compile Include="ViewModel\DeviceViewModel.cs" />
-    <Compile Include="ViewModel\EffectSawThumbnailViewModel.cs" />
-    <Compile Include="ViewModel\EffectSineThumbnailViewModel.cs" />
-    <Compile Include="ViewModel\EffectSquareThumbnailViewModel.cs" />
-    <Compile Include="ViewModel\EffectThumbnailViewModel.cs" />
-    <Compile Include="ViewModel\EffectTransitionThumbnailViewModel.cs" />
-    <Compile Include="ViewModel\IlluminatorDeviceViewModel.cs" />
-    <Compile Include="ViewModel\LightMasterDeviceViewModel.cs" />
-    <Compile Include="ViewModel\LightTimeLineViewModel.cs" />
-    <Compile Include="ViewModel\ProjectPlayerViewModel.cs" />
+    <Compile Include="ViewModel\Serialization\GradientTimeLineItem.cs" />
+    <Compile Include="ViewModel\TimelineItems\GradientThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\TimelineItems\VideoThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\Tools\CanvasElementViewModel.cs" />
+    <Compile Include="ViewModel\Tools\CanvasViewModel.cs" />
+    <Compile Include="ViewModel\Tools\GradientsViewModel.cs" />
+    <Compile Include="ViewModel\Devices\DeviceViewModel.cs" />
+    <Compile Include="ViewModel\TimelineItems\EffectSawThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\TimelineItems\EffectSineThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\TimelineItems\EffectSquareThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\Tools\EffectsViewModel.cs" />
+    <Compile Include="ViewModel\TimelineItems\EffectThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\TimelineItems\EffectTransitionThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\Timelines\EpicPoiTimeLineViewModel.cs" />
+    <Compile Include="ViewModel\Devices\IlluminatorDeviceViewModel.cs" />
+    <Compile Include="ViewModel\Devices\LightMasterDeviceViewModel.cs" />
+    <Compile Include="ViewModel\Timelines\LightTimeLineViewModel.cs" />
+    <Compile Include="ViewModel\TimelineItems\PixelThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\Tools\ProjectPlayerViewModel.cs" />
     <Compile Include="ViewModel\Serialization\TimeLineItem.cs" />
     <Compile Include="ViewModel\Serialization\TimeLineItemEffect.cs" />
     <Compile Include="ViewModel\Serialization\TimeLineItemEffectParameters.cs" />
     <Compile Include="ViewModel\Serialization\TimeLineItemSolid.cs" />
-    <Compile Include="ViewModel\SimplePoiDeviceViewModel.cs" />
-    <Compile Include="ViewModel\SolidColorThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\Devices\EpicPoiDeviceViewModel.cs" />
+    <Compile Include="ViewModel\TimelineItems\SolidColorThumbnailViewModel.cs" />
     <Compile Include="ViewModel\TimelineHelper.cs" />
-    <Compile Include="ViewModel\TimeLineItemViewModel.cs" />
+    <Compile Include="ViewModel\TimelineItems\TimeLineItemViewModel.cs" />
     <Compile Include="DefaultsWindow.xaml.cs">
       <DependentUpon>DefaultsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\DevicesViewModel.cs" />
+    <Compile Include="ViewModel\Devices\DevicesViewModel.cs" />
     <Compile Include="Drawing\CircularBuffer.cs" />
     <Compile Include="Drawing\ConfigurationItemBase.cs" />
     <Compile Include="Drawing\DrawControl.cs">
@@ -220,19 +229,20 @@
     <Compile Include="Drawing\TextDialog.designer.cs">
       <DependentUpon>TextDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\ImagesViewModel.cs" />
+    <Compile Include="ViewModel\Tools\ImagesViewModel.cs" />
     <Compile Include="Converters\MathConverter.cs" />
     <Compile Include="PictureEditor.xaml.cs">
       <DependentUpon>PictureEditor.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\ProjectsViewModel.cs" />
+    <Compile Include="ViewModel\Tools\ProjectsViewModel.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
-    <Compile Include="ViewModel\PixelDeviceViewModel.cs" />
-    <Compile Include="ViewModel\PixelTimeLineViewModel.cs" />
-    <Compile Include="ViewModel\TimeLineViewModel.cs" />
-    <Compile Include="ViewModel\ToolViewModel.cs" />
+    <Compile Include="ViewModel\Devices\PixelDeviceViewModel.cs" />
+    <Compile Include="ViewModel\Timelines\PixelTimeLineViewModel.cs" />
+    <Compile Include="ViewModel\Timelines\TimeLineViewModel.cs" />
+    <Compile Include="ViewModel\Tools\RefreshParameters.cs" />
+    <Compile Include="ViewModel\Tools\ToolViewModel.cs" />
     <Compile Include="ViewModel\RootViewModel.cs" />
-    <Compile Include="ViewModel\VideosViewModel.cs" />
+    <Compile Include="ViewModel\Tools\VideosViewModel.cs" />
     <Page Include="EffectSawWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -297,7 +307,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Styles\EffectsLayoutTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Styles\FileLayoutTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\GradientsLayoutTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2290,6 +2308,13 @@
     <Content Include="Content\80_batterfly_009.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Gradients\g_effect1.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Gradients\g_rainbow.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Effects\04_solid.png" />
     <Resource Include="Effects\00_effect.png" />
     <Resource Include="Effects\01_effect.png" />
     <Resource Include="Effects\02_effect.png" />

@@ -24,7 +24,10 @@
     <system:String x:Key="Menu_Window_ProjectPlayer">Anschauen</system:String>
     <system:String x:Key="Menu_Window_Images">Frames</system:String>
     <system:String x:Key="Menu_Window_Videos">Video</system:String>
+    <system:String x:Key="Menu_Window_Effects">Licht effects</system:String>
+    <system:String x:Key="Menu_Window_Gradients">Gradients</system:String>
     <system:String x:Key="Menu_Window">Ansicht</system:String>
+    <system:String x:Key="Menu_Window_Window">Window</system:String>
     <system:String x:Key="Menu_File_New">Neues Projekt</system:String>
     <system:String x:Key="Menu_File_Open">Projekt öffnen</system:String>
     <system:String x:Key="Menu_File_Save">Speichern</system:String>
@@ -42,6 +45,9 @@
     <system:String x:Key="Doc_Hdr_Default">Ohne Name</system:String>
     <system:String x:Key="Doc_Open_AccessError">Kein Zugang zum File.</system:String>
     <system:String x:Key="Doc_Open_DeserializeError">Fiel konnte nicht geöffnet werden. Wahrscheinlich ist der File beschädigt.</system:String>
+    <system:String x:Key="FileAddPixelTimeline">Pixel poi</system:String>
+    <system:String x:Key="FileAddEpicTimeline">E-pic poi</system:String>
+    <system:String x:Key="FileAddLightTimeline">Light segment</system:String>
     <system:String x:Key="Item_Stretching">Ausdehnung</system:String>
     <system:String x:Key="Item_SwitchLaserOnOffToolTip">Laser ein/aus</system:String>
     <system:String x:Key="Item_Menu_Replace">Ändern</system:String>

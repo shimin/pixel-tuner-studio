@@ -144,13 +144,16 @@ namespace PixelTuner.ViewModel
             }
         }
 
+        protected BitmapImage _image = null;
         public virtual object ImageSource
         {
             get
             {
-                BitmapImage image = ImageHelper.CreateImage(new Uri(FullName, UriKind.Absolute));
-                if (image == null) return DependencyProperty.UnsetValue;
-                return image;
+                if (string.IsNullOrEmpty(FullName)) _image = null;
+                else _image = ImageHelper.CreateImage(new Uri(FullName, UriKind.Absolute));
+                
+                if (_image == null) return DependencyProperty.UnsetValue;
+                return _image;
             }
         }
 
@@ -224,7 +227,7 @@ namespace PixelTuner.ViewModel
         {
             get
             {
-                return "PixelImageElement";
+                return "GenericElement";
             }
         }
 
@@ -232,7 +235,8 @@ namespace PixelTuner.ViewModel
 
         public virtual object Clone()
         {
-            TimeLineItemViewModel result = new TimeLineItemViewModel(this._fi);
+            TimeLineItemViewModel result = (TimeLineItemViewModel)Activator.CreateInstance(GetType());
+            result._fi = this._fi;
             result.StartTime = this.StartTime;
             result.EndTime = this.EndTime;
             result.TimelineViewExpanded = this.TimelineViewExpanded;
@@ -452,12 +456,12 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        private bool CanEditMe(object parameter)
+        protected virtual bool CanEditMe(object parameter)
         {
             return true;
         }
 
-        private void OnEditMe(object parameter)
+        protected virtual void OnEditMe(object parameter)
         {
             ItemWindow w = new ItemWindow(this);
             var location = Application.Current.MainWindow.PointToScreen( Mouse.GetPosition(Application.Current.MainWindow));

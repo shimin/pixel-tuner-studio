@@ -150,5 +150,11 @@ namespace PixelTuner.Styles
         {
             e.Handled = true;
         }
+
+        private void StackPanel_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var panel = sender as StackPanel;
+            if (panel != null) panel.Visibility = System.Windows.Visibility.Hidden;
+        }
     }
 }

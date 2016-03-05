@@ -26,6 +26,8 @@
                 <ResourceDictionary Source="/PixelTuner;component/Styles/FileLayoutTemplate.xaml" />
                 <ResourceDictionary Source="/PixelTuner;component/Styles/ProjectPlayerLayoutTemplate.xaml" />
                 <ResourceDictionary Source="/PixelTuner;component/Styles/ImagesLayoutTemplate.xaml" />
+                <ResourceDictionary Source="/PixelTuner;component/Styles/GradientsLayoutTemplate.xaml" />
+                <ResourceDictionary Source="/PixelTuner;component/Styles/EffectsLayoutTemplate.xaml" />
                 <ResourceDictionary Source="/PixelTuner;component/Styles/VideosLayoutTemplate.xaml" />
                 <ResourceDictionary Source="/PixelTuner;component/Styles/SharedStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
@@ -54,11 +56,15 @@
                 <MenuItem Header="{StaticResource Menu_File_Exit}" Click="ExitApplication"/>
             </MenuItem>
             <MenuItem Header="{StaticResource Menu_Window}">
-                <MenuItem Header="{StaticResource Menu_Window_ProjectPlayer}" IsCheckable="True" IsChecked="{Binding ProjectPlayerModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-                <MenuItem Header="{StaticResource Menu_Window_Projects}" IsCheckable="True" IsChecked="{Binding ProjectsModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-                <MenuItem Header="{StaticResource Menu_Window_Devices}" IsCheckable="True" IsChecked="{Binding DevicesModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-                <MenuItem Header="{StaticResource Menu_Window_Images}" IsCheckable="True" IsChecked="{Binding ImagesModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-                <MenuItem Header="{StaticResource Menu_Window_Videos}" IsCheckable="True" IsChecked="{Binding VideosModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                <MenuItem Header="{StaticResource Menu_Window_Window}">
+                    <MenuItem Header="{StaticResource Menu_Window_ProjectPlayer}" IsCheckable="True" IsChecked="{Binding ProjectPlayerModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                    <MenuItem Header="{StaticResource Menu_Window_Projects}" IsCheckable="True" IsChecked="{Binding ProjectsModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                    <MenuItem Header="{StaticResource Menu_Window_Devices}" IsCheckable="True" IsChecked="{Binding DevicesModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                    <MenuItem Header="{StaticResource Menu_Window_Images}" IsCheckable="True" IsChecked="{Binding ImagesModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                    <MenuItem Header="{StaticResource Menu_Window_Gradients}" IsCheckable="True" IsChecked="{Binding GradientsModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                    <MenuItem Header="{StaticResource Menu_Window_Videos}" IsCheckable="True" IsChecked="{Binding VideosModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                    <MenuItem Header="{StaticResource Menu_Window_Effects}" IsCheckable="True" IsChecked="{Binding EffectsModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="{StaticResource Menu_Settings}">
                 <MenuItem Header="{StaticResource Menu_Settings_Defaults}" Command="{Binding AdjustDefaultsCommand}" InputGestureText="Alt+P"/>
@@ -119,6 +125,12 @@
                     <sl:PanesTemplateSelector.ImagesViewTemplate>
                         <StaticResource ResourceKey="ImagesLayoutTemplate"></StaticResource>
                     </sl:PanesTemplateSelector.ImagesViewTemplate>
+                    <sl:PanesTemplateSelector.GradientsViewTemplate>
+                        <StaticResource ResourceKey="GradientsLayoutTemplate"></StaticResource>
+                    </sl:PanesTemplateSelector.GradientsViewTemplate>
+                    <sl:PanesTemplateSelector.EffectsViewTemplate>
+                        <StaticResource ResourceKey="EffectsLayoutTemplate"></StaticResource>
+                    </sl:PanesTemplateSelector.EffectsViewTemplate>
                     <sl:PanesTemplateSelector.VideosViewTemplate>
                         <StaticResource ResourceKey="VideosLayoutTemplate"></StaticResource>
                     </sl:PanesTemplateSelector.VideosViewTemplate>
@@ -163,6 +175,8 @@
                         </avalonDock:LayoutDocumentPaneGroup>
                         <avalonDock:LayoutAnchorablePaneGroup DockHeight="120" DockMinHeight="80" DockMinWidth="80">
                             <avalonDock:LayoutAnchorablePane Name="ImagesTool" />
+                            <avalonDock:LayoutAnchorablePane Name="EffectsTool" />
+                            <avalonDock:LayoutAnchorablePane Name="GradientsTool" />
                             <avalonDock:LayoutAnchorablePane Name="VideosTool" />
                         </avalonDock:LayoutAnchorablePaneGroup>
                     </avalonDock:LayoutPanel>

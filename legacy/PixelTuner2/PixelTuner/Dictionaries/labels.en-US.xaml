@@ -24,7 +24,10 @@
     <system:String x:Key="Menu_Window_ProjectPlayer">Preview</system:String>
     <system:String x:Key="Menu_Window_Images">Images</system:String>
     <system:String x:Key="Menu_Window_Videos">Videos</system:String>
+    <system:String x:Key="Menu_Window_Effects">Light effects</system:String>
+    <system:String x:Key="Menu_Window_Gradients">Gradients</system:String>
     <system:String x:Key="Menu_Window">View</system:String>
+    <system:String x:Key="Menu_Window_Window">Window</system:String>
     <system:String x:Key="Menu_File_New">New project</system:String>
     <system:String x:Key="Menu_File_Open">Open project</system:String>
     <system:String x:Key="Menu_File_Save">Save</system:String>
@@ -42,6 +45,9 @@
     <system:String x:Key="Doc_Hdr_Default">Noname</system:String>
     <system:String x:Key="Doc_Open_AccessError">File access error.</system:String>
     <system:String x:Key="Doc_Open_DeserializeError">File open error. It's probably corrupted.</system:String>
+    <system:String x:Key="FileAddPixelTimeline">Pixel poi</system:String>
+    <system:String x:Key="FileAddEpicTimeline">E-pic poi</system:String>
+    <system:String x:Key="FileAddLightTimeline">Light segment</system:String>
     <system:String x:Key="Item_Stretching">Stretching</system:String>
     <system:String x:Key="Item_SwitchLaserOnOffToolTip">switch laser on/off</system:String>
     <system:String x:Key="Item_Menu_Replace">replace</system:String>

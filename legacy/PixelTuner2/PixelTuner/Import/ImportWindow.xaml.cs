@@ -53,7 +53,7 @@ namespace PixelTuner.Import
                     //ProjectPlayerModel.Image = (BitmapImage)p.Result;
                     var tPath = System.IO.Path.GetTempFileName();
                     ImageHelper.SaveImageData(ImageHelper.BitmapImageToBytes<BmpBitmapEncoder>(p.Result), tPath);
-                    ProjectPlayerModel.DisplayModel = new PixelTuner.ViewModel.TimeLineItemViewModel(new System.IO.FileInfo(tPath));
+                    ProjectPlayerModel.DisplayModel = new PixelTuner.ViewModel.PixelThumbnailViewModel(new System.IO.FileInfo(tPath));
                     RaisePropertyChanged("ProjectPlayerModel");
                 }
             }

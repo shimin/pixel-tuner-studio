@@ -34,15 +34,6 @@ namespace PixelTuner.ViewModel
 
         public int? T2 { get; set; }
 
-        BitmapImage _image = null;
-        public override object ImageSource
-        {
-            get
-            {
-                return _image;
-            }
-        }
-
         public override string ContentID
         {
             get
@@ -60,11 +51,12 @@ namespace PixelTuner.ViewModel
             }
         }
 
+        protected string _uri;
         public override string FullName
         {
             get
             {
-                return Name;
+                return _uri;
             }
         }
 
@@ -116,11 +108,9 @@ namespace PixelTuner.ViewModel
 
         public override object Clone()
         {
-            EffectThumbnailViewModel result = new EffectThumbnailViewModel(_image, _name);
-            result.StartTime = this.StartTime;
-            result.EndTime = this.EndTime;
-            result.TimelineViewExpanded = this.TimelineViewExpanded;
-            result.Stretching = this.Stretching;
+            EffectThumbnailViewModel result = (EffectThumbnailViewModel)base.Clone();
+            result._image = this._image;
+            result._name = this._name;
             result.NormalBackground = this.NormalBackground;
             return result;
         }

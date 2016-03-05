@@ -61,7 +61,7 @@ namespace PixelTuner.ViewModel
             }
             else if (e.Device is SimplePoiDevice)
             {
-                var model = new SimplePoiDeviceViewModel(e.Device as SimplePoiDevice);
+                var model = new EpicPoiDeviceViewModel(e.Device as SimplePoiDevice);
                 Devices.Add(model);
             }
             else if (e.Device is GenericSerialDevice)
