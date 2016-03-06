@@ -9,17 +9,17 @@ namespace Communication.Pixelate
     {
         public virtual UInt16[] R
         {
-            get { return _generic; }
+            get { return _r; }
         }
 
         public virtual UInt16[] G
         {
-            get { return _generic; }
+            get { return _g; }
         }
 
         public virtual UInt16[] B
         {
-            get { return _generic; }
+            get { return _b; }
         }
 
         protected UInt16[] _b = new UInt16[] {  0

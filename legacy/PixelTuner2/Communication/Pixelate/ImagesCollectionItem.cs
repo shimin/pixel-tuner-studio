@@ -8,13 +8,6 @@ using Common.Imaging;
 
 namespace Communication.Pixelate
 {
-    public enum ColorDepth
-    {
-        Bit12 = 0,
-        Bit24 = 1,
-        Bit36 = 2
-    }
-
     public class ImagesCollectionItem
     {
         const int ParametersFieldSize = 1;
