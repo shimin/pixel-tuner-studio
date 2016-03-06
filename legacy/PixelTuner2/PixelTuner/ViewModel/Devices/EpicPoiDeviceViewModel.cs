@@ -39,7 +39,7 @@ namespace PixelTuner.ViewModel
 
         public override string FullName
         {
-            get { return String.Format("Simple Poi {0}.{1}.{2}", PlatformVersion, BootVersion, FirmwareVersion); ; }
+            get { return String.Format("Epic Poi {0}.{1}.{2}", PlatformVersion, BootVersion, FirmwareVersion); ; }
             protected set { RaisePropertyChanged("FullName"); }
         }
 
@@ -153,7 +153,7 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        private bool TimelineFilter(TimeLineViewModel l)
+        public static bool TimelineFilter(TimeLineViewModel l)
         {
             return l is EpicPoiTimeLineViewModel && l.Items.Count > 0;
         }

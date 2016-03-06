@@ -113,7 +113,7 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        private bool TimelineFilter(TimeLineViewModel l)
+        public static bool TimelineFilter(TimeLineViewModel l)
         {
             return l is LightTimeLineViewModel;
         }

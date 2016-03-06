@@ -171,7 +171,7 @@ namespace PixelTuner.ViewModel
             FileViewModel file = parameter as FileViewModel;
             if (file == null) return;
 
-            TimelinesToUpload dialog = new TimelinesToUpload(TimelineFilter);
+            TimelinesToUpload dialog = new TimelinesToUpload(i => TimelineFilter(i) && (i as PixelTimeLineViewModel).LineHeight == LedsTotal);
             dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             dialog.Owner = Application.Current.MainWindow;
             if (dialog.ShowDialog() == true)
@@ -188,10 +188,9 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        private bool TimelineFilter(TimeLineViewModel l)
+        public static bool TimelineFilter(TimeLineViewModel l)
         {
-            return l is PixelTimeLineViewModel && l.Items.Count > 0
-                && (l as PixelTimeLineViewModel).LineHeight == LedsTotal;
+            return l is PixelTimeLineViewModel && l.Items.Count > 0;
         }
 
         private bool ValidateProject(FileViewModel file, int projectSize)

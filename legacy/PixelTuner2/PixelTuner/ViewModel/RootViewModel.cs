@@ -704,7 +704,13 @@ namespace PixelTuner.ViewModel
 
         private bool CanExport(object parameter)
         {
-            return ActiveDocument != null;
+            if (ActiveDocument == null) return false;
+
+            bool canExport = (ActiveDocument.TimeLines.Count((i) => 
+                PixelDeviceViewModel.TimelineFilter(i) && (i as PixelTimeLineViewModel).LineHeight == ActiveDocument.LineHeight) > 0)
+                || (ActiveDocument.TimeLines.Count(LightMasterDeviceViewModel.TimelineFilter) > 0)
+                || (ActiveDocument.TimeLines.Count(EpicPoiDeviceViewModel.TimelineFilter) > 0);
+            return canExport;
         }
 
         private void OnExport(object parameter)
@@ -714,18 +720,59 @@ namespace PixelTuner.ViewModel
 
         internal void Export(FileViewModel fileToSave, bool saveAsFlag = false)
         {
-            //TimelinesToUpload dialog = new TimelinesToUpload(null);
-            //dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            //dialog.Owner = Application.Current.MainWindow;
-            //if (dialog.ShowDialog() == true)
-            //{
-            //    var dlg = new SaveFileDialog();
-            //    dlg.Filter = "Binary project file|*.bin";
-            //    if (dlg.ShowDialog().GetValueOrDefault())
-            //        fileToSave.FilePath = dlg.FileName;
+            TimelinesToUpload dialog = null;
 
-            //    File.WriteAllBytes(fileToSave.FilePath, fileToSave.GetBinaryPresentation().ToArray());
-            //}
+            if (fileToSave.TimeLines.Count((i) => 
+                PixelDeviceViewModel.TimelineFilter(i) && (i as PixelTimeLineViewModel).LineHeight == ActiveDocument.LineHeight) > 0)
+            {
+                dialog = new TimelinesToUpload((i) => 
+                    PixelDeviceViewModel.TimelineFilter(i) && (i as PixelTimeLineViewModel).LineHeight == ActiveDocument.LineHeight);
+
+                dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                dialog.Owner = Application.Current.MainWindow;
+                if (dialog.ShowDialog() == true)
+                {
+                    var dlg = new SaveFileDialog();
+                    dlg.Filter = "Binary project file|*.bin";
+                    if (dlg.ShowDialog().GetValueOrDefault())
+                        fileToSave.FilePath = dlg.FileName;
+
+                    File.WriteAllBytes(fileToSave.FilePath,
+                        fileToSave.GetPixelBinaryPresentation(dialog.SelectedTimeLines, (byte)fileToSave.LineHeight).ToArray());
+                }
+            }
+
+            if (fileToSave.TimeLines.Count(LightMasterDeviceViewModel.TimelineFilter) > 0)
+            {
+                dialog = new TimelinesToUpload(LightMasterDeviceViewModel.TimelineFilter);
+                dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                dialog.Owner = Application.Current.MainWindow;
+                if (dialog.ShowDialog() == true)
+                {
+                    var dlg = new SaveFileDialog();
+                    dlg.Filter = "Binary project file|*.bin";
+                    if (dlg.ShowDialog().GetValueOrDefault())
+                        fileToSave.FilePath = dlg.FileName;
+
+                    File.WriteAllBytes(fileToSave.FilePath, fileToSave.GetLightBinaryPresentation(dialog.SelectedTimeLines).ToArray());
+                }
+            }
+
+            if (fileToSave.TimeLines.Count(EpicPoiDeviceViewModel.TimelineFilter) > 0)
+            {
+                dialog = new TimelinesToUpload(EpicPoiDeviceViewModel.TimelineFilter);
+                dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                dialog.Owner = Application.Current.MainWindow;
+                if (dialog.ShowDialog() == true)
+                {
+                    var dlg = new SaveFileDialog();
+                    dlg.Filter = "Binary project file|*.bin";
+                    if (dlg.ShowDialog().GetValueOrDefault())
+                        fileToSave.FilePath = dlg.FileName;
+
+                    File.WriteAllBytes(fileToSave.FilePath, fileToSave.GetEpicBinaryPresentation(dialog.SelectedTimeLines).ToArray());
+                }
+            }
         }
 
         public Visibility ExportCommandVisibility

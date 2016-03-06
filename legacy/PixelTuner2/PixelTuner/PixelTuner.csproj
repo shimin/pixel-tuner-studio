@@ -412,8 +412,8 @@
     <Resource Include="Files\Flash.bin" />
     <Resource Include="Files\Flash_v3.bin" />
     <Resource Include="Files\Flash_Epic.bin" />
-    <None Include="Files\Flash_IL.bin" />
-    <None Include="Files\Flash_LR.bin" />
+    <Resource Include="Files\Flash_IL.bin" />
+    <Resource Include="Files\Flash_LR.bin" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
