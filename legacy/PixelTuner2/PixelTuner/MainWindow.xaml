@@ -67,6 +67,7 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="{StaticResource Menu_Settings}">
+                <MenuItem Header="{StaticResource Menu_Settings_Artnet_Window}" Command="{Binding ArtnetCommand}"/>
                 <MenuItem Header="{StaticResource Menu_Settings_Defaults}" Command="{Binding AdjustDefaultsCommand}" InputGestureText="Alt+P"/>
             </MenuItem>
         </Menu>

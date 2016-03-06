@@ -53,5 +53,32 @@
     <Setting Name="IsAnimate" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="Discreteness" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">5</Value>
+    </Setting>
+        <Setting Name="ArtnetLocalIP" Type="System.String" Scope="User">
+      <Value Profile="(Default)">192.168.1.101</Value>
+    </Setting>
+    <Setting Name="ArtnetSubnet" Type="System.String" Scope="User">
+      <Value Profile="(Default)">255.255.255.255</Value>
+    </Setting>
+    <Setting Name="ArtnetPort" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">3333</Value>
+    </Setting>
+    <Setting Name="ArtnetUniverse" Type="System.Byte" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="ArtnetChannel" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="ArtnetStartValue" Type="System.Byte" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="ArtnetPauseValue" Type="System.Byte" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="ArtnetStopValue" Type="System.Byte" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -18,6 +18,9 @@ using Common.Collections;
 using WPFSoundVisualizationLib;
 using NAudio;
 using Common.Controls;
+using Communication.Binarize;
+using Communication.Gradient;
+using Communication;
 
 namespace PixelTuner.ViewModel
 {
@@ -134,6 +137,20 @@ namespace PixelTuner.ViewModel
             set
             {
                 _timeLines = value;
+            }
+        }
+
+        ObservableCollection<TimeLineViewModel> _filteredTimeLines = new ObservableCollection<TimeLineViewModel>();
+        [XmlIgnore]
+        public ObservableCollection<TimeLineViewModel> FilteredTimeLines
+        {
+            get
+            {
+                return _filteredTimeLines;
+            }
+            set
+            {
+                _filteredTimeLines = value;
             }
         }
 
@@ -255,9 +272,9 @@ namespace PixelTuner.ViewModel
         {
             get
             {
-                foreach (var line in TimeLines)
-                    if (line.Items.Count > 0)
-                        return false;
+                //foreach (var line in TimeLines)
+                //    if (line.Items.Count > 0)
+                //        return false;
                 return true;
             }
         }
@@ -667,45 +684,53 @@ namespace PixelTuner.ViewModel
         }
         #endregion
         
-        public int EvaluateBinarySize(byte targetHeight)
+        public int EvaluatePixelBinarySize(byte targetHeight)
         {
             ColorDepth depth = ColorDepth.Bit24;
             try { depth = (ColorDepth)ColorDepth.Parse(typeof(ColorDepth), Settings.Default.ColorDepth); }
             catch { }
 
             var images = new List<ImagesCollectionItem>();
-            PixelProjectFile project = CreateProjectFile(images, (byte)targetHeight, depth);
+            Func<TimeLineViewModel, bool> filter = (i) =>
+            {
+                var line = i as PixelTimeLineViewModel;
+                if (line != null) return line.LineHeight == targetHeight;
+
+                return false;
+            };
+
+            PixelProjectFile project = CreatePixelProjectFile(_timeLines.Where(filter), images, (byte)targetHeight, depth);
             ImagesCollection c = new ImagesCollection(images);
 
             return project.GetBinarySize(c, targetHeight);
         }
 
-        public List<byte> GetBinaryPresentation(byte targetHeight)
+        public List<byte> GetPixelBinaryPresentation(IEnumerable<TimeLineViewModel> lines, byte targetHeight)
         {
             ColorDepth depth = ColorDepth.Bit24;
             try { depth = (ColorDepth)ColorDepth.Parse(typeof(ColorDepth), Settings.Default.ColorDepth); }
             catch { }
 
             var images = new List<ImagesCollectionItem>();
-            PixelProjectFile project = CreateProjectFile(images, targetHeight, depth);
+            PixelProjectFile project = CreatePixelProjectFile(lines, images, targetHeight, depth);
             ImagesCollection c = new ImagesCollection(images);
             var buf = project.GetBinary(c, targetHeight);
 #if(DEBUG)
             string logFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".\\Logs");
             Directory.CreateDirectory(logFolder);
-            string projectFileName = Path.Combine(logFolder, DateTime.Now.ToString("dd_MM_yyyy___HH_mm_ss_fff") + ".bin");
+            string projectFileName = Path.Combine(logFolder, DateTime.Now.ToString("pixel-project-dd_MM_yyyy___HH_mm_ss_fff") + ".bin");
             File.WriteAllBytes(projectFileName, buf.ToArray());
 #endif
             return buf;
         }
 
-        private PixelProjectFile CreateProjectFile(List<ImagesCollectionItem> imagesCollection, byte targetHeight, ColorDepth depth)
+        private PixelProjectFile CreatePixelProjectFile(IEnumerable<TimeLineViewModel> lines, 
+            List<ImagesCollectionItem> imagesCollection, byte targetHeight, ColorDepth depth)
         {
             var project = new PixelProjectFile();
-
-            foreach (TimeLineViewModel line in _timeLines)
+            foreach (TimeLineViewModel line in lines)
             {
-                if (line.Items.Count == 0) continue;
+                if ( line.Items.Count == 0 || !line.IsSelectedToUpload) continue;
                 var file = new PixelTimelineFile();
 
                 var currentTime = line.Start.Value;
@@ -740,6 +765,134 @@ namespace PixelTuner.ViewModel
             return project;
         }
 
+        public List<byte> GetEpicBinaryPresentation(IEnumerable<TimeLineViewModel> lines)
+        {
+            ColorDepth depth = ColorDepth.Bit24;
+            try { depth = (ColorDepth)ColorDepth.Parse(typeof(ColorDepth), Settings.Default.ColorDepth); }
+            catch { }
+
+            var gradients = new List<GradientsCollectionItem>();
+            GradientProjectFile project = CreateEpicProjectFile(lines, gradients, depth);
+            var c = new GradientsCollection(gradients);
+            var buf = project.GetBinary(c);
+#if(DEBUG)
+            string logFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".\\Logs");
+            Directory.CreateDirectory(logFolder);
+            string projectFileName = Path.Combine(logFolder, DateTime.Now.ToString("simple-project-dd_MM_yyyy___HH_mm_ss_fff") + ".bin");
+            File.WriteAllBytes(projectFileName, buf.ToArray());
+#endif
+            return buf;
+        }
+
+        private GradientProjectFile CreateEpicProjectFile(IEnumerable<TimeLineViewModel> lines, 
+            List<GradientsCollectionItem> imagesCollection, ColorDepth depth)
+        {
+            var project = new GradientProjectFile();
+            foreach (TimeLineViewModel line in lines)
+            {
+                if (line.Items.Count == 0 || !line.IsSelectedToUpload) continue;
+                var file = new GradientTimeLineFile();
+
+                var currentTime = line.Start.Value;
+                foreach (TimeLineItemViewModel item in line.Items)
+                {
+                    string path = item.FullName.ToLower();
+                    double startMilliseconds = 0;
+
+                    var gapDuration = (item.StartTime.Value - currentTime).TotalMilliseconds;
+                    if (gapDuration > 0)    // if start time of the next image doesn't match end time of the current one
+                    {
+                        startMilliseconds = (item.StartTime.Value - line.Start.Value).TotalMilliseconds;
+                        var blankImageFile = new GradientImageFile(null, (UInt16)item.Stretching, (UInt32)gapDuration, (UInt32)startMilliseconds, 0);
+                        file.Images.Add(blankImageFile);
+                        imagesCollection.Add(new GradientsCollectionItem(null, 1, depth));
+                    }
+
+                    var duration = (item.EndTime.Value - item.StartTime.Value).TotalMilliseconds;       // duration = end time - start time
+                    startMilliseconds = (item.StartTime.Value - line.Start.Value).TotalMilliseconds;    // start ms = start time - timeline start time
+                    UInt16 mask = item.LaserOn ? (ushort)1 : (ushort)0;
+                    var imageFile = new GradientImageFile(path, (UInt16)item.Stretching, (UInt32)duration, (UInt32)startMilliseconds, mask);
+                    var image = new GradientsCollectionItem(path, 1, depth);
+                    imageFile.Brightness = image.Brightness = item.Brightness;
+                    imagesCollection.Add(image);
+
+                    file.Images.Add(imageFile);
+                    currentTime = item.EndTime.Value;
+                }
+                project.TimeLines.Add(file);
+            }
+
+            return project;
+        }
+
+        public List<byte> GetLightBinaryPresentation(IEnumerable<TimeLineViewModel> lines)
+        {
+            LightProjectFile project = new LightProjectFile();
+            byte index = 1;
+            foreach (TimeLineViewModel line in lines)
+            {
+                if (line.Items.Count == 0 || !line.IsSelectedToUpload) continue;
+                var tlf = new LightTimelineFile();
+                tlf.SubmoduleAddress = index;
+
+                List<ITimeLineDataItem> timelineItems = FillGabs(line.Items);
+                foreach (TimeLineItemViewModel item in timelineItems)
+                {
+                    if (item is SolidColorThumbnailViewModel)
+                    {
+                        var file = new LightColorFile(item.FullName, item.StartTime.Value, item.EndTime.Value);
+                        var c = (item as SolidColorThumbnailViewModel).BackgroundColor;
+                        file.Color = System.Drawing.Color.FromArgb(255, c.R, c.G, c.B);
+                        tlf.Images.Add(file);
+                    }
+                    else if (item is EffectThumbnailViewModel)
+                    {
+                        var file = new LightEffectFile(item.FullName, item.StartTime.Value, item.EndTime.Value);
+                        var vm = (EffectThumbnailViewModel)item;
+                        file.ColorFirst = System.Drawing.Color.FromArgb(255, vm.ColorFirst.R, vm.ColorFirst.G, vm.ColorFirst.B);
+                        file.ColorLast = System.Drawing.Color.FromArgb(255, vm.ColorLast.R, vm.ColorLast.G, vm.ColorLast.B);
+                        file.T1 = vm.T1.HasValue ? vm.T1.Value : 0;
+                        file.T2 = vm.T2.HasValue ? vm.T2.Value : 0;
+                        tlf.Images.Add(file);
+                    }
+                }
+                project.TimeLines.Add(tlf);
+                index++;
+            }
+
+            var buf = project.GetBinary(Settings.Default.Discreteness);
+#if(DEBUG)
+            string projectFileName = DateTime.Now.ToString("light-project-dd_MM_yyyy___HH_mm_ss_fff") + ".bin";
+            File.WriteAllBytes(projectFileName, buf.ToArray());
+#endif
+            return buf;
+        }
+
+        /// <summary>
+        /// Fills space between two light timeline items with black samples
+        /// </summary>
+        /// <param name="items">source items collection</param>
+        /// <returns>completed items collection</returns>
+        private List<ITimeLineDataItem> FillGabs(ObservableCollection<ITimeLineDataItem> items)
+        {
+            if (items.Count < 2) return new List<ITimeLineDataItem>(items);
+
+            var result = new List<ITimeLineDataItem>();
+            for (int i = 0; i < items.Count - 1; i++)
+            {
+                result.Add(items[i]);
+                if (items[i].EndTime != items[i + 1].StartTime)
+                {
+                    var item = new SolidColorThumbnailViewModel(null, "Solid Color");
+                    item.StartTime = items[i].EndTime;
+                    item.EndTime = items[i + 1].StartTime;
+                    result.Add(item);
+                }
+            }
+            result.Add(items.Last());
+            return result;
+        }
+        
         [XmlIgnore]
         public static List<Type> ExtraTypes
         {
@@ -911,6 +1064,5 @@ namespace PixelTuner.ViewModel
                 FileChanged(sender, e);
         }
         public event EventHandler FileChanged;
-
     }
 }

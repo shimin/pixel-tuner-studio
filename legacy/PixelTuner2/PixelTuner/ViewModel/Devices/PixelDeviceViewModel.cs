@@ -22,16 +22,22 @@ namespace PixelTuner.ViewModel
         
         public new PixelDevice Device { get; private set; }
 
-        static int FirmwareFileVersionV2 { get; set; }
+        private static int FirmwareFileVersionV2 { get; set; }
 
-        static int FirmwareFileVersionV3 { get; set; }
+        private static int FirmwareFileVersionV3 { get; set; }
+
+        private static byte[] _firmwareBytesV2;
+
+        private static byte[] _firmwareBytesV3;
+
+        private static string _firmwareFileName = "flash.bin";
 
         public int ActiveProjectSize
         {
             get
             {
                 return RootViewModel.This.ActiveDocument != null ?
-                    RootViewModel.This.ActiveDocument.EvaluateBinarySize(LedsTotal) / 1024 : 0;
+                    RootViewModel.This.ActiveDocument.EvaluatePixelBinarySize(LedsTotal) / 1024 : 0;
             }
         }
 
@@ -89,12 +95,12 @@ namespace PixelTuner.ViewModel
         static PixelDeviceViewModel()
         {
             var streamInfo = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash.bin"));
-            var firmwareBytes = Common.Collections.StreamHelper.ReadFully(streamInfo.Stream);
-            FirmwareFileVersionV2 = firmwareBytes[52];
+            _firmwareBytesV2 = Common.Collections.StreamHelper.ReadFully(streamInfo.Stream);
+            FirmwareFileVersionV2 = _firmwareBytesV2[52];
 
             streamInfo = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash_v3.bin"));
-            firmwareBytes = Common.Collections.StreamHelper.ReadFully(streamInfo.Stream);
-            FirmwareFileVersionV3 = firmwareBytes[52];
+            _firmwareBytesV3 = Common.Collections.StreamHelper.ReadFully(streamInfo.Stream);
+            FirmwareFileVersionV3 = _firmwareBytesV3[52];
         }
 
         public PixelDeviceViewModel(PixelDevice device)
@@ -111,18 +117,34 @@ namespace PixelTuner.ViewModel
         
         protected override bool CanUploadFirmware(object parameter)
         {
-            return Device != null && Device.BootMode &&
-                File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "flash.bin"));
+            var fwPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _firmwareFileName);
+            return base.CanUploadFirmware(null) && (File.Exists(fwPath) || (_firmwareBytesV2 != null && _firmwareBytesV3 != null));
         }
 
+        /// <summary>
+        /// Tries to upload firmware. Firstly, check parameter, than try to load "flash.bin" from directory, than load FW from resources
+        /// </summary>
+        /// <param name="parameter">firmware bytes</param>
         protected override void OnUploadFirmware(object parameter)
         {
             try
             {
                 byte[] binaryData = parameter as byte[];
+                
                 if (binaryData == null)
-                    binaryData = File.ReadAllBytes(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "flash.bin"));
+                    try
+                    {
+                        binaryData = File.ReadAllBytes(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _firmwareFileName));
+                    }
+                    catch { }
+                
+                if (binaryData == null)
+                {
+                    if (PlatformVersion == 2) binaryData = _firmwareBytesV2;
+                    else if (PlatformVersion == 3) binaryData = _firmwareBytesV3;
+                }
                 if (binaryData == null) return;
+
                 BackgroundWorker bgWorker = new BackgroundWorker();
                 InitializeProgressBar(binaryData);
                 bgWorker.DoWork += (x, e) => Device.WriteFirmware(new List<byte>(binaryData));
@@ -149,15 +171,27 @@ namespace PixelTuner.ViewModel
             FileViewModel file = parameter as FileViewModel;
             if (file == null) return;
 
-            List<byte> data = file.GetBinaryPresentation(LedsTotal);
-            InitializeProgressBar(data);
-            RaisePropertyChanged("ProgressMax");
-            if (ValidateProject(file, data.Count / 1024)) // project size in KB
+            TimelinesToUpload dialog = new TimelinesToUpload(TimelineFilter);
+            dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            dialog.Owner = Application.Current.MainWindow;
+            if (dialog.ShowDialog() == true)
             {
-                BackgroundWorker bgWorker = new BackgroundWorker();
-                bgWorker.DoWork += (x, e) => Device.WriteFile(data);
-                bgWorker.RunWorkerAsync();
+                List<byte> data = file.GetPixelBinaryPresentation(dialog.SelectedTimeLines, LedsTotal);
+                InitializeProgressBar(data);
+
+                if (ValidateProject(file, data.Count / 1024)) // project size in KB
+                {
+                    BackgroundWorker bgWorker = new BackgroundWorker();
+                    bgWorker.DoWork += (x, e) => Device.WriteFile(data);
+                    bgWorker.RunWorkerAsync();
+                }
             }
+        }
+
+        private bool TimelineFilter(TimeLineViewModel l)
+        {
+            return l is PixelTimeLineViewModel && l.Items.Count > 0
+                && (l as PixelTimeLineViewModel).LineHeight == LedsTotal;
         }
 
         private bool ValidateProject(FileViewModel file, int projectSize)
@@ -199,26 +233,7 @@ namespace PixelTuner.ViewModel
 
         #endregion
 
-        #region AutoUpdateCommand
-
-        protected override bool CanAutoUpdateCommand(object parameter)
-        {
-            return Device != null;
-        }
-
-        protected override void OnAutoUpdateCommand(object parameter)
-        {
-            Device.SwitchToBoot();
-        }
-        
-        #endregion
-
         #region UpdatePostponeCommand
-
-        protected override bool CanUpdatePostponeCommand(object parameter)
-        {
-            return Device != null;
-        }
 
         protected override void OnUpdatePostponeCommand(object parameter)
         {

@@ -15,11 +15,13 @@ namespace PixelTuner.ViewModel
 
         private int FirmwareFileVersion { get; set; }
 
+        private byte[] _firmwareBytes;
+
         public IlluminatorDeviceViewModel()
         {
             var streamInfo = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash_IL.bin"));
-            var firmwareBytes = Common.Collections.StreamHelper.ReadFully(streamInfo.Stream);
-            FirmwareFileVersion = firmwareBytes[52];
+            _firmwareBytes = Common.Collections.StreamHelper.ReadFully(streamInfo.Stream);
+            FirmwareFileVersion = _firmwareBytes[52];
         }
 
         public IlluminatorDeviceViewModel(IlluminatorDevice device)

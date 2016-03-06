@@ -85,14 +85,6 @@
                 Value="{Binding Path=LineHeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 ParsingNumberStyle="Integer" 
                 IsTabStop="True" />
-            <!--<ct:NumericUpDownControl 
-                                        Grid.Column="4" 
-                                        Margin="4,2,2,0" 
-                                        MaxValue="200"
-                                        MinValue="5"
-                                        Step="5"
-                                        IsEnabled="{Binding Path=Parent.DataContext.LineHeightChangingAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                        Value="{Binding Path=Parent.DataContext.LineHeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>-->
 
             <Grid x:Name="MemoryGrid" 
                   Grid.Row="1" 

@@ -12,12 +12,14 @@
     <system:String x:Key="Menu_Settings_Defaults_TurnOffAfter">Timeline's Menü auf dem Gerät nach {0} Sekunden ausschalten.</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Duration">Dauer in Sekunden</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Stretching">Horizontal ausdehnen</system:String>
+    <system:String x:Key="Menu_Settings_Defaults_Rate">Discreteness</system:String>
     <system:String x:Key="Menu_Settings_Defaults_MaxStretching">Maximal erlaubte ausdehnung.</system:String>
     <system:String x:Key="Menu_Settings_Defaults_WriteDeviceSettings">In angeschlossene Geräte schreiben</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Device">Gerät</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Software">Programm</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Window">ЗDefault Werte</system:String>
     <system:String x:Key="Menu_Settings_Defaults">Default Werte</system:String>
+    <system:String x:Key="Menu_Settings_Artnet_Window">ArtNet</system:String>
     <system:String x:Key="Menu_Settings">Einstellungen</system:String>
     <system:String x:Key="Menu_Window_Devices">Geräte</system:String>
     <system:String x:Key="Menu_Window_Projects">Projekten</system:String>
@@ -111,4 +113,19 @@
     <system:String x:Key="ImportWindow_Header">Import</system:String>
     <system:String x:Key="ImportWindow_EditHeader">Bearbeiten</system:String>
     <system:String x:Key="ImportWindow_PreviewHeader">Vorschau</system:String>
+    <system:String x:Key="ChooseTimelinesWindowText">Choose timelines to upload</system:String>
+    <system:String x:Key="TimelinesToUpload_NoLines">No suitable lines to upload.</system:String>
+    <system:String x:Key="SelectAllButton">Select all</system:String>
+    <system:String x:Key="DeselectAllButton">Deselect all</system:String>
+    <system:String x:Key="Text_Close">Close</system:String>
+    <system:String x:Key="Text_Run">Run</system:String>
+    <system:String x:Key="Text_Stop">Stop</system:String>
+    <system:String x:Key="Text_Artnet_LocalIP">Local IP address</system:String>
+    <system:String x:Key="Text_Artnet_Subnet">Subnet mask</system:String>
+    <system:String x:Key="Text_Artnet_Port">Local port</system:String>
+    <system:String x:Key="Text_Artnet_Universe">Universe</system:String>
+    <system:String x:Key="Text_Artnet_Channel">Channel number</system:String>
+    <system:String x:Key="Text_Artnet_Start">Start value</system:String>
+    <system:String x:Key="Text_Artnet_Pause">Pause value</system:String>
+    <system:String x:Key="Text_Artnet_Stop">Stop value</system:String>
 </ResourceDictionary>

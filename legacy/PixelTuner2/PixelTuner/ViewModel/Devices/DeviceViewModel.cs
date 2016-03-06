@@ -213,7 +213,7 @@ namespace PixelTuner.ViewModel
 
         protected virtual bool CanUploadFirmware(object parameter)
         {
-            return false;
+            return Device != null && Device.BootMode;
         }
 
         protected virtual void OnUploadFirmware(object parameter)
@@ -267,12 +267,12 @@ namespace PixelTuner.ViewModel
 
         protected virtual bool CanAutoUpdateCommand(object parameter)
         {
-            return false;
+            return (Device != null);
         }
 
         protected virtual void OnAutoUpdateCommand(object parameter)
         {
-            
+            Device.SwitchToBoot();
         }
 
         #endregion
@@ -294,7 +294,7 @@ namespace PixelTuner.ViewModel
 
         protected virtual bool CanUpdatePostponeCommand(object parameter)
         {
-            return false;
+            return Device != null;
         }
 
         protected virtual void OnUpdatePostponeCommand(object parameter)

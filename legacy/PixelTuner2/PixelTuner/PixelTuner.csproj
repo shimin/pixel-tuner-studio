@@ -116,6 +116,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ArtNetWindow.xaml.cs">
+      <DependentUpon>ArtNetWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Audio\NAudioEngine.cs" />
     <Compile Include="Audio\SampleAggregator.cs" />
     <Compile Include="Auxiliary\DataPipe.cs" />
@@ -176,6 +179,9 @@
     </Compile>
     <Compile Include="Styles\TimeLineLayoutTemplate.xaml.cs">
       <DependentUpon>TimeLineLayoutTemplate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TimelinesToUpload.xaml.cs">
+      <DependentUpon>TimelinesToUpload.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\Serialization\GradientTimeLineItem.cs" />
     <Compile Include="ViewModel\TimelineItems\GradientThumbnailViewModel.cs" />
@@ -243,6 +249,10 @@
     <Compile Include="ViewModel\Tools\ToolViewModel.cs" />
     <Compile Include="ViewModel\RootViewModel.cs" />
     <Compile Include="ViewModel\Tools\VideosViewModel.cs" />
+    <Page Include="ArtNetWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="EffectSawWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -327,6 +337,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Styles\SelectTimelineTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Styles\SharedStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -346,6 +360,10 @@
     <Page Include="PictureEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TimelinesToUpload.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Resource Include="Dictionaries\labels.ru-RU.xaml">
       <SubType>Designer</SubType>
@@ -393,6 +411,7 @@
     </None>
     <Resource Include="Files\Flash.bin" />
     <Resource Include="Files\Flash_v3.bin" />
+    <Resource Include="Files\Flash_Epic.bin" />
     <None Include="Files\Flash_IL.bin" />
     <None Include="Files\Flash_LR.bin" />
     <None Include="Properties\Settings.settings">

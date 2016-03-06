@@ -82,14 +82,6 @@ namespace PixelTuner.ViewModel
        
         #region Properties
 
-        private bool _isSelectedToUpload = true;
-        [XmlIgnore]
-        public bool IsSelectedToUpload
-        {
-            get { return _isSelectedToUpload; }
-            set { _isSelectedToUpload = value; RaisePropertyChanged("IsSelectedToUpload"); }
-        }
-
         int _timelineHeightPx = 120;
         [XmlIgnore]
         public int TimelineHeightPx

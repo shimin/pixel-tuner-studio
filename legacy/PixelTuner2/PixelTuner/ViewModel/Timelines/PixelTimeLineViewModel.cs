@@ -30,18 +30,43 @@ namespace PixelTuner.ViewModel
 
         public bool CanAddToTimeLine(ITimeLineDataItem item, DateTime timePoint)
         {
-            return item is PixelThumbnailViewModel;
+            var i = item as PixelThumbnailViewModel;
+
+            bool matchingHeight = _line.Items.Count == 0;
+            if (!matchingHeight && i != null) 
+                matchingHeight = i.ActualHeight == ((PixelThumbnailViewModel)_line.Items.First()).ActualHeight;
+            
+            return i != null && matchingHeight;
         }
     }
 
     public class PixelTimeLineViewModel : TimeLineViewModel
     {
-        public PixelTimeLineViewModel()
-        {
-            
+        public PixelTimeLineViewModel() {
+            Items.CollectionChanged += (s, e) => { RaisePropertyChanged("LineHeight"); RaisePropertyChanged("IsLineHeightVisible"); };
         }
 
+        [XmlIgnore]
+        public int LineHeight
+        {
+            get
+            {
+                int h = 0;
+                if (Items.Count != 0) h = ((PixelThumbnailViewModel)Items.First()).ActualHeight;
+                return h;
+            }
+            set
+            {
+                RaisePropertyChanged("LineHeight");
+            }
+        }
 
+        [XmlIgnore]
+        public override System.Windows.Visibility IsLineHeightVisible
+        {
+            get { return LineHeight == 0 ? Visibility.Hidden : Visibility.Visible; }
+            set { RaisePropertyChanged("IsLineHeightVisible"); }
+        }
         #region ITimeLineManager Members
 
         ITimeLineManager _dragManager;

@@ -226,5 +226,113 @@ namespace PixelTuner.Properties {
                 this["IsAnimate"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public int Discreteness {
+            get {
+                return ((int)(this["Discreteness"]));
+            }
+            set {
+                this["Discreteness"] = value;
+            }
+        }
+                
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("192.168.1.101")]
+        public string ArtnetLocalIP {
+            get {
+                return ((string)(this["ArtnetLocalIP"]));
+            }
+            set {
+                this["ArtnetLocalIP"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("255.255.255.255")]
+        public string ArtnetSubnet {
+            get {
+                return ((string)(this["ArtnetSubnet"]));
+            }
+            set {
+                this["ArtnetSubnet"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3333")]
+        public int ArtnetPort {
+            get {
+                return ((int)(this["ArtnetPort"]));
+            }
+            set {
+                this["ArtnetPort"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public byte ArtnetUniverse {
+            get {
+                return ((byte)(this["ArtnetUniverse"]));
+            }
+            set {
+                this["ArtnetUniverse"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int ArtnetChannel {
+            get {
+                return ((int)(this["ArtnetChannel"]));
+            }
+            set {
+                this["ArtnetChannel"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public byte ArtnetStartValue {
+            get {
+                return ((byte)(this["ArtnetStartValue"]));
+            }
+            set {
+                this["ArtnetStartValue"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public byte ArtnetPauseValue {
+            get {
+                return ((byte)(this["ArtnetPauseValue"]));
+            }
+            set {
+                this["ArtnetPauseValue"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public byte ArtnetStopValue {
+            get {
+                return ((byte)(this["ArtnetStopValue"]));
+            }
+            set {
+                this["ArtnetStopValue"] = value;
+            }
+        }
     }
 }

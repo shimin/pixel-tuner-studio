@@ -59,6 +59,21 @@ namespace PixelTuner.ViewModel
             set { RaisePropertyChanged("Background"); }
         }
 
+        private bool _isSelectedToUpload = true;
+        [XmlIgnore]
+        public bool IsSelectedToUpload
+        {
+            get { return _isSelectedToUpload; }
+            set { _isSelectedToUpload = value; RaisePropertyChanged("IsSelectedToUpload"); }
+        }
+
+        [XmlIgnore]
+        public virtual System.Windows.Visibility IsLineHeightVisible
+        {
+            get { return System.Windows.Visibility.Collapsed; }
+            set { RaisePropertyChanged("IsLineHeightVisible"); }
+        }
+
         private bool _isSelected = false;
         [XmlIgnore]
         public bool IsSelected
@@ -75,12 +90,68 @@ namespace PixelTuner.ViewModel
             set { _isChanged = value; if (Parent != null) Parent.IsDirty = true; }
         }
 
+        int _timelineHeightPx = 120;
+        [XmlIgnore]
+        public int TimelineHeightPx
+        {
+            get { return _timelineHeightPx; }
+            set { _timelineHeightPx = value; RaisePropertyChanged("TimelineHeightPx"); }
+        }
+
+        int _timelinePreviewWidth = 120;
+        [XmlIgnore]
+        public int TimelinePreviewWidth
+        {
+            get { return _timelinePreviewWidth; }
+            set { _timelinePreviewWidth = value; RaisePropertyChanged("TimelinePreviewWidth"); }
+        }
+
         Double _defaultLength;
         [XmlIgnore]
         public Double DefaultTimeInterval
         {
             get { return _defaultLength = PixelTuner.Properties.Settings.Default.DefaultDuration; }
             set { _defaultLength = value; RaisePropertyChanged("DefaultTimeInterval"); }
+        }
+
+        string _metaDataPath = null;
+        [XmlAttribute]
+        public string MetaDataPath
+        {
+            get { return _metaDataPath; }
+            set { _metaDataPath = value; RaisePropertyChanged("MetaDataPath"); }
+        }
+
+        CanvasElementViewModel _metaData;
+        [XmlIgnore]
+        public CanvasElementViewModel MetaData
+        {
+            get { return _metaData; }
+            set
+            {
+                _metaData = value;
+                var ce = _metaData as CanvasElementViewModel;
+                if (ce != null)
+                {
+                    MetaDataPath = ce.Path;
+                    PreviewTransform = new MatrixTransform(
+                        ce.Transform.Value.M11,
+                        ce.Transform.Value.M12,
+                        ce.Transform.Value.M21,
+                        ce.Transform.Value.M22,
+                        -ce.Geometry.Bounds.Left,
+                        -ce.Geometry.Bounds.Top);
+                }
+                RaisePropertyChanged("MetaData");
+            }
+        }
+
+        MatrixTransform _previewTransform = null;
+        [XmlIgnore]
+        public MatrixTransform PreviewTransform
+        {
+            get { return _previewTransform; }
+            set { _previewTransform = value; RaisePropertyChanged("PreviewTransform"); }
         }
 
         // for comparasions in TimeLineControl which all use 'DateTime.MinValue'
@@ -276,7 +347,7 @@ namespace PixelTuner.ViewModel
 
         private TimeLineViewModel Clone()
         {
-            var timelineCopy = new TimeLineViewModel();
+            var timelineCopy = (TimeLineViewModel)Activator.CreateInstance(this.GetType());
             timelineCopy.DefaultTimeInterval = this.DefaultTimeInterval;
             timelineCopy.Start = this.Start;
             foreach (var item in this.Items)

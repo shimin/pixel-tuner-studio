@@ -1,0 +1,29 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:ct="clr-namespace:Common.Controls;assembly=Common"
+                    xmlns:vm="clr-namespace:PixelTuner.ViewModel"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/PixelTuner;component/Styles/SharedStyles.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <DataTemplate x:Key="SelectTimelineTemplate" DataType="{x:Type vm:TimeLineViewModel}">
+        <ItemsControl KeyboardNavigation.IsTabStop="False">
+            <Border x:Name="boxTimelineBorder" KeyboardNavigation.IsTabStop="False" BorderThickness="1" BorderBrush="{Binding Background}">
+                    <StackPanel KeyboardNavigation.IsTabStop="False" Margin="10,1,0,0" Orientation="Horizontal">
+                        <Canvas KeyboardNavigation.IsTabStop="False" Width="{StaticResource FilePreviewAreaWidth}" Background="{Binding Background}">
+                            <Path 
+                                Stroke="Black" 
+                                StrokeThickness="1" 
+                                Fill="{Binding Path=MetaData.Fill}"
+                                RenderTransform="{Binding Path=PreviewTransform}"
+                                Data="{Binding Path=MetaData.Geometry}"/>
+                        </Canvas>
+
+                        <CheckBox Margin="20" IsChecked="{Binding IsSelectedToUpload}" />
+                    </StackPanel>
+            </Border>
+        </ItemsControl>
+    </DataTemplate>
+    
+</ResourceDictionary>

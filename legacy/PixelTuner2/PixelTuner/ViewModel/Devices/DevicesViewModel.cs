@@ -48,6 +48,9 @@ namespace PixelTuner.ViewModel
             {
                 var model = new LightMasterDeviceViewModel(e.Device as LightMasterDevice);
                 Devices.Add(model);
+
+                if (model.BootMode && ContinueUpdate() && model.UploadFirmwareCommand.CanExecute(null))
+                    model.UploadFirmwareCommand.Execute(null);
             }
             else if (e.Device is IlluminatorDevice)
             {
@@ -58,19 +61,22 @@ namespace PixelTuner.ViewModel
             {
                 var model = new PixelDeviceViewModel(e.Device as PixelDevice);
                 Devices.Add(model);
+
+                if (model.BootMode && ContinueUpdate() && model.UploadFirmwareCommand.CanExecute(null))
+                    model.UploadFirmwareCommand.Execute(null);
             }
             else if (e.Device is SimplePoiDevice)
             {
                 var model = new EpicPoiDeviceViewModel(e.Device as SimplePoiDevice);
                 Devices.Add(model);
+
+                if (model.BootMode && ContinueUpdate() && model.UploadFirmwareCommand.CanExecute(null))
+                    model.UploadFirmwareCommand.Execute(null);
             }
             else if (e.Device is GenericSerialDevice)
             {
-                //var lightMasterDevice = new LightMasterDevice((e.Device as GenericSerialDevice).Port);
-                //lightMasterDevice.Initialize(null);
-
-                //var model = new PixelDeviceViewModel(lightMasterDevice);
-                //Devices.Add(model);
+                var model = new DeviceViewModel(e.Device as GenericSerialDevice);
+                Devices.Add(model);
             }
         }
 

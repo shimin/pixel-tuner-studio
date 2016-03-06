@@ -522,28 +522,37 @@ namespace PixelTuner.ViewModel
             {
                 try
                 {
-                    using (XmlTextReader tr = new XmlTextReader(path))
+                    using (FileStream fs = new FileStream(path, FileMode.Open))
                     {
-                        try
-                        {
-                            var file = (FileViewModel)_projectSerializer.Deserialize(tr);
-                            file.FilePath = path;
-                            this._files.Add(file);
-                            if (!string.IsNullOrEmpty(file.AudioPath))
-                                file.OpenAudio.Execute(file.AudioPath);
-                            ActiveDocument = file;
-                            ActiveDocument.IsDirty = false;
+                        // replace xsi:type to correctly open old projects
+                        TextReader str = new StreamReader(fs);
+                        var allText = str.ReadToEnd();
+                        allText = allText.Replace("<Line>", "<Line xsi:type=\"PixelTimeLineViewModel\">");
 
-                            if (LastUsedFileHandler != null)
-                                LastUsedFileHandler.Invoke(path);
-
-                            RemoveBrokenReferences();
-                        }
-                        catch (Exception ex)
+                        TextReader textReader = new StringReader(allText);
+                        using (XmlTextReader tr = new XmlTextReader(textReader))
                         {
-                            ResourceDictionary rd = Application.Current.Resources.MergedDictionaries[0];
-                            string msg = (String)rd["Doc_Open_DeserializeError"];
-                            MessageBox.Show(msg, Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
+                            try
+                            {
+                                var file = (FileViewModel)_projectSerializer.Deserialize(tr);
+                                file.FilePath = path;
+                                this._files.Add(file);
+                                if (!string.IsNullOrEmpty(file.AudioPath))
+                                    file.OpenAudio.Execute(file.AudioPath);
+                                ActiveDocument = file;
+                                ActiveDocument.IsDirty = false;
+
+                                if (LastUsedFileHandler != null)
+                                    LastUsedFileHandler.Invoke(path);
+
+                                RemoveBrokenReferences();
+                            }
+                            catch (Exception ex)
+                            {
+                                ResourceDictionary rd = Application.Current.Resources.MergedDictionaries[0];
+                                string msg = (String)rd["Doc_Open_DeserializeError"];
+                                MessageBox.Show(msg + "\n" + ex.Message, Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
+                            }
                         }
                     }
                 }
@@ -700,13 +709,23 @@ namespace PixelTuner.ViewModel
 
         private void OnExport(object parameter)
         {
-            var sfd = new SaveFileDialog();
-            sfd.Filter = "Binary file|*.bin";
-            if (true == sfd.ShowDialog())
-            {
-                var b = ActiveDocument.GetBinaryPresentation((byte)ActiveDocument.LineHeight);
-                File.WriteAllBytes(sfd.FileName, b.ToArray());
-            }
+            Export(ActiveDocument);
+        }
+
+        internal void Export(FileViewModel fileToSave, bool saveAsFlag = false)
+        {
+            //TimelinesToUpload dialog = new TimelinesToUpload(null);
+            //dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            //dialog.Owner = Application.Current.MainWindow;
+            //if (dialog.ShowDialog() == true)
+            //{
+            //    var dlg = new SaveFileDialog();
+            //    dlg.Filter = "Binary project file|*.bin";
+            //    if (dlg.ShowDialog().GetValueOrDefault())
+            //        fileToSave.FilePath = dlg.FileName;
+
+            //    File.WriteAllBytes(fileToSave.FilePath, fileToSave.GetBinaryPresentation().ToArray());
+            //}
         }
 
         public Visibility ExportCommandVisibility
@@ -779,6 +798,36 @@ namespace PixelTuner.ViewModel
         }
 
         #endregion 
+
+        #region ArtnetCommand
+        RelayCommand _artnetCommand = null;
+        public ICommand ArtnetCommand
+        {
+            get
+            {
+                if (_artnetCommand == null)
+                {
+                    _artnetCommand = new RelayCommand((p) => OnArtnetCommand(p), (p) => CanArtnetCommand(p));
+                }
+
+                return _artnetCommand;
+            }
+        }
+
+        private bool CanArtnetCommand(object parameter)
+        {
+            return true;
+        }
+
+        private void OnArtnetCommand(object parameter)
+        {
+            ArtNetWindow anw = new ArtNetWindow();
+            anw.Owner = Application.Current.MainWindow;
+            anw.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            anw.ShowDialog();
+        }
+
+        #endregion
 
         #region AdjustDefaultsCommand
         RelayCommand _adjustDefaultsCommand = null;

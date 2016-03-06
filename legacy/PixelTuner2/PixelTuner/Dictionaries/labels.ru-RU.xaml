@@ -12,12 +12,14 @@
     <system:String x:Key="Menu_Settings_Defaults_TurnOffAfter">Отключать меню выбора таймлайна на устройстве после {0} c.</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Duration">Длительность в секундах</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Stretching">Горизонтальное растяжение</system:String>
+    <system:String x:Key="Menu_Settings_Defaults_Rate">Интервал дискретизации</system:String>
     <system:String x:Key="Menu_Settings_Defaults_MaxStretching">Макс. возможное горизонтальное растяжение</system:String>
     <system:String x:Key="Menu_Settings_Defaults_WriteDeviceSettings">Записать в подключенные устройства</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Device">Устройство</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Software">Программа</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Window">Значения по умолчанию</system:String>
     <system:String x:Key="Menu_Settings_Defaults">Значения по умолчанию</system:String>
+    <system:String x:Key="Menu_Settings_Artnet_Window">ArtNet</system:String>
     <system:String x:Key="Menu_Settings">Настройки</system:String>
     <system:String x:Key="Menu_Window_Devices">Устройства</system:String>
     <system:String x:Key="Menu_Window_Projects">Проекты</system:String>
@@ -111,4 +113,19 @@
     <system:String x:Key="ImportWindow_Header">Импорт</system:String>
     <system:String x:Key="ImportWindow_EditHeader">Правка</system:String>
     <system:String x:Key="ImportWindow_PreviewHeader">Просмотр</system:String>
+    <system:String x:Key="ChooseTimelinesWindowText">Выбор таймлайнов для загрузки</system:String>
+    <system:String x:Key="TimelinesToUpload_NoLines">Нет подходящих линий для загрузки.</system:String>
+    <system:String x:Key="SelectAllButton">Выбрать все</system:String>
+    <system:String x:Key="DeselectAllButton">Очистить выбор</system:String>
+    <system:String x:Key="Text_Close">Закрыть</system:String>
+    <system:String x:Key="Text_Run">Старт</system:String>
+    <system:String x:Key="Text_Stop">Стоп</system:String>
+    <system:String x:Key="Text_Artnet_LocalIP">Локальный IP адрес</system:String>
+    <system:String x:Key="Text_Artnet_Subnet">Маска подсети</system:String>
+    <system:String x:Key="Text_Artnet_Port">Локальный порт</system:String>
+    <system:String x:Key="Text_Artnet_Universe">Universe</system:String>
+    <system:String x:Key="Text_Artnet_Channel">Номер канала</system:String>
+    <system:String x:Key="Text_Artnet_Start">Значение для старта</system:String>
+    <system:String x:Key="Text_Artnet_Pause">Значение для паузы</system:String>
+    <system:String x:Key="Text_Artnet_Stop">Значение для стопа</system:String>
 </ResourceDictionary>

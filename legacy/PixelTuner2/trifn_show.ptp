@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FileViewModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" UnitSize="72.281904761904656" LineHeight="1" AudioPath=".\Flux Pavilion and Matthew Koma - Emotional 320.mp3">
+  <Title>trifn_show.lrp</Title>
+  <ContentId>C:\Users\Ivan\AppData\Local\Temp\tmp1E72.tmp</ContentId>
+  <IsSelected>false</IsSelected>
+  <IsActive>false</IsActive>
+  <FilePath>D:\git\lightruler\LightRuler\trifn_show.lrp</FilePath>
+  <IsSyncOn>false</IsSyncOn>
+  <Line xsi:type="LightTimeLineViewModel" MetaDataPath="path4150">
+    <Item xsi:type="TimeLineItemSolid" Start="00:00:00.000" End="00:01:17.000" TimelineViewExpanded="false" FullName="Solid Color" Stretching="32" Color="#FF000000" />
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:17.000" End="00:01:23.050" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+    <Item xsi:type="TimeLineItemSolid" Start="00:01:23.050" End="00:01:29.100" TimelineViewExpanded="false" FullName="Solid Color" Stretching="32" Color="#FF000000" />
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:29.100" End="00:01:35.150" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:35.150" End="00:01:42.450" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FF008000" T1="40" T2="80" />
+    </Item>
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:42.450" End="00:01:49.100" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+  </Line>
+  <Line xsi:type="LightTimeLineViewModel" MetaDataPath="path4146">
+    <Item xsi:type="TimeLineItemSolid" Start="00:00:00.000" End="00:01:17.000" TimelineViewExpanded="false" FullName="Solid Color" Stretching="32" Color="#FF000000" />
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:17.000" End="00:01:23.050" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+    <Item xsi:type="TimeLineItemSolid" Start="00:01:23.050" End="00:01:29.100" TimelineViewExpanded="false" FullName="Solid Color" Stretching="32" Color="#FF000000" />
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:29.100" End="00:01:35.150" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:35.150" End="00:01:39.450" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FF008000" T1="40" T2="80" />
+    </Item>
+    <Item xsi:type="TimeLineItemSolid" Start="00:01:39.450" End="00:01:42.450" TimelineViewExpanded="false" FullName="Solid Color" Stretching="32" Color="#FF000000" />
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:42.450" End="00:01:49.100" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+  </Line>
+  <Line xsi:type="LightTimeLineViewModel" MetaDataPath="path4148">
+    <Item xsi:type="TimeLineItemSolid" Start="00:00:00.000" End="00:01:17.000" TimelineViewExpanded="false" FullName="Solid Color" Stretching="32" Color="#FF000000" />
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:17.000" End="00:01:23.050" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+    <Item xsi:type="TimeLineItemSolid" Start="00:01:23.050" End="00:01:29.100" TimelineViewExpanded="false" FullName="Solid Color" Stretching="32" Color="#FF000000" />
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:29.100" End="00:01:35.150" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:35.150" End="00:01:42.450" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FF008000" T1="40" T2="80" />
+    </Item>
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:42.450" End="00:01:49.100" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+  </Line>
+  <Line xsi:type="LightTimeLineViewModel" MetaDataPath="path3210">
+    <Item xsi:type="TimeLineItemSolid" Start="00:00:00.000" End="00:01:17.000" TimelineViewExpanded="false" FullName="Solid Color" Stretching="32" Color="#FF000000" />
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:17.000" End="00:01:23.050" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+    <Item xsi:type="TimeLineItemSolid" Start="00:01:23.050" End="00:01:29.100" TimelineViewExpanded="false" FullName="Solid Color" Stretching="32" Color="#FF000000" />
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:29.100" End="00:01:35.150" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:35.150" End="00:01:42.450" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FF008000" T1="40" T2="80" />
+    </Item>
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:42.450" End="00:01:49.100" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+  </Line>
+  <Line xsi:type="LightTimeLineViewModel" MetaDataPath="path4144">
+    <Item xsi:type="TimeLineItemSolid" Start="00:00:00.000" End="00:01:17.000" TimelineViewExpanded="false" FullName="Solid Color" Stretching="32" Color="#FF000000" />
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:17.000" End="00:01:23.050" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+    <Item xsi:type="TimeLineItemSolid" Start="00:01:23.050" End="00:01:29.100" TimelineViewExpanded="false" FullName="Solid Color" Stretching="32" Color="#FF000000" />
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:29.100" End="00:01:35.150" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:35.150" End="00:01:42.450" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FF008000" T1="40" T2="80" />
+    </Item>
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:42.450" End="00:01:49.100" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+  </Line>
+  <Line xsi:type="LightTimeLineViewModel" MetaDataPath="path4160">
+    <Item xsi:type="TimeLineItemSolid" Start="00:00:00.000" End="00:01:23.050" TimelineViewExpanded="false" FullName="Solid Color" Stretching="32" Color="#FF000000" />
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:23.050" End="00:01:29.100" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:29.100" End="00:01:35.150" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+    <Item xsi:type="TimeLineItemSolid" Start="00:01:35.150" End="00:01:42.450" TimelineViewExpanded="false" FullName="Solid Color" Stretching="32" Color="#FF000000" />
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:42.450" End="00:01:49.100" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+  </Line>
+  <Line xsi:type="LightTimeLineViewModel" MetaDataPath="path4158">
+    <Item xsi:type="TimeLineItemSolid" Start="00:00:00.000" End="00:01:23.050" TimelineViewExpanded="false" FullName="Solid Color" Stretching="32" Color="#FF000000" />
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:23.050" End="00:01:29.100" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:29.100" End="00:01:35.150" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+    <Item xsi:type="TimeLineItemSolid" Start="00:01:35.150" End="00:01:42.450" TimelineViewExpanded="false" FullName="Solid Color" Stretching="32" Color="#FF000000" />
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:42.450" End="00:01:49.100" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+  </Line>
+  <Line xsi:type="LightTimeLineViewModel" MetaDataPath="path4156">
+    <Item xsi:type="TimeLineItemSolid" Start="00:00:00.000" End="00:01:23.050" TimelineViewExpanded="false" FullName="Solid Color" Stretching="32" Color="#FF000000" />
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:23.050" End="00:01:29.100" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:29.100" End="00:01:35.150" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+    <Item xsi:type="TimeLineItemSolid" Start="00:01:35.150" End="00:01:42.450" TimelineViewExpanded="false" FullName="Solid Color" Stretching="32" Color="#FF000000" />
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:42.450" End="00:01:49.100" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+  </Line>
+  <Line xsi:type="LightTimeLineViewModel" MetaDataPath="path4154">
+    <Item xsi:type="TimeLineItemSolid" Start="00:00:00.000" End="00:01:23.050" TimelineViewExpanded="false" FullName="Solid Color" Stretching="32" Color="#FF000000" />
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:23.050" End="00:01:29.100" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:29.100" End="00:01:35.150" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+    <Item xsi:type="TimeLineItemSolid" Start="00:01:35.150" End="00:01:42.450" TimelineViewExpanded="false" FullName="Solid Color" Stretching="32" Color="#FF000000" />
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:42.450" End="00:01:49.100" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+  </Line>
+  <Line xsi:type="LightTimeLineViewModel" MetaDataPath="path3218">
+    <Item xsi:type="TimeLineItemSolid" Start="00:00:00.000" End="00:01:23.050" TimelineViewExpanded="false" FullName="Solid Color" Stretching="32" Color="#FF000000" />
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:23.050" End="00:01:29.100" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:29.100" End="00:01:35.150" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+    <Item xsi:type="TimeLineItemSolid" Start="00:01:35.150" End="00:01:42.450" TimelineViewExpanded="false" FullName="Solid Color" Stretching="32" Color="#FF000000" />
+    <Item xsi:type="TimeLineItemEffect" Start="00:01:42.450" End="00:01:49.100" TimelineViewExpanded="false" FullName="Saw-tooth Wave" Stretching="1" EffectID="Saw-tooth Wave">
+      <Data ColorFirst="#FF000000" ColorLast="#FFFF0000" T1="40" T2="80" />
+    </Item>
+  </Line>
+  <IsDirty>false</IsDirty>
+</FileViewModel>

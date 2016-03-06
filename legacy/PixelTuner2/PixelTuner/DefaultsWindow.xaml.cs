@@ -15,6 +15,7 @@ using System.ComponentModel;
 using Communication.Service;
 using Communication.Pixelate;
 using PixelTuner.ViewModel;
+using Communication;
 
 namespace PixelTuner
 {
@@ -38,6 +39,13 @@ namespace PixelTuner
                 RaisePropertyChanged("ColorDepthInt");
             }
             catch { }
+        }
+        
+        int _discreteness = Settings.Default.Discreteness;
+        public int Discreteness
+        {
+            get { return _discreteness; }
+            set { _discreteness = value; }
         }
 
         int _stretching = Settings.Default.DefaultStretching;
@@ -143,6 +151,7 @@ namespace PixelTuner
             Settings.Default.ColorDepth = ((ColorDepth)Compression).ToString();
             Settings.Default.ExitMenuOnDoubleClick = ExitMenuOnDoubleClick;
             Settings.Default.CollapseGaps = CollapseGaps;
+            Settings.Default.Discreteness = Discreteness;
             Settings.Default.Save();
             
             PixelTuner.ViewModel.RootViewModel.NotifySettingsChanged();
