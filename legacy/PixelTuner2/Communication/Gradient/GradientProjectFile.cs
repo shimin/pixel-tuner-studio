@@ -75,7 +75,7 @@ namespace Communication.Gradient
         {
             UInt32 size = (UInt32)result.Count;
             byte[] sizeBytes = BitConverter.GetBytes(size);
-            int projectHeaderOffset = projectPrefix.Count + sizeof(byte);
+            int projectHeaderOffset = projectPrefix.Count;
             for (int i = projectHeaderOffset; i < projectHeaderOffset + sizeBytes.Length; i++)
                 result[i] = sizeBytes[i - projectHeaderOffset];
         }

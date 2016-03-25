@@ -8,7 +8,7 @@ namespace Communication.Gradient
 {
     public class GradientsCollectionItem
     {
-        const int ParametersFieldSize = 1;
+        const int ParametersFieldSize = 0;
 
         public enum ColorComponent
         {

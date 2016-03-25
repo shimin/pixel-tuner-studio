@@ -10,7 +10,7 @@ namespace Communication.Pixelate
 {
     public class ImagesCollectionItem
     {
-        const int ParametersFieldSize = 1;
+        const int ParametersFieldSize = 0;
 
         /// <summary>
         /// parameter to limit white color brightness
