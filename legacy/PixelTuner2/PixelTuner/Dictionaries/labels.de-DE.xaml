@@ -68,7 +68,6 @@
     <system:String x:Key="Dev_Props_Length">Anzahl Dioden: </system:String>
     <system:String x:Key="Dev_Props_State_Uploading">Schreiben...</system:String>
     <system:String x:Key="Dev_Props_State_Downloading">Empfangen...</system:String>
-    <system:String x:Key="Dev_Props_State_Idle"></system:String>
     <system:String x:Key="Dev_Props_State_Online">Verbunden</system:String>
     <system:String x:Key="Dev_Props_State_Offline">Keine Verbindung</system:String>
     <system:String x:Key="Dev_Props_State_ProductID">Identifikator:</system:String>

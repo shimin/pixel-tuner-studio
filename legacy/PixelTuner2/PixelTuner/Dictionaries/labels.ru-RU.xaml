@@ -68,7 +68,6 @@
     <system:String x:Key="Dev_Props_Length">Число диодов: </system:String>
     <system:String x:Key="Dev_Props_State_Uploading">Загрузка...</system:String>
     <system:String x:Key="Dev_Props_State_Downloading">Получение...</system:String>
-    <system:String x:Key="Dev_Props_State_Idle"></system:String>
     <system:String x:Key="Dev_Props_State_Online">Подключен</system:String>
     <system:String x:Key="Dev_Props_State_Offline">Нет связи</system:String>
     <system:String x:Key="Dev_Props_State_ProductID">Идентификатор:</system:String>

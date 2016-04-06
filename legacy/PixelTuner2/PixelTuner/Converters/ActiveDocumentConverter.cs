@@ -7,7 +7,7 @@ using PixelTuner.ViewModel;
 
 namespace PixelTuner.Converters
 {
-    class ActiveDocumentConverter : IValueConverter
+    public class ActiveDocumentConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {

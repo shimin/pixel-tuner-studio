@@ -12,7 +12,7 @@ namespace PixelTuner.Converters
     public class LogConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
+        { 
             var newValue = ((double)value) / 0.02;
             return (double)Math.Sqrt(newValue);
             

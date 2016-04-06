@@ -4,7 +4,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="PixelTuner" MinHeight="525" MinWidth="960" WindowStyle="SingleBorderWindow" 
         Icon="/PixelTuner;component/Files/PixelTuner.ico"
-        Style="{DynamicResource WindowStyle}"
         
         xmlns:avalonDock="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:ct="clr-namespace:Common.Controls;assembly=Common"

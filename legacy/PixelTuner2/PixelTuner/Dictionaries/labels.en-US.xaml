@@ -68,7 +68,6 @@
     <system:String x:Key="Dev_Props_Length">LEDs count:</system:String>
     <system:String x:Key="Dev_Props_State_Uploading">Uploading...</system:String>
     <system:String x:Key="Dev_Props_State_Downloading">Downloading...</system:String>
-    <system:String x:Key="Dev_Props_State_Idle"></system:String>
     <system:String x:Key="Dev_Props_State_Online">Online</system:String>
     <system:String x:Key="Dev_Props_State_Offline">Offline</system:String>
     <system:String x:Key="Dev_Props_State_ProductID">ProductID:</system:String>

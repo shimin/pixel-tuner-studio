@@ -195,7 +195,6 @@
                         ManipulationMode="Free"
                         MinimumUnitWidth="20"
                         DrawTimeGrid="False"
-                        FocusOnItem="False"
                         SynchedWithSiblings="True"
                         AnchorStep="{Binding Source={StaticResource RootContext}, Path=AnchorStep}"
                         Background="{Binding Background}"

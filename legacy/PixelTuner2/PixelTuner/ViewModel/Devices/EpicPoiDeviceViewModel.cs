@@ -83,7 +83,7 @@ namespace PixelTuner.ViewModel
         public EpicPoiDeviceViewModel(SimplePoiDevice device)
             : base(device)
         {
-
+            Device = device;
         }
 
         #region UploadFirmwareCommand
