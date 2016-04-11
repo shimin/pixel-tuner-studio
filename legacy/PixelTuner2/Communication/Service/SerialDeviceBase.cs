@@ -10,19 +10,24 @@ using System.Threading;
 
 namespace Communication.Service
 {
-    public abstract class SerialDeviceBase : DeviceBase
+    public abstract class SerialDeviceBase : DeviceBase, IDisposable
     {
+        private Thread _portMonitor = null;
+
         public static SerialDeviceBase Create(SerialPort p)
         {
             SerialDeviceBase dev = null;
 
-            byte[] buffer = GetNameBytes(p);
-            string deviceName = Encoding.ASCII.GetString(buffer);
+            if (p != null && p.IsOpen)
+            {
+                byte[] buffer = GetNameBytes(p);
+                string deviceName = Encoding.ASCII.GetString(buffer);
 
-            var devName = SupportedDevices.TryGetType(deviceName);
-            var devType = Type.GetType(devName);
-            dev = Activator.CreateInstance(devType, p) as SerialDeviceBase;
-            dev.Initialize(null);
+                var devName = SupportedDevices.TryGetType(deviceName);
+                var devType = Type.GetType(devName);
+                dev = Activator.CreateInstance(devType, p) as SerialDeviceBase;
+                dev.Initialize(null);
+            }
 
             return dev;
         }
@@ -233,13 +238,33 @@ namespace Communication.Service
         public SerialDeviceBase(SerialPort port)
         {
             Port = port;
-            if (Port != null)
+            if (Port != null && Port.IsOpen)
             {
                 _portName = _port.PortName;
                 _port.ReadTimeout = 0x7530;
                 _port.WriteTimeout = 0x7d0;
+                GC.SuppressFinalize(_port.BaseStream);
             }
-            AddRemoveUSBHandler();
+        }
+
+        private void RunMonitoring()
+        {
+            _portMonitor = new Thread(() =>
+            {
+                while (Port.IsOpen)
+                {
+                    try
+                    {
+                        GetInfo();
+                        Thread.Sleep(1000);
+                    }
+                    catch
+                    {
+                        Port.Dispose();
+                    }
+                }
+            });
+            _portMonitor.Start();
         }
 
         public abstract void GetInfo();
@@ -484,37 +509,7 @@ namespace Communication.Service
         }
 
         #endregion
-
-        #region Handle connection
-
-        protected void AddRemoveUSBHandler()
-        {
-            ManagementScope scope = new ManagementScope(@"root\CIMV2")
-            {
-                Options = { EnablePrivileges = true }
-            };
-            try
-            {
-                WqlEventQuery query = new WqlEventQuery
-                {
-                    EventClassName = "__InstanceDeletionEvent",
-                    WithinInterval = new TimeSpan(0, 0, 3),
-                    Condition = "TargetInstance ISA 'Win32_USBControllerdevice'"
-                };
-                this.w = new ManagementEventWatcher(scope, query);
-                this.w.EventArrived += new EventArrivedEventHandler(this.USBRemoved);
-                this.w.Start();
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine(exception.Message);
-                if (this.w != null)
-                {
-                    this.w.Stop();
-                }
-            }
-        }
-
+        
         public virtual void Disconnect()
         {
             lock (this._syncSession)
@@ -523,9 +518,11 @@ namespace Communication.Service
                 {
                     try
                     {
+                        GC.ReRegisterForFinalize(_port);
                         Port.Close();
                         Port = null;
                         SetStatus(ConnectionStatus.Offline);
+                        OnDisconnected();
                     }
                     catch
                     {
@@ -534,12 +531,9 @@ namespace Communication.Service
             }
         }
 
-        private void USBRemoved(object sender, EventArgs e)
+        public void Dispose()
         {
-            this.Disconnect();
-            this.OnDisconnected();
+            Disconnect();
         }
-
-        #endregion
     }
 }

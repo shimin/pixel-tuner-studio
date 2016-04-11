@@ -168,8 +168,6 @@ namespace Communication.Service
         {
             lock (this._longOperation)
             {
-                this.Busy = true;
-                base.SetStatus(ConnectionStatus.Downloading);
                 try
                 {
                     List<byte> data = base.DoSession(new PixelDevicePacket(PixelDeviceCommand.INFO, null)).Data;
@@ -192,7 +190,7 @@ namespace Communication.Service
                 finally
                 {
                     this.Busy = false;
-                    base.SetStatus(ConnectionStatus.Online);
+                    SetStatus(ConnectionStatus.Online);
                 }
             }
         }
