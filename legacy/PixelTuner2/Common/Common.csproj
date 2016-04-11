@@ -30,6 +30,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>PixelTuner_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -92,6 +98,7 @@
     <Compile Include="DragDrop\Utilities\VisualTreeExtensions.cs" />
     <Compile Include="Helpers\CursorHelper.cs" />
     <Compile Include="Helpers\EnumHelper.cs" />
+    <Compile Include="Helpers\UsbNoification.cs" />
     <Compile Include="Imaging\ImageHelper.cs" />
     <Compile Include="Imaging\ImageProcessor.cs" />
     <Compile Include="Log\ConsoleTarget.cs" />
@@ -141,7 +148,9 @@
     <Resource Include="Images\_grey_Arrow-UpDisabled.png" />
     <Resource Include="Images\_grey_Arrow-UpLight.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="PixelTuner_TemporaryKey.pfx" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="ProjectPlayer\PixelTwister\Round.fx" />
   </ItemGroup>
