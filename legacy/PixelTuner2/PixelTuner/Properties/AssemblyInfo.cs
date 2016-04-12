@@ -10,9 +10,9 @@ using System.Windows;
 [assembly: AssemblyTitle("PixelTuner")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Windows 7")]
+[assembly: AssemblyCompany("e-pic.ru")]
 [assembly: AssemblyProduct("PixelTuner")]
-[assembly: AssemblyCopyright("Copyright © Windows 7 2012")]
+[assembly: AssemblyCopyright("Copyright © e-pic.ru")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

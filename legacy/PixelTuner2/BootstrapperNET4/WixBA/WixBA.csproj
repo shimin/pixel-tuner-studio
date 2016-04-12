@@ -31,6 +31,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>PixelTuner_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Hresult.cs" />
     <Compile Include="Model.cs" />
@@ -54,6 +60,7 @@
     <Compile Include="UpdateViewModel.cs" />
     <Compile Include="WixBA.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="PixelTuner_TemporaryKey.pfx" />
     <None Include="WixBA.BootstrapperCore.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
@@ -91,12 +98,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="License\License.htm" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\AutoUpdater\AutoUpdater.csproj">
-      <Project>{4BA4719C-C6AB-49BA-9754-848CA24C1FD6}</Project>
-      <Name>AutoUpdater</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\refresh.png" />

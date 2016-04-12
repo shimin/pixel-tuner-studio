@@ -1,27 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using PixelTuner.Properties;
-using Workspace.Layout;
-using Workspace.Layout.Serialization;
 
 using Communication.Service;
+using PixelTuner.Properties;
 using PixelTuner.ViewModel;
-using PixelTunerAutoupdater;
+using System.Windows.Interop;
+using Common.Helpers;
 
 namespace PixelTuner
 {
@@ -31,7 +18,7 @@ namespace PixelTuner
     public partial class MainWindow : Window
     {
         string AppID = "PixelTuner";
-
+        IntPtr windowHandle = IntPtr.Zero;
         string _layoutString = Settings.Default.LayoutString;
         System.ComponentModel.BackgroundWorker _updatesCheckWorker = new System.ComponentModel.BackgroundWorker();
 
@@ -55,6 +42,47 @@ namespace PixelTuner
             RootViewModel.This.LastUsedFileHandler = (p) => RecentFileList.InsertFile(p);
         }
 
+        //protected override void OnSourceInitialized(EventArgs e)
+        //{
+        //    base.OnSourceInitialized(e);
+
+        //    // Adds the windows message processing hook and registers USB device add/removal notification.
+        //    HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
+        //    if (source != null)
+        //    {
+        //        windowHandle = source.Handle;
+        //        source.AddHook(HwndHandler);
+        //        UsbNotification.RegisterUsbDeviceNotification(windowHandle);
+        //    }
+        //}
+
+        ///// <summary>
+        ///// Method that receives window messages.
+        ///// </summary>
+        //private IntPtr HwndHandler(IntPtr hwnd, int msg, IntPtr wparam, IntPtr lparam, ref bool handled)
+        //{
+        //    if (msg == UsbNotification.WmDevicechange)
+        //    {
+        //        switch ((int)wparam)
+        //        {
+        //            case UsbNotification.DbtDevicearrival:
+        //                DeviceHelper.UsbDeviceCheck(); // this is where you do your magic
+        //                break;
+        //            case UsbNotification.DbtDeviceremovecomplete:
+        //                DeviceHelper.UsbDeviceRemoved(); // this is where you do your magic
+        //                break;
+        //        }
+        //    }
+
+        //    handled = false;
+        //    return IntPtr.Zero;
+        //}
+
+        private void MainWnd_Activated(object sender, EventArgs e)
+        {
+            this.Focus();   // без явной установки фокуса не работают горячие клавиши
+        }
+
         private void Window_Loaded(object sender, RoutedEventArgs ev)
         {
             var serializer = new Workspace.Layout.Serialization.XmlLayoutSerializer(dockManager);
@@ -65,9 +93,6 @@ namespace PixelTuner
 
             if (File.Exists(@".\" + AppID + "Dock.config"))
                 serializer.Deserialize(@".\" + AppID + "Dock.config");
-            
-            _updatesCheckWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(_updatesCheckWorker_DoWork);
-            _updatesCheckWorker.RunWorkerAsync();
         }
         
         private void MainWnd_Unloaded(object sender, RoutedEventArgs e)
@@ -80,33 +105,7 @@ namespace PixelTuner
         {
             System.Windows.Application.Current.Dispatcher.Invoke(a);
         }
-
-        void _updatesCheckWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
-        {
-            try
-            {
-                AutoUpdater autoUpdater = new AutoUpdater(this);
-                if (autoUpdater.UpdateNeeded())
-                {
-                    UiInvoke(() =>
-                    {
-                        RootViewModel.This.UpdatesAvailable = true;
-                    });
-                }
-                else
-                {
-                    UiInvoke(() =>
-                    {
-                        RootViewModel.This.UpdatesAvailable = false;
-                    });
-                }
-            }
-            catch
-            {
-
-            }
-        }
-
+        
         private void ExitApplication(object sender, RoutedEventArgs e)
         {
             this.Close();
@@ -123,9 +122,9 @@ namespace PixelTuner
             }
         }
 
-        private void MainWnd_Activated(object sender, EventArgs e)
+        private void boxSwitchInsertMode_Click(object sender, RoutedEventArgs e)
         {
-            this.Focus();   // без явной установки фокуса не работают горячие клавиши
+            RootViewModel.This.CutNextItems = !RootViewModel.This.CutNextItems;
         }
 
         #region Обработка нажатий кнопок клавиатуры
@@ -165,11 +164,6 @@ namespace PixelTuner
         }
 
         #endregion
-
-        private void boxSwitchInsertMode_Click(object sender, RoutedEventArgs e)
-        {
-            RootViewModel.This.CutNextItems = !RootViewModel.This.CutNextItems;
-        }
 
     }
 }

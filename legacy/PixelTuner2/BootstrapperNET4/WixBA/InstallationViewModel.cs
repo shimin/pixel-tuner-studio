@@ -52,8 +52,8 @@ namespace Microsoft.Tools.WindowsInstallerXml.UX
 
         private Dictionary<string, int> downloadRetries;
         private bool downgrade;
-        private readonly string wixHomePageUrl = "http://shiningpromo.ru/pixel_poi/";
-        private readonly string wixNewsUrl = "http://shiningpromo.ru";
+        private readonly string wixHomePageUrl = "http://shop.e-pic.ru/";
+        private readonly string wixNewsUrl = "http://e-pic.ru";
 
         private bool planAttempted;
         private LaunchAction plannedAction;

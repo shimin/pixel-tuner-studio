@@ -4,11 +4,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Input;
-
-using System.Windows.Media;
 using System.Xml.Serialization;
 
 using Communication.Pixelate;
@@ -699,7 +696,7 @@ namespace PixelTuner.ViewModel
                 return false;
             };
 
-            PixelProjectFile project = CreatePixelProjectFile(_timeLines.Where(filter), images, (byte)targetHeight, depth);
+            PixelProjectFile project = CreatePixelProjectFile(_timeLines.Where(filter), images, targetHeight, depth);
             ImagesCollection c = new ImagesCollection(images);
 
             return project.GetBinarySize(c, targetHeight);
@@ -718,7 +715,7 @@ namespace PixelTuner.ViewModel
 #if(DEBUG)
             string logFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".\\Logs");
             Directory.CreateDirectory(logFolder);
-            string projectFileName = Path.Combine(logFolder, DateTime.Now.ToString("pixel-project-dd_MM_yyyy___HH_mm_ss_fff") + ".bin");
+            string projectFileName = Path.Combine(logFolder, "pixel-project " + DateTime.Now.ToString("dd_MM_yyyy___HH_mm_ss_fff") + ".bin");
             File.WriteAllBytes(projectFileName, buf.ToArray());
 #endif
             return buf;
@@ -734,22 +731,13 @@ namespace PixelTuner.ViewModel
                 var file = new PixelTimelineFile();
 
                 var currentTime = line.Start.Value;
-                foreach (TimeLineItemViewModel item in line.Items)
+
+                List<ITimeLineDataItem> timelineItems = FillGabs(line.Items, line.Start.Value, CreateBlankPixelItem);
+                foreach (TimeLineItemViewModel item in timelineItems)
                 {
                     string path = item.FullName.ToLower();
-                    double startMilliseconds = 0;
-
-                    var gapDuration = (item.StartTime.Value - currentTime).TotalMilliseconds;
-                    if (gapDuration > 0)    // if start time of the next image doesn't match end time of the current one
-                    {
-                        startMilliseconds = (item.StartTime.Value - line.Start.Value).TotalMilliseconds;
-                        var blankImageFile = new PixelImageFile(null, (UInt16)item.Stretching, (UInt32)gapDuration, (UInt32)startMilliseconds, 0);
-                        file.Images.Add(blankImageFile);
-                        imagesCollection.Add(new ImagesCollectionItem(null, targetHeight, depth));
-                    }
-
                     var duration = (item.EndTime.Value - item.StartTime.Value).TotalMilliseconds;       // duration = end time - start time
-                    startMilliseconds = (item.StartTime.Value - line.Start.Value).TotalMilliseconds;    // start ms = start time - timeline start time
+                    double startMilliseconds = (item.StartTime.Value - line.Start.Value).TotalMilliseconds;    // start ms = start time - timeline start time
                     UInt16 mask = item.LaserOn ? (ushort)1 : (ushort)0;
                     var imageFile = new PixelImageFile(path, (UInt16)item.Stretching, (UInt32)duration, (UInt32)startMilliseconds, mask);
                     var image = new ImagesCollectionItem(path, targetHeight, depth);
@@ -759,6 +747,32 @@ namespace PixelTuner.ViewModel
                     file.Images.Add(imageFile);
                     currentTime = item.EndTime.Value;
                 }
+
+                //foreach (TimeLineItemViewModel item in line.Items)
+                //{
+                //    string path = item.FullName.ToLower();
+                //    double startMilliseconds = 0;
+
+                //    var gapDuration = (item.StartTime.Value - currentTime).TotalMilliseconds;
+                //    if (gapDuration > 0)    // if start time of the next image doesn't match end time of the current one
+                //    {
+                //        startMilliseconds = (item.StartTime.Value - line.Start.Value).TotalMilliseconds;
+                //        var blankImageFile = new PixelImageFile(null, (UInt16)item.Stretching, (UInt32)gapDuration, (UInt32)startMilliseconds, 0);
+                //        file.Images.Add(blankImageFile);
+                //        imagesCollection.Add(new ImagesCollectionItem(null, targetHeight, depth));
+                //    }
+
+                //    var duration = (item.EndTime.Value - item.StartTime.Value).TotalMilliseconds;       // duration = end time - start time
+                //    startMilliseconds = (item.StartTime.Value - line.Start.Value).TotalMilliseconds;    // start ms = start time - timeline start time
+                //    UInt16 mask = item.LaserOn ? (ushort)1 : (ushort)0;
+                //    var imageFile = new PixelImageFile(path, (UInt16)item.Stretching, (UInt32)duration, (UInt32)startMilliseconds, mask);
+                //    var image = new ImagesCollectionItem(path, targetHeight, depth);
+                //    imageFile.Brightness = image.Brightness = item.Brightness;
+                //    imagesCollection.Add(image);
+
+                //    file.Images.Add(imageFile);
+                //    currentTime = item.EndTime.Value;
+                //}
                 project.TimeLines.Add(file);
             }
 
@@ -828,14 +842,15 @@ namespace PixelTuner.ViewModel
         public List<byte> GetLightBinaryPresentation(IEnumerable<TimeLineViewModel> lines)
         {
             LightProjectFile project = new LightProjectFile();
-            byte index = 1;
-            foreach (TimeLineViewModel line in lines)
+            byte slaveAddress = 1;
+            foreach (TimeLineViewModel line in _timeLines)
             {
                 if (line.Items.Count == 0 || !line.IsSelectedToUpload) continue;
-                var tlf = new LightTimelineFile();
-                tlf.SubmoduleAddress = index;
+                var binaryLine = new LightTimelineFile();
 
-                List<ITimeLineDataItem> timelineItems = FillGabs(line.Items);
+                binaryLine.SubmoduleAddress = slaveAddress;
+
+                List<ITimeLineDataItem> timelineItems = FillGabs(line.Items, line.Start.Value, CreateBlankLightItem);
                 foreach (TimeLineItemViewModel item in timelineItems)
                 {
                     if (item is SolidColorThumbnailViewModel)
@@ -843,7 +858,7 @@ namespace PixelTuner.ViewModel
                         var file = new LightColorFile(item.FullName, item.StartTime.Value, item.EndTime.Value);
                         var c = (item as SolidColorThumbnailViewModel).BackgroundColor;
                         file.Color = System.Drawing.Color.FromArgb(255, c.R, c.G, c.B);
-                        tlf.Images.Add(file);
+                        binaryLine.Images.Add(file);
                     }
                     else if (item is EffectThumbnailViewModel)
                     {
@@ -853,46 +868,70 @@ namespace PixelTuner.ViewModel
                         file.ColorLast = System.Drawing.Color.FromArgb(255, vm.ColorLast.R, vm.ColorLast.G, vm.ColorLast.B);
                         file.T1 = vm.T1.HasValue ? vm.T1.Value : 0;
                         file.T2 = vm.T2.HasValue ? vm.T2.Value : 0;
-                        tlf.Images.Add(file);
+                        binaryLine.Images.Add(file);
                     }
                 }
-                project.TimeLines.Add(tlf);
-                index++;
+                project.TimeLines.Add(binaryLine);
+                slaveAddress++;
             }
-
+            
             var buf = project.GetBinary(Settings.Default.Discreteness);
 #if(DEBUG)
-            string projectFileName = DateTime.Now.ToString("light-project-dd_MM_yyyy___HH_mm_ss_fff") + ".bin";
+            string projectFileName = "light-project " + DateTime.Now.ToString("dd_MM_yyyy___HH_mm_ss_fff") + ".bin";
             File.WriteAllBytes(projectFileName, buf.ToArray());
 #endif
             return buf;
         }
 
-        /// <summary>
-        /// Fills space between two light timeline items with black samples
-        /// </summary>
-        /// <param name="items">source items collection</param>
-        /// <returns>completed items collection</returns>
-        private List<ITimeLineDataItem> FillGabs(ObservableCollection<ITimeLineDataItem> items)
-        {
-            if (items.Count < 2) return new List<ITimeLineDataItem>(items);
+        delegate ITimeLineDataItem CreateBlankItemDelegate(DateTime start, DateTime end);
 
+        private List<ITimeLineDataItem> FillGabs(ObservableCollection<ITimeLineDataItem> items, DateTime startTime, CreateBlankItemDelegate CreateBlankItem)
+        {
             var result = new List<ITimeLineDataItem>();
-            for (int i = 0; i < items.Count - 1; i++)
+
+            var firstItem = items.First();
+            if (firstItem != null)
             {
-                result.Add(items[i]);
-                if (items[i].EndTime != items[i + 1].StartTime)
+                if (startTime != firstItem.StartTime)
+                    result.Add(CreateBlankItem(startTime, firstItem.StartTime.Value));
+
+                for (int i = 0; i < items.Count - 1; i++)
                 {
-                    var item = new SolidColorThumbnailViewModel(null, "Solid Color");
-                    item.StartTime = items[i].EndTime;
-                    item.EndTime = items[i + 1].StartTime;
-                    result.Add(item);
+                    result.Add(items[i]);
+                    if (items[i].EndTime != items[i + 1].StartTime)
+                    {
+                        result.Add(CreateBlankItem(items[i].EndTime.Value, items[i + 1].StartTime.Value));
+                    }
                 }
+                result.Add(items.Last());
             }
-            result.Add(items.Last());
             return result;
         }
-        
+
+        private SolidColorThumbnailViewModel CreateBlankLightItem(DateTime begin, DateTime end)
+        {
+            var item = new SolidColorThumbnailViewModel(null, "Solid Color");
+            item.StartTime = begin;
+            item.EndTime = end;
+            return item;
+        }
+
+        private PixelThumbnailViewModel CreateBlankPixelItem(DateTime begin, DateTime end)
+        {
+            var item = new PixelThumbnailViewModel(new FileInfo("black.jpg"));
+            item.StartTime = begin;
+            item.EndTime = end;
+            return item;
+        }
+
+        private GradientThumbnailViewModel CreateBlankGradientItem(DateTime begin, DateTime end)
+        {
+            var item = new GradientThumbnailViewModel();
+            item.StartTime = begin;
+            item.EndTime = end;
+            return item;
+        }
+
         [XmlIgnore]
         public static List<Type> ExtraTypes
         {
@@ -1031,7 +1070,7 @@ namespace PixelTuner.ViewModel
 
                 foreach (var item in RootViewModel.This.CopiedItems)
                 {
-                    if (((TimeLineItemViewModel)item).ActualHeight != LineHeight)
+                    if (item.ActualHeight != LineHeight)
                     {
                         MessageBox.Show(((String)Application.Current.TryFindResource("Global_ImagesHeightMismatch")).Replace("\"", ""));
                         return;
