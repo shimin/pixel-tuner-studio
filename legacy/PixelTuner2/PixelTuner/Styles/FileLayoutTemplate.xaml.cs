@@ -12,9 +12,6 @@ namespace PixelTuner.Styles
 {
     public partial class FileLayoutTemplate : System.Windows.ResourceDictionary
     {
-        bool ctrlHold = false;
-        bool shiftHold = false;
-        bool altHold = false;
         private Grid gridControl = null;
 
         private void Grid_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
@@ -22,26 +19,18 @@ namespace PixelTuner.Styles
             var sv = ((Grid)sender).FindName("boxScroll") as ScrollViewer;
             if (sv != null)
             {
-                if (ctrlHold && e.Delta < 0)
+                if (IsCtrlPressed() && e.Delta < 0)
                 {
                     sv.ScrollToHorizontalOffset(sv.HorizontalOffset - e.Delta);
                     e.Handled = true;
                 }
-                if (ctrlHold && e.Delta > 0)
+                if (IsCtrlPressed() && e.Delta > 0)
                 {
                     sv.ScrollToHorizontalOffset(sv.HorizontalOffset - e.Delta);
                     e.Handled = true;
                 }
-                //if (altHold)
-                //{
-                //    var fm = RootViewModel.This.ActiveDocument as FileViewModel;
-                //    var delta = (double)e.Delta / 50;
-                //    if (fm.UnitSize + delta >= fm.MinUnitSize && fm.UnitSize + delta <= fm.MaxUnitSize)
-                //        fm.UnitSize += delta;
-                //    e.Handled = true;
-                //}
-
-                if (altHold)
+                
+                if (IsAltPressed())
                 {
                     var fm = RootViewModel.This.ActiveDocument as FileViewModel;
 
@@ -54,6 +43,24 @@ namespace PixelTuner.Styles
             }
         }
 
+        private bool IsAltPressed()
+        {
+            return System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftAlt) ||
+                System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightAlt);
+        }
+
+        private bool IsCtrlPressed()
+        {
+            return System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftCtrl) ||
+                System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightCtrl);
+        }
+
+        private bool IsShiftPressed()
+        {
+            return System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftShift) ||
+                System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightShift);
+        }
+
         private void Grid_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             FileViewModel fm = null;
@@ -62,27 +69,12 @@ namespace PixelTuner.Styles
                 if (fm == null) fm = RootViewModel.This.ActiveDocument as FileViewModel;
                 fm.DeleteSelectedItems();
             }
-            if (e.Key == System.Windows.Input.Key.LeftCtrl || e.Key == System.Windows.Input.Key.RightCtrl)
-            {
-                ctrlHold = true;
-                e.Handled = true;
-            }
-            if (e.SystemKey == System.Windows.Input.Key.LeftAlt || e.SystemKey == System.Windows.Input.Key.RightAlt)
-            {
-                altHold = true;
-                e.Handled = true;
-            }
-            if (e.SystemKey == System.Windows.Input.Key.LeftShift || e.SystemKey == System.Windows.Input.Key.RightShift)
-            {
-                shiftHold = true;
-                e.Handled = true;
-            }
-            if (e.Key == System.Windows.Input.Key.C && ctrlHold)
+            if (e.Key == System.Windows.Input.Key.C && IsCtrlPressed())
             {
                 if (fm == null) fm = RootViewModel.This.ActiveDocument as FileViewModel;
                 fm.CopySelectedItems();
             }
-            if (e.Key == System.Windows.Input.Key.V && ctrlHold)
+            if (e.Key == System.Windows.Input.Key.V && IsCtrlPressed())
             {
                 if (fm == null) fm = RootViewModel.This.ActiveDocument as FileViewModel;
                 fm.PasteSelectedItems();
@@ -93,16 +85,7 @@ namespace PixelTuner.Styles
 
         private void Grid_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if (e.Key == System.Windows.Input.Key.LeftCtrl || e.Key == System.Windows.Input.Key.RightCtrl)
-            {
-                ctrlHold = false;
-                e.Handled = true;
-            }
-            if (e.SystemKey == System.Windows.Input.Key.LeftAlt || e.SystemKey == System.Windows.Input.Key.RightAlt)
-            {
-                altHold = false;
-                e.Handled = true;
-            }
+
         }
 
         private void Grid_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -114,7 +97,7 @@ namespace PixelTuner.Styles
                 var fm = RootViewModel.This.ActiveDocument as FileViewModel;
                 if (element != null && (element.DataContext is TimeLineViewModel || element.DataContext is TimeLineItemViewModel))
                 {
-                    fm.SetSelection(element.DataContext, ctrlHold, shiftHold, altHold);
+                    fm.SetSelection(element.DataContext, IsCtrlPressed(), IsShiftPressed(), IsAltPressed());
                 }
             }
             catch { }

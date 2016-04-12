@@ -62,13 +62,13 @@
                     <ColumnDefinition Width="16" />
                 </Grid.ColumnDefinitions>
                 <Border Background="{StaticResource ControlsBackBrush}">
-                <StackPanel Orientation="Vertical">
-                    <StackPanel Orientation="Horizontal">
-                        <Border Width="15" Height="15">
-                            <Image Source="{Binding StartIcon}"/>
-                        </Border>
-                        <TextBlock Grid.Column="0" Text="{Binding Path=Start}" />
-                    </StackPanel>
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="15" Height="15">
+                                <Image Source="{Binding StartIcon}"/>
+                            </Border>
+                            <TextBlock Grid.Column="0" Text="{Binding Path=Start}" />
+                        </StackPanel>
                         <Button Name="boxImageButton" PreviewMouseDoubleClick="ChildPreviewMouseLeftButtonDown">
                             <acb:CommandBehaviorCollection.Behaviors>
                                 <acb:BehaviorBinding Event="MouseDoubleClick" Command="{Binding EditMe}" />
@@ -81,37 +81,32 @@
                                         </Border.Background>
                                         <Border.ContextMenu>
                                             <ContextMenu>
-                                                <MenuItem Header="{StaticResource Item_Menu_Replace}" Command="{Binding ReplaceCommand}"/>
-                                                <MenuItem Header="{StaticResource Item_Menu_Split}" Command="{Binding SplitCommand}"/>
-                                                <MenuItem Header="{StaticResource Item_Menu_SetRepeatCount}" Command="{Binding RepeatCommand}"/>
+                                                <MenuItem Header="{StaticResource Item_Menu_Replace}" Visibility="{Binding CanReplaceProperty, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding ReplaceCommand}"/>
+                                                <MenuItem Header="{StaticResource Item_Menu_Split}" Visibility="{Binding CanSplitProperty, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding SplitCommand}"/>
+                                                <MenuItem Header="{StaticResource Item_Menu_SetRepeatCount}" Visibility="{Binding CanRepeatProperty, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding RepeatCommand}"/>
                                             </ContextMenu>
                                         </Border.ContextMenu>
+                                        <Canvas HorizontalAlignment="Left" Width="130" Height="44" Visibility="{Binding UseColorLayer, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Rectangle Width="130" Canvas.Top="1" Height="42" RadiusX="3" RadiusY="3" Opacity="{Binding ColorLayerOpacity}">
+                                                <Rectangle.Fill>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                        <GradientStop Color="{Binding ColorFirst, Mode=OneWay}" Offset="0" />
+                                                        <GradientStop Color="{Binding ColorLast, Mode=OneWay}" Offset="1" />
+                                                    </LinearGradientBrush>
+                                                </Rectangle.Fill>
+                                            </Rectangle>
+                                        </Canvas>
                                     </Border>
                                 </ControlTemplate>
                             </Button.Template>
-                    </Button>
-                    <StackPanel Orientation="Horizontal">
-                        <Border Width="15" Height="15">
-                            <Image Source="{Binding EndIcon}"/>
-                        </Border>
-                        <TextBlock Text="{Binding Path=End}" />
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Visibility="Collapsed">
-                            <Border Width="16" Height="16" Margin="-1,0,0,0" ToolTip="{StaticResource Item_Stretching}">
-                                <Image Source="/PixelTuner;component/Images/scale-stretching.png"/>
+                        </Button>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="15" Height="15">
+                                <Image Source="{Binding EndIcon}"/>
                             </Border>
-                            <ct:TriangleSlider Height="12" 
-                                           Width="48"
-                                           MinValue="0" 
-                                           MaxValue="40" 
-                                           Margin="-2,2,4,0"
-                                           IsEnabled="False"
-                                           Opacity="0.1"
-                                           ToolTip="{StaticResource Item_Stretching}"
-                                           PreviewMouseLeftButtonDown="ChildPreviewMouseLeftButtonDown"
-                                           Value="{Binding Path=Parent.DataContext.Stretching, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Text="{Binding Path=End}" />
+                        </StackPanel>
                     </StackPanel>
-                </StackPanel>
             </Border>
                 <StackPanel Orientation="Vertical" Grid.Column="1" Background="{StaticResource NormalItemBrush}">
                     <Button Margin="0,2,0,0" Command="{Binding DisposeMe}" PreviewMouseLeftButtonDown="ChildPreviewMouseLeftButtonDown">
@@ -142,7 +137,23 @@
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
-                    <Button Margin="0,2,0,0" Command="{Binding SwitchLaserOn}" PreviewMouseLeftButtonDown="ChildPreviewMouseLeftButtonDown" ToolTip="{StaticResource Item_SwitchLaserOnOffToolTip}">
+                    <Button Margin="0,2,0,0" Command="{Binding ThumbnailCommand}" Visibility="{Binding CanThumbnailProperty, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                            PreviewMouseLeftButtonDown="ChildPreviewMouseLeftButtonDown">
+                        <Button.Template>
+                            <ControlTemplate>
+                                <Border Width="16" Height="14">
+                                    <Image x:Name="SettingsBtnImage" Source="/PixelTuner;component/Images/settings_Dark.png"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="true">
+                                        <Setter Property="Source" Value="/PixelTuner;component/Images/settings.png" TargetName="SettingsBtnImage"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    <Button Margin="0,2,0,0" Command="{Binding SwitchLaserOn}" Visibility="{Binding CanSwitchLaserOnProperty, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                            PreviewMouseLeftButtonDown="ChildPreviewMouseLeftButtonDown" ToolTip="{StaticResource Item_SwitchLaserOnOffToolTip}">
                         <Button.Template>
                             <ControlTemplate>
                                 <Border Width="16" Height="14">

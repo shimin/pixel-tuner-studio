@@ -208,6 +208,48 @@ namespace PixelTuner.ViewModel
             set { _laserOn = value; RaisePropertyChanged("LaserOnButtonColor"); }
         }
 
+        [XmlIgnore]
+        public virtual double ColorLayerOpacity
+        {
+            get { return 0.6; }
+        }
+
+        [XmlIgnore]
+        public virtual bool UseColorLayer
+        {
+            get { return false; }
+        }
+
+        [XmlIgnore]
+        public bool CanSwitchLaserOnProperty
+        {
+            get { return CanSwitchLaserOn(null); }
+        }
+
+        [XmlIgnore]
+        public bool CanThumbnailProperty
+        {
+            get { return CanThumbnail(null); }
+        }
+
+        [XmlIgnore]
+        public bool CanRepeatProperty
+        {
+            get { return CanRepeat(null); }
+        }
+
+        [XmlIgnore]
+        public bool CanReplaceProperty
+        {
+            get { return CanReplace(null); }
+        }
+
+        [XmlIgnore]
+        public bool CanSplitProperty
+        {
+            get { return CanSplit(null); }
+        }
+
         public Brush LaserOnButtonColor
         {
             get
@@ -261,7 +303,7 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        protected virtual bool CanThumbnail(object parameter)
+        public virtual bool CanThumbnail(object parameter)
         {
             return false;
         }
@@ -288,7 +330,7 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        private bool CanReplace(object parameter)
+        public virtual bool CanReplace(object parameter)
         {
             return true;
         }
@@ -335,7 +377,7 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        private bool CanSplit(object parameter)
+        public virtual bool CanSplit(object parameter)
         {
             return (this.EndTime.Value - this.StartTime.Value).TotalMilliseconds >= 100;
         }
@@ -383,9 +425,9 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        private bool CanRepeat(object parameter)
+        public virtual bool CanRepeat(object parameter)
         {
-            return true;
+            return false;
         }
 
         private void OnRepeat(object parameter)
@@ -463,20 +505,30 @@ namespace PixelTuner.ViewModel
 
         protected virtual void OnEditMe(object parameter)
         {
-            ItemWindow w = new ItemWindow(this);
-            var location = Application.Current.MainWindow.PointToScreen( Mouse.GetPosition(Application.Current.MainWindow));
-            w.Left = location.X - w.Width / 2;
-            w.Top = location.Y - w.Height / 2;
+            if (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftAlt)
+                || System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightAlt))
+            {
+                ProprietaryEdit(parameter);
+            }
+            else
+            {
+                GenericEdit(parameter);
+            }
+        }
+
+        protected virtual void GenericEdit(object parameter)
+        {
+            BasicItemWindow w = new BasicItemWindow(this);
+            SetWindowPosition(w);
+
             if (w.ShowDialog() == true)
             {
-                ApplyChanges(w.Start, w.Duration, w.Stretching, w.Brightness, w.LaserOn, w.ForAll, w.DurationChanged, w.StretchingChanged, w.BrightnessChanged, w.LaserOnChanged);
+                ApplyChanges(w.Start, w.Duration, w.Brightness, w.ForAll, w.DurationChanged, w.BrightnessChanged);
             }
             if (w.NeedRefresh) RootViewModel.NotifySettingsChanged();
         }
 
-        private void ApplyChanges(DateTime start, TimeSpan duration, 
-            int stretching, byte brightness, bool laserOn, bool forAll, bool durationChanged,
-            bool stretchChanged, bool brightnessChanged, bool laserOnChanged)
+        private void ApplyChanges(DateTime start, TimeSpan duration, byte brightness, bool forAll, bool durationChanged, bool brightnessChanged)
         {
             var p = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, this);
             if (p != null)
@@ -485,21 +537,20 @@ namespace PixelTuner.ViewModel
 
                 this.StartTime = start > p.Start.Value ? start : p.Start.Value;
                 this.EndTime = this.StartTime + duration;
-                this.Stretching = stretching;
-                this.Brightness = brightness;
-                this.LaserOn = laserOn;
 
-                var thisIdx = p.Items.IndexOf(this);
-                if (thisIdx < p.Items.Count - 1 && !forAll && this.EndTime.Value > p.Items[thisIdx + 1].StartTime.Value)
-                    if (PixelTuner.Properties.Settings.Default.CutNextItems)
-                    {
-                        p.CutItemsWithinInterval(p.Items[thisIdx + 1].StartTime, this.EndTime);
-                    }
-                    else
-                    {
-                        TimeSpan moveInterval = EndTime.Value - p.Items[thisIdx + 1].StartTime.Value;
-                        p.MoveItemsAfterIndex(p.Items[thisIdx + 1].StartTime, moveInterval);
-                    }
+                List<ITimeLineDataItem> toRemove = new List<ITimeLineDataItem>();
+                for (int i = idx - 2; i >= 0; i--)
+                {
+                    if (p.Items[i].StartTime.Value >= this.StartTime.Value) toRemove.Add(p.Items[i]);
+                    else if (p.Items[i].EndTime.Value > this.StartTime.Value) p.Items[i].EndTime = this.StartTime;
+                }
+
+                for (int i = idx; i < p.Items.Count && !forAll; i++)
+                {
+                    if (p.Items[i].EndTime.Value <= this.EndTime.Value) toRemove.Add(p.Items[i]);
+                    else if (p.Items[i].StartTime.Value < this.EndTime.Value) { p.Items[i].StartTime = this.EndTime; p.Items[i].EndTime = p.Items[i].EndTime; }
+                }
+                toRemove.ForEach((killedItem) => { p.Items.Remove(killedItem); });
 
                 DateTime lastUsed = this.EndTime.Value;
                 while (forAll && idx < p.Items.Count)
@@ -507,18 +558,20 @@ namespace PixelTuner.ViewModel
                     var itm = (p.Items[idx] as TimeLineItemViewModel);
                     if (durationChanged)
                     {
-                        p.Items[idx].StartTime = lastUsed;
-                        p.Items[idx].EndTime = lastUsed.Add(duration);
+                        if (p.Items[idx].StartTime.Value < lastUsed) p.Items[idx].StartTime = lastUsed;
+                        p.Items[idx].EndTime = p.Items[idx].StartTime.Value.Add(duration);
                     }
-                    if (stretchChanged) itm.Stretching = stretching;
-                    if (brightnessChanged) itm.Brightness = brightness;
-                    if (laserOnChanged) itm.LaserOn = laserOn;
                     lastUsed = itm.EndTime.Value;
                     idx++;
                 }
             }
         }
 
+        protected virtual void ProprietaryEdit(object parameter)
+        {
+
+        }
+        
         #endregion 
         
         #region SwitchLaserOn
@@ -536,16 +589,14 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        private bool CanSwitchLaserOn(object parameter)
+        public virtual bool CanSwitchLaserOn(object parameter)
         {
-            return true;
+            return false;
         }
 
-        private void OnSwitchLaserOn(object parameter)
+        protected virtual void OnSwitchLaserOn(object parameter)
         {
-            LaserOn = !LaserOn;
-            RaisePropertyChanged("LaserOn");
-            RaisePropertyChanged("LaserOnButtonColor");
+            
         }
 
         #endregion 

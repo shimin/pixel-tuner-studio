@@ -44,6 +44,7 @@ namespace PixelTuner.ViewModel
             set
             {
                 //_bgColor = value; 
+                ColorFirst = ColorLast = value;
                 BackgroundBrush = new SolidColorBrush(value);
                 RaisePropertyChanged("BackgroundColor"); RaisePropertyChanged("BackgroundBrush");
             }
@@ -90,7 +91,43 @@ namespace PixelTuner.ViewModel
             BackgroundBrush = new System.Windows.Media.SolidColorBrush(BackgroundColor);
         }
 
-        protected override void OnEditMe(object parameter)
+        public override double ColorLayerOpacity
+        {
+            get
+            {
+                return 1.0;
+            }
+        }
+
+        public override bool UseColorLayer
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override bool CanRepeat(object parameter)
+        {
+            return false;
+        }
+
+        public override bool CanThumbnail(object parameter)
+        {
+            return true;
+        }
+
+        protected override void OnThumbnail(object parameter)
+        {
+            ProprietaryEdit(parameter);
+        }
+
+        public override bool CanSwitchLaserOn(object parameter)
+        {
+            return base.CanSwitchLaserOn(parameter);
+        }
+
+        protected override void ProprietaryEdit(object parameter)
         {
             var cd = new System.Windows.Forms.ColorDialog();
             var dr = cd.ShowDialog();

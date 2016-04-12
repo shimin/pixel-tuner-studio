@@ -26,8 +26,8 @@ namespace PixelTuner.ViewModel
             T1 = 2000;
             T2 = null;
         }
-
-        protected override void OnEditMe(object parameter)
+        
+        protected override void ProprietaryEdit(object parameter)
         {
             EffectSineWindow w = new EffectSineWindow(this);
             var location = Application.Current.MainWindow.PointToScreen(Mouse.GetPosition(Application.Current.MainWindow));

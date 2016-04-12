@@ -60,11 +60,6 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        protected override bool CanThumbnail(object parameter)
-        {
-            return false;
-        }
-
         #endregion
 
         public EffectThumbnailViewModel()
@@ -78,6 +73,34 @@ namespace PixelTuner.ViewModel
         {
             _name = fullName;
             _image = img;
+        }
+
+        public override bool UseColorLayer
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override bool CanRepeat(object parameter)
+        {
+            return false;
+        }
+
+        public override bool CanThumbnail(object parameter)
+        {
+            return true;
+        }
+
+        protected override void OnThumbnail(object parameter)
+        {
+            ProprietaryEdit(parameter);
+        }
+
+        public override bool CanSwitchLaserOn(object parameter)
+        {
+            return base.CanSwitchLaserOn(parameter);
         }
 
         public static implicit operator PixelTuner.ViewModel.Serialization.TimeLineItemEffect(EffectThumbnailViewModel item)

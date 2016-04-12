@@ -148,6 +148,9 @@
     <Compile Include="Audio\SampleAggregator.cs" />
     <Compile Include="Auxiliary\DataPipe.cs" />
     <Compile Include="Auxiliary\SvgHelper.cs" />
+    <Compile Include="BasicItemWindow.xaml.cs">
+      <DependentUpon>BasicItemWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ThumbListView\EffectView.cs" />
     <Compile Include="Controls\ThumbListView\GradientView.cs" />
     <Compile Include="Controls\ThumbListView\VideoView.cs" />
@@ -275,6 +278,10 @@
     <Compile Include="ViewModel\RootViewModel.cs" />
     <Compile Include="ViewModel\Tools\VideosViewModel.cs" />
     <Page Include="ArtNetWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="BasicItemWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2356,6 +2363,8 @@
     <Content Include="Gradients\g_rainbow.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\settings_Dark.png" />
+    <Resource Include="Images\settings.png" />
     <Resource Include="Effects\04_solid.png" />
     <Resource Include="Effects\00_effect.png" />
     <Resource Include="Effects\01_effect.png" />

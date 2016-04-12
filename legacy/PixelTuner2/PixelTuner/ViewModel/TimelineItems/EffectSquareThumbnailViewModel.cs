@@ -26,8 +26,8 @@ namespace PixelTuner.ViewModel
             T1 = 1000;
             T2 = 1000;
         }
-
-        protected override void OnEditMe(object parameter)
+        
+        protected override void ProprietaryEdit(object parameter)
         {
             EffectSquareWindow w = new EffectSquareWindow(this);
             var location = Application.Current.MainWindow.PointToScreen(Mouse.GetPosition(Application.Current.MainWindow));
