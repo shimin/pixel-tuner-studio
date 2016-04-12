@@ -791,8 +791,8 @@ namespace Common.Controls
                         break;
                     }
                 }
-                if (_actualManipulationMode == TimeLineManipulationMode.Linked)
-                    TrimTimeSpaces();
+                //if (_actualManipulationMode == TimeLineManipulationMode.Linked)
+                //    TrimTimeSpaces();
             }
         }
 
@@ -1297,8 +1297,8 @@ namespace Common.Controls
             _dragStartPosition.X = double.MinValue;
             _dragStartPosition.Y = double.MinValue;
             _dragObject = null;
-            if (_actualManipulationMode == TimeLineManipulationMode.Linked) 
-                TrimTimeSpaces();
+            //if (_actualManipulationMode == TimeLineManipulationMode.Linked) 
+            //    TrimTimeSpaces();
         }
 
         private void TrimTimeSpaces()
