@@ -224,10 +224,15 @@ namespace PixelTuner.ViewModel
             get
             {
                 if (_tools == null)
-                    _tools = new ToolViewModel[] { //FileStats, 
+                    _tools = new ToolViewModel[] {
+                        CanvasModel, 
                         VideosModel,
                         GradientsModel,
-                        DevicesModel, ProjectsModel, ImagesModel, ProjectPlayerModel, EffectsModel
+                        DevicesModel,
+                        ProjectsModel,
+                        ImagesModel,
+                        ProjectPlayerModel,
+                        EffectsModel
                     };
                 return _tools;
             }
@@ -239,7 +244,8 @@ namespace PixelTuner.ViewModel
             get
             {
                 if (_canvasModel == null)
-                    _canvasModel = new CanvasViewModel();
+                    _canvasModel = new CanvasViewModel(
+                        (string)Application.Current.TryFindResource("Menu_Window_Canvas"));
 
                 return _canvasModel;
             }
@@ -252,7 +258,7 @@ namespace PixelTuner.ViewModel
             {
                 if (_devicesModel == null)
                     _devicesModel = new DevicesViewModel(
-                        (String)Application.Current.TryFindResource("Menu_Window_Devices"));
+                        (string)Application.Current.TryFindResource("Menu_Window_Devices"));
 
                 return _devicesModel;
             }
@@ -363,8 +369,7 @@ namespace PixelTuner.ViewModel
         }
 
         #endregion
-
-
+        
         #region Effects model
 
         EffectsViewModel _effectsModel = null;
@@ -402,9 +407,9 @@ namespace PixelTuner.ViewModel
         }
 
         #endregion
-
-        #endregion
         
+        #endregion
+
         #region OpenCommand
         RelayCommand _openCommand = null;
         public ICommand OpenCommand

@@ -71,6 +71,12 @@ namespace PixelTuner.Selectors
             set;
         }
 
+        public DataTemplate CanvasViewTemplate
+        {
+            get;
+            set;
+        }
+
         public override System.Windows.DataTemplate SelectTemplate(object item, System.Windows.DependencyObject container)
         {
             var itemAsLayoutContent = item as LayoutContent;
@@ -98,6 +104,9 @@ namespace PixelTuner.Selectors
 
             if (item is VideosViewModel)
                 return VideosViewTemplate;
+
+            if (item is CanvasViewModel)
+                return CanvasViewTemplate;
 
             return base.SelectTemplate(item, container);
         }

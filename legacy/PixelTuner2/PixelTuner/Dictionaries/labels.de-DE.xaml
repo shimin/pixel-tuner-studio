@@ -24,6 +24,7 @@
     <system:String x:Key="Menu_Window_Devices">Geräte</system:String>
     <system:String x:Key="Menu_Window_Projects">Projekten</system:String>
     <system:String x:Key="Menu_Window_ProjectPlayer">Anschauen</system:String>
+    <system:String x:Key="Menu_Window_Canvas">Canvas</system:String>
     <system:String x:Key="Menu_Window_Images">Frames</system:String>
     <system:String x:Key="Menu_Window_Videos">Video</system:String>
     <system:String x:Key="Menu_Window_Effects">Licht effects</system:String>

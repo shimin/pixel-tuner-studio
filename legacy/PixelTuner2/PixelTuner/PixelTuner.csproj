@@ -173,6 +173,7 @@
     <Compile Include="Import\PreviewPage.xaml.cs">
       <DependentUpon>PreviewPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="LayoutInitializer.cs" />
     <Compile Include="RepeatItemWindow.xaml.cs">
       <DependentUpon>RepeatItemWindow.xaml</DependentUpon>
     </Compile>
@@ -201,6 +202,9 @@
     </Compile>
     <Compile Include="SplitItemWindow.xaml.cs">
       <DependentUpon>SplitItemWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Styles\CanvasTemplate.xaml.cs">
+      <DependentUpon>CanvasTemplate.xaml</DependentUpon>
     </Compile>
     <Compile Include="Styles\FileLayoutTemplate.xaml.cs">
       <DependentUpon>FileLayoutTemplate.xaml</DependentUpon>
@@ -241,7 +245,7 @@
     <Compile Include="DefaultsWindow.xaml.cs">
       <DependentUpon>DefaultsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\Devices\DevicesViewModel.cs" />
+    <Compile Include="ViewModel\Tools\DevicesViewModel.cs" />
     <Compile Include="Drawing\CircularBuffer.cs" />
     <Compile Include="Drawing\ConfigurationItemBase.cs" />
     <Compile Include="Drawing\DrawControl.cs">
@@ -342,6 +346,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SplitItemWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\CanvasTemplate.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2363,6 +2371,10 @@
     <Content Include="Gradients\g_rainbow.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="sources\human.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sources\human_1.svg" />
     <Resource Include="Images\settings_Dark.png" />
     <Resource Include="Images\settings.png" />
     <Resource Include="Effects\04_solid.png" />

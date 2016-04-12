@@ -69,14 +69,15 @@ namespace PixelTuner.ViewModel
 
         #endregion
 
-        public CanvasViewModel()
-            : base("Canvas")
+        public CanvasViewModel(string name)
+            : base(name)
         {
-            RootViewModel.This.ActiveDocumentChanged += new RootViewModel.DocumentChangedEventHandler(OnActiveDocumentChanged);
+            IsVisible = true;
             ContentId = ToolContentId;
 
             _settings = new WpfDrawingSettings();
             _settings.CultureInfo = _settings.NeutralCultureInfo;
+            RootViewModel.This.ActiveDocumentChanged += new RootViewModel.DocumentChangedEventHandler(OnActiveDocumentChanged);
         }
 
         public const string ToolContentId = "CanvasTool";
