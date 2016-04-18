@@ -143,5 +143,14 @@ namespace PixelTuner.Styles
             var panel = sender as StackPanel;
             if (panel != null) panel.Visibility = System.Windows.Visibility.Hidden;
         }
+
+        private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (e.HorizontalChange != 0)
+            {
+                RootViewModel.This.ActiveDocument.HorizontalScrollPosition = e.HorizontalOffset;
+            }
+            e.Handled = false;
+        }
     }
 }

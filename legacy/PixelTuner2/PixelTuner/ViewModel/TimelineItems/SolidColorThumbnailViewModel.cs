@@ -19,7 +19,7 @@ namespace PixelTuner.ViewModel
         {
             get
             {
-                return "SolidColorElement";
+                return "Solid Color";
             }
         }
 

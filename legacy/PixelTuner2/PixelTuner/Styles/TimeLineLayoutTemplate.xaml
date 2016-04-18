@@ -48,6 +48,20 @@
         </LinearGradientBrush.Transform>
     </LinearGradientBrush>
 
+    <DataTemplate 
+                x:Key="MetaTemplate"
+                DataType="{x:Type vm:CanvasElementViewModel}">
+        <Canvas>
+            <Path 
+                    Stroke="Black" 
+                    StrokeThickness="1" 
+                    Fill="Black" 
+                    Data="{Binding Geometry}"
+                    RenderTransform="{Binding DragTransform}">
+            </Path>
+        </Canvas>
+    </DataTemplate>
+
     <DataTemplate x:Key="TimelineItemTemplate" DataType="{x:Type vm:TimeLineItemViewModel}">
         <Border x:Name="boxItemBorder"
                 BorderThickness="1"
@@ -175,6 +189,39 @@
         </DataTemplate.Triggers>
     </DataTemplate>
 
+    <ControlTemplate x:Key="TimeLineTools">
+        <Grid x:Name="boxTimelineTools" Background="#4a4a4a" ToolTipService.IsEnabled="{Binding IsMetaDataSet}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <StackPanel>
+                <Button Height="14" Margin="4,3,2,0" Style="{StaticResource ButtonUpStyle}" Command="{Binding MoveUp}"></Button>
+                <Button Height="14" Margin="4,0,2,1" Style="{StaticResource ButtonDownStyle}" Command="{Binding MoveDown}"></Button>
+                <Button Height="16" Margin="4,1,2,1" Style="{StaticResource ButtonDeleteLineStyle}" Command="{Binding DeleteLine}"></Button>
+                <Button Height="16" Margin="4,1,2,1" Style="{StaticResource ButtonCloneStyle}" Command="{Binding CloneLine}"></Button>
+            </StackPanel>
+            <TextBlock Text="{Binding LineHeight}" Grid.Row="1" TextAlignment="Center" Visibility="{Binding IsLineHeightVisible}" Foreground="#8f8f8f" />
+            <Grid.ToolTip>
+                <ToolTip Padding="0" Margin="0" DataContext="{Binding Path=PlacementTarget, RelativeSource={x:Static RelativeSource.Self}}">
+                    <Canvas Margin="0" Width="120" Height="120" Background="{Binding Background}">
+                        <Path Stroke="Black" 
+                              Margin="5" 
+                              StrokeThickness="1" 
+                              Fill="{Binding DataContext.MetaData.Fill}" 
+                              RenderTransform="{Binding DataContext.PreviewTransform}"
+                              Data="{Binding DataContext.MetaData.Geometry}"/>
+                        <Rectangle Stroke="{Binding Background}"
+                                   StrokeThickness="5"
+                                   Width="122" 
+                                   Height="122"
+                                   Margin="-1"/>
+                    </Canvas>
+                </ToolTip>
+            </Grid.ToolTip>
+        </Grid>
+    </ControlTemplate>
+    
     <DataTemplate x:Key="TimeLineLayoutTemplate" DataType="{x:Type vm:TimeLineViewModel}">
         <ItemsControl>
             <Border x:Name="boxTimelineBorder" BorderThickness="1" BorderBrush="{Binding Background}">
@@ -183,19 +230,7 @@
                         <ColumnDefinition Width="26" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Grid x:Name="boxTimelineTools" Grid.Column="0" Background="#4a4a4a">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <StackPanel>
-                            <Button Height="14" Margin="4,3,2,0" Style="{StaticResource ButtonUpStyle}" Command="{Binding MoveUp}"></Button>
-                            <Button Height="14" Margin="4,0,2,1" Style="{StaticResource ButtonDownStyle}" Command="{Binding MoveDown}"></Button>
-                            <Button Height="16" Margin="4,1,2,1" Style="{StaticResource ButtonDeleteLineStyle}" Command="{Binding DeleteLine}"></Button>
-                            <Button Height="16" Margin="4,1,2,1" Style="{StaticResource ButtonCloneStyle}" Command="{Binding CloneLine}"></Button>
-                        </StackPanel>
-                        <TextBlock Text="{Binding LineHeight}" Grid.Row="1" TextAlignment="Center" Visibility="{Binding IsLineHeightVisible}" Foreground="#8f8f8f" />
-                    </Grid>
+                    <!--<Control Grid.Column="0" Template="{StaticResource TimeLineTools}"/>-->
                     <ct:TimeLineControl 
                         x:Name="TimeLine"
                         Grid.Column="1" 
@@ -214,13 +249,17 @@
                         StartDate="{Binding Start, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         UnitSize="{Binding Path=Parent.UnitSize}"
                         Items="{Binding Items, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        ItemTemplate="{StaticResource TimelineItemTemplate}"/>
+                        ItemTemplate="{StaticResource TimelineItemTemplate}"
+                        MetaTemplate="{StaticResource MetaTemplate}"
+                        MetaData="{Binding MetaData, Mode=TwoWay}">
+                        <Control Grid.Column="0" Margin="{Binding ToolsetMargin}" Template="{StaticResource TimeLineTools}" Width="26" Height="100"/>
+                    </ct:TimeLineControl>
                 </Grid>
             </Border>
         </ItemsControl>
         <DataTemplate.Triggers>
             <DataTrigger Binding="{Binding IsSelected}" Value="true">
-                <Setter Property="Background" Value="#ff323232" TargetName="boxTimelineTools"/>
+                <!--<Setter Property="Background" Value="#ff323232" TargetName="boxTimelineTools"/>-->
                 <Setter Property="BorderBrush" Value="{StaticResource SelectedLineBrush}" TargetName="boxTimelineBorder"/>
             </DataTrigger>
         </DataTemplate.Triggers>

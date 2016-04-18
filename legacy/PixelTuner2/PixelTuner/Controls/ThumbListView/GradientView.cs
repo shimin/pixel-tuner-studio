@@ -17,6 +17,10 @@ namespace PixelTuner.Controls.ThumbListView
 {
     public partial class ThumbnailGradientListView : ResourceDictionary
     {
+        static string picturesPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonPictures);
+
+        string _sourcePath = Path.Combine(picturesPath, "PixelTuner 2\\Gradients");
+
         private void boxThumbnails_Drop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -37,16 +41,14 @@ namespace PixelTuner.Controls.ThumbListView
 
             GradientsViewModel imagesModel = null;
             imagesView.Dispatcher.Invoke(new Action(() => imagesModel = imagesView.DataContext as GradientsViewModel));
-
-            string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Gradients");
-
+            
             StringBuilder sb = new StringBuilder();
 
             foreach (var p in fileNames)
             {
                 try
                 {
-                    var testFileName = GenerateFileName(sourcePath, p);
+                    var testFileName = GenerateFileName(_sourcePath, p);
                     Application.Current.Dispatcher.Invoke(new Action(() =>
                     {
                         var importWindow = new Import.ImportWindow(new BitmapImage(new Uri(p)));
@@ -112,7 +114,7 @@ namespace PixelTuner.Controls.ThumbListView
                     {
                         System.Drawing.Bitmap bmp = ImageHelper.BitmapImageToBitmap<BmpBitmapEncoder>(importWindow.ResultImage);
                         var saveDialog = new System.Windows.Forms.SaveFileDialog();
-                        saveDialog.InitialDirectory = System.Windows.Forms.Application.StartupPath + "\\Gradients";
+                        saveDialog.InitialDirectory = _sourcePath;
                         saveDialog.Filter = "Bmp files|*.bmp";
                         if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                         {
@@ -190,7 +192,7 @@ namespace PixelTuner.Controls.ThumbListView
             pe.ShowDialog();
             var img = pe.Config.GetScaledImage();
             var saveDialog = new System.Windows.Forms.SaveFileDialog();
-            saveDialog.InitialDirectory = System.Windows.Forms.Application.StartupPath + "\\Gradients";
+            saveDialog.InitialDirectory = _sourcePath;
             saveDialog.Filter = "Bmp files|*.bmp";
             if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -237,7 +239,7 @@ namespace PixelTuner.Controls.ThumbListView
                     var img = pe.Config.GetScaledImage();
                     var saveDialog = new System.Windows.Forms.SaveFileDialog();
                     saveDialog.FileName = thumbItem.Name;
-                    saveDialog.InitialDirectory = System.Windows.Forms.Application.StartupPath + "\\Gradients";
+                    saveDialog.InitialDirectory = _sourcePath;
                     saveDialog.Filter = "Bmp files|*.bmp";
                     if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     {

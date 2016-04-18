@@ -11,6 +11,14 @@ namespace PixelTuner.ViewModel
 {
     public class EffectSquareThumbnailViewModel : EffectThumbnailViewModel
     {
+        public override string ContentID
+        {
+            get
+            {
+                return "Square Wave";
+            }
+        }
+
         public EffectSquareThumbnailViewModel()
             : this(null, "")
         {

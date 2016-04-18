@@ -20,14 +20,11 @@
     
     <DataTemplate x:Key="CanvasTemplate">
         <Viewbox Grid.Row="1" Stretch="Uniform" Loaded="Viewbox_Loaded">
-            <Canvas 
-                Width="{Binding Clip.Bounds.Width, RelativeSource={RelativeSource Self}}" 
+            <Canvas Width="{Binding Clip.Bounds.Width, RelativeSource={RelativeSource Self}}" 
                 Height="{Binding Clip.Bounds.Height, RelativeSource={RelativeSource Self}}" 
-                Clip="{Binding PageSize}"
-                ClipToBounds="True">
+                Clip="{Binding PageSize}" ClipToBounds="True">
                 
-                <ItemsControl 
-                    ItemsSource="{Binding Elements}" 
+                <ItemsControl ItemsSource="{Binding Elements}" 
                     ItemTemplate="{StaticResource CanvasElementTemplate}" 
                     dd:DragDropHelper.IsDragSource="True" />
             </Canvas>

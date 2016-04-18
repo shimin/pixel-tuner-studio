@@ -21,7 +21,10 @@ namespace PixelTuner.ViewModel
         FileSvgReader _converter = null;
         WpfDrawingSettings _settings = null;
 
-        private string _sourceDir = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "sources");
+        static string picturesPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonPictures);
+
+        string _sourceDir = Path.Combine(picturesPath, "PixelTuner 2\\Schemas");
+        
         public string SourceDir
         {
             get { return _sourceDir; }
@@ -48,16 +51,11 @@ namespace PixelTuner.ViewModel
             set { _pageSize = value; RaisePropertyChanged("PageSize"); }
         }
 
-        //private ObservableCollection<CanvasElementViewModel> _elements = new ObservableCollection<CanvasElementViewModel>();
-        //public ObservableCollection<CanvasElementViewModel> Elements
-        //{
-        //    get { return _elements; }
-        //    set { _elements = value; }
-        //}
-
-        public IEnumerable<CanvasElementViewModel> Elements
+        private ObservableCollection<CanvasElementViewModel> _elements = new ObservableCollection<CanvasElementViewModel>();
+        public ObservableCollection<CanvasElementViewModel> Elements
         {
-            get { return ElementsDictionary.Values; }
+            get { return _elements; }
+            set { _elements = value; RaisePropertyChanged("Elements"); }
         }
 
         private Dictionary<string, CanvasElementViewModel> _elementsDictionary = new Dictionary<string, CanvasElementViewModel>();
@@ -101,6 +99,9 @@ namespace PixelTuner.ViewModel
             _converter = new FileSvgReader(_settings);
             string fileToLoad = Path.Combine(_sourceDir, "human.svg");
 
+            Elements.Clear();
+            ElementsDictionary.Clear();
+
             if (File.Exists(fileToLoad))
             {
                 LoadedView = _converter.Read(fileToLoad);
@@ -122,6 +123,7 @@ namespace PixelTuner.ViewModel
                         }
                     }
                 }
+                RaisePropertyChanged("Elements");
             }
         }
 
@@ -141,6 +143,7 @@ namespace PixelTuner.ViewModel
                     if (!ElementsDictionary.ContainsKey(newElementModel.Path))
                     {
                         ElementsDictionary.Add(newElementModel.Path, newElementModel);
+                        Elements.Add(newElementModel);
                     }
                 }
             }

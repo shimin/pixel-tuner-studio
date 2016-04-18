@@ -2,6 +2,8 @@
 using System.Windows.Input;
 
 using PixelTuner.ViewModel;
+using System.Windows.Threading;
+using System;
 
 namespace PixelTuner.Styles
 {
@@ -12,6 +14,8 @@ namespace PixelTuner.Styles
             InitializeComponent();
         }
 
+        System.Windows.Controls.Canvas canvas = null;
+
         private void Path_MouseDown(object sender, MouseButtonEventArgs e)
         {
             var s = sender as FrameworkElement;
@@ -20,11 +24,11 @@ namespace PixelTuner.Styles
                 string path = (s.DataContext as CanvasElementViewModel).Path;
             }
         }
-
+        
         private void Viewbox_Loaded(object sender, RoutedEventArgs e)
         {
             // заменить на команду
-            var s = sender as FrameworkElement;
+            var s = sender as System.Windows.Controls.Viewbox;
             if (s != null) 
             {
                 (s.DataContext as CanvasViewModel).LoadContent();

@@ -11,6 +11,14 @@ namespace PixelTuner.ViewModel
 {
     public class EffectSineThumbnailViewModel : EffectThumbnailViewModel
     {
+        public override string ContentID
+        {
+            get
+            {
+                return "Sine Wave";
+            }
+        }
+
         public EffectSineThumbnailViewModel()
             : this(null, "")
         {

@@ -13,6 +13,10 @@ namespace PixelTuner.ViewModel
 {
     public class GradientsViewModel : ToolViewModel
     {
+        static string picturesPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonPictures);
+
+        string _sourcePath = Path.Combine(picturesPath, "PixelTuner 2\\Gradients");
+
         public GradientsViewModel(string name)
             : base(name)
         {
@@ -107,12 +111,11 @@ namespace PixelTuner.ViewModel
 
         private void AsyncRefreshCollection(int height = 0, string itemToRemove = "")
         {
-            string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Gradients");
-            if (!Directory.Exists(sourcePath))
+            if (!Directory.Exists(_sourcePath))
             {
-                Directory.CreateDirectory(sourcePath);
+                Directory.CreateDirectory(_sourcePath);
             }
-            DirectoryInfo info = new DirectoryInfo(sourcePath);
+            DirectoryInfo info = new DirectoryInfo(_sourcePath);
             List<FileSystemInfo> allfiles = new List<FileSystemInfo>(info.GetFileSystemInfos("*.png"));
             allfiles.AddRange(info.GetFileSystemInfos("*.jpg"));
             allfiles.AddRange(info.GetFileSystemInfos("*.bmp"));

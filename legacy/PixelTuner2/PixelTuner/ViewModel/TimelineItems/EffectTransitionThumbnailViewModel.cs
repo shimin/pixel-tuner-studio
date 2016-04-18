@@ -11,6 +11,14 @@ namespace PixelTuner.ViewModel
 {
     public class EffectTransitionThumbnailViewModel : EffectThumbnailViewModel
     {
+        public override string ContentID
+        {
+            get
+            {
+                return "Linear Transition";
+            }
+        }
+
         public EffectTransitionThumbnailViewModel()
             : this(null, "")
         {

@@ -18,9 +18,9 @@ namespace PixelTuner
     public partial class MainWindow : Window
     {
         string AppID = "PixelTuner";
-        IntPtr windowHandle = IntPtr.Zero;
         string _layoutString = Settings.Default.LayoutString;
         System.ComponentModel.BackgroundWorker _updatesCheckWorker = new System.ComponentModel.BackgroundWorker();
+        static string _dataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
         public MainWindow()
         {
@@ -41,43 +41,7 @@ namespace PixelTuner
             RecentFileList.MenuClick += (s, e) => RootViewModel.This.Open(e.Filepath);
             RootViewModel.This.LastUsedFileHandler = (p) => RecentFileList.InsertFile(p);
         }
-
-        //protected override void OnSourceInitialized(EventArgs e)
-        //{
-        //    base.OnSourceInitialized(e);
-
-        //    // Adds the windows message processing hook and registers USB device add/removal notification.
-        //    HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
-        //    if (source != null)
-        //    {
-        //        windowHandle = source.Handle;
-        //        source.AddHook(HwndHandler);
-        //        UsbNotification.RegisterUsbDeviceNotification(windowHandle);
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Method that receives window messages.
-        ///// </summary>
-        //private IntPtr HwndHandler(IntPtr hwnd, int msg, IntPtr wparam, IntPtr lparam, ref bool handled)
-        //{
-        //    if (msg == UsbNotification.WmDevicechange)
-        //    {
-        //        switch ((int)wparam)
-        //        {
-        //            case UsbNotification.DbtDevicearrival:
-        //                DeviceHelper.UsbDeviceCheck(); // this is where you do your magic
-        //                break;
-        //            case UsbNotification.DbtDeviceremovecomplete:
-        //                DeviceHelper.UsbDeviceRemoved(); // this is where you do your magic
-        //                break;
-        //        }
-        //    }
-
-        //    handled = false;
-        //    return IntPtr.Zero;
-        //}
-
+        
         private void MainWnd_Activated(object sender, EventArgs e)
         {
             this.Focus();   // без явной установки фокуса не работают горячие клавиши
@@ -91,14 +55,18 @@ namespace PixelTuner
                 args.Content = args.Content;
             };
 
-            if (File.Exists(@".\" + AppID + "Dock.config"))
-                serializer.Deserialize(@".\" + AppID + "Dock.config");
+            if (File.Exists(Path.Combine(_dataPath, @"PixelTuner 2\" + AppID + "Dock.config")))
+                serializer.Deserialize((Path.Combine(_dataPath, @"PixelTuner 2\" + AppID + "Dock.config")));
         }
         
         private void MainWnd_Unloaded(object sender, RoutedEventArgs e)
         {
             var serializer = new Workspace.Layout.Serialization.XmlLayoutSerializer(dockManager);
-            serializer.Serialize(@".\" + AppID + "Dock.config");
+            try
+            {
+                serializer.Serialize(Path.Combine(_dataPath, @"PixelTuner 2\" + AppID + "Dock.config"));
+            }
+            catch { }
         }
 
         private static void UiInvoke(Action a)

@@ -30,6 +30,11 @@ namespace PixelTuner.ViewModel
             _line = timeline;
         }
 
+        public bool CanAddToTimeLine(ITimeLineMeta meta)
+        {
+            return meta is CanvasElementViewModel;
+        }
+
         public bool CanAddToTimeLine(ITimeLineDataItem item, DateTime timePoint)
         {
             if (item is SolidColorThumbnailViewModel || item is EffectThumbnailViewModel) return true;
@@ -41,7 +46,6 @@ namespace PixelTuner.ViewModel
         : TimeLineViewModel
     {
         public LightTimeLineViewModel() {
-            _xmlItems = new DelegatedIList<TimeLineItemViewModel, TimeLineItem>(_items);
             RootViewModel.This.PropertyChanged += new PropertyChangedEventHandler(RootModel_PropertyChanged);
             this.PropertyChanged += new PropertyChangedEventHandler(TimeLineViewModel_PropertyChanged);
             SetBackgrounds(Color.FromRgb(60, 60, 80), Color.FromRgb(50, 50, 70));
@@ -81,83 +85,13 @@ namespace PixelTuner.ViewModel
         #endregion
        
         #region Properties
-
-        int _timelineHeightPx = 120;
-        [XmlIgnore]
-        public int TimelineHeightPx
-        {
-            get { return _timelineHeightPx; }
-            set { _timelineHeightPx = value; RaisePropertyChanged("TimelineHeightPx"); }
-        }
-
-        int _timelinePreviewWidth = 120;
-        [XmlIgnore]
-        public int TimelinePreviewWidth
-        {
-            get { return _timelinePreviewWidth; }
-            set { _timelinePreviewWidth = value; RaisePropertyChanged("TimelinePreviewWidth"); }
-        }
-
-        string _metaDataPath = null;
-        [XmlAttribute]
-        public string MetaDataPath
-        {
-            get { return _metaDataPath; }
-            set { _metaDataPath = value; RaisePropertyChanged("MetaDataPath"); }
-        }
-
-        CanvasElementViewModel _metaData;
-        [XmlIgnore]
-        public CanvasElementViewModel MetaData
-        {
-            get { return _metaData; }
-            set 
-            {
-                _metaData = value;
-                var ce = _metaData as CanvasElementViewModel;
-                if (ce != null)
-                {
-                    MetaDataPath = ce.Path;
-                    PreviewTransform = new MatrixTransform(
-                        ce.Transform.Value.M11,
-                        ce.Transform.Value.M12,
-                        ce.Transform.Value.M21,
-                        ce.Transform.Value.M22,
-                        -ce.Geometry.Bounds.Left,
-                        -ce.Geometry.Bounds.Top);
-                }
-                RaisePropertyChanged("MetaData"); 
-            }
-        }
-
-        MatrixTransform _previewTransform = null;
-        [XmlIgnore]
-        public MatrixTransform PreviewTransform
-        {
-            get { return _previewTransform; }
-            set { _previewTransform = value; RaisePropertyChanged("PreviewTransform"); }
-        }
-
+        
         /// <summary>
         /// Step of rulers on timelines to link with items borders
         /// </summary>
         public int AnchorStep
         {
             get { return RootViewModel.This.AnchorStep; }
-        }
-
-        DelegatedIList<PixelTuner.ViewModel.TimeLineItemViewModel, TimeLineItem> _xmlItems;
-        [XmlElement(ElementName = "Item", Type = typeof(TimeLineItem))]
-        public DelegatedIList<PixelTuner.ViewModel.TimeLineItemViewModel, TimeLineItem> XmlItems
-        {
-            get
-            {
-                return _xmlItems;
-            }
-            set
-            {
-                _xmlItems = value;
-            }
         }
 
         #endregion

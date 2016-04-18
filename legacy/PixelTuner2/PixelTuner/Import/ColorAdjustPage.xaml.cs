@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using System.ComponentModel;
 using Common.Imaging;
 using System.Collections.ObjectModel;
+using PixelTuner.Properties;
 
 namespace PixelTuner.Import
 {
@@ -28,7 +29,13 @@ namespace PixelTuner.Import
 
         System.Drawing.Bitmap _sourceBitmap = null;
         System.Drawing.Bitmap _currentBitmap = null;
-        ImageProcessor _processor = new ImageProcessor();
+        Common.Imaging.ImageProcessor _processor = new Common.Imaging.ImageProcessor();
+
+        public bool ApplySharpening
+        {
+            get { return Settings.Default.ApplySharpening; }
+            set { Settings.Default.ApplySharpening = value; }
+        }
 
         private BitmapSource _sourceImage;
         public BitmapSource SourceImage
@@ -53,8 +60,9 @@ namespace PixelTuner.Import
 
         #endregion
 
-        public ColorAdjustPage()
+        public ColorAdjustPage(bool isPreviewOn)
         {
+            IsPreviewOn = isPreviewOn;
             DataContext = this;
             InitializeComponent();
         }
@@ -66,11 +74,18 @@ namespace PixelTuner.Import
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
-        public event PropertyChangedEventHandler PropertyChanged; 
-        
+        public event PropertyChangedEventHandler PropertyChanged;
+
         #endregion
 
         #region IPicturePage
+
+        bool _isPreviewOn = false;
+        public bool IsPreviewOn
+        {
+            get { return _isPreviewOn; }
+            set { _isPreviewOn = value; RaisePropertyChanged("IsPreviewOn"); }
+        }
 
         public BitmapSource Result
         {

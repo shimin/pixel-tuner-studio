@@ -18,10 +18,11 @@ using Common.Controls;
 using Communication.Binarize;
 using Communication.Gradient;
 using Communication;
+using System.Windows.Media;
 
 namespace PixelTuner.ViewModel
 {
-    public class FileViewModel : PaneViewModel
+    public class FileViewModel : PaneViewModel, IDisposable
     {
         public delegate void InitializePlaybackDelegate(NAudioEngine soundEngine);
 
@@ -48,6 +49,15 @@ namespace PixelTuner.ViewModel
             if (InitializePlayback != null) InitializePlayback.Invoke(soundEngine);
             soundEngine.PropertyChanged += NAudioEngine_PropertyChanged;
             SoundPlayer = soundEngine;
+
+            RootViewModel.This.DevicesModel.Illuminators.CollectionChanged
+                += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Illuminators_CollectionChanged);
+        }
+
+        void Illuminators_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            RaisePropertyChanged("IsSyncAvailable");
+            RaisePropertyChanged("RadioModuleMac");
         }
 
         void DeviceHelper_DeviceFound(DeviceEventArgs e)
@@ -104,10 +114,28 @@ namespace PixelTuner.ViewModel
         internal void UpdatePreview(TimeSpan timeSpan)
         {
             var line = SelectedTimeline;
-            if (line != null)
+            if (line != null && !(line is LightTimeLineViewModel))
             {
                 var timePoint = line.Start.Value.Add(timeSpan);
                 RootViewModel.This.ProjectPlayerModel.DisplayModel = line.FindItemByTime(timePoint);
+            }
+
+            var lines = TimeLines.Where(item => item is LightTimeLineViewModel);
+            if (lines.Count() > 0)
+            {
+                int lineIdx = 0;
+                var sample = _parsedProject.GetColors(timeSpan);
+                foreach (var l in lines)
+                {
+                    if (l.Items.Count == 0) continue;
+
+                    if (l.MetaData != null)
+                    {
+                        Color c = sample != null && lineIdx < sample.Count ? Color.FromRgb(sample[lineIdx].R, sample[lineIdx].G, sample[lineIdx].B) : Color.FromRgb(0, 0, 0);
+                        RootViewModel.This.CanvasModel.ElementsDictionary[l.MetaData.Path].Fill = l.MetaData.Fill = new SolidColorBrush(c);
+                    }
+                    lineIdx++;
+                }
             }
         }
 
@@ -192,6 +220,20 @@ namespace PixelTuner.ViewModel
             }
         }
 
+        double _horizontalScrollPosition;
+        [XmlIgnore]
+        public double HorizontalScrollPosition
+        {
+            get
+            {
+                return _horizontalScrollPosition;
+            }
+            set
+            {
+                _horizontalScrollPosition = value; RaisePropertyChanged("HorizontalScrollPosition");
+            }
+        }
+
         Double _minUnitSize = 17.88;
         [XmlIgnore]
         public Double MinUnitSize
@@ -263,6 +305,47 @@ namespace PixelTuner.ViewModel
                 //return size;
             }
         }
+
+
+        private bool _isSyncOn = false;
+        [XmlIgnore]
+        public bool IsSyncOn
+        {
+            get { return _isSyncOn; }
+            set { _isSyncOn = value; RaisePropertyChanged("IsSyncOn"); }
+        }
+
+        [XmlIgnore]
+        public string RadioModuleMac
+        {
+            get
+            {
+                var devModel = RootViewModel.This.DevicesModel;
+                if (devModel != null && devModel.Illuminators.Count > 0)
+                {
+                    var adr = devModel.Illuminators[0].Device.Mac;
+                    string result = "";
+                    for (int i = adr.Length - 1; i >= 0; i--)
+                        result += adr[i].ToString("X2") + ":";
+
+                    return result.TrimEnd(':');
+                }
+                return "";
+            }
+        }
+
+        [XmlIgnore]
+        public int MemoryListHeight
+        {
+            get
+            {
+                return RootViewModel.This.DevicesModel != null
+                    && RootViewModel.This.DevicesModel.Devices.Count != 0
+                    ? DeviceHelper.Devices.Count * 15 + 20
+                    : 0;
+            }
+        }
+
 
         [XmlIgnore]
         public bool LineHeightChangingAvailable
@@ -574,9 +657,20 @@ namespace PixelTuner.ViewModel
 
         private void OnPlayAudio(object parameter)
         {
+            var lines = TimeLines.Where(item => item is LightTimeLineViewModel);
+            _parsedProject = LightBinaryProject.Parse(GetLightBinaryPresentation(lines));
+
             var player = ((NAudioEngine)SoundPlayer);
+            if (IsSyncAvailable && IsSyncOn && RootViewModel.This.DevicesModel.Illuminators.Count > 0)
+            {
+                RootViewModel.This.DevicesModel.Illuminators.First().Play(
+                    player.CurrentTime, PixelTuner.Properties.Settings.Default.Discreteness);
+            }
+            
             player.Play();
         }
+
+        private LightBinaryProject _parsedProject = null;
 
         #endregion
 
@@ -602,7 +696,13 @@ namespace PixelTuner.ViewModel
 
         private void OnPauseAudio(object parameter)
         {
-            ((NAudioEngine)SoundPlayer).Pause();
+            var player = (NAudioEngine)SoundPlayer;
+            if (IsSyncAvailable && IsSyncOn && RootViewModel.This.DevicesModel.Illuminators.Count > 0)
+            {
+                RootViewModel.This.DevicesModel.Illuminators.First().Pause(
+                    player.CurrentTime, Settings.Default.Discreteness);
+            }
+            player.Pause();
         }
 
         #endregion
@@ -631,6 +731,11 @@ namespace PixelTuner.ViewModel
         {
             var player = (NAudioEngine)SoundPlayer;
             player.ChannelPosition = player.InitialChannelPosition;
+            if (IsSyncAvailable && IsSyncOn && RootViewModel.This.DevicesModel.Illuminators.Count > 0)
+            {
+                RootViewModel.This.DevicesModel.Illuminators.First().Stop(
+                    player.CurrentTime, Settings.Default.Discreteness);
+            }
             player.Stop();
         }
 
@@ -672,6 +777,11 @@ namespace PixelTuner.ViewModel
             {
                 case "ChannelPosition":
                     //clockDisplay.Time = TimeSpan.FromSeconds(engine.ChannelPosition);
+                    if (!SoundPlayer.IsPlaying)
+                    {
+                        var lines = TimeLines.Where(item => item is LightTimeLineViewModel);
+                        _parsedProject = LightBinaryProject.Parse(GetLightBinaryPresentation(lines));
+                    }
                     UpdatePreview(SoundPlayer.CurrentTime);
                     break;
                 default:
@@ -747,32 +857,6 @@ namespace PixelTuner.ViewModel
                     file.Images.Add(imageFile);
                     currentTime = item.EndTime.Value;
                 }
-
-                //foreach (TimeLineItemViewModel item in line.Items)
-                //{
-                //    string path = item.FullName.ToLower();
-                //    double startMilliseconds = 0;
-
-                //    var gapDuration = (item.StartTime.Value - currentTime).TotalMilliseconds;
-                //    if (gapDuration > 0)    // if start time of the next image doesn't match end time of the current one
-                //    {
-                //        startMilliseconds = (item.StartTime.Value - line.Start.Value).TotalMilliseconds;
-                //        var blankImageFile = new PixelImageFile(null, (UInt16)item.Stretching, (UInt32)gapDuration, (UInt32)startMilliseconds, 0);
-                //        file.Images.Add(blankImageFile);
-                //        imagesCollection.Add(new ImagesCollectionItem(null, targetHeight, depth));
-                //    }
-
-                //    var duration = (item.EndTime.Value - item.StartTime.Value).TotalMilliseconds;       // duration = end time - start time
-                //    startMilliseconds = (item.StartTime.Value - line.Start.Value).TotalMilliseconds;    // start ms = start time - timeline start time
-                //    UInt16 mask = item.LaserOn ? (ushort)1 : (ushort)0;
-                //    var imageFile = new PixelImageFile(path, (UInt16)item.Stretching, (UInt32)duration, (UInt32)startMilliseconds, mask);
-                //    var image = new ImagesCollectionItem(path, targetHeight, depth);
-                //    imageFile.Brightness = image.Brightness = item.Brightness;
-                //    imagesCollection.Add(image);
-
-                //    file.Images.Add(imageFile);
-                //    currentTime = item.EndTime.Value;
-                //}
                 project.TimeLines.Add(file);
             }
 
@@ -843,7 +927,7 @@ namespace PixelTuner.ViewModel
         {
             LightProjectFile project = new LightProjectFile();
             byte slaveAddress = 1;
-            foreach (TimeLineViewModel line in _timeLines)
+            foreach (TimeLineViewModel line in lines)
             {
                 if (line.Items.Count == 0 || !line.IsSelectedToUpload) continue;
                 var binaryLine = new LightTimelineFile();
@@ -855,14 +939,14 @@ namespace PixelTuner.ViewModel
                 {
                     if (item is SolidColorThumbnailViewModel)
                     {
-                        var file = new LightColorFile(item.FullName, item.StartTime.Value, item.EndTime.Value);
+                        var file = new LightColorFile(item.ContentID, item.StartTime.Value, item.EndTime.Value);
                         var c = (item as SolidColorThumbnailViewModel).BackgroundColor;
                         file.Color = System.Drawing.Color.FromArgb(255, c.R, c.G, c.B);
                         binaryLine.Images.Add(file);
                     }
                     else if (item is EffectThumbnailViewModel)
                     {
-                        var file = new LightEffectFile(item.FullName, item.StartTime.Value, item.EndTime.Value);
+                        var file = new LightEffectFile(item.ContentID, item.StartTime.Value, item.EndTime.Value);
                         var vm = (EffectThumbnailViewModel)item;
                         file.ColorFirst = System.Drawing.Color.FromArgb(255, vm.ColorFirst.R, vm.ColorFirst.G, vm.ColorFirst.B);
                         file.ColorLast = System.Drawing.Color.FromArgb(255, vm.ColorLast.R, vm.ColorLast.G, vm.ColorLast.B);
@@ -949,11 +1033,14 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        public int MemoryListHeight
+        [XmlIgnore]
+        public bool IsSyncAvailable
         {
             get
             {
-                return DeviceHelper.Devices.Count != 0 ? DeviceHelper.Devices.Count * 15 + 20 : 0;
+                bool isAvailable = RootViewModel.This.DevicesModel.Illuminators.Count > 0;
+                if (!isAvailable) IsSyncOn = false;
+                return isAvailable;
             }
         }
 
@@ -1102,6 +1189,13 @@ namespace PixelTuner.ViewModel
             if (FileChanged != null)
                 FileChanged(sender, e);
         }
+
+        public void Dispose()
+        {
+            if (SoundPlayer is NAudioEngine)
+                (SoundPlayer as NAudioEngine).Dispose();
+        }
+
         public event EventHandler FileChanged;
     }
 }

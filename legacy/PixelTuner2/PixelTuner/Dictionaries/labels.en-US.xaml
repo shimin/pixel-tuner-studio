@@ -44,6 +44,8 @@
     <system:String x:Key="Doc_Lbl_Scale">Scale</system:String>
     <system:String x:Key="Doc_Lbl_Height">Height</system:String>
     <system:String x:Key="Doc_Lbl_MemoryUsed">Memory used</system:String>
+    <system:String x:Key="Doc_Lbl_Sync">Radio sync:</system:String>
+    <system:String x:Key="Doc_Lbl_Sync_DisconnectedTooltip">Disconnected</system:String>
     <system:String x:Key="Doc_Lbl_ImportTrack">Import track</system:String>
     <system:String x:Key="Doc_Hdr_Default">Noname</system:String>
     <system:String x:Key="Doc_Open_AccessError">File access error.</system:String>

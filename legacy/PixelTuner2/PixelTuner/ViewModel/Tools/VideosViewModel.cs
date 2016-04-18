@@ -12,6 +12,10 @@ namespace PixelTuner.ViewModel
 {
     public class VideosViewModel : ToolViewModel
     {
+        static string picturesPath = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
+
+        string _sourcePath = Path.Combine(picturesPath, "PixelTuner 2\\Clips");
+
         public VideosViewModel(string name)
             : base(name)
         {
@@ -93,11 +97,10 @@ namespace PixelTuner.ViewModel
 
         private void AsyncRefreshCollection(int height = 0, string itemToRemove = "")
         {
-            string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Gradients");
-            if (!Directory.Exists(sourcePath))
-                Directory.CreateDirectory(sourcePath);
+            if (!Directory.Exists(_sourcePath))
+                Directory.CreateDirectory(_sourcePath);
 
-            DirectoryInfo info = new DirectoryInfo(sourcePath);
+            DirectoryInfo info = new DirectoryInfo(_sourcePath);
             List<FileSystemInfo> allfiles = new List<FileSystemInfo>(info.GetFileSystemInfos("*.avi"));
             allfiles.AddRange(info.GetFileSystemInfos("*.wmv"));
             allfiles.AddRange(info.GetFileSystemInfos("*.mp4"));

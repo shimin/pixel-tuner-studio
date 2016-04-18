@@ -11,6 +11,7 @@ using Common.Collections;
 using Common.ViewModel;
 using PixelTuner.ViewModel.Serialization;
 using System.Windows.Input;
+using System.Windows;
 
 namespace PixelTuner.ViewModel
 {
@@ -23,6 +24,11 @@ namespace PixelTuner.ViewModel
         public ItemDragDropManager(TimeLineViewModel timeline)
         {
             _line = timeline;
+        }
+
+        public bool CanAddToTimeLine(ITimeLineMeta meta)
+        {
+            return false;
         }
 
         public bool CanAddToTimeLine(ITimeLineDataItem item, DateTime timePoint)
@@ -40,14 +46,21 @@ namespace PixelTuner.ViewModel
         public FileViewModel Parent
         {
             get { return _parent; }
-            set { _parent = value; }
+            set
+            {
+                _parent = value;
+                if (_parent != null)
+                {
+                    _parent.PropertyChanged -= _parent_PropertyChanged;
+                    _parent.PropertyChanged += _parent_PropertyChanged;
+                }
+            }
         }
 
         Brush _darkLineColor = new SolidColorBrush(Color.FromArgb(255, 64, 64, 64));
 
         Brush _lightLineColor = new SolidColorBrush(Color.FromArgb(255, 70, 70, 70));
 
-        Brush _backGround;
         [XmlIgnore]
         public Brush Background
         {
@@ -66,6 +79,16 @@ namespace PixelTuner.ViewModel
             get { return _isSelectedToUpload; }
             set { _isSelectedToUpload = value; RaisePropertyChanged("IsSelectedToUpload"); }
         }
+        
+        [XmlIgnore]
+        public bool IsMetaDataSet
+        {
+            get
+            {
+                return MetaData != null;
+            }
+        }
+
 
         [XmlIgnore]
         public virtual System.Windows.Visibility IsLineHeightVisible
@@ -88,6 +111,21 @@ namespace PixelTuner.ViewModel
         {
             get { return _isChanged; }
             set { _isChanged = value; if (Parent != null) Parent.IsDirty = true; }
+        }
+
+        System.Windows.Thickness _toolsetMargin = new Thickness(-27, 0, 0, 0);
+        [XmlIgnore]
+        public Thickness ToolsetMargin
+        {
+            get
+            {
+                return _toolsetMargin;
+            }
+
+            set
+            {
+                _toolsetMargin = value; RaisePropertyChanged("ToolsetMargin");
+            }
         }
 
         int _timelineHeightPx = 120;
@@ -113,7 +151,7 @@ namespace PixelTuner.ViewModel
             get { return _defaultLength = PixelTuner.Properties.Settings.Default.DefaultDuration; }
             set { _defaultLength = value; RaisePropertyChanged("DefaultTimeInterval"); }
         }
-
+        
         string _metaDataPath = null;
         [XmlAttribute]
         public string MetaDataPath
@@ -143,6 +181,7 @@ namespace PixelTuner.ViewModel
                         -ce.Geometry.Bounds.Top);
                 }
                 RaisePropertyChanged("MetaData");
+                RaisePropertyChanged("IsMetaDataSet");
             }
         }
 
@@ -349,6 +388,8 @@ namespace PixelTuner.ViewModel
         {
             var timelineCopy = (TimeLineViewModel)Activator.CreateInstance(this.GetType());
             timelineCopy.DefaultTimeInterval = this.DefaultTimeInterval;
+            timelineCopy.MetaData = this.MetaData;
+            timelineCopy.ToolsetMargin = this.ToolsetMargin;
             timelineCopy.Start = this.Start;
             foreach (var item in this.Items)
                 timelineCopy.Items.Add((ITimeLineDataItem)(item as TimeLineItemViewModel).Clone());
@@ -392,8 +433,16 @@ namespace PixelTuner.ViewModel
         }
 
         #endregion
-        
+
         #region Methods
+
+        private void _parent_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "HorizontalScrollPosition")
+            {
+                ToolsetMargin = new Thickness(Parent.HorizontalScrollPosition - 27, 0, 0, 0);
+            }
+        }
 
         public void SetBackgrounds(Color light, Color dark)
         {

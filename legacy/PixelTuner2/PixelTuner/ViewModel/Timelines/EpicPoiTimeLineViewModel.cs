@@ -18,6 +18,11 @@ namespace PixelTuner.ViewModel
             _line = timeline;
         }
 
+        public bool CanAddToTimeLine(ITimeLineMeta meta)
+        {
+            return false;
+        }
+
         public bool CanAddToTimeLine(ITimeLineDataItem item, DateTime timePoint)
         {
             return item is GradientThumbnailViewModel;
