@@ -8,5 +8,6 @@ namespace Common.Controls
 	public interface ITimeLineManager
 	{
 		Boolean CanAddToTimeLine(ITimeLineDataItem item, DateTime timePoint);
-	}
+        Boolean CanAddToTimeLine(ITimeLineMeta meta);
+    }
 }

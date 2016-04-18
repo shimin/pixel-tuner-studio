@@ -1376,11 +1376,20 @@ namespace Common.Controls
 
         private void DragTimeLineMeta(DragEventArgs e, object d2)
         {
+            var d = e.Data.GetData("Common.DragDropHelper") as ITimeLineMeta;
             if (Manager != null)
             {
                 var tmpDAC = new TimeLineItemControl();
                 tmpDAC.UnitSize = UnitSize;
                 tmpDAC.StartTime = StartDate.Add(tmpDAC.ConvertDistanceToTime((Double)e.GetPosition(this).X));
+                if (!Manager.CanAddToTimeLine(d))
+                {
+                    e.Effects = DragDropEffects.None;
+                    e.Handled = true;
+                    if (Children.Contains(_tmpDraggAdornerControl)) Children.Remove(_tmpDraggAdornerControl);
+                    _tmpDraggAdornerControl = null;
+                    return;
+                }
             }
 
             e.Effects = DragDropEffects.Move;

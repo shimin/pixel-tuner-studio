@@ -10,9 +10,41 @@ using System.Windows;
 
 using SD = System.Drawing;
 using SDI = System.Drawing.Imaging;
+using System.Windows.Data;
+using System.Globalization;
 
 namespace Common.Imaging
 {
+    [ValueConversion(typeof(System.Drawing.Image), typeof(System.Windows.Media.ImageSource))]
+    public class ImageConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var image = value as System.Drawing.Image;
+            BitmapImage bitmap = null;
+
+            if (image != null)
+            {
+                bitmap = ImageHelper.BitmapImageFromBitmap(image);
+            }
+
+            return bitmap;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var bitmap = value as BitmapImage;
+            SD.Image image = null;
+
+            if (bitmap != null)
+            {
+                image = ImageHelper.BitmapImageToBitmap<BmpBitmapEncoder>(bitmap);
+            }
+
+            return image;
+        }
+    }
+
     public class ImageHelper
     {
         public static BitmapImage CreateImage(Uri path)
@@ -61,7 +93,7 @@ namespace Common.Imaging
         /// </summary>
         /// <param name="image">Source bitmap</param>
         /// <returns>returns BitmapImage</returns>
-        public static BitmapImage BitmapImageFromBitmap(SD.Bitmap image)
+        public static BitmapImage BitmapImageFromBitmap(SD.Image image)
         {
             MemoryStream ms = new MemoryStream();
             image.Save(ms, SDI.ImageFormat.Bmp);
@@ -516,5 +548,113 @@ namespace Common.Imaging
         }
 
         #endregion
+
+        public static float Clamp(float value, float min, float max)
+        {
+            return (value < min) ? min : (value > max) ? max : value;
+        }
+
+        /// <summary>
+        /// An implementation of Fant's resampling algorithm
+        /// </summary>
+        /// <param name="sourcePixels">source the source pixels</param>
+        /// <param name="destPixels">dest the destination pixels</param>
+        /// <param name="scanLineLength">length the length of the scanline to resample</param>
+        /// <param name="offset">offset the start offset into the arrays</param>
+        /// <param name="stride">stride the offset between pixels in consecutive Rows</param>
+        /// <param name="outPositions">out an array of output positions for each pixel</param>       
+        public static void RowWarpResample(ref int[] sourcePixels, ref int[] destPixels, int scanLineLength, int offset,
+            int stride, float[] outPositions)
+        {
+            int i, j;
+            float sizfac;
+            float inSegment;
+            float outSegment;
+            int a, r, g, b, nextA, nextR, nextG, nextB;
+            float aSum, rSum, gSum, bSum;
+            float[] inArr;
+            int srcIndex = offset;
+            int destIndex = offset;
+            int lastIndex = sourcePixels.Length;
+            int rgb;
+
+            inArr = new float[scanLineLength + 2];
+            i = 0;
+            for (j = 0; j < scanLineLength; j++)
+            {
+                while (outPositions[i + 1] < j)
+                    i++;
+                inArr[j] = i + (float)(j - outPositions[i]) / (outPositions[i + 1] - outPositions[i]);
+                //			inArr[j] = ImageMath.clamp( inArr[j], 0, length-1 );
+            }
+            inArr[scanLineLength] = scanLineLength;
+            inArr[scanLineLength + 1] = scanLineLength;
+
+            inSegment = 1.0f;
+            outSegment = inArr[1];
+            sizfac = outSegment;
+            aSum = rSum = gSum = bSum = 0.0f;
+            rgb = sourcePixels[srcIndex];
+            a = 255; //(rgb >> 24) & 0xff;
+            r = (rgb >> 16) & 0xff;
+            g = (rgb >> 8) & 0xff;
+            b = rgb & 0xff;
+            srcIndex += stride;
+            rgb = sourcePixels[srcIndex];
+            nextA = 255; //(rgb >> 24) & 0xff;
+            nextR = (rgb >> 16) & 0xff;
+            nextG = (rgb >> 8) & 0xff;
+            nextB = rgb & 0xff;
+            srcIndex += stride;
+            i = 1;
+
+            while (i <= scanLineLength)
+            {
+                float aIntensity = inSegment * a + (1.0f - inSegment) * nextA;
+                float rIntensity = inSegment * r + (1.0f - inSegment) * nextR;
+                float gIntensity = inSegment * g + (1.0f - inSegment) * nextG;
+                float bIntensity = inSegment * b + (1.0f - inSegment) * nextB;
+                if (inSegment < outSegment)
+                {
+                    aSum += (aIntensity * inSegment);
+                    rSum += (rIntensity * inSegment);
+                    gSum += (gIntensity * inSegment);
+                    bSum += (bIntensity * inSegment);
+                    outSegment -= inSegment;
+                    inSegment = 1.0f;
+                    a = nextA;
+                    r = nextR;
+                    g = nextG;
+                    b = nextB;
+                    if (srcIndex < lastIndex)
+                        rgb = sourcePixels[srcIndex];
+                    nextA = (rgb >> 24) & 0xff;
+                    nextR = (rgb >> 16) & 0xff;
+                    nextG = (rgb >> 8) & 0xff;
+                    nextB = rgb & 0xff;
+                    srcIndex += stride;
+                }
+                else {
+                    aSum += (aIntensity * outSegment);
+                    rSum += (rIntensity * outSegment);
+                    gSum += (gIntensity * outSegment);
+                    bSum += (bIntensity * outSegment);
+
+                    destPixels[destIndex] =
+                        (255 << 24 |
+                        ((int)Math.Min(rSum / sizfac, 255) << 16) |
+                        ((int)Math.Min(gSum / sizfac, 255) << 8) |
+                        (int)Math.Min(bSum / sizfac, 255));
+
+                    destIndex += stride;
+                    aSum = rSum = gSum = bSum = 0.0f;
+                    inSegment -= outSegment;
+                    outSegment = inArr[i + 1] - inArr[i];
+                    sizfac = outSegment;
+                    i++;
+                }
+            }
+        }
+
     }
 }
