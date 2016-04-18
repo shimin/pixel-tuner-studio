@@ -66,6 +66,12 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>bin\Release\NAudio.XML</DocumentationFile>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>PixelTuner_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -372,9 +378,7 @@
     <Compile Include="Wave\MmeInterop\WaveInterop.cs" />
     <Compile Include="Wave\MmeInterop\WaveOutCapabilities.cs" />
     <Compile Include="Wave\MmeInterop\WaveOutSupport.cs" />
-    <Compile Include="Wave\MmeInterop\WaveWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Wave\MmeInterop\WaveWindow.cs" />
     <Compile Include="Wave\SampleChunkConverters\ISampleChunkConverter.cs" />
     <Compile Include="Wave\SampleChunkConverters\Mono16SampleChunkConverter.cs" />
     <Compile Include="Wave\SampleChunkConverters\Mono24SampleChunkConverter.cs" />
@@ -525,7 +529,9 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="PixelTuner_TemporaryKey.pfx" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

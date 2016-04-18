@@ -46,7 +46,7 @@ namespace Workspace.PageTransitions
 		public void ShowPage(UserControl newPage)
 		{			
 			pages.Push(newPage);
-
+            this.DataContext = newPage.DataContext;
 			Task.Factory.StartNew(() => ShowNewPage());
 		}
 
