@@ -71,9 +71,9 @@
                                     Grid.Row="0"
                                     BorderThickness="0,0,0,1"
                                     Panel.ZIndex="0">
-                                <Canvas Name="PART_Timeline"
-                                        ClipToBounds="True"
-                                        Height="20" />
+                                <local:RulerTimelineElement Name="PART_Timeline"
+                                            ClipToBounds="True"
+                                            Height="20" />
                             </Border>
                             <Canvas Name="PART_Repeat"
                                     Grid.Row="1"

@@ -142,6 +142,8 @@ namespace NAudio.Wave
             }
         }
 
+        int _sampleFrame = 5;
+        int _samplesAdded = 0;
 
         /// <summary>
         /// Reads bytes from this wave stream
@@ -180,7 +182,8 @@ namespace NAudio.Wave
                         destWaveBuffer.FloatBuffer[outIndex++] = left;
                         destWaveBuffer.FloatBuffer[outIndex++] = right;
                         bytesWritten += 8;
-                        if (Sample != null) RaiseSample(left, right);
+                        _samplesAdded++;
+                        if (Sample != null && _samplesAdded % _sampleFrame == 0) RaiseSample(left, right);
                     }
                 }
                 // 3. Fill out with zeroes

@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,7 +38,7 @@ namespace WPFSoundVisualizationLib
     [Description("Displays a stereo waveform and allows a user to change playback position.")]
     [ToolboxItem(true)]
     [TemplatePart(Name = "PART_Waveform", Type = typeof(Canvas)),
-     TemplatePart(Name = "PART_Timeline", Type = typeof(Canvas)),
+     TemplatePart(Name = "PART_Timeline", Type = typeof(RulerTimelineElement)),
      TemplatePart(Name = "PART_Repeat", Type = typeof(Canvas)),
      TemplatePart(Name = "PART_Progress", Type = typeof(Canvas))]
     public class WaveformTimeline : Control
@@ -46,7 +47,7 @@ namespace WPFSoundVisualizationLib
         private IWaveformPlayer soundPlayer;
         private Canvas waveformCanvas;
         private Canvas repeatCanvas;
-        private Canvas timelineCanvas;
+        private RulerTimelineElement timelineCanvas;
         private Canvas progressCanvas;
         private readonly Path leftPath = new Path();
         private readonly Path rightPath = new Path();
@@ -54,24 +55,21 @@ namespace WPFSoundVisualizationLib
         private readonly Rectangle repeatRegion = new Rectangle();
         private readonly Line progressLine = new Line();
         private readonly Path progressIndicator = new Path();
-        private readonly List<Line> timeLineTicks = new List<Line>();
-        private readonly Rectangle timelineBackgroundRegion = new Rectangle();
-        private readonly List<TextBlock> timestampTextBlocks = new List<TextBlock>();
+        private readonly double VerticalScale = 1.2d;
+        private double ChannelLength = double.NaN;
         private bool isMouseDown;
         private bool isMouseScaling;
         private Point mouseScalingPoint;
         private Point mouseDownPoint;
         private Point currentPoint;
         private double startLoopRegion = -1;
-        private double endLoopRegion = -1;        
+        private double endLoopRegion = -1;
+        private Size _initialSize = Size.Empty; 
         #endregion
 
         #region Constants
         private const int mouseMoveTolerance = 3;
         private const int indicatorTriangleWidth = 4;
-        private const int majorTickHeight = 10;
-        private const int minorTickHeight = 3;
-        private const int timeStampMargin = 5;
         #endregion
 
         #region Dependency Properties
@@ -115,7 +113,7 @@ namespace WPFSoundVisualizationLib
         protected virtual void OnLeftLevelBrushChanged(Brush oldValue, Brush newValue)
         {
             leftPath.Fill = LeftLevelBrush;
-            UpdateWaveform();
+            GenerateWaveform();
         }
 
         /// <summary>
@@ -176,7 +174,7 @@ namespace WPFSoundVisualizationLib
         protected virtual void OnRightLevelBrushChanged(Brush oldValue, Brush newValue)
         {
             rightPath.Fill = RightLevelBrush;
-            UpdateWaveform();
+            GenerateWaveform();
         }
 
         /// <summary>
@@ -321,7 +319,7 @@ namespace WPFSoundVisualizationLib
             }
         }
         #endregion
-
+        
         #region CenterLineBrush
         /// <summary>
         /// Identifies the <see cref="CenterLineBrush" /> dependency property. 
@@ -362,7 +360,7 @@ namespace WPFSoundVisualizationLib
         protected virtual void OnCenterLineBrushChanged(Brush oldValue, Brush newValue)
         {
             centerLine.Stroke = CenterLineBrush;
-            UpdateWaveform();
+            GenerateWaveform();
         }
 
         /// <summary>
@@ -424,7 +422,7 @@ namespace WPFSoundVisualizationLib
         protected virtual void OnCenterLineThicknessChanged(double oldValue, double newValue)
         {
             centerLine.StrokeThickness = CenterLineThickness;
-            UpdateWaveform();
+            GenerateWaveform();
         }
 
         /// <summary>
@@ -610,7 +608,7 @@ namespace WPFSoundVisualizationLib
         /// <param name="newValue">The new value of <see cref="TimelineTickBrush"/></param>
         protected virtual void OnTimelineTickBrushChanged(Brush oldValue, Brush newValue)
         {
-            UpdateTimeline();
+            UpdateTimeTickInterval();
             InitTimeLabels();
         }
 
@@ -631,77 +629,7 @@ namespace WPFSoundVisualizationLib
             }
         }
         #endregion
-
-        #region AutoScaleWaveformCache
-        /// <summary>
-        /// Identifies the <see cref="AutoScaleWaveformCache" /> dependency property. 
-        /// </summary>
-        public static readonly DependencyProperty AutoScaleWaveformCacheProperty = DependencyProperty.Register("AutoScaleWaveformCache", typeof(bool), typeof(WaveformTimeline), new UIPropertyMetadata(false, OnAutoScaleWaveformCacheChanged, OnCoerceAutoScaleWaveformCache));
-
-        private static object OnCoerceAutoScaleWaveformCache(DependencyObject o, object value)
-        {
-            WaveformTimeline waveformTimeline = o as WaveformTimeline;
-            if (waveformTimeline != null)
-                return waveformTimeline.OnCoerceAutoScaleWaveformCache((bool)value);
-            else
-                return value;
-        }
-
-        private static void OnAutoScaleWaveformCacheChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
-        {
-            WaveformTimeline waveformTimeline = o as WaveformTimeline;
-            if (waveformTimeline != null)
-                waveformTimeline.OnAutoScaleWaveformCacheChanged((bool)e.OldValue, (bool)e.NewValue);
-        }
-
-        /// <summary>
-        /// Coerces the value of <see cref="AutoScaleWaveformCache"/> when a new value is applied.
-        /// </summary>
-        /// <param name="value">The value that was set on <see cref="AutoScaleWaveformCache"/></param>
-        /// <returns>The adjusted value of <see cref="AutoScaleWaveformCache"/></returns>
-        protected virtual bool OnCoerceAutoScaleWaveformCache(bool value)
-        {
-            return value;
-        }
-
-        /// <summary>
-        /// Called after the <see cref="AutoScaleWaveformCache"/> value has changed.
-        /// </summary>
-        /// <param name="oldValue">The previous value of <see cref="AutoScaleWaveformCache"/></param>
-        /// <param name="newValue">The new value of <see cref="AutoScaleWaveformCache"/></param>
-        protected virtual void OnAutoScaleWaveformCacheChanged(bool oldValue, bool newValue)
-        {
-            UpdateWaveformCacheScaling();
-        }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether the waveform should attempt to autoscale
-        /// its render buffer in size.
-        /// </summary>
-        /// <remarks>
-        /// If true, the control will attempt to set the waveform's bitmap cache
-        /// at a resolution based on the sum of all ScaleTransforms applied
-        /// in the control's visual tree heirarchy. This can make the waveform appear
-        /// less blurry if a ScaleTransform is applied at a higher level.
-        /// The only ScaleTransforms that are considered here are those that have 
-        /// uniform vertical and horizontal scaling (generally used to "zoom in"
-        /// on a window or controls).
-        /// </remarks>
-        [Category("Common")]
-        public bool AutoScaleWaveformCache
-        {
-            // IMPORTANT: To maintain parity between setting a property in XAML and procedural code, do not touch the getter and setter inside this dependency property!
-            get
-            {
-                return (bool)GetValue(AutoScaleWaveformCacheProperty);
-            }
-            set
-            {
-                SetValue(AutoScaleWaveformCacheProperty, value);
-            }
-        }
-        #endregion
-
+        
         #region ScalingCommand
 
         public static DependencyProperty ScalingCommandProperty
@@ -766,21 +694,18 @@ namespace WPFSoundVisualizationLib
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-
+            
             waveformCanvas = GetTemplateChild("PART_Waveform") as Canvas;
-            waveformCanvas.CacheMode = new BitmapCache();
-
+            
             // Used to make the transparent regions clickable.
-            waveformCanvas.Background = new SolidColorBrush(Colors.Transparent);
+            waveformCanvas.Background = new SolidColorBrush(Color.FromArgb(8, 255, 255, 255));
 
             waveformCanvas.Children.Add(centerLine);
             waveformCanvas.Children.Add(leftPath);
             waveformCanvas.Children.Add(rightPath);
 
-            timelineCanvas = GetTemplateChild("PART_Timeline") as Canvas;
-            timelineCanvas.Background = new SolidColorBrush(Color.FromArgb(8,255,255,255));
-            timelineCanvas.Children.Add(timelineBackgroundRegion);
-            timelineCanvas.SizeChanged += timelineCanvas_SizeChanged;
+            timelineCanvas = GetTemplateChild("PART_Timeline") as RulerTimelineElement;
+            timelineCanvas.LayoutBrush = TimelineTickBrush;
 
             repeatCanvas = GetTemplateChild("PART_Repeat") as Canvas;
             repeatCanvas.Children.Add(repeatRegion);
@@ -788,10 +713,8 @@ namespace WPFSoundVisualizationLib
             progressCanvas = GetTemplateChild("PART_Progress") as Canvas;
             progressCanvas.Children.Add(progressIndicator);
             progressCanvas.Children.Add(progressLine);
-
-            UpdateWaveformCacheScaling();            
-        }            
-
+        }
+        
         /// <summary>
         /// Called whenever the control's template changes. 
         /// </summary>
@@ -802,11 +725,6 @@ namespace WPFSoundVisualizationLib
             base.OnTemplateChanged(oldTemplate, newTemplate);
             if(waveformCanvas != null)
                 waveformCanvas.Children.Clear();
-            if (timelineCanvas != null)
-            {
-                timelineCanvas.SizeChanged -= timelineCanvas_SizeChanged;
-                timelineCanvas.Children.Clear();
-            }
             if(repeatCanvas != null)
                 repeatCanvas.Children.Clear();
             if(progressCanvas != null)
@@ -848,7 +766,7 @@ namespace WPFSoundVisualizationLib
                     UpdateRepeatRegion();
                     break;
                 case "WaveformData":
-                    UpdateWaveform();
+                    GenerateWaveform();
                     break;
                 case "ChannelPosition":
                     UpdateProgressIndicator();
@@ -857,15 +775,10 @@ namespace WPFSoundVisualizationLib
                     startLoopRegion = -1;
                     endLoopRegion = -1;
                     UpdateAllRegions();
-                    InitTimeLabels();
                     break;
             }
         }
-
-        private void timelineCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            //UpdateTimeline();
-        }       
+       
         #endregion
 
         #region Event Overrides
@@ -876,11 +789,17 @@ namespace WPFSoundVisualizationLib
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
             base.OnRenderSizeChanged(sizeInfo);
-            UpdateWaveformCacheScaling();
-            UpdateAllRegions();
-            if (timelineCanvas != null && timelineCanvas.Children.Count > 0) InitTimeLabels();
-        }
+            
+            if (leftPath.Data == null || rightPath.Data == null) { GenerateWaveform(); }
+            if (_initialSize.Width <= 1 || _initialSize.Height <= 1) _initialSize = waveformCanvas.RenderSize;
 
+            double xScale = waveformCanvas.RenderSize.Width / _initialSize.Width;
+            double yScale = waveformCanvas.RenderSize.Height / _initialSize.Height * VerticalScale;
+            SetTransform(xScale, yScale);
+            
+            UpdateAllRegions();
+        }
+        
         /// <summary>
         /// Invoked when an unhandled MouseLeftButtonDown routed event is raised on this element. Implement this method to add class handling for this event.
         /// </summary>
@@ -997,24 +916,7 @@ namespace WPFSoundVisualizationLib
         #endregion
 
         #region Private Utiltiy Methods
-        private void UpdateWaveformCacheScaling()
-        {
-            if (waveformCanvas == null)
-                return;
-
-            BitmapCache waveformCache = (BitmapCache)waveformCanvas.CacheMode;
-            if (AutoScaleWaveformCache)
-            {
-                double totalTransformScale = GetTotalTransformScale();
-                if (waveformCache.RenderAtScale != totalTransformScale)
-                    waveformCache.RenderAtScale = totalTransformScale;
-            }
-            else
-            {
-                waveformCache.RenderAtScale = 1.0d;
-            }
-        }
-
+        
         private bool PointInRepeatRegion(Point point)
         {
             if (soundPlayer.ChannelLength == 0)
@@ -1060,8 +962,7 @@ namespace WPFSoundVisualizationLib
         {
             UpdateRepeatRegion();
             CreateProgressIndicator();
-            UpdateTimeline();
-            UpdateWaveform();
+            UpdateTimeTickInterval();
         }
 
         private void UpdateRepeatRegion()
@@ -1090,134 +991,56 @@ namespace WPFSoundVisualizationLib
         double minorTickDuration = 0.05d; // Major tick = 5 seconds, Minor tick = 1.00 second
         double majorTickDuration = 0.25d;
 
-        private void UpdateTimeline()
+        private void UpdateTimeTickInterval()
         {
             if (soundPlayer == null || timelineCanvas == null)
                 return;
 
-            timelineBackgroundRegion.Width = timelineCanvas.RenderSize.Width;
-            timelineBackgroundRegion.Height = timelineCanvas.RenderSize.Height;
+            double controlWidth = this.RenderSize.Width;
 
-            if (this.Width / soundPlayer.ChannelLength >= 600.0d) // Major tick = 250 ms, Minor tick = 50 ms.
+            if (controlWidth / soundPlayer.ChannelLength >= 600.0d) // Major tick = 250 ms, Minor tick = 50 ms.
             {
                 minorTickDuration = 0.05d;
                 majorTickDuration = 0.25d;
             }
-            else if (this.Width / soundPlayer.ChannelLength >= 200.0d) // Major tick = 0.5 sec, Minor tick = 100 ms.
+            else if (controlWidth / soundPlayer.ChannelLength >= 120.0d) // Major tick = 0.5 sec, Minor tick = 100 ms.
             {
                 minorTickDuration = 0.1d;
                 majorTickDuration = 0.5d;
             }
-            else if (this.Width / soundPlayer.ChannelLength >= 60.0d) // Major tick = 1 seconds, Minor tick = 200 seconds.
+            else if (controlWidth / soundPlayer.ChannelLength >= 80.0d) // Major tick = 0.5 sec, Minor tick = 100 ms.
             {
                 minorTickDuration = 0.2d;
-                majorTickDuration = 1.0d;
+                majorTickDuration = 1d;
             }
-            else if (this.Width / soundPlayer.ChannelLength >= 30.0d) // Major tick = 10 seconds, Minor tick = 1.0 seconds.
+            else if (controlWidth / soundPlayer.ChannelLength >= 40.0d) // Major tick = 1 seconds, Minor tick = 200 seconds.
             {
-                minorTickDuration = 1.0d;
-                majorTickDuration = 5.0d;
+                minorTickDuration = 0.4d;
+                majorTickDuration = 2.0d;
             }
-            else if (this.Width / soundPlayer.ChannelLength >= 10.0d) // Major tick = 10 seconds, Minor tick = 2.0 seconds.
+            else if (controlWidth / soundPlayer.ChannelLength >= 20.0d) // Major tick = 5 seconds, Minor tick = 1.0 seconds.
+            {
+                minorTickDuration = 0.8d;
+                majorTickDuration = 4.0d;
+            }
+            else if (controlWidth / soundPlayer.ChannelLength >= 0d) // Major tick = 10 seconds, Minor tick = 2.0 seconds.
             {
                 minorTickDuration = 2.0d;
                 majorTickDuration = 10.0d;
             }
+            timelineCanvas.TickDuration = minorTickDuration;
         }
-
+        
         private void InitTimeLabels()
         {
-            if (soundPlayer == null || timelineCanvas == null)
-                return;
-
-            if (soundPlayer.ChannelLength < minorTickDuration)
-                return;
-
-            var rect = timelineCanvas.Children[0];
-            timelineCanvas.Children.Clear();
-            timelineCanvas.Children.Add(rect);
-            timestampTextBlocks.Clear();
-            timeLineTicks.Clear();
-
-            double bottomLoc = timelineCanvas.RenderSize.Height - 1;
-
-            int minorTickCount = (int)(soundPlayer.ChannelLength / minorTickDuration);
-            for (int i = 1; i <= minorTickCount; i++)
+            if (soundPlayer != null && timelineCanvas != null)
             {
-                Line timelineTick = new Line()
-                {
-                    Stroke = TimelineTickBrush,
-                    StrokeThickness = 1.0d
-                };
-                if (i % (majorTickDuration / minorTickDuration) == 0) // Draw Large Ticks and Timestamps at minute marks
-                {
-                    double xLocation = ((i * minorTickDuration) / soundPlayer.ChannelLength) * timelineCanvas.RenderSize.Width;
-
-                    bool drawTextBlock = false;
-                    double lastTimestampEnd;
-                    if (timestampTextBlocks.Count != 0)
-                    {
-                        TextBlock lastTextBlock = timestampTextBlocks[timestampTextBlocks.Count - 1];
-
-                        lastTimestampEnd = lastTextBlock.Margin.Left + lastTextBlock.ActualWidth;
-                    }
-                    else
-                        lastTimestampEnd = 0;
-
-                    if (xLocation > lastTimestampEnd + timeStampMargin)
-                        drawTextBlock = true;
-
-                    // Flag that we're at the end of the timeline such 
-                    // that there is not enough room for the text to draw.
-                    bool isAtEndOfTimeline = (timelineCanvas.RenderSize.Width - xLocation < 28.0d);
-
-                    if (drawTextBlock)
-                    {
-                        timelineTick.X1 = xLocation;
-                        timelineTick.Y1 = bottomLoc;
-                        timelineTick.X2 = xLocation;
-                        timelineTick.Y2 = bottomLoc - majorTickHeight;
-
-                        if (isAtEndOfTimeline)
-                            continue;
-
-                        TimeSpan timeSpan = TimeSpan.FromSeconds(i * minorTickDuration);
-                        TextBlock timestampText = new TextBlock()
-                        {
-                            Margin = new Thickness(xLocation + 2, 0, 0, 0),
-                            FontFamily = this.FontFamily,
-                            FontStyle = this.FontStyle,
-                            FontWeight = this.FontWeight,
-                            FontStretch = this.FontStretch,
-                            FontSize = this.FontSize,
-                            Foreground = this.Foreground,
-                            Text = (timeSpan.TotalHours >= 1.0d) ? string.Format(@"{0:hh\:mm\:ss\:fff}", timeSpan) : string.Format(@"{0:mm\:ss\:fff}", timeSpan)
-                        };
-                        timestampTextBlocks.Add(timestampText);
-                        timelineCanvas.Children.Add(timestampText);
-                        //UpdateLayout(); // Needed so that we know the width of the textblock.
-                    }
-                    else // If still on the text block, draw a minor tick mark instead of a major.
-                    {
-                        timelineTick.X1 = xLocation;
-                        timelineTick.Y1 = bottomLoc;
-                        timelineTick.X2 = xLocation;
-                        timelineTick.Y2 = bottomLoc - minorTickHeight;
-                    }
-                }
-                else // Draw small ticks
-                {
-                    double xLocation = ((i * minorTickDuration) / soundPlayer.ChannelLength) * timelineCanvas.RenderSize.Width;
-                    timelineTick.X1 = xLocation;
-                    timelineTick.Y1 = bottomLoc;
-                    timelineTick.X2 = xLocation;
-                    timelineTick.Y2 = bottomLoc - minorTickHeight;
-                }
-                timeLineTicks.Add(timelineTick);
-                timelineCanvas.Children.Add(timelineTick);
+                if (soundPlayer.ChannelLength <= minorTickDuration) return;
+                timelineCanvas.Initialize(soundPlayer.ChannelLength, minorTickDuration);
+                ChannelLength = SoundPlayer.ChannelLength;
             }
         }
-
+        
         private void CreateProgressIndicator()
         {
             if (soundPlayer == null || timelineCanvas == null || progressCanvas == null)
@@ -1259,11 +1082,29 @@ namespace WPFSoundVisualizationLib
             progressIndicator.Margin = new Thickness(xLocation, 0, 0, 0);
         }
 
-        private void UpdateWaveform()
+        private void SetTransform(double xScale, double yScale)
+        {
+            var transform = new TransformGroup();
+            var scale = new ScaleTransform(xScale, yScale);
+            var translate = new TranslateTransform(0, waveformCanvas.ActualHeight / 2);
+
+            transform.Children.Add(scale);
+            transform.Children.Add(translate);
+
+            leftPath.RenderTransform = transform;
+            rightPath.RenderTransform = transform;
+            centerLine.RenderTransform = transform;
+        }
+
+        private void GenerateWaveform()
         {
             const double minValue = 0;
             const double maxValue = 1.5;
             const double dbScale = (maxValue - minValue);
+
+            rightPath.RenderTransformOrigin = new Point(0, 0);
+            centerLine.RenderTransformOrigin = new Point(0, 0);
+            leftPath.RenderTransformOrigin = new Point(0, 0);
 
             if (soundPlayer == null || soundPlayer.WaveformData == null || waveformCanvas == null ||
                 waveformCanvas.RenderSize.Width < 1 || waveformCanvas.RenderSize.Height < 1)
@@ -1274,59 +1115,65 @@ namespace WPFSoundVisualizationLib
 
             int pointCount = (int)(soundPlayer.WaveformData.Length / 2.0d);
             double pointThickness = waveformCanvas.RenderSize.Width / pointCount;
-            double waveformSideHeight = waveformCanvas.RenderSize.Height / 2.0d;
-            double centerHeight = waveformSideHeight;
+            double waveformSideHeight = waveformCanvas.RenderSize.Height / 2.0d * VerticalScale;
 
             if (CenterLineBrush != null)
             {
                 centerLine.X1 = 0;
                 centerLine.X2 = waveformCanvas.RenderSize.Width;
-                centerLine.Y1 = centerHeight;
-                centerLine.Y2 = centerHeight;
+                centerLine.Y1 = 0;
+                centerLine.Y2 = 0;
             }
 
-            if (soundPlayer.WaveformData != null && soundPlayer.WaveformData.Length > 1)
+            var WaveformLeft = new StreamGeometry();
+            WaveformLeft.FillRule = FillRule.EvenOdd;
+            var WaveformRight = new StreamGeometry();
+            WaveformRight.FillRule = FillRule.EvenOdd;
+
+
+            using (StreamGeometryContext left = WaveformLeft.Open())
             {
-                PolyLineSegment leftWaveformPolyLine = new PolyLineSegment();
-                leftWaveformPolyLine.Points.Add(new Point(0, centerHeight));
-
-                PolyLineSegment rightWaveformPolyLine = new PolyLineSegment();
-                rightWaveformPolyLine.Points.Add(new Point(0, centerHeight));
-
-                double xLocation = 0.0d;
-                for (int i = 0; i < soundPlayer.WaveformData.Length; i += 2)
+                using (StreamGeometryContext right = WaveformRight.Open())
                 {
-                    xLocation = (i / 2) * pointThickness;
-                    leftRenderHeight = ((soundPlayer.WaveformData[i] - minValue) / dbScale) * waveformSideHeight;
-                    leftWaveformPolyLine.Points.Add(new Point(xLocation, centerHeight - leftRenderHeight));
-                    rightRenderHeight = ((soundPlayer.WaveformData[i + 1] - minValue) / dbScale) * waveformSideHeight;
-                    rightWaveformPolyLine.Points.Add(new Point(xLocation, centerHeight + rightRenderHeight));
+                    if (soundPlayer.WaveformData != null && soundPlayer.WaveformData.Length > 1)
+                    {
+                        left.BeginFigure(new Point(0, 0), true, true);
+                        right.BeginFigure(new Point(0, 0), true, true);
+
+                        double xLocation = 0.0d;
+                        for (int i = 0; i < soundPlayer.WaveformData.Length; i += 2)
+                        {
+                            xLocation = (i / 2) * pointThickness;
+                            leftRenderHeight = ((soundPlayer.WaveformData[i] - minValue) / dbScale) * waveformSideHeight;
+                            left.LineTo(new Point(xLocation, -leftRenderHeight), true, false);
+                            rightRenderHeight = ((soundPlayer.WaveformData[i + 1] - minValue) / dbScale) * waveformSideHeight;
+                            right.LineTo(new Point(xLocation, rightRenderHeight), true, false);
+                        }
+
+                        left.LineTo(new Point(xLocation, 0), true, false);
+                        right.LineTo(new Point(xLocation, 0), true, false);
+                    }
+                    else
+                    {
+                        WaveformLeft = null;
+                        WaveformRight = null;
+                    }
                 }
-
-                leftWaveformPolyLine.Points.Add(new Point(xLocation, centerHeight));
-                leftWaveformPolyLine.Points.Add(new Point(0, centerHeight));
-                rightWaveformPolyLine.Points.Add(new Point(xLocation, centerHeight));
-                rightWaveformPolyLine.Points.Add(new Point(0, centerHeight));
-
-                PathGeometry leftGeometry = new PathGeometry();
-                PathFigure leftPathFigure = new PathFigure();
-                leftPathFigure.Segments.Add(leftWaveformPolyLine);
-                leftGeometry.Figures.Add(leftPathFigure);
-                PathGeometry rightGeometry = new PathGeometry();
-                PathFigure rightPathFigure = new PathFigure();
-                rightPathFigure.Segments.Add(rightWaveformPolyLine);
-                rightGeometry.Figures.Add(rightPathFigure);
-
-                leftPath.Data = leftGeometry;
-                rightPath.Data = rightGeometry;
             }
-            else
+            WaveformLeft.Freeze();
+            WaveformRight.Freeze();
+
+            leftPath.Data = WaveformLeft;
+            rightPath.Data = WaveformRight;
+
+            SetTransform(1, VerticalScale);
+            _initialSize = waveformCanvas.RenderSize;
+
+            if (ChannelLength != SoundPlayer.ChannelLength)
             {
-                leftPath.Data = null;
-                rightPath.Data = null;
+                InitTimeLabels();
             }
         }
         #endregion
-
     }
 }
