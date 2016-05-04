@@ -87,6 +87,7 @@ namespace PixelTuner
             foreach (var f in filesToClose)
             {
                 if (!RootViewModel.This.Close(f)) e.Cancel = true;
+                else f.Dispose();
             }
         }
 

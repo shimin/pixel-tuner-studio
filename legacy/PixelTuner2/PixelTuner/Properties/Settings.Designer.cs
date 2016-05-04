@@ -49,7 +49,7 @@ namespace PixelTuner.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        [global::System.Configuration.DefaultSettingValueAttribute("4")]
         public float DefaultDuration {
             get {
                 return ((float)(this["DefaultDuration"]));
@@ -61,7 +61,7 @@ namespace PixelTuner.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("20")]
+        [global::System.Configuration.DefaultSettingValueAttribute("4")]
         public int DefaultStretching {
             get {
                 return ((int)(this["DefaultStretching"]));

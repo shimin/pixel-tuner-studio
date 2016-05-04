@@ -95,7 +95,7 @@ namespace PixelTuner.ViewModel
                     }
                     else AsyncRefreshCollection();
                 }
-                catch (ThreadAbortException) { }
+                catch { }
             });
             t.Start(new RefreshParameters(height, itemToRemove));
         }

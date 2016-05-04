@@ -278,6 +278,7 @@ namespace PixelTuner.ViewModel
                 RaisePropertyChanged("UnitSize");
                 RaisePropertyChanged("UnitSizeStep");
                 RaisePropertyChanged("WaveFormLength");
+                RaisePropertyChanged("PlaybackPointerPosition");
             }
         }
 
@@ -387,11 +388,21 @@ namespace PixelTuner.ViewModel
         {
             get
             {
-                return SoundPlayer != null ? PixelTuner.Properties.Settings.Default.UnitSize * SoundPlayer.ChannelLength : 0;
+                return SoundPlayer != null ? Settings.Default.UnitSize * SoundPlayer.ChannelLength : 0;
             }
             set
             {
             }
+        }
+
+        [XmlIgnore]
+        public Double PlaybackPointerPosition
+        {
+            get
+            {
+                return SoundPlayer != null ? Settings.Default.UnitSize * SoundPlayer.ChannelPosition - 200 : 0;
+            }
+            set { }
         }
 
         [XmlIgnore]
@@ -505,6 +516,7 @@ namespace PixelTuner.ViewModel
 
         private void OnClose()
         {
+            Dispose();
             RootViewModel.This.Close(this);
         }
         #endregion
@@ -615,7 +627,7 @@ namespace PixelTuner.ViewModel
         {
             var dlg = new OpenFileDialog();
             dlg.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            dlg.Filter = "Audio file|*.mp3";
+            dlg.Filter = "All Supported Files (*.wav;*.mp3)|*.wav;*.mp3|All Files (*.*)|*.*";
             string path = parameter as string;
             if (path == null || !File.Exists(path))
             {

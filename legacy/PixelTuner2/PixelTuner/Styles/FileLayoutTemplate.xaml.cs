@@ -7,12 +7,15 @@ using System.Windows.Media;
 using PixelTuner.ViewModel;
 using Common.ViewModel;
 using NAudio;
+using System.Windows;
+using System.ComponentModel;
 
 namespace PixelTuner.Styles
 {
     public partial class FileLayoutTemplate : System.Windows.ResourceDictionary
     {
         private Grid gridControl = null;
+        private ScrollViewer _waveformScroll = null;
 
         private void Grid_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
         {
@@ -102,37 +105,7 @@ namespace PixelTuner.Styles
             }
             catch { }
         }
-
-        public void InitializePlayback(NAudioEngine soundEngine)
-        {
-            if (gridControl != null)
-            {
-                var playButton = gridControl.FindName("boxPlayButton") as Button;
-                if (playButton != null)
-                    UIHelper.Bind(soundEngine, "CanPlay", playButton, Button.IsEnabledProperty);
-
-                var pauseButton = gridControl.FindName("boxPauseButton") as Button;
-                if (pauseButton != null)
-                    UIHelper.Bind(soundEngine, "CanPause", pauseButton, Button.IsEnabledProperty);
-
-                var stopButton = gridControl.FindName("boxStopButton") as Button;
-                if (stopButton != null)
-                    UIHelper.Bind(soundEngine, "CanStop", stopButton, Button.IsEnabledProperty);
-
-                var waveformTimeline = gridControl.FindName("boxWaveform") as WPFSoundVisualizationLib.WaveformTimeline;
-                if (waveformTimeline != null)
-                    waveformTimeline.RegisterSoundPlayer(soundEngine);
-                //UIHelper.Bind(soundEngine, "SelectionBegin", repeatStartTimeEdit, TimeEditor.ValueProperty, BindingMode.TwoWay);
-                //UIHelper.Bind(soundEngine, "SelectionEnd", repeatStopTimeEdit, TimeEditor.ValueProperty, BindingMode.TwoWay);
-            }
-        }
-
-        private void Grid_Loaded(object sender, System.Windows.RoutedEventArgs e)
-        {
-            gridControl = (Grid)sender;
-            (gridControl.DataContext as FileViewModel).InitializePlayback = InitializePlayback;
-        }
-
+        
         private void boxGrid_RequestBringIntoView(object sender, System.Windows.RequestBringIntoViewEventArgs e)
         {
             e.Handled = true;
@@ -151,6 +124,27 @@ namespace PixelTuner.Styles
                 RootViewModel.This.ActiveDocument.HorizontalScrollPosition = e.HorizontalOffset;
             }
             e.Handled = false;
+        }
+        
+        private void FileLayoutTemplate_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if(e.PropertyName == "PlaybackPointerPosition")
+            {
+                if (_waveformScroll != null)
+                {
+                    FileViewModel vm = _waveformScroll.DataContext as FileViewModel;
+                    if (vm != null) _waveformScroll.ScrollToHorizontalOffset(vm.PlaybackPointerPosition);
+                }
+            }
+        }
+
+        private void boxScroll_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            _waveformScroll = sender as ScrollViewer;
+            if (_waveformScroll != null)
+            {
+                (_waveformScroll.DataContext as INotifyPropertyChanged).PropertyChanged += FileLayoutTemplate_PropertyChanged;
+            }
         }
     }
 }

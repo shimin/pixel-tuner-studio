@@ -60,9 +60,14 @@
                 </xctk:DropDownButton.DropDownContent>
             </xctk:DropDownButton>
             <TextBlock Grid.Row="0" Grid.Column="1" Margin="16,4,4,0" Foreground="{StaticResource TextBrush}" Text="{StaticResource Doc_Lbl_Scale}"/>
-            <Slider x:Name="Slider_Scale" Grid.Row="0" Grid.Column="2" Margin="2" 
-                                Minimum="{Binding MinUnitSize}" Maximum="{Binding MaxUnitSize}" 
-                                Value="{Binding UnitSize, Converter={StaticResource LogUnitSizeConverter}}"/>
+            <Slider x:Name="Slider_Scale" 
+                    Grid.Row="0" 
+                    Grid.Column="2" 
+                    Margin="2" 
+                    Minimum="{Binding MinUnitSize}" 
+                    Maximum="{Binding MaxUnitSize}" 
+                    Value="{Binding UnitSize, Converter={StaticResource LogUnitSizeConverter}}"/>
+            
             <TextBlock Grid.Column="3" Margin="16,4,4,0" Foreground="{StaticResource TextBrush}" Text="{StaticResource Doc_Lbl_Height}" />
             <StackPanel Grid.Row="0" Grid.Column="5" Margin="12,-2,1,1"  Orientation="Horizontal" Height="26">
                 <Button Name="boxOpenAudioButton" Width="88" Height="22" Margin="0,0,8,0" Command="{Binding OpenAudio}" Content="{StaticResource Doc_Lbl_ImportTrack}" Focusable="False"></Button>
@@ -152,6 +157,7 @@
                           ScrollChanged="ScrollViewer_ScrollChanged"
                           Grid.ColumnSpan="6"
                           Grid.RowSpan="1"
+                          Loaded="boxScroll_Loaded"
                           HorizontalAlignment="Stretch"
                           HorizontalScrollBarVisibility="Auto" 
                           VerticalScrollBarVisibility="Disabled">
@@ -164,13 +170,15 @@
 
                     <svl:WaveformTimeline
                         Grid.Row="0" 
-                        Name="boxWaveform" 
+                        x:Name="boxWaveform" 
                         Height="Auto"
                         Margin="26,0,0,0"
                         HorizontalAlignment="Left" 
                         VerticalAlignment="Stretch"
                         Width="{Binding WaveFormLength}" 
                         Opacity="0.5"
+                        TimelineTickBrush="White"
+                        ProgressBarBrush="White"
                         BorderThickness="1" 
                         SoundPlayer="{Binding SoundPlayer}" 
                         LeftLevelBrush="{StaticResource WaveformLeftLevelBrush}" 

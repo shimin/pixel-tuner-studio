@@ -508,25 +508,25 @@
       <Project>{da4f02e3-0b5e-42cd-b8d9-5583fa51d66e}</Project>
       <Name>NAudio</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WpfTools\Toolkit\Toolkit.csproj">
-      <Project>{72E591D6-8F83-4D8C-8F67-9C325E623234}</Project>
-      <Name>Toolkit</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WpfTools\Workspace.PageTransitions\Workspace.PageTransitions.csproj">
-      <Project>{22A46D61-1D40-43A9-802C-B9D43DADD9EC}</Project>
-      <Name>Workspace.PageTransitions</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WpfTools\Workspace.Themes\Workspace.Themes.csproj">
-      <Project>{D422C9D7-B4EA-4154-949B-FAC4D9DC89D2}</Project>
-      <Name>Workspace.Themes</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WpfTools\Workspace\Workspace.csproj">
-      <Project>{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}</Project>
-      <Name>Workspace</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Communication\Communication.csproj">
       <Project>{DA6AD361-E034-4A14-BA94-8605A21D2E70}</Project>
       <Name>Communication</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WpfTools\Toolkit\Toolkit.csproj">
+      <Project>{72e591d6-8f83-4d8c-8f67-9c325e623234}</Project>
+      <Name>Toolkit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WpfTools\Workspace.PageTransitions\Workspace.PageTransitions.csproj">
+      <Project>{22a46d61-1d40-43a9-802c-b9d43dadd9ec}</Project>
+      <Name>Workspace.PageTransitions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WpfTools\Workspace.Themes\Workspace.Themes.csproj">
+      <Project>{d422c9d7-b4ea-4154-949b-fac4d9dc89d2}</Project>
+      <Name>Workspace.Themes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WpfTools\Workspace\Workspace.csproj">
+      <Project>{db81988f-e0f2-45a0-a1fd-8c37f3d35244}</Project>
+      <Name>Workspace</Name>
     </ProjectReference>
     <ProjectReference Include="..\WpfTools\WPFSoundVisualizationLibrary\WPFSoundVisualizationLib.csproj">
       <Project>{90f96222-1c39-4a19-abe8-1b00fb330985}</Project>
