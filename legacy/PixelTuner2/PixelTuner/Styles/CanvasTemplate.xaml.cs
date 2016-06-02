@@ -29,7 +29,7 @@ namespace PixelTuner.Styles
         {
             // заменить на команду
             var s = sender as System.Windows.Controls.Viewbox;
-            if (s != null) 
+            if (s != null && s.DataContext != null) 
             {
                 (s.DataContext as CanvasViewModel).LoadContent();
             }

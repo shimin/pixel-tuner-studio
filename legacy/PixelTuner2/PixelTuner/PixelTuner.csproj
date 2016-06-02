@@ -124,6 +124,10 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\System.Windows.Interactivity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -218,6 +222,8 @@
     <Compile Include="TimelinesToUpload.xaml.cs">
       <DependentUpon>TimelinesToUpload.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UndoRedo\State.cs" />
+    <Compile Include="UndoRedo\StateManager.cs" />
     <Compile Include="ViewModel\Serialization\GradientTimeLineItem.cs" />
     <Compile Include="ViewModel\TimelineItems\GradientThumbnailViewModel.cs" />
     <Compile Include="ViewModel\TimelineItems\VideoThumbnailViewModel.cs" />

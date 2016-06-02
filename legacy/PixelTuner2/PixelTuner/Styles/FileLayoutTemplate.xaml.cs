@@ -85,15 +85,10 @@ namespace PixelTuner.Styles
             // first handled by MainForm than by GridControl...
             // MainForm -> ActiveDocumentLayout -> Grid -> TimeLineControl -> TimeLineItem
         }
-
-        private void Grid_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-
-        }
-
+        
         private void Grid_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            var dc = ((Grid)(sender));
+            var dc = (Grid)sender;
             try
             {
                 var element = VisualTreeHelper.HitTest(dc, e.GetPosition(dc)).VisualHit as System.Windows.FrameworkElement;

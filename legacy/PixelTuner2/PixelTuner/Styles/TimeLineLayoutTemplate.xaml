@@ -251,7 +251,8 @@
                         Items="{Binding Items, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         ItemTemplate="{StaticResource TimelineItemTemplate}"
                         MetaTemplate="{StaticResource MetaTemplate}"
-                        MetaData="{Binding MetaData, Mode=TwoWay}">
+                        MetaData="{Binding MetaData, Mode=TwoWay}"
+                        PreviewChangesCommand="{Binding PreviewChanges}">
                         <Control Grid.Column="0" Margin="{Binding ToolsetMargin}" Template="{StaticResource TimeLineTools}" Width="26" Height="100"/>
                     </ct:TimeLineControl>
                 </Grid>

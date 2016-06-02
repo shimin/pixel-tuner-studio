@@ -72,6 +72,7 @@ namespace PixelTuner.ViewModel
             get { return LineHeight == 0 ? Visibility.Hidden : Visibility.Visible; }
             set { RaisePropertyChanged("IsLineHeightVisible"); }
         }
+
         #region ITimeLineManager Members
 
         ITimeLineManager _dragManager;
@@ -85,5 +86,12 @@ namespace PixelTuner.ViewModel
         }
 
         #endregion
+
+        public override object Clone()
+        {
+            PixelTimeLineViewModel copyLine = (PixelTimeLineViewModel)base.Clone();
+            copyLine.LineHeight = LineHeight;
+            return copyLine;
+        }
     }
 }

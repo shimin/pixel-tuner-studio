@@ -145,15 +145,15 @@ namespace PixelTuner.ViewModel
         }
 
         protected BitmapImage _image = null;
-        public virtual object ImageSource
+        public virtual BitmapSource ImageSource
         {
             get
             {
-                if (string.IsNullOrEmpty(FullName)) _image = null;
+                if (string.IsNullOrEmpty(FullName)) _image = new BitmapImage();
                 else _image = ImageHelper.CreateImage(new Uri(FullName, UriKind.Absolute));
-                
-                if (_image == null) return DependencyProperty.UnsetValue;
                 return _image;
+                //if (_image == null) return DependencyProperty.UnsetValue;
+                //return _image;
             }
         }
 
@@ -262,8 +262,18 @@ namespace PixelTuner.ViewModel
         [XmlIgnore]
         public int ActualHeight
         {
-            get { return ImageSource == null ? 0 : (int)((BitmapImage)ImageSource).PixelHeight; }
+            get { return ImageSource == null ? 0 : ImageSource.PixelHeight; }
         }
+
+        private Guid _guid = Guid.NewGuid();
+        [XmlIgnore]
+        public Guid Guid
+        {
+            get { return _guid; }
+            private set { _guid = value; }
+        }
+
+
 
         public virtual string ContentID
         {
@@ -278,10 +288,12 @@ namespace PixelTuner.ViewModel
         public virtual object Clone()
         {
             TimeLineItemViewModel result = (TimeLineItemViewModel)Activator.CreateInstance(GetType());
+            result._guid = _guid;
             result._fi = this._fi;
             result.StartTime = this.StartTime;
             result.EndTime = this.EndTime;
             result.TimelineViewExpanded = this.TimelineViewExpanded;
+            result.NormalBackground = NormalBackground;
             result.Stretching = this.Stretching;
             result.Brightness = this.Brightness;
             result.LaserOn = this.LaserOn;
@@ -335,9 +347,9 @@ namespace PixelTuner.ViewModel
             return true;
         }
 
-        private void OnReplace(object parameter)
+        protected virtual void OnReplace(object parameter)
         {
-            var w = new ReplaceItemWindow();
+            ReplaceItemWindow w = OpenReplaceWindow();
             w.Owner = Application.Current.MainWindow;
             w.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             if (w.ShowDialog() == true)
@@ -348,6 +360,7 @@ namespace PixelTuner.ViewModel
                     var p = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, this);
                     if (p != null)
                     {
+                        RootViewModel.This.ActiveDocument.PushUndo(false, p);
                         int idx = p.Items.IndexOf(this);
                         newItem.StartTime = this.StartTime;
                         newItem.EndTime = this.EndTime;
@@ -360,8 +373,13 @@ namespace PixelTuner.ViewModel
             }
         }
 
+        protected virtual ReplaceItemWindow OpenReplaceWindow()
+        {
+            return new ReplaceItemWindow();
+        }
+
         #endregion
-        
+
         #region SplitCommand
         RelayCommand _splitCommand = null;
         public ICommand SplitCommand
@@ -400,6 +418,7 @@ namespace PixelTuner.ViewModel
             var p = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, this);
             if (p != null)
             {
+                RootViewModel.This.ActiveDocument.PushUndo(false, p);
                 int idxToPaste = p.Items.IndexOf(this);
                 var splittedPart = (TimeLineItemViewModel)this.Clone();
                 this.StartTime = this.StartTime + timeSpan;
@@ -437,6 +456,9 @@ namespace PixelTuner.ViewModel
 
             if (w.ShowDialog() == true)
             {
+                var p = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, this);
+                if (p != null) { RootViewModel.This.ActiveDocument.PushUndo(false, p); }
+
                 this.Stretching = w.Stretching;
             }
             RootViewModel.NotifySettingsChanged();
@@ -470,6 +492,7 @@ namespace PixelTuner.ViewModel
             var p = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, this);
             if (p != null)
             {
+                RootViewModel.This.ActiveDocument.PushUndo(false, p);
                 p.IsChanged = true;
                 System.Reflection.PropertyInfo pi = p.GetType().GetProperty("Items");
                 if (pi != null) parentCollection = 
@@ -505,6 +528,9 @@ namespace PixelTuner.ViewModel
 
         protected virtual void OnEditMe(object parameter)
         {
+            var p = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, this);
+            if (p != null) { RootViewModel.This.ActiveDocument.PushUndo(false, p); }
+
             if (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftAlt)
                 || System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightAlt))
             {
@@ -651,6 +677,7 @@ namespace PixelTuner.ViewModel
         public new DateTime LastAccessTimeUtc { get { return _fi.LastAccessTimeUtc; } set { _fi.LastAccessTimeUtc = value; } }
         public new DateTime LastWriteTime { get { return _fi.LastWriteTime; } set { _fi.LastWriteTime = value; } }
         public new DateTime LastWriteTimeUtc { get { return _fi.LastWriteTimeUtc; } set { _fi.LastWriteTimeUtc = value; } }
+
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             _fi.GetObjectData(info, context);

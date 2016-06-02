@@ -6,6 +6,10 @@ using System.Windows.Media.Imaging;
 using Common.Imaging;
 using System.Drawing;
 using PixelTuner.Properties;
+using System.ComponentModel;
+using System.Threading;
+using System.Windows.Media;
+using System.Windows;
 
 namespace PixelTuner.ViewModel
 {
@@ -23,16 +27,27 @@ namespace PixelTuner.ViewModel
 
         private int _blackFieldHeight = 40;
 
-        BitmapImage _image;
-        public BitmapImage Image
+        BitmapSource _image;
+        public BitmapSource Image
         {
             get { return _image; }
-            set
+            private set
             {
-                _image = FormatImage(value);
+                _image = value;
                 TilingX = ((double)400 / (double)_image.Width) * Stretching;
                 RaisePropertyChanged("Image");
             }
+        }
+
+        public void AsyncSetImage(BitmapSource image)
+        {
+            var bmp = (BitmapSource)image.GetAsFrozen();
+            ThreadPool.QueueUserWorkItem((o) =>
+            {
+                BitmapSource frozen = FormatImage(bmp);
+                frozen.Freeze();
+                Image = frozen;
+            });
         }
 
         TimeLineItemViewModel _displayModel;
@@ -51,13 +66,15 @@ namespace PixelTuner.ViewModel
                     {
                         _displayModel.PropertyChanged -= _displayModel_PropertyChanged;
                         _displayModel.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(_displayModel_PropertyChanged);
-                        Image = (BitmapImage)value.ImageSource;
+
+                        AsyncSetImage(value.ImageSource);
                         ModelStretching = value.Stretching;
                         Opacity = (double)value.Brightness / 100.0;
                     }
                     else
                     {
-                        Image = ImageHelper.BitmapImageFromBitmap(new System.Drawing.Bitmap(50, 50));
+                        var img = ImageHelper.BitmapImageFromBitmap(new System.Drawing.Bitmap(50, 50));
+                        AsyncSetImage(img);
                     }
                     RaisePropertyChanged("Dash");
                     RaisePropertyChanged("Dot");
@@ -182,20 +199,49 @@ namespace PixelTuner.ViewModel
                 } 
             }
         }
-
-        private BitmapImage FormatImage(BitmapImage value)
+        
+        private BitmapSource FormatImage(BitmapSource src)
         {
-            BitmapSource rotated = new TransformedBitmap(value, new System.Windows.Media.RotateTransform(180));
-            
-            var bmp = ImageHelper.BitmapImageToBitmap<BmpBitmapEncoder>(rotated);
-            
-            Bitmap bg = new Bitmap(bmp.Width, bmp.Height + (bmp.Height / 2) + 1);
-            using (Graphics g = Graphics.FromImage(bg))
+            BitmapSource rotated = new TransformedBitmap(src, new RotateTransform(180));
+            return CreateBorder(rotated, new Thickness(0, rotated.Height / 2, 0, 1));
+        }
+
+        /// <summary>
+        /// Creates new image with black border around original pic. Doesn't affect original image scale.
+        /// </summary>
+        /// <param name="source">Source image</param>
+        /// <param name="margin">Border thickness</param>
+        /// <returns></returns>
+        private static BitmapSource CreateBorder(ImageSource source, Thickness margin)
+        {
+            double width = source.Width + margin.Left + margin.Right;
+            double height = source.Height + margin.Top + margin.Bottom;
+
+            var internalArea = new Rect(
+                margin.Left,
+                margin.Top, 
+                source.Width, 
+                source.Height);
+
+            var externalArea = new Rect(
+                0,
+                0,
+                width,
+                height);
+
+            var drawingVisual = new DrawingVisual();
+            using (var dc = drawingVisual.RenderOpen())
             {
-                g.DrawImage(bmp, new Point(0, (bmp.Height / 2)));
+                var b = new System.Windows.Media.SolidColorBrush(Colors.Black);
+                var p = new System.Windows.Media.Pen(b, 0);
+                dc.DrawRectangle(b, p, externalArea);
+                dc.DrawImage(source, internalArea);
             }
-            var result = (BitmapImage)ImageHelper.BitmapImageFromBitmap(bg);
-            return result;
+
+            var resizedImage = new RenderTargetBitmap((int)width, (int)height, 96, 96, PixelFormats.Default);
+            resizedImage.Render(drawingVisual);
+
+            return resizedImage;
         }
 
         private Dictionary<int, double> TilingConverter50 = new Dictionary<int, double>()

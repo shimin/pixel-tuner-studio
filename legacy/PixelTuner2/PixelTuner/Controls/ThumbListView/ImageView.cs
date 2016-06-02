@@ -177,7 +177,8 @@ namespace PixelTuner.Controls.ThumbListView
             var item = (sender as ListView).SelectedItem as PixelThumbnailViewModel;
             if (item != null)
             {
-                RootViewModel.This.ProjectPlayerModel.DisplayModel = new PixelThumbnailViewModel(new FileInfo(item.FullName));
+                if (RootViewModel.This.ProjectPlayerModel.IsVisible)
+                    RootViewModel.This.ProjectPlayerModel.DisplayModel = new PixelThumbnailViewModel(new FileInfo(item.FullName));
             }
         }
 
@@ -259,7 +260,7 @@ namespace PixelTuner.Controls.ThumbListView
                 var image = System.Drawing.Image.FromFile(thumbItem.FullName);
                 if (image != null)
                 {
-                    var iw = new PixelTuner.Import.ImportWindow((System.Windows.Media.ImageSource)thumbItem.ImageSource);
+                    var iw = new PixelTuner.Import.ImportWindow(thumbItem.ImageSource);
                     iw.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
                     iw.Owner = Application.Current.MainWindow;
                     iw.ShowDialog();

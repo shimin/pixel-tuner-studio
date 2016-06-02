@@ -49,5 +49,10 @@ namespace PixelTuner.ViewModel
         }
 
         #endregion
+
+        public override object Clone()
+        {
+            return base.Clone();
+        }
     }
 }

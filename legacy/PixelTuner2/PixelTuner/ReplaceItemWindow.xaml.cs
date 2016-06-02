@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using PixelTuner.ViewModel;
 using PixelTuner.Properties;
+using Common.ViewModel;
 
 namespace PixelTuner
 {
@@ -21,9 +22,14 @@ namespace PixelTuner
     public partial class ReplaceItemWindow : Window
     {
         public ReplaceItemWindow()
+            : this(new ImagesViewModel("ReplaceItemWindow"))
+        {   
+        }
+
+        public ReplaceItemWindow(ViewModelBase model)
         {
             InitializeComponent();
-            this.DataContext = new ImagesViewModel("ReplaceItemWindow");
+            DataContext = model;
         }
 
         private void boxThumbnails_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)

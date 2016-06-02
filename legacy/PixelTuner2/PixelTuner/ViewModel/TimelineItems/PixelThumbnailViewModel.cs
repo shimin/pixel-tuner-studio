@@ -48,6 +48,9 @@ namespace PixelTuner.ViewModel
 
         protected override void OnSwitchLaserOn(object parameter)
         {
+            var p = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, this);
+            if (p != null) { RootViewModel.This.ActiveDocument.PushUndo(false, p); }
+
             LaserOn = !LaserOn;
             RaisePropertyChanged("LaserOn");
             RaisePropertyChanged("LaserOnButtonColor");

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Common.ViewModel;
 using Communication.Service;
 using System.Windows;

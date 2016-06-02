@@ -48,5 +48,13 @@ namespace PixelTuner.ViewModel
             }
             return base.ToType(conversionType, provider);
         }
+
+        protected override ReplaceItemWindow OpenReplaceWindow()
+        {
+            return new ReplaceItemWindow(new GradientsViewModel(
+                (String)System.Windows.Application.Current.TryFindResource("Menu_Window_Gradients"))
+            );
+        }
+
     }
 }

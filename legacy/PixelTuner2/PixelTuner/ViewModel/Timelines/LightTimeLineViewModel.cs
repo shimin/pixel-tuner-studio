@@ -176,5 +176,10 @@ namespace PixelTuner.ViewModel
                 return this.Start;
             else return Items[idx - 1].EndTime;
         }
+
+        public override object Clone()
+        {
+            return base.Clone();
+        }
     }
 }

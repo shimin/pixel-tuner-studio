@@ -172,8 +172,18 @@ namespace PixelTuner.ViewModel
             SolidColorThumbnailViewModel result = (SolidColorThumbnailViewModel)base.Clone();
             result._image = this._image;
             result._name = this._name;
+            result._colorFirst = this._colorFirst;
+            result._colorLast = this._colorLast;
+            result._uri = this._uri;
             result.BackgroundBrush = this.BackgroundBrush;
             return result;
+        }
+
+        protected override ReplaceItemWindow OpenReplaceWindow()
+        {
+            return new ReplaceItemWindow(new EffectsViewModel(
+                (String)System.Windows.Application.Current.TryFindResource("Menu_Window_Effects"))
+            );
         }
 
         public override string ToString()

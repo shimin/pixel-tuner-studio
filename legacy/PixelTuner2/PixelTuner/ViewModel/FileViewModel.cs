@@ -19,6 +19,8 @@ using Communication.Binarize;
 using Communication.Gradient;
 using Communication;
 using System.Windows.Media;
+using System.Collections.Specialized;
+using Common.ViewModel;
 
 namespace PixelTuner.ViewModel
 {
@@ -34,10 +36,10 @@ namespace PixelTuner.ViewModel
 
         public FileViewModel(string filePath)
         {
+            ViewLoaded = false;
             FilePath = filePath;
             Title = FileName;
-            _timeLines.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(
-                _timeLines_CollectionChanged);
+            _timeLines.CollectionChanged += new NotifyCollectionChangedEventHandler(_timeLines_CollectionChanged);
 
             Devices = new SafeObservable<PixelDeviceViewModel>();
             FileChanged += (x, e) => { IsDirty = true; };
@@ -51,10 +53,11 @@ namespace PixelTuner.ViewModel
             SoundPlayer = soundEngine;
 
             RootViewModel.This.DevicesModel.Illuminators.CollectionChanged
-                += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Illuminators_CollectionChanged);
+                += new NotifyCollectionChangedEventHandler(Illuminators_CollectionChanged);
+            OnLoadedCommand = new DelegateCommand(OnLoaded);
         }
 
-        void Illuminators_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        void Illuminators_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             RaisePropertyChanged("IsSyncAvailable");
             RaisePropertyChanged("RadioModuleMac");
@@ -87,60 +90,73 @@ namespace PixelTuner.ViewModel
             modelsToRemove.ForEach((item) => { Devices.Remove(item); });
         }
 
-        void _timeLines_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        void _timeLines_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             ClearSelection();
 
-            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+            if (e.Action == NotifyCollectionChangedAction.Add)
                 ((TimeLineViewModel)e.NewItems[e.NewItems.Count - 1]).IsSelected = true;
 
             for (int i = 0; i < _timeLines.Count; i++)
             {
-                //if (i % 2 == 0) _timeLines[i].Background =  _lightLineColor;
-                //else _timeLines[i].Background = _darkLineColor;
                 _timeLines[i].Parent = this;
-                _timeLines[i].Items.CollectionChanged -= TimeLineItems_CollectionChanged;
-                _timeLines[i].Items.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(TimeLineItems_CollectionChanged);
             }
-            OnFileChanged(sender, e);
-        }
-
-        void TimeLineItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            RaisePropertyChanged("LineHeightChangingAvailable");
+            
             OnFileChanged(sender, e);
         }
 
         internal void UpdatePreview(TimeSpan timeSpan)
         {
-            var line = SelectedTimeline;
-            if (line != null && !(line is LightTimeLineViewModel))
+            if (RootViewModel.This.CanvasModel.IsVisible && _parsedProject != null)
             {
-                var timePoint = line.Start.Value.Add(timeSpan);
-                RootViewModel.This.ProjectPlayerModel.DisplayModel = line.FindItemByTime(timePoint);
-            }
-
-            var lines = TimeLines.Where(item => item is LightTimeLineViewModel);
-            if (lines.Count() > 0)
-            {
-                int lineIdx = 0;
-                var sample = _parsedProject.GetColors(timeSpan);
-                foreach (var l in lines)
+                var line = SelectedTimeline;
+                if (line != null && RootViewModel.This.ProjectPlayerModel.IsVisible && !(line is LightTimeLineViewModel))
                 {
-                    if (l.Items.Count == 0) continue;
-
-                    if (l.MetaData != null)
+                    var timePoint = line.Start.Value.Add(timeSpan);
+                    RootViewModel.This.ProjectPlayerModel.DisplayModel = line.FindItemByTime(timePoint);
+                }
+                var lines = TimeLines.Where(item => item is LightTimeLineViewModel);
+                if (lines.Count() > 0)
+                {
+                    int lineIdx = 0;
+                    var sample = _parsedProject.GetColors(timeSpan);
+                    foreach (var l in lines)
                     {
-                        Color c = sample != null && lineIdx < sample.Count ? Color.FromRgb(sample[lineIdx].R, sample[lineIdx].G, sample[lineIdx].B) : Color.FromRgb(0, 0, 0);
-                        RootViewModel.This.CanvasModel.ElementsDictionary[l.MetaData.Path].Fill = l.MetaData.Fill = new SolidColorBrush(c);
+                        if (l.Items.Count == 0) continue;
+
+                        if (l.MetaData != null)
+                        {
+                            Color c = sample != null && lineIdx < sample.Count ? Color.FromRgb(sample[lineIdx].R, sample[lineIdx].G, sample[lineIdx].B) : Color.FromRgb(0, 0, 0);
+                            RootViewModel.This.CanvasModel.ElementsDictionary[l.MetaData.Path].Fill = l.MetaData.Fill = new SolidColorBrush(c);
+                        }
+                        lineIdx++;
                     }
-                    lineIdx++;
                 }
             }
         }
 
         #region Properties
 
+        #region IsDirty
+
+        private bool _isDirty = false;
+        [XmlIgnore]
+        public bool IsDirty
+        {
+            get { return _isDirty; }
+            set
+            {
+                if (_isDirty != value)
+                {
+                    _isDirty = value;
+                    RaisePropertyChanged("IsDirty");
+                    RaisePropertyChanged("FileName");
+                }
+            }
+        }
+
+        #endregion
+        
         [XmlIgnore]
         public SafeObservable<PixelDeviceViewModel> Devices
         {
@@ -279,6 +295,7 @@ namespace PixelTuner.ViewModel
                 RaisePropertyChanged("UnitSizeStep");
                 RaisePropertyChanged("WaveFormLength");
                 RaisePropertyChanged("PlaybackPointerPosition");
+                RaisePropertyChanged("ProgressLinePosition");
             }
         }
 
@@ -307,7 +324,17 @@ namespace PixelTuner.ViewModel
             }
         }
 
-
+        [XmlIgnore]
+        public bool IsSyncAvailable
+        {
+            get
+            {
+                bool isAvailable = RootViewModel.This.DevicesModel.Illuminators.Count > 0;
+                if (!isAvailable) IsSyncOn = false;
+                return isAvailable;
+            }
+        }
+        
         private bool _isSyncOn = false;
         [XmlIgnore]
         public bool IsSyncOn
@@ -340,26 +367,17 @@ namespace PixelTuner.ViewModel
         {
             get
             {
-                return RootViewModel.This.DevicesModel != null
-                    && RootViewModel.This.DevicesModel.Devices.Count != 0
-                    ? DeviceHelper.Devices.Count * 15 + 20
-                    : 0;
+                int n = 0;
+                if (RootViewModel.This.DevicesModel != null
+                    && RootViewModel.This.DevicesModel.Devices.Count != 0)
+                {
+                    n = DeviceHelper.Devices.Count(i => i is PixelDevice);
+                    return n * 15 + 20;
+                }
+                return n;
             }
         }
-
-
-        [XmlIgnore]
-        public bool LineHeightChangingAvailable
-        {
-            get
-            {
-                //foreach (var line in TimeLines)
-                //    if (line.Items.Count > 0)
-                //        return false;
-                return true;
-            }
-        }
-
+        
         [XmlIgnore]
         public override Uri IconSource
         {
@@ -369,12 +387,38 @@ namespace PixelTuner.ViewModel
             }
         }
 
+        [XmlIgnore]
         public TimeLineViewModel SelectedTimeline
         {
             get
             {
                 foreach (var t in TimeLines) if (t.IsSelected) return t;
                 return null;
+            }
+        }
+
+        [XmlIgnore]
+        public double ProgressLinePosition
+        {
+            get
+            {
+                return SoundPlayer.ChannelPosition * Settings.Default.UnitSize + 26.1d;
+            }
+        }
+        
+        [XmlIgnore]
+        public bool ViewLoaded
+        {
+            get;
+            set;
+        }
+
+        [XmlIgnore]
+        public Visibility ProgressLineVisibility
+        {
+            get
+            {
+                return SoundPlayer != null && SoundPlayer.ChannelLength > 0 ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
@@ -413,32 +457,129 @@ namespace PixelTuner.ViewModel
         public IWaveformPlayer SoundPlayer
         {
             get { return _soundPlayer; }
-            set { _soundPlayer = value; RaisePropertyChanged("SoundPlayer"); }
+            set { _soundPlayer = value; RaisePropertyChanged("SoundPlayer"); RaisePropertyChanged("ProgressLineVisibility"); }
         }
 
         #endregion
 
         #endregion
 
-        #region IsDirty
-
-        private bool _isDirty = false;
-        [XmlIgnore]
-        public bool IsDirty
+        #region Undo/Redo
+        public void PushUndo(bool keepRedoStack, TimeLineViewModel oldModel = null)
         {
-            get { return _isDirty; }
-            set
+            if (ViewLoaded)
             {
-                if (_isDirty != value)
+                var state = new ObservableCollection<TimeLineViewModel>();
+                if (oldModel == null)
                 {
-                    _isDirty = value;
-                    RaisePropertyChanged("IsDirty");
-                    RaisePropertyChanged("FileName");
+                    foreach (var l in _timeLines) state.Add((TimeLineViewModel)l.Clone());
                 }
+                else
+                {
+                    state.Add((TimeLineViewModel)oldModel.Clone());
+                }
+                _undoStack.Push(state);
+                if (!keepRedoStack) _redoStack.Clear();
             }
         }
 
+        private void PushRedo(TimeLineViewModel oldModel = null)
+        {
+            if (ViewLoaded)
+            {
+                var state = new ObservableCollection<TimeLineViewModel>();
+                if (oldModel == null)
+                {
+                    foreach (var l in _timeLines) state.Add((TimeLineViewModel)l.Clone());
+                }
+                else
+                {
+                    state.Add((TimeLineViewModel)oldModel.Clone());
+                }
+                _redoStack.Push(state);
+            }
+        }
+
+        public void Undo()
+        {
+            if (_undoStack.Count > 0 && ViewLoaded)
+            {
+                _timeLines.CollectionChanged -= _timeLines_CollectionChanged;
+                
+                var state = _undoStack.Pop();
+                if (state.Count > 1) PushRedo();
+                else
+                {
+                    int idx = 0;
+                    foreach (var l in _timeLines)
+                        if (l.Guid != state[0].Guid) { idx++; }
+                        else break;
+
+                    PushRedo(_timeLines[idx]);
+                }
+                SetState(state);
+
+                _timeLines.CollectionChanged += _timeLines_CollectionChanged;
+            }
+        }
+
+        public void Redo()
+        {
+            if (_redoStack.Count > 0 && ViewLoaded)
+            {
+                _timeLines.CollectionChanged -= _timeLines_CollectionChanged;
+                
+                var state = _redoStack.Pop();
+                if (state.Count > 1) PushUndo(true);
+                else
+                {
+                    int idx = 0;
+                    foreach (var l in _timeLines)
+                        if (l.Guid != state[0].Guid) { idx++; }
+                        else break;
+
+                    PushUndo(true, _timeLines[idx]);
+                }
+                SetState(state);
+
+                _timeLines.CollectionChanged += _timeLines_CollectionChanged;
+            }
+        }
+
+        private void SetState(ObservableCollection<TimeLineViewModel> state)
+        {
+            if (state.Count > 1)
+            {
+                _timeLines.Clear();
+                foreach (var l in state) _timeLines.Add(l);
+            }
+            else
+            {
+                int idx = 0;
+                foreach (var l in _timeLines)
+                {
+                    if (l.Guid == state[0].Guid) { break; }
+                    idx++;
+                }
+                _timeLines.RemoveAt(idx);
+                _timeLines.Insert(idx, state[0]);
+            }
+        }
+
+        Stack<ObservableCollection<TimeLineViewModel>> _undoStack = new Stack<ObservableCollection<TimeLineViewModel>>();
+        Stack<ObservableCollection<TimeLineViewModel>> _redoStack = new Stack<ObservableCollection<TimeLineViewModel>>();
+
         #endregion
+
+        #region Commands
+
+        [XmlIgnore]
+        public ICommand OnLoadedCommand { get; private set; }
+
+        private void OnLoaded(object arg)
+        {
+            ViewLoaded = true;
+        }
 
         #region SaveCommand
         RelayCommand _saveCommand = null;
@@ -544,11 +685,12 @@ namespace PixelTuner.ViewModel
 
         private void OnAddPixelLine(object parameter)
         {
+            PushUndo(false);
             _timeLines.Add(new PixelTimeLineViewModel());
         }
 
-        #endregion 
-        
+        #endregion
+
         #region AddEpicLineCommand
         RelayCommand _addEpicLineCommand = null;
         public ICommand AddEpicLine
@@ -571,11 +713,12 @@ namespace PixelTuner.ViewModel
 
         private void OnAddEpicLine(object parameter)
         {
+            PushUndo(false);
             _timeLines.Add(new EpicPoiTimeLineViewModel());
         }
 
-        #endregion 
-        
+        #endregion
+
         #region AddLightLineCommand
         RelayCommand _addLightLineCommand = null;
         public ICommand AddLightLine
@@ -598,11 +741,12 @@ namespace PixelTuner.ViewModel
 
         private void OnAddLightLine(object parameter)
         {
+            PushUndo(false);
             _timeLines.Add(new LightTimeLineViewModel());
         }
 
-        #endregion 
-        
+        #endregion
+
         #region OpenAudioCommand
         RelayCommand _openAudioCommand = null;
         public ICommand OpenAudio
@@ -678,7 +822,7 @@ namespace PixelTuner.ViewModel
                 RootViewModel.This.DevicesModel.Illuminators.First().Play(
                     player.CurrentTime, PixelTuner.Properties.Settings.Default.Discreteness);
             }
-            
+
             player.Play();
         }
 
@@ -782,6 +926,8 @@ namespace PixelTuner.ViewModel
 
         #endregion
 
+        #endregion
+
         #region NAudio Engine Events
         private void NAudioEngine_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -792,9 +938,11 @@ namespace PixelTuner.ViewModel
                     if (!SoundPlayer.IsPlaying)
                     {
                         var lines = TimeLines.Where(item => item is LightTimeLineViewModel);
-                        _parsedProject = LightBinaryProject.Parse(GetLightBinaryPresentation(lines));
+                        //_parsedProject = LightBinaryProject.Parse(GetLightBinaryPresentation(lines));
                     }
                     UpdatePreview(SoundPlayer.CurrentTime);
+                    RaisePropertyChanged("ProgressLineVisibility");
+                    RaisePropertyChanged("ProgressLinePosition");
                     break;
                 default:
                     // Do Nothing
@@ -802,7 +950,9 @@ namespace PixelTuner.ViewModel
             }
         }
         #endregion
-        
+
+        #region Project generation
+
         public int EvaluatePixelBinarySize(byte targetHeight)
         {
             ColorDepth depth = ColorDepth.Bit24;
@@ -824,7 +974,9 @@ namespace PixelTuner.ViewModel
             return project.GetBinarySize(c, targetHeight);
         }
 
-        public List<byte> GetPixelBinaryPresentation(IEnumerable<TimeLineViewModel> lines, byte targetHeight)
+        public List<byte> GetPixelBinaryPresentation(
+            IEnumerable<TimeLineViewModel> lines, 
+            byte targetHeight)
         {
             ColorDepth depth = ColorDepth.Bit24;
             try { depth = (ColorDepth)ColorDepth.Parse(typeof(ColorDepth), Settings.Default.ColorDepth); }
@@ -843,13 +995,16 @@ namespace PixelTuner.ViewModel
             return buf;
         }
 
-        private PixelProjectFile CreatePixelProjectFile(IEnumerable<TimeLineViewModel> lines, 
-            List<ImagesCollectionItem> imagesCollection, byte targetHeight, ColorDepth depth)
+        private PixelProjectFile CreatePixelProjectFile(
+            IEnumerable<TimeLineViewModel> lines,
+            IList<ImagesCollectionItem> imagesCollection, 
+            byte targetHeight, 
+            ColorDepth depth)
         {
             var project = new PixelProjectFile();
             foreach (TimeLineViewModel line in lines)
             {
-                if ( line.Items.Count == 0 || !line.IsSelectedToUpload) continue;
+                if (line.Items.Count == 0 || !line.IsSelectedToUpload) continue;
                 var file = new PixelTimelineFile();
 
                 var currentTime = line.Start.Value;
@@ -894,8 +1049,10 @@ namespace PixelTuner.ViewModel
             return buf;
         }
 
-        private GradientProjectFile CreateEpicProjectFile(IEnumerable<TimeLineViewModel> lines, 
-            List<GradientsCollectionItem> imagesCollection, ColorDepth depth)
+        private GradientProjectFile CreateEpicProjectFile(
+            IEnumerable<TimeLineViewModel> lines,
+            IList<GradientsCollectionItem> imagesCollection, 
+            ColorDepth depth)
         {
             var project = new GradientProjectFile();
             foreach (TimeLineViewModel line in lines)
@@ -970,7 +1127,7 @@ namespace PixelTuner.ViewModel
                 project.TimeLines.Add(binaryLine);
                 slaveAddress++;
             }
-            
+
             var buf = project.GetBinary(Settings.Default.Discreteness);
 #if(DEBUG)
             string projectFileName = "light-project " + DateTime.Now.ToString("dd_MM_yyyy___HH_mm_ss_fff") + ".bin";
@@ -1028,6 +1185,8 @@ namespace PixelTuner.ViewModel
             return item;
         }
 
+        #endregion
+
         [XmlIgnore]
         public static List<Type> ExtraTypes
         {
@@ -1042,17 +1201,6 @@ namespace PixelTuner.ViewModel
                 };
                 result.AddRange(TimeLineViewModel.ExtraTypes);
                 return result;
-            }
-        }
-
-        [XmlIgnore]
-        public bool IsSyncAvailable
-        {
-            get
-            {
-                bool isAvailable = RootViewModel.This.DevicesModel.Illuminators.Count > 0;
-                if (!isAvailable) IsSyncOn = false;
-                return isAvailable;
             }
         }
 
@@ -1103,6 +1251,16 @@ namespace PixelTuner.ViewModel
                             _selectedItems.Remove(item);
                             item.IsSelected = false;
                         }
+                        else if (shiftHold)
+                        {
+                            List<TimeLineItemViewModel> selectionRange = GetSelectionRange(item);
+
+                            ClearSelection();
+
+                            selectedLine.IsSelected = true;
+                            _selectedItems.AddRange(selectionRange);
+                            selectionRange.ForEach(x => x.IsSelected = true);
+                        }
                         else
                         {
                             _selectedItems.Add(item);
@@ -1121,6 +1279,31 @@ namespace PixelTuner.ViewModel
                     RootViewModel.This.ProjectPlayerModel.DisplayModel = item;
                 }
             }
+        }
+
+        private List<TimeLineItemViewModel> GetSelectionRange(TimeLineItemViewModel item)
+        {
+            List<TimeLineItemViewModel> result = new List<TimeLineItemViewModel>();
+            if (_selectedItems.Count < 1)
+            {
+                result.Add(item);
+            }
+            else
+            {
+                TimeLineViewModel line = TimeLines.First(x => x.Items.Contains(item));
+                int idx1 = line.Items.IndexOf(item);
+                int idx2 = line.Items.IndexOf(_selectedItems.First());
+                // to keep first selected item at the beginning of list:
+                if (idx1 < idx2)
+                {
+                    for (int i = idx2; i >= idx1; i--) result.Add((TimeLineItemViewModel)line.Items[i]);
+                }
+                else
+                {
+                    for (int i = idx2; i <= idx1; i++) result.Add((TimeLineItemViewModel)line.Items[i]);
+                }
+            }
+            return result;
         }
 
         internal void CopySelectedItems()
@@ -1169,7 +1352,8 @@ namespace PixelTuner.ViewModel
 
                 foreach (var item in RootViewModel.This.CopiedItems)
                 {
-                    if (item.ActualHeight != LineHeight)
+                    var pixelLine = selectedLine as PixelTimeLineViewModel;
+                    if (pixelLine != null && item.ActualHeight != pixelLine.LineHeight)
                     {
                         MessageBox.Show(((String)Application.Current.TryFindResource("Global_ImagesHeightMismatch")).Replace("\"", ""));
                         return;
@@ -1182,7 +1366,11 @@ namespace PixelTuner.ViewModel
         internal void DeleteSelectedItems()
         {
             _selectedItems.ForEach(i => {
-                TimeLines.All(t => t.Items.Remove(i));
+                i.IsSelected = false;
+                foreach(var l in TimeLines)
+                {
+                    l.Items.Remove(i);
+                }
             });
             _selectedItems.Clear();
         }

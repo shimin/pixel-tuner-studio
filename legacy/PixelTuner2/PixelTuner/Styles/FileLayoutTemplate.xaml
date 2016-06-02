@@ -4,6 +4,7 @@
                     xmlns:ct="clr-namespace:Common.Controls;assembly=Common"
                     xmlns:cv="clr-namespace:PixelTuner.Converters"
                     xmlns:vm="clr-namespace:PixelTuner.ViewModel"
+                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                     xmlns:svl="clr-namespace:WPFSoundVisualizationLib;assembly=WPFSoundVisualizationLib"
                     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit">
 
@@ -35,7 +36,12 @@
     </LinearGradientBrush>
 
     <DataTemplate x:Key="FileLayoutTemplate" DataType="{x:Type vm:FileViewModel}">
-        <Grid PreviewMouseDown="Grid_PreviewMouseDown" PreviewKeyDown="Grid_PreviewKeyDown" PreviewKeyUp="Grid_PreviewKeyUp" PreviewMouseWheel="Grid_PreviewMouseWheel">
+        <Grid Name="rootGrid" PreviewMouseDown="Grid_PreviewMouseDown" PreviewKeyDown="Grid_PreviewKeyDown" PreviewMouseWheel="Grid_PreviewMouseWheel">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Loaded">
+                    <i:InvokeCommandAction Command="{Binding Path=OnLoadedCommand}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
             <Grid.RowDefinitions>
                 <RowDefinition Height="24"/>
                 <RowDefinition Height="{Binding MemoryListHeight, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" MinHeight="0"/>
@@ -67,8 +73,22 @@
                     Minimum="{Binding MinUnitSize}" 
                     Maximum="{Binding MaxUnitSize}" 
                     Value="{Binding UnitSize, Converter={StaticResource LogUnitSizeConverter}}"/>
-            
-            <TextBlock Grid.Column="3" Margin="16,4,4,0" Foreground="{StaticResource TextBrush}" Text="{StaticResource Doc_Lbl_Height}" />
+
+            <TextBlock Grid.Row="0" Grid.Column="3" Margin="16,4,4,0" Foreground="{StaticResource TextBrush}" Text="{StaticResource Doc_Lbl_Height}" />
+
+            <xctk:DoubleUpDown 
+                Increment="5"
+                Minimum="5" 
+                Maximum="200" 
+                Grid.Column="4" 
+                Margin="4,2,2,0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Top" 
+                IsManipulationEnabled="True"
+                Value="{Binding Path=LineHeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                ParsingNumberStyle="Integer" 
+                IsTabStop="True" />
+
             <StackPanel Grid.Row="0" Grid.Column="5" Margin="12,-2,1,1"  Orientation="Horizontal" Height="26">
                 <Button Name="boxOpenAudioButton" Width="88" Height="22" Margin="0,0,8,0" Command="{Binding OpenAudio}" Content="{StaticResource Doc_Lbl_ImportTrack}" Focusable="False"></Button>
                 <Button Name="boxPlayButton" Width="20" Height="20" Command="{Binding PlayAudio}" Style="{StaticResource ButtonPlayStyle}" Focusable="False"/>
@@ -93,20 +113,7 @@
                 </TextBlock>
                 <CheckBox IsChecked="{Binding IsSyncOn}" Height="28" Focusable="False" IsEnabled="{Binding IsSyncAvailable}" Style="{StaticResource SliderSwitchStyle}" Margin="0,0,0,2" />
             </StackPanel>
-            <xctk:DoubleUpDown 
-                Increment="5"
-                Minimum="5" 
-                Maximum="200" 
-                Grid.Column="4" 
-                Margin="4,2,2,0"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Top" 
-                IsEnabled="{Binding Path=LineHeightChangingAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                IsManipulationEnabled="True"
-                Value="{Binding Path=LineHeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                ParsingNumberStyle="Integer" 
-                IsTabStop="True" />
-
+            
             <Grid x:Name="MemoryGrid" 
                   Grid.Row="1" 
                   Grid.Column="0" 
@@ -193,12 +200,24 @@
                         ResizeDirection="Rows"
                         Height="4"/>
 
-                    <ScrollViewer
-                        Grid.Row="2" 
+                    <ScrollViewer Grid.Row="2" 
                         HorizontalScrollBarVisibility="Disabled" 
                         VerticalScrollBarVisibility="Auto">
                         <StackPanel x:Name="timelineStackPanel" Orientation="Vertical">
-                            <ItemsControl Grid.Row="2" ItemTemplate="{StaticResource TimeLineLayoutTemplate}" ItemsSource="{Binding Path=TimeLines, Mode=TwoWay}" />
+                            <ItemsControl x:Name="boxTimelines" Grid.Row="2" ItemTemplate="{StaticResource TimeLineLayoutTemplate}" ItemsSource="{Binding Path=TimeLines, Mode=TwoWay}">
+                                <ct:ContentAdorner.AdornerContentTemplate>
+                                    <DataTemplate>
+                                        <Line DataContext="{Binding ElementName=boxWaveform, Path=DataContext}"  
+                                              Stroke="#dfffffff"
+                                              StrokeThickness="1"
+                                              X1="{Binding ProgressLinePosition, Mode=OneWay}" 
+                                              Y1="0" 
+                                              X2="{Binding ProgressLinePosition, Mode=OneWay}" 
+                                              Y2="{Binding ElementName=boxTimelines, Path=ActualHeight, Mode=OneWay}"
+                                              Visibility="{Binding ProgressLineVisibility}"/>
+                                    </DataTemplate>
+                                </ct:ContentAdorner.AdornerContentTemplate>
+                            </ItemsControl>
                         </StackPanel>
                     </ScrollViewer>
                 </Grid>

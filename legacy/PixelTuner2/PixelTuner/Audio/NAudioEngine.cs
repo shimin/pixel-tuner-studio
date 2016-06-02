@@ -277,10 +277,30 @@ namespace NAudio
         private void waveformGenerateWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             WaveformGenerationParams waveformParams = e.Argument as WaveformGenerationParams;
-            inputStream.Sample += waveStream_Sample;
+
+            var path = waveformParams.Path;
+            WaveStream audioStream = null;
+            if (path.EndsWith(".wav", StringComparison.OrdinalIgnoreCase))
+            {
+                audioStream = new WaveFileReader(path);
+                if (audioStream.WaveFormat.Encoding != WaveFormatEncoding.Pcm && audioStream.WaveFormat.Encoding != WaveFormatEncoding.IeeeFloat)
+                {
+                    audioStream = WaveFormatConversionStream.CreatePcmStream(audioStream);
+                    audioStream = new BlockAlignReductionStream(audioStream);
+                }
+            }
+            else if (path.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase))
+            {
+                audioStream = new Mp3FileReader(path);
+            }
+            else throw new ArgumentException("Wrong file format: " + path);
+            
+            WaveChannel32 waveformInputStream = new WaveChannel32(audioStream);
+            waveformInputStream.Sample += waveStream_Sample;
 
             int frameLength = fftDataSize;
-            int frameCount = (int)((double)inputStream.Length / (double)frameLength);
+            int frameCount = (int)((double)waveformInputStream.Length / (double)frameLength);
+            
             int waveformLength = frameCount * 2;
             byte[] readBuffer = new byte[frameLength];
             waveformAggregator = new SampleAggregator(frameLength);
@@ -299,7 +319,7 @@ namespace NAudio
             int readCount = 0;
             while (currentPointIndex * 2 < waveformParams.Points)
             {
-                inputStream.Read(readBuffer, 0, readBuffer.Length);
+                waveformInputStream.Read(readBuffer, 0, readBuffer.Length);
 
                 waveformData.Add(waveformAggregator.LeftMaxVolume);
                 waveformData.Add(waveformAggregator.RightMaxVolume);
@@ -341,6 +361,12 @@ namespace NAudio
                 fullLevelData = waveformData.ToArray();
                 WaveformData = finalClonedData;
             }));
+            waveformInputStream.Close();
+            waveformInputStream.Dispose();
+            waveformInputStream = null;
+            audioStream.Close();
+            audioStream.Dispose();
+            audioStream = null;
         }
         #endregion
 

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 
-  <?define ProductVersion="2.0.4.17" ?>
+  <?define ProductVersion="2.0.4.20" ?>
   <?define RTMProductVersion="1.0.0" ?>
   <?define UpgradeCode="{df1086f7-6803-4697-b66c-74dd2733c092}"?>
   <?define Manufacturer="e-pic.ru"?>
-  <?define ProductCode="{34BDCB6A-C3A7-403A-87BD-0EA0AEA88ACE}"?>
+  <?define ProductCode="{7fc84a2c-a666-4980-8b2b-5920bfec5c72}"?>
   <?define PackageCode="*"?>
 
   <Product Id="$(var.ProductCode)" Name="PixelTuner" Language="1033" Codepage="1252" Version="$(var.ProductVersion)" Manufacturer="$(var.Manufacturer)" UpgradeCode="$(var.UpgradeCode)">
@@ -58,6 +58,7 @@
               <Shortcut Id="desktopPixelTuner" Directory="DesktopFolder" Name="PixelTuner 2"
                 WorkingDirectory='INSTALLLOCATION' Icon="PixelTuner.exe" IconIndex="0" Advertise="yes" />
             </File>
+            <File Id="InteractivityLib" Source="..\PixelTuner\bin\$(var.Configuration)\System.Windows.Interactivity.dll"/>
             <File Id="ToolkitLib" Source="..\PixelTuner\bin\$(var.Configuration)\Toolkit.dll" />
             <File Id="WorkspaceLib" Source="..\PixelTuner\bin\$(var.Configuration)\Workspace.dll" />
             <File Id="WorkspacePageTransitionsLib" Source="..\PixelTuner\bin\$(var.Configuration)\Workspace.PageTransitions.dll" />

@@ -123,10 +123,10 @@ namespace PixelTuner
                 switch (e.Key)
                 {
                     case Key.Z:
-                        //RootViewModel.This.ActiveDocument.Undo();
+                        RootViewModel.This.ActiveDocument.Undo();
                         break;
                     case Key.Y:
-                        //RootViewModel.This.ActiveDocument.Redo();
+                        RootViewModel.This.ActiveDocument.Redo();
                         break;
                 }
             }

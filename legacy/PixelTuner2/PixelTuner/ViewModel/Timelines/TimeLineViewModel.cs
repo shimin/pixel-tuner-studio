@@ -37,7 +37,8 @@ namespace PixelTuner.ViewModel
         }
     }
 
-    public class TimeLineViewModel : ViewModelBase
+    public class TimeLineViewModel
+         : ViewModelBase
     {
         #region Properties
 
@@ -88,8 +89,7 @@ namespace PixelTuner.ViewModel
                 return MetaData != null;
             }
         }
-
-
+        
         [XmlIgnore]
         public virtual System.Windows.Visibility IsLineHeightVisible
         {
@@ -220,35 +220,21 @@ namespace PixelTuner.ViewModel
 
         #endregion
        
-        protected ObservableCollection<ITimeLineDataItem> _items
-            = new ObservableCollection<ITimeLineDataItem>();
         [XmlIgnore]
         public ObservableCollection<ITimeLineDataItem> Items
         {
-            get
-            {
-                return _items;
-            }
-            set
-            {
-                _items = value;
-                RaisePropertyChanged("Items");
-            }
+            get;
+            set;
         }
 
         #endregion
 
         public TimeLineViewModel()
         {
-            _xmlItems = new DelegatedIList<TimeLineItemViewModel, TimeLineItem>(_items);
-            _items.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(_items_CollectionChanged);
+            Items = new ObservableCollection<ITimeLineDataItem>();
+            XmlItems = new DelegatedIList<TimeLineItemViewModel, TimeLineItem>(Items);
         }
-
-        void _items_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            Console.WriteLine(e.Action.ToString());
-        }
-
+        
         #region Commands
 
         #region MoveUpCommand
@@ -280,6 +266,7 @@ namespace PixelTuner.ViewModel
         {
             if (Parent != null)
             {
+                Parent.PushUndo(false);
                 int old = Parent.TimeLines.IndexOf(this);
                 Parent.TimeLines.Move(old, old - 1);
                 Parent.TimeLines.All(arg => { arg.RaisePropertyChanged("Background"); return false; });
@@ -318,6 +305,7 @@ namespace PixelTuner.ViewModel
         {
             if (Parent != null)
             {
+                Parent.PushUndo(false);
                 int old = Parent.TimeLines.IndexOf(this);
                 Parent.TimeLines.Move(old, old + 1);
                 Parent.TimeLines.All(arg => { arg.RaisePropertyChanged("Background"); return false; });
@@ -353,7 +341,10 @@ namespace PixelTuner.ViewModel
         private void OnDeleteLine(object parameter)
         {
             if (Parent != null)
+            {
+                Parent.PushUndo(false);
                 Parent.TimeLines.Remove(this);
+            }
         }
 
         #endregion
@@ -380,13 +371,23 @@ namespace PixelTuner.ViewModel
 
         private void OnCloneLine(object parameter)
         {
+            Parent.PushUndo(false);
             int idx = Parent.TimeLines.IndexOf(this);
-            Parent.TimeLines.Insert(idx + 1, this.Clone());
+            Parent.TimeLines.Insert(idx + 1, (TimeLineViewModel)Clone());
         }
 
-        private TimeLineViewModel Clone()
+        public override object Clone()
         {
-            var timelineCopy = (TimeLineViewModel)Activator.CreateInstance(this.GetType());
+            var timelineCopy = (TimeLineViewModel)base.Clone();
+            timelineCopy.Parent = this.Parent;
+            timelineCopy.Background = Background;
+            timelineCopy.IsChanged = true;
+            timelineCopy.IsLineHeightVisible = IsLineHeightVisible;
+            timelineCopy.IsSelectedToUpload = IsSelectedToUpload;
+            timelineCopy.MetaDataPath = MetaDataPath;
+            timelineCopy.PreviewTransform = PreviewTransform;
+            timelineCopy.TimelineHeightPx = TimelineHeightPx;
+            timelineCopy.TimelinePreviewWidth = TimelinePreviewWidth;
             timelineCopy.DefaultTimeInterval = this.DefaultTimeInterval;
             timelineCopy.MetaData = this.MetaData;
             timelineCopy.ToolsetMargin = this.ToolsetMargin;
@@ -394,6 +395,33 @@ namespace PixelTuner.ViewModel
             foreach (var item in this.Items)
                 timelineCopy.Items.Add((ITimeLineDataItem)(item as TimeLineItemViewModel).Clone());
             return timelineCopy;
+        }
+
+        #endregion
+
+        #region PreviewChangesCommand
+        RelayCommand _previewChangesCommand = null;
+        public ICommand PreviewChanges
+        {
+            get
+            {
+                if (_previewChangesCommand == null)
+                {
+                    _previewChangesCommand = new RelayCommand((p) => OnPreviewChanges(p), (p) => CanPreviewChanges(p));
+                }
+
+                return _previewChangesCommand;
+            }
+        }
+
+        private bool CanPreviewChanges(object parameter)
+        {
+            return Parent != null;
+        }
+
+        private void OnPreviewChanges(object parameter)
+        {
+            Parent.PushUndo(false, this);
         }
 
         #endregion
@@ -417,19 +445,12 @@ namespace PixelTuner.ViewModel
                 return result;
             }
         }
-
-        DelegatedIList<TimeLineItemViewModel, TimeLineItem> _xmlItems;
+        
         [XmlElement(ElementName = "Item", Type = typeof(TimeLineItem))]
         public DelegatedIList<TimeLineItemViewModel, TimeLineItem> XmlItems
         {
-            get
-            {
-                return _xmlItems;
-            }
-            set
-            {
-                _xmlItems = value;
-            }
+            get;
+            set;
         }
 
         #endregion
@@ -454,6 +475,7 @@ namespace PixelTuner.ViewModel
         {
             if (itemsToPaste.Count > 0)
             {
+                Parent.PushUndo(false, this);
                 DateTime? startTime = GetStartTimeByIndex(insertIndex);
                 TimeSpan delta = startTime.Value - itemsToPaste.First().StartTime.Value;
 

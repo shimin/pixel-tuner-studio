@@ -129,6 +129,13 @@ namespace PixelTuner.ViewModel
             throw new NotImplementedException();
         }
 
+        protected override ReplaceItemWindow OpenReplaceWindow()
+        {
+            return new ReplaceItemWindow(new EffectsViewModel(
+                (String)System.Windows.Application.Current.TryFindResource("Menu_Window_Effects"))
+            );
+        }
+
         public override object Clone()
         {
             EffectThumbnailViewModel result = (EffectThumbnailViewModel)base.Clone();

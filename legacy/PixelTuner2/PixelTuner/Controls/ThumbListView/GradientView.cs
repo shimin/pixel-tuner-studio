@@ -177,7 +177,8 @@ namespace PixelTuner.Controls.ThumbListView
             var item = (sender as ListView).SelectedItem as TimeLineItemViewModel;
             if (item != null)
             {
-                RootViewModel.This.ProjectPlayerModel.DisplayModel = new TimeLineItemViewModel(new FileInfo(item.FullName));
+                if (RootViewModel.This.ProjectPlayerModel.IsVisible)
+                    RootViewModel.This.ProjectPlayerModel.DisplayModel = new TimeLineItemViewModel(new FileInfo(item.FullName));
             }
         }
 
