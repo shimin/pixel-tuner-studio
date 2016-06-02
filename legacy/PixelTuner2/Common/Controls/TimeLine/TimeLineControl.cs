@@ -187,7 +187,6 @@ namespace Common.Controls
             {
                 tc.ScrollToItem(e.NewValue as ITimeLineDataItem);
             }
-
         }
 
         private void ScrollToItem(ITimeLineDataItem target)
@@ -228,8 +227,6 @@ namespace Common.Controls
             //    }
             //}
         }
-
-
 
         #region manager
         public ITimeLineManager Manager
@@ -576,7 +573,6 @@ namespace Common.Controls
 
         #region unitsize
 
-
         public Double UnitSize
         {
             get { return (Double)GetValue(UnitSizeProperty); }
@@ -656,6 +652,29 @@ namespace Common.Controls
         private static void OnAnchorStepChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             TimeLineItemControl.AnchorStep = (int)e.NewValue;
+        }
+
+        #endregion
+
+        #region PreviewChangesCommand
+
+        public static DependencyProperty PreviewChangesCommandProperty
+        = DependencyProperty.Register(
+            "PreviewChangesCommand",
+            typeof(ICommand),
+            typeof(TimeLineControl));
+
+        public ICommand PreviewChangesCommand
+        {
+            get
+            {
+                return (ICommand)GetValue(PreviewChangesCommandProperty);
+            }
+
+            set
+            {
+                SetValue(PreviewChangesCommandProperty, value);
+            }
         }
 
         #endregion
@@ -1294,6 +1313,7 @@ namespace Common.Controls
 
         void item_PreviewDragButtonUp(object sender, MouseButtonEventArgs e)
         {
+            _previewChangesRaised = false;
             _dragStartPosition.X = double.MinValue;
             _dragStartPosition.Y = double.MinValue;
             _dragObject = null;
@@ -1494,15 +1514,14 @@ namespace Common.Controls
                     dropper.InitializeDefaultLength();
                     Children.Remove(_tmpDraggAdornerControl);
                     _tmpDraggAdornerControl = null;
-
                 }
                 else
                 {
                     ITimeLineMeta meta = e.Data.GetData("Common.DragDropHelper") as ITimeLineMeta;
                     if (meta != null)
                     {
+                        if (PreviewChangesCommand != null && PreviewChangesCommand.CanExecute(null)) PreviewChangesCommand.Execute(null);
                         MetaData = (ITimeLineMeta)meta.Clone();
-                        
                         e.Handled = true;
                     }
                 }
@@ -1521,6 +1540,7 @@ namespace Common.Controls
                 DateTime start = (DateTime)GetValue(StartDateProperty);
                 if (newIndex == 0)
                 {
+                    if (PreviewChangesCommand != null && PreviewChangesCommand.CanExecute(null)) PreviewChangesCommand.Execute(null);
                     if (dropData == null)
                     {
                         RemoveTimeLineItemControl(dropper);
@@ -1533,16 +1553,14 @@ namespace Common.Controls
                     InsertTimeLineItemControlAt(newIndex, dropper);
                     dropper.MoveToNewStartTime(start);
                     MakeRoom(newIndex, dropper.Width);
-
-
                 }
                 else//we are moving this after something.
                 {
-
                     //find out if we are moving the existing one back or forward.
                     var placeAfter = GetTimeLineItemControlAt(newIndex - 1);
                     if (placeAfter != null)
                     {
+                        if (PreviewChangesCommand != null && PreviewChangesCommand.CanExecute(null)) PreviewChangesCommand.Execute(null);
                         start = placeAfter.EndTime;
                         RemoveTimeLineItemControl(dropper);
                         if (curIndex < newIndex && curIndex >= 0)//-1 is on an insert in which case we definitely don't want to take off on our new index value
@@ -1792,6 +1810,12 @@ namespace Common.Controls
 
         internal void HandleItemManipulation(TimeLineItemControl ctrl, TimeLineItemChangedEventArgs e)
         {
+            if (PreviewChangesCommand != null && PreviewChangesCommand.CanExecute(null) && !_previewChangesRaised)
+            {
+                PreviewChangesCommand.Execute(null);
+                _previewChangesRaised = true;
+            }
+
             Boolean doStretch = false;
             TimeSpan deltaT = e.DeltaTime;
             TimeSpan zeroT = new TimeSpan();
@@ -2084,6 +2108,8 @@ namespace Common.Controls
 
         #endregion
         #endregion
+
+        bool _previewChangesRaised = false;
 
         /// <summary>
         /// Mouse move is important for both edit and drag behaviors
