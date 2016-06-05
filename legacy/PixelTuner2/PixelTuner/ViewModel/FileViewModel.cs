@@ -1365,6 +1365,7 @@ namespace PixelTuner.ViewModel
 
         internal void DeleteSelectedItems()
         {
+            RootViewModel.This.ActiveDocument.PushUndo(false);
             _selectedItems.ForEach(i => {
                 i.IsSelected = false;
                 foreach(var l in TimeLines)
