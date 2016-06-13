@@ -35,6 +35,9 @@ namespace PixelTuner.ViewModel
         public RootViewModel()
         {
             this.Id = Guid.NewGuid();
+
+            GenerateColors();
+
             _anchorStepCollection = new Dictionary<int, string>(){
                 {20, "20 ms"},
                 {50, "50 ms"},
@@ -46,6 +49,95 @@ namespace PixelTuner.ViewModel
             Logger = new Logger(new FileTarget("log.txt"));
 #endif
             this.ActiveDocumentChanged +=new DocumentChangedEventHandler(Workspace_ActiveDocumentChanged);
+        }
+
+        private void GenerateColors()
+        {
+            byte step = 50;
+            for (byte i = 250; i > 0; i -= 5)
+            {
+                _colorsMono.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(i, i, i), string.Format("{0}, {0}, {0}", i)));
+            }
+
+            for (byte i = 250; i > 0; i -= 50)
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(i, i, i), string.Format("{0}, {0}, {0}", i)));
+            }
+            
+            for (byte r = 250; r > 0; r -= step) // red
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(r, 0, 0), string.Format("{0}, {1}, {2}", r, 0, 0)));
+            }
+
+            for (byte c = 250; c > 0; c -= step) // orange
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(c, (byte)(c / 2), 0), string.Format("{0}, {1}, {2}", c, c / 2, 0)));
+            }
+
+            for (byte c = 250; c > 0; c -= step) // yellow
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(c, c, 0), string.Format("{0}, {1}, {2}", c, c, 0)));
+            }
+
+            for (byte c = 250; c > 0; c -= step) // yellow
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb((byte)(c / 2), c, 0), string.Format("{0}, {1}, {2}", c / 2, c, 0)));
+            }
+
+            for (byte g = 250; g > 0; g -= step) // green
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(0, g, 0), string.Format("{0}, {1}, {2}", 0, g, 0)));
+            }
+
+            for (byte c = 250; c > 0; c -= step) // cyan
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(0, c, (byte)(c / 2)), string.Format("{0}, {1}, {2}", 0, c, c / 2)));
+            }
+
+            for (byte c = 250; c > 0; c -= step) // cyan
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(0, c, c), string.Format("{0}, {1}, {2}", 0, c, c)));
+            }
+
+            for (byte c = 250; c > 0; c -= step) // cyan
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(0, (byte)(c / 2), c), string.Format("{0}, {1}, {2}", 0, c / 2, c)));
+            }
+
+            for (byte b = 250; b > 0; b -= step) // blue
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(0, 0, b), string.Format("{0}, {1}, {2}", 0, 0, b)));
+            }
+
+            for (byte c = 250; c > 0; c -= step) // cyan
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb((byte)(c / 2), 0, c), string.Format("{0}, {1}, {2}", c / 2, 0, c)));
+            }
+
+            for (byte c = 250; c > 0; c -= step) // purple
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(c, 0, c), string.Format("{0}, {1}, {2}", c, 0, c)));
+            }
+            
+            for (byte c = 250; c > 0; c -= step) // cyan
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(c, 0, (byte)(c / 2)), string.Format("{0}, {1}, {2}", c, 0, c / 2)));
+            }
+
+            for (byte c = 0; c < 250; c += 25) 
+                _colorsMonoShort.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(c, c, c), string.Format("{0}, {0}, {0}", c)));
+            _colorsMonoShort.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(255, 255, 255), "White"));
+
+            _colorsRGBshort.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(0, 0, 0), "Black"));
+            _colorsRGBshort.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(125, 125, 125), "Gray"));
+            _colorsRGBshort.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(255, 255, 255), "White"));
+            _colorsRGBshort.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(255, 0, 0), "Red"));
+            _colorsRGBshort.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(255, 125, 0), "Orange"));
+            _colorsRGBshort.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(255, 255, 0), "Yellow"));
+            _colorsRGBshort.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(0, 255, 0), "Green"));
+            _colorsRGBshort.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(0, 255, 255), "Cyan"));
+            _colorsRGBshort.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(0, 0, 255), "Blue"));
+            _colorsRGBshort.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(255, 0, 255), "Magenta"));
         }
 
         void Workspace_ActiveDocumentChanged(object sender, DocumentChangedEventArgs e)
@@ -158,6 +250,57 @@ namespace PixelTuner.ViewModel
             set { Settings.Default.CutNextItems = value; RaisePropertyChanged("CutNextItems"); }
         }
 
+        private static ObservableCollection<Toolkit.ColorItem> _colorsRGB = new ObservableCollection<Toolkit.ColorItem>();
+        public static ObservableCollection<Toolkit.ColorItem> ColorsRgb
+        {
+            get
+            {
+                return _colorsRGB;
+            }
+            set
+            {
+                _colorsRGB = value;
+            }
+        }
+
+        private static ObservableCollection<Toolkit.ColorItem> _colorsRGBshort = new ObservableCollection<Toolkit.ColorItem>();
+        public static ObservableCollection<Toolkit.ColorItem> ColorsRgbShort
+        {
+            get
+            {
+                return _colorsRGBshort;
+            }
+            set
+            {
+                _colorsRGBshort = value;
+            }
+        }
+
+        private static ObservableCollection<Toolkit.ColorItem> _colorsMono = new ObservableCollection<Toolkit.ColorItem>();
+        public static ObservableCollection<Toolkit.ColorItem> ColorsMono
+        {
+            get
+            {
+                return _colorsMono;
+            }
+            set
+            {
+                _colorsMono = value;
+            }
+        }
+
+        private static ObservableCollection<Toolkit.ColorItem> _colorsMonoShort = new ObservableCollection<Toolkit.ColorItem>();
+        public static ObservableCollection<Toolkit.ColorItem> ColorsMonoShort
+        {
+            get
+            {
+                return _colorsMonoShort;
+            }
+            set
+            {
+                _colorsMonoShort = value;
+            }
+        }
         #endregion
 
         #region View models

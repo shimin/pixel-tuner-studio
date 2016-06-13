@@ -224,6 +224,7 @@
     </Compile>
     <Compile Include="UndoRedo\State.cs" />
     <Compile Include="UndoRedo\StateManager.cs" />
+    <Compile Include="ViewModel\AvailableColors.cs" />
     <Compile Include="ViewModel\Serialization\GradientTimeLineItem.cs" />
     <Compile Include="ViewModel\TimelineItems\GradientThumbnailViewModel.cs" />
     <Compile Include="ViewModel\TimelineItems\VideoThumbnailViewModel.cs" />

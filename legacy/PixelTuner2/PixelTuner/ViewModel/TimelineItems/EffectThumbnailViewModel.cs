@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using PixelTuner.ViewModel.Serialization;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
+using System.Collections.ObjectModel;
 
 namespace PixelTuner.ViewModel
 {
@@ -24,6 +21,32 @@ namespace PixelTuner.ViewModel
         {
             get { return _colorLast; }
             set { _colorLast = value; RaisePropertyChanged("ColorLast"); RaisePropertyChanged("ColorLastBrush"); }
+        }
+
+        private ObservableCollection<Toolkit.ColorItem> _availableColors = new ObservableCollection<Toolkit.ColorItem>();
+        public ObservableCollection<Toolkit.ColorItem> AvailableColors
+        {
+            get
+            {
+                return _availableColors;
+            }
+            set
+            {
+                _availableColors = value;
+            }
+        }
+
+        private ObservableCollection<Toolkit.ColorItem> _colorsShort = new ObservableCollection<Toolkit.ColorItem>();
+        public ObservableCollection<Toolkit.ColorItem> ColorsShort
+        {
+            get
+            {
+                return _colorsShort;
+            }
+            set
+            {
+                _colorsShort = value;
+            }
         }
 
         public SolidColorBrush ColorFirstBrush { get { return new SolidColorBrush(ColorFirst); } }
@@ -59,7 +82,7 @@ namespace PixelTuner.ViewModel
                 return _uri;
             }
         }
-
+        
         #endregion
 
         public EffectThumbnailViewModel()
@@ -73,6 +96,24 @@ namespace PixelTuner.ViewModel
         {
             _name = fullName;
             _image = img;
+        }
+
+        public void SetColorModel(bool monochrome)
+        {
+            AvailableColors.Clear();
+            ColorsShort.Clear();
+
+            if (monochrome)
+            {
+                AvailableColors = RootViewModel.ColorsMono;
+                ColorsShort = RootViewModel.ColorsMonoShort;
+                ColorLast = Color.FromRgb(ColorLast.R, ColorLast.R, ColorLast.R);
+            }
+            else
+            {
+                AvailableColors = RootViewModel.ColorsRgb;
+                ColorsShort = RootViewModel.ColorsRgbShort;
+            }
         }
 
         public override bool UseColorLayer

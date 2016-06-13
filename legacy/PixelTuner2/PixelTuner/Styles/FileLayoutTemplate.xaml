@@ -204,7 +204,7 @@
                         HorizontalScrollBarVisibility="Disabled" 
                         VerticalScrollBarVisibility="Auto">
                         <StackPanel x:Name="timelineStackPanel" Orientation="Vertical">
-                            <ItemsControl x:Name="boxTimelines" Grid.Row="2" ItemTemplate="{StaticResource TimeLineLayoutTemplate}" ItemsSource="{Binding Path=TimeLines, Mode=TwoWay}">
+                            <ItemsControl x:Name="boxTimelines" Grid.Row="2" ItemsSource="{Binding Path=TimeLines, Mode=TwoWay}">
                                 <ct:ContentAdorner.AdornerContentTemplate>
                                     <DataTemplate>
                                         <Line DataContext="{Binding ElementName=boxWaveform, Path=DataContext}"  

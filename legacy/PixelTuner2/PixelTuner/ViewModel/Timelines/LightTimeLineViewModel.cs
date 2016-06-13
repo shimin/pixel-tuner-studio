@@ -45,10 +45,22 @@ namespace PixelTuner.ViewModel
     public class LightTimeLineViewModel
         : TimeLineViewModel
     {
-        public LightTimeLineViewModel() {
+        public LightTimeLineViewModel()
+        {
             RootViewModel.This.PropertyChanged += new PropertyChangedEventHandler(RootModel_PropertyChanged);
-            this.PropertyChanged += new PropertyChangedEventHandler(TimeLineViewModel_PropertyChanged);
+            PropertyChanged += new PropertyChangedEventHandler(TimeLineViewModel_PropertyChanged);
+            Items.CollectionChanged += Items_CollectionChanged;
             SetBackgrounds(Color.FromRgb(60, 60, 80), Color.FromRgb(50, 50, 70));
+        }
+
+        private void Items_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            // it breaks layout update on remove item in case of usage e.NewItems etc. 
+            foreach(var i in Items)
+            {
+                var item = i as EffectThumbnailViewModel;
+                if (item != null) item.SetColorModel(IsMonochrome);
+            }
         }
 
         void TimeLineViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -85,6 +97,13 @@ namespace PixelTuner.ViewModel
         #endregion
        
         #region Properties
+
+        [XmlAttribute]
+        public bool IsMonochrome
+        {
+            get;
+            set;
+        }
         
         /// <summary>
         /// Step of rulers on timelines to link with items borders
@@ -93,6 +112,36 @@ namespace PixelTuner.ViewModel
         {
             get { return RootViewModel.This.AnchorStep; }
         }
+
+        #endregion
+
+        #region Commands
+
+        #region SwitchMonochromeModeCommand
+        RelayCommand _switchMonochromeModeCommand = null;
+        public ICommand SwitchMonochromeMode
+        {
+            get
+            {
+                if (_switchMonochromeModeCommand == null)
+                {
+                    _switchMonochromeModeCommand = new RelayCommand((p) => OnSwitchMonochromeMode(p));
+                }
+
+                return _switchMonochromeModeCommand;
+            }
+        }
+
+        private void OnSwitchMonochromeMode(object parameter)
+        {
+            if (Items.Count == 0)
+            {
+                IsMonochrome = !IsMonochrome;
+                RaisePropertyChanged("IsMonochrome");
+            }
+        }
+
+        #endregion
 
         #endregion
 

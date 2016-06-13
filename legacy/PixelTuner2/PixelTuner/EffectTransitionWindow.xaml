@@ -25,8 +25,8 @@
         <Border Grid.RowSpan="2" Grid.ColumnSpan="6" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Image Source="/PixelTuner;component/Effects/00_effect.png"/>
         </Border>
-        <xctk:ColorPicker SelectedColor="{Binding ColorFirst}" Name="boxC1" Grid.Row="2" Grid.ColumnSpan="5"></xctk:ColorPicker>
-        <xctk:ColorPicker SelectedColor="{Binding ColorLast}" Name="boxC2" Grid.Row="3" Grid.ColumnSpan="5"></xctk:ColorPicker>
+        <xctk:ColorPicker SelectedColor="{Binding ColorFirst}" StandardColors="{Binding ColorsShort}" AvailableColors="{Binding AvailableColors}" Name="boxC1" Grid.Row="2" Grid.ColumnSpan="5"></xctk:ColorPicker>
+        <xctk:ColorPicker SelectedColor="{Binding ColorLast}" StandardColors="{Binding ColorsShort}" AvailableColors="{Binding AvailableColors}" Name="boxC2" Grid.Row="3" Grid.ColumnSpan="5"></xctk:ColorPicker>
 
         <StackPanel Grid.Row="4" Grid.ColumnSpan="6" Orientation="Horizontal">
             <Button Content="OK" TabIndex="90" Width="74" IsDefault="True" Click="OKButton_Click" />

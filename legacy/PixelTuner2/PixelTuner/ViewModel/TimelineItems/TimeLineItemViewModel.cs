@@ -488,19 +488,12 @@ namespace PixelTuner.ViewModel
 
         protected virtual void OnDisposeMe(object parameter)
         {
-            ObservableCollection<ITimeLineDataItem> parentCollection = null;
             var p = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, this);
             if (p != null)
             {
                 RootViewModel.This.ActiveDocument.PushUndo(false, p);
                 p.IsChanged = true;
-                System.Reflection.PropertyInfo pi = p.GetType().GetProperty("Items");
-                if (pi != null) parentCollection = 
-                    (ObservableCollection<ITimeLineDataItem>)pi.GetValue(p, null);
-            }
-            if (parentCollection != null)
-            {
-                parentCollection.Remove(this);
+                p.Items.Remove(this);
             }
         }
 

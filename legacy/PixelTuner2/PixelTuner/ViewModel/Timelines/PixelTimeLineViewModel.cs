@@ -48,7 +48,7 @@ namespace PixelTuner.ViewModel
     public class PixelTimeLineViewModel : TimeLineViewModel
     {
         public PixelTimeLineViewModel() {
-            Items.CollectionChanged += (s, e) => { RaisePropertyChanged("LineHeight"); RaisePropertyChanged("IsLineHeightVisible"); };
+            Items.CollectionChanged += (s, e) => { RaisePropertyChanged("LineHeight"); };
         }
 
         [XmlIgnore]
@@ -65,14 +65,7 @@ namespace PixelTuner.ViewModel
                 RaisePropertyChanged("LineHeight");
             }
         }
-
-        [XmlIgnore]
-        public override System.Windows.Visibility IsLineHeightVisible
-        {
-            get { return LineHeight == 0 ? Visibility.Hidden : Visibility.Visible; }
-            set { RaisePropertyChanged("IsLineHeightVisible"); }
-        }
-
+        
         #region ITimeLineManager Members
 
         ITimeLineManager _dragManager;
