@@ -41,7 +41,7 @@ namespace Communication.Binarize
             List<byte> result = new List<byte>(projectPrefix);                          // header
             result.AddRange(new byte[4]);                                               // binary total size field
             result.AddRange(BitConverter.GetBytes(samplesSectionAddress));              // start address samples section
-            result.Add((byte)notEmptyLines.Count);                                      // timelines count            
+            result.Add(EstimateTimelinesCount(notEmptyLines));                          // timelines count            
             //result.Add((byte)rate);                                                   // rate
             result.Add((byte)pointSize);                                                // pointSize
 
@@ -68,8 +68,18 @@ namespace Communication.Binarize
                 nextSample = new List<byte>();
                 for (int j = 0; j < channels.Count; j++)
                 {
-                    nextSample.AddRange(channels[j].GetRange(i * pointSize, pointSize));
+                    if (!notEmptyLines[j].IsMonochrome)
+                    {
+                        while (nextSample.Count % pointSize != 0) nextSample.Add(0);    // complete sample to match pointSize.
+                        nextSample.AddRange(channels[j].GetRange(i * pointSize, pointSize));
+                    }
+                    else
+                    {
+                        nextSample.Add(channels[j][i * pointSize]);                     // add R value only of current monochrome line
+                    }
                 }
+                while (nextSample.Count % pointSize != 0) nextSample.Add(0);            // complete sample to match pointSize.
+
                 // filter samples to store only non-repeating sets
                 if (prevSample == null || !Equals(prevSample, nextSample) || i == samplesCount - 1)
                 {
@@ -85,6 +95,30 @@ namespace Communication.Binarize
             }
 
             SetBinarySize(result);
+            return result;
+        }
+
+        private byte EstimateTimelinesCount(List<LightTimelineFile> notEmptyLines)
+        {
+            byte result = 0;
+            int monochromeLines = 0;
+            for (int i = 0; i < notEmptyLines.Count; i++)
+            {
+                if (notEmptyLines[i].IsMonochrome)
+                {
+                    monochromeLines++;
+                    if (monochromeLines % 3 == 0) result++;
+                }
+                else
+                {
+                    if (monochromeLines % 3 != 0)
+                    {
+                        result++;
+                        monochromeLines = 0;
+                    }
+                    result++;
+                }
+            }
             return result;
         }
 

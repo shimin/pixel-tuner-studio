@@ -11,6 +11,8 @@ namespace Communication.Binarize
     {
         public List<LightFileBase> Images { get; set; }
 
+        public bool IsMonochrome { get; set; }
+
         public byte SubmoduleAddress { get; set; }
 
         public LightTimelineFile()
