@@ -171,20 +171,28 @@ namespace PixelTuner.ViewModel
             FileViewModel file = parameter as FileViewModel;
             if (file == null) return;
 
-            TimelinesToUpload dialog = new TimelinesToUpload(i => TimelineFilter(i) && (i as PixelTimeLineViewModel).LineHeight == LedsTotal);
-            dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            dialog.Owner = Application.Current.MainWindow;
-            if (dialog.ShowDialog() == true)
+            try
             {
-                List<byte> data = file.GetPixelBinaryPresentation(dialog.SelectedTimeLines, LedsTotal);
-                InitializeProgressBar(data);
-
-                if (ValidateProject(file, data.Count / 1024)) // project size in KB
+                TimelinesToUpload dialog = new TimelinesToUpload(i => TimelineFilter(i) && (i as PixelTimeLineViewModel).LineHeight == LedsTotal);
+                dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                dialog.Owner = Application.Current.MainWindow;
+                if (dialog.ShowDialog() == true)
                 {
-                    BackgroundWorker bgWorker = new BackgroundWorker();
-                    bgWorker.DoWork += (x, e) => Device.WriteFile(data);
-                    bgWorker.RunWorkerAsync();
+                    List<byte> data = file.GetPixelBinaryPresentation(dialog.SelectedTimeLines, LedsTotal);
+                    InitializeProgressBar(data);
+
+                    bool validationOK = ValidateProject(file, data.Count / 1024);
+                    if (validationOK) // project size in KB
+                    {
+                        BackgroundWorker bgWorker = new BackgroundWorker();
+                        bgWorker.DoWork += (x, e) => Device.WriteFile(data);
+                        bgWorker.RunWorkerAsync();
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                if (Device.Logger != null) Device.Logger.WriteException(ex);
             }
         }
 

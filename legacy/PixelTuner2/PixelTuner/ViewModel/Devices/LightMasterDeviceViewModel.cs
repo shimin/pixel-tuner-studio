@@ -43,7 +43,7 @@ namespace PixelTuner.ViewModel
         /// </summary>
         public long MaxMemory
         {
-            get { return Device == null ? 0 : Device.MaxMemory; }
+            get { return Device == null ? 0 : Device.MemoryAvailable; }
             private set { RaisePropertyChanged("MaxMemory"); }
         }
 
@@ -148,9 +148,10 @@ namespace PixelTuner.ViewModel
             try
             {
                 byte[] binaryData = parameter as byte[];
-                
-                if (binaryData == null)
-                    binaryData = File.ReadAllBytes(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _firmwareFileName));
+
+                var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _firmwareFileName);
+                if (binaryData == null && File.Exists(path))
+                    binaryData = File.ReadAllBytes(path);
 
                 if (binaryData == null)
                     binaryData = _firmwareBytes;

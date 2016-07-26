@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 
-  <?define ProductVersion="2.0.4.21" ?>
+  <?define ProductVersion="2.0.4.17" ?>
   <?define RTMProductVersion="1.0.0" ?>
   <?define UpgradeCode="{df1086f7-6803-4697-b66c-74dd2733c092}"?>
   <?define Manufacturer="e-pic.ru"?>
@@ -146,7 +146,7 @@
 
       <Directory Id="DesktopFolder" Name="Desktop" />
 
-      <Directory Id="WIX_DIR_COMMON_PICTURES">
+      <Directory Id="WIX_DIR_MYPICTURES">
         <Directory Id="PixelTuner2Content" Name="PixelTuner 2">
            <Directory Id="ContentFolder" Name="Content"/>
            <Directory Id="GradientsFolder" Name="Gradients"/>
@@ -154,7 +154,7 @@
         </Directory>
       </Directory>
 
-      <Directory Id="WIX_DIR_COMMON_VIDEO">
+      <Directory Id="WIX_DIR_MYVIDEO">
         <Directory Id="VideosFolder" Name="Clips"/>
       </Directory>
       

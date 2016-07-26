@@ -120,19 +120,70 @@ namespace PixelTuner.ViewModel
                 {
                     int lineIdx = 0;
                     var sample = _parsedProject.GetColors(timeSpan);
-                    foreach (var l in lines)
-                    {
-                        if (l.Items.Count == 0) continue;
+                    int maxIdx = CalcMaxSampleColors(lines, sample);
 
-                        if (l.MetaData != null)
+                    foreach (LightTimeLineViewModel l in lines)
+                    {
+                        if (l.Items.Count != 0 && l.MetaData != null)
                         {
-                            Color c = sample != null && lineIdx < sample.Count ? Color.FromRgb(sample[lineIdx].R, sample[lineIdx].G, sample[lineIdx].B) : Color.FromRgb(0, 0, 0);
-                            RootViewModel.This.CanvasModel.ElementsDictionary[l.MetaData.Path].Fill = l.MetaData.Fill = new SolidColorBrush(c);
+                            var elementColor = Colors.Black;
+                            var element = RootViewModel.This.CanvasModel.ElementsDictionary[l.MetaData.Path];
+
+                            if (sample != null && lineIdx < maxIdx)
+                            {
+                                if (l.IsMonochrome)
+                                {
+                                    var amount = sample[lineIdx / 3].R;
+                                    if (lineIdx % 3 == 1) amount = sample[lineIdx / 3].G;
+                                    else if (lineIdx % 3 == 2) amount = sample[lineIdx / 3].B;
+
+                                    elementColor = Color.FromRgb(amount, amount, amount);
+                                    lineIdx++;
+                                }
+                                else
+                                {
+                                    elementColor = Color.FromRgb(sample[lineIdx / 3].R, sample[lineIdx / 3].G, sample[lineIdx / 3].B);
+                                    lineIdx += 3;
+                                }
+                            }
+                            
+                            element.Fill = l.MetaData.Fill = new SolidColorBrush(elementColor);
                         }
-                        lineIdx++;
                     }
                 }
             }
+        }
+
+        private int CalcMaxSampleColors(IEnumerable<TimeLineViewModel> src, List<ColorStruct> sample)
+        {
+            int result = 0;
+            int monochromeLines = 0;
+            var lines = new List<TimeLineViewModel>();
+            lines.AddRange(src);
+
+            for (int i = 0; i < lines.Count; i++)
+            {
+                var line = lines[i] as LightTimeLineViewModel;
+                if (line != null)
+                {
+                    if (line.IsMonochrome)
+                    {
+                        monochromeLines++;
+                        if (monochromeLines % 3 == 0) result++;
+                    }
+                    else
+                    {
+                        if (monochromeLines % 3 != 0)
+                        {
+                            result++;
+                            monochromeLines = 0;
+                        }
+                        result++;
+                    }
+                }
+            }
+
+            return result;
         }
 
         #region Properties
@@ -1098,9 +1149,9 @@ namespace PixelTuner.ViewModel
             byte slaveAddress = 1;
             foreach (TimeLineViewModel line in lines)
             {
-                if (line.Items.Count == 0 || !line.IsSelectedToUpload) continue;
+                if (!(line is LightTimeLineViewModel) || line.Items.Count == 0 || !line.IsSelectedToUpload) continue;
                 var binaryLine = new LightTimelineFile();
-
+                binaryLine.IsMonochrome = (line as LightTimeLineViewModel).IsMonochrome;
                 binaryLine.SubmoduleAddress = slaveAddress;
 
                 List<ITimeLineDataItem> timelineItems = FillGabs(line.Items, line.Start.Value, CreateBlankLightItem);
