@@ -118,7 +118,7 @@ namespace PixelTuner.ViewModel
                 var lines = TimeLines.Where(item => item is LightTimeLineViewModel);
                 if (lines.Count() > 0)
                 {
-                    int lineIdx = 0;
+                    int channelID = 0;
                     var sample = _parsedProject.GetColors(timeSpan);
                     int maxIdx = CalcMaxSampleColors(lines, sample);
 
@@ -129,21 +129,22 @@ namespace PixelTuner.ViewModel
                             var elementColor = Colors.Black;
                             var element = RootViewModel.This.CanvasModel.ElementsDictionary[l.MetaData.Path];
 
-                            if (sample != null && lineIdx < maxIdx)
+                            if (sample != null && channelID / 3 < maxIdx)
                             {
                                 if (l.IsMonochrome)
                                 {
-                                    var amount = sample[lineIdx / 3].R;
-                                    if (lineIdx % 3 == 1) amount = sample[lineIdx / 3].G;
-                                    else if (lineIdx % 3 == 2) amount = sample[lineIdx / 3].B;
+                                    var amount = sample[channelID / 3].R;
+                                    if (channelID % 3 == 1) amount = sample[channelID / 3].G;
+                                    else if (channelID % 3 == 2) amount = sample[channelID / 3].B;
 
                                     elementColor = Color.FromRgb(amount, amount, amount);
-                                    lineIdx++;
+                                    channelID++;
                                 }
                                 else
                                 {
-                                    elementColor = Color.FromRgb(sample[lineIdx / 3].R, sample[lineIdx / 3].G, sample[lineIdx / 3].B);
-                                    lineIdx += 3;
+                                    if (channelID % 3 != 0) channelID += 3 - channelID % 3;
+                                    elementColor = Color.FromRgb(sample[channelID / 3].R, sample[channelID / 3].G, sample[channelID / 3].B);
+                                    channelID += 3;
                                 }
                             }
                             
@@ -169,7 +170,7 @@ namespace PixelTuner.ViewModel
                     if (line.IsMonochrome)
                     {
                         monochromeLines++;
-                        if (monochromeLines % 3 == 0) result++;
+                        if (monochromeLines % 3 == 0) { result++; monochromeLines = 0; }
                     }
                     else
                     {
@@ -182,6 +183,7 @@ namespace PixelTuner.ViewModel
                     }
                 }
             }
+            if (monochromeLines % 3 != 0) result++;
 
             return result;
         }

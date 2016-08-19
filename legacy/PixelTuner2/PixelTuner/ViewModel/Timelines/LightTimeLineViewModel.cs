@@ -228,7 +228,9 @@ namespace PixelTuner.ViewModel
 
         public override object Clone()
         {
-            return base.Clone();
+            LightTimeLineViewModel result = (LightTimeLineViewModel)base.Clone();
+            result.IsMonochrome = this.IsMonochrome;
+            return result;
         }
     }
 }

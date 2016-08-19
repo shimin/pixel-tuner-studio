@@ -19,6 +19,8 @@
     <UICulture>ru-RU</UICulture>
     <UICulture>en-US</UICulture>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -40,25 +42,26 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;DONT_SAVE_LAYOUT</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;DONT_SAVE_LAYOUT;UNSAFE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UICulture>ru-RU</UICulture>
     <UICulture>en-US</UICulture>
     <Prefer32Bit>false</Prefer32Bit>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;DONT_SAVE_LAYOUT</DefineConstants>
+    <DefineConstants>TRACE;DONT_SAVE_LAYOUT; UNSAFE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UICulture>ru-RU</UICulture>
     <UICulture>en-US</UICulture>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EnRelease|x86'">
     <OutputPath>bin\x86\EnRelease\</OutputPath>
@@ -102,7 +105,7 @@
     </ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>PixelTuner_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
@@ -114,11 +117,36 @@
     <GenerateManifests>false</GenerateManifests>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ImageProcessor, Version=2.3.0.0, Culture=neutral, PublicKeyToken=1c1942f1a7dbbec2, processorArchitecture=MSIL">
-      <HintPath>..\packages\ImageProcessor-strong-name.2.3.0.0\lib\net46\ImageProcessor.dll</HintPath>
+    <Reference Include="ImageProcessor, Version=2.4.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ImageProcessor.2.4.3.0\lib\net45\ImageProcessor.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="PresentationFramework.Aero" />
+    <Reference Include="SharpDX">
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.D3DCompiler">
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.D3DCompiler.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct2D1">
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Direct2D1.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D10">
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Direct3D10.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D11">
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Direct3D11.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D11.Effects">
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Direct3D11.Effects.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D9, Version=2.6.3.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Direct3D9.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.DXGI">
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.DXGI.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -180,6 +208,9 @@
     <Compile Include="EffectTransitionWindow.xaml.cs">
       <DependentUpon>EffectTransitionWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="HoopPreview\Disposer.cs" />
+    <Compile Include="HoopPreview\DxRingPreviewScene.cs" />
+    <Compile Include="HoopPreview\SceneBase.cs" />
     <Compile Include="Import\PreviewPage.xaml.cs">
       <DependentUpon>PreviewPage.xaml</DependentUpon>
     </Compile>
@@ -207,6 +238,24 @@
     <Compile Include="ReplaceItemWindow.xaml.cs">
       <DependentUpon>ReplaceItemWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SharpDX.WPF\Cameras\BaseCamera.cs" />
+    <Compile Include="SharpDX.WPF\Cameras\FirstPersonCamera.cs" />
+    <Compile Include="SharpDX.WPF\Cameras\ModelViewerCamera.cs" />
+    <Compile Include="SharpDX.WPF\ConstantBuffer.cs" />
+    <Compile Include="SharpDX.WPF\D2D1.cs" />
+    <Compile Include="SharpDX.WPF\D3D.cs" />
+    <Compile Include="SharpDX.WPF\D3D10.cs" />
+    <Compile Include="SharpDX.WPF\D3D11.cs" />
+    <Compile Include="SharpDX.WPF\D3D11_2D1.cs" />
+    <Compile Include="SharpDX.WPF\D3D9.cs" />
+    <Compile Include="SharpDX.WPF\DeviceUtil.cs" />
+    <Compile Include="SharpDX.WPF\DisposeGroup.cs" />
+    <Compile Include="SharpDX.WPF\DXElement.cs" />
+    <Compile Include="SharpDX.WPF\DXImageSource.cs" />
+    <Compile Include="SharpDX.WPF\DXSharing.cs" />
+    <Compile Include="SharpDX.WPF\DXUtils.cs" />
+    <Compile Include="SharpDX.WPF\FPS.cs" />
+    <Compile Include="SharpDX.WPF\IDirect3D.cs" />
     <Compile Include="SplitItemWindow.xaml.cs">
       <DependentUpon>SplitItemWindow.xaml</DependentUpon>
     </Compile>
@@ -455,12 +504,16 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="SharpDX.WPF\app.config" />
+    <None Include="SharpDX.WPF\MainClasses.cd" />
     <Resource Include="Files\Flash.bin" />
     <Resource Include="Files\Flash_v3.bin" />
     <Resource Include="Files\Flash_Epic.bin" />
     <Resource Include="Files\Flash_IL.bin" />
     <Resource Include="Files\Flash_LR.bin" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="PixelTuner.manifest" />
     <None Include="PixelTunerDock.config" />
     <None Include="PixelTuner_TemporaryKey.pfx" />
@@ -560,7 +613,7 @@
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
       <Visible>False</Visible>
-      <ProductName>Клиентский профиль Microsoft .NET Framework 4 %28x86 и x64%29</ProductName>
+      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -1189,8 +1242,17 @@
     <Content Include="Content\80_batterfly_009.bmp" />
     <Content Include="Gradients\g_effect1.jpg" />
     <Content Include="Gradients\g_rainbow.jpg" />
+    <Content Include="HoopPreview\shader.fx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Schemas\human.svg" />
     <Content Include="Schemas\human_1.svg" />
+    <Content Include="sharpdx_direct3d11_effects_x64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sharpdx_direct3d11_effects_x86.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Resource Include="Images\settings_Dark.png" />
     <Resource Include="Images\settings.png" />
     <Resource Include="Effects\04_solid.png" />
@@ -1256,6 +1318,13 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\packages\SharpDX.2.6.3\build\SharpDX.targets" Condition="Exists('..\packages\SharpDX.2.6.3\build\SharpDX.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\SharpDX.2.6.3\build\SharpDX.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SharpDX.2.6.3\build\SharpDX.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
