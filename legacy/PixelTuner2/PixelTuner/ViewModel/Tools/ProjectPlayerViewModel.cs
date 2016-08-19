@@ -10,6 +10,8 @@ using System.ComponentModel;
 using System.Threading;
 using System.Windows.Media;
 using System.Windows;
+using DXRingPreview;
+using SharpDX.WPF;
 
 namespace PixelTuner.ViewModel
 {
@@ -21,11 +23,40 @@ namespace PixelTuner.ViewModel
             ContentId = ToolContentId;
             IsVisible = true;
             _tilingX = 1;
+
+            try
+            {
+                HoopRenderer = new DxRingPreviewScene()
+                {
+                    Renderer = new D3D11(),
+                    GAlphaStep = 0.415f,
+                    CircleStripScanSpeed = 0.8f,
+                    CircleRotationSpeed = 1.5f,
+                    CircleWidth = 0.012f
+                };
+            }
+            catch(Exception ex)
+            {
+                StringBuilder sb = new StringBuilder(ex.Message);
+                var inner = ex.InnerException;
+                while(inner != null)
+                {
+                    sb.Append("\n\n\t" + inner.Message);
+                    inner = inner.InnerException;
+                }
+                MessageBox.Show(sb.ToString(), "Hoop preview error");
+            }
         }
 
         public const string ToolContentId = "ProjectPlayerTool";
 
         private int _blackFieldHeight = 40;
+
+        public DxRingPreviewScene HoopRenderer
+        {
+            get;
+            set;
+        }
 
         BitmapSource _image;
         public BitmapSource Image
@@ -61,12 +92,13 @@ namespace PixelTuner.ViewModel
                     if (_displayModel != null) _displayModel.PropertyChanged -= _displayModel_PropertyChanged;
 
                     _displayModel = value;
-                    
+
                     if (value != null)
                     {
                         _displayModel.PropertyChanged -= _displayModel_PropertyChanged;
                         _displayModel.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(_displayModel_PropertyChanged);
 
+                        HoopRenderer.ContentTexture = _displayModel.FullName;
                         AsyncSetImage(value.ImageSource);
                         ModelStretching = value.Stretching;
                         Opacity = (double)value.Brightness / 100.0;

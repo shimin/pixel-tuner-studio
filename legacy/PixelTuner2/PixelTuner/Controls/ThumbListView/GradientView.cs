@@ -17,7 +17,7 @@ namespace PixelTuner.Controls.ThumbListView
 {
     public partial class ThumbnailGradientListView : ResourceDictionary
     {
-        static string picturesPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonPictures);
+        static string picturesPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
 
         string _sourcePath = Path.Combine(picturesPath, "PixelTuner 2\\Gradients");
 

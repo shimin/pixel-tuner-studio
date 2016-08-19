@@ -10,3 +10,5 @@ Release/
 *.user
 SetAssemblyInfoTool.exe
 *.stackdump
+BootstrapperNET4/directx_Jun2010_redist.exe
+packages/
