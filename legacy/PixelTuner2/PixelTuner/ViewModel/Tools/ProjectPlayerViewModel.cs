@@ -10,8 +10,6 @@ using System.ComponentModel;
 using System.Threading;
 using System.Windows.Media;
 using System.Windows;
-using DXRingPreview;
-using SharpDX.WPF;
 
 namespace PixelTuner.ViewModel
 {
@@ -23,39 +21,50 @@ namespace PixelTuner.ViewModel
             ContentId = ToolContentId;
             IsVisible = true;
             _tilingX = 1;
-
-            try
-            {
-                HoopRenderer = new DxRingPreviewScene()
-                {
-                    Renderer = new D3D11(),
-                    GAlphaStep = 0.415f,
-                    CircleStripScanSpeed = 0.8f,
-                    CircleRotationSpeed = 1.5f,
-                    CircleWidth = 0.012f
-                };
-            }
-            catch(Exception ex)
-            {
-                StringBuilder sb = new StringBuilder(ex.Message);
-                var inner = ex.InnerException;
-                while(inner != null)
-                {
-                    sb.Append("\n\n\t" + inner.Message);
-                    inner = inner.InnerException;
-                }
-                MessageBox.Show(sb.ToString(), "Hoop preview error");
-            }
         }
 
         public const string ToolContentId = "ProjectPlayerTool";
 
-        private int _blackFieldHeight = 40;
-
-        public DxRingPreviewScene HoopRenderer
+        private float _tailAlpha = 0.8f;
+        public float TailAlpha
         {
-            get;
-            set;
+            get
+            {
+                return _tailAlpha;
+            }
+
+            set
+            {
+                _tailAlpha = value; RaisePropertyChanged("TailAlpha");
+            }
+        }
+
+        private float _scanSpeed = 6f;
+        public float ScanSpeed
+        {
+            get
+            {
+                return _scanSpeed;
+            }
+
+            set
+            {
+                _scanSpeed = value; RaisePropertyChanged("ScanSpeed");
+            }
+        }
+
+        private float _rotationFactor = 2f;
+        public float RotationFactor
+        {
+            get
+            {
+                return _rotationFactor;
+            }
+
+            set
+            {
+                _rotationFactor = value; RaisePropertyChanged("RotationFactor");
+            }
         }
 
         BitmapSource _image;
@@ -73,6 +82,8 @@ namespace PixelTuner.ViewModel
         public void AsyncSetImage(BitmapSource image)
         {
             var bmp = (BitmapSource)image.GetAsFrozen();
+            //Bitmap = ImageHelper.BitmapImageToBitmap<BmpBitmapEncoder>(image);
+            //Bitmap = (Bitmap)Bitmap.FromFile(DisplayModel.FullName);
             ThreadPool.QueueUserWorkItem((o) =>
             {
                 BitmapSource frozen = FormatImage(bmp);
@@ -97,8 +108,7 @@ namespace PixelTuner.ViewModel
                     {
                         _displayModel.PropertyChanged -= _displayModel_PropertyChanged;
                         _displayModel.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(_displayModel_PropertyChanged);
-
-                        HoopRenderer.ContentTexture = _displayModel.FullName;
+                        
                         AsyncSetImage(value.ImageSource);
                         ModelStretching = value.Stretching;
                         Opacity = (double)value.Brightness / 100.0;
@@ -231,7 +241,7 @@ namespace PixelTuner.ViewModel
                 } 
             }
         }
-        
+
         private BitmapSource FormatImage(BitmapSource src)
         {
             BitmapSource rotated = new TransformedBitmap(src, new RotateTransform(180));

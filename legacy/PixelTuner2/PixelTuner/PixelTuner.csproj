@@ -117,35 +117,26 @@
     <GenerateManifests>false</GenerateManifests>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GlmNet, Version=0.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\GlmNet.0.5.1.0\lib\net40\GlmNet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="ImageProcessor, Version=2.4.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ImageProcessor.2.4.3.0\lib\net45\ImageProcessor.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="PresentationFramework.Aero" />
-    <Reference Include="SharpDX">
-      <HintPath>$(SharpDXPackageBinDir)\SharpDX.dll</HintPath>
+    <Reference Include="SharpGL, Version=2.4.0.0, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpGL.2.4.0.0\lib\net40\SharpGL.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="SharpDX.D3DCompiler">
-      <HintPath>$(SharpDXPackageBinDir)\SharpDX.D3DCompiler.dll</HintPath>
+    <Reference Include="SharpGL.SceneGraph, Version=2.4.0.0, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpGL.2.4.0.0\lib\net40\SharpGL.SceneGraph.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="SharpDX.Direct2D1">
-      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Direct2D1.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Direct3D10">
-      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Direct3D10.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Direct3D11">
-      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Direct3D11.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Direct3D11.Effects">
-      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Direct3D11.Effects.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Direct3D9, Version=2.6.3.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Direct3D9.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.DXGI">
-      <HintPath>$(SharpDXPackageBinDir)\SharpDX.DXGI.dll</HintPath>
+    <Reference Include="SharpGL.WPF, Version=2.4.0.0, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpGL.WPF.2.4.0.0\lib\net40\SharpGL.WPF.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -189,6 +180,9 @@
     <Compile Include="BasicItemWindow.xaml.cs">
       <DependentUpon>BasicItemWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CanvasElementWindow.xaml.cs">
+      <DependentUpon>CanvasElementWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ThumbListView\EffectView.cs" />
     <Compile Include="Controls\ThumbListView\GradientView.cs" />
     <Compile Include="Controls\ThumbListView\VideoView.cs" />
@@ -208,9 +202,10 @@
     <Compile Include="EffectTransitionWindow.xaml.cs">
       <DependentUpon>EffectTransitionWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="HoopPreview\Disposer.cs" />
-    <Compile Include="HoopPreview\DxRingPreviewScene.cs" />
-    <Compile Include="HoopPreview\SceneBase.cs" />
+    <Compile Include="HoopPreview\Geometry\SimpleQuad.cs" />
+    <Compile Include="HoopPreview\Helpers\ManifestResourceLoader.cs" />
+    <Compile Include="HoopPreview\Helpers\RenderTexure.cs" />
+    <Compile Include="HoopPreview\HoopPreviewScene.cs" />
     <Compile Include="Import\PreviewPage.xaml.cs">
       <DependentUpon>PreviewPage.xaml</DependentUpon>
     </Compile>
@@ -238,24 +233,6 @@
     <Compile Include="ReplaceItemWindow.xaml.cs">
       <DependentUpon>ReplaceItemWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SharpDX.WPF\Cameras\BaseCamera.cs" />
-    <Compile Include="SharpDX.WPF\Cameras\FirstPersonCamera.cs" />
-    <Compile Include="SharpDX.WPF\Cameras\ModelViewerCamera.cs" />
-    <Compile Include="SharpDX.WPF\ConstantBuffer.cs" />
-    <Compile Include="SharpDX.WPF\D2D1.cs" />
-    <Compile Include="SharpDX.WPF\D3D.cs" />
-    <Compile Include="SharpDX.WPF\D3D10.cs" />
-    <Compile Include="SharpDX.WPF\D3D11.cs" />
-    <Compile Include="SharpDX.WPF\D3D11_2D1.cs" />
-    <Compile Include="SharpDX.WPF\D3D9.cs" />
-    <Compile Include="SharpDX.WPF\DeviceUtil.cs" />
-    <Compile Include="SharpDX.WPF\DisposeGroup.cs" />
-    <Compile Include="SharpDX.WPF\DXElement.cs" />
-    <Compile Include="SharpDX.WPF\DXImageSource.cs" />
-    <Compile Include="SharpDX.WPF\DXSharing.cs" />
-    <Compile Include="SharpDX.WPF\DXUtils.cs" />
-    <Compile Include="SharpDX.WPF\FPS.cs" />
-    <Compile Include="SharpDX.WPF\IDirect3D.cs" />
     <Compile Include="SplitItemWindow.xaml.cs">
       <DependentUpon>SplitItemWindow.xaml</DependentUpon>
     </Compile>
@@ -265,6 +242,7 @@
     <Compile Include="Styles\FileLayoutTemplate.xaml.cs">
       <DependentUpon>FileLayoutTemplate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Styles\ProjectPlayerLayoutTemplate.xaml.cs" />
     <Compile Include="Styles\TimeLineLayoutTemplate.xaml.cs">
       <DependentUpon>TimeLineLayoutTemplate.xaml</DependentUpon>
     </Compile>
@@ -347,6 +325,10 @@
     <Page Include="BasicItemWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="CanvasElementWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="EffectSawWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -504,13 +486,17 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="SharpDX.WPF\app.config" />
-    <None Include="SharpDX.WPF\MainClasses.cd" />
     <Resource Include="Files\Flash.bin" />
     <Resource Include="Files\Flash_v3.bin" />
     <Resource Include="Files\Flash_Epic.bin" />
     <Resource Include="Files\Flash_IL.bin" />
     <Resource Include="Files\Flash_LR.bin" />
+    <EmbeddedResource Include="HoopPreview\Shaders\ClearShader.frag" />
+    <EmbeddedResource Include="HoopPreview\Shaders\ClearShader.vert" />
+    <EmbeddedResource Include="HoopPreview\Shaders\SliceShader.frag" />
+    <EmbeddedResource Include="HoopPreview\Shaders\SliceShader.vert" />
+    <EmbeddedResource Include="HoopPreview\Shaders\WarpShader.frag" />
+    <EmbeddedResource Include="HoopPreview\Shaders\WarpShader.vert" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -1242,17 +1228,8 @@
     <Content Include="Content\80_batterfly_009.bmp" />
     <Content Include="Gradients\g_effect1.jpg" />
     <Content Include="Gradients\g_rainbow.jpg" />
-    <Content Include="HoopPreview\shader.fx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Schemas\human.svg" />
     <Content Include="Schemas\human_1.svg" />
-    <Content Include="sharpdx_direct3d11_effects_x64.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sharpdx_direct3d11_effects_x86.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Resource Include="Images\settings_Dark.png" />
     <Resource Include="Images\settings.png" />
     <Resource Include="Effects\04_solid.png" />
@@ -1318,13 +1295,6 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <Import Project="..\packages\SharpDX.2.6.3\build\SharpDX.targets" Condition="Exists('..\packages\SharpDX.2.6.3\build\SharpDX.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\SharpDX.2.6.3\build\SharpDX.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SharpDX.2.6.3\build\SharpDX.targets'))" />
-  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

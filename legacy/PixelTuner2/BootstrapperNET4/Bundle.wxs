@@ -18,7 +18,6 @@
       <PackageGroupRef Id="DriverInstaller"/>
       <PackageGroupRef Id="DriverInstaller_x64"/>
       <PackageGroupRef Id="PixelTunerInstaller"/>
-      <PackageGroupRef Id="DirectXInstaller"/>
     </Chain>
   </Bundle>
   <Fragment>
@@ -57,18 +56,6 @@
         Compressed="yes"
         Vital="yes"
         SourceFile="$(var.PixelTunerMsiPath)" />
-    </PackageGroup>
-  </Fragment>
-
-  <Fragment>
-    <PackageGroup Id="DirectXInstaller">
-      <ExePackage
-        Id="DirectXPackage"
-        Cache="no"
-        Compressed="yes"
-        Permanent="yes"
-        Vital="yes"
-        SourceFile="directx_Jun2010_redist.exe" />
     </PackageGroup>
   </Fragment>
 </Wix>

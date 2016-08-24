@@ -79,7 +79,7 @@
             <xctk:DoubleUpDown 
                 Increment="5"
                 Minimum="5" 
-                Maximum="200" 
+                Maximum="400" 
                 Grid.Column="4" 
                 Margin="4,2,2,0"
                 HorizontalAlignment="Stretch"

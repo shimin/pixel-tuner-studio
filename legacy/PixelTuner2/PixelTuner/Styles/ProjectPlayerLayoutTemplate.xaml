@@ -1,7 +1,8 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<ResourceDictionary x:Class="PixelTuner.Styles.ProjectPlayerLayoutTemplate"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:ptw="clr-namespace:Common.ProjectPlayer.PixelTwister;assembly=Common"
-                    xmlns:dxc="clr-namespace:SharpDX.WPF"
+                    xmlns:sharpGl="clr-namespace:SharpGL.WPF;assembly=SharpGL.WPF"
                     xmlns:properties="clr-namespace:PixelTuner.Properties"
                     xmlns:vm="clr-namespace:PixelTuner.ViewModel">
     <ResourceDictionary.MergedDictionaries>
@@ -89,7 +90,56 @@
             </TabItem>
             <TabItem Header="Hoop" Background="Black" BorderThickness="0" Foreground="White" Width="50" Margin="0" Padding="0">
                 <Grid x:Name="boxHoopGrid" Background="Black">
-                    <dxc:DXElement x:Name="DxView" Renderer="{Binding HoopRenderer}"></dxc:DXElement>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="80" />
+                    </Grid.RowDefinitions>
+                    <sharpGl:OpenGLControl 
+                        Loaded="OpenGLControl_Loaded"
+                        OpenGLDraw="OpenGlControl_OnOpenGLDraw" 
+                        Resized="OpenGlControl_OnResized" 
+                        FrameRate="200"
+                        SnapsToDevicePixels="True"
+                        OpenGLInitialized="OpenGLControl_OpenGLInitialized"
+                        RenderContextType="FBO" />
+                    <StackPanel Grid.Row="1" Orientation="Vertical">
+                        <StackPanel Visibility="Visible" Orientation="Horizontal">
+                            <Label Content="Alpha: " Foreground="White" />
+                            <Slider Name="boxTailAlphaSlider" Width="260" Value="{Binding TailAlpha, UpdateSourceTrigger=PropertyChanged}" 
+                                    SmallChange="0.01" 
+                                    LargeChange="0.1" 
+                                    TickFrequency="0.01" 
+                                    IsSnapToTickEnabled="True" 
+                                    Minimum="0.1" 
+                                    Maximum="0.95"/>
+                            <Label Foreground="White" Content="{Binding TailAlpha}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="{StaticResource Item_Stretching}" Foreground="White" />
+                            <Slider Name="boxHoopStretchingSlider" Width="260" Value="{Binding ScanSpeed, UpdateSourceTrigger=PropertyChanged}" 
+                                    Margin="3" 
+                                    SmallChange="0.05"
+                                    LargeChange="0.2"
+                                    TickFrequency="0.05"
+                                    IsSnapToTickEnabled="True"
+                                    Minimum="0.1" 
+                                    Maximum="8"/>
+                            <Label Foreground="White" Content="{Binding ScanSpeed}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Rotation: " Foreground="White" />
+                            <Slider Name="boxRotationFactor" Width="260" Value="{Binding RotationFactor, UpdateSourceTrigger=PropertyChanged}" 
+                                    Margin="3" 
+                                    SmallChange="0.05"
+                                    LargeChange="0.2"
+                                    TickFrequency="0.05"
+                                    IsSnapToTickEnabled="True"
+                                    Minimum="0.05" 
+                                    Maximum="12"/>
+                            <Label Foreground="White" Content="{Binding RotationFactor}"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <!--<dxc:DXElement x:Name="DxView" Renderer="{Binding HoopRenderer}"></dxc:DXElement>-->
                 </Grid>
             </TabItem>
         </TabControl>

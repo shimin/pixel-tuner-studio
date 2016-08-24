@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
-     xmlns:utils="http://schemas.microsoft.com/wix/UtilExtension">
+  xmlns:utils="http://schemas.microsoft.com/wix/UtilExtension">
 
   <?define ProductVersion="2.0.6.6" ?>
   <?define RTMProductVersion="1.0.0" ?>
@@ -10,16 +10,16 @@
   <?define PackageCode="*"?>
 
   <Product Id="$(var.ProductCode)" Name="PixelTuner" Language="1033" Codepage="1252" Version="$(var.ProductVersion)" Manufacturer="$(var.Manufacturer)" UpgradeCode="$(var.UpgradeCode)">
-    
+
     <Package Id='$(var.PackageCode)' InstallPrivileges='elevated' InstallScope='perMachine' Manufacturer='$(var.Manufacturer)' InstallerVersion="200" Compressed="yes" ReadOnly='yes' ShortNames='no' Keywords='Installer,MSI,Database'/>
-    
+
     <Media Id="1" Cabinet="media.cab" EmbedCab="yes" />
     <MajorUpgrade AllowDowngrades="yes" IgnoreRemoveFailure="no" />
-    
+
     <WixVariable Id="WixUILicenseRtf" Value=".\License.rtf" />
     <WixVariable Id="WixUIBannerBmp" Value=".\pics\banner.bmp" />
     <WixVariable Id="WixUIDialogBmp" Value=".\pics\dialog.bmp" />
-    
+
     <Property Id="INSTALLLOCATION">
       <RegistrySearch Id="InstallPathRegSearch" Type="raw" Root="HKLM" Key="SOFTWARE\e-pic\PixelTuner 2" Name="InstallLocation" />
     </Property>
@@ -28,7 +28,7 @@
     <PropertyRef Id="WIX_DIR_COMMON_VIDEO" />
     <Property Id="PREVIOUSVERSIONSINSTALLED" Secure="yes" />
     <Property Id="NEWPRODUCTFOUND" Secure="yes" />
-    
+
     <Upgrade Id="$(var.UpgradeCode)">
       <UpgradeVersion Minimum="$(var.ProductVersion)"
                   IncludeMinimum="no"
@@ -60,6 +60,10 @@
                 WorkingDirectory='INSTALLLOCATION' Icon="PixelTuner.exe" IconIndex="0" Advertise="yes" />
             </File>
             <File Id="InteractivityLib" Source="..\PixelTuner\bin\$(var.Configuration)\System.Windows.Interactivity.dll"/>
+            <File Id="GlmNetLib" Source="..\PixelTuner\bin\$(var.Configuration)\GlmNet.dll"/>
+            <File Id="SharpGLLib" Source="..\PixelTuner\bin\$(var.Configuration)\SharpGL.dll"/>
+            <File Id="SharpGLSceneGraphLib" Source="..\PixelTuner\bin\$(var.Configuration)\SharpGL.SceneGraph.dll"/>
+            <File Id="SharpGLWPFLib" Source="..\PixelTuner\bin\$(var.Configuration)\SharpGL.WPF.dll"/>
             <File Id="ToolkitLib" Source="..\PixelTuner\bin\$(var.Configuration)\Toolkit.dll" />
             <File Id="WorkspaceLib" Source="..\PixelTuner\bin\$(var.Configuration)\Workspace.dll" />
             <File Id="WorkspacePageTransitionsLib" Source="..\PixelTuner\bin\$(var.Configuration)\Workspace.PageTransitions.dll" />
@@ -85,7 +89,7 @@
               <File Id="Rosources_en_US" Source="..\PixelTuner\bin\$(var.Configuration)\en-US\PixelTuner.resources.dll" />
             </Component>
           </Directory>
-          
+
           <Directory Id="ResourceLocation_es" Name="es">
             <Component Id="PixelTuner.com.es" Guid="FFFE2969-59C2-4A42-B4B7-6D5473F8131C">
               <File Id="Rosources_es" Source="..\PixelTuner\bin\$(var.Configuration)\es\Workspace.resources.dll" />
@@ -177,37 +181,48 @@
 
       <Directory Id="WIX_DIR_MYPICTURES">
         <Directory Id="PixelTuner2Content" Name="PixelTuner 2">
-           <Directory Id="ContentFolder" Name="Content"/>
-           <Directory Id="GradientsFolder" Name="Gradients"/>
-           <Directory Id="SchemasFolder" Name="Schemas"/>
+          <Directory Id="ContentFolder" Name="Content"/>
+          <Directory Id="GradientsFolder" Name="Gradients"/>
+          <Directory Id="SchemasFolder" Name="Schemas"/>
         </Directory>
       </Directory>
 
       <Directory Id="WIX_DIR_MYVIDEO">
         <Directory Id="VideosFolder" Name="Clips"/>
       </Directory>
-      
+
       <Directory Id="WIX_DIR_RESOURCES">
         <Directory Id="INSTALLDOCKLOCATION" Name="PixelTuner 2"/>
       </Directory>
-    
+
       <Directory Id="AppDataFolder">
         <Directory Id="PixelTunerDockFolder" Name="PixelTuner 2">
           <Component Id="DockData" Guid="5cc2a8ab-6031-4870-b6b4-1bff0af6eaf4">
-              <CreateFolder/>
+            <CreateFolder/>
             <RegistryValue Root='HKCU' Key='Software\e-pic\PixelTuner 2'
                      Name='InstallDockFolder'
                      Type='string'
                      Value='PixelTunerDockFolder'
                      KeyPath='yes' />
-              <File Id="PixelTunerDock" Source="..\PixelTuner\PixelTunerDock.config" />
-              <RemoveFolder Id='PixelTunerDockFolder' On='uninstall' />
-              <RemoveFolder Id='RemovePixelTunerDockFolder' Directory='PixelTunerDockFolder' On='uninstall' />
-            </Component>
+            <File Id="PixelTunerDock" Source="..\PixelTuner\PixelTunerDock.config" />
+            <RemoveFolder Id='PixelTunerDockFolder' On='uninstall' />
+            <RemoveFolder Id='RemovePixelTunerDockFolder' Directory='PixelTunerDockFolder' On='uninstall' />
+          </Component>
         </Directory>
       </Directory>
-    
+
     </Directory>
+
+    <!--<DirectoryRef Id="TARGETDIR">
+      
+    --><!--<Merge Id="VCRedist" SourceFile="vcredist\Microsoft_VC100_CRT_x64.msm" DiskId="1" Language="0"/>--><!--
+    
+      <Merge Id="VCRedist1" SourceFile="vcredist\Microsoft_VC100_CRT_x86.msm" DiskId="1" Language="0"/>
+      
+    --><!--<Merge Id="VCRedist2" SourceFile="vcredist\Microsoft_VC110_CRT_x64.msm" DiskId="1" Language="0"/>--><!--
+    
+      <Merge Id="VCRedist3" SourceFile="vcredist\Microsoft_VC110_CRT_x86.msm" DiskId="1" Language="0"/>
+    </DirectoryRef>-->
 
     <DirectoryRef Id="INSTALLLOCATION">
       <Component Id="SharpVectors" Guid="af9296e1-4dcd-4028-b355-57f7a7e72282">
@@ -221,25 +236,10 @@
         <File Id="SharpVectors_RuntimeLib" Source="..\PixelTuner\bin\$(var.Configuration)\SharpVectors.Runtime.dll" />
       </Component>
     </DirectoryRef>
-    
-    <DirectoryRef Id="INSTALLLOCATION">
-      <Component Id="SharpDX" Guid="e14974ba-ff5c-4cb9-a424-744a3b70e8a1">
-        <File Id="SharpDX_Lib" Source="..\PixelTuner\bin\$(var.Configuration)\SharpDX.dll" />
-        <File Id="SharpDX_D3DCompilerLib" Source="..\PixelTuner\bin\$(var.Configuration)\SharpDX.D3DCompiler.dll" />
-        <File Id="SharpDX_Direct2D1Lib" Source="..\PixelTuner\bin\$(var.Configuration)\SharpDX.Direct2D1.dll" />
-        <File Id="SharpDX_Direct3D9Lib" Source="..\PixelTuner\bin\$(var.Configuration)\SharpDX.Direct3D9.dll" />
-        <File Id="SharpDX_Direct3D10Lib" Source="..\PixelTuner\bin\$(var.Configuration)\SharpDX.Direct3D10.dll" />
-        <File Id="SharpDX_Direct3D11Lib" Source="..\PixelTuner\bin\$(var.Configuration)\SharpDX.Direct3D11.dll" />
-        <File Id="SharpDX_Direct3D11EffectLib" Source="..\PixelTuner\bin\$(var.Configuration)\SharpDX.Direct3D11.Effects.dll" />
-        <File Id="SharpDX_DXGILib" Source="..\PixelTuner\bin\$(var.Configuration)\SharpDX.DXGI.dll" />
-        <File Id="SharpDX_direct3d11_effects_x64Lib" Source="..\PixelTuner\bin\$(var.Configuration)\sharpdx_direct3d11_effects_x64.dll" />
-        <File Id="SharpDX_direct3d11_effects_x86Lib" Source="..\PixelTuner\bin\$(var.Configuration)\sharpdx_direct3d11_effects_x86.dll" />
-      </Component>
-    </DirectoryRef>
-    
+
     <DirectoryRef Id="ContentFolder">
-    <Component Id="DefaultContent" Guid="114E4EA1-8D2F-464C-B017-3952BD1AB67D">
-      <CreateFolder></CreateFolder>
+      <Component Id="DefaultContent" Guid="114E4EA1-8D2F-464C-B017-3952BD1AB67D">
+        <CreateFolder></CreateFolder>
         <File Id="_100_2_waves_bmp" Source="..\PixelTuner\Content\100_2_waves.bmp" />
         <File Id="_100_black_bmp" Source="..\PixelTuner\Content\100_black.bmp" />
         <File Id="_100_black_bmp_png" Source="..\PixelTuner\Content\100_black.bmp.png" />
@@ -1711,9 +1711,9 @@
         <File Id="_80_white_bmp_png" Source="..\PixelTuner\Content\80_white.bmp.png" />
         <File Id="_80_Wolf_bmp" Source="..\PixelTuner\Content\80_Wolf.bmp" />
         <File Id="_80_Zayac_bmp" Source="..\PixelTuner\Content\80_Zayac.bmp" />
-    </Component>
+      </Component>
     </DirectoryRef>
-    
+
     <DirectoryRef Id="GradientsFolder">
       <Component Id="DefaultGradients" Guid="bd323f30-425e-4279-87bd-fb79cc987143">
         <CreateFolder/>
@@ -1729,15 +1729,17 @@
         <File Id="_human_1_svg" Source="..\PixelTuner\Schemas\human_1.svg" />
       </Component>
     </DirectoryRef>
-    
-    <Feature Id="ProductFeature" Title="PixelTuner" Level="1">
 
+    <Feature Id="ProductFeature" Title="PixelTuner" Level="1">
+      <!--<MergeRef Id="VCRedist"/>-->
+      <!--<MergeRef Id="VCRedist1"/>-->
+      <!--<MergeRef Id="VCRedist2"/>-->
+      <!--<MergeRef Id="VCRedist3"/>-->
       <!-- TODO: Remove the comments around this ComponentRef element and the Component above in order to add resources to this installer. -->
       <ComponentRef Id="InstallPathRegWriter" />
       <ComponentRef Id="PixelTuner.com" />
       <ComponentRef Id="DockData"/>
       <ComponentRef Id="SharpVectors" />
-      <ComponentRef Id="SharpDX" />
       <ComponentRef Id="PixelTuner.com.en" />
       <ComponentRef Id="PixelTuner.com.en_US" />
       <ComponentRef Id="PixelTuner.com.de" />

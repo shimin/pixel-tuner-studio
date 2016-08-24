@@ -249,7 +249,7 @@
             <TextBlock Text="{Binding LineHeight}" Grid.Row="1" TextAlignment="Center" Visibility="{Binding LineHeight, Converter={StaticResource ControlVisibilityConverter}, FallbackValue=Collapsed}" Foreground="#8f8f8f" />
             <Grid.ToolTip>
                 <ToolTip Padding="0" Margin="0" DataContext="{Binding Path=PlacementTarget, RelativeSource={x:Static RelativeSource.Self}}">
-                    <Canvas Margin="0" Width="120" Height="120" Background="{Binding Background}">
+                    <Canvas Margin="0" Width="120" Height="120" Background="{Binding Background}" ClipToBounds="True">
                         <Path Stroke="Black" 
                               Margin="5" 
                               StrokeThickness="1" 
