@@ -106,7 +106,9 @@
     <Compile Include="DragDrop\Utilities\TypeUtilities.cs" />
     <Compile Include="DragDrop\Utilities\VisualTreeExtensions.cs" />
     <Compile Include="Helpers\CursorHelper.cs" />
+    <Compile Include="Helpers\DataGridColumnsHelper.cs" />
     <Compile Include="Helpers\EnumHelper.cs" />
+    <Compile Include="Helpers\GridHelper.cs" />
     <Compile Include="Helpers\UsbNoification.cs" />
     <Compile Include="Imaging\WarpGrid.cs" />
     <Compile Include="Imaging\ImageHelper.cs" />
