@@ -5,33 +5,126 @@ using System.Windows.Input;
 using System.Windows;
 using System.Windows.Controls;
 using System.Collections.ObjectModel;
+using System;
+using System.Collections.Generic;
 
 namespace PixelTuner.ViewModel
 {
+    public class LedTile : ViewModelBase
+    {
+        public LedTile(CanvasElementViewModel parentElement, int idx)
+        {
+            _parent = parentElement;
+            _index = idx;
+            TurnOnCommand = new DelegateCommand(OnTurnedOn);
+        }
+
+        int _index = 0;
+        
+        public int Y
+        {
+            get
+            {
+                return _index / _parent.ColumnsCount;
+            }
+        }
+        
+        public int X
+        {
+            get
+            {
+                return _index % _parent.ColumnsCount;
+            }
+        }
+
+        CanvasElementViewModel _parent = null;
+
+        bool _selected = false;
+
+        int _ledNumber;
+        public int LedNumber
+        {
+            get
+            {
+                return _ledNumber;
+            }
+
+            set
+            {
+                _ledNumber = value; RaisePropertyChanged("LedNumber");
+            }
+        }
+
+        double _opacityVal = 0.75;
+        public double OpacityVal
+        {
+            get
+            {
+                return _opacityVal;
+            }
+
+            set
+            {
+                _opacityVal = value; RaisePropertyChanged("OpacityVal");
+            }
+        }
+
+        [XmlIgnore]
+        public ICommand TurnOnCommand { get; private set; }
+
+        private void OnTurnedOn(object arg)
+        {
+            if (_parent.SelectedLeds.Contains(this))
+            {
+                _parent.SelectedLeds.Remove(this);
+                LedNumber = 0;
+            }
+            else
+            {
+                LedNumber = _parent.SelectedLeds.Count;
+                _parent.SelectedLeds.Add(this);
+            }
+        }
+    }
+
     public class CanvasElementViewModel : ViewModelBase, Common.Controls.ITimeLineMeta
     {
         public CanvasElementViewModel()
         {
-            ColumnCollection = new ObservableCollection<DataGridColumn>();
-            RowsData = new ObservableCollection<object>();
+            LedTiles = new ObservableCollection<LedTile>();
+            SelectedLeds = new ObservableCollection<LedTile>();
             OnDoubleClickCommand = new DelegateCommand(OnDoubleClick);
         }
 
         #region Pixel markup
 
-        public ObservableCollection<DataGridColumn> ColumnCollection
+        int _tilesMargin = 0;
+        public int TilesMargin
+        {
+            get
+            {
+                return _tilesMargin;
+            }
+
+            set
+            {
+                _tilesMargin = value; RaisePropertyChanged("TilesMargin");
+            }
+        }
+
+        public ObservableCollection<LedTile> LedTiles
         {
             get;
             private set;
         }
-
-        public ObservableCollection<object> RowsData
+        
+        public ObservableCollection<LedTile> SelectedLeds
         {
             get;
             private set;
         }
-
-        int _rowsCount = 2;
+        
+        int _rowsCount = 0;
         public int RowsCount
         {
             get
@@ -41,13 +134,11 @@ namespace PixelTuner.ViewModel
 
             set
             {
-                RowsData.Clear();
-                _rowsCount = value; RaisePropertyChanged("RowsCount");
-                for (int i = 0; i < _rowsCount; i++) RowsData.Add(new object());
+                _rowsCount = value; UpdateLedTiles(); RaisePropertyChanged("RowsCount");
             }
         }
 
-        int _columnsCount = 2;
+        int _columnsCount = 0;
         public int ColumnsCount
         {
             get
@@ -57,13 +148,13 @@ namespace PixelTuner.ViewModel
 
             set
             {
-                ColumnCollection.Clear();
-                _columnsCount = value; RaisePropertyChanged("ColumnsCount");
-                for (int i = 0; i < _columnsCount; i++) ColumnCollection.Add(new DataGridTextColumn());
+                _columnsCount = value; UpdateLedTiles(); RaisePropertyChanged("ColumnsCount");
             }
         }
 
         #endregion
+
+        #region Properties
 
         Geometry _geometry;
         public Geometry Geometry
@@ -116,19 +207,35 @@ namespace PixelTuner.ViewModel
 
         public Transform DragTransform
         {
-            get {
+            get
+            {
                 return new TranslateTransform(
                     -(_geometry.Bounds.Left + _geometry.Bounds.Width / 2),
                     -(_geometry.Bounds.Top + _geometry.Bounds.Height / 2));
                 //return _transform; 
             }
-            set {  }
+            set { }
         }
 
+        #endregion
+        
         #region Commands
 
         [XmlIgnore]
         public ICommand OnDoubleClickCommand { get; private set; }
+
+        public List<Point> OrderedLeds
+        {
+            get
+            {
+                List<Point> result = new List<Point>();
+                foreach (var l in SelectedLeds)
+                {
+                    result.Add(new Point(l.X, l.Y));
+                }
+                return result;
+            }
+        }
 
         private void OnDoubleClick(object arg)
         {
@@ -139,6 +246,23 @@ namespace PixelTuner.ViewModel
         }
 
         #endregion
+
+        private void UpdateLedTiles()
+        {
+            int targetAmount = ColumnsCount * RowsCount;
+            int difference = targetAmount - LedTiles.Count;
+            if (difference > 0)
+            {
+                for (int i = 0; i < difference; i++) LedTiles.Add(new LedTile(this, LedTiles.Count));
+            } else
+            {
+                while (difference < 0)
+                {
+                    LedTiles.RemoveAt(LedTiles.Count + difference);
+                    difference++;
+                }
+            }
+        }
 
         public override object Clone()
         {

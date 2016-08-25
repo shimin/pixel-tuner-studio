@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace PixelTuner
@@ -51,5 +52,21 @@ namespace PixelTuner
 
         #endregion
 
+        private void Button_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Button b = sender as Button;
+            Console.WriteLine(e.LeftButton);
+            if (e.LeftButton == MouseButtonState.Pressed ||
+                e.MouseDevice.LeftButton == MouseButtonState.Pressed)
+            {
+                var ledModel = b.DataContext as LedTile;
+                ledModel.TurnOnCommand.Execute(null);
+            }
+        }
+
+        private void Button_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = false;
+        }
     }
 }
