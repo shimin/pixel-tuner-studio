@@ -9,7 +9,9 @@ namespace Communication.Pixelate
     {
         #region Fields
         
-        List<byte> projectPrefix = new List<byte>(Encoding.ASCII.GetBytes("FLSH"));
+        List<byte> projectPrefix = new List<byte>(Encoding.ASCII.GetBytes("PPOI"));
+
+        private byte formatVersion = 1;
 
         public List<PixelTimelineFile> TimeLines { get; set; }
 
@@ -61,6 +63,7 @@ namespace Communication.Pixelate
         private List<byte> CreateProjectHeader(List<PixelTimelineFile> timeLines, byte targetHeight)
         {
             List<byte> result = new List<byte>(projectPrefix);                          // header
+            result.Add(formatVersion);
             result.Add(targetHeight);                                                   // project images height
             result.AddRange(new byte[4]);                                               // binary total size field
             result.Add((byte)timeLines.Count);                                          // timelines count
@@ -75,7 +78,7 @@ namespace Communication.Pixelate
         {
             UInt32 size = (UInt32)result.Count;
             byte[] sizeBytes = BitConverter.GetBytes(size);
-            int projectHeaderOffset = projectPrefix.Count + sizeof(byte);
+            int projectHeaderOffset = projectPrefix.Count + 2 * sizeof(byte);
             for (int i = projectHeaderOffset; i < projectHeaderOffset + sizeBytes.Length; i++)
                 result[i] = sizeBytes[i - projectHeaderOffset];
         }

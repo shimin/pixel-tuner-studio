@@ -83,5 +83,23 @@ namespace Communication.Binarize
 
             return color;
         }
+
+        public override string ToString()
+        {
+            StringBuilder result = new StringBuilder();
+            result.AppendLine("\t\tLightTransitionFile begin");
+
+            result.AppendLine("\t\tName:       :" + this.Name.ToString());
+            result.AppendLine("\t\tStartAddress:" + this.StartAddress.ToString("X"));
+
+            result.AppendLine("\t\tColorFirst: " + this.ColorFirst.ToString());
+            result.AppendLine("\t\tColorLast:  " + this.ColorLast.ToString());
+
+            result.AppendLine("\t\tStartTime:  " + this.StartTime.ToString());
+            result.AppendLine("\t\tEndTime:    " + this.EndTime.ToString());
+            
+            result.AppendLine("\t\tLightTransitionFile end");
+            return result.ToString();
+        }
     }
 }

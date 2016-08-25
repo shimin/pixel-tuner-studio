@@ -11,6 +11,8 @@ namespace Communication.Binarize
     {
         public List<LightFileBase> Images { get; set; }
 
+        public bool IsMonochrome { get; set; }
+
         public byte SubmoduleAddress { get; set; }
 
         public LightTimelineFile()
@@ -107,6 +109,17 @@ namespace Communication.Binarize
             }
 
             return result;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder result = new StringBuilder();
+            result.AppendLine("\tline begin");
+            result.AppendLine("\timages: " + this.Images.Count.ToString());
+            result.AppendLine("\taddress " + this.SubmoduleAddress.ToString());
+            Images.ForEach((img) => result.AppendLine(img.ToString()));
+            result.AppendLine("\tline end");
+            return result.ToString();
         }
     }
 }

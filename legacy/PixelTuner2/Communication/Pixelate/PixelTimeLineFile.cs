@@ -10,17 +10,20 @@ namespace Communication.Pixelate
     {
         public System.Drawing.Color TimelineColor { get; set; }
 
+        public System.Drawing.Color TimelineColorSelection { get; set; }
+
         public List<PixelImageFile> Images { get; set; }
 
         public PixelTimelineFile()
         {
             Images = new List<PixelImageFile>();
-            TimelineColor = System.Drawing.Color.FromArgb(0, 0, 0x69);
+            TimelineColor = System.Drawing.Color.FromArgb(0, 0, 20);
+            TimelineColorSelection = System.Drawing.Color.FromArgb(70, 0, 0);
         }
 
         internal UInt32 GetSize()
         {
-            return (UInt32)(PixelImageFile.Size * Images.Count + 2 + 3 + 4);
+            return (UInt32)(PixelImageFile.Size * Images.Count + 2 + 3 + 3 + 4);
         }
 
         internal List<byte> GetBinary(ImagesCollection imgCollection)
@@ -30,6 +33,9 @@ namespace Communication.Pixelate
             bin.Add(TimelineColor.R);                                       // 1 byte R
             bin.Add(TimelineColor.G);                                       // 1 byte G
             bin.Add(TimelineColor.B);                                       // 1 byte B
+            bin.Add(TimelineColorSelection.R);                              // 1 byte selection R
+            bin.Add(TimelineColorSelection.G);                              // 1 byte selection G
+            bin.Add(TimelineColorSelection.B);                              // 1 byte selection B
             bin.AddRange(BitConverter.GetBytes(GetTimelineDuration()));     // 4 bytes timeline duration
             foreach (var v in Images)
             {

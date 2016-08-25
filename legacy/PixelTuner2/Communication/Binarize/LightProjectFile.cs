@@ -41,8 +41,8 @@ namespace Communication.Binarize
             List<byte> result = new List<byte>(projectPrefix);                          // header
             result.AddRange(new byte[4]);                                               // binary total size field
             result.AddRange(BitConverter.GetBytes(samplesSectionAddress));              // start address samples section
-            result.Add((byte)notEmptyLines.Count);                                      // timelines count            
-            //result.Add((byte)rate);                                                     // rate
+            result.Add(EstimateTimelinesCount(notEmptyLines));                          // timelines count            
+            //result.Add((byte)rate);                                                   // rate
             result.Add((byte)pointSize);                                                // pointSize
 
             DateTime start = DateTime.MinValue.AddYears(1);
@@ -55,7 +55,7 @@ namespace Communication.Binarize
             channels = new List<List<byte>>();
             notEmptyLines.ForEach((tl) => { channels.Add(tl.GetBinary(samplesCount, rate)); });
 
-            //result.AddRange(BitConverter.GetBytes((UInt16)samplesCount));               // last! sample number
+            //result.AddRange(BitConverter.GetBytes((UInt16)samplesCount));             // last! sample number
             result.AddRange(BitConverter.GetBytes((UInt32)duration));                   // last sample timestamp
             UInt32 nullSize = samplesSectionAddress - (UInt32)result.Count;
             result.AddRange(new byte[nullSize]);                                        // arrange samples section
@@ -68,8 +68,18 @@ namespace Communication.Binarize
                 nextSample = new List<byte>();
                 for (int j = 0; j < channels.Count; j++)
                 {
-                    nextSample.AddRange(channels[j].GetRange(i * pointSize, pointSize));
+                    if (!notEmptyLines[j].IsMonochrome)
+                    {
+                        while (nextSample.Count % pointSize != 0) nextSample.Add(0);    // complete sample to match pointSize.
+                        nextSample.AddRange(channels[j].GetRange(i * pointSize, pointSize));
+                    }
+                    else
+                    {
+                        nextSample.Add(channels[j][i * pointSize]);                     // add R value only of current monochrome line
+                    }
                 }
+                while (nextSample.Count % pointSize != 0) nextSample.Add(0);            // complete sample to match pointSize.
+
                 // filter samples to store only non-repeating sets
                 if (prevSample == null || !Equals(prevSample, nextSample) || i == samplesCount - 1)
                 {
@@ -85,6 +95,30 @@ namespace Communication.Binarize
             }
 
             SetBinarySize(result);
+            return result;
+        }
+
+        private byte EstimateTimelinesCount(List<LightTimelineFile> notEmptyLines)
+        {
+            byte result = 0;
+            int monochromeLines = 0;
+            for (int i = 0; i < notEmptyLines.Count; i++)
+            {
+                if (notEmptyLines[i].IsMonochrome)
+                {
+                    monochromeLines++;
+                    if (monochromeLines % 3 == 0) result++;
+                }
+                else
+                {
+                    if (monochromeLines % 3 != 0)
+                    {
+                        result++;
+                        monochromeLines = 0;
+                    }
+                    result++;
+                }
+            }
             return result;
         }
 
@@ -140,6 +174,14 @@ namespace Communication.Binarize
                 currentAddress += lines[i].GetSize();
             }
             return result;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder result = new StringBuilder();
+            result.AppendLine("LightProject");
+            TimeLines.ForEach((l) => result.AppendLine(l.ToString()));
+            return result.ToString();
         }
 
         #endregion

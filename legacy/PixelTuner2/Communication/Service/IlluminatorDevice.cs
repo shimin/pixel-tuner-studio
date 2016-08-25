@@ -84,8 +84,6 @@ namespace Communication.Service
         {
             lock (this._longOperation)
             {
-                base.Busy = true;
-                base.SetStatus(ConnectionStatus.Downloading);
                 try
                 {
                     List<byte> data = base.DoSession(new PixelDevicePacket(PixelDeviceCommand.INFO, null)).Data;
