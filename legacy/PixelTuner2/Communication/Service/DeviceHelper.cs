@@ -50,6 +50,7 @@ namespace Communication.Service
             while (_keepSeeking)
             {
                 List<string> portNames = new List<string> (SerialPort.GetPortNames());
+                Console.WriteLine(portNames.Count);
                 portNames.ForEach(portName =>
                 {
                     if (!DeviceExists(portName))
@@ -101,6 +102,19 @@ namespace Communication.Service
                 Devices.Remove(device);
                 device.Dispose();
                 OnDeviceLost(device);
+            }
+            else
+            {
+                try
+                {
+                    device.GetInfo();
+                }
+                catch
+                {
+                    Devices.Remove(device);
+                    device.Dispose();
+                    OnDeviceLost(device);
+                }
             }
         }
 

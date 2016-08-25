@@ -186,6 +186,7 @@ namespace Communication.Service
                     {
                         base.Logger.WriteException(exception);
                     }
+                    throw exception;
                 }
                 finally
                 {

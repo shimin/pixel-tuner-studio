@@ -241,8 +241,8 @@ namespace Communication.Service
             if (Port != null && Port.IsOpen)
             {
                 _portName = _port.PortName;
-                _port.ReadTimeout = 0x7530;
-                _port.WriteTimeout = 0x7d0;
+                _port.ReadTimeout = 2000;
+                _port.WriteTimeout = 2000;
                 GC.SuppressFinalize(_port.BaseStream);
             }
         }
@@ -350,6 +350,7 @@ namespace Communication.Service
             catch (Exception ex)
             {
                 Logger.WriteException(ex);
+                throw ex;
             }
             if (answer != null)
             {
