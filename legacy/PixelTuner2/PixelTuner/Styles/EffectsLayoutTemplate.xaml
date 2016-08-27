@@ -1,0 +1,29 @@
+﻿<ResourceDictionary 
+    x:Class="PixelTuner.Controls.ThumbListView.ThumbnailEffectsListView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:dd="clr-namespace:Common.DragDrop;assembly=Common"
+                    xmlns:tlw="clr-namespace:PixelTuner.Controls.ThumbListView">
+    
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/PixelTuner;component/Styles/SharedStyles.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <tlw:EffectView x:Key="EffectView"/>
+
+    <DataTemplate x:Key="EffectsLayoutTemplate">
+        <Grid>
+            <ListView 
+                x:Name="boxEffectThumbnails"
+                View="{DynamicResource EffectView}"
+                SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}"
+                SelectionMode="Extended" 
+                BorderThickness="0"
+                AllowDrop="True"
+                dd:DragDropHelper.IsDragSource="True" 
+                ItemsSource="{Binding ImagesCollection, Mode=OneWay}">
+            </ListView>
+        </Grid>
+    </DataTemplate>
+    
+</ResourceDictionary>

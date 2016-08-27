@@ -44,7 +44,7 @@ namespace PixelTuner
             {
                 // актуально только для 50-ок
                 Duration d = item.EndTime.Value - item.StartTime.Value;
-                double minMcsLength = ((BitmapImage)item.ImageSource).PixelWidth * 0.1;
+                double minMcsLength = item.ImageSource.PixelWidth * 0.1;
 
                 int maxRepeatCount = (int)(d.TimeSpan.TotalMilliseconds / minMcsLength);
                 if ((d.TimeSpan.TotalMilliseconds % minMcsLength) > 0) maxRepeatCount++;

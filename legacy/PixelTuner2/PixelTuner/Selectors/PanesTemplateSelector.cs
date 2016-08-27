@@ -47,6 +47,18 @@ namespace PixelTuner.Selectors
             set;
         }
 
+        public DataTemplate GradientsViewTemplate
+        {
+            get;
+            set;
+        }
+
+        public DataTemplate EffectsViewTemplate
+        {
+            get;
+            set;
+        }
+
         public DataTemplate VideosViewTemplate
         {
             get;
@@ -54,6 +66,12 @@ namespace PixelTuner.Selectors
         }
 
         public DataTemplate FileStatsViewTemplate
+        {
+            get;
+            set;
+        }
+
+        public DataTemplate CanvasViewTemplate
         {
             get;
             set;
@@ -78,8 +96,17 @@ namespace PixelTuner.Selectors
             if (item is ImagesViewModel)
                 return ImagesViewTemplate;
 
+            if (item is GradientsViewModel)
+                return GradientsViewTemplate;
+
+            if (item is EffectsViewModel)
+                return EffectsViewTemplate;
+
             if (item is VideosViewModel)
                 return VideosViewTemplate;
+
+            if (item is CanvasViewModel)
+                return CanvasViewTemplate;
 
             return base.SelectTemplate(item, container);
         }

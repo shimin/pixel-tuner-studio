@@ -16,6 +16,10 @@ namespace PixelTuner.Controls.ThumbListView
 {
     public partial class ThumbnailListView : ResourceDictionary
     {
+        static string picturesPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+
+        string _sourcePath = Path.Combine(picturesPath, "PixelTuner 2\\Content");
+
         private void boxThumbnails_Drop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -37,15 +41,13 @@ namespace PixelTuner.Controls.ThumbListView
             ImagesViewModel imagesModel = null;
             imagesView.Dispatcher.Invoke(new Action(() => imagesModel = imagesView.DataContext as ImagesViewModel ));
 
-            string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content");
-
             StringBuilder sb = new StringBuilder();
             
             foreach (var p in fileNames)
             {
                 try
                 {
-                    var testFileName = GenerateFileName(sourcePath, p);
+                    var testFileName = GenerateFileName(_sourcePath, p);
                     Application.Current.Dispatcher.Invoke(new Action(() =>
                     {
                         var importWindow = new Import.ImportWindow(new BitmapImage(new Uri(p)));
@@ -63,7 +65,7 @@ namespace PixelTuner.Controls.ThumbListView
             }
             
             if (sb.Length > 0) MessageBox.Show(sb.ToString());
-            imagesModel.RefreshImagesCollection(PixelTuner.Properties.Settings.Default.LineHeight);
+            imagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
             imagesView.Dispatcher.Invoke(new Action(() => imagesView.Focus()));
         }
 
@@ -91,7 +93,7 @@ namespace PixelTuner.Controls.ThumbListView
                 var control = sender as ListView;
                 if (control != null)
                 {
-                    var itemToRemove = control.SelectedItem as TimeLineItemViewModel;
+                    var itemToRemove = control.SelectedItem as PixelThumbnailViewModel;
                     string msg = String.Format((String)Application.Current.TryFindResource("Global_ReallyRemove"), itemToRemove.FullName);
                     var answer = MessageBox.Show(msg, Application.Current.MainWindow.Title, MessageBoxButton.YesNo, MessageBoxImage.Question);
 
@@ -111,7 +113,7 @@ namespace PixelTuner.Controls.ThumbListView
                     {
                         System.Drawing.Bitmap bmp = ImageHelper.BitmapImageToBitmap<BmpBitmapEncoder>(importWindow.ResultImage);
                         var saveDialog = new System.Windows.Forms.SaveFileDialog();
-                        saveDialog.InitialDirectory = System.Windows.Forms.Application.StartupPath + "\\Content";
+                        saveDialog.InitialDirectory = _sourcePath;
                         saveDialog.Filter = "Bmp files|*.bmp";
                         if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                         {
@@ -125,7 +127,7 @@ namespace PixelTuner.Controls.ThumbListView
         private void SearchHandler(object sender, RoutedEventArgs e)
         {
             var s = sender as TextBox;
-            RootViewModel.This.ImagesModel.ApplyFilter(s.Text);
+            RootViewModel.This.ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
         }
 
         private void ListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -140,31 +142,28 @@ namespace PixelTuner.Controls.ThumbListView
                     var fm = RootViewModel.This.ActiveDocument;
                     if (fm != null && fm.SelectedTimeline != null)
                     {
-                        var src = item.DataContext as TimeLineItemViewModel;
+                        var src = item.DataContext as PixelThumbnailViewModel;
                         if (src != null)
                         {
-                            var newItem = (TimeLineItemViewModel)src.Clone();
+                            var newItem = (PixelThumbnailViewModel)src.Clone();
+                            
                             int insertPosition = fm.SelectedTimeline.Items.Count;
-                            foreach (TimeLineItemViewModel i in fm.SelectedTimeline.Items) {
+                            foreach (TimeLineItemViewModel i in fm.SelectedTimeline.Items)
                                 if (i.IsSelected)
                                 {
-                                    insertPosition = fm.SelectedTimeline.Items.IndexOf(i); break;
+                                    insertPosition = fm.SelectedTimeline.Items.IndexOf(i); 
+                                    break;
                                 }
-                            }
+
                             var itemCollection = new ObservableCollection<TimeLineItemViewModel>(
                                 new System.Collections.Generic.List<TimeLineItemViewModel> { newItem });
                             newItem.EndTime = newItem.StartTime.Value.AddSeconds(Settings.Default.DefaultDuration);
-                            fm.SelectedTimeline.InsertItems(itemCollection, insertPosition);
-                            //if (insertPosition == 0)
-                            //{
-                            //    newItem.StartTime = fm.SelectedTimeline.Start;
-                            //}
-                            //else
-                            //{
-                            //    newItem.StartTime = fm.SelectedTimeline.Items[insertPosition - 1].EndTime;
-                            //}
-                            //newItem.EndTime = newItem.StartTime.Value.AddSeconds(Settings.Default.DefaultDuration);
-                            //fm.SelectedTimeline.Items.Insert(insertPosition, newItem);
+
+                            if (fm.SelectedTimeline.DragManager != null)
+                                if (fm.SelectedTimeline.DragManager.CanAddToTimeLine(newItem, newItem.StartTime.Value))
+                                {
+                                    fm.SelectedTimeline.InsertItems(itemCollection, insertPosition);
+                                }
                         }
                     }
                     break;
@@ -175,10 +174,11 @@ namespace PixelTuner.Controls.ThumbListView
 
         private void ListView_SelectionChanged(object sender, System.EventArgs e)
         {
-            var item = (sender as ListView).SelectedItem as TimeLineItemViewModel;
+            var item = (sender as ListView).SelectedItem as PixelThumbnailViewModel;
             if (item != null)
             {
-                RootViewModel.This.ProjectPlayerModel.DisplayModel = new TimeLineItemViewModel(new FileInfo(item.FullName));
+                if (RootViewModel.This.ProjectPlayerModel.IsVisible)
+                    RootViewModel.This.ProjectPlayerModel.DisplayModel = new PixelThumbnailViewModel(new FileInfo(item.FullName));
             }
         }
 
@@ -193,7 +193,7 @@ namespace PixelTuner.Controls.ThumbListView
             pe.ShowDialog();
             var img = pe.Config.GetScaledImage();
             var saveDialog = new System.Windows.Forms.SaveFileDialog();
-            saveDialog.InitialDirectory = System.Windows.Forms.Application.StartupPath + "\\Content";
+            saveDialog.InitialDirectory = _sourcePath;
             saveDialog.Filter = "Bmp files|*.bmp";
             if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -218,7 +218,7 @@ namespace PixelTuner.Controls.ThumbListView
 
         private void Resfresh_Button_Click(object sender, RoutedEventArgs e)
         {
-            RootViewModel.This.ImagesModel.RefreshImagesCollection();
+            RootViewModel.This.ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
         }
 
         private void Change_Button_Click(object sender, RoutedEventArgs e)
@@ -240,7 +240,7 @@ namespace PixelTuner.Controls.ThumbListView
                     var img = pe.Config.GetScaledImage();
                     var saveDialog = new System.Windows.Forms.SaveFileDialog();
                     saveDialog.FileName = thumbItem.Name;
-                    saveDialog.InitialDirectory = System.Windows.Forms.Application.StartupPath + "\\Content";
+                    saveDialog.InitialDirectory = _sourcePath;
                     saveDialog.Filter = "Bmp files|*.bmp";
                     if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     {
@@ -260,14 +260,14 @@ namespace PixelTuner.Controls.ThumbListView
                 var image = System.Drawing.Image.FromFile(thumbItem.FullName);
                 if (image != null)
                 {
-                    var iw = new PixelTuner.Import.ImportWindow((System.Windows.Media.ImageSource)thumbItem.ImageSource);
+                    var iw = new PixelTuner.Import.ImportWindow(thumbItem.ImageSource);
                     iw.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
                     iw.Owner = Application.Current.MainWindow;
                     iw.ShowDialog();
                     var img = iw.ResultImage;
                     var saveDialog = new System.Windows.Forms.SaveFileDialog();
                     saveDialog.FileName = thumbItem.Name;
-                    saveDialog.InitialDirectory = System.Windows.Forms.Application.StartupPath + "\\Content";
+                    saveDialog.InitialDirectory = _sourcePath;
                     saveDialog.Filter = "Bmp files|*.bmp";
                     if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     {

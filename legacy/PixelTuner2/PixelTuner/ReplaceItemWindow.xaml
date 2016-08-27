@@ -26,7 +26,7 @@
             <Button Content="Cancel" Height="23" Name="CancelButton" Click="CancelButton_Click"  Margin="3" Width="75" />
             <Button Content="OK" Grid.Row="1" Height="23" Name="OKButton" Click="OKButton_Click" Margin="3" Width="75" />
         </StackPanel>
-        <c:SearchTextBox Grid.Row="0" VerticalAlignment="Top" Search="SearchHandler" HorizontalAlignment="Stretch" x:Name="searchTextBox" Height="23" Margin="1" />
+        <c:SearchTextBox Grid.Row="0" VerticalAlignment="Top" Text="{Binding SearchPattern, UpdateSourceTrigger=PropertyChanged}" Search="SearchHandler" HorizontalAlignment="Stretch" x:Name="searchTextBox" Height="23" Margin="1" />
         <ListView 
                 x:Name="boxThumbnails"
                 Grid.Row="1"

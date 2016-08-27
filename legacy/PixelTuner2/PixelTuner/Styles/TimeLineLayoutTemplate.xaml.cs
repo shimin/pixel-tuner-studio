@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using PixelTuner.ViewModel;
 using PixelTuner.Controls;
+using System.Windows.Media;
 
 namespace PixelTuner.Styles
 {

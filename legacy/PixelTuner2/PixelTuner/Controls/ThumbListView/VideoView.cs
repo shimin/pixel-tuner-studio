@@ -16,6 +16,10 @@ namespace PixelTuner.Controls.ThumbListView
 {
     public partial class ThumbnailVideoListView : ResourceDictionary
     {
+        static string picturesPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+
+        string _sourcePath = Path.Combine(picturesPath, "PixelTuner 2\\Clips");
+
         private void boxThumbnails_Drop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -31,30 +35,19 @@ namespace PixelTuner.Controls.ThumbListView
         {
             object[] args = (object[])ea.Argument;
 
-            ListView imagesView = (ListView)args[0];
+            ListView videosView = (ListView)args[0];
             string[] fileNames = (string[])args[1];
 
             VideosViewModel videosModel = null;
-            imagesView.Dispatcher.Invoke(new Action(() => videosModel = imagesView.DataContext as VideosViewModel ));
-
-            string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content");
-
+            videosView.Dispatcher.Invoke(new Action(() => videosModel = videosView.DataContext as VideosViewModel ));
+            
             StringBuilder sb = new StringBuilder();
             
             foreach (var p in fileNames)
             {
                 try
                 {
-                    var testFileName = GenerateFileName(sourcePath, p);
-                    Application.Current.Dispatcher.Invoke(new Action(() =>
-                    {
-                        var importWindow = new Import.ImportWindow(new BitmapImage(new Uri(p)));
-                        if (importWindow.ShowDialog() == true)
-                        {
-                            System.Drawing.Bitmap bmp = ImageHelper.BitmapImageToBitmap<BmpBitmapEncoder>(importWindow.ResultImage);
-                            Common.Imaging.ImageHelper.SaveBmp(testFileName, bmp);
-                        }
-                    }));
+                    File.Copy(p, Path.Combine(_sourcePath, Path.GetFileName(p)));
                 }
                 catch
                 {
@@ -64,26 +57,9 @@ namespace PixelTuner.Controls.ThumbListView
             
             if (sb.Length > 0) MessageBox.Show(sb.ToString());
             videosModel.RefreshVideosCollection(PixelTuner.Properties.Settings.Default.LineHeight);
-            imagesView.Dispatcher.Invoke(new Action(() => imagesView.Focus()));
+            videosView.Dispatcher.Invoke(new Action(() => videosView.Focus()));
         }
-
-        private static string GenerateFileName(string baseDirectory, string dropFileName)
-        {
-            string destFileName = "";
-            var shortName = Path.GetFileNameWithoutExtension(dropFileName);
-            shortName += ".bmp";
-            var testFileName = destFileName = Path.Combine(baseDirectory, shortName);
-
-            int idx = 0;
-            while (File.Exists(testFileName))
-            {
-                idx++;
-                testFileName = Path.Combine(baseDirectory, Path.GetFileNameWithoutExtension(destFileName) +
-                    "_" + idx.ToString() + Path.GetExtension(destFileName));
-            }
-            return testFileName;
-        }
-
+        
         private void boxThumbnails_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == System.Windows.Input.Key.Delete)
@@ -106,7 +82,7 @@ namespace PixelTuner.Controls.ThumbListView
         private void SearchHandler(object sender, RoutedEventArgs e)
         {
             var s = sender as TextBox;
-            RootViewModel.This.ImagesModel.ApplyFilter(s.Text);
+            RootViewModel.This.VideosModel.RefreshVideosCollection();
         }
 
         private void ListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -135,7 +111,12 @@ namespace PixelTuner.Controls.ThumbListView
                             var itemCollection = new ObservableCollection<TimeLineItemViewModel>(
                                 new System.Collections.Generic.List<TimeLineItemViewModel> { newItem });
                             newItem.EndTime = newItem.StartTime.Value.AddSeconds(Settings.Default.DefaultDuration);
-                            fm.SelectedTimeline.InsertItems(itemCollection, insertPosition);
+
+                            if (fm.SelectedTimeline.DragManager != null)
+                                if (fm.SelectedTimeline.DragManager.CanAddToTimeLine(newItem, newItem.StartTime.Value))
+                                {
+                                    fm.SelectedTimeline.InsertItems(itemCollection, insertPosition);
+                                }
                         }
                     }
                     break;
@@ -146,18 +127,18 @@ namespace PixelTuner.Controls.ThumbListView
 
         private void ListView_SelectionChanged(object sender, System.EventArgs e)
         {
-            var item = (sender as ListView).SelectedItem as TimeLineItemViewModel;
-            if (item != null)
-            {
-                RootViewModel.This.ProjectPlayerModel.DisplayModel = new TimeLineItemViewModel(new FileInfo(item.FullName));
-            }
+            //var item = (sender as ListView).SelectedItem as TimeLineItemViewModel;
+            //if (item != null)
+            //{
+            //    RootViewModel.This.ProjectPlayerModel.DisplayModel = new TimeLineItemViewModel(new FileInfo(item.FullName));
+            //}
         }
 
         #region Picture editor
 
         private void Delete_Button_Click(object sender, RoutedEventArgs e)
         {
-            var itemToRemove = RootViewModel.This.ImagesModel.SelectedItem;
+            var itemToRemove = RootViewModel.This.VideosModel.SelectedItem;
             if (itemToRemove != null)
             {
                 string msg = String.Format((String)Application.Current.TryFindResource("Global_ReallyRemove"), itemToRemove.FullName);
@@ -171,7 +152,7 @@ namespace PixelTuner.Controls.ThumbListView
 
         private void Resfresh_Button_Click(object sender, RoutedEventArgs e)
         {
-            RootViewModel.This.ImagesModel.RefreshImagesCollection();
+            RootViewModel.This.VideosModel.RefreshVideosCollection();
         }
 
         #endregion
@@ -198,7 +179,7 @@ namespace PixelTuner.Controls.ThumbListView
 
         protected override object ItemContainerDefaultStyleKey
         {
-            get { return new ComponentResourceKey(GetType(), "ListViewItem"); }
+            get { return new ComponentResourceKey(GetType(), "VideoListViewItem"); }
         }
 
         #endregion

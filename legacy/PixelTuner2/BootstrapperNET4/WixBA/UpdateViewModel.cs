@@ -231,27 +231,7 @@ namespace Microsoft.Tools.WindowsInstallerXml.UX
             bool succeeded = false;
             try
             {
-                var updater = new PixelTunerAutoupdater.AutoUpdater(System.Windows.Application.Current.MainWindow);
-
-                if (updater.UpdateNeeded())
-                {
-                    var update = new Update();
-                    update.Url = "http://shiningpromo.ru/downloads/PixelTunerSetup.exe";
-                    update.Version = updater.RemoteVersion;
-
-                    if (update == null)
-                    {
-                        this.UpdateUrl = null;
-                        this.State = UpdateState.Current;
-                    }
-                    else
-                    {
-                        this.UpdateUrl = update.Url;
-                        this.State = UpdateState.Available;
-                    }
-
-                    succeeded = true;
-                }
+                
             }
             catch (ArgumentException)
             {

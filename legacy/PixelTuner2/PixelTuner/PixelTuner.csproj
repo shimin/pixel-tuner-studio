@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -19,6 +19,8 @@
     <UICulture>ru-RU</UICulture>
     <UICulture>en-US</UICulture>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -40,22 +42,26 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;DONT_SAVE_LAYOUT</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;DONT_SAVE_LAYOUT;UNSAFE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UICulture>ru-RU</UICulture>
     <UICulture>en-US</UICulture>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;DONT_SAVE_LAYOUT</DefineConstants>
+    <DefineConstants>TRACE;DONT_SAVE_LAYOUT; UNSAFE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UICulture>ru-RU</UICulture>
     <UICulture>en-US</UICulture>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EnRelease|x86'">
     <OutputPath>bin\x86\EnRelease\</OutputPath>
@@ -69,6 +75,7 @@
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
     <UICulture>ru-RU</UICulture>
     <UICulture>en-US</UICulture>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EnDebug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -79,13 +86,48 @@
     <ErrorReport>prompt</ErrorReport>
     <UICulture>ru-RU</UICulture>
     <UICulture>en-US</UICulture>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Files\PixelTuner.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>PixelTuner.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>921C5299701C69E693B745CE234E06DEC25DB270</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>
+    </ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>PixelTuner_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>false</GenerateManifests>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NAudio">
-      <HintPath>..\WpfTools\NAudio\NAudio.dll</HintPath>
+    <Reference Include="GlmNet, Version=0.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\GlmNet.0.5.1.0\lib\net40\GlmNet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ImageProcessor, Version=2.4.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ImageProcessor.2.4.4.0\lib\net40\ImageProcessor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\Microsoft.Expression.Interactions.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
@@ -93,6 +135,10 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\System.Windows.Interactivity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -116,16 +162,46 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ArtNetWindow.xaml.cs">
+      <DependentUpon>ArtNetWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Audio\NAudioEngine.cs" />
     <Compile Include="Audio\SampleAggregator.cs" />
+    <Compile Include="Auxiliary\DataPipe.cs" />
+    <Compile Include="Auxiliary\SvgHelper.cs" />
+    <Compile Include="BasicItemWindow.xaml.cs">
+      <DependentUpon>BasicItemWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CanvasElementWindow.xaml.cs">
+      <DependentUpon>CanvasElementWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ThumbListView\EffectView.cs" />
+    <Compile Include="Controls\ThumbListView\GradientView.cs" />
     <Compile Include="Controls\ThumbListView\VideoView.cs" />
     <Compile Include="Converters\ActiveDocumentConverter.cs" />
     <Compile Include="Converters\ActiveTimeLineConverter.cs" />
     <Compile Include="Controls\ThumbListView\ImageView.cs" />
     <Compile Include="Converters\LogConverter.cs" />
+    <Compile Include="EffectSawWindow.xaml.cs">
+      <DependentUpon>EffectSawWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="EffectSineWindow.xaml.cs">
+      <DependentUpon>EffectSineWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="EffectSquareWindow.xaml.cs">
+      <DependentUpon>EffectSquareWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="EffectTransitionWindow.xaml.cs">
+      <DependentUpon>EffectTransitionWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="HoopPreview\Geometry\SimpleQuad.cs" />
+    <Compile Include="HoopPreview\Helpers\ManifestResourceLoader.cs" />
+    <Compile Include="HoopPreview\Helpers\RenderTexure.cs" />
+    <Compile Include="HoopPreview\HoopPreviewScene.cs" />
     <Compile Include="Import\PreviewPage.xaml.cs">
       <DependentUpon>PreviewPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="LayoutInitializer.cs" />
     <Compile Include="RepeatItemWindow.xaml.cs">
       <DependentUpon>RepeatItemWindow.xaml</DependentUpon>
     </Compile>
@@ -134,9 +210,6 @@
     </Compile>
     <Compile Include="Import\CropPage.xaml.cs">
       <DependentUpon>CropPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Import\CroppingWindow.xaml.cs">
-      <DependentUpon>CroppingWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Import\HistoryEntry.cs" />
     <Compile Include="Import\ImportWindow.xaml.cs">
@@ -155,21 +228,53 @@
     <Compile Include="SplitItemWindow.xaml.cs">
       <DependentUpon>SplitItemWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Styles\CanvasTemplate.xaml.cs">
+      <DependentUpon>CanvasTemplate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Styles\FileLayoutTemplate.xaml.cs">
       <DependentUpon>FileLayoutTemplate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Styles\ProjectPlayerLayoutTemplate.xaml.cs" />
     <Compile Include="Styles\TimeLineLayoutTemplate.xaml.cs">
       <DependentUpon>TimeLineLayoutTemplate.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\IlluminatorDeviceViewModel.cs" />
-    <Compile Include="ViewModel\LightMasterDeviceViewModel.cs" />
-    <Compile Include="ViewModel\ProjectPlayerViewModel.cs" />
+    <Compile Include="TimelinesToUpload.xaml.cs">
+      <DependentUpon>TimelinesToUpload.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UndoRedo\State.cs" />
+    <Compile Include="UndoRedo\StateManager.cs" />
+    <Compile Include="ViewModel\AvailableColors.cs" />
+    <Compile Include="ViewModel\Serialization\GradientTimeLineItem.cs" />
+    <Compile Include="ViewModel\TimelineItems\GradientThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\TimelineItems\VideoThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\Tools\CanvasElementViewModel.cs" />
+    <Compile Include="ViewModel\Tools\CanvasViewModel.cs" />
+    <Compile Include="ViewModel\Tools\GradientsViewModel.cs" />
+    <Compile Include="ViewModel\Devices\DeviceViewModel.cs" />
+    <Compile Include="ViewModel\TimelineItems\EffectSawThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\TimelineItems\EffectSineThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\TimelineItems\EffectSquareThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\Tools\EffectsViewModel.cs" />
+    <Compile Include="ViewModel\TimelineItems\EffectThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\TimelineItems\EffectTransitionThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\Timelines\EpicPoiTimeLineViewModel.cs" />
+    <Compile Include="ViewModel\Devices\IlluminatorDeviceViewModel.cs" />
+    <Compile Include="ViewModel\Devices\LightMasterDeviceViewModel.cs" />
+    <Compile Include="ViewModel\Timelines\LightTimeLineViewModel.cs" />
+    <Compile Include="ViewModel\TimelineItems\PixelThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\Tools\ProjectPlayerViewModel.cs" />
     <Compile Include="ViewModel\Serialization\TimeLineItem.cs" />
-    <Compile Include="ViewModel\TimeLineItemViewModel.cs" />
+    <Compile Include="ViewModel\Serialization\TimeLineItemEffect.cs" />
+    <Compile Include="ViewModel\Serialization\TimeLineItemEffectParameters.cs" />
+    <Compile Include="ViewModel\Serialization\TimeLineItemSolid.cs" />
+    <Compile Include="ViewModel\Devices\EpicPoiDeviceViewModel.cs" />
+    <Compile Include="ViewModel\TimelineItems\SolidColorThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\TimelineHelper.cs" />
+    <Compile Include="ViewModel\TimelineItems\TimeLineItemViewModel.cs" />
     <Compile Include="DefaultsWindow.xaml.cs">
       <DependentUpon>DefaultsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\DevicesViewModel.cs" />
+    <Compile Include="ViewModel\Tools\DevicesViewModel.cs" />
     <Compile Include="Drawing\CircularBuffer.cs" />
     <Compile Include="Drawing\ConfigurationItemBase.cs" />
     <Compile Include="Drawing\DrawControl.cs">
@@ -191,18 +296,48 @@
     <Compile Include="Drawing\TextDialog.designer.cs">
       <DependentUpon>TextDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\ImagesViewModel.cs" />
+    <Compile Include="ViewModel\Tools\ImagesViewModel.cs" />
     <Compile Include="Converters\MathConverter.cs" />
     <Compile Include="PictureEditor.xaml.cs">
       <DependentUpon>PictureEditor.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\ProjectsViewModel.cs" />
+    <Compile Include="ViewModel\Tools\ProjectsViewModel.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
-    <Compile Include="ViewModel\PixelDeviceViewModel.cs" />
-    <Compile Include="ViewModel\TimeLineViewModel.cs" />
-    <Compile Include="ViewModel\ToolViewModel.cs" />
+    <Compile Include="ViewModel\Devices\PixelDeviceViewModel.cs" />
+    <Compile Include="ViewModel\Timelines\PixelTimeLineViewModel.cs" />
+    <Compile Include="ViewModel\Timelines\TimeLineViewModel.cs" />
+    <Compile Include="ViewModel\Tools\RefreshParameters.cs" />
+    <Compile Include="ViewModel\Tools\ToolViewModel.cs" />
     <Compile Include="ViewModel\RootViewModel.cs" />
-    <Compile Include="ViewModel\VideosViewModel.cs" />
+    <Compile Include="ViewModel\Tools\VideosViewModel.cs" />
+    <Page Include="ArtNetWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="BasicItemWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="CanvasElementWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="EffectSawWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="EffectSineWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="EffectSquareWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="EffectTransitionWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Import\PreviewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -222,10 +357,6 @@
     <Page Include="Import\CropPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Import\CroppingWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Import\ImportWindow.xaml">
       <SubType>Designer</SubType>
@@ -247,11 +378,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Styles\CanvasTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Styles\DevicesLayoutTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Styles\EffectsLayoutTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Styles\FileLayoutTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\GradientsLayoutTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -262,6 +405,10 @@
     <Page Include="Styles\ProjectPlayerLayoutTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\SelectTimelineTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Styles\SharedStyles.xaml">
       <SubType>Designer</SubType>
@@ -282,6 +429,10 @@
     <Page Include="PictureEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TimelinesToUpload.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Resource Include="Dictionaries\labels.ru-RU.xaml">
       <SubType>Designer</SubType>
@@ -329,6 +480,19 @@
     </None>
     <Resource Include="Files\Flash.bin" />
     <Resource Include="Files\Flash_v3.bin" />
+    <Resource Include="Files\Flash_Epic.bin" />
+    <Resource Include="Files\Flash_IL.bin" />
+    <Resource Include="Files\Flash_LR.bin" />
+    <EmbeddedResource Include="HoopPreview\Shaders\ClearShader.frag" />
+    <EmbeddedResource Include="HoopPreview\Shaders\ClearShader.vert" />
+    <EmbeddedResource Include="HoopPreview\Shaders\SliceShader.frag" />
+    <EmbeddedResource Include="HoopPreview\Shaders\SliceShader.vert" />
+    <EmbeddedResource Include="HoopPreview\Shaders\WarpShader.frag" />
+    <EmbeddedResource Include="HoopPreview\Shaders\WarpShader.vert" />
+    <None Include="packages.config" />
+    <None Include="PixelTuner.manifest" />
+    <None Include="PixelTunerDock.config" />
+    <None Include="PixelTuner_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -337,35 +501,83 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
-      <Project>{3C6806B7-698D-45CD-B131-EB84845CC938}</Project>
+      <Project>{3c6806b7-698d-45cd-b131-eb84845cc938}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WpfTools\Toolkit\Toolkit.csproj">
-      <Project>{72E591D6-8F83-4D8C-8F67-9C325E623234}</Project>
-      <Name>Toolkit</Name>
+    <ProjectReference Include="..\eDmx.ArtNet\eDmx.ArtNet.csproj">
+      <Project>{82991D6F-D554-41EE-AF8B-A110FCE19D00}</Project>
+      <Name>eDmx.ArtNet</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WpfTools\Workspace.PageTransitions\Workspace.PageTransitions.csproj">
-      <Project>{22A46D61-1D40-43A9-802C-B9D43DADD9EC}</Project>
-      <Name>Workspace.PageTransitions</Name>
+    <ProjectReference Include="..\SharpGL\SharpGL.SceneGraph\SharpGL.SceneGraph.csproj">
+      <Project>{98fd93e9-e6d8-4a09-bff3-32d0416af619}</Project>
+      <Name>SharpGL.SceneGraph</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WpfTools\Workspace.Themes\Workspace.Themes.csproj">
-      <Project>{D422C9D7-B4EA-4154-949B-FAC4D9DC89D2}</Project>
-      <Name>Workspace.Themes</Name>
+    <ProjectReference Include="..\SharpGL\SharpGL.WPF\SharpGL.WPF.csproj">
+      <Project>{30984028-0a02-4512-a779-740838f907ae}</Project>
+      <Name>SharpGL.WPF</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WpfTools\Workspace\Workspace.csproj">
-      <Project>{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}</Project>
-      <Name>Workspace</Name>
+    <ProjectReference Include="..\SharpGL\SharpGL\SharpGL.csproj">
+      <Project>{df595485-a67d-46c9-8337-600eb39c31df}</Project>
+      <Name>SharpGL</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AutoUpdater\AutoUpdater.csproj">
-      <Project>{4BA4719C-C6AB-49BA-9754-848CA24C1FD6}</Project>
-      <Name>AutoUpdater</Name>
+    <ProjectReference Include="..\SharpVectors\SharpVectorConverters\SharpVectors.Converters.csproj">
+      <Project>{E8056611-E49C-4BC3-A682-A629D5CEC11C}</Project>
+      <Name>SharpVectors.Converters</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpVectors\SharpVectorCore\SharpVectors.Core.csproj">
+      <Project>{D6BB65FC-240E-4241-B2ED-A7FB3F13E978}</Project>
+      <Name>SharpVectors.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpVectors\SharpVectorCss\SharpVectors.Css.csproj">
+      <Project>{351B0A6E-2F6B-497A-844B-DCB5A502FB0D}</Project>
+      <Name>SharpVectors.Css</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpVectors\SharpVectorDom\SharpVectors.Dom.csproj">
+      <Project>{FE34CBC0-D23C-4A95-BA64-83A031814010}</Project>
+      <Name>SharpVectors.Dom</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpVectors\SharpVectorModel\SharpVectors.Model.csproj">
+      <Project>{5D336F48-3FB9-4382-B4B9-06974C764007}</Project>
+      <Name>SharpVectors.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpVectors\SharpVectorRenderingGdi\SharpVectors.Rendering.Gdi.csproj">
+      <Project>{0AD99D97-24ED-484D-9430-9905811F8A4F}</Project>
+      <Name>SharpVectors.Rendering.Gdi</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpVectors\SharpVectorRenderingWpf\SharpVectors.Rendering.Wpf.csproj">
+      <Project>{A2576CE0-E492-490F-97E9-C0E7ABAFAF27}</Project>
+      <Name>SharpVectors.Rendering.Wpf</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpVectors\SharpVectorRuntime\SharpVectors.Runtime.csproj">
+      <Project>{2CD52982-A1C2-4A14-9D69-D64719357216}</Project>
+      <Name>SharpVectors.Runtime</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WpfTools\NAudioSrc\NAudio.csproj">
+      <Project>{da4f02e3-0b5e-42cd-b8d9-5583fa51d66e}</Project>
+      <Name>NAudio</Name>
     </ProjectReference>
     <ProjectReference Include="..\Communication\Communication.csproj">
       <Project>{DA6AD361-E034-4A14-BA94-8605A21D2E70}</Project>
       <Name>Communication</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WpfTools\Toolkit\Toolkit.csproj">
+      <Project>{72e591d6-8f83-4d8c-8f67-9c325e623234}</Project>
+      <Name>Toolkit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WpfTools\Workspace.PageTransitions\Workspace.PageTransitions.csproj">
+      <Project>{22a46d61-1d40-43a9-802c-b9d43dadd9ec}</Project>
+      <Name>Workspace.PageTransitions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WpfTools\Workspace.Themes\Workspace.Themes.csproj">
+      <Project>{d422c9d7-b4ea-4154-949b-fac4d9dc89d2}</Project>
+      <Name>Workspace.Themes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WpfTools\Workspace\Workspace.csproj">
+      <Project>{db81988f-e0f2-45a0-a1fd-8c37f3d35244}</Project>
+      <Name>Workspace</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WpfTools\WPFSoundVisualizationLibrary\WPFSoundVisualizationLib.csproj">
-      <Project>{90F96222-1C39-4A19-ABE8-1B00FB330985}</Project>
+      <Project>{90f96222-1c39-4a19-abe8-1b00fb330985}</Project>
       <Name>WPFSoundVisualizationLib</Name>
     </ProjectReference>
   </ItemGroup>
@@ -421,1791 +633,612 @@
     <Resource Include="Images\DrawingTool\paint_bucket.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\100_2_waves.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\100_black.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\100_hearts.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\100_hub1.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\100_mickey.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\100_mosaic.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\100_mosaic2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\100_mosaic3.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\100_mosaic_hole.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\100_pattern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\100_pattern2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\100_pattern3.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\100_pattern4.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\100_patternBulbs.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\100_stain.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\100_stain2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\100_stars.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\100_steps.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\100_waves.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\100_white.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\100_wing.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\20_simple_white.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Wolf.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Zayac.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Vetka.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Vetka2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Snow.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Snow1.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Snow2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_SnowBlue.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_SnowBlue2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_SnowGold.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Snowly.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Snowman1.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Snowman2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_SnowPattern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_SnowPattern2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_SnowPurple.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_SnowRed.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Rudolf2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Santa.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Santa2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Stars.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Stars2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Tracery.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_present2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Presents.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Night.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_NY-Pattern1.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_NY-Pattern12.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_NY-Pattern3.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Gingerbread.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Forest.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Frozen.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_FuturamaSanta.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Firtrees.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Feer.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Fir.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Element.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Deer.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Deer2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Deer3.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Champagne-2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Champagne2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Coldgrand.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Combo.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Combo2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Cone.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Candylove.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Bells.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_cartoon-images-of-spongebob-hd-desktop-10.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_cute-anime-angel-wallpaper-background-1.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_cute-anime-angel-wallpaper-hd-background-9.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_border.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Bounty.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_BubblesPattern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_BubblesPattern2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Cake.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Cake2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Cancer.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Capricorn.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Crusty.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_disney-princess-characters-to-draw-hd-pictures-4.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_EtnoAfricaPattern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_EtnoAfricaPattern2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Evolution.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_face1.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_face1.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_face2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_face3.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_face4.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_face5.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_face6.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_face7.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_face8.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_face9.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_face91.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_face92.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_face93.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_face94.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Fire.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Fire2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_FloraPattern2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_FloraPattern3.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_FloraPettern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_foliage.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Gemini.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Hearts.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_iPoi.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Leo.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Libra.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_LisaSimpson.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_London.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Moscow.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_NyanCat.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_pacman.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Panda.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Paris.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Piano.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Pisces.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_PSY.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Rome.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_RoundPattern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Russia.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Sagittarius.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Scorpio.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Sonic.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_SquarePattern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_SquarePattern2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Star.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_superman-comic-wallpaper-widescreen-2.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Taurus.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_triangle.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Virgo.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Water.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Aquarius.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Aries.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Bart.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Batman.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_border.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Bounty.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_BubblesPattern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_BubblesPattern2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Cake.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Cake2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Cancer.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Capricorn.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Ball.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Ball2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Bells.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Candylove.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_cards.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Crusty.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_EtnoAfricaPattern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_EtnoAfricaPattern2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Evolution.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Fire.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Fire2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Champagne-2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Champagne2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Coldgrand.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Combo.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Combo2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Cone.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Deer.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Deer2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Deer3.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Element.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Feer.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Fir.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Firtrees.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_fish.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_FloraPattern2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_FloraPattern3.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_FloraPettern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_foliage.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Gemini.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Forest.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Frozen.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_FuturamaSanta.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Gingerbread.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_hearts.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Hearts2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_iPoi.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_leaf.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Leo.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Libra.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_LisaSimpson.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_London.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_love.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Moscow.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_NyanCat.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_pacman.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Panda.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Paris.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Piano.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Night.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_NY-Pattern2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_NY-Pattern1.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_NY-Pattern3.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_pikachu.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_pikachu_1.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_pikachu_2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Pisces.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_PSY.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_present2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Presents.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_red_arrows_right.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Rome.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_RoundPattern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Russia.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Sagittarius.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Rudolf2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_samson.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Santa.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Santa2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_santorini.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Scorpio.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_smiles.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Sonic.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_SquarePattern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_SquarePattern2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Star.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Snow.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Snow1.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Snow2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_SnowBlue.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_SnowBlue2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_SnowGold.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Snowly.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Snowman1.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Snowman2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_SnowPattern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_SnowPattern2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_SnowPurple.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_SnowRed.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Stars3.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Stars.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Stars2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_stripes.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Taurus.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Tracery.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_triangle.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_triangle2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Virgo.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Water.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Vetka.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Vetka2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Wolf.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\25_Zayac.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\30_red_line.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\40_AudioLevels.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\40_audio_levels.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\40_hearts.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\40_new_year.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\40_steps2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_2_waves.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_angrybird_red.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_angrybird_yellow.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Aquarius.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Aries.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_audio_levels.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_background.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Bart.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Batman.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_border.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Bounty.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_BubblesPattern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_BubblesPattern2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Cake.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Cake2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Cancer.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Capricorn.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Ball.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Ball2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Bells.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Candylove.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_cards.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Crusty.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_EtnoAfricaPattern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_EtnoAfricaPattern2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Evolution.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Fire.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Fire2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_FloraPattern2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_FloraPattern3.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_FloraPettern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_foliage.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Gemini.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Champagne-2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Champagne2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Coldgrand.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Combo.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Combo2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Cone.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Deer.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Deer2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Deer3.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Element.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Feer.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Fir.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Firtrees.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Forest.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Frozen.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_FuturamaSanta.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Gingerbread.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_girlface.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_iPoi.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_justMarried.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_justMarriedEn.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_hearts.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Leo.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Libra.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_LisaSimpson.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_London.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_microsoft.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_microsoft2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Moscow.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_new_year.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_NyanCat.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_pacman.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Panda.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Paris.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Night.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_NY-Pattern1.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_NY-Pattern12.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_NY-Pattern3.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_pattern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_pattern2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_pattern3.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_patternBulbs.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_patternCubesRainbow.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_patternFireworks.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Piano.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Pisces.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_PSY.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_present2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Presents.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_rainbow.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_redcloud.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_red_arrows_right.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Rome.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_RoundPattern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Rudolf2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_ruflag.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_ruler.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Russia.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Sagittarius.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Santa3.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Santa.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Scorpio.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Santa2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_snake.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Sonic.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_SquarePattern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_SquarePattern2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Snow.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Snow1.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Snow2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_SnowBlue.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_SnowBlue2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_SnowGold.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Snowly.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Snowman1.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Snowman2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_SnowPattern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_SnowPattern2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_SnowPurple.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_SnowRed.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_square_circle.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Star.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Stars3.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Stars.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Stars2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_steps.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_steps2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_stork2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_stork3.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_sunFlower.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Taurus.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_triangle.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Virgo.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Tracery.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Vetka.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Vetka2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Volkswagen.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Volkswagen_blue.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Volkswagen_text.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Water.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_waves.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_white.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\55_2_waves.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_3d-ocean-wallpaper-hd-background-10.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_3d-wallpaper-fire-hd-1080p-14.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_3d-wallpaper-fire-hd-background-wallpaper-27.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_3d-wallpaper-fire-widescreen-2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_3d-wallpaper-red-blue-hd-background-10.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_abstract-art-faces-black-and-white-hd-images-3.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_abstract-art-faces-for-desktop-16.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_abstract-art-faces-for-desktop-background-15.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_abstract-art-faces-hd-1080p-14.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_abstract-art-faces-hd-free-13.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_abstract-art-faces-images-7.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_abstract-music-wallpapers-hd-desktop-10.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_abstract-music-wallpapers-hd-pictures-4.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_anime-music-wallpaper-1920x1080-hd-pictures-4.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_anime-music-wallpaper-for-desktop-background-13.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_anime-music-wallpaper-hd-background-wallpaper-28.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_anime-music-wallpaper-hd-background-wallpaper-32.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_anime-violin-wallpaper-hd-widescreen-11.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_anime-violin-wallpaper-pictures-5.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Aquarius.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Aries.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Bart.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Batman.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_border.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_boum.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Bounty.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_BubblesPattern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_BubblesPattern2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Cake.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Cake2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Cancer.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Capricorn.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_cartoon-images-of-spongebob-hd-desktop-10.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_cloud.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_cloud_text.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_comics-characters-face-widescreen-2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_comics-characters-face-widescreen-3.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Crusty.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_cute-anime-angel-wallpaper-background-1.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_cute-anime-angel-wallpaper-hd-background-9.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_EtnoAfricaPattern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_EtnoAfricaPattern2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Evolution.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Fire.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Fire2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_FloraPattern2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_FloraPattern3.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_FloraPettern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_foliage.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_funny-face-cartoon-images-background-1.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Gemini.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_geometric-abstract-sculpture-hd-images-3.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Hearts.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_iPoi.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Leo.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Libra.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_LisaSimpson.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_London.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Moscow.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_music-wallpaper-hd-background-wallpaper-54.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_music-wallpaper-hd-for-desktop-images-6.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_neon-wallpaper-free-desktop-8.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_neon-wallpaper-hd-cool-7.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_neon-wallpaper-images-6.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_NyanCat.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_pacman.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Panda.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Paris.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Piano.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_picasso-abstract-art-faces-pictures-6.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Pisces.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_PSY.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_quote1.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_quote1_empty.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_return-of-the-hulk-l.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Rome.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_RoundPattern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Russia.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Sagittarius.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_sb1.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_sb2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_sb3.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_sb4.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_sb5.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_sb6.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_sb7.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_sb8.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Scorpio.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_simple-abstract-art-shapes-hd-pictures-4.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_simple-abstract-art-shapes-widescreen-2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Sonic.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_SquarePatter2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_SquarePattern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Star.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_superman-comic-wallpaper-background-1.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_superman-comic-wallpaper-images-6.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_superman-comic-wallpaper-widescreen-2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Taurus.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_triangle.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Virgo.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_wallpaper-hd-hd-background-wallpaper-53.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_wallpaper-hd-hd-background-wallpaper-78.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Water.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Water2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Wolf.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\50_Zayac.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Ball.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Ball2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Bells.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Candylove.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Champagne-1.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Champagne2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Coldgrand.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Combo.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Combo2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Cone.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Deer.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Deer2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Deer3.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Element.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Feer.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Fir.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Firtrees.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Forest.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Frozen.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_FuturamaSanta.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Gingerbread.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Night.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_NY-Pattern1.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_NY-Pattern12.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_NY-Pattern3.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_present2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Presents.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Rudolf2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Santa.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Santa2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Snow.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Snow1.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Snow2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_SnowBlue.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_SnowBlue2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_SnowGold.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Snowly.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Snowman1.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Snowman2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_SnowPattern.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_SnowPattern2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_SnowPurple.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_SnowRed.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Stars.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Stars2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Tracery.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Vetka.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Vetka2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Wolf.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\65_Zayac.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\70_audio_levels.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\70_hearts.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\70_rainbow.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\70_rainbow2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\70_red_arrows_right.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\70_stars.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\70_steps2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\70_stork2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\70_stripes.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\70_triangle.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_2_waves.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_3d-ocean-wallpaper-hd-background-10.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_3d-wallpaper-fire-hd-1080p-14.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_3d-wallpaper-fire-hd-background-10.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_3d-wallpaper-fire-hd-background-wallpaper-27.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_3d-wallpaper-fire-widescreen-2.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_3d-wallpaper-red-blue-hd-background-10.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Aquarius.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Aries.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Bart.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_batman-and-joker-comic-strip-pictures-5.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Batman.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_abstract-art-faces-black-and-white-hd-images-3.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_abstract-art-faces-for-desktop-16.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_abstract-art-faces-for-desktop-background-15.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_abstract-art-faces-hd-1080p-14.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_abstract-art-faces-hd-free-13.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_abstract-art-faces-images-7.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_abstract-music-wallpapers-hd-desktop-10.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_abstract-music-wallpapers-hd-pictures-4.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_anime-music-wallpaper-1920x1080-hd-pictures-4.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_anime-music-wallpaper-for-desktop-background-13.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_anime-music-wallpaper-hd-background-wallpaper-28.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_anime-music-wallpaper-hd-background-wallpaper-32.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_anime-violin-wallpaper-hd-widescreen-11.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_anime-violin-wallpaper-pictures-5.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_batman-and-joker-comic-strip-background-1.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Ball.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_Ball2.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_batterfly_002.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_batterfly_003.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_batterfly_004.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_batterfly_005.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_batterfly_006.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_batterfly_007.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_batterfly_008.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\80_batterfly_009.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Content\100_2_waves.bmp" />
+    <Content Include="Content\100_black.bmp" />
+    <Content Include="Content\100_hearts.bmp" />
+    <Content Include="Content\100_hub1.bmp" />
+    <Content Include="Content\100_mickey.bmp" />
+    <Content Include="Content\100_mosaic.bmp" />
+    <Content Include="Content\100_mosaic2.bmp" />
+    <Content Include="Content\100_mosaic3.bmp" />
+    <Content Include="Content\100_mosaic_hole.bmp" />
+    <Content Include="Content\100_pattern.bmp" />
+    <Content Include="Content\100_pattern2.bmp" />
+    <Content Include="Content\100_pattern3.bmp" />
+    <Content Include="Content\100_pattern4.bmp" />
+    <Content Include="Content\100_patternBulbs.bmp" />
+    <Content Include="Content\100_stain.bmp" />
+    <Content Include="Content\100_stain2.bmp" />
+    <Content Include="Content\100_stars.bmp" />
+    <Content Include="Content\100_steps.bmp" />
+    <Content Include="Content\100_waves.bmp" />
+    <Content Include="Content\100_white.bmp" />
+    <Content Include="Content\100_wing.bmp" />
+    <Content Include="Content\20_simple_white.bmp" />
+    <Content Include="Content\80_Wolf.bmp" />
+    <Content Include="Content\80_Zayac.bmp" />
+    <Content Include="Content\80_Vetka.bmp" />
+    <Content Include="Content\80_Vetka2.bmp" />
+    <Content Include="Content\80_Snow.bmp" />
+    <Content Include="Content\80_Snow1.bmp" />
+    <Content Include="Content\80_Snow2.bmp" />
+    <Content Include="Content\80_SnowBlue.bmp" />
+    <Content Include="Content\80_SnowBlue2.bmp" />
+    <Content Include="Content\80_SnowGold.bmp" />
+    <Content Include="Content\80_Snowly.bmp" />
+    <Content Include="Content\80_Snowman1.bmp" />
+    <Content Include="Content\80_Snowman2.bmp" />
+    <Content Include="Content\80_SnowPattern.bmp" />
+    <Content Include="Content\80_SnowPattern2.bmp" />
+    <Content Include="Content\80_SnowPurple.bmp" />
+    <Content Include="Content\80_SnowRed.bmp" />
+    <Content Include="Content\80_Rudolf2.bmp" />
+    <Content Include="Content\80_Santa.bmp" />
+    <Content Include="Content\80_Santa2.bmp" />
+    <Content Include="Content\80_Stars.bmp" />
+    <Content Include="Content\80_Stars2.bmp" />
+    <Content Include="Content\80_Tracery.bmp" />
+    <Content Include="Content\80_present2.bmp" />
+    <Content Include="Content\80_Presents.bmp" />
+    <Content Include="Content\80_Night.bmp" />
+    <Content Include="Content\80_NY-Pattern1.bmp" />
+    <Content Include="Content\80_NY-Pattern12.bmp" />
+    <Content Include="Content\80_NY-Pattern3.bmp" />
+    <Content Include="Content\80_Gingerbread.bmp" />
+    <Content Include="Content\80_Forest.bmp" />
+    <Content Include="Content\80_Frozen.jpg" />
+    <Content Include="Content\80_FuturamaSanta.bmp" />
+    <Content Include="Content\80_Firtrees.bmp" />
+    <Content Include="Content\80_Feer.bmp" />
+    <Content Include="Content\80_Fir.bmp" />
+    <Content Include="Content\80_Element.bmp" />
+    <Content Include="Content\80_Deer.bmp" />
+    <Content Include="Content\80_Deer2.bmp" />
+    <Content Include="Content\80_Deer3.bmp" />
+    <Content Include="Content\80_Champagne-2.bmp" />
+    <Content Include="Content\80_Champagne2.bmp" />
+    <Content Include="Content\80_Coldgrand.bmp" />
+    <Content Include="Content\80_Combo.bmp" />
+    <Content Include="Content\80_Combo2.bmp" />
+    <Content Include="Content\80_Cone.bmp" />
+    <Content Include="Content\80_Candylove.bmp" />
+    <Content Include="Content\80_Bells.bmp" />
+    <Content Include="Content\80_cartoon-images-of-spongebob-hd-desktop-10.jpg" />
+    <Content Include="Content\80_cute-anime-angel-wallpaper-background-1.jpg" />
+    <Content Include="Content\80_cute-anime-angel-wallpaper-hd-background-9.jpg" />
+    <Content Include="Content\80_border.bmp" />
+    <Content Include="Content\80_Bounty.bmp" />
+    <Content Include="Content\80_BubblesPattern.bmp" />
+    <Content Include="Content\80_BubblesPattern2.bmp" />
+    <Content Include="Content\80_Cake.bmp" />
+    <Content Include="Content\80_Cake2.bmp" />
+    <Content Include="Content\80_Cancer.bmp" />
+    <Content Include="Content\80_Capricorn.bmp" />
+    <Content Include="Content\80_Crusty.bmp" />
+    <Content Include="Content\80_disney-princess-characters-to-draw-hd-pictures-4.bmp" />
+    <Content Include="Content\80_EtnoAfricaPattern.bmp" />
+    <Content Include="Content\80_EtnoAfricaPattern2.bmp" />
+    <Content Include="Content\80_Evolution.bmp" />
+    <Content Include="Content\80_face1.bmp" />
+    <Content Include="Content\80_face1.png" />
+    <Content Include="Content\80_face2.bmp" />
+    <Content Include="Content\80_face3.bmp" />
+    <Content Include="Content\80_face4.bmp" />
+    <Content Include="Content\80_face5.bmp" />
+    <Content Include="Content\80_face6.bmp" />
+    <Content Include="Content\80_face7.bmp" />
+    <Content Include="Content\80_face8.bmp" />
+    <Content Include="Content\80_face9.bmp" />
+    <Content Include="Content\80_face91.bmp" />
+    <Content Include="Content\80_face92.bmp" />
+    <Content Include="Content\80_face93.bmp" />
+    <Content Include="Content\80_face94.bmp" />
+    <Content Include="Content\80_Fire.bmp" />
+    <Content Include="Content\80_Fire2.bmp" />
+    <Content Include="Content\80_FloraPattern2.bmp" />
+    <Content Include="Content\80_FloraPattern3.bmp" />
+    <Content Include="Content\80_FloraPettern.bmp" />
+    <Content Include="Content\80_foliage.bmp" />
+    <Content Include="Content\80_Gemini.bmp" />
+    <Content Include="Content\80_Hearts.bmp" />
+    <Content Include="Content\80_iPoi.bmp" />
+    <Content Include="Content\80_Leo.bmp" />
+    <Content Include="Content\80_Libra.bmp" />
+    <Content Include="Content\80_LisaSimpson.bmp" />
+    <Content Include="Content\80_London.bmp" />
+    <Content Include="Content\80_Moscow.bmp" />
+    <Content Include="Content\80_NyanCat.bmp" />
+    <Content Include="Content\80_pacman.bmp" />
+    <Content Include="Content\80_Panda.bmp" />
+    <Content Include="Content\80_Paris.bmp" />
+    <Content Include="Content\80_Piano.bmp" />
+    <Content Include="Content\80_Pisces.bmp" />
+    <Content Include="Content\80_PSY.bmp" />
+    <Content Include="Content\80_Rome.bmp" />
+    <Content Include="Content\80_RoundPattern.bmp" />
+    <Content Include="Content\80_Russia.bmp" />
+    <Content Include="Content\80_Sagittarius.bmp" />
+    <Content Include="Content\80_Scorpio.bmp" />
+    <Content Include="Content\80_Sonic.bmp" />
+    <Content Include="Content\80_SquarePattern.bmp" />
+    <Content Include="Content\80_SquarePattern2.bmp" />
+    <Content Include="Content\80_Star.bmp" />
+    <Content Include="Content\80_superman-comic-wallpaper-widescreen-2.jpg" />
+    <Content Include="Content\80_Taurus.bmp" />
+    <Content Include="Content\80_triangle.bmp" />
+    <Content Include="Content\80_Virgo.bmp" />
+    <Content Include="Content\80_Water.bmp" />
+    <Content Include="Content\25_Aquarius.bmp" />
+    <Content Include="Content\25_Aries.bmp" />
+    <Content Include="Content\25_Bart.bmp" />
+    <Content Include="Content\25_Batman.bmp" />
+    <Content Include="Content\25_border.bmp" />
+    <Content Include="Content\25_Bounty.bmp" />
+    <Content Include="Content\25_BubblesPattern.bmp" />
+    <Content Include="Content\25_BubblesPattern2.bmp" />
+    <Content Include="Content\25_Cake.bmp" />
+    <Content Include="Content\25_Cake2.bmp" />
+    <Content Include="Content\25_Cancer.bmp" />
+    <Content Include="Content\25_Capricorn.bmp" />
+    <Content Include="Content\25_Ball.bmp" />
+    <Content Include="Content\25_Ball2.bmp" />
+    <Content Include="Content\25_Bells.bmp" />
+    <Content Include="Content\25_Candylove.bmp" />
+    <Content Include="Content\25_cards.bmp" />
+    <Content Include="Content\25_Crusty.bmp" />
+    <Content Include="Content\25_EtnoAfricaPattern.bmp" />
+    <Content Include="Content\25_EtnoAfricaPattern2.bmp" />
+    <Content Include="Content\25_Evolution.bmp" />
+    <Content Include="Content\25_Fire.bmp" />
+    <Content Include="Content\25_Fire2.bmp" />
+    <Content Include="Content\25_Champagne-2.bmp" />
+    <Content Include="Content\25_Champagne2.bmp" />
+    <Content Include="Content\25_Coldgrand.bmp" />
+    <Content Include="Content\25_Combo.bmp" />
+    <Content Include="Content\25_Combo2.bmp" />
+    <Content Include="Content\25_Cone.bmp" />
+    <Content Include="Content\25_Deer.bmp" />
+    <Content Include="Content\25_Deer2.bmp" />
+    <Content Include="Content\25_Deer3.bmp" />
+    <Content Include="Content\25_Element.bmp" />
+    <Content Include="Content\25_Feer.bmp" />
+    <Content Include="Content\25_Fir.bmp" />
+    <Content Include="Content\25_Firtrees.bmp" />
+    <Content Include="Content\25_fish.bmp" />
+    <Content Include="Content\25_FloraPattern2.bmp" />
+    <Content Include="Content\25_FloraPattern3.bmp" />
+    <Content Include="Content\25_FloraPettern.bmp" />
+    <Content Include="Content\25_foliage.bmp" />
+    <Content Include="Content\25_Gemini.bmp" />
+    <Content Include="Content\25_Forest.bmp" />
+    <Content Include="Content\25_Frozen.jpg" />
+    <Content Include="Content\25_FuturamaSanta.bmp" />
+    <Content Include="Content\25_Gingerbread.bmp" />
+    <Content Include="Content\25_hearts.bmp" />
+    <Content Include="Content\25_Hearts2.bmp" />
+    <Content Include="Content\25_iPoi.bmp" />
+    <Content Include="Content\25_leaf.bmp" />
+    <Content Include="Content\25_Leo.bmp" />
+    <Content Include="Content\25_Libra.bmp" />
+    <Content Include="Content\25_LisaSimpson.bmp" />
+    <Content Include="Content\25_London.bmp" />
+    <Content Include="Content\25_love.bmp" />
+    <Content Include="Content\25_Moscow.bmp" />
+    <Content Include="Content\25_NyanCat.bmp" />
+    <Content Include="Content\25_pacman.bmp" />
+    <Content Include="Content\25_Panda.bmp" />
+    <Content Include="Content\25_Paris.bmp" />
+    <Content Include="Content\25_Piano.bmp" />
+    <Content Include="Content\25_Night.bmp" />
+    <Content Include="Content\25_NY-Pattern2.bmp" />
+    <Content Include="Content\25_NY-Pattern1.bmp" />
+    <Content Include="Content\25_NY-Pattern3.bmp" />
+    <Content Include="Content\25_pikachu.bmp" />
+    <Content Include="Content\25_pikachu_1.bmp" />
+    <Content Include="Content\25_pikachu_2.bmp" />
+    <Content Include="Content\25_Pisces.bmp" />
+    <Content Include="Content\25_PSY.bmp" />
+    <Content Include="Content\25_present2.bmp" />
+    <Content Include="Content\25_Presents.bmp" />
+    <Content Include="Content\25_red_arrows_right.bmp" />
+    <Content Include="Content\25_Rome.bmp" />
+    <Content Include="Content\25_RoundPattern.bmp" />
+    <Content Include="Content\25_Russia.bmp" />
+    <Content Include="Content\25_Sagittarius.bmp" />
+    <Content Include="Content\25_Rudolf2.bmp" />
+    <Content Include="Content\25_samson.bmp" />
+    <Content Include="Content\25_Santa.bmp" />
+    <Content Include="Content\25_Santa2.bmp" />
+    <Content Include="Content\25_santorini.bmp" />
+    <Content Include="Content\25_Scorpio.bmp" />
+    <Content Include="Content\25_smiles.bmp" />
+    <Content Include="Content\25_Sonic.bmp" />
+    <Content Include="Content\25_SquarePattern.bmp" />
+    <Content Include="Content\25_SquarePattern2.bmp" />
+    <Content Include="Content\25_Star.bmp" />
+    <Content Include="Content\25_Snow.bmp" />
+    <Content Include="Content\25_Snow1.bmp" />
+    <Content Include="Content\25_Snow2.bmp" />
+    <Content Include="Content\25_SnowBlue.bmp" />
+    <Content Include="Content\25_SnowBlue2.bmp" />
+    <Content Include="Content\25_SnowGold.bmp" />
+    <Content Include="Content\25_Snowly.bmp" />
+    <Content Include="Content\25_Snowman1.bmp" />
+    <Content Include="Content\25_Snowman2.bmp" />
+    <Content Include="Content\25_SnowPattern.bmp" />
+    <Content Include="Content\25_SnowPattern2.bmp" />
+    <Content Include="Content\25_SnowPurple.bmp" />
+    <Content Include="Content\25_SnowRed.bmp" />
+    <Content Include="Content\25_Stars3.bmp" />
+    <Content Include="Content\25_Stars.bmp" />
+    <Content Include="Content\25_Stars2.bmp" />
+    <Content Include="Content\25_stripes.bmp" />
+    <Content Include="Content\25_Taurus.bmp" />
+    <Content Include="Content\25_Tracery.bmp" />
+    <Content Include="Content\25_triangle.bmp" />
+    <Content Include="Content\25_triangle2.bmp" />
+    <Content Include="Content\25_Virgo.bmp" />
+    <Content Include="Content\25_Water.bmp" />
+    <Content Include="Content\25_Vetka.bmp" />
+    <Content Include="Content\25_Vetka2.bmp" />
+    <Content Include="Content\25_Wolf.bmp" />
+    <Content Include="Content\25_Zayac.bmp" />
+    <Content Include="Content\30_red_line.bmp" />
+    <Content Include="Content\40_AudioLevels.bmp" />
+    <Content Include="Content\40_audio_levels.bmp" />
+    <Content Include="Content\40_hearts.bmp" />
+    <Content Include="Content\40_new_year.bmp" />
+    <Content Include="Content\40_steps2.bmp" />
+    <Content Include="Content\50_2_waves.bmp" />
+    <Content Include="Content\50_angrybird_red.bmp" />
+    <Content Include="Content\50_angrybird_yellow.bmp" />
+    <Content Include="Content\50_Aquarius.bmp" />
+    <Content Include="Content\50_Aries.bmp" />
+    <Content Include="Content\50_audio_levels.bmp" />
+    <Content Include="Content\50_background.bmp" />
+    <Content Include="Content\50_Bart.bmp" />
+    <Content Include="Content\50_Batman.bmp" />
+    <Content Include="Content\50_border.bmp" />
+    <Content Include="Content\50_Bounty.bmp" />
+    <Content Include="Content\50_BubblesPattern.bmp" />
+    <Content Include="Content\50_BubblesPattern2.bmp" />
+    <Content Include="Content\50_Cake.bmp" />
+    <Content Include="Content\50_Cake2.bmp" />
+    <Content Include="Content\50_Cancer.bmp" />
+    <Content Include="Content\50_Capricorn.bmp" />
+    <Content Include="Content\50_Ball.bmp" />
+    <Content Include="Content\50_Ball2.bmp" />
+    <Content Include="Content\50_Bells.bmp" />
+    <Content Include="Content\50_Candylove.bmp" />
+    <Content Include="Content\50_cards.bmp" />
+    <Content Include="Content\50_Crusty.bmp" />
+    <Content Include="Content\50_EtnoAfricaPattern.bmp" />
+    <Content Include="Content\50_EtnoAfricaPattern2.bmp" />
+    <Content Include="Content\50_Evolution.bmp" />
+    <Content Include="Content\50_Fire.bmp" />
+    <Content Include="Content\50_Fire2.bmp" />
+    <Content Include="Content\50_FloraPattern2.bmp" />
+    <Content Include="Content\50_FloraPattern3.bmp" />
+    <Content Include="Content\50_FloraPettern.bmp" />
+    <Content Include="Content\50_foliage.bmp" />
+    <Content Include="Content\50_Gemini.bmp" />
+    <Content Include="Content\50_Champagne-2.bmp" />
+    <Content Include="Content\50_Champagne2.bmp" />
+    <Content Include="Content\50_Coldgrand.bmp" />
+    <Content Include="Content\50_Combo.bmp" />
+    <Content Include="Content\50_Combo2.bmp" />
+    <Content Include="Content\50_Cone.bmp" />
+    <Content Include="Content\50_Deer.bmp" />
+    <Content Include="Content\50_Deer2.bmp" />
+    <Content Include="Content\50_Deer3.bmp" />
+    <Content Include="Content\50_Element.bmp" />
+    <Content Include="Content\50_Feer.bmp" />
+    <Content Include="Content\50_Fir.bmp" />
+    <Content Include="Content\50_Firtrees.bmp" />
+    <Content Include="Content\50_Forest.bmp" />
+    <Content Include="Content\50_Frozen.jpg" />
+    <Content Include="Content\50_FuturamaSanta.bmp" />
+    <Content Include="Content\50_Gingerbread.bmp" />
+    <Content Include="Content\50_girlface.bmp" />
+    <Content Include="Content\50_iPoi.bmp" />
+    <Content Include="Content\50_justMarried.bmp" />
+    <Content Include="Content\50_justMarriedEn.bmp" />
+    <Content Include="Content\50_hearts.bmp" />
+    <Content Include="Content\50_Leo.bmp" />
+    <Content Include="Content\50_Libra.bmp" />
+    <Content Include="Content\50_LisaSimpson.bmp" />
+    <Content Include="Content\50_London.bmp" />
+    <Content Include="Content\50_microsoft.bmp" />
+    <Content Include="Content\50_microsoft2.bmp" />
+    <Content Include="Content\50_Moscow.bmp" />
+    <Content Include="Content\50_new_year.bmp" />
+    <Content Include="Content\50_NyanCat.bmp" />
+    <Content Include="Content\50_pacman.bmp" />
+    <Content Include="Content\50_Panda.bmp" />
+    <Content Include="Content\50_Paris.bmp" />
+    <Content Include="Content\50_Night.bmp" />
+    <Content Include="Content\50_NY-Pattern1.bmp" />
+    <Content Include="Content\50_NY-Pattern12.bmp" />
+    <Content Include="Content\50_NY-Pattern3.bmp" />
+    <Content Include="Content\50_pattern.bmp" />
+    <Content Include="Content\50_pattern2.bmp" />
+    <Content Include="Content\50_pattern3.bmp" />
+    <Content Include="Content\50_patternBulbs.bmp" />
+    <Content Include="Content\50_patternCubesRainbow.bmp" />
+    <Content Include="Content\50_patternFireworks.bmp" />
+    <Content Include="Content\50_Piano.bmp" />
+    <Content Include="Content\50_Pisces.bmp" />
+    <Content Include="Content\50_PSY.bmp" />
+    <Content Include="Content\50_present2.bmp" />
+    <Content Include="Content\50_Presents.bmp" />
+    <Content Include="Content\50_rainbow.bmp" />
+    <Content Include="Content\50_redcloud.bmp" />
+    <Content Include="Content\50_red_arrows_right.bmp" />
+    <Content Include="Content\50_Rome.bmp" />
+    <Content Include="Content\50_RoundPattern.bmp" />
+    <Content Include="Content\50_Rudolf2.bmp" />
+    <Content Include="Content\50_ruflag.bmp" />
+    <Content Include="Content\50_ruler.bmp" />
+    <Content Include="Content\50_Russia.bmp" />
+    <Content Include="Content\50_Sagittarius.bmp" />
+    <Content Include="Content\50_Santa3.bmp" />
+    <Content Include="Content\50_Santa.bmp" />
+    <Content Include="Content\50_Scorpio.bmp" />
+    <Content Include="Content\50_Santa2.bmp" />
+    <Content Include="Content\50_snake.bmp" />
+    <Content Include="Content\50_Sonic.bmp" />
+    <Content Include="Content\50_SquarePattern.bmp" />
+    <Content Include="Content\50_SquarePattern2.bmp" />
+    <Content Include="Content\50_Snow.bmp" />
+    <Content Include="Content\50_Snow1.bmp" />
+    <Content Include="Content\50_Snow2.bmp" />
+    <Content Include="Content\50_SnowBlue.bmp" />
+    <Content Include="Content\50_SnowBlue2.bmp" />
+    <Content Include="Content\50_SnowGold.bmp" />
+    <Content Include="Content\50_Snowly.bmp" />
+    <Content Include="Content\50_Snowman1.bmp" />
+    <Content Include="Content\50_Snowman2.bmp" />
+    <Content Include="Content\50_SnowPattern.bmp" />
+    <Content Include="Content\50_SnowPattern2.bmp" />
+    <Content Include="Content\50_SnowPurple.bmp" />
+    <Content Include="Content\50_SnowRed.bmp" />
+    <Content Include="Content\50_square_circle.bmp" />
+    <Content Include="Content\50_Star.bmp" />
+    <Content Include="Content\50_Stars3.bmp" />
+    <Content Include="Content\50_Stars.bmp" />
+    <Content Include="Content\50_Stars2.bmp" />
+    <Content Include="Content\50_steps.bmp" />
+    <Content Include="Content\50_steps2.bmp" />
+    <Content Include="Content\50_stork2.bmp" />
+    <Content Include="Content\50_stork3.bmp" />
+    <Content Include="Content\50_sunFlower.bmp" />
+    <Content Include="Content\50_Taurus.bmp" />
+    <Content Include="Content\50_triangle.bmp" />
+    <Content Include="Content\50_Virgo.bmp" />
+    <Content Include="Content\50_Tracery.bmp" />
+    <Content Include="Content\50_Vetka.bmp" />
+    <Content Include="Content\50_Vetka2.bmp" />
+    <Content Include="Content\50_Volkswagen.bmp" />
+    <Content Include="Content\50_Volkswagen_blue.bmp" />
+    <Content Include="Content\50_Volkswagen_text.bmp" />
+    <Content Include="Content\50_Water.bmp" />
+    <Content Include="Content\50_waves.bmp" />
+    <Content Include="Content\50_white.bmp" />
+    <Content Include="Content\55_2_waves.bmp" />
+    <Content Include="Content\65_3d-ocean-wallpaper-hd-background-10.bmp" />
+    <Content Include="Content\65_3d-wallpaper-fire-hd-1080p-14.bmp" />
+    <Content Include="Content\65_3d-wallpaper-fire-hd-background-wallpaper-27.bmp" />
+    <Content Include="Content\65_3d-wallpaper-fire-widescreen-2.bmp" />
+    <Content Include="Content\65_3d-wallpaper-red-blue-hd-background-10.bmp" />
+    <Content Include="Content\65_abstract-art-faces-black-and-white-hd-images-3.bmp" />
+    <Content Include="Content\65_abstract-art-faces-for-desktop-16.bmp" />
+    <Content Include="Content\65_abstract-art-faces-for-desktop-background-15.bmp" />
+    <Content Include="Content\65_abstract-art-faces-hd-1080p-14.bmp" />
+    <Content Include="Content\65_abstract-art-faces-hd-free-13.bmp" />
+    <Content Include="Content\65_abstract-art-faces-images-7.bmp" />
+    <Content Include="Content\65_abstract-music-wallpapers-hd-desktop-10.bmp" />
+    <Content Include="Content\65_abstract-music-wallpapers-hd-pictures-4.bmp" />
+    <Content Include="Content\65_anime-music-wallpaper-1920x1080-hd-pictures-4.bmp" />
+    <Content Include="Content\65_anime-music-wallpaper-for-desktop-background-13.bmp" />
+    <Content Include="Content\65_anime-music-wallpaper-hd-background-wallpaper-28.bmp" />
+    <Content Include="Content\65_anime-music-wallpaper-hd-background-wallpaper-32.bmp" />
+    <Content Include="Content\65_anime-violin-wallpaper-hd-widescreen-11.bmp" />
+    <Content Include="Content\65_anime-violin-wallpaper-pictures-5.bmp" />
+    <Content Include="Content\65_Aquarius.bmp" />
+    <Content Include="Content\65_Aries.bmp" />
+    <Content Include="Content\65_Bart.bmp" />
+    <Content Include="Content\65_Batman.bmp" />
+    <Content Include="Content\65_border.bmp" />
+    <Content Include="Content\65_boum.bmp" />
+    <Content Include="Content\65_Bounty.bmp" />
+    <Content Include="Content\65_BubblesPattern.bmp" />
+    <Content Include="Content\65_BubblesPattern2.bmp" />
+    <Content Include="Content\65_Cake.bmp" />
+    <Content Include="Content\65_Cake2.bmp" />
+    <Content Include="Content\65_Cancer.bmp" />
+    <Content Include="Content\65_Capricorn.bmp" />
+    <Content Include="Content\65_cartoon-images-of-spongebob-hd-desktop-10.bmp" />
+    <Content Include="Content\65_cloud.bmp" />
+    <Content Include="Content\65_cloud_text.bmp" />
+    <Content Include="Content\65_comics-characters-face-widescreen-2.bmp" />
+    <Content Include="Content\65_comics-characters-face-widescreen-3.bmp" />
+    <Content Include="Content\65_Crusty.bmp" />
+    <Content Include="Content\65_cute-anime-angel-wallpaper-background-1.bmp" />
+    <Content Include="Content\65_cute-anime-angel-wallpaper-hd-background-9.bmp" />
+    <Content Include="Content\65_EtnoAfricaPattern.bmp" />
+    <Content Include="Content\65_EtnoAfricaPattern2.bmp" />
+    <Content Include="Content\65_Evolution.bmp" />
+    <Content Include="Content\65_Fire.bmp" />
+    <Content Include="Content\65_Fire2.bmp" />
+    <Content Include="Content\65_FloraPattern2.bmp" />
+    <Content Include="Content\65_FloraPattern3.bmp" />
+    <Content Include="Content\65_FloraPettern.bmp" />
+    <Content Include="Content\65_foliage.bmp" />
+    <Content Include="Content\65_funny-face-cartoon-images-background-1.bmp" />
+    <Content Include="Content\65_Gemini.bmp" />
+    <Content Include="Content\65_geometric-abstract-sculpture-hd-images-3.bmp" />
+    <Content Include="Content\65_Hearts.bmp" />
+    <Content Include="Content\65_iPoi.bmp" />
+    <Content Include="Content\65_Leo.bmp" />
+    <Content Include="Content\65_Libra.bmp" />
+    <Content Include="Content\65_LisaSimpson.bmp" />
+    <Content Include="Content\65_London.bmp" />
+    <Content Include="Content\65_Moscow.bmp" />
+    <Content Include="Content\65_music-wallpaper-hd-background-wallpaper-54.bmp" />
+    <Content Include="Content\65_music-wallpaper-hd-for-desktop-images-6.bmp" />
+    <Content Include="Content\65_neon-wallpaper-free-desktop-8.bmp" />
+    <Content Include="Content\65_neon-wallpaper-hd-cool-7.bmp" />
+    <Content Include="Content\65_neon-wallpaper-images-6.bmp" />
+    <Content Include="Content\65_NyanCat.bmp" />
+    <Content Include="Content\65_pacman.bmp" />
+    <Content Include="Content\65_Panda.bmp" />
+    <Content Include="Content\65_Paris.bmp" />
+    <Content Include="Content\65_Piano.bmp" />
+    <Content Include="Content\65_picasso-abstract-art-faces-pictures-6.bmp" />
+    <Content Include="Content\65_Pisces.bmp" />
+    <Content Include="Content\65_PSY.bmp" />
+    <Content Include="Content\65_quote1.bmp" />
+    <Content Include="Content\65_quote1_empty.bmp" />
+    <Content Include="Content\65_return-of-the-hulk-l.bmp" />
+    <Content Include="Content\65_Rome.bmp" />
+    <Content Include="Content\65_RoundPattern.bmp" />
+    <Content Include="Content\65_Russia.bmp" />
+    <Content Include="Content\65_Sagittarius.bmp" />
+    <Content Include="Content\65_sb1.bmp" />
+    <Content Include="Content\65_sb2.bmp" />
+    <Content Include="Content\65_sb3.bmp" />
+    <Content Include="Content\65_sb4.bmp" />
+    <Content Include="Content\65_sb5.bmp" />
+    <Content Include="Content\65_sb6.bmp" />
+    <Content Include="Content\65_sb7.bmp" />
+    <Content Include="Content\65_sb8.bmp" />
+    <Content Include="Content\65_Scorpio.bmp" />
+    <Content Include="Content\65_simple-abstract-art-shapes-hd-pictures-4.bmp" />
+    <Content Include="Content\65_simple-abstract-art-shapes-widescreen-2.bmp" />
+    <Content Include="Content\65_Sonic.bmp" />
+    <Content Include="Content\65_SquarePatter2.bmp" />
+    <Content Include="Content\65_SquarePattern.bmp" />
+    <Content Include="Content\65_Star.bmp" />
+    <Content Include="Content\65_superman-comic-wallpaper-background-1.bmp" />
+    <Content Include="Content\65_superman-comic-wallpaper-images-6.bmp" />
+    <Content Include="Content\65_superman-comic-wallpaper-widescreen-2.bmp" />
+    <Content Include="Content\65_Taurus.bmp" />
+    <Content Include="Content\65_triangle.bmp" />
+    <Content Include="Content\65_Virgo.bmp" />
+    <Content Include="Content\65_wallpaper-hd-hd-background-wallpaper-53.bmp" />
+    <Content Include="Content\65_wallpaper-hd-hd-background-wallpaper-78.bmp" />
+    <Content Include="Content\65_Water.bmp" />
+    <Content Include="Content\65_Water2.bmp" />
+    <Content Include="Content\50_Wolf.bmp" />
+    <Content Include="Content\50_Zayac.bmp" />
+    <Content Include="Content\65_Ball.bmp" />
+    <Content Include="Content\65_Ball2.bmp" />
+    <Content Include="Content\65_Bells.bmp" />
+    <Content Include="Content\65_Candylove.bmp" />
+    <Content Include="Content\65_Champagne-1.bmp" />
+    <Content Include="Content\65_Champagne2.bmp" />
+    <Content Include="Content\65_Coldgrand.bmp" />
+    <Content Include="Content\65_Combo.bmp" />
+    <Content Include="Content\65_Combo2.bmp" />
+    <Content Include="Content\65_Cone.bmp" />
+    <Content Include="Content\65_Deer.bmp" />
+    <Content Include="Content\65_Deer2.bmp" />
+    <Content Include="Content\65_Deer3.bmp" />
+    <Content Include="Content\65_Element.bmp" />
+    <Content Include="Content\65_Feer.bmp" />
+    <Content Include="Content\65_Fir.bmp" />
+    <Content Include="Content\65_Firtrees.bmp" />
+    <Content Include="Content\65_Forest.bmp" />
+    <Content Include="Content\65_Frozen.jpg" />
+    <Content Include="Content\65_FuturamaSanta.bmp" />
+    <Content Include="Content\65_Gingerbread.bmp" />
+    <Content Include="Content\65_Night.bmp" />
+    <Content Include="Content\65_NY-Pattern1.bmp" />
+    <Content Include="Content\65_NY-Pattern12.bmp" />
+    <Content Include="Content\65_NY-Pattern3.bmp" />
+    <Content Include="Content\65_present2.bmp" />
+    <Content Include="Content\65_Presents.bmp" />
+    <Content Include="Content\65_Rudolf2.bmp" />
+    <Content Include="Content\65_Santa.bmp" />
+    <Content Include="Content\65_Santa2.bmp" />
+    <Content Include="Content\65_Snow.bmp" />
+    <Content Include="Content\65_Snow1.bmp" />
+    <Content Include="Content\65_Snow2.bmp" />
+    <Content Include="Content\65_SnowBlue.bmp" />
+    <Content Include="Content\65_SnowBlue2.bmp" />
+    <Content Include="Content\65_SnowGold.bmp" />
+    <Content Include="Content\65_Snowly.bmp" />
+    <Content Include="Content\65_Snowman1.bmp" />
+    <Content Include="Content\65_Snowman2.bmp" />
+    <Content Include="Content\65_SnowPattern.bmp" />
+    <Content Include="Content\65_SnowPattern2.bmp" />
+    <Content Include="Content\65_SnowPurple.bmp" />
+    <Content Include="Content\65_SnowRed.bmp" />
+    <Content Include="Content\65_Stars.bmp" />
+    <Content Include="Content\65_Stars2.bmp" />
+    <Content Include="Content\65_Tracery.bmp" />
+    <Content Include="Content\65_Vetka.bmp" />
+    <Content Include="Content\65_Vetka2.bmp" />
+    <Content Include="Content\65_Wolf.bmp" />
+    <Content Include="Content\65_Zayac.bmp" />
+    <Content Include="Content\70_audio_levels.bmp" />
+    <Content Include="Content\70_hearts.bmp" />
+    <Content Include="Content\70_rainbow.bmp" />
+    <Content Include="Content\70_rainbow2.bmp" />
+    <Content Include="Content\70_red_arrows_right.bmp" />
+    <Content Include="Content\70_stars.bmp" />
+    <Content Include="Content\70_steps2.bmp" />
+    <Content Include="Content\70_stork2.bmp" />
+    <Content Include="Content\70_stripes.bmp" />
+    <Content Include="Content\70_triangle.bmp" />
+    <Content Include="Content\80_2_waves.bmp" />
+    <Content Include="Content\80_3d-ocean-wallpaper-hd-background-10.jpg" />
+    <Content Include="Content\80_3d-wallpaper-fire-hd-1080p-14.jpg" />
+    <Content Include="Content\80_3d-wallpaper-fire-hd-background-10.jpg" />
+    <Content Include="Content\80_3d-wallpaper-fire-hd-background-wallpaper-27.jpg" />
+    <Content Include="Content\80_3d-wallpaper-fire-widescreen-2.jpg" />
+    <Content Include="Content\80_3d-wallpaper-red-blue-hd-background-10.jpg" />
+    <Content Include="Content\80_Aquarius.bmp" />
+    <Content Include="Content\80_Aries.bmp" />
+    <Content Include="Content\80_Bart.bmp" />
+    <Content Include="Content\80_batman-and-joker-comic-strip-pictures-5.bmp" />
+    <Content Include="Content\80_Batman.bmp" />
+    <Content Include="Content\80_abstract-art-faces-black-and-white-hd-images-3.jpg" />
+    <Content Include="Content\80_abstract-art-faces-for-desktop-16.jpg" />
+    <Content Include="Content\80_abstract-art-faces-for-desktop-background-15.jpg" />
+    <Content Include="Content\80_abstract-art-faces-hd-1080p-14.jpg" />
+    <Content Include="Content\80_abstract-art-faces-hd-free-13.jpg" />
+    <Content Include="Content\80_abstract-art-faces-images-7.jpg" />
+    <Content Include="Content\80_abstract-music-wallpapers-hd-desktop-10.jpg" />
+    <Content Include="Content\80_abstract-music-wallpapers-hd-pictures-4.jpg" />
+    <Content Include="Content\80_anime-music-wallpaper-1920x1080-hd-pictures-4.jpg" />
+    <Content Include="Content\80_anime-music-wallpaper-for-desktop-background-13.jpg" />
+    <Content Include="Content\80_anime-music-wallpaper-hd-background-wallpaper-28.jpg" />
+    <Content Include="Content\80_anime-music-wallpaper-hd-background-wallpaper-32.jpg" />
+    <Content Include="Content\80_anime-violin-wallpaper-hd-widescreen-11.jpg" />
+    <Content Include="Content\80_anime-violin-wallpaper-pictures-5.jpg" />
+    <Content Include="Content\80_batman-and-joker-comic-strip-background-1.jpg" />
+    <Content Include="Content\80_Ball.bmp" />
+    <Content Include="Content\80_Ball2.bmp" />
+    <Content Include="Content\80_batterfly_002.bmp" />
+    <Content Include="Content\80_batterfly_003.bmp" />
+    <Content Include="Content\80_batterfly_004.bmp" />
+    <Content Include="Content\80_batterfly_005.bmp" />
+    <Content Include="Content\80_batterfly_006.bmp" />
+    <Content Include="Content\80_batterfly_007.bmp" />
+    <Content Include="Content\80_batterfly_008.bmp" />
+    <Content Include="Content\80_batterfly_009.bmp" />
+    <Content Include="Gradients\g_effect1.jpg" />
+    <Content Include="Gradients\g_rainbow.jpg" />
+    <Content Include="Schemas\human.svg" />
+    <Content Include="Schemas\human_1.svg" />
+    <Resource Include="Images\settings_Dark.png" />
+    <Resource Include="Images\settings.png" />
+    <Resource Include="Effects\04_solid.png" />
+    <Resource Include="Effects\00_effect.png" />
+    <Resource Include="Effects\01_effect.png" />
+    <Resource Include="Effects\02_effect.png" />
+    <Resource Include="Effects\03_effect.png" />
     <Resource Include="Images\rotateLeft.png" />
     <Resource Include="Images\rotateRight.png" />
     <Resource Include="Images\flipHorizontally.png" />
@@ -2261,13 +1294,8 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>if not exist .\upload\ md .\upload\
-xcopy /y /f ".\*.dll" ".\upload\"
-xcopy /y /f ".\PixelTuner.exe" ".\upload\"
-if not exist .\upload\en-US\ md .\upload\en-US
-xcopy /y /f ".\en-US\PixelTuner.resources.dll" ".\upload\en-US"
-if not exist .\upload\Content\ md .\upload\Content
-xcopy /y /f ".\Content\*.*" ".\upload\Content"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

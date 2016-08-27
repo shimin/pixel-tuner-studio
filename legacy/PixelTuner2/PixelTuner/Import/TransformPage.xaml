@@ -3,95 +3,31 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:img="clr-namespace:Common.Imaging;assembly=Common"
              mc:Ignorable="d" 
              Background="#FF323232"
              d:DesignHeight="400" d:DesignWidth="660">
+    <UserControl.Resources>
+        <img:ImageConverter x:Key="ImageConverter"/>
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="460*" />
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="120" />
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Grid Grid.ColumnSpan="1" Margin="0,0,0,0">
-            <Image x:Name="boxImageSrc"
-                   Grid.Row="0"
-                   RenderTransformOrigin="0, 0" 
-                   Stretch="None" 
-                   Source="{Binding SourceImage}">
-                <Image.LayoutTransform>
-                    <TransformGroup>
-                        <ScaleTransform ScaleX="0.01" ScaleY="0.01"/>
-                        <ScaleTransform ScaleX="{Binding ElementName=boxZoomSlider, Path=Value}" ScaleY="{Binding ElementName=boxZoomSlider, Path=Value}"/>
-                    </TransformGroup>
-                </Image.LayoutTransform>
-            </Image>
-        </Grid>
-
-
-        <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" Grid.Column="1" Background="{x:Null}" Margin="0">
-            <StackPanel.Resources>
-                <Style x:Key="{x:Type CheckBox}" TargetType="{x:Type CheckBox}">
-                    <Setter Property="Margin" Value="5,5,5,5"/>
-                </Style>
-            </StackPanel.Resources>
-            <GroupBox Foreground="#FFFFFFFF" Header="Перспектива" Margin="0,5,5,0" BorderThickness="0.25" BorderBrush="#FFFFFFFF">
-                <StackPanel Height="Auto">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        <CheckBox Name="boxApplyPerspective" Grid.ColumnSpan="2" Foreground="White" Content="Применить"/>
-                        <Label Grid.Row="1" Foreground="White" Content="Уровень"/>
-                        <Slider Grid.Row="1" Grid.Column="1" Name="boxSharpAmount" Margin="2,3"></Slider>
-                    </Grid>
-                </StackPanel>
-            </GroupBox>
-            <GroupBox BorderBrush="#FFFFFFFF" BorderThickness="0.25" Foreground="#FFFFFFFF" Header="Сдвиг">
-                <StackPanel Height="Auto">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        <CheckBox Name="boxApplySkew" Grid.ColumnSpan="2" Foreground="White" Content="Применить"/>
-                        <Label Grid.Row="1" Content="Уровень" Foreground="White" />
-                        <Slider Grid.Row="1" Grid.Column="1" Margin="2,3" Name="boxBrightnessSlider" />
-                    </Grid>
-                </StackPanel>
-            </GroupBox>
-            <GroupBox BorderBrush="#FFFFFFFF" BorderThickness="0.25" Foreground="#FFFFFFFF" Header="Полярные координаты">
-                <StackPanel Height="Auto">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        <CheckBox Name="boxApplyPolar" Grid.ColumnSpan="2" Foreground="White" Content="Применить"/>
-                        <Label Grid.Row="1" Content="Уровень" Foreground="White" />
-                        <Slider Grid.Row="1"  Grid.Column="1" Margin="2,3" Name="boxColorValue" />
-                    </Grid>
-                </StackPanel>
-            </GroupBox>
-        </StackPanel>
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Grid.ColumnSpan="2" Margin="0,0,170,0">
-            <Label Foreground="White" Content="Zoom: "/>
-            <Slider Name="boxZoomSlider" HorizontalAlignment="Stretch" Width="200" Minimum="100" Maximum="1000" Value="200" />
+        <Image x:Name="boxImage"
+               Grid.Column="0"
+               Stretch="Fill"
+               ClipToBounds="True"
+               Source="{Binding ResultImage}">
+        </Image>
+        <StackPanel Grid.Column="1" Orientation="Vertical">
+            <TextBlock Text="Верх" Foreground="White"/>
+            <Slider Name="boxTop" Minimum="0.51" Maximum="1" Value="{Binding TopOffset}"/>
+            <TextBlock Text="Середина" Foreground="White"/>
+            <Slider Name="boxMiddle" Minimum="0.51" Maximum="1" Value="{Binding MiddleOffset}"/>
+            <TextBlock Text="Низ" Foreground="White"/>
+            <Slider Name="boxBottom" Minimum="0.51" Maximum="1" Value="{Binding BottomOffset}"/>
         </StackPanel>
     </Grid>
 </UserControl>

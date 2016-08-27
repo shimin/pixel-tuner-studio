@@ -19,7 +19,7 @@ namespace NAudio
         private static NAudioEngine instance;
         private readonly DispatcherTimer positionTimer = new DispatcherTimer(DispatcherPriority.ApplicationIdle);
         private readonly BackgroundWorker waveformGenerateWorker = new BackgroundWorker();
-        private readonly int fftDataSize = (int)FFTDataSize.FFT2048;
+        private readonly int fftDataSize = (int)FFTDataSize.FFT512;
         private bool disposed;
         private bool canPlay;
         private bool canPause;
@@ -277,12 +277,30 @@ namespace NAudio
         private void waveformGenerateWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             WaveformGenerationParams waveformParams = e.Argument as WaveformGenerationParams;
-            Mp3FileReader waveformMp3Stream = new Mp3FileReader(waveformParams.Path);
-            WaveChannel32 waveformInputStream = new WaveChannel32(waveformMp3Stream);
+
+            var path = waveformParams.Path;
+            WaveStream audioStream = null;
+            if (path.EndsWith(".wav", StringComparison.OrdinalIgnoreCase))
+            {
+                audioStream = new WaveFileReader(path);
+                if (audioStream.WaveFormat.Encoding != WaveFormatEncoding.Pcm && audioStream.WaveFormat.Encoding != WaveFormatEncoding.IeeeFloat)
+                {
+                    audioStream = WaveFormatConversionStream.CreatePcmStream(audioStream);
+                    audioStream = new BlockAlignReductionStream(audioStream);
+                }
+            }
+            else if (path.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase))
+            {
+                audioStream = new Mp3FileReader(path);
+            }
+            else throw new ArgumentException("Wrong file format: " + path);
+            
+            WaveChannel32 waveformInputStream = new WaveChannel32(audioStream);
             waveformInputStream.Sample += waveStream_Sample;
 
             int frameLength = fftDataSize;
             int frameCount = (int)((double)waveformInputStream.Length / (double)frameLength);
+            
             int waveformLength = frameCount * 2;
             byte[] readBuffer = new byte[frameLength];
             waveformAggregator = new SampleAggregator(frameLength);
@@ -346,9 +364,9 @@ namespace NAudio
             waveformInputStream.Close();
             waveformInputStream.Dispose();
             waveformInputStream = null;
-            waveformMp3Stream.Close();
-            waveformMp3Stream.Dispose();
-            waveformMp3Stream = null;
+            audioStream.Close();
+            audioStream.Dispose();
+            audioStream = null;
         }
         #endregion
 
@@ -436,8 +454,23 @@ namespace NAudio
                     {
                         DesiredLatency = 100
                     };
-                    ActiveStream = new Mp3FileReader(path);
-                    inputStream = new WaveChannel32(ActiveStream);
+
+                    if (path.EndsWith(".wav", StringComparison.OrdinalIgnoreCase))
+                    {
+                        ActiveStream = new WaveFileReader(path);
+                        if (ActiveStream.WaveFormat.Encoding != WaveFormatEncoding.Pcm && ActiveStream.WaveFormat.Encoding != WaveFormatEncoding.IeeeFloat)
+                        {
+                            ActiveStream = WaveFormatConversionStream.CreatePcmStream(ActiveStream);
+                            ActiveStream = new BlockAlignReductionStream(ActiveStream);
+                        }
+                    }
+                    else if (path.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase))
+                    {
+                        ActiveStream = new Mp3FileReader(path);
+                    }
+                    else throw new ArgumentException("Wrong file format: " + path);
+
+                    inputStream = new WaveChannel32(this.ActiveStream);
                     sampleAggregator = new SampleAggregator(fftDataSize);
                     inputStream.Sample += inputStream_Sample;
                     waveOutDevice.Init(inputStream);
@@ -446,8 +479,9 @@ namespace NAudio
                     GenerateWaveformData(path);
                     CanPlay = true;
                 }
-                catch
+                catch(Exception ex)
                 {
+                    MessageBox.Show(ex.Message, "PixelTuner", MessageBoxButton.OK, MessageBoxImage.Information);
                     ActiveStream = null;
                     CanPlay = false;
                 }

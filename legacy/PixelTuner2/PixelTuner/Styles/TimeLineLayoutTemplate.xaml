@@ -4,6 +4,7 @@
                     
                     xmlns:acb="clr-namespace:AttachedCommandBehavior;assembly=Common"
                     xmlns:ct="clr-namespace:Common.Controls;assembly=Common"
+                    xmlns:ccv="clr-namespace:Common.Converters;assembly=Common"
                     xmlns:cv="clr-namespace:PixelTuner.Converters"
                     xmlns:vm="clr-namespace:PixelTuner.ViewModel"
                     xmlns:tlw="clr-namespace:PixelTuner.Controls.ThumbListView">
@@ -48,6 +49,56 @@
         </LinearGradientBrush.Transform>
     </LinearGradientBrush>
 
+    <DataTemplate 
+                x:Key="MetaTemplate"
+                DataType="{x:Type vm:CanvasElementViewModel}">
+        <Canvas>
+            <Path 
+                    Stroke="Black" 
+                    StrokeThickness="1" 
+                    Fill="Black" 
+                    Data="{Binding Geometry}"
+                    RenderTransform="{Binding DragTransform}">
+            </Path>
+        </Canvas>
+    </DataTemplate>
+
+    <Style x:Key="MonochromeSwitcherStyle" TargetType="Rectangle">
+        <Setter Property="Stroke" Value="Gray"/>
+        <Setter Property="StrokeThickness" Value="1"/>
+        <Setter Property="Fill">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <LinearGradientBrush.GradientStops>
+                        <GradientStop Color="#ff2c2c2c" Offset="0"/>
+                        <GradientStop Color="#ff6c6c6c" Offset="0.3"/>
+                        <GradientStop Color="#ff6f6f6f" Offset="0.5"/>
+                        <GradientStop Color="#ff6c6c6c" Offset="0.7"/>
+                        <GradientStop Color="#ff2c2c2c" Offset="1"/>
+                    </LinearGradientBrush.GradientStops>
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ToolTip" Value="Monochrome"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsMonochrome}" Value="false">
+                <Setter Property="Fill">
+                    <Setter.Value>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <LinearGradientBrush.GradientStops>
+                                <GradientStop Color="#ffff0000" Offset="0"/>
+                                <GradientStop Color="#ffffff00" Offset="0.5"/>
+                                <GradientStop Color="#ff0099ff" Offset="1"/>
+                            </LinearGradientBrush.GradientStops>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Stroke" Value="White"/>
+                <Setter Property="ToolTip" Value="RGB"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
     <DataTemplate x:Key="TimelineItemTemplate" DataType="{x:Type vm:TimeLineItemViewModel}">
         <Border x:Name="boxItemBorder"
                 BorderThickness="1"
@@ -62,13 +113,13 @@
                     <ColumnDefinition Width="16" />
                 </Grid.ColumnDefinitions>
                 <Border Background="{StaticResource ControlsBackBrush}">
-                <StackPanel Orientation="Vertical">
-                    <StackPanel Orientation="Horizontal">
-                        <Border Width="15" Height="15">
-                            <Image Source="{Binding StartIcon}"/>
-                        </Border>
-                        <TextBlock Grid.Column="0" Text="{Binding Path=Start}" />
-                    </StackPanel>
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="15" Height="15">
+                                <Image Source="{Binding StartIcon}"/>
+                            </Border>
+                            <TextBlock Grid.Column="0" Text="{Binding Path=Start}" />
+                        </StackPanel>
                         <Button Name="boxImageButton" PreviewMouseDoubleClick="ChildPreviewMouseLeftButtonDown">
                             <acb:CommandBehaviorCollection.Behaviors>
                                 <acb:BehaviorBinding Event="MouseDoubleClick" Command="{Binding EditMe}" />
@@ -81,37 +132,32 @@
                                         </Border.Background>
                                         <Border.ContextMenu>
                                             <ContextMenu>
-                                                <MenuItem Header="{StaticResource Item_Menu_Replace}" Command="{Binding ReplaceCommand}"/>
-                                                <MenuItem Header="{StaticResource Item_Menu_Split}" Command="{Binding SplitCommand}"/>
-                                                <MenuItem Header="{StaticResource Item_Menu_SetRepeatCount}" Command="{Binding RepeatCommand}"/>
+                                                <MenuItem Header="{StaticResource Item_Menu_Replace}" Visibility="{Binding CanReplaceProperty, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding ReplaceCommand}"/>
+                                                <MenuItem Header="{StaticResource Item_Menu_Split}" Visibility="{Binding CanSplitProperty, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding SplitCommand}"/>
+                                                <MenuItem Header="{StaticResource Item_Menu_SetRepeatCount}" Visibility="{Binding CanRepeatProperty, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding RepeatCommand}"/>
                                             </ContextMenu>
                                         </Border.ContextMenu>
+                                        <Canvas HorizontalAlignment="Left" Width="130" Height="44" Visibility="{Binding UseColorLayer, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Rectangle Width="130" Canvas.Top="1" Height="42" RadiusX="3" RadiusY="3" Opacity="{Binding ColorLayerOpacity}">
+                                                <Rectangle.Fill>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                        <GradientStop Color="{Binding ColorFirst, Mode=OneWay}" Offset="0" />
+                                                        <GradientStop Color="{Binding ColorLast, Mode=OneWay}" Offset="1" />
+                                                    </LinearGradientBrush>
+                                                </Rectangle.Fill>
+                                            </Rectangle>
+                                        </Canvas>
                                     </Border>
                                 </ControlTemplate>
                             </Button.Template>
-                    </Button>
-                    <StackPanel Orientation="Horizontal">
-                        <Border Width="15" Height="15">
-                            <Image Source="{Binding EndIcon}"/>
-                        </Border>
-                        <TextBlock Text="{Binding Path=End}" />
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Visibility="Collapsed">
-                            <Border Width="16" Height="16" Margin="-1,0,0,0" ToolTip="{StaticResource Item_Stretching}">
-                                <Image Source="/PixelTuner;component/Images/scale-stretching.png"/>
+                        </Button>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="15" Height="15">
+                                <Image Source="{Binding EndIcon}"/>
                             </Border>
-                            <ct:TriangleSlider Height="12" 
-                                           Width="48"
-                                           MinValue="0" 
-                                           MaxValue="40" 
-                                           Margin="-2,2,4,0"
-                                           IsEnabled="False"
-                                           Opacity="0.1"
-                                           ToolTip="{StaticResource Item_Stretching}"
-                                           PreviewMouseLeftButtonDown="ChildPreviewMouseLeftButtonDown"
-                                           Value="{Binding Path=Parent.DataContext.Stretching, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Text="{Binding Path=End}" />
+                        </StackPanel>
                     </StackPanel>
-                </StackPanel>
             </Border>
                 <StackPanel Orientation="Vertical" Grid.Column="1" Background="{StaticResource NormalItemBrush}">
                     <Button Margin="0,2,0,0" Command="{Binding DisposeMe}" PreviewMouseLeftButtonDown="ChildPreviewMouseLeftButtonDown">
@@ -142,7 +188,23 @@
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
-                    <Button Margin="0,2,0,0" Command="{Binding SwitchLaserOn}" PreviewMouseLeftButtonDown="ChildPreviewMouseLeftButtonDown" ToolTip="{StaticResource Item_SwitchLaserOnOffToolTip}">
+                    <Button Margin="0,2,0,0" Command="{Binding ThumbnailCommand}" Visibility="{Binding CanThumbnailProperty, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                            PreviewMouseLeftButtonDown="ChildPreviewMouseLeftButtonDown">
+                        <Button.Template>
+                            <ControlTemplate>
+                                <Border Width="16" Height="14">
+                                    <Image x:Name="SettingsBtnImage" Source="/PixelTuner;component/Images/settings_Dark.png"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="true">
+                                        <Setter Property="Source" Value="/PixelTuner;component/Images/settings.png" TargetName="SettingsBtnImage"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    <Button Margin="0,2,0,0" Command="{Binding SwitchLaserOn}" Visibility="{Binding CanSwitchLaserOnProperty, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                            PreviewMouseLeftButtonDown="ChildPreviewMouseLeftButtonDown" ToolTip="{StaticResource Item_SwitchLaserOnOffToolTip}">
                         <Button.Template>
                             <ControlTemplate>
                                 <Border Width="16" Height="14">
@@ -164,7 +226,48 @@
         </DataTemplate.Triggers>
     </DataTemplate>
 
-    <DataTemplate x:Key="TimeLineLayoutTemplate" DataType="{x:Type vm:TimeLineViewModel}">
+    <ControlTemplate x:Key="TimeLineTools">
+        <Grid x:Name="boxTimelineTools" Background="#4a4a4a" ToolTipService.IsEnabled="{Binding IsMetaDataSet}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.Resources>
+                <ccv:ControlVisibilityConverter x:Key="ControlVisibilityConverter"/>
+            </Grid.Resources>
+            <StackPanel>
+                <Button Height="14" Margin="4,3,2,0" Style="{StaticResource ButtonUpStyle}" Command="{Binding MoveUp}"></Button>
+                <Button Height="14" Margin="4,0,2,1" Style="{StaticResource ButtonDownStyle}" Command="{Binding MoveDown}"></Button>
+                <Button Height="16" Margin="4,1,2,1" Style="{StaticResource ButtonDeleteLineStyle}" Command="{Binding DeleteLine}"></Button>
+                <Button Height="16" Margin="4,1,2,1" Style="{StaticResource ButtonCloneStyle}" Command="{Binding CloneLine}"></Button>
+                <Rectangle Width="14" Height="14" Margin="4,1,2,1" Style="{StaticResource MonochromeSwitcherStyle}" Visibility="{Binding IsMonochrome, Converter={StaticResource ControlVisibilityConverter}, FallbackValue=Collapsed}">
+                    <acb:CommandBehaviorCollection.Behaviors>
+                        <acb:BehaviorBinding Event="MouseDown" Command="{Binding SwitchMonochromeMode}" />
+                    </acb:CommandBehaviorCollection.Behaviors>
+                </Rectangle>
+            </StackPanel>
+            <TextBlock Text="{Binding LineHeight}" Grid.Row="1" TextAlignment="Center" Visibility="{Binding LineHeight, Converter={StaticResource ControlVisibilityConverter}, FallbackValue=Collapsed}" Foreground="#8f8f8f" />
+            <Grid.ToolTip>
+                <ToolTip Padding="0" Margin="0" DataContext="{Binding Path=PlacementTarget, RelativeSource={x:Static RelativeSource.Self}}">
+                    <Canvas Margin="0" Width="120" Height="120" Background="{Binding Background}" ClipToBounds="True">
+                        <Path Stroke="Black" 
+                              Margin="5" 
+                              StrokeThickness="1" 
+                              Fill="{Binding DataContext.MetaData.Fill}" 
+                              RenderTransform="{Binding DataContext.PreviewTransform}"
+                              Data="{Binding DataContext.MetaData.Geometry}"/>
+                        <Rectangle Stroke="{Binding Background}"
+                                   StrokeThickness="5"
+                                   Width="122" 
+                                   Height="122"
+                                   Margin="-1"/>
+                    </Canvas>
+                </ToolTip>
+            </Grid.ToolTip>
+        </Grid>
+    </ControlTemplate>
+    
+    <DataTemplate DataType="{x:Type vm:TimeLineViewModel}">
         <ItemsControl>
             <Border x:Name="boxTimelineBorder" BorderThickness="1" BorderBrush="{Binding Background}">
                 <Grid x:Name="grid" SizeChanged="grid_SizeChanged">
@@ -172,12 +275,6 @@
                         <ColumnDefinition Width="26" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <StackPanel x:Name="boxTimelineTools" Grid.Column="0" Background="#4a4a4a">
-                        <Button Height="14" Margin="4,3,2,0" Style="{StaticResource ButtonUpStyle}" Command="{Binding MoveUp}"></Button>
-                        <Button Height="14" Margin="4,0,2,1" Style="{StaticResource ButtonDownStyle}" Command="{Binding MoveDown}"></Button>
-                        <Button Height="16" Margin="4,1,2,1" Style="{StaticResource ButtonDeleteLineStyle}" Command="{Binding DeleteLine}"></Button>
-                        <Button Height="16" Margin="4,1,2,1" Style="{StaticResource ButtonCloneStyle}" Command="{Binding CloneLine}"></Button>
-                    </StackPanel>
                     <ct:TimeLineControl 
                         x:Name="TimeLine"
                         Grid.Column="1" 
@@ -188,21 +285,25 @@
                         ManipulationMode="Free"
                         MinimumUnitWidth="20"
                         DrawTimeGrid="False"
-                        FocusOnItem="False"
                         SynchedWithSiblings="True"
                         AnchorStep="{Binding Source={StaticResource RootContext}, Path=AnchorStep}"
                         Background="{Binding Background}"
                         DefaultTimeInterval="{Binding DefaultTimeInterval}" 
+                        Manager="{Binding DragManager}"
                         StartDate="{Binding Start, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         UnitSize="{Binding Path=Parent.UnitSize}"
                         Items="{Binding Items, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        ItemTemplate="{StaticResource TimelineItemTemplate}"/>
+                        ItemTemplate="{StaticResource TimelineItemTemplate}"
+                        MetaTemplate="{StaticResource MetaTemplate}"
+                        MetaData="{Binding MetaData, Mode=TwoWay}"
+                        PreviewChangesCommand="{Binding PreviewChanges}">
+                        <Control Grid.Column="0" Margin="{Binding ToolsetMargin}" Template="{StaticResource TimeLineTools}" Width="26" Height="100"/>
+                    </ct:TimeLineControl>
                 </Grid>
             </Border>
         </ItemsControl>
         <DataTemplate.Triggers>
             <DataTrigger Binding="{Binding IsSelected}" Value="true">
-                <Setter Property="Background" Value="#ff323232" TargetName="boxTimelineTools"/>
                 <Setter Property="BorderBrush" Value="{StaticResource SelectedLineBrush}" TargetName="boxTimelineBorder"/>
             </DataTrigger>
         </DataTemplate.Triggers>

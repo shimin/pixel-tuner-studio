@@ -19,7 +19,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-    <DefineConstants>PackageVersion=2.0.1.0;PixelTunerMsiPath=./../PixelTunerSetup/bin/Release/PixelTunerSetup.msi</DefineConstants>
+    <DefineConstants>PackageVersion=2.0.2.0;PixelTunerMsiPath=./../PixelTunerSetup/bin/$(Configuration)/PixelTunerSetup.msi</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Bundle.wxs" />

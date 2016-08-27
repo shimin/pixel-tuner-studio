@@ -9,6 +9,7 @@ namespace PixelTuner.Import
     interface IPicturePage
     {
         void ApplyChanges();
+        bool IsPreviewOn { get; set; }
         void SetSource(BitmapSource bmp);
         BitmapSource Result { get; }
     }

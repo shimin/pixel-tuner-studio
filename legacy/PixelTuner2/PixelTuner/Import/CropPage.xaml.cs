@@ -73,12 +73,21 @@ namespace PixelTuner.Import
             set { _resizeHeightValue = value; RaisePropertyChanged("ResizeHeightValue"); }
         }
 
+        bool _resizeAllowed = false;
+        public bool ResizeAllowed
+        {
+            get { return _resizeAllowed; }
+            set { _resizeAllowed = value; RaisePropertyChanged("ResizeAllowed"); }
+        }
+        
         private Rect _lastCropState = Rect.Empty;
         #endregion
 
-        public CropPage(ImageSource src)
+        public CropPage(ImageSource src, bool isPreviewOn, bool resizeAllowed)
         {
             _imageToCrop = src;
+            ResizeAllowed = resizeAllowed;
+            IsPreviewOn = isPreviewOn;
             _resizeHeightValue = Settings.Default.LineHeight;
             DataContext = this;
             InitializeComponent();
@@ -199,6 +208,13 @@ namespace PixelTuner.Import
 
         #region IPicturePage
 
+        bool _isPreviewOn = false;
+        public bool IsPreviewOn
+        {
+            get { return _isPreviewOn; }
+            set { _isPreviewOn = value; RaisePropertyChanged("IsPreviewOn"); }
+        }
+
         public BitmapSource Result
         {
             get { return ResizedImage; }
@@ -217,13 +233,20 @@ namespace PixelTuner.Import
             var crpImage = ImageHelper.CropImage(srcImage, left, top, right, bottom);
             double aspect = (double)crpImage.Width / (double)crpImage.Height;
 
-            ResizedImageGDI = ImageHelper.ResizeImage(crpImage, (int)Math.Round(ResizeHeightValue * aspect), ResizeHeightValue);
+            if (ResizeAllowed)
+            {
+                ResizedImageGDI = ImageHelper.ResizeImage(crpImage, (int)Math.Round(ResizeHeightValue * aspect), ResizeHeightValue);
+            }
+            else
+            {
+                ResizedImageGDI = crpImage;
+            }
             ResizedImage = ImageHelper.BitmapImageFromBitmap(ResizedImageGDI);
         }
 
         public void SetSource(BitmapSource bmp)
         {
-            boxImage.Source = bmp;
+            boxImage.Source = ImageToCrop = bmp;
         } 
 
         #endregion

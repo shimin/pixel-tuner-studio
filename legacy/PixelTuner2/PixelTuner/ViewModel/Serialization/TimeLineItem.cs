@@ -142,9 +142,9 @@ namespace PixelTuner.ViewModel.Serialization
             set { _brightness = value; }
         }
 
-        public static implicit operator TimeLineItemViewModel(TimeLineItem item)
+        public static implicit operator PixelThumbnailViewModel(TimeLineItem item)
         {
-            var v = new PixelTuner.ViewModel.TimeLineItemViewModel(new System.IO.FileInfo(item.FullName));
+            var v = new PixelTuner.ViewModel.PixelThumbnailViewModel(new System.IO.FileInfo(item.FullName));
             v.StartTime = item.StartTime;
             v.EndTime = item.EndTime;
             v.Stretching = item.Stretching;
@@ -218,11 +218,15 @@ namespace PixelTuner.ViewModel.Serialization
             throw new NotImplementedException();
         }
 
-        public object ToType(Type conversionType, IFormatProvider provider)
+        public virtual object ToType(Type conversionType, IFormatProvider provider)
         {
-            if (conversionType == typeof(TimeLineItemViewModel))
+            if (conversionType == typeof(PixelThumbnailViewModel))
             {
-                return (TimeLineItemViewModel)this;
+                return (PixelThumbnailViewModel)this;
+            }
+            else if (conversionType == typeof(TimeLineItemViewModel))
+            {
+                return (PixelThumbnailViewModel)this;
             }
             throw new NotImplementedException();
         }

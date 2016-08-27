@@ -30,7 +30,7 @@
 
             <!-- Title -->
             <Button Grid.Row="0" Grid.ColumnSpan="2" Background="#FF100010" DataContext="{Binding InstallationViewModel}" Command="{Binding LaunchHomePageCommand}"/>
-            <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Style="{StaticResource StatusTextStyle}" DataContext="{Binding InstallationViewModel}">shiningpromo.ru</TextBlock>
+            <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Style="{StaticResource StatusTextStyle}" DataContext="{Binding InstallationViewModel}">e-pic.ru</TextBlock>
             <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Style="{StaticResource StatusTextStyle}" HorizontalAlignment="Right" DataContext="{Binding InstallationViewModel}" Text="{Binding Version}"/>
             <TextBlock Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="32" Foreground="White" IsHitTestVisible="False">PixelTuner</TextBlock>
 

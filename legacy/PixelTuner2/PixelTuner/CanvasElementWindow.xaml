@@ -1,0 +1,90 @@
+﻿<Window x:Class="PixelTuner.CanvasElementWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:gh="clr-namespace:Common.Helpers;assembly=Common"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:local="clr-namespace:PixelTuner"
+        mc:Ignorable="d"
+        Title="Element markup" 
+        Width="600" Height="400"
+        Background="DarkGray"
+        WindowStyle="ToolWindow" 
+        WindowStartupLocation="CenterOwner" 
+        PreviewKeyDown="Window_KeyDown"
+        ResizeMode="CanResize" 
+        Focusable="True"
+        ShowInTaskbar="False" 
+        Topmost="False">
+    <Window.Resources>
+        <Style TargetType="Button" x:Key="TransparentButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="Transparent">
+                            <ContentPresenter/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    
+    <Grid Margin="8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="120"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="24"/>
+        </Grid.RowDefinitions>
+
+        <DockPanel>
+            <Path Name="boxFigure"
+                  Grid.Row="0"
+                  Stroke="{Binding Stroke}" 
+                  StrokeThickness="1" 
+                  Stretch="Uniform"
+                  Data="{Binding Geometry}">
+            </Path>
+        </DockPanel>
+
+        <ItemsControl 
+            ItemsSource="{Binding LedTiles}"
+            Width="{Binding ElementName=boxFigure, Path=ActualWidth}" 
+            Height="{Binding ElementName=boxFigure, Path=ActualHeight}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button 
+                        Background="Transparent" 
+                        Command="{Binding TurnOnCommand}" 
+                        Opacity="{Binding OpacityVal}" 
+                        MouseLeftButtonDown="Button_MouseDown"
+                        MouseDown="Button_MouseDown"
+                        MouseEnter="Button_MouseEnter"
+                        Margin="{Binding ElementName=boxTailGrid, Path=DataContext.TilesMargin}"
+                        Content="{Binding LedNumber}">
+                    </Button>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Name="boxTailGrid" Columns="{Binding ColumnsCount}" Rows="{Binding RowsCount}" Background="Transparent" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+
+        <StackPanel Grid.Column="1">
+            <TextBlock Text="Rows: "/>
+            <xctk:DecimalUpDown Name="boxRows" Value="{Binding RowsCount}" Background="White" Margin="6"/>
+            <TextBlock Text="Columns: "/>
+            <xctk:DecimalUpDown Name="boxColumns" Value="{Binding ColumnsCount}" Background="White" Margin="6"/>
+            <TextBlock Text="Spacing: "/>
+            <xctk:DecimalUpDown Name="boxTilesMargin" Value="{Binding TilesMargin}" Background="White" Margin="6" Minimum="0" Maximum="100"/>
+        </StackPanel>
+        
+        <Button Grid.Column="1" Name="boxCloseBtn" Content="Close" Grid.Row="1" Width="64" HorizontalAlignment="Right" Click="boxCloseBtn_Click" Margin="2"/>
+    </Grid>
+</Window>

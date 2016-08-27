@@ -56,7 +56,12 @@ namespace PixelTuner
                 ex = ex.InnerException;
                 level++;
             }
-            System.IO.File.WriteAllText("./LastUnhandledException.txt", message.ToString());
+            try
+            {
+                var path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                System.IO.File.WriteAllText(System.IO.Path.Combine(path, "PixelTuner 2\\LastUnhandledException.txt"), message.ToString());
+            }
+            catch { }
         }
 
         private void AppendText(string text, System.Text.StringBuilder result, int level)

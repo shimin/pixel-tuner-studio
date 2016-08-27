@@ -35,6 +35,9 @@ namespace PixelTuner.ViewModel
         public RootViewModel()
         {
             this.Id = Guid.NewGuid();
+
+            GenerateColors();
+
             _anchorStepCollection = new Dictionary<int, string>(){
                 {20, "20 ms"},
                 {50, "50 ms"},
@@ -48,13 +51,109 @@ namespace PixelTuner.ViewModel
             this.ActiveDocumentChanged +=new DocumentChangedEventHandler(Workspace_ActiveDocumentChanged);
         }
 
+        private void GenerateColors()
+        {
+            byte step = 50;
+            for (byte i = 250; i > 0; i -= 5)
+            {
+                _colorsMono.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(i, i, i), string.Format("{0}, {0}, {0}", i)));
+            }
+
+            for (byte i = 250; i > 0; i -= 50)
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(i, i, i), string.Format("{0}, {0}, {0}", i)));
+            }
+            
+            for (byte r = 250; r > 0; r -= step) // red
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(r, 0, 0), string.Format("{0}, {1}, {2}", r, 0, 0)));
+            }
+
+            for (byte c = 250; c > 0; c -= step) // orange
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(c, (byte)(c / 2), 0), string.Format("{0}, {1}, {2}", c, c / 2, 0)));
+            }
+
+            for (byte c = 250; c > 0; c -= step) // yellow
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(c, c, 0), string.Format("{0}, {1}, {2}", c, c, 0)));
+            }
+
+            for (byte c = 250; c > 0; c -= step) // yellow
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb((byte)(c / 2), c, 0), string.Format("{0}, {1}, {2}", c / 2, c, 0)));
+            }
+
+            for (byte g = 250; g > 0; g -= step) // green
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(0, g, 0), string.Format("{0}, {1}, {2}", 0, g, 0)));
+            }
+
+            for (byte c = 250; c > 0; c -= step) // cyan
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(0, c, (byte)(c / 2)), string.Format("{0}, {1}, {2}", 0, c, c / 2)));
+            }
+
+            for (byte c = 250; c > 0; c -= step) // cyan
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(0, c, c), string.Format("{0}, {1}, {2}", 0, c, c)));
+            }
+
+            for (byte c = 250; c > 0; c -= step) // cyan
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(0, (byte)(c / 2), c), string.Format("{0}, {1}, {2}", 0, c / 2, c)));
+            }
+
+            for (byte b = 250; b > 0; b -= step) // blue
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(0, 0, b), string.Format("{0}, {1}, {2}", 0, 0, b)));
+            }
+
+            for (byte c = 250; c > 0; c -= step) // cyan
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb((byte)(c / 2), 0, c), string.Format("{0}, {1}, {2}", c / 2, 0, c)));
+            }
+
+            for (byte c = 250; c > 0; c -= step) // purple
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(c, 0, c), string.Format("{0}, {1}, {2}", c, 0, c)));
+            }
+            
+            for (byte c = 250; c > 0; c -= step) // cyan
+            {
+                _colorsRGB.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(c, 0, (byte)(c / 2)), string.Format("{0}, {1}, {2}", c, 0, c / 2)));
+            }
+
+            for (byte c = 0; c < 250; c += 25) 
+                _colorsMonoShort.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(c, c, c), string.Format("{0}, {0}, {0}", c)));
+            _colorsMonoShort.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(255, 255, 255), "White"));
+
+            _colorsRGBshort.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(0, 0, 0), "Black"));
+            _colorsRGBshort.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(125, 125, 125), "Gray"));
+            _colorsRGBshort.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(255, 255, 255), "White"));
+            _colorsRGBshort.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(255, 0, 0), "Red"));
+            _colorsRGBshort.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(255, 125, 0), "Orange"));
+            _colorsRGBshort.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(255, 255, 0), "Yellow"));
+            _colorsRGBshort.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(0, 255, 0), "Green"));
+            _colorsRGBshort.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(0, 255, 255), "Cyan"));
+            _colorsRGBshort.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(0, 0, 255), "Blue"));
+            _colorsRGBshort.Add(new Toolkit.ColorItem(System.Windows.Media.Color.FromRgb(255, 0, 255), "Magenta"));
+        }
+
         void Workspace_ActiveDocumentChanged(object sender, DocumentChangedEventArgs e)
         {
-            if (_activeDocument == null) ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
+            if (_activeDocument == null)
+            {
+                ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
+                VideosModel.RefreshVideosCollection(Settings.Default.LineHeight);
+                GradientsModel.RefreshImagesCollection();
+            }
             else
             {
                 Settings.Default.LineHeight = _activeDocument.LineHeight;
                 ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
+                VideosModel.RefreshVideosCollection(Settings.Default.LineHeight);
+                GradientsModel.RefreshImagesCollection();
                 e.NewDocument.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(NewDocument_PropertyChanged);
                 if (e.OldDocument != null)
                     e.OldDocument.PropertyChanged -= NewDocument_PropertyChanged;
@@ -68,6 +167,8 @@ namespace PixelTuner.ViewModel
                 {
                     Settings.Default.LineHeight = (sender as FileViewModel).LineHeight;
                     ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
+                    VideosModel.RefreshVideosCollection(Settings.Default.LineHeight);
+                    GradientsModel.RefreshImagesCollection();
                 }
         }
 
@@ -106,6 +207,20 @@ namespace PixelTuner.ViewModel
         {
             get { return _id; }
             set { _id = value; }
+        }
+
+        private bool _isOpenGLAvailable = false;
+        public bool IsOpenGLAvailable
+        {
+            get
+            {
+                return _isOpenGLAvailable;
+            }
+
+            set
+            {
+                _isOpenGLAvailable = value; RaisePropertyChanged("IsOpenGLAvailable");
+            }
         }
 
         private ObservableCollection<TimeLineItemViewModel> _copiedItems = new ObservableCollection<TimeLineItemViewModel>();
@@ -149,6 +264,57 @@ namespace PixelTuner.ViewModel
             set { Settings.Default.CutNextItems = value; RaisePropertyChanged("CutNextItems"); }
         }
 
+        private static ObservableCollection<Toolkit.ColorItem> _colorsRGB = new ObservableCollection<Toolkit.ColorItem>();
+        public static ObservableCollection<Toolkit.ColorItem> ColorsRgb
+        {
+            get
+            {
+                return _colorsRGB;
+            }
+            set
+            {
+                _colorsRGB = value;
+            }
+        }
+
+        private static ObservableCollection<Toolkit.ColorItem> _colorsRGBshort = new ObservableCollection<Toolkit.ColorItem>();
+        public static ObservableCollection<Toolkit.ColorItem> ColorsRgbShort
+        {
+            get
+            {
+                return _colorsRGBshort;
+            }
+            set
+            {
+                _colorsRGBshort = value;
+            }
+        }
+
+        private static ObservableCollection<Toolkit.ColorItem> _colorsMono = new ObservableCollection<Toolkit.ColorItem>();
+        public static ObservableCollection<Toolkit.ColorItem> ColorsMono
+        {
+            get
+            {
+                return _colorsMono;
+            }
+            set
+            {
+                _colorsMono = value;
+            }
+        }
+
+        private static ObservableCollection<Toolkit.ColorItem> _colorsMonoShort = new ObservableCollection<Toolkit.ColorItem>();
+        public static ObservableCollection<Toolkit.ColorItem> ColorsMonoShort
+        {
+            get
+            {
+                return _colorsMonoShort;
+            }
+            set
+            {
+                _colorsMonoShort = value;
+            }
+        }
         #endregion
 
         #region View models
@@ -215,10 +381,30 @@ namespace PixelTuner.ViewModel
             get
             {
                 if (_tools == null)
-                    _tools = new ToolViewModel[] { //FileStats,
-                        DevicesModel, ProjectsModel, ImagesModel, ProjectPlayerModel
+                    _tools = new ToolViewModel[] {
+                        CanvasModel, 
+                        VideosModel,
+                        GradientsModel,
+                        DevicesModel,
+                        ProjectsModel,
+                        ImagesModel,
+                        ProjectPlayerModel,
+                        EffectsModel
                     };
                 return _tools;
+            }
+        }
+
+        CanvasViewModel _canvasModel = null;
+        public CanvasViewModel CanvasModel
+        {
+            get
+            {
+                if (_canvasModel == null)
+                    _canvasModel = new CanvasViewModel(
+                        (string)Application.Current.TryFindResource("Menu_Window_Canvas"));
+
+                return _canvasModel;
             }
         }
 
@@ -229,7 +415,7 @@ namespace PixelTuner.ViewModel
             {
                 if (_devicesModel == null)
                     _devicesModel = new DevicesViewModel(
-                        (String)Application.Current.TryFindResource("Menu_Window_Devices"));
+                        (string)Application.Current.TryFindResource("Menu_Window_Devices"));
 
                 return _devicesModel;
             }
@@ -306,6 +492,8 @@ namespace PixelTuner.ViewModel
             {
                 foreach (var timeline in fileView.TimeLines)
                 {
+                    if (timeline is LightTimeLineViewModel) continue;
+
                     List<TimeLineItemViewModel> toRemove = new List<TimeLineItemViewModel>();
                     foreach (var item in timeline.Items)
                     {
@@ -338,85 +526,46 @@ namespace PixelTuner.ViewModel
         }
 
         #endregion
+        
+        #region Effects model
 
-        #endregion
-
-        #region UpdateCommand
-        RelayCommand _updateCommand = null;
-        public ICommand UpdateCommand
+        EffectsViewModel _effectsModel = null;
+        public EffectsViewModel EffectsModel
         {
             get
             {
-                if (_updateCommand == null)
+                if (_effectsModel == null)
                 {
-                    _updateCommand = new RelayCommand((p) => OnUpdate(p), (p) => CanUpdate(p));
+                    _effectsModel = new EffectsViewModel(
+                        (String)Application.Current.TryFindResource("Menu_Window_Effects"));
                 }
 
-                return _updateCommand;
+                return _effectsModel;
             }
         }
 
-        private bool CanUpdate(object parameter)
-        {
-            return true;
-        }
+        #endregion
 
-        private void OnUpdate(object parameter)
-        {
-            CheckForUpdates();
-        }
+        #region Gradients model
 
-        private void CheckForUpdates()
+        GradientsViewModel _gradientsModel = null;
+        public GradientsViewModel GradientsModel
         {
-            #region check and download new version program
-            bool bHasError = false;
-            PixelTunerAutoupdater.IAutoUpdater autoUpdater = new PixelTunerAutoupdater.AutoUpdater(Application.Current.MainWindow);
-            try
+            get
             {
-                autoUpdater.Update();
-            }
-            catch (System.Net.WebException)
-            {
-                MessageBox.Show("Can not find the specified resource");
-                bHasError = true;
-            }
-            catch (System.Xml.XmlException)
-            {
-                bHasError = true;
-                MessageBox.Show("Download the upgrade file error");
-            }
-            catch (NotSupportedException)
-            {
-                bHasError = true;
-                MessageBox.Show("Upgrade address configuration error");
-            }
-            catch (ArgumentException)
-            {
-                bHasError = true;
-                MessageBox.Show("Download the upgrade file error");
-            }
-            catch (Exception exp)
-            {
-                bHasError = true;
-                MessageBox.Show("An error occurred during the upgrade process" + exp.Message);
-            }
-            finally
-            {
-                if (bHasError == true)
+                if (_gradientsModel == null)
                 {
-                    try
-                    {
-                        autoUpdater.RollBack();
-                    }
-                    catch (Exception)
-                    {
-                        //Log the message to your file or database
-                    }
+                    _gradientsModel = new GradientsViewModel(
+                        (String)Application.Current.TryFindResource("Menu_Window_Gradients"));
                 }
+
+                return _gradientsModel;
             }
-            #endregion
         }
-        #endregion 
+
+        #endregion
+        
+        #endregion
 
         #region OpenCommand
         RelayCommand _openCommand = null;
@@ -441,7 +590,6 @@ namespace PixelTuner.ViewModel
         private void OnOpen(object parameter)
         {
             Open((string)parameter);
-            RemoveBrokenReferences();
         }
 
         internal void Open(string path = null)
@@ -459,26 +607,37 @@ namespace PixelTuner.ViewModel
             {
                 try
                 {
-                    using (XmlTextReader tr = new XmlTextReader(path))
+                    using (FileStream fs = new FileStream(path, FileMode.Open))
                     {
-                        try
-                        {
-                            var file = (FileViewModel)_projectSerializer.Deserialize(tr);
-                            file.FilePath = path;
-                            this._files.Add(file);
-                            if (!string.IsNullOrEmpty(file.AudioPath))
-                                file.OpenAudio.Execute(file.AudioPath);
-                            ActiveDocument = file;
-                            ActiveDocument.IsDirty = false;
+                        // replace xsi:type to correctly open old projects
+                        TextReader str = new StreamReader(fs);
+                        var allText = str.ReadToEnd();
+                        allText = allText.Replace("<Line>", "<Line xsi:type=\"PixelTimeLineViewModel\">");
 
-                            if (LastUsedFileHandler != null)
-                                LastUsedFileHandler.Invoke(path);
-                        }
-                        catch (Exception ex)
+                        TextReader textReader = new StringReader(allText);
+                        using (XmlTextReader tr = new XmlTextReader(textReader))
                         {
-                            ResourceDictionary rd = Application.Current.Resources.MergedDictionaries[0];
-                            string msg = (String)rd["Doc_Open_DeserializeError"];
-                            MessageBox.Show(msg, Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
+                            try
+                            {
+                                var file = (FileViewModel)_projectSerializer.Deserialize(tr);
+                                file.FilePath = path;
+                                this._files.Add(file);
+                                if (!string.IsNullOrEmpty(file.AudioPath))
+                                    file.OpenAudio.Execute(file.AudioPath);
+                                ActiveDocument = file;
+                                ActiveDocument.IsDirty = false;
+
+                                if (LastUsedFileHandler != null)
+                                    LastUsedFileHandler.Invoke(path);
+
+                                RemoveBrokenReferences();
+                            }
+                            catch (Exception ex)
+                            {
+                                ResourceDictionary rd = Application.Current.Resources.MergedDictionaries[0];
+                                string msg = (String)rd["Doc_Open_DeserializeError"];
+                                MessageBox.Show(msg + "\n" + ex.Message, Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
+                            }
                         }
                     }
                 }
@@ -516,7 +675,7 @@ namespace PixelTuner.ViewModel
         private void OnNew(object parameter)
         {
             var model = new FileViewModel();
-            model.TimeLines.Add(new TimeLineViewModel());
+            model.TimeLines.Add(new PixelTimeLineViewModel());
             _files.Add(model);
             ActiveDocument = _files.Last();
         }
@@ -630,17 +789,74 @@ namespace PixelTuner.ViewModel
 
         private bool CanExport(object parameter)
         {
-            return ActiveDocument != null;
+            if (ActiveDocument == null) return false;
+
+            bool canExport = (ActiveDocument.TimeLines.Count((i) => 
+                PixelDeviceViewModel.TimelineFilter(i) && (i as PixelTimeLineViewModel).LineHeight == ActiveDocument.LineHeight) > 0)
+                || (ActiveDocument.TimeLines.Count(LightMasterDeviceViewModel.TimelineFilter) > 0)
+                || (ActiveDocument.TimeLines.Count(EpicPoiDeviceViewModel.TimelineFilter) > 0);
+            return canExport;
         }
 
         private void OnExport(object parameter)
         {
-            var sfd = new SaveFileDialog();
-            sfd.Filter = "Binary file|*.bin";
-            if (true == sfd.ShowDialog())
+            Export(ActiveDocument);
+        }
+
+        internal void Export(FileViewModel fileToSave, bool saveAsFlag = false)
+        {
+            TimelinesToUpload dialog = null;
+
+            if (fileToSave.TimeLines.Count((i) => 
+                PixelDeviceViewModel.TimelineFilter(i) && (i as PixelTimeLineViewModel).LineHeight == ActiveDocument.LineHeight) > 0)
             {
-                var b = ActiveDocument.GetBinaryPresentation((byte)ActiveDocument.LineHeight);
-                File.WriteAllBytes(sfd.FileName, b.ToArray());
+                dialog = new TimelinesToUpload((i) => 
+                    PixelDeviceViewModel.TimelineFilter(i) && (i as PixelTimeLineViewModel).LineHeight == ActiveDocument.LineHeight);
+
+                dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                dialog.Owner = Application.Current.MainWindow;
+                if (dialog.ShowDialog() == true)
+                {
+                    var dlg = new SaveFileDialog();
+                    dlg.Filter = "Binary project file|*.bin";
+                    if (dlg.ShowDialog().GetValueOrDefault())
+                        fileToSave.FilePath = dlg.FileName;
+
+                    File.WriteAllBytes(fileToSave.FilePath,
+                        fileToSave.GetPixelBinaryPresentation(dialog.SelectedTimeLines, (byte)fileToSave.LineHeight).ToArray());
+                }
+            }
+
+            if (fileToSave.TimeLines.Count(LightMasterDeviceViewModel.TimelineFilter) > 0)
+            {
+                dialog = new TimelinesToUpload(LightMasterDeviceViewModel.TimelineFilter);
+                dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                dialog.Owner = Application.Current.MainWindow;
+                if (dialog.ShowDialog() == true)
+                {
+                    var dlg = new SaveFileDialog();
+                    dlg.Filter = "Binary project file|*.bin";
+                    if (dlg.ShowDialog().GetValueOrDefault())
+                        fileToSave.FilePath = dlg.FileName;
+
+                    File.WriteAllBytes(fileToSave.FilePath, fileToSave.GetLightBinaryPresentation(dialog.SelectedTimeLines).ToArray());
+                }
+            }
+
+            if (fileToSave.TimeLines.Count(EpicPoiDeviceViewModel.TimelineFilter) > 0)
+            {
+                dialog = new TimelinesToUpload(EpicPoiDeviceViewModel.TimelineFilter);
+                dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                dialog.Owner = Application.Current.MainWindow;
+                if (dialog.ShowDialog() == true)
+                {
+                    var dlg = new SaveFileDialog();
+                    dlg.Filter = "Binary project file|*.bin";
+                    if (dlg.ShowDialog().GetValueOrDefault())
+                        fileToSave.FilePath = dlg.FileName;
+
+                    File.WriteAllBytes(fileToSave.FilePath, fileToSave.GetEpicBinaryPresentation(dialog.SelectedTimeLines).ToArray());
+                }
             }
         }
 
@@ -715,6 +931,36 @@ namespace PixelTuner.ViewModel
 
         #endregion 
 
+        #region ArtnetCommand
+        RelayCommand _artnetCommand = null;
+        public ICommand ArtnetCommand
+        {
+            get
+            {
+                if (_artnetCommand == null)
+                {
+                    _artnetCommand = new RelayCommand((p) => OnArtnetCommand(p), (p) => CanArtnetCommand(p));
+                }
+
+                return _artnetCommand;
+            }
+        }
+
+        private bool CanArtnetCommand(object parameter)
+        {
+            return true;
+        }
+
+        private void OnArtnetCommand(object parameter)
+        {
+            ArtNetWindow anw = new ArtNetWindow();
+            anw.Owner = Application.Current.MainWindow;
+            anw.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            anw.ShowDialog();
+        }
+
+        #endregion
+
         #region AdjustDefaultsCommand
         RelayCommand _adjustDefaultsCommand = null;
         public ICommand AdjustDefaultsCommand
@@ -743,6 +989,8 @@ namespace PixelTuner.ViewModel
             dw.ShowDialog();
 
             ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
+            VideosModel.RefreshVideosCollection(Settings.Default.LineHeight);
+            GradientsModel.RefreshImagesCollection();
 
             foreach (var f in Files)
             {

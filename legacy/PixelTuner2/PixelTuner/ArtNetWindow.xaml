@@ -1,0 +1,39 @@
+﻿<Window x:Class="PixelTuner.ArtNetWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        Title="{StaticResource Menu_Settings_Artnet_Window}" Height="284" Width="505" WindowStyle="ToolWindow" ResizeMode="NoResize">
+    <Grid Margin="6,2">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="30" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="1" Height="28" HorizontalAlignment="Right" Name="stackPanel1" VerticalAlignment="Top" Orientation="Horizontal" FlowDirection="RightToLeft">
+            <Button Content="{StaticResource Text_Close}" Margin="2" Name="CancelButton" Width="75" Click="CancelButton_Click" />
+            <Button Content="{StaticResource Text_Stop}" Name="boxStopServer" Width="75" Margin="2" Click="boxStopServer_Click"/>
+            <Button Content="{StaticResource Text_Run}" Name="boxRunServer" Width="75" Margin="2" Click="boxRunServer_Click"/>
+        </StackPanel>
+        <StackPanel Height="236" HorizontalAlignment="Left" Name="stackPanel2" VerticalAlignment="Top" Orientation="Horizontal" Grid.RowSpan="2">
+            <StackPanel Name="stackPanel3" Width="140">
+                <TextBox Height="24" Margin="2" TextAlignment="Center" Width="140" Text="{Binding ArtnetLocalIP}"></TextBox>
+                <TextBox Height="24" Margin="2" TextAlignment="Center" Width="140" Text="{Binding ArtnetSubnet}"></TextBox>
+                <xctk:IntegerUpDown Margin="1" Minimum="0" Maximum="65535" DefaultValue="3333" Height="24"  Value="{Binding ArtnetPort}"></xctk:IntegerUpDown>
+                <xctk:IntegerUpDown Margin="1" Minimum="0" Maximum="255" DefaultValue="1" Height="24" Value="{Binding ArtnetUniverse}" />
+                <xctk:IntegerUpDown Margin="1" Minimum="0" Maximum="1023" DefaultValue="0" Height="24" Value="{Binding ArtnetChannel}" />
+                <xctk:IntegerUpDown Margin="1" Minimum="0" Maximum="255" DefaultValue="38" Height="24" Value="{Binding ArtnetStartValue}" />
+                <xctk:IntegerUpDown Margin="1" Minimum="0" Maximum="255" DefaultValue="13" Height="24" Value="{Binding ArtnetPauseValue}" />
+                <xctk:IntegerUpDown Margin="1" Minimum="0" Maximum="255" DefaultValue="26" Height="24" Value="{Binding ArtnetStopValue}" />
+            </StackPanel>
+            <StackPanel Name="stackPanel4" Width="200" ForceCursor="True">
+                <TextBlock Margin="2,9,0,0"  Text="{StaticResource Text_Artnet_LocalIP}" />
+                <TextBlock Margin="2,10,0,0" Text="{StaticResource Text_Artnet_Subnet}"/>
+                <TextBlock Margin="2,10,0,0" Text="{StaticResource Text_Artnet_Port}"/>
+                <TextBlock Margin="2,10,0,0" Text="{StaticResource Text_Artnet_Universe}"/>
+                <TextBlock Margin="2,10,0,0" Text="{StaticResource Text_Artnet_Channel}"/>
+                <TextBlock Margin="2,10,0,0" Text="{StaticResource Text_Artnet_Start}"/>
+                <TextBlock Margin="2,10,0,0" Text="{StaticResource Text_Artnet_Pause}"/>
+                <TextBlock Margin="2,10,0,0" Text="{StaticResource Text_Artnet_Stop}"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

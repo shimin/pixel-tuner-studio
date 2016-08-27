@@ -27,10 +27,13 @@
                 <RowDefinition Height="30" />
             </Grid.RowDefinitions>
             <TabControl Name="boxTabs" Grid.ColumnSpan="2" Background="Transparent" BorderThickness="0">
-                <TabItem Header="{StaticResource ImportWindow_EditHeader}" >
+                <TabItem Name="boxMainTab" Header="{StaticResource ImportWindow_EditHeader}" >
                     <pts:PageTransition Name="pageTransitionControl" Margin="0" TransitionType="Fade" />
                 </TabItem>
-                <TabItem Name="boxPreviewTab" Header="{StaticResource ImportWindow_PreviewHeader}" ContentTemplate="{StaticResource ProjectPlayerLayoutTemplate}">
+                <TabItem Name="boxPreviewTab" 
+                         Header="{StaticResource ImportWindow_PreviewHeader}" 
+                         IsEnabled="{Binding ElementName=boxMainTab, Path=Content.DataContext.IsPreviewOn}" 
+                         ContentTemplate="{StaticResource ProjectPlayerLayoutTemplate}">
                 </TabItem>
             </TabControl>
             <Grid Grid.Row="1" Grid.RowSpan="1">

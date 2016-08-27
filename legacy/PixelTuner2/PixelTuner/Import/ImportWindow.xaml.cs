@@ -33,9 +33,10 @@ namespace PixelTuner.Import
         public ImportWindow(ImageSource imageToCrop)
         {
             DataContext = this;
-            //pagesNext.Push(new TransformPage());
-            pagesNext.Push(new ColorAdjustPage());
-            pagesNext.Push(new CropPage(imageToCrop));
+            pagesNext.Push(new ColorAdjustPage(true));
+            pagesNext.Push(new CropPage(imageToCrop, true, true));
+            pagesNext.Push(new TransformPage(false));
+            pagesNext.Push(new CropPage(imageToCrop, false, false));
             InitializeComponent();
             pageTransitionControl.ShowPage(pagesNext.Peek());
             boxTabs.SelectionChanged += new SelectionChangedEventHandler(boxTabs_SelectionChanged);
@@ -53,7 +54,7 @@ namespace PixelTuner.Import
                     //ProjectPlayerModel.Image = (BitmapImage)p.Result;
                     var tPath = System.IO.Path.GetTempFileName();
                     ImageHelper.SaveImageData(ImageHelper.BitmapImageToBytes<BmpBitmapEncoder>(p.Result), tPath);
-                    ProjectPlayerModel.DisplayModel = new PixelTuner.ViewModel.TimeLineItemViewModel(new System.IO.FileInfo(tPath));
+                    ProjectPlayerModel.DisplayModel = new PixelTuner.ViewModel.PixelThumbnailViewModel(new System.IO.FileInfo(tPath));
                     RaisePropertyChanged("ProjectPlayerModel");
                 }
             }
@@ -169,8 +170,10 @@ namespace PixelTuner.Import
                 {
                     pagesNext.Clear();
                     pagesPrev.Clear();
-                    pagesNext.Push(new ColorAdjustPage());
-                    pagesNext.Push(new CropPage(img));
+                    pagesNext.Push(new ColorAdjustPage(true));
+                    pagesNext.Push(new CropPage(img, true, true));
+                    pagesNext.Push(new TransformPage(false));
+                    pagesNext.Push(new CropPage(img, false, false));
                     pageTransitionControl.ShowPage(pagesNext.Peek());
                 }
             }

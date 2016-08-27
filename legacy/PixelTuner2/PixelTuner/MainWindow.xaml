@@ -4,7 +4,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="PixelTuner" MinHeight="525" MinWidth="960" WindowStyle="SingleBorderWindow" 
         Icon="/PixelTuner;component/Files/PixelTuner.ico"
-        Style="{DynamicResource WindowStyle}"
         
         xmlns:avalonDock="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:ct="clr-namespace:Common.Controls;assembly=Common"
@@ -26,7 +25,10 @@
                 <ResourceDictionary Source="/PixelTuner;component/Styles/FileLayoutTemplate.xaml" />
                 <ResourceDictionary Source="/PixelTuner;component/Styles/ProjectPlayerLayoutTemplate.xaml" />
                 <ResourceDictionary Source="/PixelTuner;component/Styles/ImagesLayoutTemplate.xaml" />
+                <ResourceDictionary Source="/PixelTuner;component/Styles/GradientsLayoutTemplate.xaml" />
+                <ResourceDictionary Source="/PixelTuner;component/Styles/EffectsLayoutTemplate.xaml" />
                 <ResourceDictionary Source="/PixelTuner;component/Styles/VideosLayoutTemplate.xaml" />
+                <ResourceDictionary Source="/PixelTuner;component/Styles/CanvasTemplate.xaml" />
                 <ResourceDictionary Source="/PixelTuner;component/Styles/SharedStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
         
@@ -54,13 +56,19 @@
                 <MenuItem Header="{StaticResource Menu_File_Exit}" Click="ExitApplication"/>
             </MenuItem>
             <MenuItem Header="{StaticResource Menu_Window}">
-                <MenuItem Header="{StaticResource Menu_Window_ProjectPlayer}" IsCheckable="True" IsChecked="{Binding ProjectPlayerModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-                <MenuItem Header="{StaticResource Menu_Window_Projects}" IsCheckable="True" IsChecked="{Binding ProjectsModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-                <MenuItem Header="{StaticResource Menu_Window_Devices}" IsCheckable="True" IsChecked="{Binding DevicesModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-                <MenuItem Header="{StaticResource Menu_Window_Images}" IsCheckable="True" IsChecked="{Binding ImagesModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-                <MenuItem Header="{StaticResource Menu_Window_Videos}" IsCheckable="True" IsChecked="{Binding VideosModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                <MenuItem Header="{StaticResource Menu_Window_Window}">
+                    <MenuItem Header="{StaticResource Menu_Window_ProjectPlayer}" IsCheckable="True" IsChecked="{Binding ProjectPlayerModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                    <MenuItem Header="{StaticResource Menu_Window_Projects}" IsCheckable="True" IsChecked="{Binding ProjectsModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                    <MenuItem Header="{StaticResource Menu_Window_Devices}" IsCheckable="True" IsChecked="{Binding DevicesModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                    <MenuItem Header="{StaticResource Menu_Window_Canvas}" IsCheckable="True" IsChecked="{Binding CanvasModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                    <MenuItem Header="{StaticResource Menu_Window_Images}" IsCheckable="True" IsChecked="{Binding ImagesModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                    <MenuItem Header="{StaticResource Menu_Window_Gradients}" IsCheckable="True" IsChecked="{Binding GradientsModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                    <MenuItem Header="{StaticResource Menu_Window_Videos}" IsCheckable="True" IsChecked="{Binding VideosModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                    <MenuItem Header="{StaticResource Menu_Window_Effects}" IsCheckable="True" IsChecked="{Binding EffectsModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="{StaticResource Menu_Settings}">
+                <MenuItem Header="{StaticResource Menu_Settings_Artnet_Window}" Command="{Binding ArtnetCommand}"/>
                 <MenuItem Header="{StaticResource Menu_Settings_Defaults}" Command="{Binding AdjustDefaultsCommand}" InputGestureText="Alt+P"/>
             </MenuItem>
         </Menu>
@@ -99,32 +107,20 @@
             <avalonDock:DockingManager.Theme>
                 <avalonDock:DefaultTheme/>
             </avalonDock:DockingManager.Theme>
-            
+
             <avalonDock:DockingManager.LayoutItemTemplateSelector>
-                <sl:PanesTemplateSelector>
-                    <sl:PanesTemplateSelector.FileViewTemplate>
-                        <StaticResource ResourceKey="FileLayoutTemplate"></StaticResource>
-                    </sl:PanesTemplateSelector.FileViewTemplate>
-                    <sl:PanesTemplateSelector.DevicesViewTemplate>
-                        <StaticResource ResourceKey="DevicesLayoutTemplate"></StaticResource>
-                    </sl:PanesTemplateSelector.DevicesViewTemplate>
-                    <sl:PanesTemplateSelector.ProjectsViewTemplate>
-                        <DataTemplate>
-                            <ListBox x:Name="boxProjectsList" MinWidth="120" MinHeight="120" ItemsSource="{Binding Files}"></ListBox>
-                        </DataTemplate>
-                    </sl:PanesTemplateSelector.ProjectsViewTemplate>
-                    <sl:PanesTemplateSelector.ProjectPlayerViewTemplate>
-                        <StaticResource ResourceKey="ProjectPlayerLayoutTemplate"></StaticResource>
-                    </sl:PanesTemplateSelector.ProjectPlayerViewTemplate>
-                    <sl:PanesTemplateSelector.ImagesViewTemplate>
-                        <StaticResource ResourceKey="ImagesLayoutTemplate"></StaticResource>
-                    </sl:PanesTemplateSelector.ImagesViewTemplate>
-                    <sl:PanesTemplateSelector.VideosViewTemplate>
-                        <StaticResource ResourceKey="VideosLayoutTemplate"></StaticResource>
-                    </sl:PanesTemplateSelector.VideosViewTemplate>
+                <sl:PanesTemplateSelector 
+                    CanvasViewTemplate="{StaticResource CanvasTemplate}"
+                    DevicesViewTemplate="{StaticResource DevicesLayoutTemplate}"
+                    ImagesViewTemplate="{StaticResource ImagesLayoutTemplate}"
+                    FileViewTemplate="{StaticResource FileLayoutTemplate}"
+                    ProjectPlayerViewTemplate="{StaticResource ProjectPlayerLayoutTemplate}"
+                    GradientsViewTemplate="{StaticResource GradientsLayoutTemplate}"
+                    EffectsViewTemplate="{StaticResource EffectsLayoutTemplate}"
+                    VideosViewTemplate="{StaticResource VideosLayoutTemplate}">
                 </sl:PanesTemplateSelector>
             </avalonDock:DockingManager.LayoutItemTemplateSelector>
-            
+
             <avalonDock:DockingManager.LayoutItemContainerStyleSelector>
                 <sl:PanesStyleSelector>
                     <sl:PanesStyleSelector.ToolStyle>
@@ -146,16 +142,18 @@
                     </sl:PanesStyleSelector.FileStyle>
                 </sl:PanesStyleSelector>
             </avalonDock:DockingManager.LayoutItemContainerStyleSelector>
+
+            <avalonDock:DockingManager.LayoutUpdateStrategy>
+                <pt:LayoutInitializer/>
+            </avalonDock:DockingManager.LayoutUpdateStrategy>
             
             <avalonDock:LayoutRoot>
                 <avalonDock:LayoutPanel Orientation="Horizontal">
                     <avalonDock:LayoutAnchorablePaneGroup Orientation="Vertical" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120">
-                        <avalonDock:LayoutAnchorablePane Name="ProjectsTool" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120">
-                        </avalonDock:LayoutAnchorablePane>
-                        <avalonDock:LayoutAnchorablePane Name="DevicesTool" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120">
-                        </avalonDock:LayoutAnchorablePane>
-                        <avalonDock:LayoutAnchorablePane Name="ProjectPlayerTool" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120">
-                        </avalonDock:LayoutAnchorablePane>
+                        <avalonDock:LayoutAnchorablePane Name="ProjectsTool" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120"/>
+                        <avalonDock:LayoutAnchorablePane Name="DevicesTool" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120"/>
+                        <avalonDock:LayoutAnchorablePane Name="ProjectPlayerTool" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120"/>
+                        <avalonDock:LayoutAnchorablePane Name="CanvasTool" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120"/>
                     </avalonDock:LayoutAnchorablePaneGroup>
                     <avalonDock:LayoutPanel Orientation="Vertical" >
                         <avalonDock:LayoutDocumentPaneGroup>
@@ -163,6 +161,8 @@
                         </avalonDock:LayoutDocumentPaneGroup>
                         <avalonDock:LayoutAnchorablePaneGroup DockHeight="120" DockMinHeight="80" DockMinWidth="80">
                             <avalonDock:LayoutAnchorablePane Name="ImagesTool" />
+                            <avalonDock:LayoutAnchorablePane Name="EffectsTool" />
+                            <avalonDock:LayoutAnchorablePane Name="GradientsTool" />
                             <avalonDock:LayoutAnchorablePane Name="VideosTool" />
                         </avalonDock:LayoutAnchorablePaneGroup>
                     </avalonDock:LayoutPanel>
