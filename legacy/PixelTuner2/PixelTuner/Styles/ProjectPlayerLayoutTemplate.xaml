@@ -8,7 +8,68 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/PixelTuner;component/Styles/SliderStyles.xaml" />
     </ResourceDictionary.MergedDictionaries>
-        <DataTemplate x:Key="ProjectPlayerLayoutTemplate" DataType="{x:Type vm:ProjectPlayerViewModel}">
+    <DataTemplate x:Key="CanDisplayHoopPreview">
+        <Grid x:Name="boxHoopGrid" Background="Black">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="80" />
+            </Grid.RowDefinitions>
+
+            <sharpGl:OpenGLControl 
+                        Loaded="OpenGLControl_Loaded"
+                        OpenGLDraw="OpenGlControl_OnOpenGLDraw" 
+                        Resized="OpenGlControl_OnResized"
+                        OpenGLVersion="OpenGL3_1"
+                        OpenGLInitialized="OpenGLControl_OpenGLInitialized"
+                        RenderContextType="FBO" />
+            <StackPanel Grid.Row="1" Orientation="Vertical">
+                <StackPanel Visibility="Visible" Orientation="Horizontal">
+                    <Label Content="Alpha: " Foreground="White" />
+                    <Slider Name="boxTailAlphaSlider" Width="260" Value="{Binding TailAlpha, UpdateSourceTrigger=PropertyChanged}" 
+                                    SmallChange="0.01" 
+                                    LargeChange="0.1" 
+                                    TickFrequency="0.01" 
+                                    IsSnapToTickEnabled="True" 
+                                    Minimum="0.1" 
+                                    Maximum="0.95"/>
+                    <Label Foreground="White" Content="{Binding TailAlpha}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="{StaticResource Item_Stretching}" Foreground="White" />
+                    <Slider Name="boxHoopStretchingSlider" Width="260" Value="{Binding ScanSpeed, UpdateSourceTrigger=PropertyChanged}" 
+                                    Margin="3" 
+                                    SmallChange="0.05"
+                                    LargeChange="0.2"
+                                    TickFrequency="0.05"
+                                    IsSnapToTickEnabled="True"
+                                    Minimum="0.1" 
+                                    Maximum="8"/>
+                    <Label Foreground="White" Content="{Binding ScanSpeed}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Rotation: " Foreground="White" />
+                    <Slider Name="boxRotationFactor" Width="260" Value="{Binding RotationFactor, UpdateSourceTrigger=PropertyChanged}" 
+                                    Margin="3" 
+                                    SmallChange="0.05"
+                                    LargeChange="0.2"
+                                    TickFrequency="0.05"
+                                    IsSnapToTickEnabled="True"
+                                    Minimum="0.05" 
+                                    Maximum="12"/>
+                    <Label Foreground="White" Content="{Binding RotationFactor}"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+    <DataTemplate x:Key="CantDisplayHoopPreview">
+        <Border BorderBrush="Black" BorderThickness="1">
+            <DockPanel Background="Black">
+                <TextBlock Text="Hoop preview isn't available on this PC." Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </DockPanel>
+        </Border>
+    </DataTemplate>
+    
+    <DataTemplate x:Key="ProjectPlayerLayoutTemplate" DataType="{x:Type vm:ProjectPlayerViewModel}">
         <TabControl Margin="0" Padding="0">
             <TabItem Header="Poi" BorderThickness="0" Background="Black" Foreground="White" Width="50" Margin="0" Padding="0">
                 <Grid Background="Black" DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.ProjectPlayerModel}">
@@ -89,58 +150,20 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Hoop" Background="Black" BorderThickness="0" Foreground="White" Width="50" Margin="0" Padding="0">
-                <Grid x:Name="boxHoopGrid" Background="Black">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="80" />
-                    </Grid.RowDefinitions>
-                    <sharpGl:OpenGLControl 
-                        Loaded="OpenGLControl_Loaded"
-                        OpenGLDraw="OpenGlControl_OnOpenGLDraw" 
-                        Resized="OpenGlControl_OnResized" 
-                        FrameRate="200"
-                        SnapsToDevicePixels="True"
-                        OpenGLInitialized="OpenGLControl_OpenGLInitialized"
-                        RenderContextType="FBO" />
-                    <StackPanel Grid.Row="1" Orientation="Vertical">
-                        <StackPanel Visibility="Visible" Orientation="Horizontal">
-                            <Label Content="Alpha: " Foreground="White" />
-                            <Slider Name="boxTailAlphaSlider" Width="260" Value="{Binding TailAlpha, UpdateSourceTrigger=PropertyChanged}" 
-                                    SmallChange="0.01" 
-                                    LargeChange="0.1" 
-                                    TickFrequency="0.01" 
-                                    IsSnapToTickEnabled="True" 
-                                    Minimum="0.1" 
-                                    Maximum="0.95"/>
-                            <Label Foreground="White" Content="{Binding TailAlpha}"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <Label Content="{StaticResource Item_Stretching}" Foreground="White" />
-                            <Slider Name="boxHoopStretchingSlider" Width="260" Value="{Binding ScanSpeed, UpdateSourceTrigger=PropertyChanged}" 
-                                    Margin="3" 
-                                    SmallChange="0.05"
-                                    LargeChange="0.2"
-                                    TickFrequency="0.05"
-                                    IsSnapToTickEnabled="True"
-                                    Minimum="0.1" 
-                                    Maximum="8"/>
-                            <Label Foreground="White" Content="{Binding ScanSpeed}"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <Label Content="Rotation: " Foreground="White" />
-                            <Slider Name="boxRotationFactor" Width="260" Value="{Binding RotationFactor, UpdateSourceTrigger=PropertyChanged}" 
-                                    Margin="3" 
-                                    SmallChange="0.05"
-                                    LargeChange="0.2"
-                                    TickFrequency="0.05"
-                                    IsSnapToTickEnabled="True"
-                                    Minimum="0.05" 
-                                    Maximum="12"/>
-                            <Label Foreground="White" Content="{Binding RotationFactor}"/>
-                        </StackPanel>
-                    </StackPanel>
-                    <!--<dxc:DXElement x:Name="DxView" Renderer="{Binding HoopRenderer}"></dxc:DXElement>-->
-                </Grid>
+                <ContentControl Content="{Binding}">
+                    <ContentControl.Style>
+                        <Style TargetType="ContentControl">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Source={StaticResource RootContext}, Path=IsOpenGLAvailable}" Value="true">
+                                    <Setter Property="ContentTemplate" Value="{StaticResource CanDisplayHoopPreview}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Source={StaticResource RootContext}, Path=IsOpenGLAvailable}" Value="false">
+                                    <Setter Property="ContentTemplate" Value="{StaticResource CantDisplayHoopPreview}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ContentControl.Style>
+                </ContentControl>
             </TabItem>
         </TabControl>
     </DataTemplate>

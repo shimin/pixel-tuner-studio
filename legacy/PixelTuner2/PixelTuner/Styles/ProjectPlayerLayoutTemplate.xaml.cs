@@ -1,6 +1,8 @@
 ﻿using Common.Imaging;
 using GlHoopPreview;
 using PixelTuner.ViewModel;
+using SharpGL;
+using SharpGL.Enumerations;
 using SharpGL.SceneGraph;
 using SharpGL.WPF;
 using System.Windows;
@@ -35,7 +37,7 @@ namespace PixelTuner.Styles
                 }
             }
         }
-        
+
         private void OpenGlControl_OnResized(object sender, OpenGLEventArgs args)
         {
             if (args != null)
@@ -55,7 +57,7 @@ namespace PixelTuner.Styles
         private void OpenGLControl_Loaded(object sender, RoutedEventArgs e)
         {
             var c = sender as OpenGLControl;
-            c.Measure(new Size(50, 50));
+            c.Measure(new Size(10,10));
         }
     }
 }

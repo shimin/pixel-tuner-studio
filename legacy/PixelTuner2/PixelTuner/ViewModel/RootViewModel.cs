@@ -209,6 +209,20 @@ namespace PixelTuner.ViewModel
             set { _id = value; }
         }
 
+        private bool _isOpenGLAvailable = false;
+        public bool IsOpenGLAvailable
+        {
+            get
+            {
+                return _isOpenGLAvailable;
+            }
+
+            set
+            {
+                _isOpenGLAvailable = value; RaisePropertyChanged("IsOpenGLAvailable");
+            }
+        }
+
         private ObservableCollection<TimeLineItemViewModel> _copiedItems = new ObservableCollection<TimeLineItemViewModel>();
         public ObservableCollection<TimeLineItemViewModel> CopiedItems
         {

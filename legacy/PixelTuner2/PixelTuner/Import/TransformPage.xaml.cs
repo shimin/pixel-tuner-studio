@@ -8,6 +8,7 @@ using System.Windows.Documents;
 using Common.Controls;
 using System.Windows.Media;
 using System.Windows.Input;
+using System;
 
 namespace PixelTuner.Import
 {
@@ -122,11 +123,11 @@ namespace PixelTuner.Import
                             topLeft, topCenter, topRight,
                             centerLeft, new Point(0.5, 0.5), centerRight,
                             bottomLeft, bottomCenter, bottomRight).Image;
-
-                Dispatcher.Invoke(() =>
+                
+                Dispatcher.Invoke(new Action(() =>
                 {
                     ResultImage = ImageHelper.BitmapImageFromBitmap(img);
-                });
+                }));
             };
             _imageUpdater.RunWorkerCompleted += _imageUpdater_RunWorkerCompleted;
 

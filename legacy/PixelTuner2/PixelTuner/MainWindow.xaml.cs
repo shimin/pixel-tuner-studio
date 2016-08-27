@@ -7,8 +7,8 @@ using System.Windows.Input;
 using Communication.Service;
 using PixelTuner.Properties;
 using PixelTuner.ViewModel;
-using System.Windows.Interop;
-using Common.Helpers;
+using SharpGL.WPF;
+using SharpGL;
 
 namespace PixelTuner
 {
@@ -24,6 +24,8 @@ namespace PixelTuner
 
         public MainWindow()
         {
+            this.DataContext = RootViewModel.This = (RootViewModel)Application.Current.TryFindResource("RootContext");
+            TestOpenGL();
             Settings.Default.Reload();
             string culture = System.Threading.Thread.CurrentThread.CurrentUICulture.Name;
             ResourceDictionary d = null;
@@ -37,7 +39,6 @@ namespace PixelTuner
             Application.Current.Resources.MergedDictionaries.Add(d);
             Loaded += (s, e) => { DeviceHelper.StartSeeking(); };
             InitializeComponent();
-            this.DataContext = RootViewModel.This = (RootViewModel)Application.Current.TryFindResource("RootContext");
             RecentFileList.MenuClick += (s, e) => RootViewModel.This.Open(e.Filepath);
             RootViewModel.This.LastUsedFileHandler = (p) => RecentFileList.InsertFile(p);
         }
@@ -58,7 +59,16 @@ namespace PixelTuner
             if (File.Exists(Path.Combine(_dataPath, @"PixelTuner 2\" + AppID + "Dock.config")))
                 serializer.Deserialize((Path.Combine(_dataPath, @"PixelTuner 2\" + AppID + "Dock.config")));
         }
-        
+
+        private void TestOpenGL()
+        {
+            OpenGL glx = new OpenGL();
+            glx.Create(SharpGL.Version.OpenGLVersion.OpenGL3_3, RenderContextType.HiddenWindow, 1, 1, 1, null);
+            var version = glx.Version;
+            if (version[0] == '3')
+                RootViewModel.This.IsOpenGLAvailable = true;
+        }
+
         private void MainWnd_Unloaded(object sender, RoutedEventArgs e)
         {
             var serializer = new Workspace.Layout.Serialization.XmlLayoutSerializer(dockManager);

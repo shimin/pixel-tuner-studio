@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PixelTuner</RootNamespace>
     <AssemblyName>PixelTuner</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -121,23 +121,15 @@
       <HintPath>..\packages\GlmNet.0.5.1.0\lib\net40\GlmNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ImageProcessor, Version=2.4.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ImageProcessor.2.4.3.0\lib\net45\ImageProcessor.dll</HintPath>
+    <Reference Include="ImageProcessor, Version=2.4.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ImageProcessor.2.4.4.0\lib\net40\ImageProcessor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\Microsoft.Expression.Interactions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="PresentationFramework.Aero" />
-    <Reference Include="SharpGL, Version=2.4.0.0, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpGL.2.4.0.0\lib\net40\SharpGL.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="SharpGL.SceneGraph, Version=2.4.0.0, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpGL.2.4.0.0\lib\net40\SharpGL.SceneGraph.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="SharpGL.WPF, Version=2.4.0.0, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpGL.WPF.2.4.0.0\lib\net40\SharpGL.WPF.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -497,9 +489,7 @@
     <EmbeddedResource Include="HoopPreview\Shaders\SliceShader.vert" />
     <EmbeddedResource Include="HoopPreview\Shaders\WarpShader.frag" />
     <EmbeddedResource Include="HoopPreview\Shaders\WarpShader.vert" />
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="packages.config" />
     <None Include="PixelTuner.manifest" />
     <None Include="PixelTunerDock.config" />
     <None Include="PixelTuner_TemporaryKey.pfx" />
@@ -517,6 +507,18 @@
     <ProjectReference Include="..\eDmx.ArtNet\eDmx.ArtNet.csproj">
       <Project>{82991D6F-D554-41EE-AF8B-A110FCE19D00}</Project>
       <Name>eDmx.ArtNet</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpGL\SharpGL.SceneGraph\SharpGL.SceneGraph.csproj">
+      <Project>{98fd93e9-e6d8-4a09-bff3-32d0416af619}</Project>
+      <Name>SharpGL.SceneGraph</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpGL\SharpGL.WPF\SharpGL.WPF.csproj">
+      <Project>{30984028-0a02-4512-a779-740838f907ae}</Project>
+      <Name>SharpGL.WPF</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpGL\SharpGL\SharpGL.csproj">
+      <Project>{df595485-a67d-46c9-8337-600eb39c31df}</Project>
+      <Name>SharpGL</Name>
     </ProjectReference>
     <ProjectReference Include="..\SharpVectors\SharpVectorConverters\SharpVectors.Converters.csproj">
       <Project>{E8056611-E49C-4BC3-A682-A629D5CEC11C}</Project>
