@@ -70,8 +70,8 @@
     </DataTemplate>
     
     <DataTemplate x:Key="ProjectPlayerLayoutTemplate" DataType="{x:Type vm:ProjectPlayerViewModel}">
-        <TabControl Margin="0" Padding="0">
-            <TabItem Header="Poi" BorderThickness="0" Background="Black" Foreground="White" Width="50" Margin="0" Padding="0">
+        <TabControl Margin="0" Padding="0" BorderThickness="0">
+            <TabItem Header="Poi" BorderThickness="0" Width="50" Margin="0" Padding="0">
                 <Grid Background="Black" DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.ProjectPlayerModel}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
@@ -149,7 +149,7 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="Hoop" Background="Black" BorderThickness="0" Foreground="White" Width="50" Margin="0" Padding="0">
+            <TabItem Header="Hoop" Width="50" Margin="0" Padding="0">
                 <ContentControl Content="{Binding}">
                     <ContentControl.Style>
                         <Style TargetType="ContentControl">
