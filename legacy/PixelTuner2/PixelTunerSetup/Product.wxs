@@ -47,6 +47,7 @@
       <Directory Id="ProgramFilesFolder">
         <Directory Id="INSTALLLOCATION" Name="PixelTuner 2">
           <Component Id="PixelTuner.com" Guid="5dede663-8553-41b8-810c-679d0cf6749a">
+            <File Id="ApexLib" Source="..\PixelTuner\bin\$(var.Configuration)\Apex.dll" />
             <File Id="CommonLib" Source="..\PixelTuner\bin\$(var.Configuration)\Common.dll" />
             <File Id="CommunicationLib" Source="..\PixelTuner\bin\$(var.Configuration)\Communication.dll" />
             <File Id="eDmxArtNetLib" Source="..\PixelTuner\bin\$(var.Configuration)\eDmx.ArtNet.dll" />
