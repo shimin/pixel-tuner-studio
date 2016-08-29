@@ -19,9 +19,10 @@
                         Loaded="OpenGLControl_Loaded"
                         OpenGLDraw="OpenGlControl_OnOpenGLDraw" 
                         Resized="OpenGlControl_OnResized"
-                        OpenGLVersion="OpenGL3_1"
+                        OpenGLVersion="OpenGL3_0"
                         OpenGLInitialized="OpenGLControl_OpenGLInitialized"
-                        RenderContextType="FBO" />
+                        RenderContextType="FBO"
+                        FrameRate="200"/>
             <StackPanel Grid.Row="1" Orientation="Vertical">
                 <StackPanel Visibility="Visible" Orientation="Horizontal">
                     <Label Content="Alpha: " Foreground="White" />

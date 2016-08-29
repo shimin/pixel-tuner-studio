@@ -1,20 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using GlHoopPreview.Geometry;
 using GlHoopPreview.Helpers;
 using GlmNet;
 using SharpGL;
 using SharpGL.SceneGraph.Assets;
-using SharpGL.SceneGraph.Primitives;
-using SharpGL.Enumerations;
-using SharpGL.SceneGraph;
-using SharpGL.SceneGraph.Core;
 using SharpGL.Shaders;
 
 namespace GlHoopPreview
@@ -153,7 +144,7 @@ namespace GlHoopPreview
             gl.Enable(OpenGL.GL_VERTEX_SHADER);
             gl.Enable(OpenGL.GL_FRAGMENT_SHADER);
 
-            _nextFrameTime = GetCurrentTimeTicks();
+            //_nextFrameTime = GetCurrentTimeTicks();
         }
 
         public void Clear(OpenGL gl)
@@ -175,19 +166,7 @@ namespace GlHoopPreview
             _quadTexture.Destroy(gl);
             _quadTexture.Create(gl, texture);
         }
-
-        //private void CreateProjectionMatrix(OpenGL gl)
-        //{
-        //    const float s = 0.46f;
-        //    var h = s * _currentScreenHeight / _currentScreenWidth;
-        //    _projectionMatrix = glm.frustum(-s, s, -h, h, 1, 100);
-
-        //    gl.MatrixMode(OpenGL.GL_PROJECTION);
-        //    gl.LoadIdentity();
-        //    gl.MultMatrix(_projectionMatrix.to_array());
-        //    gl.MatrixMode(OpenGL.GL_MODELVIEW);
-        //}
-
+        
         private void CreateOrtoMatrix(OpenGL gl)
         {
             _projectionMatrix = glm.ortho(0f, _currentScreenWidth, _currentScreenHeight, 0f);
@@ -196,26 +175,11 @@ namespace GlHoopPreview
             gl.MultMatrix(_projectionMatrix.to_array());
         }
 
-        //public void CreateModelviewAndNormalMatrix(float rotationAngle)
-        //{
-        //    var rotation = glm.rotate(mat4.identity(), rotationAngle, new vec3(0, 1, 0));
-        //    var translation = glm.translate(mat4.identity(), new vec3(0, 0, -4));
-        //    _modelviewMatrix = rotation * translation;
-        //    _normalMatrix = _modelviewMatrix.to_mat3();
-        //}
-
         private void UpdateHoopParams()
         {
-            var ls = 0;
-            while (GetCurrentTimeTicks() > _nextFrameTime && ls < MaxFrameSkip)
-            {
-                _arcSelfRotation += (0.001f * _circleSelfRotationSpeed);
-                _arcPosition += (1f * _circleRotationSpeed);
-                _gSlice += (0.004f * _circleStripScanSpeed);
-
-                _nextFrameTime += FrameDuration;
-                ls++;
-            }
+            _arcSelfRotation += (0.001f * _circleSelfRotationSpeed);
+            _arcPosition += (1f * _circleRotationSpeed);
+            _gSlice += (0.004f * _circleStripScanSpeed);
         }
 
         private void SetSliceShaderParams(OpenGL gl)
@@ -304,10 +268,10 @@ namespace GlHoopPreview
         private float _currentScreenWidth;
         private float _currentScreenHeight;
 
-        private const int Fps = 50;
-        private const int FrameDuration = 1000 / Fps;
-        private const int MaxFrameSkip = 1;
+        //private const int Fps = 50;
+        //private const int FrameDuration = 1000 / Fps;
+        //private const int MaxFrameSkip = 1;
 
-        private double _nextFrameTime;   
+        //private double _nextFrameTime;   
     }
 }

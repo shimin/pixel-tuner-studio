@@ -1,120 +1,39 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{B086FF41-D6AB-42FD-9609-7E1004470DD2}</ProjectGuid>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{EBDDCCC4-16B2-420A-9142-8F9F5DC8D1C0}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PixelTuner</RootNamespace>
     <AssemblyName>PixelTuner</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <UICulture>ru-RU</UICulture>
-    <UICulture>en-US</UICulture>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;DONT_SAVE_LAYOUT;UNSAFE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <UICulture>ru-RU</UICulture>
-    <UICulture>en-US</UICulture>
-    <Prefer32Bit>false</Prefer32Bit>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;DONT_SAVE_LAYOUT; UNSAFE</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <UICulture>ru-RU</UICulture>
-    <UICulture>en-US</UICulture>
-    <Prefer32Bit>false</Prefer32Bit>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EnRelease|x86'">
-    <OutputPath>bin\x86\EnRelease\</OutputPath>
-    <DefineConstants>TRACE;en_US</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
-    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
-    <UICulture>ru-RU</UICulture>
-    <UICulture>en-US</UICulture>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EnDebug|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\EnDebug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;en_US</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <UICulture>ru-RU</UICulture>
-    <UICulture>en-US</UICulture>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>Files\PixelTuner.ico</ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>PixelTuner.manifest</ApplicationManifest>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignManifests>false</SignManifests>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestCertificateThumbprint>921C5299701C69E693B745CE234E06DEC25DB270</ManifestCertificateThumbprint>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestKeyFile>
-    </ManifestKeyFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>PixelTuner_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <TargetZone>LocalIntranet</TargetZone>
-  </PropertyGroup>
-  <PropertyGroup>
-    <GenerateManifests>false</GenerateManifests>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="GlmNet, Version=0.5.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -129,11 +48,9 @@
       <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\Microsoft.Expression.Interactions.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Management" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\System.Windows.Interactivity.dll</HintPath>
@@ -144,6 +61,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -177,11 +95,36 @@
     </Compile>
     <Compile Include="Controls\ThumbListView\EffectView.cs" />
     <Compile Include="Controls\ThumbListView\GradientView.cs" />
+    <Compile Include="Controls\ThumbListView\ImageView.cs" />
     <Compile Include="Controls\ThumbListView\VideoView.cs" />
     <Compile Include="Converters\ActiveDocumentConverter.cs" />
     <Compile Include="Converters\ActiveTimeLineConverter.cs" />
-    <Compile Include="Controls\ThumbListView\ImageView.cs" />
     <Compile Include="Converters\LogConverter.cs" />
+    <Compile Include="Converters\MathConverter.cs" />
+    <Compile Include="DefaultsWindow.xaml.cs">
+      <DependentUpon>DefaultsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Drawing\CircularBuffer.cs" />
+    <Compile Include="Drawing\ConfigurationItem.cs" />
+    <Compile Include="Drawing\ConfigurationItemBase.cs" />
+    <Compile Include="Drawing\DrawControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Drawing\DrawControl.Designer.cs">
+      <DependentUpon>DrawControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Drawing\PixelCanvas.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Drawing\PixelCanvas.Designer.cs">
+      <DependentUpon>PixelCanvas.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Drawing\TextDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Drawing\TextDialog.Designer.cs">
+      <DependentUpon>TextDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="EffectSawWindow.xaml.cs">
       <DependentUpon>EffectSawWindow.xaml</DependentUpon>
     </Compile>
@@ -198,13 +141,6 @@
     <Compile Include="HoopPreview\Helpers\ManifestResourceLoader.cs" />
     <Compile Include="HoopPreview\Helpers\RenderTexure.cs" />
     <Compile Include="HoopPreview\HoopPreviewScene.cs" />
-    <Compile Include="Import\PreviewPage.xaml.cs">
-      <DependentUpon>PreviewPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="LayoutInitializer.cs" />
-    <Compile Include="RepeatItemWindow.xaml.cs">
-      <DependentUpon>RepeatItemWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Import\ColorAdjustPage.xaml.cs">
       <DependentUpon>ColorAdjustPage.xaml</DependentUpon>
     </Compile>
@@ -216,15 +152,29 @@
       <DependentUpon>ImportWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Import\IPicturePage.cs" />
+    <Compile Include="Import\PreviewPage.xaml.cs">
+      <DependentUpon>PreviewPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Import\TransformPage.xaml.cs">
       <DependentUpon>TransformPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ItemWindow.xaml.cs">
       <DependentUpon>ItemWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="LayoutInitializer.cs" />
+    <Compile Include="PictureEditor.xaml.cs">
+      <DependentUpon>PictureEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs" />
+    <Compile Include="RepeatItemWindow.xaml.cs">
+      <DependentUpon>RepeatItemWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ReplaceItemWindow.xaml.cs">
       <DependentUpon>ReplaceItemWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Selectors\PanesStyleSelector.cs" />
+    <Compile Include="Selectors\PanesTemplateSelector.cs" />
     <Compile Include="SplitItemWindow.xaml.cs">
       <DependentUpon>SplitItemWindow.xaml</DependentUpon>
     </Compile>
@@ -234,7 +184,9 @@
     <Compile Include="Styles\FileLayoutTemplate.xaml.cs">
       <DependentUpon>FileLayoutTemplate.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Styles\ProjectPlayerLayoutTemplate.xaml.cs" />
+    <Compile Include="Styles\ProjectPlayerLayoutTemplate.xaml.cs">
+      <DependentUpon>ProjectPlayerLayoutTemplate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Styles\TimeLineLayoutTemplate.xaml.cs">
       <DependentUpon>TimeLineLayoutTemplate.xaml</DependentUpon>
     </Compile>
@@ -244,72 +196,47 @@
     <Compile Include="UndoRedo\State.cs" />
     <Compile Include="UndoRedo\StateManager.cs" />
     <Compile Include="ViewModel\AvailableColors.cs" />
-    <Compile Include="ViewModel\Serialization\GradientTimeLineItem.cs" />
-    <Compile Include="ViewModel\TimelineItems\GradientThumbnailViewModel.cs" />
-    <Compile Include="ViewModel\TimelineItems\VideoThumbnailViewModel.cs" />
-    <Compile Include="ViewModel\Tools\CanvasElementViewModel.cs" />
-    <Compile Include="ViewModel\Tools\CanvasViewModel.cs" />
-    <Compile Include="ViewModel\Tools\GradientsViewModel.cs" />
     <Compile Include="ViewModel\Devices\DeviceViewModel.cs" />
-    <Compile Include="ViewModel\TimelineItems\EffectSawThumbnailViewModel.cs" />
-    <Compile Include="ViewModel\TimelineItems\EffectSineThumbnailViewModel.cs" />
-    <Compile Include="ViewModel\TimelineItems\EffectSquareThumbnailViewModel.cs" />
-    <Compile Include="ViewModel\Tools\EffectsViewModel.cs" />
-    <Compile Include="ViewModel\TimelineItems\EffectThumbnailViewModel.cs" />
-    <Compile Include="ViewModel\TimelineItems\EffectTransitionThumbnailViewModel.cs" />
-    <Compile Include="ViewModel\Timelines\EpicPoiTimeLineViewModel.cs" />
+    <Compile Include="ViewModel\Devices\EpicPoiDeviceViewModel.cs" />
     <Compile Include="ViewModel\Devices\IlluminatorDeviceViewModel.cs" />
     <Compile Include="ViewModel\Devices\LightMasterDeviceViewModel.cs" />
-    <Compile Include="ViewModel\Timelines\LightTimeLineViewModel.cs" />
-    <Compile Include="ViewModel\TimelineItems\PixelThumbnailViewModel.cs" />
-    <Compile Include="ViewModel\Tools\ProjectPlayerViewModel.cs" />
+    <Compile Include="ViewModel\Devices\PixelDeviceViewModel.cs" />
+    <Compile Include="ViewModel\FileViewModel.cs" />
+    <Compile Include="ViewModel\PaneViewModel.cs" />
+    <Compile Include="ViewModel\RelayCommand.cs" />
+    <Compile Include="ViewModel\RootViewModel.cs" />
+    <Compile Include="ViewModel\Serialization\GradientTimeLineItem.cs" />
     <Compile Include="ViewModel\Serialization\TimeLineItem.cs" />
     <Compile Include="ViewModel\Serialization\TimeLineItemEffect.cs" />
     <Compile Include="ViewModel\Serialization\TimeLineItemEffectParameters.cs" />
     <Compile Include="ViewModel\Serialization\TimeLineItemSolid.cs" />
-    <Compile Include="ViewModel\Devices\EpicPoiDeviceViewModel.cs" />
-    <Compile Include="ViewModel\TimelineItems\SolidColorThumbnailViewModel.cs" />
     <Compile Include="ViewModel\TimelineHelper.cs" />
+    <Compile Include="ViewModel\TimelineItems\EffectSawThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\TimelineItems\EffectSineThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\TimelineItems\EffectSquareThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\TimelineItems\EffectThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\TimelineItems\EffectTransitionThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\TimelineItems\GradientThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\TimelineItems\PixelThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\TimelineItems\SolidColorThumbnailViewModel.cs" />
     <Compile Include="ViewModel\TimelineItems\TimeLineItemViewModel.cs" />
-    <Compile Include="DefaultsWindow.xaml.cs">
-      <DependentUpon>DefaultsWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ViewModel\Tools\DevicesViewModel.cs" />
-    <Compile Include="Drawing\CircularBuffer.cs" />
-    <Compile Include="Drawing\ConfigurationItemBase.cs" />
-    <Compile Include="Drawing\DrawControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Drawing\DrawControl.designer.cs">
-      <DependentUpon>DrawControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Drawing\ConfigurationItem.cs" />
-    <Compile Include="Drawing\PixelCanvas.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Drawing\PixelCanvas.Designer.cs">
-      <DependentUpon>PixelCanvas.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Drawing\TextDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Drawing\TextDialog.designer.cs">
-      <DependentUpon>TextDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ViewModel\Tools\ImagesViewModel.cs" />
-    <Compile Include="Converters\MathConverter.cs" />
-    <Compile Include="PictureEditor.xaml.cs">
-      <DependentUpon>PictureEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ViewModel\Tools\ProjectsViewModel.cs" />
-    <Compile Include="ViewModel\RelayCommand.cs" />
-    <Compile Include="ViewModel\Devices\PixelDeviceViewModel.cs" />
+    <Compile Include="ViewModel\TimelineItems\VideoThumbnailViewModel.cs" />
+    <Compile Include="ViewModel\Timelines\EpicPoiTimeLineViewModel.cs" />
+    <Compile Include="ViewModel\Timelines\LightTimeLineViewModel.cs" />
     <Compile Include="ViewModel\Timelines\PixelTimeLineViewModel.cs" />
     <Compile Include="ViewModel\Timelines\TimeLineViewModel.cs" />
+    <Compile Include="ViewModel\Tools\CanvasElementViewModel.cs" />
+    <Compile Include="ViewModel\Tools\CanvasViewModel.cs" />
+    <Compile Include="ViewModel\Tools\DevicesViewModel.cs" />
+    <Compile Include="ViewModel\Tools\EffectsViewModel.cs" />
+    <Compile Include="ViewModel\Tools\GradientsViewModel.cs" />
+    <Compile Include="ViewModel\Tools\ImagesViewModel.cs" />
+    <Compile Include="ViewModel\Tools\ProjectPlayerViewModel.cs" />
+    <Compile Include="ViewModel\Tools\ProjectsViewModel.cs" />
     <Compile Include="ViewModel\Tools\RefreshParameters.cs" />
     <Compile Include="ViewModel\Tools\ToolViewModel.cs" />
-    <Compile Include="ViewModel\RootViewModel.cs" />
     <Compile Include="ViewModel\Tools\VideosViewModel.cs" />
+    <Compile Include="ViewModel\UndoRedoEventArgs.cs" />
     <Page Include="ArtNetWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -319,8 +246,24 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="CanvasElementWindow.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DefaultsWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dictionaries\labels.de-DE.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dictionaries\labels.en-US.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dictionaries\labels.ru-RU.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="EffectSawWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -338,41 +281,53 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Import\PreviewPage.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Import\ColorAdjustPage.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Import\CropPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Import\ImportWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Import\PreviewPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Import\TransformPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ItemWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="PictureEditor.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="RepeatItemWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Dictionaries\labels.de-DE.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Import\ColorAdjustPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Import\CropPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Import\ImportWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Import\TransformPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ItemWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="ReplaceItemWindow.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="SplitItemWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -383,106 +338,73 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Styles\DevicesLayoutTemplate.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Styles\EffectsLayoutTemplate.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Styles\FileLayoutTemplate.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Styles\GradientsLayoutTemplate.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Styles\ImagesLayoutTemplate.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Styles\ProjectPlayerLayoutTemplate.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Styles\SelectTimelineTemplate.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Styles\SharedStyles.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Styles\SliderStyles.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Styles\ThumbListView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DefaultsWindow.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Styles\TimeLineLayoutTemplate.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
-    <Page Include="PictureEditor.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Styles\VideosLayoutTemplate.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="TimelinesToUpload.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Resource Include="Dictionaries\labels.ru-RU.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Resource>
-    <Resource Include="Dictionaries\labels.en-US.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Resource>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ViewModel\FileViewModel.cs" />
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Selectors\PanesStyleSelector.cs" />
-    <Compile Include="Selectors\PanesTemplateSelector.cs" />
-    <Compile Include="ViewModel\PaneViewModel.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <EmbeddedResource Include="Drawing\DrawControl.resx">
-      <DependentUpon>DrawControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Drawing\TextDialog.resx">
-      <DependentUpon>TextDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <None Include="app.config">
-      <SubType>Designer</SubType>
-    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="Content\65.ZIP" />
     <Resource Include="Files\Flash.bin" />
-    <Resource Include="Files\Flash_v3.bin" />
     <Resource Include="Files\Flash_Epic.bin" />
     <Resource Include="Files\Flash_IL.bin" />
     <Resource Include="Files\Flash_LR.bin" />
+    <Resource Include="Files\Flash_v3.bin" />
     <EmbeddedResource Include="HoopPreview\Shaders\ClearShader.frag" />
     <EmbeddedResource Include="HoopPreview\Shaders\ClearShader.vert" />
     <EmbeddedResource Include="HoopPreview\Shaders\SliceShader.frag" />
@@ -490,75 +412,69 @@
     <EmbeddedResource Include="HoopPreview\Shaders\WarpShader.frag" />
     <EmbeddedResource Include="HoopPreview\Shaders\WarpShader.vert" />
     <None Include="packages.config" />
-    <None Include="PixelTuner.manifest" />
     <None Include="PixelTunerDock.config" />
-    <None Include="PixelTuner_TemporaryKey.pfx" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <AppDesigner Include="Properties\" />
+    <None Include="Properties\Settings.settings" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{3c6806b7-698d-45cd-b131-eb84845cc938}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Communication\Communication.csproj">
+      <Project>{da6ad361-e034-4a14-ba94-8605a21d2e70}</Project>
+      <Name>Communication</Name>
+    </ProjectReference>
     <ProjectReference Include="..\eDmx.ArtNet\eDmx.ArtNet.csproj">
-      <Project>{82991D6F-D554-41EE-AF8B-A110FCE19D00}</Project>
+      <Project>{82991d6f-d554-41ee-af8b-a110fce19d00}</Project>
       <Name>eDmx.ArtNet</Name>
     </ProjectReference>
     <ProjectReference Include="..\SharpGL\SharpGL.SceneGraph\SharpGL.SceneGraph.csproj">
-      <Project>{98fd93e9-e6d8-4a09-bff3-32d0416af619}</Project>
+      <Project>{47bcaa39-edad-4404-b6bd-4742b0abb523}</Project>
       <Name>SharpGL.SceneGraph</Name>
     </ProjectReference>
     <ProjectReference Include="..\SharpGL\SharpGL.WPF\SharpGL.WPF.csproj">
-      <Project>{30984028-0a02-4512-a779-740838f907ae}</Project>
+      <Project>{53e67055-13d2-4467-bb57-79589afac2cd}</Project>
       <Name>SharpGL.WPF</Name>
     </ProjectReference>
     <ProjectReference Include="..\SharpGL\SharpGL\SharpGL.csproj">
-      <Project>{df595485-a67d-46c9-8337-600eb39c31df}</Project>
+      <Project>{5ef45533-e2c7-46f2-b4a3-b8f36cd406e0}</Project>
       <Name>SharpGL</Name>
     </ProjectReference>
     <ProjectReference Include="..\SharpVectors\SharpVectorConverters\SharpVectors.Converters.csproj">
-      <Project>{E8056611-E49C-4BC3-A682-A629D5CEC11C}</Project>
+      <Project>{e8056611-e49c-4bc3-a682-a629d5cec11c}</Project>
       <Name>SharpVectors.Converters</Name>
     </ProjectReference>
     <ProjectReference Include="..\SharpVectors\SharpVectorCore\SharpVectors.Core.csproj">
-      <Project>{D6BB65FC-240E-4241-B2ED-A7FB3F13E978}</Project>
+      <Project>{d6bb65fc-240e-4241-b2ed-a7fb3f13e978}</Project>
       <Name>SharpVectors.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\SharpVectors\SharpVectorCss\SharpVectors.Css.csproj">
-      <Project>{351B0A6E-2F6B-497A-844B-DCB5A502FB0D}</Project>
+      <Project>{351b0a6e-2f6b-497a-844b-dcb5a502fb0d}</Project>
       <Name>SharpVectors.Css</Name>
     </ProjectReference>
     <ProjectReference Include="..\SharpVectors\SharpVectorDom\SharpVectors.Dom.csproj">
-      <Project>{FE34CBC0-D23C-4A95-BA64-83A031814010}</Project>
+      <Project>{fe34cbc0-d23c-4a95-ba64-83a031814010}</Project>
       <Name>SharpVectors.Dom</Name>
     </ProjectReference>
     <ProjectReference Include="..\SharpVectors\SharpVectorModel\SharpVectors.Model.csproj">
-      <Project>{5D336F48-3FB9-4382-B4B9-06974C764007}</Project>
+      <Project>{5d336f48-3fb9-4382-b4b9-06974c764007}</Project>
       <Name>SharpVectors.Model</Name>
     </ProjectReference>
     <ProjectReference Include="..\SharpVectors\SharpVectorRenderingGdi\SharpVectors.Rendering.Gdi.csproj">
-      <Project>{0AD99D97-24ED-484D-9430-9905811F8A4F}</Project>
+      <Project>{0ad99d97-24ed-484d-9430-9905811f8a4f}</Project>
       <Name>SharpVectors.Rendering.Gdi</Name>
     </ProjectReference>
     <ProjectReference Include="..\SharpVectors\SharpVectorRenderingWpf\SharpVectors.Rendering.Wpf.csproj">
-      <Project>{A2576CE0-E492-490F-97E9-C0E7ABAFAF27}</Project>
+      <Project>{a2576ce0-e492-490f-97e9-c0e7abafaf27}</Project>
       <Name>SharpVectors.Rendering.Wpf</Name>
     </ProjectReference>
     <ProjectReference Include="..\SharpVectors\SharpVectorRuntime\SharpVectors.Runtime.csproj">
-      <Project>{2CD52982-A1C2-4A14-9D69-D64719357216}</Project>
+      <Project>{2cd52982-a1c2-4a14-9d69-d64719357216}</Project>
       <Name>SharpVectors.Runtime</Name>
     </ProjectReference>
     <ProjectReference Include="..\WpfTools\NAudioSrc\NAudio.csproj">
       <Project>{da4f02e3-0b5e-42cd-b8d9-5583fa51d66e}</Project>
       <Name>NAudio</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Communication\Communication.csproj">
-      <Project>{DA6AD361-E034-4A14-BA94-8605A21D2E70}</Project>
-      <Name>Communication</Name>
     </ProjectReference>
     <ProjectReference Include="..\WpfTools\Toolkit\Toolkit.csproj">
       <Project>{72e591d6-8f83-4d8c-8f67-9c325e623234}</Project>
@@ -582,721 +498,1545 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\PinClose_Dark.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\PinClose.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\red_cross.png" />
-    <Resource Include="Images\red_crossDisabled.png" />
-    <Resource Include="Images\red_crossLight.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\PixelTuner.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Files\PixelTuner.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\DrawingTool\bmp.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\DrawingTool\copy.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\DrawingTool\text.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\DrawingTool\paint_bucket.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Content\100_2_waves.bmp" />
-    <Content Include="Content\100_black.bmp" />
-    <Content Include="Content\100_hearts.bmp" />
-    <Content Include="Content\100_hub1.bmp" />
-    <Content Include="Content\100_mickey.bmp" />
-    <Content Include="Content\100_mosaic.bmp" />
-    <Content Include="Content\100_mosaic2.bmp" />
-    <Content Include="Content\100_mosaic3.bmp" />
-    <Content Include="Content\100_mosaic_hole.bmp" />
-    <Content Include="Content\100_pattern.bmp" />
-    <Content Include="Content\100_pattern2.bmp" />
-    <Content Include="Content\100_pattern3.bmp" />
-    <Content Include="Content\100_pattern4.bmp" />
-    <Content Include="Content\100_patternBulbs.bmp" />
-    <Content Include="Content\100_stain.bmp" />
-    <Content Include="Content\100_stain2.bmp" />
-    <Content Include="Content\100_stars.bmp" />
-    <Content Include="Content\100_steps.bmp" />
-    <Content Include="Content\100_waves.bmp" />
-    <Content Include="Content\100_white.bmp" />
-    <Content Include="Content\100_wing.bmp" />
-    <Content Include="Content\20_simple_white.bmp" />
-    <Content Include="Content\80_Wolf.bmp" />
-    <Content Include="Content\80_Zayac.bmp" />
-    <Content Include="Content\80_Vetka.bmp" />
-    <Content Include="Content\80_Vetka2.bmp" />
-    <Content Include="Content\80_Snow.bmp" />
-    <Content Include="Content\80_Snow1.bmp" />
-    <Content Include="Content\80_Snow2.bmp" />
-    <Content Include="Content\80_SnowBlue.bmp" />
-    <Content Include="Content\80_SnowBlue2.bmp" />
-    <Content Include="Content\80_SnowGold.bmp" />
-    <Content Include="Content\80_Snowly.bmp" />
-    <Content Include="Content\80_Snowman1.bmp" />
-    <Content Include="Content\80_Snowman2.bmp" />
-    <Content Include="Content\80_SnowPattern.bmp" />
-    <Content Include="Content\80_SnowPattern2.bmp" />
-    <Content Include="Content\80_SnowPurple.bmp" />
-    <Content Include="Content\80_SnowRed.bmp" />
-    <Content Include="Content\80_Rudolf2.bmp" />
-    <Content Include="Content\80_Santa.bmp" />
-    <Content Include="Content\80_Santa2.bmp" />
-    <Content Include="Content\80_Stars.bmp" />
-    <Content Include="Content\80_Stars2.bmp" />
-    <Content Include="Content\80_Tracery.bmp" />
-    <Content Include="Content\80_present2.bmp" />
-    <Content Include="Content\80_Presents.bmp" />
-    <Content Include="Content\80_Night.bmp" />
-    <Content Include="Content\80_NY-Pattern1.bmp" />
-    <Content Include="Content\80_NY-Pattern12.bmp" />
-    <Content Include="Content\80_NY-Pattern3.bmp" />
-    <Content Include="Content\80_Gingerbread.bmp" />
-    <Content Include="Content\80_Forest.bmp" />
-    <Content Include="Content\80_Frozen.jpg" />
-    <Content Include="Content\80_FuturamaSanta.bmp" />
-    <Content Include="Content\80_Firtrees.bmp" />
-    <Content Include="Content\80_Feer.bmp" />
-    <Content Include="Content\80_Fir.bmp" />
-    <Content Include="Content\80_Element.bmp" />
-    <Content Include="Content\80_Deer.bmp" />
-    <Content Include="Content\80_Deer2.bmp" />
-    <Content Include="Content\80_Deer3.bmp" />
-    <Content Include="Content\80_Champagne-2.bmp" />
-    <Content Include="Content\80_Champagne2.bmp" />
-    <Content Include="Content\80_Coldgrand.bmp" />
-    <Content Include="Content\80_Combo.bmp" />
-    <Content Include="Content\80_Combo2.bmp" />
-    <Content Include="Content\80_Cone.bmp" />
-    <Content Include="Content\80_Candylove.bmp" />
-    <Content Include="Content\80_Bells.bmp" />
-    <Content Include="Content\80_cartoon-images-of-spongebob-hd-desktop-10.jpg" />
-    <Content Include="Content\80_cute-anime-angel-wallpaper-background-1.jpg" />
-    <Content Include="Content\80_cute-anime-angel-wallpaper-hd-background-9.jpg" />
-    <Content Include="Content\80_border.bmp" />
-    <Content Include="Content\80_Bounty.bmp" />
-    <Content Include="Content\80_BubblesPattern.bmp" />
-    <Content Include="Content\80_BubblesPattern2.bmp" />
-    <Content Include="Content\80_Cake.bmp" />
-    <Content Include="Content\80_Cake2.bmp" />
-    <Content Include="Content\80_Cancer.bmp" />
-    <Content Include="Content\80_Capricorn.bmp" />
-    <Content Include="Content\80_Crusty.bmp" />
-    <Content Include="Content\80_disney-princess-characters-to-draw-hd-pictures-4.bmp" />
-    <Content Include="Content\80_EtnoAfricaPattern.bmp" />
-    <Content Include="Content\80_EtnoAfricaPattern2.bmp" />
-    <Content Include="Content\80_Evolution.bmp" />
-    <Content Include="Content\80_face1.bmp" />
-    <Content Include="Content\80_face1.png" />
-    <Content Include="Content\80_face2.bmp" />
-    <Content Include="Content\80_face3.bmp" />
-    <Content Include="Content\80_face4.bmp" />
-    <Content Include="Content\80_face5.bmp" />
-    <Content Include="Content\80_face6.bmp" />
-    <Content Include="Content\80_face7.bmp" />
-    <Content Include="Content\80_face8.bmp" />
-    <Content Include="Content\80_face9.bmp" />
-    <Content Include="Content\80_face91.bmp" />
-    <Content Include="Content\80_face92.bmp" />
-    <Content Include="Content\80_face93.bmp" />
-    <Content Include="Content\80_face94.bmp" />
-    <Content Include="Content\80_Fire.bmp" />
-    <Content Include="Content\80_Fire2.bmp" />
-    <Content Include="Content\80_FloraPattern2.bmp" />
-    <Content Include="Content\80_FloraPattern3.bmp" />
-    <Content Include="Content\80_FloraPettern.bmp" />
-    <Content Include="Content\80_foliage.bmp" />
-    <Content Include="Content\80_Gemini.bmp" />
-    <Content Include="Content\80_Hearts.bmp" />
-    <Content Include="Content\80_iPoi.bmp" />
-    <Content Include="Content\80_Leo.bmp" />
-    <Content Include="Content\80_Libra.bmp" />
-    <Content Include="Content\80_LisaSimpson.bmp" />
-    <Content Include="Content\80_London.bmp" />
-    <Content Include="Content\80_Moscow.bmp" />
-    <Content Include="Content\80_NyanCat.bmp" />
-    <Content Include="Content\80_pacman.bmp" />
-    <Content Include="Content\80_Panda.bmp" />
-    <Content Include="Content\80_Paris.bmp" />
-    <Content Include="Content\80_Piano.bmp" />
-    <Content Include="Content\80_Pisces.bmp" />
-    <Content Include="Content\80_PSY.bmp" />
-    <Content Include="Content\80_Rome.bmp" />
-    <Content Include="Content\80_RoundPattern.bmp" />
-    <Content Include="Content\80_Russia.bmp" />
-    <Content Include="Content\80_Sagittarius.bmp" />
-    <Content Include="Content\80_Scorpio.bmp" />
-    <Content Include="Content\80_Sonic.bmp" />
-    <Content Include="Content\80_SquarePattern.bmp" />
-    <Content Include="Content\80_SquarePattern2.bmp" />
-    <Content Include="Content\80_Star.bmp" />
-    <Content Include="Content\80_superman-comic-wallpaper-widescreen-2.jpg" />
-    <Content Include="Content\80_Taurus.bmp" />
-    <Content Include="Content\80_triangle.bmp" />
-    <Content Include="Content\80_Virgo.bmp" />
-    <Content Include="Content\80_Water.bmp" />
-    <Content Include="Content\25_Aquarius.bmp" />
-    <Content Include="Content\25_Aries.bmp" />
-    <Content Include="Content\25_Bart.bmp" />
-    <Content Include="Content\25_Batman.bmp" />
-    <Content Include="Content\25_border.bmp" />
-    <Content Include="Content\25_Bounty.bmp" />
-    <Content Include="Content\25_BubblesPattern.bmp" />
-    <Content Include="Content\25_BubblesPattern2.bmp" />
-    <Content Include="Content\25_Cake.bmp" />
-    <Content Include="Content\25_Cake2.bmp" />
-    <Content Include="Content\25_Cancer.bmp" />
-    <Content Include="Content\25_Capricorn.bmp" />
-    <Content Include="Content\25_Ball.bmp" />
-    <Content Include="Content\25_Ball2.bmp" />
-    <Content Include="Content\25_Bells.bmp" />
-    <Content Include="Content\25_Candylove.bmp" />
-    <Content Include="Content\25_cards.bmp" />
-    <Content Include="Content\25_Crusty.bmp" />
-    <Content Include="Content\25_EtnoAfricaPattern.bmp" />
-    <Content Include="Content\25_EtnoAfricaPattern2.bmp" />
-    <Content Include="Content\25_Evolution.bmp" />
-    <Content Include="Content\25_Fire.bmp" />
-    <Content Include="Content\25_Fire2.bmp" />
-    <Content Include="Content\25_Champagne-2.bmp" />
-    <Content Include="Content\25_Champagne2.bmp" />
-    <Content Include="Content\25_Coldgrand.bmp" />
-    <Content Include="Content\25_Combo.bmp" />
-    <Content Include="Content\25_Combo2.bmp" />
-    <Content Include="Content\25_Cone.bmp" />
-    <Content Include="Content\25_Deer.bmp" />
-    <Content Include="Content\25_Deer2.bmp" />
-    <Content Include="Content\25_Deer3.bmp" />
-    <Content Include="Content\25_Element.bmp" />
-    <Content Include="Content\25_Feer.bmp" />
-    <Content Include="Content\25_Fir.bmp" />
-    <Content Include="Content\25_Firtrees.bmp" />
-    <Content Include="Content\25_fish.bmp" />
-    <Content Include="Content\25_FloraPattern2.bmp" />
-    <Content Include="Content\25_FloraPattern3.bmp" />
-    <Content Include="Content\25_FloraPettern.bmp" />
-    <Content Include="Content\25_foliage.bmp" />
-    <Content Include="Content\25_Gemini.bmp" />
-    <Content Include="Content\25_Forest.bmp" />
-    <Content Include="Content\25_Frozen.jpg" />
-    <Content Include="Content\25_FuturamaSanta.bmp" />
-    <Content Include="Content\25_Gingerbread.bmp" />
-    <Content Include="Content\25_hearts.bmp" />
-    <Content Include="Content\25_Hearts2.bmp" />
-    <Content Include="Content\25_iPoi.bmp" />
-    <Content Include="Content\25_leaf.bmp" />
-    <Content Include="Content\25_Leo.bmp" />
-    <Content Include="Content\25_Libra.bmp" />
-    <Content Include="Content\25_LisaSimpson.bmp" />
-    <Content Include="Content\25_London.bmp" />
-    <Content Include="Content\25_love.bmp" />
-    <Content Include="Content\25_Moscow.bmp" />
-    <Content Include="Content\25_NyanCat.bmp" />
-    <Content Include="Content\25_pacman.bmp" />
-    <Content Include="Content\25_Panda.bmp" />
-    <Content Include="Content\25_Paris.bmp" />
-    <Content Include="Content\25_Piano.bmp" />
-    <Content Include="Content\25_Night.bmp" />
-    <Content Include="Content\25_NY-Pattern2.bmp" />
-    <Content Include="Content\25_NY-Pattern1.bmp" />
-    <Content Include="Content\25_NY-Pattern3.bmp" />
-    <Content Include="Content\25_pikachu.bmp" />
-    <Content Include="Content\25_pikachu_1.bmp" />
-    <Content Include="Content\25_pikachu_2.bmp" />
-    <Content Include="Content\25_Pisces.bmp" />
-    <Content Include="Content\25_PSY.bmp" />
-    <Content Include="Content\25_present2.bmp" />
-    <Content Include="Content\25_Presents.bmp" />
-    <Content Include="Content\25_red_arrows_right.bmp" />
-    <Content Include="Content\25_Rome.bmp" />
-    <Content Include="Content\25_RoundPattern.bmp" />
-    <Content Include="Content\25_Russia.bmp" />
-    <Content Include="Content\25_Sagittarius.bmp" />
-    <Content Include="Content\25_Rudolf2.bmp" />
-    <Content Include="Content\25_samson.bmp" />
-    <Content Include="Content\25_Santa.bmp" />
-    <Content Include="Content\25_Santa2.bmp" />
-    <Content Include="Content\25_santorini.bmp" />
-    <Content Include="Content\25_Scorpio.bmp" />
-    <Content Include="Content\25_smiles.bmp" />
-    <Content Include="Content\25_Sonic.bmp" />
-    <Content Include="Content\25_SquarePattern.bmp" />
-    <Content Include="Content\25_SquarePattern2.bmp" />
-    <Content Include="Content\25_Star.bmp" />
-    <Content Include="Content\25_Snow.bmp" />
-    <Content Include="Content\25_Snow1.bmp" />
-    <Content Include="Content\25_Snow2.bmp" />
-    <Content Include="Content\25_SnowBlue.bmp" />
-    <Content Include="Content\25_SnowBlue2.bmp" />
-    <Content Include="Content\25_SnowGold.bmp" />
-    <Content Include="Content\25_Snowly.bmp" />
-    <Content Include="Content\25_Snowman1.bmp" />
-    <Content Include="Content\25_Snowman2.bmp" />
-    <Content Include="Content\25_SnowPattern.bmp" />
-    <Content Include="Content\25_SnowPattern2.bmp" />
-    <Content Include="Content\25_SnowPurple.bmp" />
-    <Content Include="Content\25_SnowRed.bmp" />
-    <Content Include="Content\25_Stars3.bmp" />
-    <Content Include="Content\25_Stars.bmp" />
-    <Content Include="Content\25_Stars2.bmp" />
-    <Content Include="Content\25_stripes.bmp" />
-    <Content Include="Content\25_Taurus.bmp" />
-    <Content Include="Content\25_Tracery.bmp" />
-    <Content Include="Content\25_triangle.bmp" />
-    <Content Include="Content\25_triangle2.bmp" />
-    <Content Include="Content\25_Virgo.bmp" />
-    <Content Include="Content\25_Water.bmp" />
-    <Content Include="Content\25_Vetka.bmp" />
-    <Content Include="Content\25_Vetka2.bmp" />
-    <Content Include="Content\25_Wolf.bmp" />
-    <Content Include="Content\25_Zayac.bmp" />
-    <Content Include="Content\30_red_line.bmp" />
-    <Content Include="Content\40_AudioLevels.bmp" />
-    <Content Include="Content\40_audio_levels.bmp" />
-    <Content Include="Content\40_hearts.bmp" />
-    <Content Include="Content\40_new_year.bmp" />
-    <Content Include="Content\40_steps2.bmp" />
-    <Content Include="Content\50_2_waves.bmp" />
-    <Content Include="Content\50_angrybird_red.bmp" />
-    <Content Include="Content\50_angrybird_yellow.bmp" />
-    <Content Include="Content\50_Aquarius.bmp" />
-    <Content Include="Content\50_Aries.bmp" />
-    <Content Include="Content\50_audio_levels.bmp" />
-    <Content Include="Content\50_background.bmp" />
-    <Content Include="Content\50_Bart.bmp" />
-    <Content Include="Content\50_Batman.bmp" />
-    <Content Include="Content\50_border.bmp" />
-    <Content Include="Content\50_Bounty.bmp" />
-    <Content Include="Content\50_BubblesPattern.bmp" />
-    <Content Include="Content\50_BubblesPattern2.bmp" />
-    <Content Include="Content\50_Cake.bmp" />
-    <Content Include="Content\50_Cake2.bmp" />
-    <Content Include="Content\50_Cancer.bmp" />
-    <Content Include="Content\50_Capricorn.bmp" />
-    <Content Include="Content\50_Ball.bmp" />
-    <Content Include="Content\50_Ball2.bmp" />
-    <Content Include="Content\50_Bells.bmp" />
-    <Content Include="Content\50_Candylove.bmp" />
-    <Content Include="Content\50_cards.bmp" />
-    <Content Include="Content\50_Crusty.bmp" />
-    <Content Include="Content\50_EtnoAfricaPattern.bmp" />
-    <Content Include="Content\50_EtnoAfricaPattern2.bmp" />
-    <Content Include="Content\50_Evolution.bmp" />
-    <Content Include="Content\50_Fire.bmp" />
-    <Content Include="Content\50_Fire2.bmp" />
-    <Content Include="Content\50_FloraPattern2.bmp" />
-    <Content Include="Content\50_FloraPattern3.bmp" />
-    <Content Include="Content\50_FloraPettern.bmp" />
-    <Content Include="Content\50_foliage.bmp" />
-    <Content Include="Content\50_Gemini.bmp" />
-    <Content Include="Content\50_Champagne-2.bmp" />
-    <Content Include="Content\50_Champagne2.bmp" />
-    <Content Include="Content\50_Coldgrand.bmp" />
-    <Content Include="Content\50_Combo.bmp" />
-    <Content Include="Content\50_Combo2.bmp" />
-    <Content Include="Content\50_Cone.bmp" />
-    <Content Include="Content\50_Deer.bmp" />
-    <Content Include="Content\50_Deer2.bmp" />
-    <Content Include="Content\50_Deer3.bmp" />
-    <Content Include="Content\50_Element.bmp" />
-    <Content Include="Content\50_Feer.bmp" />
-    <Content Include="Content\50_Fir.bmp" />
-    <Content Include="Content\50_Firtrees.bmp" />
-    <Content Include="Content\50_Forest.bmp" />
-    <Content Include="Content\50_Frozen.jpg" />
-    <Content Include="Content\50_FuturamaSanta.bmp" />
-    <Content Include="Content\50_Gingerbread.bmp" />
-    <Content Include="Content\50_girlface.bmp" />
-    <Content Include="Content\50_iPoi.bmp" />
-    <Content Include="Content\50_justMarried.bmp" />
-    <Content Include="Content\50_justMarriedEn.bmp" />
-    <Content Include="Content\50_hearts.bmp" />
-    <Content Include="Content\50_Leo.bmp" />
-    <Content Include="Content\50_Libra.bmp" />
-    <Content Include="Content\50_LisaSimpson.bmp" />
-    <Content Include="Content\50_London.bmp" />
-    <Content Include="Content\50_microsoft.bmp" />
-    <Content Include="Content\50_microsoft2.bmp" />
-    <Content Include="Content\50_Moscow.bmp" />
-    <Content Include="Content\50_new_year.bmp" />
-    <Content Include="Content\50_NyanCat.bmp" />
-    <Content Include="Content\50_pacman.bmp" />
-    <Content Include="Content\50_Panda.bmp" />
-    <Content Include="Content\50_Paris.bmp" />
-    <Content Include="Content\50_Night.bmp" />
-    <Content Include="Content\50_NY-Pattern1.bmp" />
-    <Content Include="Content\50_NY-Pattern12.bmp" />
-    <Content Include="Content\50_NY-Pattern3.bmp" />
-    <Content Include="Content\50_pattern.bmp" />
-    <Content Include="Content\50_pattern2.bmp" />
-    <Content Include="Content\50_pattern3.bmp" />
-    <Content Include="Content\50_patternBulbs.bmp" />
-    <Content Include="Content\50_patternCubesRainbow.bmp" />
-    <Content Include="Content\50_patternFireworks.bmp" />
-    <Content Include="Content\50_Piano.bmp" />
-    <Content Include="Content\50_Pisces.bmp" />
-    <Content Include="Content\50_PSY.bmp" />
-    <Content Include="Content\50_present2.bmp" />
-    <Content Include="Content\50_Presents.bmp" />
-    <Content Include="Content\50_rainbow.bmp" />
-    <Content Include="Content\50_redcloud.bmp" />
-    <Content Include="Content\50_red_arrows_right.bmp" />
-    <Content Include="Content\50_Rome.bmp" />
-    <Content Include="Content\50_RoundPattern.bmp" />
-    <Content Include="Content\50_Rudolf2.bmp" />
-    <Content Include="Content\50_ruflag.bmp" />
-    <Content Include="Content\50_ruler.bmp" />
-    <Content Include="Content\50_Russia.bmp" />
-    <Content Include="Content\50_Sagittarius.bmp" />
-    <Content Include="Content\50_Santa3.bmp" />
-    <Content Include="Content\50_Santa.bmp" />
-    <Content Include="Content\50_Scorpio.bmp" />
-    <Content Include="Content\50_Santa2.bmp" />
-    <Content Include="Content\50_snake.bmp" />
-    <Content Include="Content\50_Sonic.bmp" />
-    <Content Include="Content\50_SquarePattern.bmp" />
-    <Content Include="Content\50_SquarePattern2.bmp" />
-    <Content Include="Content\50_Snow.bmp" />
-    <Content Include="Content\50_Snow1.bmp" />
-    <Content Include="Content\50_Snow2.bmp" />
-    <Content Include="Content\50_SnowBlue.bmp" />
-    <Content Include="Content\50_SnowBlue2.bmp" />
-    <Content Include="Content\50_SnowGold.bmp" />
-    <Content Include="Content\50_Snowly.bmp" />
-    <Content Include="Content\50_Snowman1.bmp" />
-    <Content Include="Content\50_Snowman2.bmp" />
-    <Content Include="Content\50_SnowPattern.bmp" />
-    <Content Include="Content\50_SnowPattern2.bmp" />
-    <Content Include="Content\50_SnowPurple.bmp" />
-    <Content Include="Content\50_SnowRed.bmp" />
-    <Content Include="Content\50_square_circle.bmp" />
-    <Content Include="Content\50_Star.bmp" />
-    <Content Include="Content\50_Stars3.bmp" />
-    <Content Include="Content\50_Stars.bmp" />
-    <Content Include="Content\50_Stars2.bmp" />
-    <Content Include="Content\50_steps.bmp" />
-    <Content Include="Content\50_steps2.bmp" />
-    <Content Include="Content\50_stork2.bmp" />
-    <Content Include="Content\50_stork3.bmp" />
-    <Content Include="Content\50_sunFlower.bmp" />
-    <Content Include="Content\50_Taurus.bmp" />
-    <Content Include="Content\50_triangle.bmp" />
-    <Content Include="Content\50_Virgo.bmp" />
-    <Content Include="Content\50_Tracery.bmp" />
-    <Content Include="Content\50_Vetka.bmp" />
-    <Content Include="Content\50_Vetka2.bmp" />
-    <Content Include="Content\50_Volkswagen.bmp" />
-    <Content Include="Content\50_Volkswagen_blue.bmp" />
-    <Content Include="Content\50_Volkswagen_text.bmp" />
-    <Content Include="Content\50_Water.bmp" />
-    <Content Include="Content\50_waves.bmp" />
-    <Content Include="Content\50_white.bmp" />
-    <Content Include="Content\55_2_waves.bmp" />
-    <Content Include="Content\65_3d-ocean-wallpaper-hd-background-10.bmp" />
-    <Content Include="Content\65_3d-wallpaper-fire-hd-1080p-14.bmp" />
-    <Content Include="Content\65_3d-wallpaper-fire-hd-background-wallpaper-27.bmp" />
-    <Content Include="Content\65_3d-wallpaper-fire-widescreen-2.bmp" />
-    <Content Include="Content\65_3d-wallpaper-red-blue-hd-background-10.bmp" />
-    <Content Include="Content\65_abstract-art-faces-black-and-white-hd-images-3.bmp" />
-    <Content Include="Content\65_abstract-art-faces-for-desktop-16.bmp" />
-    <Content Include="Content\65_abstract-art-faces-for-desktop-background-15.bmp" />
-    <Content Include="Content\65_abstract-art-faces-hd-1080p-14.bmp" />
-    <Content Include="Content\65_abstract-art-faces-hd-free-13.bmp" />
-    <Content Include="Content\65_abstract-art-faces-images-7.bmp" />
-    <Content Include="Content\65_abstract-music-wallpapers-hd-desktop-10.bmp" />
-    <Content Include="Content\65_abstract-music-wallpapers-hd-pictures-4.bmp" />
-    <Content Include="Content\65_anime-music-wallpaper-1920x1080-hd-pictures-4.bmp" />
-    <Content Include="Content\65_anime-music-wallpaper-for-desktop-background-13.bmp" />
-    <Content Include="Content\65_anime-music-wallpaper-hd-background-wallpaper-28.bmp" />
-    <Content Include="Content\65_anime-music-wallpaper-hd-background-wallpaper-32.bmp" />
-    <Content Include="Content\65_anime-violin-wallpaper-hd-widescreen-11.bmp" />
-    <Content Include="Content\65_anime-violin-wallpaper-pictures-5.bmp" />
-    <Content Include="Content\65_Aquarius.bmp" />
-    <Content Include="Content\65_Aries.bmp" />
-    <Content Include="Content\65_Bart.bmp" />
-    <Content Include="Content\65_Batman.bmp" />
-    <Content Include="Content\65_border.bmp" />
-    <Content Include="Content\65_boum.bmp" />
-    <Content Include="Content\65_Bounty.bmp" />
-    <Content Include="Content\65_BubblesPattern.bmp" />
-    <Content Include="Content\65_BubblesPattern2.bmp" />
-    <Content Include="Content\65_Cake.bmp" />
-    <Content Include="Content\65_Cake2.bmp" />
-    <Content Include="Content\65_Cancer.bmp" />
-    <Content Include="Content\65_Capricorn.bmp" />
-    <Content Include="Content\65_cartoon-images-of-spongebob-hd-desktop-10.bmp" />
-    <Content Include="Content\65_cloud.bmp" />
-    <Content Include="Content\65_cloud_text.bmp" />
-    <Content Include="Content\65_comics-characters-face-widescreen-2.bmp" />
-    <Content Include="Content\65_comics-characters-face-widescreen-3.bmp" />
-    <Content Include="Content\65_Crusty.bmp" />
-    <Content Include="Content\65_cute-anime-angel-wallpaper-background-1.bmp" />
-    <Content Include="Content\65_cute-anime-angel-wallpaper-hd-background-9.bmp" />
-    <Content Include="Content\65_EtnoAfricaPattern.bmp" />
-    <Content Include="Content\65_EtnoAfricaPattern2.bmp" />
-    <Content Include="Content\65_Evolution.bmp" />
-    <Content Include="Content\65_Fire.bmp" />
-    <Content Include="Content\65_Fire2.bmp" />
-    <Content Include="Content\65_FloraPattern2.bmp" />
-    <Content Include="Content\65_FloraPattern3.bmp" />
-    <Content Include="Content\65_FloraPettern.bmp" />
-    <Content Include="Content\65_foliage.bmp" />
-    <Content Include="Content\65_funny-face-cartoon-images-background-1.bmp" />
-    <Content Include="Content\65_Gemini.bmp" />
-    <Content Include="Content\65_geometric-abstract-sculpture-hd-images-3.bmp" />
-    <Content Include="Content\65_Hearts.bmp" />
-    <Content Include="Content\65_iPoi.bmp" />
-    <Content Include="Content\65_Leo.bmp" />
-    <Content Include="Content\65_Libra.bmp" />
-    <Content Include="Content\65_LisaSimpson.bmp" />
-    <Content Include="Content\65_London.bmp" />
-    <Content Include="Content\65_Moscow.bmp" />
-    <Content Include="Content\65_music-wallpaper-hd-background-wallpaper-54.bmp" />
-    <Content Include="Content\65_music-wallpaper-hd-for-desktop-images-6.bmp" />
-    <Content Include="Content\65_neon-wallpaper-free-desktop-8.bmp" />
-    <Content Include="Content\65_neon-wallpaper-hd-cool-7.bmp" />
-    <Content Include="Content\65_neon-wallpaper-images-6.bmp" />
-    <Content Include="Content\65_NyanCat.bmp" />
-    <Content Include="Content\65_pacman.bmp" />
-    <Content Include="Content\65_Panda.bmp" />
-    <Content Include="Content\65_Paris.bmp" />
-    <Content Include="Content\65_Piano.bmp" />
-    <Content Include="Content\65_picasso-abstract-art-faces-pictures-6.bmp" />
-    <Content Include="Content\65_Pisces.bmp" />
-    <Content Include="Content\65_PSY.bmp" />
-    <Content Include="Content\65_quote1.bmp" />
-    <Content Include="Content\65_quote1_empty.bmp" />
-    <Content Include="Content\65_return-of-the-hulk-l.bmp" />
-    <Content Include="Content\65_Rome.bmp" />
-    <Content Include="Content\65_RoundPattern.bmp" />
-    <Content Include="Content\65_Russia.bmp" />
-    <Content Include="Content\65_Sagittarius.bmp" />
-    <Content Include="Content\65_sb1.bmp" />
-    <Content Include="Content\65_sb2.bmp" />
-    <Content Include="Content\65_sb3.bmp" />
-    <Content Include="Content\65_sb4.bmp" />
-    <Content Include="Content\65_sb5.bmp" />
-    <Content Include="Content\65_sb6.bmp" />
-    <Content Include="Content\65_sb7.bmp" />
-    <Content Include="Content\65_sb8.bmp" />
-    <Content Include="Content\65_Scorpio.bmp" />
-    <Content Include="Content\65_simple-abstract-art-shapes-hd-pictures-4.bmp" />
-    <Content Include="Content\65_simple-abstract-art-shapes-widescreen-2.bmp" />
-    <Content Include="Content\65_Sonic.bmp" />
-    <Content Include="Content\65_SquarePatter2.bmp" />
-    <Content Include="Content\65_SquarePattern.bmp" />
-    <Content Include="Content\65_Star.bmp" />
-    <Content Include="Content\65_superman-comic-wallpaper-background-1.bmp" />
-    <Content Include="Content\65_superman-comic-wallpaper-images-6.bmp" />
-    <Content Include="Content\65_superman-comic-wallpaper-widescreen-2.bmp" />
-    <Content Include="Content\65_Taurus.bmp" />
-    <Content Include="Content\65_triangle.bmp" />
-    <Content Include="Content\65_Virgo.bmp" />
-    <Content Include="Content\65_wallpaper-hd-hd-background-wallpaper-53.bmp" />
-    <Content Include="Content\65_wallpaper-hd-hd-background-wallpaper-78.bmp" />
-    <Content Include="Content\65_Water.bmp" />
-    <Content Include="Content\65_Water2.bmp" />
-    <Content Include="Content\50_Wolf.bmp" />
-    <Content Include="Content\50_Zayac.bmp" />
-    <Content Include="Content\65_Ball.bmp" />
-    <Content Include="Content\65_Ball2.bmp" />
-    <Content Include="Content\65_Bells.bmp" />
-    <Content Include="Content\65_Candylove.bmp" />
-    <Content Include="Content\65_Champagne-1.bmp" />
-    <Content Include="Content\65_Champagne2.bmp" />
-    <Content Include="Content\65_Coldgrand.bmp" />
-    <Content Include="Content\65_Combo.bmp" />
-    <Content Include="Content\65_Combo2.bmp" />
-    <Content Include="Content\65_Cone.bmp" />
-    <Content Include="Content\65_Deer.bmp" />
-    <Content Include="Content\65_Deer2.bmp" />
-    <Content Include="Content\65_Deer3.bmp" />
-    <Content Include="Content\65_Element.bmp" />
-    <Content Include="Content\65_Feer.bmp" />
-    <Content Include="Content\65_Fir.bmp" />
-    <Content Include="Content\65_Firtrees.bmp" />
-    <Content Include="Content\65_Forest.bmp" />
-    <Content Include="Content\65_Frozen.jpg" />
-    <Content Include="Content\65_FuturamaSanta.bmp" />
-    <Content Include="Content\65_Gingerbread.bmp" />
-    <Content Include="Content\65_Night.bmp" />
-    <Content Include="Content\65_NY-Pattern1.bmp" />
-    <Content Include="Content\65_NY-Pattern12.bmp" />
-    <Content Include="Content\65_NY-Pattern3.bmp" />
-    <Content Include="Content\65_present2.bmp" />
-    <Content Include="Content\65_Presents.bmp" />
-    <Content Include="Content\65_Rudolf2.bmp" />
-    <Content Include="Content\65_Santa.bmp" />
-    <Content Include="Content\65_Santa2.bmp" />
-    <Content Include="Content\65_Snow.bmp" />
-    <Content Include="Content\65_Snow1.bmp" />
-    <Content Include="Content\65_Snow2.bmp" />
-    <Content Include="Content\65_SnowBlue.bmp" />
-    <Content Include="Content\65_SnowBlue2.bmp" />
-    <Content Include="Content\65_SnowGold.bmp" />
-    <Content Include="Content\65_Snowly.bmp" />
-    <Content Include="Content\65_Snowman1.bmp" />
-    <Content Include="Content\65_Snowman2.bmp" />
-    <Content Include="Content\65_SnowPattern.bmp" />
-    <Content Include="Content\65_SnowPattern2.bmp" />
-    <Content Include="Content\65_SnowPurple.bmp" />
-    <Content Include="Content\65_SnowRed.bmp" />
-    <Content Include="Content\65_Stars.bmp" />
-    <Content Include="Content\65_Stars2.bmp" />
-    <Content Include="Content\65_Tracery.bmp" />
-    <Content Include="Content\65_Vetka.bmp" />
-    <Content Include="Content\65_Vetka2.bmp" />
-    <Content Include="Content\65_Wolf.bmp" />
-    <Content Include="Content\65_Zayac.bmp" />
-    <Content Include="Content\70_audio_levels.bmp" />
-    <Content Include="Content\70_hearts.bmp" />
-    <Content Include="Content\70_rainbow.bmp" />
-    <Content Include="Content\70_rainbow2.bmp" />
-    <Content Include="Content\70_red_arrows_right.bmp" />
-    <Content Include="Content\70_stars.bmp" />
-    <Content Include="Content\70_steps2.bmp" />
-    <Content Include="Content\70_stork2.bmp" />
-    <Content Include="Content\70_stripes.bmp" />
-    <Content Include="Content\70_triangle.bmp" />
-    <Content Include="Content\80_2_waves.bmp" />
-    <Content Include="Content\80_3d-ocean-wallpaper-hd-background-10.jpg" />
-    <Content Include="Content\80_3d-wallpaper-fire-hd-1080p-14.jpg" />
-    <Content Include="Content\80_3d-wallpaper-fire-hd-background-10.jpg" />
-    <Content Include="Content\80_3d-wallpaper-fire-hd-background-wallpaper-27.jpg" />
-    <Content Include="Content\80_3d-wallpaper-fire-widescreen-2.jpg" />
-    <Content Include="Content\80_3d-wallpaper-red-blue-hd-background-10.jpg" />
-    <Content Include="Content\80_Aquarius.bmp" />
-    <Content Include="Content\80_Aries.bmp" />
-    <Content Include="Content\80_Bart.bmp" />
-    <Content Include="Content\80_batman-and-joker-comic-strip-pictures-5.bmp" />
-    <Content Include="Content\80_Batman.bmp" />
-    <Content Include="Content\80_abstract-art-faces-black-and-white-hd-images-3.jpg" />
-    <Content Include="Content\80_abstract-art-faces-for-desktop-16.jpg" />
-    <Content Include="Content\80_abstract-art-faces-for-desktop-background-15.jpg" />
-    <Content Include="Content\80_abstract-art-faces-hd-1080p-14.jpg" />
-    <Content Include="Content\80_abstract-art-faces-hd-free-13.jpg" />
-    <Content Include="Content\80_abstract-art-faces-images-7.jpg" />
-    <Content Include="Content\80_abstract-music-wallpapers-hd-desktop-10.jpg" />
-    <Content Include="Content\80_abstract-music-wallpapers-hd-pictures-4.jpg" />
-    <Content Include="Content\80_anime-music-wallpaper-1920x1080-hd-pictures-4.jpg" />
-    <Content Include="Content\80_anime-music-wallpaper-for-desktop-background-13.jpg" />
-    <Content Include="Content\80_anime-music-wallpaper-hd-background-wallpaper-28.jpg" />
-    <Content Include="Content\80_anime-music-wallpaper-hd-background-wallpaper-32.jpg" />
-    <Content Include="Content\80_anime-violin-wallpaper-hd-widescreen-11.jpg" />
-    <Content Include="Content\80_anime-violin-wallpaper-pictures-5.jpg" />
-    <Content Include="Content\80_batman-and-joker-comic-strip-background-1.jpg" />
-    <Content Include="Content\80_Ball.bmp" />
-    <Content Include="Content\80_Ball2.bmp" />
-    <Content Include="Content\80_batterfly_002.bmp" />
-    <Content Include="Content\80_batterfly_003.bmp" />
-    <Content Include="Content\80_batterfly_004.bmp" />
-    <Content Include="Content\80_batterfly_005.bmp" />
-    <Content Include="Content\80_batterfly_006.bmp" />
-    <Content Include="Content\80_batterfly_007.bmp" />
-    <Content Include="Content\80_batterfly_008.bmp" />
-    <Content Include="Content\80_batterfly_009.bmp" />
-    <Content Include="Gradients\g_effect1.jpg" />
-    <Content Include="Gradients\g_rainbow.jpg" />
-    <Content Include="Schemas\human.svg" />
-    <Content Include="Schemas\human_1.svg" />
-    <Resource Include="Images\settings_Dark.png" />
-    <Resource Include="Images\settings.png" />
-    <Resource Include="Effects\04_solid.png" />
+    <Resource Include="Content\100_2_waves.bmp" />
+    <Resource Include="Content\100_black.bmp" />
+    <Resource Include="Content\100_black.bmp.png" />
+    <Resource Include="Content\100_hearts.bmp" />
+    <Resource Include="Content\100_hub1.bmp" />
+    <Resource Include="Content\100_hub1.bmp.png" />
+    <Resource Include="Content\100_mickey.bmp" />
+    <Resource Include="Content\100_mosaic.bmp" />
+    <Resource Include="Content\100_mosaic2.bmp" />
+    <Resource Include="Content\100_mosaic3.bmp" />
+    <Resource Include="Content\100_mosaic_hole.bmp" />
+    <Resource Include="Content\100_pattern.bmp" />
+    <Resource Include="Content\100_pattern2.bmp" />
+    <Resource Include="Content\100_pattern3.bmp" />
+    <Resource Include="Content\100_pattern4.bmp" />
+    <Resource Include="Content\100_patternBulbs.bmp" />
+    <Resource Include="Content\100_stain.bmp" />
+    <Resource Include="Content\100_stain2.bmp" />
+    <Resource Include="Content\100_stars.bmp" />
+    <Resource Include="Content\100_steps.bmp" />
+    <Resource Include="Content\100_waves.bmp" />
+    <Resource Include="Content\100_white.bmp" />
+    <Resource Include="Content\100_white.bmp.png" />
+    <Resource Include="Content\100_wing.bmp" />
+    <Resource Include="Content\100_wing.bmp.png" />
+    <Resource Include="Content\125 1st xp.png" />
+    <Resource Include="Content\125 biology.bmp" />
+    <Resource Include="Content\125 blossom.png" />
+    <Resource Include="Content\125 blueMagic2.bmp" />
+    <Resource Include="Content\125 chain.png" />
+    <Resource Include="Content\125 conch 8.png" />
+    <Resource Include="Content\125 cover 1.jpg" />
+    <Resource Include="Content\125 cover 10.jpg" />
+    <Resource Include="Content\125 cover 12.jpg" />
+    <Resource Include="Content\125 cover 13.jpg" />
+    <Resource Include="Content\125 cover 14.jpg" />
+    <Resource Include="Content\125 cover 15.png" />
+    <Resource Include="Content\125 cover 16.jpg" />
+    <Resource Include="Content\125 cover 17.jpg" />
+    <Resource Include="Content\125 cover 18.jpg" />
+    <Resource Include="Content\125 cover 19.jpg" />
+    <Resource Include="Content\125 cover 20.jpg" />
+    <Resource Include="Content\125 cover 21.jpg" />
+    <Resource Include="Content\125 cover 22.jpg" />
+    <Resource Include="Content\125 cover 23.jpg" />
+    <Resource Include="Content\125 cover 24.jpg" />
+    <Resource Include="Content\125 cover 25.png" />
+    <Resource Include="Content\125 cover 26.png" />
+    <Resource Include="Content\125 cover 27.jpg" />
+    <Resource Include="Content\125 cover 28.jpg" />
+    <Resource Include="Content\125 cover 29.bmp" />
+    <Resource Include="Content\125 cover 3.jpeg" />
+    <Resource Include="Content\125 cover 30.jpg" />
+    <Resource Include="Content\125 cover 31.jpg" />
+    <Resource Include="Content\125 cover 32.jpg.png" />
+    <Resource Include="Content\125 cover 5.jpg" />
+    <Resource Include="Content\125 cover 6.jpg" />
+    <Resource Include="Content\125 cover 7.jpg" />
+    <Resource Include="Content\125 cover 8.jpg" />
+    <Resource Include="Content\125 cover 9.jpg" />
+    <Resource Include="Content\125 cyan to green.png" />
+    <Resource Include="Content\125 Eqalizer.bmp" />
+    <Resource Include="Content\125 filling green 3.png" />
+    <Resource Include="Content\125 filling green 4.png" />
+    <Resource Include="Content\125 filling green back.png" />
+    <Resource Include="Content\125 filling green.png" />
+    <Resource Include="Content\125 filling red 25.png" />
+    <Resource Include="Content\125 filling red 26.png" />
+    <Resource Include="Content\125 filling red 27.png" />
+    <Resource Include="Content\125 filling red 28.png" />
+    <Resource Include="Content\125 filling red.png" />
+    <Resource Include="Content\125 fire rings.jpg" />
+    <Resource Include="Content\125 fire stars.png" />
+    <Resource Include="Content\125 fire.bmp" />
+    <Resource Include="Content\125 fire2.bmp" />
+    <Resource Include="Content\125 fire3.bmp" />
+    <Resource Include="Content\125 fireworks.bmp" />
+    <Resource Include="Content\125 fireworks2.bmp" />
+    <Resource Include="Content\125 flame 1.jpg" />
+    <Resource Include="Content\125 flame 2.jpg" />
+    <Resource Include="Content\125 flame 3.jpg" />
+    <Resource Include="Content\125 flashes blue.png" />
+    <Resource Include="Content\125 flashes green.png" />
+    <Resource Include="Content\125 flashes red.png" />
+    <Resource Include="Content\125 flashes white.png" />
+    <Resource Include="Content\125 fog 1.bmp" />
+    <Resource Include="Content\125 fog 2.bmp" />
+    <Resource Include="Content\125 fog 3.bmp" />
+    <Resource Include="Content\125 fruits.png" />
+    <Resource Include="Content\125 gradient.jpg" />
+    <Resource Include="Content\125 green fade down.png" />
+    <Resource Include="Content\125 green waves.png" />
+    <Resource Include="Content\125 green _ blue.png" />
+    <Resource Include="Content\125 heart.jpg" />
+    <Resource Include="Content\125 hearts electro.jpg" />
+    <Resource Include="Content\125 hearts.jpg" />
+    <Resource Include="Content\125 iceFire.bmp" />
+    <Resource Include="Content\125 lightning 25.png" />
+    <Resource Include="Content\125 lightning 26.jpg" />
+    <Resource Include="Content\125 lightning 27.jpg" />
+    <Resource Include="Content\125 lightning 28.jpg" />
+    <Resource Include="Content\125 lightning 30.jpg" />
+    <Resource Include="Content\125 megafon.png" />
+    <Resource Include="Content\125 Nightfall Logo.png" />
+    <Resource Include="Content\125 palm 1.png" />
+    <Resource Include="Content\125 palm 2.png" />
+    <Resource Include="Content\125 palm 3.png" />
+    <Resource Include="Content\125 palm 4.png" />
+    <Resource Include="Content\125 palm 5.png" />
+    <Resource Include="Content\125 pattern 1.png" />
+    <Resource Include="Content\125 pattern 2.bmp" />
+    <Resource Include="Content\125 pattern 3.jpg" />
+    <Resource Include="Content\125 pattern 4.bmp" />
+    <Resource Include="Content\125 pattern 5.jpg" />
+    <Resource Include="Content\125 pattern 6.jpg" />
+    <Resource Include="Content\125 pattern bulbs.bmp" />
+    <Resource Include="Content\125 psycho rainbow.jpg" />
+    <Resource Include="Content\125 purple v.png" />
+    <Resource Include="Content\125 rainbow star.png" />
+    <Resource Include="Content\125 rainbow.jpg" />
+    <Resource Include="Content\125 rainbow.png" />
+    <Resource Include="Content\125 red to cyan.png" />
+    <Resource Include="Content\125 red _ blue.png" />
+    <Resource Include="Content\125 red _ green 2.png" />
+    <Resource Include="Content\125 red _ green.png" />
+    <Resource Include="Content\125 red-blue-hd-background-10.bmp" />
+    <Resource Include="Content\125 redLightning2.bmp" />
+    <Resource Include="Content\125 reg triangle.png" />
+    <Resource Include="Content\125 snow 1.png" />
+    <Resource Include="Content\125 snow 2.png" />
+    <Resource Include="Content\125 snow 3.jpg" />
+    <Resource Include="Content\125 stars.png" />
+    <Resource Include="Content\125 starsTexture.bmp" />
+    <Resource Include="Content\125 strawberry.bmp" />
+    <Resource Include="Content\125 stripes.bmp" />
+    <Resource Include="Content\125 tetris 1.png" />
+    <Resource Include="Content\125 tetris 2.png" />
+    <Resource Include="Content\125 tetris 3.png" />
+    <Resource Include="Content\125 tetris 4.png" />
+    <Resource Include="Content\125 tetris 5.png" />
+    <Resource Include="Content\125 tetris 6.png" />
+    <Resource Include="Content\125 tetris 7.png" />
+    <Resource Include="Content\125 tetris 8.png" />
+    <Resource Include="Content\125 texture.bmp" />
+    <Resource Include="Content\125 texture2.bmp" />
+    <Resource Include="Content\125 vegetables.png" />
+    <Resource Include="Content\125 walking dots blue.png" />
+    <Resource Include="Content\125 walking dots green.png" />
+    <Resource Include="Content\125 walking dots red.png" />
+    <Resource Include="Content\125 walking dots violet.png" />
+    <Resource Include="Content\125 walking dots yellow.png" />
+    <Resource Include="Content\125 waves 25.png" />
+    <Resource Include="Content\125 waves 26.jpg" />
+    <Resource Include="Content\125 waves 27.jpg" />
+    <Resource Include="Content\125 waves.bmp" />
+    <Resource Include="Content\125 wawe.jpg" />
+    <Resource Include="Content\125 white fade down.png" />
+    <Resource Include="Content\125 white fade.png" />
+    <Resource Include="Content\125 white flashes.png" />
+    <Resource Include="Content\125 white line 25.png" />
+    <Resource Include="Content\125 white line 26.png" />
+    <Resource Include="Content\125 white line fast.png" />
+    <Resource Include="Content\125.bmp" />
+    <Resource Include="Content\125_2016.bmp" />
+    <Resource Include="Content\125_2016_2.bmp" />
+    <Resource Include="Content\125_2016_3.bmp" />
+    <Resource Include="Content\125_3d-wallpaper-fire-hd-background-wallpaper-27.bmp" />
+    <Resource Include="Content\125_3d-wallpaper-fire-hd-pictures-4.bmp" />
+    <Resource Include="Content\125_3d-wallpaper-fire-widescreen-2.bmp" />
+    <Resource Include="Content\125_3d-wallpaper-red-blue-hd-background-10.bmp" />
+    <Resource Include="Content\125_abstract-art-faces-for-desktop-16_1.bmp" />
+    <Resource Include="Content\125_abstract-music-wallpapers-hd-desktop-10_1.bmp" />
+    <Resource Include="Content\125_anime-music-wallpaper-hd-background-wallpaper-28_1.bmp" />
+    <Resource Include="Content\125_bats.bmp" />
+    <Resource Include="Content\125_bats2.bmp" />
+    <Resource Include="Content\125_bats3.bmp" />
+    <Resource Include="Content\125_bird_2016.bmp" />
+    <Resource Include="Content\125_boo.bmp" />
+    <Resource Include="Content\125_candle_2016.bmp" />
+    <Resource Include="Content\125_cat.bmp" />
+    <Resource Include="Content\125_cat_2016.bmp" />
+    <Resource Include="Content\125_CHUV.bmp" />
+    <Resource Include="Content\125_chuv_flag.bmp" />
+    <Resource Include="Content\125_dasha.bmp" />
+    <Resource Include="Content\125_face_2016.bmp" />
+    <Resource Include="Content\125_face_2016_2.bmp" />
+    <Resource Include="Content\125_face_2016_3.bmp" />
+    <Resource Include="Content\125_gift.bmp" />
+    <Resource Include="Content\125_gift_2016.bmp" />
+    <Resource Include="Content\125_gift_2016_2.bmp" />
+    <Resource Include="Content\125_gift_2016_3.bmp" />
+    <Resource Include="Content\125_gift_2016_4.bmp" />
+    <Resource Include="Content\125_gift_2016_5.bmp" />
+    <Resource Include="Content\125_gift_2016_6.bmp" />
+    <Resource Include="Content\125_gift_2016_7.bmp" />
+    <Resource Include="Content\125_halloween.bmp" />
+    <Resource Include="Content\125_halloweenParty.bmp" />
+    <Resource Include="Content\125_happyHalloween.bmp" />
+    <Resource Include="Content\125_happyHalloween2.bmp" />
+    <Resource Include="Content\125_hearts-n-hats_2016.bmp" />
+    <Resource Include="Content\125_hohloma.bmp" />
+    <Resource Include="Content\125_Love_Love_is.bmp" />
+    <Resource Include="Content\125_new_year.bmp" />
+    <Resource Include="Content\125_new_year_2.bmp" />
+    <Resource Include="Content\125_pattern.bmp" />
+    <Resource Include="Content\125_pattern10.bmp" />
+    <Resource Include="Content\125_pattern11.bmp" />
+    <Resource Include="Content\125_pattern12.bmp" />
+    <Resource Include="Content\125_pattern13.bmp" />
+    <Resource Include="Content\125_pattern2.bmp" />
+    <Resource Include="Content\125_pattern_big_2016.bmp" />
+    <Resource Include="Content\125_pattern_small_2016.bmp" />
+    <Resource Include="Content\125_pumpkin3.bmp" />
+    <Resource Include="Content\125_pumpkin32.bmp" />
+    <Resource Include="Content\125_pumpkinface.bmp" />
+    <Resource Include="Content\125_return-of-the-hulk-l_1.bmp" />
+    <Resource Include="Content\125_santa_2016.bmp" />
+    <Resource Include="Content\125_santa_2016_2.bmp" />
+    <Resource Include="Content\125_santa_2016_3.bmp" />
+    <Resource Include="Content\125_santa_2016_4.bmp" />
+    <Resource Include="Content\125_signs_2016.bmp" />
+    <Resource Include="Content\125_signs_2016_2.bmp" />
+    <Resource Include="Content\125_signs_2016_3.bmp" />
+    <Resource Include="Content\125_signs_2016_4.bmp" />
+    <Resource Include="Content\125_signs_2016_5.bmp" />
+    <Resource Include="Content\125_signs_2016_6.bmp" />
+    <Resource Include="Content\125_skull.bmp" />
+    <Resource Include="Content\125_snowbird_2016.bmp" />
+    <Resource Include="Content\125_snowgirl_2016.bmp" />
+    <Resource Include="Content\125_snowman_2016.bmp" />
+    <Resource Include="Content\125_snowman_2016_2.bmp" />
+    <Resource Include="Content\125_snow_2016.bmp" />
+    <Resource Include="Content\125_sock_2016.bmp" />
+    <Resource Include="Content\125_sock_2016_1.bmp" />
+    <Resource Include="Content\125_sock_2016_2.bmp" />
+    <Resource Include="Content\125_sock_2016_3.bmp" />
+    <Resource Include="Content\125_sovet.bmp" />
+    <Resource Include="Content\125_starhat_2016.bmp" />
+    <Resource Include="Content\125_star_2016.bmp" />
+    <Resource Include="Content\125_superman-comic-wallpaper-background-1_1.bmp" />
+    <Resource Include="Content\125_superman-comic-wallpaper-images-6_1.bmp" />
+    <Resource Include="Content\125_sweet_2016.bmp" />
+    <Resource Include="Content\125_tapes2016_2.bmp" />
+    <Resource Include="Content\125_tapes2016_3.bmp" />
+    <Resource Include="Content\125_tapes2016_4.bmp" />
+    <Resource Include="Content\125_tapes2016_5.bmp" />
+    <Resource Include="Content\125_tapes_2016.bmp" />
+    <Resource Include="Content\125_tape_2016.bmp" />
+    <Resource Include="Content\125_test.bmp" />
+    <Resource Include="Content\125_test2.bmp" />
+    <Resource Include="Content\125_test3.bmp" />
+    <Resource Include="Content\125_texture.bmp" />
+    <Resource Include="Content\125_texture2.bmp" />
+    <Resource Include="Content\125_texture3.bmp" />
+    <Resource Include="Content\125_texture4.bmp" />
+    <Resource Include="Content\125_texture5.bmp" />
+    <Resource Include="Content\125_texture7_stars.bmp" />
+    <Resource Include="Content\125_texture7_stars_1.bmp" />
+    <Resource Include="Content\125_texture8.bmp" />
+    <Resource Include="Content\125_textureStars.bmp" />
+    <Resource Include="Content\125_textureStars2.bmp" />
+    <Resource Include="Content\125_texture_1.bmp" />
+    <Resource Include="Content\125_texture_electronics.bmp" />
+    <Resource Include="Content\125_theBat.bmp" />
+    <Resource Include="Content\125_theBat2.bmp" />
+    <Resource Include="Content\125_tree-star-hat_2016.bmp" />
+    <Resource Include="Content\125_tree_2016.bmp" />
+    <Resource Include="Content\125_tree_2016_2.bmp" />
+    <Resource Include="Content\125_uglyFaces.bmp" />
+    <Resource Include="Content\125_uglyFaces2.bmp" />
+    <Resource Include="Content\125_uglyFaces3.bmp" />
+    <Resource Include="Content\150_2016.bmp" />
+    <Resource Include="Content\150_2016_2.bmp" />
+    <Resource Include="Content\150_2016_3.bmp" />
+    <Resource Include="Content\150_abstract-music-wallpapers-hd-desktop-10_3.bmp" />
+    <Resource Include="Content\150_anime-music-wallpaper-hd-background-wallpaper-28.bmp" />
+    <Resource Include="Content\150_anime-violin-wallpaper-pictures-5.bmp" />
+    <Resource Include="Content\150_ball.bmp" />
+    <Resource Include="Content\150_bats.bmp" />
+    <Resource Include="Content\150_bats2.bmp" />
+    <Resource Include="Content\150_bats3.bmp" />
+    <Resource Include="Content\150_biology.bmp" />
+    <Resource Include="Content\150_bird_2016.bmp" />
+    <Resource Include="Content\150_blackout.bmp" />
+    <Resource Include="Content\150_blueMagic.bmp" />
+    <Resource Include="Content\150_blueMagic2.bmp" />
+    <Resource Include="Content\150_boo.bmp" />
+    <Resource Include="Content\150_candle_2016.bmp" />
+    <Resource Include="Content\150_cat.bmp" />
+    <Resource Include="Content\150_cat_2016.bmp" />
+    <Resource Include="Content\150_christmasballs.bmp" />
+    <Resource Include="Content\150_chuvashia.bmp" />
+    <Resource Include="Content\150_daria.bmp" />
+    <Resource Include="Content\150_face_2016.bmp" />
+    <Resource Include="Content\150_face_2016_2.bmp" />
+    <Resource Include="Content\150_face_2016_3.bmp" />
+    <Resource Include="Content\150_fairPlay.bmp" />
+    <Resource Include="Content\150_fence.bmp" />
+    <Resource Include="Content\150_firBranch.bmp" />
+    <Resource Include="Content\150_fire.bmp" />
+    <Resource Include="Content\150_fire2.bmp" />
+    <Resource Include="Content\150_fire3.bmp" />
+    <Resource Include="Content\150_fireworks.bmp" />
+    <Resource Include="Content\150_fireworks2.bmp" />
+    <Resource Include="Content\150_fireworks3.bmp" />
+    <Resource Include="Content\150_fireworks4.bmp" />
+    <Resource Include="Content\150_fog.bmp" />
+    <Resource Include="Content\150_fog2.bmp" />
+    <Resource Include="Content\150_fog3.bmp" />
+    <Resource Include="Content\150_fog4.bmp" />
+    <Resource Include="Content\150_gift.bmp" />
+    <Resource Include="Content\150_gift_2016.bmp" />
+    <Resource Include="Content\150_gift_2016_2.bmp" />
+    <Resource Include="Content\150_gift_2016_3.bmp" />
+    <Resource Include="Content\150_gift_2016_4.bmp" />
+    <Resource Include="Content\150_gift_2016_5.bmp" />
+    <Resource Include="Content\150_gift_2016_6.bmp" />
+    <Resource Include="Content\150_gift_2016_7.bmp" />
+    <Resource Include="Content\150_grassBackground.bmp" />
+    <Resource Include="Content\150_halloween.bmp" />
+    <Resource Include="Content\150_halloweenParty.bmp" />
+    <Resource Include="Content\150_happyHalloween.bmp" />
+    <Resource Include="Content\150_happyHalloween2.bmp" />
+    <Resource Include="Content\150_heart.bmp" />
+    <Resource Include="Content\150_hearts-n-hats_2016.bmp" />
+    <Resource Include="Content\150_iceFire.bmp" />
+    <Resource Include="Content\150_imp.bmp" />
+    <Resource Include="Content\150_kate.bmp" />
+    <Resource Include="Content\150_Love_Love_is.bmp" />
+    <Resource Include="Content\150_minion.bmp" />
+    <Resource Include="Content\150_minion1.bmp" />
+    <Resource Include="Content\150_minion3.bmp" />
+    <Resource Include="Content\150_names.bmp" />
+    <Resource Include="Content\150_new_year.bmp" />
+    <Resource Include="Content\150_new_year_2.bmp" />
+    <Resource Include="Content\150_pattern_big_2016.bmp" />
+    <Resource Include="Content\150_pattern_small_2016.bmp" />
+    <Resource Include="Content\150_pumkin32.bmp" />
+    <Resource Include="Content\150_pumpkin.bmp" />
+    <Resource Include="Content\150_pumpkinface.bmp" />
+    <Resource Include="Content\150_red-blue-hd-background-10.bmp" />
+    <Resource Include="Content\150_redLightning.bmp" />
+    <Resource Include="Content\150_redLightning2.bmp" />
+    <Resource Include="Content\150_santa.bmp" />
+    <Resource Include="Content\150_santa_2016.bmp" />
+    <Resource Include="Content\150_santa_2016_2.bmp" />
+    <Resource Include="Content\150_santa_2016_3.bmp" />
+    <Resource Include="Content\150_santa_2016_4.bmp" />
+    <Resource Include="Content\150_shisha.bmp" />
+    <Resource Include="Content\150_signs_2016.bmp" />
+    <Resource Include="Content\150_signs_2016_2.bmp" />
+    <Resource Include="Content\150_signs_2016_3.bmp" />
+    <Resource Include="Content\150_signs_2016_4.bmp" />
+    <Resource Include="Content\150_signs_2016_5.bmp" />
+    <Resource Include="Content\150_signs_2016_6.bmp" />
+    <Resource Include="Content\150_skull.bmp" />
+    <Resource Include="Content\150_snowbird_2016.bmp" />
+    <Resource Include="Content\150_snowgirl_2016.bmp" />
+    <Resource Include="Content\150_snowman.bmp" />
+    <Resource Include="Content\150_snowman_2016.bmp" />
+    <Resource Include="Content\150_snowman_2016_2.bmp" />
+    <Resource Include="Content\150_snow_2016.bmp" />
+    <Resource Include="Content\150_sock_2016.bmp" />
+    <Resource Include="Content\150_sock_2016_1.bmp" />
+    <Resource Include="Content\150_sock_2016_2.bmp" />
+    <Resource Include="Content\150_sock_2016_3.bmp" />
+    <Resource Include="Content\150_SOVET.bmp" />
+    <Resource Include="Content\150_starhat_2016.bmp" />
+    <Resource Include="Content\150_starsTexture.bmp" />
+    <Resource Include="Content\150_star_2016.bmp" />
+    <Resource Include="Content\150_strawberry.bmp" />
+    <Resource Include="Content\150_sweet_2016.bmp" />
+    <Resource Include="Content\150_tapes2016_2.bmp" />
+    <Resource Include="Content\150_tapes2016_3.bmp" />
+    <Resource Include="Content\150_tapes2016_4.bmp" />
+    <Resource Include="Content\150_tapes2016_5.bmp" />
+    <Resource Include="Content\150_tapes_2016.bmp" />
+    <Resource Include="Content\150_tape_2016.bmp" />
+    <Resource Include="Content\150_texture.bmp" />
+    <Resource Include="Content\150_texture2.bmp" />
+    <Resource Include="Content\150_texture3.bmp" />
+    <Resource Include="Content\150_texture6+.bmp" />
+    <Resource Include="Content\150_texture8.bmp" />
+    <Resource Include="Content\150_texture8_1.bmp" />
+    <Resource Include="Content\150_texture9.bmp" />
+    <Resource Include="Content\150_theBat.bmp" />
+    <Resource Include="Content\150_theBat2.bmp" />
+    <Resource Include="Content\150_tree-star-hat_2016.bmp" />
+    <Resource Include="Content\150_tree_2016.bmp" />
+    <Resource Include="Content\150_tree_2016_2.bmp" />
+    <Resource Include="Content\150_triangle.bmp" />
+    <Resource Include="Content\150_triangle4.bmp" />
+    <Resource Include="Content\150_trifn_mo_me.bmp" />
+    <Resource Include="Content\150_uglyFaces.bmp" />
+    <Resource Include="Content\150_uglyFaces2.bmp" />
+    <Resource Include="Content\150_uglyFaces3.bmp" />
+    <Resource Include="Content\150_what_about_us__by_sharonliv_arzets-d6oknqj.bmp" />
+    <Resource Include="Content\25_3d-wallpaper-red-blue-hd-background-10_1.bmp" />
+    <Resource Include="Content\25_abstract-music-wallpapers-hd-desktop-10_2.bmp" />
+    <Resource Include="Content\25_anime-violin-wallpaper-hd-widescreen-11_1.bmp" />
+    <Resource Include="Content\25_Aquarius.bmp" />
+    <Resource Include="Content\25_Aries.bmp" />
+    <Resource Include="Content\25_Ball.bmp" />
+    <Resource Include="Content\25_Ball2.bmp" />
+    <Resource Include="Content\25_Bart.bmp" />
+    <Resource Include="Content\25_Batman.bmp" />
+    <Resource Include="Content\25_Bells.bmp" />
+    <Resource Include="Content\25_border.bmp" />
+    <Resource Include="Content\25_Bounty.bmp" />
+    <Resource Include="Content\25_BubblesPattern.bmp" />
+    <Resource Include="Content\25_BubblesPattern2.bmp" />
+    <Resource Include="Content\25_Cake.bmp" />
+    <Resource Include="Content\25_Cake2.bmp" />
+    <Resource Include="Content\25_Cancer.bmp" />
+    <Resource Include="Content\25_Candylove.bmp" />
+    <Resource Include="Content\25_Capricorn.bmp" />
+    <Resource Include="Content\25_cards.bmp" />
+    <Resource Include="Content\25_Champagne-2.bmp" />
+    <Resource Include="Content\25_Champagne2.bmp" />
+    <Resource Include="Content\25_Coldgrand.bmp" />
+    <Resource Include="Content\25_Combo.bmp" />
+    <Resource Include="Content\25_Combo2.bmp" />
+    <Resource Include="Content\25_Cone.bmp" />
+    <Resource Include="Content\25_Crusty.bmp" />
+    <Resource Include="Content\25_Deer.bmp" />
+    <Resource Include="Content\25_Deer2.bmp" />
+    <Resource Include="Content\25_Deer3.bmp" />
+    <Resource Include="Content\25_Element.bmp" />
+    <Resource Include="Content\25_epic.bmp" />
+    <Resource Include="Content\25_EtnoAfricaPattern.bmp" />
+    <Resource Include="Content\25_EtnoAfricaPattern2.bmp" />
+    <Resource Include="Content\25_Evolution.bmp" />
+    <Resource Include="Content\25_Feer.bmp" />
+    <Resource Include="Content\25_Fir.bmp" />
+    <Resource Include="Content\25_Fire.bmp" />
+    <Resource Include="Content\25_Fire2.bmp" />
+    <Resource Include="Content\25_Firtrees.bmp" />
+    <Resource Include="Content\25_fish.bmp" />
+    <Resource Include="Content\25_FloraPattern2.bmp" />
+    <Resource Include="Content\25_FloraPattern3.bmp" />
+    <Resource Include="Content\25_FloraPettern.bmp" />
+    <Resource Include="Content\25_foliage.bmp" />
+    <Resource Include="Content\25_Forest.bmp" />
+    <Resource Include="Content\25_Frozen.jpg" />
+    <Resource Include="Content\25_FuturamaSanta.bmp" />
+    <Resource Include="Content\25_garden.bmp" />
+    <Resource Include="Content\25_Gemini.bmp" />
+    <Resource Include="Content\25_gift.bmp.png" />
+    <Resource Include="Content\25_Gingerbread.bmp" />
+    <Resource Include="Content\25_hearts.bmp" />
+    <Resource Include="Content\25_Hearts2.bmp" />
+    <Resource Include="Content\25_iPoi.bmp" />
+    <Resource Include="Content\25_leaf.bmp" />
+    <Resource Include="Content\25_Leo.bmp" />
+    <Resource Include="Content\25_Libra.bmp" />
+    <Resource Include="Content\25_LisaSimpson.bmp" />
+    <Resource Include="Content\25_London.bmp" />
+    <Resource Include="Content\25_love.bmp" />
+    <Resource Include="Content\25_Moscow.bmp" />
+    <Resource Include="Content\25_Night.bmp" />
+    <Resource Include="Content\25_NY-Pattern1+.bmp" />
+    <Resource Include="Content\25_NY-Pattern1.bmp" />
+    <Resource Include="Content\25_NY-Pattern2.bmp" />
+    <Resource Include="Content\25_NY-Pattern3.bmp" />
+    <Resource Include="Content\25_NY-Pattern4.bmp" />
+    <Resource Include="Content\25_NyanCat.bmp" />
+    <Resource Include="Content\25_pacman.bmp" />
+    <Resource Include="Content\25_Panda.bmp" />
+    <Resource Include="Content\25_Paris.bmp" />
+    <Resource Include="Content\25_Piano.bmp" />
+    <Resource Include="Content\25_pikachu.bmp" />
+    <Resource Include="Content\25_pikachu_1.bmp" />
+    <Resource Include="Content\25_pikachu_2.bmp" />
+    <Resource Include="Content\25_Pisces.bmp" />
+    <Resource Include="Content\25_present2.bmp" />
+    <Resource Include="Content\25_Presents.bmp" />
+    <Resource Include="Content\25_PSY.bmp" />
+    <Resource Include="Content\25_rainbow.bmp.png" />
+    <Resource Include="Content\25_rainbow2.bmp.png" />
+    <Resource Include="Content\25_red_arrows_right.bmp" />
+    <Resource Include="Content\25_Rome.bmp" />
+    <Resource Include="Content\25_RoundPattern.bmp" />
+    <Resource Include="Content\25_Rudolf2.bmp" />
+    <Resource Include="Content\25_Russia.bmp" />
+    <Resource Include="Content\25_ru_svetodiody.bmp" />
+    <Resource Include="Content\25_Sagittarius.bmp" />
+    <Resource Include="Content\25_samson.bmp" />
+    <Resource Include="Content\25_Santa.bmp" />
+    <Resource Include="Content\25_Santa2.bmp" />
+    <Resource Include="Content\25_santorini.bmp" />
+    <Resource Include="Content\25_Scorpio.bmp" />
+    <Resource Include="Content\25_smiles.bmp" />
+    <Resource Include="Content\25_Snow.bmp" />
+    <Resource Include="Content\25_Snow1.bmp" />
+    <Resource Include="Content\25_Snow2.bmp" />
+    <Resource Include="Content\25_SnowBlue.bmp" />
+    <Resource Include="Content\25_SnowBlue2.bmp" />
+    <Resource Include="Content\25_SnowGold.bmp" />
+    <Resource Include="Content\25_Snowly.bmp" />
+    <Resource Include="Content\25_Snowman1.bmp" />
+    <Resource Include="Content\25_Snowman2.bmp" />
+    <Resource Include="Content\25_SnowPattern.bmp" />
+    <Resource Include="Content\25_SnowPattern2.bmp" />
+    <Resource Include="Content\25_SnowPurple.bmp" />
+    <Resource Include="Content\25_SnowRed.bmp" />
+    <Resource Include="Content\25_Sonic.bmp" />
+    <Resource Include="Content\25_SquarePattern.bmp" />
+    <Resource Include="Content\25_SquarePattern2.bmp" />
+    <Resource Include="Content\25_Star.bmp" />
+    <Resource Include="Content\25_stars.bmp" />
+    <Resource Include="Content\25_Stars2.bmp" />
+    <Resource Include="Content\25_Stars3.bmp" />
+    <Resource Include="Content\25_stripes.bmp" />
+    <Resource Include="Content\25_Taurus.bmp" />
+    <Resource Include="Content\25_Tracery.bmp" />
+    <Resource Include="Content\25_triangle.bmp" />
+    <Resource Include="Content\25_triangle2.bmp" />
+    <Resource Include="Content\25_Vetka.bmp" />
+    <Resource Include="Content\25_Vetka2.bmp" />
+    <Resource Include="Content\25_Virgo.bmp" />
+    <Resource Include="Content\25_Water.bmp" />
+    <Resource Include="Content\25_Wolf.bmp" />
+    <Resource Include="Content\25_Zayac.bmp" />
+    <Resource Include="Content\30_red_line.bmp" />
+    <Resource Include="Content\40_angrybird_red.bmp.png" />
+    <Resource Include="Content\40_angrybird_yellow.bmp.png" />
+    <Resource Include="Content\40_AudioLevels.bmp" />
+    <Resource Include="Content\40_audio_levels.bmp" />
+    <Resource Include="Content\40_dance.bmp" />
+    <Resource Include="Content\40_fish.bmp.png" />
+    <Resource Include="Content\40_hearts.bmp" />
+    <Resource Include="Content\40_leaf.bmp.png" />
+    <Resource Include="Content\40_new_year.bmp" />
+    <Resource Include="Content\40_rainbow.bmp.png" />
+    <Resource Include="Content\40_rainbow2.bmp.png" />
+    <Resource Include="Content\40_smiles.bmp.png" />
+    <Resource Include="Content\40_steps2.bmp" />
+    <Resource Include="Content\40_stripes.bmp.png" />
+    <Resource Include="Content\50_2016.bmp" />
+    <Resource Include="Content\50_2016_2.bmp" />
+    <Resource Include="Content\50_2016_3.bmp" />
+    <Resource Include="Content\50_2_waves.bmp" />
+    <Resource Include="Content\50_3d-wallpaper-fire-widescreen-2.bmp" />
+    <Resource Include="Content\50_angrybird_red.bmp" />
+    <Resource Include="Content\50_angrybird_yellow.bmp" />
+    <Resource Include="Content\50_Aquarius.bmp" />
+    <Resource Include="Content\50_Aries.bmp" />
+    <Resource Include="Content\50_audio_levels.bmp" />
+    <Resource Include="Content\50_background.bmp" />
+    <Resource Include="Content\50_Ball.bmp" />
+    <Resource Include="Content\50_Ball2.bmp" />
+    <Resource Include="Content\50_ball3.bmp" />
+    <Resource Include="Content\50_Bart.bmp" />
+    <Resource Include="Content\50_Batman.bmp" />
+    <Resource Include="Content\50_Bells.bmp" />
+    <Resource Include="Content\50_bird_2016.bmp" />
+    <Resource Include="Content\50_border.bmp" />
+    <Resource Include="Content\50_Bounty.bmp" />
+    <Resource Include="Content\50_BubblesPattern.bmp" />
+    <Resource Include="Content\50_BubblesPattern2.bmp" />
+    <Resource Include="Content\50_Cake.bmp" />
+    <Resource Include="Content\50_Cake2.bmp" />
+    <Resource Include="Content\50_Cancer.bmp" />
+    <Resource Include="Content\50_candle_2016.bmp" />
+    <Resource Include="Content\50_Candylove.bmp" />
+    <Resource Include="Content\50_Capricorn.bmp" />
+    <Resource Include="Content\50_cards.bmp" />
+    <Resource Include="Content\50_cat_2016.bmp" />
+    <Resource Include="Content\50_Champagne-2.bmp" />
+    <Resource Include="Content\50_Champagne2.bmp" />
+    <Resource Include="Content\50_Coldgrand.bmp" />
+    <Resource Include="Content\50_Combo.bmp" />
+    <Resource Include="Content\50_Combo2.bmp" />
+    <Resource Include="Content\50_Cone.bmp" />
+    <Resource Include="Content\50_Crusty.bmp" />
+    <Resource Include="Content\50_Deer.bmp" />
+    <Resource Include="Content\50_Deer2.bmp" />
+    <Resource Include="Content\50_Deer3.bmp" />
+    <Resource Include="Content\50_Element.bmp" />
+    <Resource Include="Content\50_epic.bmp" />
+    <Resource Include="Content\50_EtnoAfricaPattern.bmp" />
+    <Resource Include="Content\50_EtnoAfricaPattern2.bmp" />
+    <Resource Include="Content\50_Evolution.bmp" />
+    <Resource Include="Content\50_face_2016.bmp" />
+    <Resource Include="Content\50_face_2016_2.bmp" />
+    <Resource Include="Content\50_face_2016_3.bmp" />
+    <Resource Include="Content\50_Feer.bmp" />
+    <Resource Include="Content\50_Feer2.bmp" />
+    <Resource Include="Content\50_Fir.bmp" />
+    <Resource Include="Content\50_Fire.bmp" />
+    <Resource Include="Content\50_Fire2.bmp" />
+    <Resource Include="Content\50_Firtrees.bmp" />
+    <Resource Include="Content\50_fish.bmp.png" />
+    <Resource Include="Content\50_FloraPattern2.bmp" />
+    <Resource Include="Content\50_FloraPattern3.bmp" />
+    <Resource Include="Content\50_FloraPettern.bmp" />
+    <Resource Include="Content\50_foliage.bmp" />
+    <Resource Include="Content\50_Forest.bmp" />
+    <Resource Include="Content\50_Frozen.jpg" />
+    <Resource Include="Content\50_FuturamaSanta.bmp" />
+    <Resource Include="Content\50_Gemini.bmp" />
+    <Resource Include="Content\50_gift_2016.bmp" />
+    <Resource Include="Content\50_gift_2016_2.bmp" />
+    <Resource Include="Content\50_gift_2016_3.bmp" />
+    <Resource Include="Content\50_gift_2016_4.bmp" />
+    <Resource Include="Content\50_gift_2016_5.bmp" />
+    <Resource Include="Content\50_gift_2016_6.bmp" />
+    <Resource Include="Content\50_gift_2016_7.bmp" />
+    <Resource Include="Content\50_Gingerbread.bmp" />
+    <Resource Include="Content\50_girlface.bmp" />
+    <Resource Include="Content\50_grassBackground.bmp" />
+    <Resource Include="Content\50_hearts-n-hats_2016.bmp" />
+    <Resource Include="Content\50_hearts.bmp" />
+    <Resource Include="Content\50_iPoi.bmp" />
+    <Resource Include="Content\50_justMarried.bmp" />
+    <Resource Include="Content\50_justMarriedEn.bmp" />
+    <Resource Include="Content\50_leaf.bmp.png" />
+    <Resource Include="Content\50_Leo.bmp" />
+    <Resource Include="Content\50_Libra.bmp" />
+    <Resource Include="Content\50_LisaSimpson.bmp" />
+    <Resource Include="Content\50_London.bmp" />
+    <Resource Include="Content\50_microsoft.bmp" />
+    <Resource Include="Content\50_microsoft2.bmp" />
+    <Resource Include="Content\50_microsoft2.bmp.png" />
+    <Resource Include="Content\50_Moscow.bmp" />
+    <Resource Include="Content\50_new_year.bmp" />
+    <Resource Include="Content\50_new_year_2.bmp" />
+    <Resource Include="Content\50_Night.bmp" />
+    <Resource Include="Content\50_NY-Pattern1.bmp" />
+    <Resource Include="Content\50_NY-Pattern12.bmp" />
+    <Resource Include="Content\50_NY-Pattern2.bmp" />
+    <Resource Include="Content\50_NY-Pattern3.bmp" />
+    <Resource Include="Content\50_NY-Pattern4.bmp" />
+    <Resource Include="Content\50_NyanCat.bmp" />
+    <Resource Include="Content\50_pacman.bmp" />
+    <Resource Include="Content\50_Panda.bmp" />
+    <Resource Include="Content\50_Paris.bmp" />
+    <Resource Include="Content\50_pattern.bmp" />
+    <Resource Include="Content\50_pattern2.bmp" />
+    <Resource Include="Content\50_pattern3.bmp" />
+    <Resource Include="Content\50_patternBulbs.bmp" />
+    <Resource Include="Content\50_patternCubesRainbow.bmp" />
+    <Resource Include="Content\50_patternFireworks.bmp" />
+    <Resource Include="Content\50_pattern_big_2016.bmp" />
+    <Resource Include="Content\50_pattern_small_2016.bmp" />
+    <Resource Include="Content\50_Piano.bmp" />
+    <Resource Include="Content\50_pikachu.bmp" />
+    <Resource Include="Content\50_Pisces.bmp" />
+    <Resource Include="Content\50_PIXELWANDS.bmp.png" />
+    <Resource Include="Content\50_present2.bmp" />
+    <Resource Include="Content\50_Presents.bmp" />
+    <Resource Include="Content\50_PSY.bmp" />
+    <Resource Include="Content\50_rainbow.bmp" />
+    <Resource Include="Content\50_rainbow2.bmp.png" />
+    <Resource Include="Content\50_redcloud.bmp" />
+    <Resource Include="Content\50_redcloud.bmp.png" />
+    <Resource Include="Content\50_red_arrows_right.bmp" />
+    <Resource Include="Content\50_Rome.bmp" />
+    <Resource Include="Content\50_RoundPattern.bmp" />
+    <Resource Include="Content\50_Rudolf2.bmp" />
+    <Resource Include="Content\50_ruflag.bmp" />
+    <Resource Include="Content\50_ruler.bmp" />
+    <Resource Include="Content\50_ruler.bmp.png" />
+    <Resource Include="Content\50_Russia.bmp" />
+    <Resource Include="Content\50_Sagittarius.bmp" />
+    <Resource Include="Content\50_santa.bmp" />
+    <Resource Include="Content\50_Santa2.bmp" />
+    <Resource Include="Content\50_Santa3.bmp" />
+    <Resource Include="Content\50_santa_2016.bmp" />
+    <Resource Include="Content\50_santa_2016_2.bmp" />
+    <Resource Include="Content\50_santa_2016_3.bmp" />
+    <Resource Include="Content\50_santa_2016_4.bmp" />
+    <Resource Include="Content\50_Scorpio.bmp" />
+    <Resource Include="Content\50_signs_2016.bmp" />
+    <Resource Include="Content\50_signs_2016_2.bmp" />
+    <Resource Include="Content\50_signs_2016_3.bmp" />
+    <Resource Include="Content\50_signs_2016_4.bmp" />
+    <Resource Include="Content\50_signs_2016_5.bmp" />
+    <Resource Include="Content\50_signs_2016_6.bmp" />
+    <Resource Include="Content\50_smiles.bmp.png" />
+    <Resource Include="Content\50_snake.bmp" />
+    <Resource Include="Content\50_Snow.bmp" />
+    <Resource Include="Content\50_Snow1.bmp" />
+    <Resource Include="Content\50_Snow2.bmp" />
+    <Resource Include="Content\50_snowbird_2016.bmp" />
+    <Resource Include="Content\50_SnowBlue.bmp" />
+    <Resource Include="Content\50_SnowBlue2.bmp" />
+    <Resource Include="Content\50_snowgirl_2016.bmp" />
+    <Resource Include="Content\50_SnowGold.bmp" />
+    <Resource Include="Content\50_Snowly.bmp" />
+    <Resource Include="Content\50_Snowman1.bmp" />
+    <Resource Include="Content\50_Snowman2.bmp" />
+    <Resource Include="Content\50_snowman_2016.bmp" />
+    <Resource Include="Content\50_snowman_2016_2.bmp" />
+    <Resource Include="Content\50_SnowPattern.bmp" />
+    <Resource Include="Content\50_SnowPattern2.bmp" />
+    <Resource Include="Content\50_SnowPurple.bmp" />
+    <Resource Include="Content\50_SnowRed.bmp" />
+    <Resource Include="Content\50_snow_2016.bmp" />
+    <Resource Include="Content\50_sock_2016.bmp" />
+    <Resource Include="Content\50_sock_2016_1.bmp" />
+    <Resource Include="Content\50_sock_2016_2.bmp" />
+    <Resource Include="Content\50_sock_2016_3.bmp" />
+    <Resource Include="Content\50_Sonic.bmp" />
+    <Resource Include="Content\50_SquarePattern.bmp" />
+    <Resource Include="Content\50_SquarePattern2.bmp" />
+    <Resource Include="Content\50_square_circle.bmp" />
+    <Resource Include="Content\50_Star.bmp" />
+    <Resource Include="Content\50_starhat_2016.bmp" />
+    <Resource Include="Content\50_stars.bmp" />
+    <Resource Include="Content\50_Stars2.bmp" />
+    <Resource Include="Content\50_Stars3.bmp" />
+    <Resource Include="Content\50_star_2016.bmp" />
+    <Resource Include="Content\50_steps.bmp" />
+    <Resource Include="Content\50_steps2.bmp" />
+    <Resource Include="Content\50_stork2.bmp" />
+    <Resource Include="Content\50_stork3.bmp" />
+    <Resource Include="Content\50_stripes.bmp.png" />
+    <Resource Include="Content\50_sunFlower.bmp" />
+    <Resource Include="Content\50_sweet_2016.bmp" />
+    <Resource Include="Content\50_tapes2016_2.bmp" />
+    <Resource Include="Content\50_tapes2016_3.bmp" />
+    <Resource Include="Content\50_tapes2016_4.bmp" />
+    <Resource Include="Content\50_tapes2016_5.bmp" />
+    <Resource Include="Content\50_tapes_2016.bmp" />
+    <Resource Include="Content\50_tape_2016.bmp" />
+    <Resource Include="Content\50_Taurus.bmp" />
+    <Resource Include="Content\50_texture8.bmp" />
+    <Resource Include="Content\50_Tracery.bmp" />
+    <Resource Include="Content\50_tree-star-hat_2016.bmp" />
+    <Resource Include="Content\50_tree_2016.bmp" />
+    <Resource Include="Content\50_tree_2016_2.bmp" />
+    <Resource Include="Content\50_triangle.bmp" />
+    <Resource Include="Content\50_Vetka.bmp" />
+    <Resource Include="Content\50_Vetka2.bmp" />
+    <Resource Include="Content\50_Virgo.bmp" />
+    <Resource Include="Content\50_Volkswagen.bmp" />
+    <Resource Include="Content\50_Volkswagen_blue.bmp" />
+    <Resource Include="Content\50_Volkswagen_blue.bmp.png" />
+    <Resource Include="Content\50_Volkswagen_text.bmp" />
+    <Resource Include="Content\50_Water.bmp" />
+    <Resource Include="Content\50_waves.bmp" />
+    <Resource Include="Content\50_what_about_us__by_sharonliv_arzets-d6oknqj_2.bmp" />
+    <Resource Include="Content\50_white.bmp" />
+    <Resource Include="Content\50_Wolf.bmp" />
+    <Resource Include="Content\50_Zayac.bmp" />
+    <Resource Include="Content\55_2_waves.bmp" />
+    <Resource Include="Content\55_2_waves.bmp.png" />
+    <Resource Include="Content\60_3d-wallpaper-fire-hd-1080p-14.bmp" />
+    <Resource Include="Content\60_3d-wallpaper-fire-hd-background-wallpaper-27.bmp" />
+    <Resource Include="Content\60_3d-wallpaper-fire-widescreen-2.bmp" />
+    <Resource Include="Content\60_3d-wallpaper-red-blue-hd-background-10.bmp" />
+    <Resource Include="Content\60_abstract-art-faces-black-and-white-hd-images-3.bmp" />
+    <Resource Include="Content\60_abstract-art-faces-for-desktop-16.bmp" />
+    <Resource Include="Content\60_abstract-art-faces-for-desktop-background-15.bmp" />
+    <Resource Include="Content\60_abstract-art-faces-hd-1080p-14.bmp" />
+    <Resource Include="Content\60_abstract-art-faces-hd-free-13.bmp" />
+    <Resource Include="Content\60_abstract-art-faces-images-7.bmp" />
+    <Resource Include="Content\60_abstract-music-wallpapers-hd-desktop-10.bmp" />
+    <Resource Include="Content\60_abstract-music-wallpapers-hd-pictures-4.bmp" />
+    <Resource Include="Content\60_anime-music-wallpaper-1920x1080-hd-pictures-4.bmp" />
+    <Resource Include="Content\60_anime-music-wallpaper-for-desktop-background-13.bmp" />
+    <Resource Include="Content\60_anime-music-wallpaper-hd-background-wallpaper-28.bmp" />
+    <Resource Include="Content\60_anime-music-wallpaper-hd-background-wallpaper-32.bmp" />
+    <Resource Include="Content\60_anime-violin-wallpaper-hd-widescreen-11.bmp" />
+    <Resource Include="Content\60_anime-violin-wallpaper-pictures-5.bmp" />
+    <Resource Include="Content\60_Aquarius.bmp" />
+    <Resource Include="Content\60_Aries.bmp" />
+    <Resource Include="Content\60_audio.jpg" />
+    <Resource Include="Content\60_Ball.bmp" />
+    <Resource Include="Content\60_Ball2.bmp" />
+    <Resource Include="Content\60_Bart.bmp" />
+    <Resource Include="Content\60_Batman.bmp" />
+    <Resource Include="Content\60_Bells.bmp" />
+    <Resource Include="Content\60_border.bmp" />
+    <Resource Include="Content\60_boum.bmp" />
+    <Resource Include="Content\60_Bounty.bmp" />
+    <Resource Include="Content\60_BubblesPattern.bmp" />
+    <Resource Include="Content\60_BubblesPattern2.bmp" />
+    <Resource Include="Content\60_Cake.bmp" />
+    <Resource Include="Content\60_Cake2.bmp" />
+    <Resource Include="Content\60_Cancer.bmp" />
+    <Resource Include="Content\60_candle_cant.bmp" />
+    <Resource Include="Content\60_Candylove.bmp" />
+    <Resource Include="Content\60_Capricorn.bmp" />
+    <Resource Include="Content\60_cartoon-images-of-spongebob-hd-desktop-10.bmp" />
+    <Resource Include="Content\60_Champagne-1.bmp" />
+    <Resource Include="Content\60_Champagne2.bmp" />
+    <Resource Include="Content\60_cloud.bmp" />
+    <Resource Include="Content\60_cloud_text.bmp" />
+    <Resource Include="Content\60_Coldgrand.bmp" />
+    <Resource Include="Content\60_Combo.bmp" />
+    <Resource Include="Content\60_Combo2.bmp" />
+    <Resource Include="Content\60_comics-characters-face-widescreen-2.bmp" />
+    <Resource Include="Content\60_comics-characters-face-widescreen-3.bmp" />
+    <Resource Include="Content\60_Cone.bmp" />
+    <Resource Include="Content\60_Crusty.bmp" />
+    <Resource Include="Content\60_cute-anime-angel-wallpaper-background-1.bmp" />
+    <Resource Include="Content\60_cute-anime-angel-wallpaper-hd-background-9.bmp" />
+    <Resource Include="Content\60_Deer.bmp" />
+    <Resource Include="Content\60_Deer2.bmp" />
+    <Resource Include="Content\60_Deer3.bmp" />
+    <Resource Include="Content\60_Element.bmp" />
+    <Resource Include="Content\60_EtnoAfricaPattern.bmp" />
+    <Resource Include="Content\60_EtnoAfricaPattern2.bmp" />
+    <Resource Include="Content\60_Evolution.bmp" />
+    <Resource Include="Content\60_Feer.bmp" />
+    <Resource Include="Content\60_Fir.bmp" />
+    <Resource Include="Content\60_Fire.bmp" />
+    <Resource Include="Content\60_Fire2.bmp" />
+    <Resource Include="Content\60_Firtrees.bmp" />
+    <Resource Include="Content\60_FloraPattern2.bmp" />
+    <Resource Include="Content\60_FloraPattern3.bmp" />
+    <Resource Include="Content\60_FloraPettern.bmp" />
+    <Resource Include="Content\60_foliage.bmp" />
+    <Resource Include="Content\60_Forest.bmp" />
+    <Resource Include="Content\60_Frozen.jpg" />
+    <Resource Include="Content\60_funny-face-cartoon-images-background-1.bmp" />
+    <Resource Include="Content\60_FuturamaSanta.bmp" />
+    <Resource Include="Content\60_Gemini.bmp" />
+    <Resource Include="Content\60_geometric-abstract-sculpture-hd-images-3.bmp" />
+    <Resource Include="Content\60_Gingerbread.bmp" />
+    <Resource Include="Content\60_grassBackground.bmp" />
+    <Resource Include="Content\60_Hearts.bmp" />
+    <Resource Include="Content\60_hearts.jpg" />
+    <Resource Include="Content\60_iPoi.bmp" />
+    <Resource Include="Content\60_Leo.bmp" />
+    <Resource Include="Content\60_Libra.bmp" />
+    <Resource Include="Content\60_LisaSimpson.bmp" />
+    <Resource Include="Content\60_London.bmp" />
+    <Resource Include="Content\60_Moscow.bmp" />
+    <Resource Include="Content\60_music-wallpaper-hd-background-wallpaper-54.bmp" />
+    <Resource Include="Content\60_music-wallpaper-hd-for-desktop-images-6.bmp" />
+    <Resource Include="Content\60_neon-wallpaper-free-desktop-8.bmp" />
+    <Resource Include="Content\60_neon-wallpaper-hd-cool-7.bmp" />
+    <Resource Include="Content\60_neon-wallpaper-images-6.bmp" />
+    <Resource Include="Content\60_Night.bmp" />
+    <Resource Include="Content\60_NY-Pattern1.bmp" />
+    <Resource Include="Content\60_NY-Pattern12.bmp" />
+    <Resource Include="Content\60_NY-Pattern3.bmp" />
+    <Resource Include="Content\60_NyanCat.bmp" />
+    <Resource Include="Content\60_pacman.bmp" />
+    <Resource Include="Content\60_Panda.bmp" />
+    <Resource Include="Content\60_Paris.bmp" />
+    <Resource Include="Content\60_Piano.bmp" />
+    <Resource Include="Content\60_picasso-abstract-art-faces-pictures-6.bmp" />
+    <Resource Include="Content\60_Pisces.bmp" />
+    <Resource Include="Content\60_present2.bmp" />
+    <Resource Include="Content\60_Presents.bmp" />
+    <Resource Include="Content\60_PSY.bmp" />
+    <Resource Include="Content\60_quote1.bmp" />
+    <Resource Include="Content\60_quote1_empty.bmp" />
+    <Resource Include="Content\60_return-of-the-hulk-l.bmp" />
+    <Resource Include="Content\60_Rome.bmp" />
+    <Resource Include="Content\60_RoundPattern.bmp" />
+    <Resource Include="Content\60_Rudolf2.bmp" />
+    <Resource Include="Content\60_Russia.bmp" />
+    <Resource Include="Content\60_Sagittarius.bmp" />
+    <Resource Include="Content\60_Santa.bmp" />
+    <Resource Include="Content\60_Santa2.bmp" />
+    <Resource Include="Content\60_sb1.bmp" />
+    <Resource Include="Content\60_sb2.bmp" />
+    <Resource Include="Content\60_sb3.bmp" />
+    <Resource Include="Content\60_sb4.bmp" />
+    <Resource Include="Content\60_sb5.bmp" />
+    <Resource Include="Content\60_sb6.bmp" />
+    <Resource Include="Content\60_sb7.bmp" />
+    <Resource Include="Content\60_sb8.bmp" />
+    <Resource Include="Content\60_school.bmp" />
+    <Resource Include="Content\60_Scorpio.bmp" />
+    <Resource Include="Content\60_simple-abstract-art-shapes-hd-pictures-4.bmp" />
+    <Resource Include="Content\60_simple-abstract-art-shapes-widescreen-2.bmp" />
+    <Resource Include="Content\60_Snow.bmp" />
+    <Resource Include="Content\60_Snow1.bmp" />
+    <Resource Include="Content\60_Snow2.bmp" />
+    <Resource Include="Content\60_SnowBlue.bmp" />
+    <Resource Include="Content\60_SnowBlue2.bmp" />
+    <Resource Include="Content\60_SnowGold.bmp" />
+    <Resource Include="Content\60_Snowly.bmp" />
+    <Resource Include="Content\60_Snowman2.bmp" />
+    <Resource Include="Content\60_SnowPattern.bmp" />
+    <Resource Include="Content\60_SnowPattern2.bmp" />
+    <Resource Include="Content\60_SnowPurple.bmp" />
+    <Resource Include="Content\60_SnowRed.bmp" />
+    <Resource Include="Content\60_Sonic.bmp" />
+    <Resource Include="Content\60_SquarePatter2.bmp" />
+    <Resource Include="Content\60_SquarePattern.bmp" />
+    <Resource Include="Content\60_Star.bmp" />
+    <Resource Include="Content\60_Stars.bmp" />
+    <Resource Include="Content\60_Stars2.bmp" />
+    <Resource Include="Content\60_stork2.bmp" />
+    <Resource Include="Content\60_superman-comic-wallpaper-background-1.bmp" />
+    <Resource Include="Content\60_superman-comic-wallpaper-images-6.bmp" />
+    <Resource Include="Content\60_superman-comic-wallpaper-widescreen-2.bmp" />
+    <Resource Include="Content\60_Taurus.bmp" />
+    <Resource Include="Content\60_triangle.bmp" />
+    <Resource Include="Content\60_triangle2.bmp" />
+    <Resource Include="Content\60_triangle3.bmp" />
+    <Resource Include="Content\60_Vetka.bmp" />
+    <Resource Include="Content\60_Vetka2.bmp" />
+    <Resource Include="Content\60_Virgo.bmp" />
+    <Resource Include="Content\60_wallpaper-hd-hd-background-wallpaper-53.bmp" />
+    <Resource Include="Content\60_wallpaper-hd-hd-background-wallpaper-78.bmp" />
+    <Resource Include="Content\60_Water2.bmp" />
+    <Resource Include="Content\60_Wolf.bmp" />
+    <Resource Include="Content\60_Zayac.bmp" />
+    <Resource Include="Content\65_2016.bmp" />
+    <Resource Include="Content\65_2016_2.bmp" />
+    <Resource Include="Content\65_2016_3.bmp" />
+    <Resource Include="Content\65_3d-ocean-wallpaper-hd-background-10.bmp" />
+    <Resource Include="Content\65_3d-wallpaper-fire-hd-1080p-14.bmp" />
+    <Resource Include="Content\65_3d-wallpaper-fire-hd-background-wallpaper-27.bmp" />
+    <Resource Include="Content\65_3d-wallpaper-fire-widescreen-2.bmp" />
+    <Resource Include="Content\65_3d-wallpaper-red-blue-hd-background-10.bmp" />
+    <Resource Include="Content\65_65_kate3.bmp" />
+    <Resource Include="Content\65_65_weare.bmp" />
+    <Resource Include="Content\65_80_juriy.bmp" />
+    <Resource Include="Content\65_80_kate.bmp" />
+    <Resource Include="Content\65_80_kate2+.bmp" />
+    <Resource Include="Content\65_abstract-art-faces-black-and-white-hd-images-3.bmp" />
+    <Resource Include="Content\65_abstract-art-faces-for-desktop-16.bmp" />
+    <Resource Include="Content\65_abstract-art-faces-for-desktop-background-15.bmp" />
+    <Resource Include="Content\65_abstract-art-faces-hd-1080p-14.bmp" />
+    <Resource Include="Content\65_abstract-art-faces-hd-free-13.bmp" />
+    <Resource Include="Content\65_abstract-art-faces-images-7.bmp" />
+    <Resource Include="Content\65_abstract-music-wallpapers-hd-desktop-10.bmp" />
+    <Resource Include="Content\65_abstract-music-wallpapers-hd-pictures-4.bmp" />
+    <Resource Include="Content\65_angrybird_red.bmp.png" />
+    <Resource Include="Content\65_angrybird_yellow.bmp.png" />
+    <Resource Include="Content\65_anime-music-wallpaper-1920x1080-hd-pictures-4.bmp" />
+    <Resource Include="Content\65_anime-music-wallpaper-for-desktop-background-13.bmp" />
+    <Resource Include="Content\65_anime-music-wallpaper-hd-background-wallpaper-28.bmp" />
+    <Resource Include="Content\65_anime-music-wallpaper-hd-background-wallpaper-32.bmp" />
+    <Resource Include="Content\65_anime-violin-wallpaper-hd-widescreen-11.bmp" />
+    <Resource Include="Content\65_anime-violin-wallpaper-pictures-5.bmp" />
+    <Resource Include="Content\65_Aquarius.bmp" />
+    <Resource Include="Content\65_Argentina article.bmp" />
+    <Resource Include="Content\65_Aries.bmp" />
+    <Resource Include="Content\65_audio_levels.bmp.png" />
+    <Resource Include="Content\65_Ball.bmp" />
+    <Resource Include="Content\65_Ball2.bmp" />
+    <Resource Include="Content\65_Bart.bmp" />
+    <Resource Include="Content\65_Batman.bmp" />
+    <Resource Include="Content\65_Bells.bmp" />
+    <Resource Include="Content\65_bird_2016.bmp" />
+    <Resource Include="Content\65_black.bmp.png" />
+    <Resource Include="Content\65_border.bmp" />
+    <Resource Include="Content\65_boum.bmp" />
+    <Resource Include="Content\65_Bounty.bmp" />
+    <Resource Include="Content\65_BubblesPattern.bmp" />
+    <Resource Include="Content\65_BubblesPattern2.bmp" />
+    <Resource Include="Content\65_Cake.bmp" />
+    <Resource Include="Content\65_Cake2.bmp" />
+    <Resource Include="Content\65_Cake3.bmp" />
+    <Resource Include="Content\65_Cancer.bmp" />
+    <Resource Include="Content\65_candle_2016.bmp" />
+    <Resource Include="Content\65_candle_cant.bmp" />
+    <Resource Include="Content\65_Candylove.bmp" />
+    <Resource Include="Content\65_Capricorn.bmp" />
+    <Resource Include="Content\65_cards.bmp.png" />
+    <Resource Include="Content\65_cartoon-images-of-spongebob-hd-desktop-10.bmp" />
+    <Resource Include="Content\65_cat_2016.bmp" />
+    <Resource Include="Content\65_Champagne-1.bmp" />
+    <Resource Include="Content\65_Champagne2.bmp" />
+    <Resource Include="Content\65_cloud.bmp" />
+    <Resource Include="Content\65_cloud_text.bmp" />
+    <Resource Include="Content\65_Coldgrand.bmp" />
+    <Resource Include="Content\65_Combo.bmp" />
+    <Resource Include="Content\65_Combo2.bmp" />
+    <Resource Include="Content\65_comics-characters-face-widescreen-2.bmp" />
+    <Resource Include="Content\65_comics-characters-face-widescreen-3.bmp" />
+    <Resource Include="Content\65_Cone.bmp" />
+    <Resource Include="Content\65_Crusty.bmp" />
+    <Resource Include="Content\65_cute-anime-angel-wallpaper-background-1.bmp" />
+    <Resource Include="Content\65_cute-anime-angel-wallpaper-hd-background-9.bmp" />
+    <Resource Include="Content\65_Deer.bmp" />
+    <Resource Include="Content\65_Deer2.bmp" />
+    <Resource Include="Content\65_Deer3.bmp" />
+    <Resource Include="Content\65_Element.bmp" />
+    <Resource Include="Content\65_EtnoAfricaPattern.bmp" />
+    <Resource Include="Content\65_EtnoAfricaPattern2.bmp" />
+    <Resource Include="Content\65_Evolution.bmp" />
+    <Resource Include="Content\65_face_2016.bmp" />
+    <Resource Include="Content\65_face_2016_2.bmp" />
+    <Resource Include="Content\65_face_2016_3.bmp" />
+    <Resource Include="Content\65_Feer.bmp" />
+    <Resource Include="Content\65_Fir.bmp" />
+    <Resource Include="Content\65_Fire.bmp" />
+    <Resource Include="Content\65_Fire2.bmp" />
+    <Resource Include="Content\65_Firtrees.bmp" />
+    <Resource Include="Content\65_fish.bmp.png" />
+    <Resource Include="Content\65_FloraPattern2.bmp" />
+    <Resource Include="Content\65_FloraPattern3.bmp" />
+    <Resource Include="Content\65_FloraPettern.bmp" />
+    <Resource Include="Content\65_foliage.bmp" />
+    <Resource Include="Content\65_Forest.bmp" />
+    <Resource Include="Content\65_Frozen.jpg" />
+    <Resource Include="Content\65_funny-face-cartoon-images-background-1.bmp" />
+    <Resource Include="Content\65_FuturamaSanta.bmp" />
+    <Resource Include="Content\65_Gemini.bmp" />
+    <Resource Include="Content\65_geometric-abstract-sculpture-hd-images-3.bmp" />
+    <Resource Include="Content\65_gift_2016.bmp" />
+    <Resource Include="Content\65_gift_2016_2.bmp" />
+    <Resource Include="Content\65_gift_2016_3.bmp" />
+    <Resource Include="Content\65_gift_2016_4.bmp" />
+    <Resource Include="Content\65_gift_2016_5.bmp" />
+    <Resource Include="Content\65_gift_2016_6.bmp" />
+    <Resource Include="Content\65_gift_2016_7.bmp" />
+    <Resource Include="Content\65_Gingerbread.bmp" />
+    <Resource Include="Content\65_grassBackground.bmp" />
+    <Resource Include="Content\65_hearts-n-hats_2016.bmp" />
+    <Resource Include="Content\65_Hearts.bmp" />
+    <Resource Include="Content\65_Hearts2.bmp" />
+    <Resource Include="Content\65_iPoi.bmp" />
+    <Resource Include="Content\65_leaf.bmp.png" />
+    <Resource Include="Content\65_Leo.bmp" />
+    <Resource Include="Content\65_Libra.bmp" />
+    <Resource Include="Content\65_LisaSimpson.bmp" />
+    <Resource Include="Content\65_London.bmp" />
+    <Resource Include="Content\65_mickey.bmp.png" />
+    <Resource Include="Content\65_Moscow.bmp" />
+    <Resource Include="Content\65_music-wallpaper-hd-background-wallpaper-54.bmp" />
+    <Resource Include="Content\65_music-wallpaper-hd-for-desktop-images-6.bmp" />
+    <Resource Include="Content\65_neon-wallpaper-free-desktop-8.bmp" />
+    <Resource Include="Content\65_neon-wallpaper-hd-cool-7.bmp" />
+    <Resource Include="Content\65_neon-wallpaper-images-6.bmp" />
+    <Resource Include="Content\65_new_year.bmp" />
+    <Resource Include="Content\65_new_year_2.bmp" />
+    <Resource Include="Content\65_Night.bmp" />
+    <Resource Include="Content\65_NY-Pattern1.bmp" />
+    <Resource Include="Content\65_NY-Pattern12.bmp" />
+    <Resource Include="Content\65_NY-Pattern2.bmp" />
+    <Resource Include="Content\65_NY-Pattern3.bmp" />
+    <Resource Include="Content\65_NY-Pattern4.bmp" />
+    <Resource Include="Content\65_NyanCat.bmp" />
+    <Resource Include="Content\65_optogan.bmp.png" />
+    <Resource Include="Content\65_pacman.bmp" />
+    <Resource Include="Content\65_Panda.bmp" />
+    <Resource Include="Content\65_Paris.bmp" />
+    <Resource Include="Content\65_patternFireworks.bmp.png" />
+    <Resource Include="Content\65_pattern_big_2016.bmp" />
+    <Resource Include="Content\65_pattern_small_2016.bmp" />
+    <Resource Include="Content\65_Piano.bmp" />
+    <Resource Include="Content\65_picasso-abstract-art-faces-pictures-6.bmp" />
+    <Resource Include="Content\65_pikachu.bmp" />
+    <Resource Include="Content\65_Pisces.bmp" />
+    <Resource Include="Content\65_PIXELWANDS.bmp.png" />
+    <Resource Include="Content\65_pqbX5iR0rE8.bmp" />
+    <Resource Include="Content\65_pqbX5iR0rE9.bmp" />
+    <Resource Include="Content\65_present2.bmp" />
+    <Resource Include="Content\65_Presents.bmp" />
+    <Resource Include="Content\65_PSY.bmp" />
+    <Resource Include="Content\65_quote1.bmp" />
+    <Resource Include="Content\65_quote1_empty.bmp" />
+    <Resource Include="Content\65_rainbow.bmp.png" />
+    <Resource Include="Content\65_rainbow2.bmp.png" />
+    <Resource Include="Content\65_red_arrows_right.bmp.png" />
+    <Resource Include="Content\65_return-of-the-hulk-l.bmp" />
+    <Resource Include="Content\65_Rome.bmp" />
+    <Resource Include="Content\65_RoundPattern.bmp" />
+    <Resource Include="Content\65_Rudolf2.bmp" />
+    <Resource Include="Content\65_Russia.bmp" />
+    <Resource Include="Content\65_ru_svetodiody.bmp.png" />
+    <Resource Include="Content\65_Sagittarius.bmp" />
+    <Resource Include="Content\65_Santa.bmp" />
+    <Resource Include="Content\65_Santa2.bmp" />
+    <Resource Include="Content\65_santa_2016.bmp" />
+    <Resource Include="Content\65_santa_2016_2.bmp" />
+    <Resource Include="Content\65_santa_2016_3.bmp" />
+    <Resource Include="Content\65_santa_2016_4.bmp" />
+    <Resource Include="Content\65_sb1.bmp" />
+    <Resource Include="Content\65_sb2.bmp" />
+    <Resource Include="Content\65_sb3.bmp" />
+    <Resource Include="Content\65_sb4.bmp" />
+    <Resource Include="Content\65_sb5.bmp" />
+    <Resource Include="Content\65_sb6.bmp" />
+    <Resource Include="Content\65_sb7.bmp" />
+    <Resource Include="Content\65_sb8.bmp" />
+    <Resource Include="Content\65_school.bmp" />
+    <Resource Include="Content\65_Scorpio.bmp" />
+    <Resource Include="Content\65_signs_2016.bmp" />
+    <Resource Include="Content\65_signs_2016_2.bmp" />
+    <Resource Include="Content\65_signs_2016_3.bmp" />
+    <Resource Include="Content\65_signs_2016_4.bmp" />
+    <Resource Include="Content\65_signs_2016_5.bmp" />
+    <Resource Include="Content\65_signs_2016_6.bmp" />
+    <Resource Include="Content\65_simple-abstract-art-shapes-hd-pictures-4.bmp" />
+    <Resource Include="Content\65_simple-abstract-art-shapes-widescreen-2.bmp" />
+    <Resource Include="Content\65_smiles.bmp.png" />
+    <Resource Include="Content\65_Snow.bmp" />
+    <Resource Include="Content\65_Snow1.bmp" />
+    <Resource Include="Content\65_Snow2.bmp" />
+    <Resource Include="Content\65_snowbird_2016.bmp" />
+    <Resource Include="Content\65_SnowBlue.bmp" />
+    <Resource Include="Content\65_SnowBlue2.bmp" />
+    <Resource Include="Content\65_snowgirl_2016.bmp" />
+    <Resource Include="Content\65_SnowGold.bmp" />
+    <Resource Include="Content\65_Snowly.bmp" />
+    <Resource Include="Content\65_Snowman1.bmp" />
+    <Resource Include="Content\65_Snowman2.bmp" />
+    <Resource Include="Content\65_snowman_2016.bmp" />
+    <Resource Include="Content\65_snowman_2016_2.bmp" />
+    <Resource Include="Content\65_SnowPattern.bmp" />
+    <Resource Include="Content\65_SnowPattern2.bmp" />
+    <Resource Include="Content\65_SnowPurple.bmp" />
+    <Resource Include="Content\65_SnowRed.bmp" />
+    <Resource Include="Content\65_snow_2016.bmp" />
+    <Resource Include="Content\65_sock_2016.bmp" />
+    <Resource Include="Content\65_sock_2016_1.bmp" />
+    <Resource Include="Content\65_sock_2016_2.bmp" />
+    <Resource Include="Content\65_sock_2016_3.bmp" />
+    <Resource Include="Content\65_Sonic.bmp" />
+    <Resource Include="Content\65_SquarePatter2.bmp" />
+    <Resource Include="Content\65_SquarePattern.bmp" />
+    <Resource Include="Content\65_SquarePattern2.bmp" />
+    <Resource Include="Content\65_Star.bmp" />
+    <Resource Include="Content\65_starhat_2016.bmp" />
+    <Resource Include="Content\65_Stars.bmp" />
+    <Resource Include="Content\65_Stars2.bmp" />
+    <Resource Include="Content\65_star_2016.bmp" />
+    <Resource Include="Content\65_stork2.bmp.png" />
+    <Resource Include="Content\65_stripes.bmp.png" />
+    <Resource Include="Content\65_superman-comic-wallpaper-background-1.bmp" />
+    <Resource Include="Content\65_superman-comic-wallpaper-images-6.bmp" />
+    <Resource Include="Content\65_superman-comic-wallpaper-widescreen-2.bmp" />
+    <Resource Include="Content\65_sweet_2016.bmp" />
+    <Resource Include="Content\65_tapes2016_2.bmp" />
+    <Resource Include="Content\65_tapes2016_3.bmp" />
+    <Resource Include="Content\65_tapes2016_4.bmp" />
+    <Resource Include="Content\65_tapes2016_5.bmp" />
+    <Resource Include="Content\65_tapes_2016.bmp" />
+    <Resource Include="Content\65_tape_2016.bmp" />
+    <Resource Include="Content\65_Taurus.bmp" />
+    <Resource Include="Content\65_texture8.bmp" />
+    <Resource Include="Content\65_Tracery.bmp" />
+    <Resource Include="Content\65_tree-star-hat_2016.bmp" />
+    <Resource Include="Content\65_tree_2016.bmp" />
+    <Resource Include="Content\65_tree_2016_2.bmp" />
+    <Resource Include="Content\65_triangle.bmp" />
+    <Resource Include="Content\65_triangle2.bmp" />
+    <Resource Include="Content\65_Vetka.bmp" />
+    <Resource Include="Content\65_Vetka2.bmp" />
+    <Resource Include="Content\65_Virgo.bmp" />
+    <Resource Include="Content\65_wallpaper-hd-hd-background-wallpaper-53.bmp" />
+    <Resource Include="Content\65_wallpaper-hd-hd-background-wallpaper-78.bmp" />
+    <Resource Include="Content\65_Water.bmp" />
+    <Resource Include="Content\65_Water2.bmp" />
+    <Resource Include="Content\65_whiteLine.bmp.png" />
+    <Resource Include="Content\65_Wolf.bmp" />
+    <Resource Include="Content\65_Zayac.bmp" />
+    <Resource Include="Content\70_audio_levels.bmp" />
+    <Resource Include="Content\70_audio_levels.bmp.png" />
+    <Resource Include="Content\70_hearts.bmp" />
+    <Resource Include="Content\70_hearts.bmp.png" />
+    <Resource Include="Content\70_rainbow.bmp" />
+    <Resource Include="Content\70_rainbow.bmp.png" />
+    <Resource Include="Content\70_rainbow2.bmp" />
+    <Resource Include="Content\70_rainbow2.bmp.png" />
+    <Resource Include="Content\70_red_arrows_right.bmp" />
+    <Resource Include="Content\70_red_arrows_right.bmp.png" />
+    <Resource Include="Content\70_smiles.bmp.png" />
+    <Resource Include="Content\70_stars.bmp" />
+    <Resource Include="Content\70_stars.bmp.png" />
+    <Resource Include="Content\70_steps2.bmp" />
+    <Resource Include="Content\70_steps2.bmp.png" />
+    <Resource Include="Content\70_stork2.bmp" />
+    <Resource Include="Content\70_stripes.bmp" />
+    <Resource Include="Content\70_stripes.bmp.png" />
+    <Resource Include="Content\70_triangle.bmp" />
+    <Resource Include="Content\80_2016.bmp" />
+    <Resource Include="Content\80_2016_2.bmp" />
+    <Resource Include="Content\80_2016_3.bmp" />
+    <Resource Include="Content\80_2_waves.bmp" />
+    <Resource Include="Content\80_2_waves.bmp.png" />
+    <Resource Include="Content\80_3d-ocean-wallpaper-hd-background-10.jpg" />
+    <Resource Include="Content\80_3d-wallpaper-fire-hd-1080p-14.jpg" />
+    <Resource Include="Content\80_3d-wallpaper-fire-hd-background-10.jpg" />
+    <Resource Include="Content\80_3d-wallpaper-fire-hd-background-wallpaper-27.jpg" />
+    <Resource Include="Content\80_3d-wallpaper-fire-widescreen-2.jpg" />
+    <Resource Include="Content\80_3d-wallpaper-red-blue-hd-background-10.jpg" />
+    <Resource Include="Content\80_3d-wallpaper-red-blue-hd-background-10_2.bmp" />
+    <Resource Include="Content\80_aauto.bmp" />
+    <Resource Include="Content\80_abstract-art-faces-black-and-white-hd-images-3.jpg" />
+    <Resource Include="Content\80_abstract-art-faces-for-desktop-16.jpg" />
+    <Resource Include="Content\80_abstract-art-faces-for-desktop-background-15.jpg" />
+    <Resource Include="Content\80_abstract-art-faces-hd-1080p-14.jpg" />
+    <Resource Include="Content\80_abstract-art-faces-hd-free-13.jpg" />
+    <Resource Include="Content\80_abstract-art-faces-images-7.jpg" />
+    <Resource Include="Content\80_abstract-music-wallpapers-hd-desktop-10.jpg" />
+    <Resource Include="Content\80_abstract-music-wallpapers-hd-desktop-10_4.bmp" />
+    <Resource Include="Content\80_abstract-music-wallpapers-hd-pictures-4.jpg" />
+    <Resource Include="Content\80_angrybird_red.bmp.png" />
+    <Resource Include="Content\80_angrybird_yellow.bmp.png" />
+    <Resource Include="Content\80_anime-music-wallpaper-1920x1080-hd-pictures-4.jpg" />
+    <Resource Include="Content\80_anime-music-wallpaper-for-desktop-background-13.jpg" />
+    <Resource Include="Content\80_anime-music-wallpaper-hd-background-wallpaper-28.jpg" />
+    <Resource Include="Content\80_anime-music-wallpaper-hd-background-wallpaper-32.jpg" />
+    <Resource Include="Content\80_anime-violin-wallpaper-hd-widescreen-11.jpg" />
+    <Resource Include="Content\80_anime-violin-wallpaper-pictures-5.jpg" />
+    <Resource Include="Content\80_Aquarius.bmp" />
+    <Resource Include="Content\80_Aries.bmp" />
+    <Resource Include="Content\80_audio_levels.bmp.png" />
+    <Resource Include="Content\80_Ball.bmp" />
+    <Resource Include="Content\80_Ball2.bmp" />
+    <Resource Include="Content\80_Bart.bmp" />
+    <Resource Include="Content\80_batman-and-joker-comic-strip-background-1.jpg" />
+    <Resource Include="Content\80_batman-and-joker-comic-strip-pictures-5.bmp" />
+    <Resource Include="Content\80_Batman.bmp" />
+    <Resource Include="Content\80_bats.bmp" />
+    <Resource Include="Content\80_batterfly_002.bmp" />
+    <Resource Include="Content\80_batterfly_002.bmp.png" />
+    <Resource Include="Content\80_batterfly_003.bmp" />
+    <Resource Include="Content\80_batterfly_003.bmp.png" />
+    <Resource Include="Content\80_batterfly_004.bmp" />
+    <Resource Include="Content\80_batterfly_004.bmp.png" />
+    <Resource Include="Content\80_batterfly_005.bmp" />
+    <Resource Include="Content\80_batterfly_005.bmp.png" />
+    <Resource Include="Content\80_batterfly_006.bmp" />
+    <Resource Include="Content\80_batterfly_006.bmp.png" />
+    <Resource Include="Content\80_batterfly_007.bmp" />
+    <Resource Include="Content\80_batterfly_007.bmp.png" />
+    <Resource Include="Content\80_batterfly_008.bmp" />
+    <Resource Include="Content\80_batterfly_008.bmp.png" />
+    <Resource Include="Content\80_batterfly_009.bmp" />
+    <Resource Include="Content\80_batterfly_009.bmp.png" />
+    <Resource Include="Content\80_Bells.bmp" />
+    <Resource Include="Content\80_biology.bmp" />
+    <Resource Include="Content\80_bird_2016.bmp" />
+    <Resource Include="Content\80_boo.bmp" />
+    <Resource Include="Content\80_border.bmp" />
+    <Resource Include="Content\80_Bounty.bmp" />
+    <Resource Include="Content\80_BubblesPattern.bmp" />
+    <Resource Include="Content\80_BubblesPattern2.bmp" />
+    <Resource Include="Content\80_Cake.bmp" />
+    <Resource Include="Content\80_Cake2.bmp" />
+    <Resource Include="Content\80_Cancer.bmp" />
+    <Resource Include="Content\80_candle_2016.bmp" />
+    <Resource Include="Content\80_Candylove.bmp" />
+    <Resource Include="Content\80_Capricorn.bmp" />
+    <Resource Include="Content\80_cards.bmp.png" />
+    <Resource Include="Content\80_cartoon-images-of-spongebob-hd-desktop-10.jpg" />
+    <Resource Include="Content\80_cat.bmp" />
+    <Resource Include="Content\80_cat_2016.bmp" />
+    <Resource Include="Content\80_Champagne-2.bmp" />
+    <Resource Include="Content\80_Champagne2.bmp" />
+    <Resource Include="Content\80_Coldgrand.bmp" />
+    <Resource Include="Content\80_Combo.bmp" />
+    <Resource Include="Content\80_Combo2.bmp" />
+    <Resource Include="Content\80_Cone.bmp" />
+    <Resource Include="Content\80_Crusty.bmp" />
+    <Resource Include="Content\80_cute-anime-angel-wallpaper-background-1.jpg" />
+    <Resource Include="Content\80_cute-anime-angel-wallpaper-hd-background-9.jpg" />
+    <Resource Include="Content\80_daria.bmp" />
+    <Resource Include="Content\80_daria2.bmp" />
+    <Resource Include="Content\80_daria3.bmp" />
+    <Resource Include="Content\80_Deer.bmp" />
+    <Resource Include="Content\80_Deer2.bmp" />
+    <Resource Include="Content\80_Deer3.bmp" />
+    <Resource Include="Content\80_disney-princess-characters-to-draw-hd-pictures-4.bmp" />
+    <Resource Include="Content\80_Element.bmp" />
+    <Resource Include="Content\80_EtnoAfricaPattern.bmp" />
+    <Resource Include="Content\80_EtnoAfricaPattern2.bmp" />
+    <Resource Include="Content\80_Evolution.bmp" />
+    <Resource Include="Content\80_face1.bmp" />
+    <Resource Include="Content\80_face1.png" />
+    <Resource Include="Content\80_face2.bmp" />
+    <Resource Include="Content\80_face3.bmp" />
+    <Resource Include="Content\80_face4.bmp" />
+    <Resource Include="Content\80_face5.bmp" />
+    <Resource Include="Content\80_face6.bmp" />
+    <Resource Include="Content\80_face7.bmp" />
+    <Resource Include="Content\80_face8.bmp" />
+    <Resource Include="Content\80_face9.bmp" />
+    <Resource Include="Content\80_face91.bmp" />
+    <Resource Include="Content\80_face92.bmp" />
+    <Resource Include="Content\80_face93.bmp" />
+    <Resource Include="Content\80_face94.bmp" />
+    <Resource Include="Content\80_face_2016.bmp" />
+    <Resource Include="Content\80_face_2016_2.bmp" />
+    <Resource Include="Content\80_face_2016_3.bmp" />
+    <Resource Include="Content\80_Feer.bmp" />
+    <Resource Include="Content\80_fence.bmp" />
+    <Resource Include="Content\80_film.bmp" />
+    <Resource Include="Content\80_Fir.bmp" />
+    <Resource Include="Content\80_Fire.bmp" />
+    <Resource Include="Content\80_Fire2.bmp" />
+    <Resource Include="Content\80_fireBall.bmp" />
+    <Resource Include="Content\80_fireworks.bmp" />
+    <Resource Include="Content\80_fireworks2.bmp" />
+    <Resource Include="Content\80_Firtrees.bmp" />
+    <Resource Include="Content\80_fish.bmp.png" />
+    <Resource Include="Content\80_flashes_2.bmp" />
+    <Resource Include="Content\80_FloraPattern2.bmp" />
+    <Resource Include="Content\80_FloraPattern3.bmp" />
+    <Resource Include="Content\80_FloraPettern.bmp" />
+    <Resource Include="Content\80_foliage.bmp" />
+    <Resource Include="Content\80_Forest.bmp" />
+    <Resource Include="Content\80_Frozen.jpg" />
+    <Resource Include="Content\80_FuturamaSanta.bmp" />
+    <Resource Include="Content\80_garden_hall.bmp" />
+    <Resource Include="Content\80_garden_hall2.bmp.png" />
+    <Resource Include="Content\80_Gemini.bmp" />
+    <Resource Include="Content\80_gift.bmp" />
+    <Resource Include="Content\80_gift_2016.bmp" />
+    <Resource Include="Content\80_gift_2016_2.bmp" />
+    <Resource Include="Content\80_gift_2016_3.bmp" />
+    <Resource Include="Content\80_gift_2016_4.bmp" />
+    <Resource Include="Content\80_gift_2016_5.bmp" />
+    <Resource Include="Content\80_gift_2016_6.bmp" />
+    <Resource Include="Content\80_gift_2016_7.bmp" />
+    <Resource Include="Content\80_Gingerbread.bmp" />
+    <Resource Include="Content\80_gorko.bmp.png" />
+    <Resource Include="Content\80_grassBackground.bmp" />
+    <Resource Include="Content\80_halloween.bmp" />
+    <Resource Include="Content\80_halloweenParty.bmp" />
+    <Resource Include="Content\80_happyHalloween.bmp" />
+    <Resource Include="Content\80_happyHalloween2.bmp" />
+    <Resource Include="Content\80_hearts-n-hats_2016.bmp" />
+    <Resource Include="Content\80_Hearts.bmp" />
+    <Resource Include="Content\80_imp.bmp" />
+    <Resource Include="Content\80_iPoi.bmp" />
+    <Resource Include="Content\80_lada_logo.bmp" />
+    <Resource Include="Content\80_lada_text.bmp" />
+    <Resource Include="Content\80_leaf.bmp.png" />
+    <Resource Include="Content\80_Leo.bmp" />
+    <Resource Include="Content\80_Libra.bmp" />
+    <Resource Include="Content\80_lightning+.bmp" />
+    <Resource Include="Content\80_lightning.bmp" />
+    <Resource Include="Content\80_lightning2+.bmp" />
+    <Resource Include="Content\80_lightning2.bmp" />
+    <Resource Include="Content\80_lightning3.bmp" />
+    <Resource Include="Content\80_lightning32.bmp" />
+    <Resource Include="Content\80_lightning36.bmp" />
+    <Resource Include="Content\80_lightning4+.bmp" />
+    <Resource Include="Content\80_lightning4.bmp" />
+    <Resource Include="Content\80_lightning40+.bmp" />
+    <Resource Include="Content\80_lightning40.bmp" />
+    <Resource Include="Content\80_lightning44++.bmp" />
+    <Resource Include="Content\80_lightning44+.bmp" />
+    <Resource Include="Content\80_lightning44.bmp" />
+    <Resource Include="Content\80_lightning5.bmp" />
+    <Resource Include="Content\80_lightning6.bmp" />
+    <Resource Include="Content\80_lightning7.bmp" />
+    <Resource Include="Content\80_LisaSimpson.bmp" />
+    <Resource Include="Content\80_London.bmp" />
+    <Resource Include="Content\80_Love_Love_is.bmp" />
+    <Resource Include="Content\80_mickey.bmp.png" />
+    <Resource Include="Content\80_minion.bmp" />
+    <Resource Include="Content\80_minion2.bmp" />
+    <Resource Include="Content\80_minion3.bmp" />
+    <Resource Include="Content\80_mosaic.bmp.png" />
+    <Resource Include="Content\80_mosaic2.bmp.png" />
+    <Resource Include="Content\80_mosaic3.bmp.png" />
+    <Resource Include="Content\80_Moscow.bmp" />
+    <Resource Include="Content\80_neon-wallpaper-images-6_1.bmp" />
+    <Resource Include="Content\80_new_cover_6.bmp" />
+    <Resource Include="Content\80_new_year.bmp" />
+    <Resource Include="Content\80_new_year_2.bmp" />
+    <Resource Include="Content\80_Night.bmp" />
+    <Resource Include="Content\80_NY-Pattern1.bmp" />
+    <Resource Include="Content\80_NY-Pattern12.bmp" />
+    <Resource Include="Content\80_NY-Pattern1_try1.bmp" />
+    <Resource Include="Content\80_NY-Pattern2.bmp" />
+    <Resource Include="Content\80_NY-Pattern3.bmp" />
+    <Resource Include="Content\80_NY-Pattern4.bmp" />
+    <Resource Include="Content\80_NyanCat.bmp" />
+    <Resource Include="Content\80_pacman.bmp" />
+    <Resource Include="Content\80_Panda.bmp" />
+    <Resource Include="Content\80_Paris.bmp" />
+    <Resource Include="Content\80_pattern2.bmp.png" />
+    <Resource Include="Content\80_pattern3.bmp.png" />
+    <Resource Include="Content\80_patternBulbs.bmp.png" />
+    <Resource Include="Content\80_pattern_big_2016.bmp" />
+    <Resource Include="Content\80_pattern_small_2016.bmp" />
+    <Resource Include="Content\80_Piano.bmp" />
+    <Resource Include="Content\80_Pisces.bmp" />
+    <Resource Include="Content\80_PIXELWANDS.bmp.png" />
+    <Resource Include="Content\80_present2.bmp" />
+    <Resource Include="Content\80_Presents.bmp" />
+    <Resource Include="Content\80_PSY.bmp" />
+    <Resource Include="Content\80_pumpkin3.bmp" />
+    <Resource Include="Content\80_pumpkin32.bmp" />
+    <Resource Include="Content\80_pumpkinface.bmp" />
+    <Resource Include="Content\80_rainbow.bmp.png" />
+    <Resource Include="Content\80_rainbow2.bmp.png" />
+    <Resource Include="Content\80_red_arrows_right.bmp.png" />
+    <Resource Include="Content\80_Rome.bmp" />
+    <Resource Include="Content\80_RoundPattern.bmp" />
+    <Resource Include="Content\80_Rudolf2.bmp" />
+    <Resource Include="Content\80_Russia.bmp" />
+    <Resource Include="Content\80_Sagittarius.bmp" />
+    <Resource Include="Content\80_Santa.bmp" />
+    <Resource Include="Content\80_Santa2.bmp" />
+    <Resource Include="Content\80_santa_2016.bmp" />
+    <Resource Include="Content\80_santa_2016_2.bmp" />
+    <Resource Include="Content\80_santa_2016_3.bmp" />
+    <Resource Include="Content\80_santa_2016_4.bmp" />
+    <Resource Include="Content\80_Scorpio.bmp" />
+    <Resource Include="Content\80_signs_2016.bmp" />
+    <Resource Include="Content\80_signs_2016_2.bmp" />
+    <Resource Include="Content\80_signs_2016_3.bmp" />
+    <Resource Include="Content\80_signs_2016_4.bmp" />
+    <Resource Include="Content\80_signs_2016_5.bmp" />
+    <Resource Include="Content\80_signs_2016_6.bmp" />
+    <Resource Include="Content\80_skull.bmp" />
+    <Resource Include="Content\80_smiles.bmp.png" />
+    <Resource Include="Content\80_Snow.bmp" />
+    <Resource Include="Content\80_Snow1.bmp" />
+    <Resource Include="Content\80_Snow2.bmp" />
+    <Resource Include="Content\80_snowbird_2016.bmp" />
+    <Resource Include="Content\80_SnowBlue.bmp" />
+    <Resource Include="Content\80_SnowBlue2.bmp" />
+    <Resource Include="Content\80_snowgirl_2016.bmp" />
+    <Resource Include="Content\80_SnowGold.bmp" />
+    <Resource Include="Content\80_Snowly.bmp" />
+    <Resource Include="Content\80_Snowman1.bmp" />
+    <Resource Include="Content\80_Snowman2.bmp" />
+    <Resource Include="Content\80_snowman_2016.bmp" />
+    <Resource Include="Content\80_snowman_2016_2.bmp" />
+    <Resource Include="Content\80_SnowPattern.bmp" />
+    <Resource Include="Content\80_SnowPattern2.bmp" />
+    <Resource Include="Content\80_SnowPurple.bmp" />
+    <Resource Include="Content\80_SnowRed.bmp" />
+    <Resource Include="Content\80_snow_2016.bmp" />
+    <Resource Include="Content\80_sock_2016.bmp" />
+    <Resource Include="Content\80_sock_2016_1.bmp" />
+    <Resource Include="Content\80_sock_2016_2.bmp" />
+    <Resource Include="Content\80_sock_2016_3.bmp" />
+    <Resource Include="Content\80_Sonic.bmp" />
+    <Resource Include="Content\80_SquarePattern.bmp" />
+    <Resource Include="Content\80_SquarePattern2.bmp" />
+    <Resource Include="Content\80_Star.bmp" />
+    <Resource Include="Content\80_starhat_2016.bmp" />
+    <Resource Include="Content\80_Stars.bmp" />
+    <Resource Include="Content\80_Stars2.bmp" />
+    <Resource Include="Content\80_star_2016.bmp" />
+    <Resource Include="Content\80_steps2.bmp.png" />
+    <Resource Include="Content\80_stork2.bmp.png" />
+    <Resource Include="Content\80_stripes.bmp.png" />
+    <Resource Include="Content\80_superman-comic-wallpaper-widescreen-2.jpg" />
+    <Resource Include="Content\80_sweet_2016.bmp" />
+    <Resource Include="Content\80_tapes2016_2.bmp" />
+    <Resource Include="Content\80_tapes2016_3.bmp" />
+    <Resource Include="Content\80_tapes2016_4.bmp" />
+    <Resource Include="Content\80_tapes2016_5.bmp" />
+    <Resource Include="Content\80_tapes_2016.bmp" />
+    <Resource Include="Content\80_tape_2016.bmp" />
+    <Resource Include="Content\80_Taurus.bmp" />
+    <Resource Include="Content\80_texture3.bmp" />
+    <Resource Include="Content\80_texture8.bmp" />
+    <Resource Include="Content\80_texture8_1.bmp" />
+    <Resource Include="Content\80_texture9.bmp" />
+    <Resource Include="Content\80_thebat.bmp" />
+    <Resource Include="Content\80_theBat2.bmp" />
+    <Resource Include="Content\80_theBat3.bmp" />
+    <Resource Include="Content\80_Tracery.bmp" />
+    <Resource Include="Content\80_tree-star-hat_2016.bmp" />
+    <Resource Include="Content\80_tree_2016.bmp" />
+    <Resource Include="Content\80_tree_2016_2.bmp" />
+    <Resource Include="Content\80_triangle.bmp" />
+    <Resource Include="Content\80_uglyFaces.bmp" />
+    <Resource Include="Content\80_uglyFaces2.bmp" />
+    <Resource Include="Content\80_uglyFaces3.bmp" />
+    <Resource Include="Content\80_Vetka.bmp" />
+    <Resource Include="Content\80_Vetka2.bmp" />
+    <Resource Include="Content\80_Virgo.bmp" />
+    <Resource Include="Content\80_Water.bmp" />
+    <Resource Include="Content\80_what_about_us__by_sharonliv_arzets-d6oknqj_1.bmp" />
+    <Resource Include="Content\80_white.bmp.png" />
+    <Resource Include="Content\80_Wolf.bmp" />
+    <Resource Include="Content\80_Zayac.bmp" />
     <Resource Include="Effects\00_effect.png" />
     <Resource Include="Effects\01_effect.png" />
     <Resource Include="Effects\02_effect.png" />
     <Resource Include="Effects\03_effect.png" />
-    <Resource Include="Images\rotateLeft.png" />
-    <Resource Include="Images\rotateRight.png" />
+    <Resource Include="Effects\04_solid.png" />
+    <Resource Include="Files\PixelTuner.ico" />
+    <Resource Include="Gradients\g_effect1.jpg" />
+    <Resource Include="Gradients\g_rainbow.jpg" />
+    <Resource Include="Images\cutTheRest.png" />
+    <Resource Include="Images\document.png" />
+    <Resource Include="Images\DrawingTool\bmp.png" />
+    <Resource Include="Images\DrawingTool\copy.png" />
+    <Resource Include="Images\DrawingTool\flip_horizontal.png" />
+    <Resource Include="Images\DrawingTool\flip_vertical.png" />
+    <Resource Include="Images\DrawingTool\paint_bucket.png" />
+    <Resource Include="Images\DrawingTool\pipette.png" />
+    <Resource Include="Images\DrawingTool\text.png" />
     <Resource Include="Images\flipHorizontally.png" />
     <Resource Include="Images\flipVertically.png" />
-    <Resource Include="Images\cutTheRest.png" />
     <Resource Include="Images\moveTheRest.png" />
-    <Resource Include="Images\stop.png" />
-    <Resource Include="Images\stopDisabled.png" />
-    <Resource Include="Images\stopLight.png" />
-    <Resource Include="Images\play.png" />
-    <Resource Include="Images\playDisabled.png" />
-    <Resource Include="Images\playLight.png" />
     <Resource Include="Images\pause.png" />
     <Resource Include="Images\pauseDisabled.png" />
     <Resource Include="Images\pauseLight.png" />
+    <Resource Include="Images\PenEdit.png" />
+    <Resource Include="Images\PenEdit_Dark.png" />
+    <Resource Include="Images\PinClose.png" />
+    <Resource Include="Images\PinClose_Dark.png" />
+    <Resource Include="Images\pipette_tool.ico" />
+    <Resource Include="Images\PixelTuner.ico" />
+    <Resource Include="Images\play.png" />
+    <Resource Include="Images\playDisabled.png" />
+    <Resource Include="Images\playLight.png" />
+    <Resource Include="Images\red_cross.png" />
+    <Resource Include="Images\red_crossDisabled.png" />
+    <Resource Include="Images\red_crossLight.png" />
+    <Resource Include="Images\rotateLeft.png" />
+    <Resource Include="Images\rotateRight.png" />
+    <Resource Include="Images\scale-stretching.png" />
+    <Resource Include="Images\settings.png" />
+    <Resource Include="Images\settings_Dark.png" />
+    <Resource Include="Images\stop.png" />
+    <Resource Include="Images\stopDisabled.png" />
+    <Resource Include="Images\stopLight.png" />
+    <Resource Include="Images\timeEnd.png" />
+    <Resource Include="Images\timeLength.png" />
+    <Resource Include="Images\timelineClone.png" />
+    <Resource Include="Images\timelineCloneDisabled.png" />
+    <Resource Include="Images\timelineCloneLight.png" />
+    <Resource Include="Images\timeStart.png" />
     <Resource Include="Images\_grey_Arrow-Down.png" />
     <Resource Include="Images\_grey_Arrow-DownDisabled.png" />
     <Resource Include="Images\_grey_Arrow-DownLight.png" />
     <Resource Include="Images\_grey_Arrow-Up.png" />
     <Resource Include="Images\_grey_Arrow-UpDisabled.png" />
     <Resource Include="Images\_grey_Arrow-UpLight.png" />
-    <Resource Include="Images\document.png" />
-    <Resource Include="Images\scale-stretching.png" />
-    <Resource Include="Images\DrawingTool\flip_horizontal.png" />
-    <Resource Include="Images\DrawingTool\flip_vertical.png" />
-    <Resource Include="Images\PenEdit.png" />
-    <Resource Include="Images\PenEdit_Dark.png" />
-    <Resource Include="Images\pipette_tool.ico" />
-    <Resource Include="Images\DrawingTool\pipette.png" />
-    <Resource Include="Images\timelineCloneDisabled.png" />
-    <Resource Include="Images\timelineCloneLight.png" />
-    <Resource Include="Images\timelineClone.png" />
-    <Resource Include="Images\timeEnd.png" />
-    <Resource Include="Images\timeLength.png" />
-    <Resource Include="Images\timeStart.png" />
-    <Page Include="Styles\TimeLineLayoutTemplate.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Styles\VideosLayoutTemplate.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\Generic.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+    <Content Include="Schemas\human.svg" />
+    <Content Include="Schemas\human_1.svg" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Drawing\DrawControl.resx">
+      <DependentUpon>DrawControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Drawing\TextDialog.resx">
+      <DependentUpon>TextDialog.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
