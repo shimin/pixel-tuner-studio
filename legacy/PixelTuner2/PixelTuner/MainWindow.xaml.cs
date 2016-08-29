@@ -63,7 +63,7 @@ namespace PixelTuner
         private void TestOpenGL()
         {
             OpenGL glx = new OpenGL();
-            glx.Create(SharpGL.Version.OpenGLVersion.OpenGL3_3, RenderContextType.HiddenWindow, 1, 1, 1, null);
+            glx.Create(SharpGL.Version.OpenGLVersion.OpenGL3_0, RenderContextType.HiddenWindow, 1, 1, 1, null);
             var version = glx.Version;
             if (version[0] == '3')
                 RootViewModel.This.IsOpenGLAvailable = true;

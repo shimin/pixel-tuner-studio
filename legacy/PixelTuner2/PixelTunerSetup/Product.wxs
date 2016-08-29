@@ -85,11 +85,11 @@
             </Component>
           </Directory>-->
 
-          <Directory Id="ResourceLocation_en_US" Name="en-US">
+          <!--<Directory Id="ResourceLocation_en_US" Name="en-US">
             <Component Id="PixelTuner.com.en_US" Guid="872F9BE8-C7CA-485A-83AF-CF822255135E">
               <File Id="Rosources_en_US" Source="..\PixelTuner\bin\$(var.Configuration)\en-US\PixelTuner.resources.dll" />
             </Component>
-          </Directory>
+          </Directory>-->
 
           <Directory Id="ResourceLocation_es" Name="es">
             <Component Id="PixelTuner.com.es" Guid="FFFE2969-59C2-4A42-B4B7-6D5473F8131C">
@@ -1742,7 +1742,7 @@
       <ComponentRef Id="DockData"/>
       <ComponentRef Id="SharpVectors" />
       <!--<ComponentRef Id="PixelTuner.com.en" />-->
-      <ComponentRef Id="PixelTuner.com.en_US" />
+      <!--<ComponentRef Id="PixelTuner.com.en_US" />-->
       <ComponentRef Id="PixelTuner.com.de" />
       <ComponentRef Id="PixelTuner.com.es" />
       <ComponentRef Id="PixelTuner.com.fr" />

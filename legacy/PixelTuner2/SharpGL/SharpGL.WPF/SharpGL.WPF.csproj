@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{30984028-0A02-4512-A779-740838F907AE}</ProjectGuid>
+    <ProjectGuid>{53E67055-13D2-4467-BB57-79589AFAC2CD}</ProjectGuid>
     <OutputType>library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SharpGL.WPF</RootNamespace>
