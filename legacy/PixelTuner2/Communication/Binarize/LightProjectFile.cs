@@ -119,6 +119,7 @@ namespace Communication.Binarize
                     result++;
                 }
             }
+            if (monochromeLines != 0) result++;
             return result;
         }
 

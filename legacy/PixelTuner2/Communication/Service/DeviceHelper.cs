@@ -50,7 +50,6 @@ namespace Communication.Service
             while (_keepSeeking)
             {
                 List<string> portNames = new List<string> (SerialPort.GetPortNames());
-                Console.WriteLine(portNames.Count);
                 portNames.ForEach(portName =>
                 {
                     if (!DeviceExists(portName))
