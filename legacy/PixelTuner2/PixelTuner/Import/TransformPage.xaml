@@ -6,6 +6,7 @@
              xmlns:img="clr-namespace:Common.Imaging;assembly=Common"
              mc:Ignorable="d" 
              Background="#FF323232"
+             Name="boxTransformPage"
              d:DesignHeight="400" d:DesignWidth="660">
     <UserControl.Resources>
         <img:ImageConverter x:Key="ImageConverter"/>
@@ -21,13 +22,14 @@
                ClipToBounds="True"
                Source="{Binding ResultImage}">
         </Image>
-        <StackPanel Grid.Column="1" Orientation="Vertical">
-            <TextBlock Text="Верх" Foreground="White"/>
+        <StackPanel Grid.Column="1" Orientation="Vertical" Margin="6">
+            <TextBlock Text="{StaticResource ImportWindow_Top}" Foreground="White"/>
             <Slider Name="boxTop" Minimum="0.51" Maximum="1" Value="{Binding TopOffset}"/>
-            <TextBlock Text="Середина" Foreground="White"/>
+            <TextBlock Text="{StaticResource ImportWindow_Middle}" Foreground="White"/>
             <Slider Name="boxMiddle" Minimum="0.51" Maximum="1" Value="{Binding MiddleOffset}"/>
-            <TextBlock Text="Низ" Foreground="White"/>
+            <TextBlock Text="{StaticResource ImportWindow_Bottom}" Foreground="White"/>
             <Slider Name="boxBottom" Minimum="0.51" Maximum="1" Value="{Binding BottomOffset}"/>
+            <Button Name="boxSkipBtn" Content="{StaticResource ImportWindow_Skip}" Margin="4" Command="{Binding SkipCommand}"></Button>
         </StackPanel>
     </Grid>
 </UserControl>

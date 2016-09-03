@@ -18,6 +18,18 @@ using Common.Log;
 
 namespace PixelTuner.ViewModel
 {
+    public static class ExtensionMethods
+    {
+
+        private static Action EmptyDelegate = delegate () { };
+
+
+        public static void Refresh(this UIElement uiElement)
+        {
+            uiElement.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Render, EmptyDelegate);
+        }
+    }
+
     public class RootViewModel : ViewModelBase
     {
 #if DEBUG
@@ -146,6 +158,7 @@ namespace PixelTuner.ViewModel
             {
                 ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
                 VideosModel.RefreshVideosCollection(Settings.Default.LineHeight);
+                CanvasModel = null;
                 GradientsModel.RefreshImagesCollection();
             }
             else
@@ -154,6 +167,7 @@ namespace PixelTuner.ViewModel
                 ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
                 VideosModel.RefreshVideosCollection(Settings.Default.LineHeight);
                 GradientsModel.RefreshImagesCollection();
+                CanvasModel = ActiveDocument.Canvas;
                 e.NewDocument.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(NewDocument_PropertyChanged);
                 if (e.OldDocument != null)
                     e.OldDocument.PropertyChanged -= NewDocument_PropertyChanged;
@@ -401,11 +415,15 @@ namespace PixelTuner.ViewModel
             get
             {
                 if (_canvasModel == null)
-                    _canvasModel = new CanvasViewModel(
-                        (string)Application.Current.TryFindResource("Menu_Window_Canvas"));
+                {
+                    _canvasModel =
+                        new CanvasViewModel((string) Application.Current.TryFindResource("Menu_Window_Canvas"));
+                    _canvasModel.LoadContent();
+                }
 
                 return _canvasModel;
             }
+            set { _canvasModel = value; RaisePropertyChanged("CanvasModel"); }
         }
 
         DevicesViewModel _devicesModel = null;
@@ -676,11 +694,50 @@ namespace PixelTuner.ViewModel
         {
             var model = new FileViewModel();
             model.TimeLines.Add(new PixelTimeLineViewModel());
+            model.Canvas = new CanvasViewModel();
+            model.Canvas.LoadContent();
             _files.Add(model);
             ActiveDocument = _files.Last();
         }
 
-        #endregion 
+        #endregion
+
+        #region ImportCommand
+        RelayCommand _importCommand = null;
+        public System.Windows.Input.ICommand ImportCommand
+        {
+            get
+            {
+                if (_importCommand == null)
+                {
+                    _importCommand = new RelayCommand((p) => OnImport(p), (p) => CanImport(p));
+                }
+
+                return _importCommand;
+            }
+        }
+
+        private bool CanImport(object parameter)
+        {
+            return true;
+        }
+
+        private void OnImport(object parameter)
+        {
+            CanvasViewModel c = new CanvasViewModel();
+
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.InitialDirectory = c.SourceDir;
+            ofd.Filter = "SVG files|*.svg";
+            if (ofd.ShowDialog() == true)
+            {
+                c.LoadContent(ofd.FileName);
+                CanvasModel = c;
+                if (ActiveDocument != null) ActiveDocument.Canvas = c;
+            }
+        }
+
+        #endregion
 
         #region SaveCommand
         RelayCommand _saveCommand = null;

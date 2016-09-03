@@ -3,11 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:gh="clr-namespace:Common.Helpers;assembly=Common"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-        xmlns:local="clr-namespace:PixelTuner"
         mc:Ignorable="d"
-        Title="Element markup" 
+        Title="{StaticResource ElementMarkup_Header}" 
         Width="600" Height="400"
         Background="DarkGray"
         WindowStyle="ToolWindow" 
@@ -77,14 +75,15 @@
         </ItemsControl>
 
         <StackPanel Grid.Column="1">
-            <TextBlock Text="Rows: "/>
+            <TextBlock Text="{StaticResource ElementMarkup_Rows}"/>
             <xctk:DecimalUpDown Name="boxRows" Value="{Binding RowsCount}" Background="White" Margin="6"/>
-            <TextBlock Text="Columns: "/>
+            <TextBlock Text="{StaticResource ElementMarkup_Columns}"/>
             <xctk:DecimalUpDown Name="boxColumns" Value="{Binding ColumnsCount}" Background="White" Margin="6"/>
+            <Button Content="{StaticResource ElementMarkup_Set}" Command="{Binding SetSizeCommand}"/>
             <TextBlock Text="Spacing: "/>
             <xctk:DecimalUpDown Name="boxTilesMargin" Value="{Binding TilesMargin}" Background="White" Margin="6" Minimum="0" Maximum="100"/>
         </StackPanel>
         
-        <Button Grid.Column="1" Name="boxCloseBtn" Content="Close" Grid.Row="1" Width="64" HorizontalAlignment="Right" Click="boxCloseBtn_Click" Margin="2"/>
+        <Button Grid.Column="1" Name="boxCloseBtn" Content="{StaticResource Menu_File_Close}" Grid.Row="1" Width="80" HorizontalAlignment="Right" Click="boxCloseBtn_Click" Margin="2"/>
     </Grid>
 </Window>

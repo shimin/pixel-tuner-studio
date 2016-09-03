@@ -24,7 +24,7 @@ namespace PixelTuner.Styles
                 _hoopPreviewScene.RenderHoopPreview(gl);
                 var control = (OpenGLControl)sender;
                 var model = control.DataContext as ProjectPlayerViewModel;
-                if (model.DisplayModel != null)
+                if (model != null && model.DisplayModel != null)
                 {
                     _hoopPreviewScene.CircleSelfRotationSpeed = model.RotationFactor;
                     _hoopPreviewScene.CircleStripScanSpeed = model.ScanSpeed;

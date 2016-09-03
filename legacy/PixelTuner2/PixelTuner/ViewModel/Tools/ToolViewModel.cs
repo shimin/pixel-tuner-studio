@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace PixelTuner.ViewModel
 {
@@ -13,6 +14,7 @@ namespace PixelTuner.ViewModel
             Title = name;
         }
 
+        [XmlIgnore]
         public string Name
         {
             get;

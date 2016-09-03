@@ -35,7 +35,7 @@ namespace PixelTuner.Import
             DataContext = this;
             pagesNext.Push(new ColorAdjustPage(true));
             pagesNext.Push(new CropPage(imageToCrop, true, true));
-            pagesNext.Push(new TransformPage(false));
+            pagesNext.Push(new TransformPage(false, SkipCommand));
             pagesNext.Push(new CropPage(imageToCrop, false, false));
             InitializeComponent();
             pageTransitionControl.ShowPage(pagesNext.Peek());
@@ -129,8 +129,39 @@ namespace PixelTuner.Import
             pageTransitionControl.ShowPage(pagesNext.Peek());
         }
 
-        #endregion 
-        
+        #endregion
+
+        #region SkipCommand
+
+        private RelayCommand _skipCommand = null;
+
+        public ICommand SkipCommand
+        {
+            get
+            {
+                if (_skipCommand == null) _skipCommand = new RelayCommand((p) => OnSkip(p), (p) => CanSkip(p));
+                return _skipCommand;
+            }
+        }
+
+        private bool CanSkip(object parameter)
+        {
+            return pagesNext.Peek() is TransformPage;
+        }
+
+        private void OnSkip(object parameter)
+        {
+            var current = (IPicturePage)pagesPrev.Peek();
+            current.ApplyChanges();
+            //pagesPrev.Push(pagesNext.Pop());
+            pagesPrev.Push(pagesNext.Pop());
+
+            var next = (IPicturePage)pagesNext.Peek();
+            next.SetSource(current.Result);
+            pageTransitionControl.ShowPage(pagesNext.Peek());
+        }
+        #endregion
+
         ProjectPlayerViewModel _projectPlayerModel = null;
         public ProjectPlayerViewModel ProjectPlayerModel
         {
@@ -172,7 +203,7 @@ namespace PixelTuner.Import
                     pagesPrev.Clear();
                     pagesNext.Push(new ColorAdjustPage(true));
                     pagesNext.Push(new CropPage(img, true, true));
-                    pagesNext.Push(new TransformPage(false));
+                    pagesNext.Push(new TransformPage(false, SkipCommand));
                     pagesNext.Push(new CropPage(img, false, false));
                     pageTransitionControl.ShowPage(pagesNext.Peek());
                 }

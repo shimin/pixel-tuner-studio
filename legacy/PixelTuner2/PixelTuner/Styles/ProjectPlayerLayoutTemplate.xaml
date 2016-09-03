@@ -8,7 +8,7 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/PixelTuner;component/Styles/SliderStyles.xaml" />
     </ResourceDictionary.MergedDictionaries>
-    <DataTemplate x:Key="CanDisplayHoopPreview">
+    <DataTemplate x:Key="CanDisplayHoopPreview" DataType="{x:Type vm:ProjectPlayerViewModel}">
         <Grid x:Name="boxHoopGrid" Background="Black">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -72,7 +72,7 @@
     
     <DataTemplate x:Key="ProjectPlayerLayoutTemplate" DataType="{x:Type vm:ProjectPlayerViewModel}">
         <TabControl Margin="0" Padding="0" BorderThickness="0">
-            <TabItem Header="Poi" BorderThickness="0" Width="50" Margin="0" Padding="0">
+            <TabItem Name="boxMainTabItem" Header="Poi" BorderThickness="0" Width="50" Margin="0" Padding="0">
                 <Grid Background="Black" DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.ProjectPlayerModel}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
@@ -151,7 +151,7 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Hoop" Width="50" Margin="0" Padding="0">
-                <ContentControl Content="{Binding}">
+                <ContentControl Content="{Binding}" DataContext="{Binding ElementName=boxMainTabItem, Path=DataContext}">
                     <ContentControl.Style>
                         <Style TargetType="ContentControl">
                             <Style.Triggers>

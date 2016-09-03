@@ -50,7 +50,7 @@
     <system:String x:Key="Doc_Hdr_Default">Ohne Name</system:String>
     <system:String x:Key="Doc_Open_AccessError">Kein Zugang zum File.</system:String>
     <system:String x:Key="Doc_Open_DeserializeError">Fiel konnte nicht geöffnet werden. Wahrscheinlich ist der File beschädigt.</system:String>
-    <system:String x:Key="FileAddPixelTimeline">Pixel poi</system:String>
+    <system:String x:Key="FileAddPixelTimeline">Pixel poi &#8260; reif</system:String>
     <system:String x:Key="FileAddEpicTimeline">E-pic poi</system:String>
     <system:String x:Key="FileAddLightTimeline">Light segment</system:String>
     <system:String x:Key="Item_Stretching">Ausdehnung</system:String>
@@ -111,10 +111,14 @@
     <system:String x:Key="CropPage_Height">Höhe</system:String>
     <system:String x:Key="CropPage_ClippingRectangle">Kadrierungsbereich:</system:String>
     <system:String x:Key="ImportWindow_Next">weiter</system:String>
+    <system:String x:Key="ImportWindow_Skip">auslassen</system:String>
     <system:String x:Key="ImportWindow_Back">zurück</system:String>
     <system:String x:Key="ImportWindow_Header">Import</system:String>
     <system:String x:Key="ImportWindow_EditHeader">Bearbeiten</system:String>
     <system:String x:Key="ImportWindow_PreviewHeader">Vorschau</system:String>
+    <system:String x:Key="ImportWindow_Top">Oben</system:String>
+    <system:String x:Key="ImportWindow_Middle">Mitte</system:String>
+    <system:String x:Key="ImportWindow_Bottom">Boden</system:String>
     <system:String x:Key="ChooseTimelinesWindowText">Choose timelines to upload</system:String>
     <system:String x:Key="TimelinesToUpload_NoLines">No suitable lines to upload.</system:String>
     <system:String x:Key="SelectAllButton">Select all</system:String>
@@ -130,4 +134,10 @@
     <system:String x:Key="Text_Artnet_Start">Start value</system:String>
     <system:String x:Key="Text_Artnet_Pause">Pause value</system:String>
     <system:String x:Key="Text_Artnet_Stop">Stop value</system:String>
+    <system:String x:Key="ElementMarkup_Header">Element markup</system:String>
+    <system:String x:Key="ElementMarkup_Rows">Reihen:</system:String>
+    <system:String x:Key="ElementMarkup_Columns">Spalten:</system:String>
+    <system:String x:Key="ElementMarkup_Set">set</system:String>
+    <system:String x:Key="ElementMarkup_Spacing">Abstand:</system:String>
+    <system:String x:Key="ElementMarkup_Import">Last skizze</system:String>
 </ResourceDictionary>

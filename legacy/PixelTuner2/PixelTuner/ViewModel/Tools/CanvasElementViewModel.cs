@@ -7,41 +7,22 @@ using System.Windows.Controls;
 using System.Collections.ObjectModel;
 using System;
 using System.Collections.Generic;
+using Microsoft.Expression.Interactivity.Core;
 
 namespace PixelTuner.ViewModel
 {
     public class LedTile : ViewModelBase
     {
-        public LedTile(CanvasElementViewModel parentElement, int idx)
-        {
-            _parent = parentElement;
-            _index = idx;
-            TurnOnCommand = new DelegateCommand(OnTurnedOn);
-        }
+        #region Pixel markup
 
-        int _index = 0;
-        
-        public int Y
-        {
-            get
-            {
-                return _index / _parent.ColumnsCount;
-            }
-        }
-        
-        public int X
-        {
-            get
-            {
-                return _index % _parent.ColumnsCount;
-            }
-        }
-
-        CanvasElementViewModel _parent = null;
-
-        bool _selected = false;
+        [XmlIgnore]
+        public CanvasElementViewModel Parent { get; set; } = null;
 
         int _ledNumber;
+        /// <summary>
+        /// Differ than Index because reflects actual LED index in physical matrix
+        /// </summary>
+        [XmlAttribute]
         public int LedNumber
         {
             get
@@ -56,6 +37,7 @@ namespace PixelTuner.ViewModel
         }
 
         double _opacityVal = 0.75;
+        [XmlAttribute]
         public double OpacityVal
         {
             get
@@ -69,20 +51,58 @@ namespace PixelTuner.ViewModel
             }
         }
 
+        [XmlAttribute]
+        public int Index { get; set; } = 0;
+
+        /// <summary>
+        /// Y (row) position of the LED in abstract markup matrix
+        /// </summary>
+        [XmlIgnore]
+        public int Y
+        {
+            get
+            {
+                return Index / Parent.ColumnsCount;
+            }
+        }
+
+        /// <summary>
+        /// X (column) position of the LED in abstract markup matrix
+        /// </summary>
+        [XmlIgnore]
+        public int X
+        {
+            get
+            {
+                return Index % Parent.ColumnsCount;
+            }
+        }
+
+        [XmlAttribute]
+        public bool Selected { get; set; } = false;
+
+        #endregion
+
+        public LedTile()
+        {
+            TurnOnCommand = new DelegateCommand(OnTurnedOn);
+        }
+
         [XmlIgnore]
         public ICommand TurnOnCommand { get; private set; }
 
         private void OnTurnedOn(object arg)
         {
-            if (_parent.SelectedLeds.Contains(this))
+            if (Selected)
             {
-                _parent.SelectedLeds.Remove(this);
+                Selected = false;
                 LedNumber = 0;
             }
             else
             {
-                LedNumber = _parent.SelectedLeds.Count;
-                _parent.SelectedLeds.Add(this);
+                var e = RootViewModel.This.CanvasModel.GetHostElement(this);
+                LedNumber = e.GetLastNumber();
+                Selected = true;
             }
         }
     }
@@ -92,13 +112,15 @@ namespace PixelTuner.ViewModel
         public CanvasElementViewModel()
         {
             LedTiles = new ObservableCollection<LedTile>();
-            SelectedLeds = new ObservableCollection<LedTile>();
+            //SelectedLeds = new ObservableCollection<LedTile>();
+            SetSizeCommand = new ActionCommand(SetSize);
             OnDoubleClickCommand = new DelegateCommand(OnDoubleClick);
         }
 
-        #region Pixel markup
+        #region Properties
 
-        int _tilesMargin = 0;
+        int _tilesMargin = 2;
+        [XmlAttribute]
         public int TilesMargin
         {
             get
@@ -112,19 +134,36 @@ namespace PixelTuner.ViewModel
             }
         }
 
+        [XmlElement]
         public ObservableCollection<LedTile> LedTiles
         {
             get;
-            private set;
+            set;
         }
-        
-        public ObservableCollection<LedTile> SelectedLeds
+
+        //[XmlElement]
+        //public ObservableCollection<LedTile> SelectedLeds
+        //{
+        //    get;
+        //    set;
+        //}
+
+        [XmlIgnore]
+        public List<Point> OrderedLeds
         {
-            get;
-            private set;
+            get
+            {
+                List<Point> result = new List<Point>();
+                foreach (var l in LedTiles)
+                {
+                    if (l.Selected) result.Add(new Point(l.X, l.Y));
+                }
+                return result;
+            }
         }
-        
+
         int _rowsCount = 0;
+        [XmlAttribute]
         public int RowsCount
         {
             get
@@ -134,11 +173,12 @@ namespace PixelTuner.ViewModel
 
             set
             {
-                _rowsCount = value; UpdateLedTiles(); RaisePropertyChanged("RowsCount");
+                _rowsCount = value; RaisePropertyChanged("RowsCount");
             }
         }
 
         int _columnsCount = 0;
+        [XmlAttribute]
         public int ColumnsCount
         {
             get
@@ -148,15 +188,12 @@ namespace PixelTuner.ViewModel
 
             set
             {
-                _columnsCount = value; UpdateLedTiles(); RaisePropertyChanged("ColumnsCount");
+                _columnsCount = value; RaisePropertyChanged("ColumnsCount");
             }
         }
 
-        #endregion
-
-        #region Properties
-
         Geometry _geometry;
+        [XmlIgnore]
         public Geometry Geometry
         {
             get { return _geometry; }
@@ -171,6 +208,7 @@ namespace PixelTuner.ViewModel
         }
 
         Brush _stroke = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+        [XmlIgnore]
         public Brush Stroke
         {
             get { return _stroke; }
@@ -178,6 +216,7 @@ namespace PixelTuner.ViewModel
         }
 
         Brush _fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+        [XmlIgnore]
         public Brush Fill
         {
             get { return _fill; }
@@ -185,12 +224,14 @@ namespace PixelTuner.ViewModel
         }
 
         Transform _transform;
+        [XmlIgnore]
         public Transform Transform
         {
             get { return _transform; }
             set { _transform = value; RaisePropertyChanged("Transform"); RaisePropertyChanged("PreviewTransform"); }
         }
 
+        [XmlIgnore]
         public Transform PreviewTransform
         {
             get
@@ -205,6 +246,7 @@ namespace PixelTuner.ViewModel
             }
         }
 
+        [XmlIgnore]
         public Transform DragTransform
         {
             get
@@ -222,20 +264,10 @@ namespace PixelTuner.ViewModel
         #region Commands
 
         [XmlIgnore]
-        public ICommand OnDoubleClickCommand { get; private set; }
+        public ICommand SetSizeCommand { get; private set; }
 
-        public List<Point> OrderedLeds
-        {
-            get
-            {
-                List<Point> result = new List<Point>();
-                foreach (var l in SelectedLeds)
-                {
-                    result.Add(new Point(l.X, l.Y));
-                }
-                return result;
-            }
-        }
+        [XmlIgnore]
+        public ICommand OnDoubleClickCommand { get; private set; }
 
         private void OnDoubleClick(object arg)
         {
@@ -247,14 +279,15 @@ namespace PixelTuner.ViewModel
 
         #endregion
 
-        private void UpdateLedTiles()
+        private void SetSize(object arg)
         {
-            int targetAmount = ColumnsCount * RowsCount;
-            int difference = targetAmount - LedTiles.Count;
+            var targetAmount = ColumnsCount * RowsCount;
+            var difference = targetAmount - LedTiles.Count;
             if (difference > 0)
             {
-                for (int i = 0; i < difference; i++) LedTiles.Add(new LedTile(this, LedTiles.Count));
-            } else
+                for (var i = 0; i < difference; i++) LedTiles.Add(new LedTile() {Parent = this, Index = LedTiles.Count});
+            }
+            else
             {
                 while (difference < 0)
                 {
@@ -262,6 +295,16 @@ namespace PixelTuner.ViewModel
                     difference++;
                 }
             }
+        }
+
+        public int GetLastNumber()
+        {
+            int idx = 0;
+            foreach (var ledTile in LedTiles)
+            {
+                if (ledTile.Selected) idx++;
+            }
+            return idx;
         }
 
         public override object Clone()

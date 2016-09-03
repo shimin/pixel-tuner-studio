@@ -67,7 +67,10 @@ namespace PixelTuner
         private void AppendText(string text, System.Text.StringBuilder result, int level)
         {
             while (level > 0)
+            {
                 result.Append("\t");
+                level--;
+            }
 
             result.AppendLine(text);
         }

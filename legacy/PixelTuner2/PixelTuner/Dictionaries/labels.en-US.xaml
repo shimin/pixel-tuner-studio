@@ -50,7 +50,7 @@
     <system:String x:Key="Doc_Hdr_Default">Noname</system:String>
     <system:String x:Key="Doc_Open_AccessError">File access error.</system:String>
     <system:String x:Key="Doc_Open_DeserializeError">File open error. It's probably corrupted.</system:String>
-    <system:String x:Key="FileAddPixelTimeline">Pixel poi</system:String>
+    <system:String x:Key="FileAddPixelTimeline">Pixel poi &#8260; hoop</system:String>
     <system:String x:Key="FileAddEpicTimeline">E-pic poi</system:String>
     <system:String x:Key="FileAddLightTimeline">Light segment</system:String>
     <system:String x:Key="Item_Stretching">Stretching</system:String>
@@ -111,10 +111,14 @@
     <system:String x:Key="CropPage_Height">Height</system:String>
     <system:String x:Key="CropPage_ClippingRectangle">Clipping rectangle:</system:String>
     <system:String x:Key="ImportWindow_Next">next</system:String>
+    <system:String x:Key="ImportWindow_Skip">skip</system:String>
     <system:String x:Key="ImportWindow_Back">back</system:String>
     <system:String x:Key="ImportWindow_Header">Import</system:String>
     <system:String x:Key="ImportWindow_EditHeader">Edit</system:String>
     <system:String x:Key="ImportWindow_PreviewHeader">Preview</system:String>
+    <system:String x:Key="ImportWindow_Top">Top</system:String>
+    <system:String x:Key="ImportWindow_Middle">Middle</system:String>
+    <system:String x:Key="ImportWindow_Bottom">Bottom</system:String>
     <system:String x:Key="ChooseTimelinesWindowText">Choose timelines to upload</system:String>
     <system:String x:Key="TimelinesToUpload_NoLines">No suitable lines to upload.</system:String>
     <system:String x:Key="SelectAllButton">Select all</system:String>
@@ -130,4 +134,10 @@
     <system:String x:Key="Text_Artnet_Start">Start value</system:String>
     <system:String x:Key="Text_Artnet_Pause">Pause value</system:String>
     <system:String x:Key="Text_Artnet_Stop">Stop value</system:String>
+    <system:String x:Key="ElementMarkup_Header">Element markup</system:String>
+    <system:String x:Key="ElementMarkup_Rows">Rows:</system:String>
+    <system:String x:Key="ElementMarkup_Columns">Columns:</system:String>
+    <system:String x:Key="ElementMarkup_Set">set</system:String>
+    <system:String x:Key="ElementMarkup_Spacing">Spacing:</system:String>
+    <system:String x:Key="ElementMarkup_Import">Load sketch</system:String>
 </ResourceDictionary>

@@ -90,7 +90,7 @@ namespace PixelTuner.Import
             }
         }
 
-
+        public ICommand SkipCommand { get; set; }
 
         Point topLeft = new Point(0, 0);
         Point topCenter = new Point(0.5, 0);
@@ -105,8 +105,9 @@ namespace PixelTuner.Import
 
         #endregion
 
-        public TransformPage(bool isPreviewOn)
+        public TransformPage(bool isPreviewOn, ICommand skipCommand)
         {
+            SkipCommand = skipCommand;
             _imageUpdater.WorkerSupportsCancellation = true;
             _imageUpdater.DoWork += (sender, args) =>
             {

@@ -100,6 +100,9 @@ namespace PixelTuner.ViewModel
             for (int i = 0; i < _timeLines.Count; i++)
             {
                 _timeLines[i].Parent = this;
+                string path = _timeLines[i].MetaDataPath;
+                if (Canvas != null && !string.IsNullOrEmpty(path) && Canvas.ElementsDictionary.ContainsKey(path))
+                    _timeLines[i].MetaData = Canvas.ElementsDictionary[_timeLines[i].MetaDataPath];
             }
             
             OnFileChanged(sender, e);
@@ -215,6 +218,12 @@ namespace PixelTuner.ViewModel
         {
             get;
             private set;
+        }
+
+        [XmlElement]
+        public CanvasViewModel Canvas
+        {
+            get; set;
         }
 
         ObservableCollection<TimeLineViewModel> _timeLines = new ObservableCollection<TimeLineViewModel>();
@@ -1247,6 +1256,9 @@ namespace PixelTuner.ViewModel
             {
                 var result = new List<Type>()
                 {
+                    typeof(CanvasViewModel),
+                    typeof(CanvasElementViewModel),
+                    typeof(LedTile),
                     typeof(TimeLineViewModel),
                     typeof(EpicPoiTimeLineViewModel),
                     typeof(LightTimeLineViewModel),

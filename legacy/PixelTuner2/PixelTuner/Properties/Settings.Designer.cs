@@ -334,5 +334,17 @@ namespace PixelTuner.Properties {
                 this["ArtnetStopValue"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastUsedSVG {
+            get {
+                return ((string)(this["LastUsedSVG"]));
+            }
+            set {
+                this["LastUsedSVG"] = value;
+            }
+        }
     }
 }

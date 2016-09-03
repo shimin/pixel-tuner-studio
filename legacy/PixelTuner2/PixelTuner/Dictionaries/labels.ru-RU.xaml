@@ -50,7 +50,7 @@
     <system:String x:Key="Doc_Hdr_Default">Без имени</system:String>
     <system:String x:Key="Doc_Open_AccessError">Нет доступа к файлу.</system:String>
     <system:String x:Key="Doc_Open_DeserializeError">Ошибка открытия файла. Возможно файл поврежден.</system:String>
-    <system:String x:Key="FileAddPixelTimeline">Пиксель пой</system:String>
+    <system:String x:Key="FileAddPixelTimeline">Пиксель пой &#8260; обруч</system:String>
     <system:String x:Key="FileAddEpicTimeline">Эпик пой</system:String>
     <system:String x:Key="FileAddLightTimeline">Световой сегмент</system:String>
     <system:String x:Key="Item_Stretching">Растяжение</system:String>
@@ -111,10 +111,14 @@
     <system:String x:Key="CropPage_Height">Высота</system:String>
     <system:String x:Key="CropPage_ClippingRectangle">Область кадрирования:</system:String>
     <system:String x:Key="ImportWindow_Next">далее</system:String>
+    <system:String x:Key="ImportWindow_Skip">пропустить</system:String>
     <system:String x:Key="ImportWindow_Back">назад</system:String>
     <system:String x:Key="ImportWindow_Header">Импорт</system:String>
     <system:String x:Key="ImportWindow_EditHeader">Правка</system:String>
     <system:String x:Key="ImportWindow_PreviewHeader">Просмотр</system:String>
+    <system:String x:Key="ImportWindow_Top">Верх</system:String>
+    <system:String x:Key="ImportWindow_Middle">Середина</system:String>
+    <system:String x:Key="ImportWindow_Bottom">Низ</system:String>
     <system:String x:Key="ChooseTimelinesWindowText">Выбор таймлайнов для загрузки</system:String>
     <system:String x:Key="TimelinesToUpload_NoLines">Нет подходящих линий для загрузки.</system:String>
     <system:String x:Key="SelectAllButton">Выбрать все</system:String>
@@ -130,4 +134,10 @@
     <system:String x:Key="Text_Artnet_Start">Значение для старта</system:String>
     <system:String x:Key="Text_Artnet_Pause">Значение для паузы</system:String>
     <system:String x:Key="Text_Artnet_Stop">Значение для стопа</system:String>
+    <system:String x:Key="ElementMarkup_Header">Разметка элемента</system:String>
+    <system:String x:Key="ElementMarkup_Rows">Строк:</system:String>
+    <system:String x:Key="ElementMarkup_Columns">Столбцов:</system:String>
+    <system:String x:Key="ElementMarkup_Set">задать</system:String>
+    <system:String x:Key="ElementMarkup_Spacing">Промежуток:</system:String>
+    <system:String x:Key="ElementMarkup_Import">Выбрать эскиз</system:String>
 </ResourceDictionary>

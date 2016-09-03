@@ -4,8 +4,11 @@
                     xmlns:dd="clr-namespace:Common.DragDrop;assembly=Common"
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                     x:Class="PixelTuner.Styles.CanvasTemplate"
-                    x:ClassModifier="internal"
-                    >
+                    x:ClassModifier="internal">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/PixelTuner;component/Styles/SharedStyles.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+    
     <DataTemplate x:Key="CanvasElementTemplate" DataType="{x:Type model:CanvasElementViewModel}">
         <ItemsControl>
             <i:Interaction.Triggers>
@@ -18,7 +21,6 @@
                             Stroke="{Binding Stroke}" 
                             StrokeThickness="1" 
                             Fill="{Binding Fill}" 
-                            MouseDown="Path_MouseDown"
                             RenderTransform="{Binding Transform}"
                             Data="{Binding Geometry}">
                 </Path>
@@ -27,15 +29,24 @@
     </DataTemplate>
     
     <DataTemplate x:Key="CanvasTemplate">
-        <Viewbox Grid.Row="1" Stretch="Uniform" Loaded="Viewbox_Loaded">
-            <Canvas Width="{Binding Clip.Bounds.Width, RelativeSource={RelativeSource Self}}" 
-                Height="{Binding Clip.Bounds.Height, RelativeSource={RelativeSource Self}}" 
-                Clip="{Binding PageSize}" ClipToBounds="True">
-                
-                <ItemsControl ItemsSource="{Binding Elements}" 
-                    ItemTemplate="{StaticResource CanvasElementTemplate}" 
-                    dd:DragDropHelper.IsDragSource="True" />
-            </Canvas>
-        </Viewbox>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Height="32">
+                <Button Command="{Binding Source={StaticResource RootContext}, Path=ImportCommand}" Content="{StaticResource ElementMarkup_Import}" Margin="6" Style="{StaticResource WhiteLinkButton}" />
+            </StackPanel>
+            <Viewbox Grid.Row="1" Stretch="Uniform" DataContext="{Binding Source={StaticResource RootContext}, Path=CanvasModel}">
+                <Canvas Width="{Binding Clip.Bounds.Width, RelativeSource={RelativeSource Self}}" 
+                    Height="{Binding Clip.Bounds.Height, RelativeSource={RelativeSource Self}}" 
+                    Clip="{Binding PageSize}" ClipToBounds="True">
+
+                    <ItemsControl ItemsSource="{Binding Elements}" 
+                        ItemTemplate="{StaticResource CanvasElementTemplate}" 
+                        dd:DragDropHelper.IsDragSource="True" />
+                </Canvas>
+            </Viewbox>
+        </Grid>
     </DataTemplate>
 </ResourceDictionary>
