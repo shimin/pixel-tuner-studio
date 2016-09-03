@@ -426,11 +426,17 @@ namespace Communication.Service
         {
             lock (this._longOperation)
             {
+                int readTimeout = 2000;
+                int writeTimeout = 2000;
                 Busy = true;
                 SetStatus(ConnectionStatus.Uploading);
                 bool noExceptions = false;
                 try
                 {
+                    readTimeout = Port.ReadTimeout;
+                    writeTimeout = Port.WriteTimeout;
+                    Port.WriteTimeout = 10000;
+                    Port.ReadTimeout = 20000;
                     List<byte> data = new List<byte>();
                     var answer = DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_IDATA_MODE, BitConverter.GetBytes(binaryData.Count)));
                     if (answer.Data[0] == 0x00)
@@ -466,6 +472,8 @@ namespace Communication.Service
                     Busy = false;
                     if (noExceptions)
                         SetStatus(ConnectionStatus.Online);
+                    Port.ReadTimeout = readTimeout;
+                    Port.WriteTimeout = writeTimeout;
                 }
             }
         }
@@ -476,8 +484,14 @@ namespace Communication.Service
             {
                 Busy = true;
                 SetStatus(ConnectionStatus.Uploading);
+                int readTimeout = 2000;
+                int writeTimeout = 2000;
                 try
                 {
+                    readTimeout = Port.ReadTimeout;
+                    writeTimeout = Port.WriteTimeout;
+                    Port.WriteTimeout = 10000;
+                    Port.ReadTimeout = 20000;
                     List<byte> data = new List<byte>();
                     DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_IFLASH_MODE, null));
                     foreach (byte num in binaryData)
@@ -505,6 +519,8 @@ namespace Communication.Service
                 {
                     Busy = false;
                     SetStatus(ConnectionStatus.Online);
+                    Port.ReadTimeout = readTimeout;
+                    Port.WriteTimeout = writeTimeout;
                 }
             }
         }

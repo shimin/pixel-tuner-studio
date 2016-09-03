@@ -82,10 +82,16 @@ namespace Communication.Service
         {
             lock (this._longOperation)
             {
+                int readTimeout = 2000;
+                int writeTimeout = 2000;
                 this.Busy = true;
                 base.SetStatus(ConnectionStatus.Uploading);
                 try
                 {
+                    readTimeout = Port.ReadTimeout;
+                    writeTimeout = Port.WriteTimeout;
+                    Port.WriteTimeout = 10000;
+                    Port.ReadTimeout = 20000;
                     List<byte> data = new List<byte>();
                     foreach (DeviceFeature feature in settings)
                     {
@@ -113,6 +119,8 @@ namespace Communication.Service
                 {
                     this.Busy = false;
                     base.SetStatus(ConnectionStatus.Online);
+                    Port.ReadTimeout = readTimeout;
+                    Port.WriteTimeout = writeTimeout;
                 }
             }
         }
