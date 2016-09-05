@@ -53,6 +53,7 @@
     <system:String x:Key="FileAddPixelTimeline">Pixel poi &#8260; reif</system:String>
     <system:String x:Key="FileAddEpicTimeline">E-pic poi</system:String>
     <system:String x:Key="FileAddLightTimeline">Light segment</system:String>
+    <system:String x:Key="FileAddPixelSuitTimeline">Video segment</system:String>
     <system:String x:Key="Item_Stretching">Ausdehnung</system:String>
     <system:String x:Key="Item_SwitchLaserOnOffToolTip">Laser ein/aus</system:String>
     <system:String x:Key="Item_Menu_Replace">Ändern</system:String>
@@ -79,6 +80,7 @@
     <system:String x:Key="Dev_Props_State_UploadError">Laden fehler.</system:String>
     <system:String x:Key="Preview_Animate">Animieren</system:String>
     <system:String x:Key="Global_ImagesHeightMismatch">"Frame's Höhe passt mit Projekthöhe nicht zusammen."</system:String>
+    <system:String x:Key="Global_PixelElementLinkError">"Pixel segment sketch isn't assigned. Just drag it from canvas window."</system:String>
     <system:String x:Key="Global_SaveChanges">"Möchten Sie Änderungen in '{0}' speichern?"</system:String>
     <system:String x:Key="Global_NotEnoughtSpace">Nicht genung Speicher im Zielgerät.</system:String>
     <system:String x:Key="Global_TimelineHigherThanDevice">Frame's Höhe im Projekt&#160;{0}, was größer als&#160;{1}&#160;-&#160;Anzahl&#160;der Lichtdioden&#160;im&#160;Gerät. Frames werden &#160;bis auf&#160;{2}&#160;Pixeln&#160;von unten abgeschnitten. Durchführen?</system:String>
@@ -140,4 +142,5 @@
     <system:String x:Key="ElementMarkup_Set">set</system:String>
     <system:String x:Key="ElementMarkup_Spacing">Abstand:</system:String>
     <system:String x:Key="ElementMarkup_Import">Last skizze</system:String>
+    <system:String x:Key="VideoOffsetWindow_Title">Video-offset</system:String>
 </ResourceDictionary>

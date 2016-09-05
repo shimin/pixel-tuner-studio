@@ -6,9 +6,9 @@ using System.Xml.Serialization;
 
 namespace PixelTuner.ViewModel.Serialization
 {
-    public class GradientTimeLineItem : TimeLineItem
+    public class TimeLineItemGradient : TimeLineItem
     {
-        public static implicit operator PixelTuner.ViewModel.GradientThumbnailViewModel(GradientTimeLineItem item)
+        public static implicit operator PixelTuner.ViewModel.GradientThumbnailViewModel(TimeLineItemGradient item)
         {
             var v = new GradientThumbnailViewModel(new System.IO.FileInfo(item.FullName));
             v.StartTime = item.StartTime;

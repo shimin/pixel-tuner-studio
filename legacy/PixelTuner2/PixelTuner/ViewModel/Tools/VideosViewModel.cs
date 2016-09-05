@@ -7,6 +7,9 @@ using System.IO;
 using System.Windows;
 using System.ComponentModel;
 using System.Threading;
+using System.Windows.Controls;
+using System.Windows.Input;
+using Microsoft.Expression.Interactivity.Core;
 
 namespace PixelTuner.ViewModel
 {
@@ -101,10 +104,12 @@ namespace PixelTuner.ViewModel
                 Directory.CreateDirectory(_sourcePath);
 
             DirectoryInfo info = new DirectoryInfo(_sourcePath);
-            List<FileSystemInfo> allfiles = new List<FileSystemInfo>(info.GetFileSystemInfos("*.avi"));
-            allfiles.AddRange(info.GetFileSystemInfos("*.wmv"));
-            allfiles.AddRange(info.GetFileSystemInfos("*.mp4"));
-            allfiles.AddRange(info.GetFileSystemInfos("*.mpg"));
+            List<FileSystemInfo> allfiles = new List<FileSystemInfo>();
+            allfiles.AddRange(info.GetFileSystemInfos("*.avi"));
+            //allfiles.AddRange(info.GetFileSystemInfos("*.wmv"));
+            //allfiles.AddRange(info.GetFileSystemInfos("*.mp4"));
+            //allfiles.AddRange(info.GetFileSystemInfos("*.mpg"));
+            allfiles.AddRange(info.GetFileSystemInfos("*.gif"));
 
             if (Application.Current == null) return;
             Application.Current.Dispatcher.Invoke(new Action(() => { _videos.Clear(); }));

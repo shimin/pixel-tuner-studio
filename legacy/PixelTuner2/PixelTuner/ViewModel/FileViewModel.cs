@@ -21,6 +21,7 @@ using Communication;
 using System.Windows.Media;
 using System.Collections.Specialized;
 using Common.ViewModel;
+using PixelTuner.ViewModel.Timelines;
 
 namespace PixelTuner.ViewModel
 {
@@ -809,6 +810,34 @@ namespace PixelTuner.ViewModel
 
         #endregion
 
+        #region AddPixelSuitLineCommand
+        RelayCommand _addPixelSuitLineCommand = null;
+        public ICommand AddPixelSuitLine
+        {
+            get
+            {
+                if (_addPixelSuitLineCommand == null)
+                {
+                    _addPixelSuitLineCommand = new RelayCommand((p) => OnAddPixelSuitLine(p), (p) => CanAddPixelSuitLine(p));
+                }
+
+                return _addPixelSuitLineCommand;
+            }
+        }
+
+        private bool CanAddPixelSuitLine(object parameter)
+        {
+            return TimeLines.Count < 254;
+        }
+
+        private void OnAddPixelSuitLine(object parameter)
+        {
+            PushUndo(false);
+            _timeLines.Add(new VideoTimeLineViewModel());
+        }
+
+        #endregion
+
         #region OpenAudioCommand
         RelayCommand _openAudioCommand = null;
         public ICommand OpenAudio
@@ -1262,7 +1291,8 @@ namespace PixelTuner.ViewModel
                     typeof(TimeLineViewModel),
                     typeof(EpicPoiTimeLineViewModel),
                     typeof(LightTimeLineViewModel),
-                    typeof(PixelTimeLineViewModel)
+                    typeof(PixelTimeLineViewModel),
+                    typeof(VideoTimeLineViewModel)
                 };
                 result.AddRange(TimeLineViewModel.ExtraTypes);
                 return result;

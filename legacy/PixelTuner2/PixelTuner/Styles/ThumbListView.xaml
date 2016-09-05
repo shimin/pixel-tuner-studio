@@ -1,6 +1,6 @@
 <ResourceDictionary xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'
                     xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'
-                    xmlns:mwt="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
+                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                     xmlns:l="clr-namespace:PixelTuner.Controls.ThumbListView">
     <Style x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type l:ImageView}, ResourceId=ImageView}"
          TargetType="{x:Type ListView}" BasedOn="{StaticResource {x:Type ListBox}}">
@@ -122,11 +122,19 @@
             <Setter.Value>
                 <DataTemplate>
                     <Border Background="White">
-                        <Image Height="50" Margin="2">
-                            <Image.Source>
-                                <BitmapImage UriSource="{Binding FullName}" CacheOption="OnLoad" />
-                            </Image.Source>
-                        </Image>
+                        <MediaElement Height="80" Name="boxVideoHost" LoadedBehavior="Manual">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MediaEnded">
+                                    <i:InvokeCommandAction Command="{Binding Path=OnMediaEndedCommand}" CommandParameter="{Binding ElementName=boxVideoHost}"/>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="Loaded">
+                                    <i:InvokeCommandAction Command="{Binding Path=OnLoadedCommand}" CommandParameter="{Binding ElementName=boxVideoHost}"/>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="MouseLeftButtonDown">
+                                    <i:InvokeCommandAction Command="{Binding Path=OnClickCommand}" CommandParameter="{Binding ElementName=boxVideoHost}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </MediaElement>
                     </Border>
                 </DataTemplate>
             </Setter.Value>

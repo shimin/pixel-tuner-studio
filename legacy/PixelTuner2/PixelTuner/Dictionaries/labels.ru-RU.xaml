@@ -53,6 +53,7 @@
     <system:String x:Key="FileAddPixelTimeline">Пиксель пой &#8260; обруч</system:String>
     <system:String x:Key="FileAddEpicTimeline">Эпик пой</system:String>
     <system:String x:Key="FileAddLightTimeline">Световой сегмент</system:String>
+    <system:String x:Key="FileAddPixelSuitTimeline">Видео таймлайн</system:String>
     <system:String x:Key="Item_Stretching">Растяжение</system:String>
     <system:String x:Key="Item_SwitchLaserOnOffToolTip">лазер вкл/выкл</system:String>
     <system:String x:Key="Item_Menu_Replace">заменить</system:String>
@@ -79,6 +80,7 @@
     <system:String x:Key="Dev_Props_State_UploadError">Ошибка загрузки.</system:String>
     <system:String x:Key="Preview_Animate">Анимировать</system:String>
     <system:String x:Key="Global_ImagesHeightMismatch">"Не совпадает высота картинок и проекта."</system:String>
+    <system:String x:Key="Global_PixelElementLinkError">"Не привязан эскиз пиксельного сегмента. Перетащите его из окна просмотра."</system:String>
     <system:String x:Key="Global_SaveChanges">"Сохранить изменения '{0}'?"</system:String>
     <system:String x:Key="Global_NotEnoughtSpace">Недостаточно памяти устройства.</system:String>
     <system:String x:Key="Global_TimelineHigherThanDevice">Высота картинок в проекте&#160;{0}, это больше, чем&#160;{1}&#160;-&#160;число&#160;светодиодов&#160;в&#160;устройстве. Картинки будут обрезаны&#160;на&#160;{2}&#160;пикселей&#160;снизу. Продолжить?</system:String>
@@ -140,4 +142,5 @@
     <system:String x:Key="ElementMarkup_Set">задать</system:String>
     <system:String x:Key="ElementMarkup_Spacing">Промежуток:</system:String>
     <system:String x:Key="ElementMarkup_Import">Выбрать эскиз</system:String>
+    <system:String x:Key="VideoOffsetWindow_Title">Смещение видео</system:String>
 </ResourceDictionary>

@@ -61,6 +61,7 @@
                     <StackPanel MouseDown="StackPanel_MouseDown">
                         <MenuItem Header="{StaticResource FileAddPixelTimeline}" Command="{Binding AddPixelLine}" />
                         <MenuItem Header="{StaticResource FileAddLightTimeline}" Command="{Binding AddLightLine}" />
+                        <MenuItem Header="{StaticResource FileAddPixelSuitTimeline}" Command="{Binding AddPixelSuitLine}" />
                         <MenuItem Header="{StaticResource FileAddEpicTimeline}" Command="{Binding AddEpicLine}" />
                     </StackPanel>
                 </xctk:DropDownButton.DropDownContent>

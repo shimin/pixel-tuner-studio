@@ -440,7 +440,9 @@ namespace PixelTuner.ViewModel
                     typeof(TimeLineItem),
                     typeof(TimeLineItemSolid),
                     typeof(TimeLineItemEffect),
-                    typeof(TimeLineItemEffectParameters)
+                    typeof(TimeLineItemEffectParameters),
+                    typeof(TimeLineItemVideo),
+                    typeof(TimeLineItemGradient)
                 };
                 return result;
             }

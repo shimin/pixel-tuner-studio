@@ -28,9 +28,9 @@ namespace PixelTuner.ViewModel
         {
         }
 
-        public static implicit operator GradientTimeLineItem(GradientThumbnailViewModel item)
+        public static implicit operator TimeLineItemGradient(GradientThumbnailViewModel item)
         {
-            var result = new GradientTimeLineItem();
+            var result = new TimeLineItemGradient();
             result.StartTime = item.StartTime;
             result.EndTime = item.EndTime;
             result.FullName = item.FullName;
@@ -42,9 +42,9 @@ namespace PixelTuner.ViewModel
 
         public override object ToType(Type conversionType, IFormatProvider provider)
         {
-            if (conversionType == typeof(GradientTimeLineItem))
+            if (conversionType == typeof(Serialization.TimeLineItem))
             {
-                return (GradientTimeLineItem)this;
+                return (TimeLineItemGradient)this;
             }
             return base.ToType(conversionType, provider);
         }

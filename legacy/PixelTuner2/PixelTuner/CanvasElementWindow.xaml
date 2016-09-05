@@ -16,17 +16,23 @@
         ShowInTaskbar="False" 
         Topmost="False">
     <Window.Resources>
-        <Style TargetType="Button" x:Key="TransparentButton">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="Transparent">
-                            <ContentPresenter/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        <ResourceDictionary>
+            <Style TargetType="Button" x:Key="TransparentButton">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="Transparent">
+                                <ContentPresenter/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/PixelTuner;component/Styles/SharedStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Window.Resources>
     
     <Grid Margin="8">
@@ -38,7 +44,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="24"/>
         </Grid.RowDefinitions>
-
+        <!--<MediaElement Visibility="{Binding MediaVisible, Converter={StaticResource BoolToVisibilityConverter}}" Source="{Binding Path=Thumbnail.FullName}" />-->
         <DockPanel>
             <Path Name="boxFigure"
                   Grid.Row="0"
@@ -76,9 +82,9 @@
 
         <StackPanel Grid.Column="1">
             <TextBlock Text="{StaticResource ElementMarkup_Rows}"/>
-            <xctk:DecimalUpDown Name="boxRows" Value="{Binding RowsCount}" Background="White" Margin="6"/>
+            <xctk:DecimalUpDown Name="boxRows" Value="{Binding RowsCount}" Background="White" Margin="6" Minimum="0"/>
             <TextBlock Text="{StaticResource ElementMarkup_Columns}"/>
-            <xctk:DecimalUpDown Name="boxColumns" Value="{Binding ColumnsCount}" Background="White" Margin="6"/>
+            <xctk:DecimalUpDown Name="boxColumns" Value="{Binding ColumnsCount}" Background="White" Margin="6" Minimum="0"/>
             <Button Content="{StaticResource ElementMarkup_Set}" Command="{Binding SetSizeCommand}"/>
             <TextBlock Text="Spacing: "/>
             <xctk:DecimalUpDown Name="boxTilesMargin" Value="{Binding TilesMargin}" Background="White" Margin="6" Minimum="0" Maximum="100"/>

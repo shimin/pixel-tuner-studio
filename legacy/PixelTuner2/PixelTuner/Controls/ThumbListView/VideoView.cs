@@ -56,7 +56,7 @@ namespace PixelTuner.Controls.ThumbListView
             }
             
             if (sb.Length > 0) MessageBox.Show(sb.ToString());
-            videosModel.RefreshVideosCollection(PixelTuner.Properties.Settings.Default.LineHeight);
+            videosModel.RefreshVideosCollection();
             videosView.Dispatcher.Invoke(new Action(() => videosView.Focus()));
         }
         

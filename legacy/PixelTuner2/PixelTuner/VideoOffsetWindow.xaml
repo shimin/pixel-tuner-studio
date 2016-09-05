@@ -1,0 +1,74 @@
+﻿<Window x:Class="PixelTuner.VideoOffsetWindow"
+        Name="videoWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:local="clr-namespace:PixelTuner"
+        WindowStyle="ToolWindow"
+        mc:Ignorable="d"
+        Title="{StaticResource VideoOffsetWindow_Title}" Height="300" Width="400">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/PixelTuner;component/Styles/SharedStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="100"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <MediaElement Name="boxMediaElement"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Top"
+                      MediaOpened="BoxMediaElement_OnMediaOpened"
+                      Width="{Binding Path=MediaWidth}"
+                      Margin="{Binding Path=MediaMargin}"
+                      Source="{Binding Path=Thumbnail.FullName}">
+            <MediaElement.RenderTransform>
+                <ScaleTransform ScaleY="{Binding ElementName=videoWindow, Path=MediaYScale}"/>
+            </MediaElement.RenderTransform>
+        </MediaElement>
+        <DockPanel Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <Path Name="boxFigure"
+                  StrokeThickness="0" 
+                  Stretch="Uniform"
+                  Fill="#00000000"
+                  Stroke="{Binding ElementName=videoWindow, Path=CanvasElement.Stroke}" 
+                  Data="{Binding ElementName=videoWindow, Path=CanvasElement.Geometry}">
+            </Path>
+        </DockPanel>
+        <ItemsControl Grid.Column="0" 
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Top"
+                      ItemsSource="{Binding ElementName=videoWindow, Path=CanvasElement.LedTiles}"
+                      Width="{Binding ElementName=boxFigure, Path=ActualWidth}" 
+                      Height="{Binding ElementName=boxFigure, Path=ActualHeight}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderBrush="#bfffffff" Margin="-2" BorderThickness="4"></Border>
+                    <!--<Button Background="Transparent" 
+                            Opacity="0.25"
+                            Margin="2"
+                            Content="{Binding LedNumber}">
+                    </Button>-->
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="{Binding ElementName=videoWindow, Path=CanvasElement.ColumnsCount}" 
+                                 Rows="{Binding ElementName=videoWindow, Path=CanvasElement.RowsCount}" 
+                                 Background="Transparent" 
+                                 IsEnabled="False" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+        <StackPanel Grid.Column="1">
+            <xctk:DecimalUpDown Value="{Binding ElementName=videoWindow, Path=Thumbnail.XOffset}" Margin="4" Minimum="0"/>
+            <xctk:DecimalUpDown Value="{Binding ElementName=videoWindow, Path=Thumbnail.YOffset}" Margin="4" Minimum="0"/>
+        </StackPanel>
+    </Grid>
+</Window>

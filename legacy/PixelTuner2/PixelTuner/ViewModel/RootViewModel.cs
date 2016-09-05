@@ -157,7 +157,7 @@ namespace PixelTuner.ViewModel
             if (_activeDocument == null)
             {
                 ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
-                VideosModel.RefreshVideosCollection(Settings.Default.LineHeight);
+                //VideosModel.RefreshVideosCollection(Settings.Default.LineHeight);
                 CanvasModel = null;
                 GradientsModel.RefreshImagesCollection();
             }
@@ -165,7 +165,7 @@ namespace PixelTuner.ViewModel
             {
                 Settings.Default.LineHeight = _activeDocument.LineHeight;
                 ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
-                VideosModel.RefreshVideosCollection(Settings.Default.LineHeight);
+                //VideosModel.RefreshVideosCollection(Settings.Default.LineHeight);
                 GradientsModel.RefreshImagesCollection();
                 CanvasModel = ActiveDocument.Canvas;
                 e.NewDocument.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(NewDocument_PropertyChanged);
@@ -181,7 +181,7 @@ namespace PixelTuner.ViewModel
                 {
                     Settings.Default.LineHeight = (sender as FileViewModel).LineHeight;
                     ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
-                    VideosModel.RefreshVideosCollection(Settings.Default.LineHeight);
+                    //VideosModel.RefreshVideosCollection(Settings.Default.LineHeight);
                     GradientsModel.RefreshImagesCollection();
                 }
         }
@@ -1046,7 +1046,7 @@ namespace PixelTuner.ViewModel
             dw.ShowDialog();
 
             ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
-            VideosModel.RefreshVideosCollection(Settings.Default.LineHeight);
+            //VideosModel.RefreshVideosCollection(Settings.Default.LineHeight);
             GradientsModel.RefreshImagesCollection();
 
             foreach (var f in Files)

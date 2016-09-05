@@ -198,6 +198,9 @@
     </Compile>
     <Compile Include="UndoRedo\State.cs" />
     <Compile Include="UndoRedo\StateManager.cs" />
+    <Compile Include="VideoOffsetWindow.xaml.cs">
+      <DependentUpon>VideoOffsetWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\AvailableColors.cs" />
     <Compile Include="ViewModel\Devices\DeviceViewModel.cs" />
     <Compile Include="ViewModel\Devices\EpicPoiDeviceViewModel.cs" />
@@ -208,11 +211,12 @@
     <Compile Include="ViewModel\PaneViewModel.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
     <Compile Include="ViewModel\RootViewModel.cs" />
-    <Compile Include="ViewModel\Serialization\GradientTimeLineItem.cs" />
+    <Compile Include="ViewModel\Serialization\TimeLineItemGradient.cs" />
     <Compile Include="ViewModel\Serialization\TimeLineItem.cs" />
     <Compile Include="ViewModel\Serialization\TimeLineItemEffect.cs" />
     <Compile Include="ViewModel\Serialization\TimeLineItemEffectParameters.cs" />
     <Compile Include="ViewModel\Serialization\TimeLineItemSolid.cs" />
+    <Compile Include="ViewModel\Serialization\TimeLineItemVideo.cs" />
     <Compile Include="ViewModel\TimelineHelper.cs" />
     <Compile Include="ViewModel\TimelineItems\EffectSawThumbnailViewModel.cs" />
     <Compile Include="ViewModel\TimelineItems\EffectSineThumbnailViewModel.cs" />
@@ -226,6 +230,7 @@
     <Compile Include="ViewModel\TimelineItems\VideoThumbnailViewModel.cs" />
     <Compile Include="ViewModel\Timelines\EpicPoiTimeLineViewModel.cs" />
     <Compile Include="ViewModel\Timelines\LightTimeLineViewModel.cs" />
+    <Compile Include="ViewModel\Timelines\VideoTimeLineViewModel.cs" />
     <Compile Include="ViewModel\Timelines\PixelTimeLineViewModel.cs" />
     <Compile Include="ViewModel\Timelines\TimeLineViewModel.cs" />
     <Compile Include="ViewModel\Tools\CanvasElementViewModel.cs" />
@@ -395,6 +400,10 @@
     <Page Include="TimelinesToUpload.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="VideoOffsetWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
