@@ -989,7 +989,6 @@ namespace WPFSoundVisualizationLib
         }
 
         double minorTickDuration = 0.05d; // Major tick = 5 seconds, Minor tick = 1.00 second
-        double majorTickDuration = 0.25d;
 
         private void UpdateTimeTickInterval()
         {
@@ -1001,32 +1000,26 @@ namespace WPFSoundVisualizationLib
             if (controlWidth / soundPlayer.ChannelLength >= 600.0d) // Major tick = 250 ms, Minor tick = 50 ms.
             {
                 minorTickDuration = 0.05d;
-                majorTickDuration = 0.25d;
             }
             else if (controlWidth / soundPlayer.ChannelLength >= 120.0d) // Major tick = 0.5 sec, Minor tick = 100 ms.
             {
                 minorTickDuration = 0.1d;
-                majorTickDuration = 0.5d;
             }
             else if (controlWidth / soundPlayer.ChannelLength >= 80.0d) // Major tick = 0.5 sec, Minor tick = 100 ms.
             {
                 minorTickDuration = 0.2d;
-                majorTickDuration = 1d;
             }
             else if (controlWidth / soundPlayer.ChannelLength >= 40.0d) // Major tick = 1 seconds, Minor tick = 200 seconds.
             {
                 minorTickDuration = 0.4d;
-                majorTickDuration = 2.0d;
             }
             else if (controlWidth / soundPlayer.ChannelLength >= 20.0d) // Major tick = 5 seconds, Minor tick = 1.0 seconds.
             {
                 minorTickDuration = 0.8d;
-                majorTickDuration = 4.0d;
             }
             else if (controlWidth / soundPlayer.ChannelLength >= 0d) // Major tick = 10 seconds, Minor tick = 2.0 seconds.
             {
                 minorTickDuration = 2.0d;
-                majorTickDuration = 10.0d;
             }
             timelineCanvas.TickDuration = minorTickDuration;
         }
