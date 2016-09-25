@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -11,6 +12,6 @@ namespace Common.Controls
 		DateTime? EndTime { get; set; }
         Boolean TimelineViewExpanded { get; set; }
         bool IsSelected { get; set; }
-        object Clone();
+        object Clone(FileInfo fi = null);
 	}
 }
