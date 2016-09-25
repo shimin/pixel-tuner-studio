@@ -85,7 +85,7 @@ namespace PixelTuner.ViewModel
         {
             Device = device;
         }
-
+        
         #region UploadFirmwareCommand
 
         protected override bool CanUploadFirmware(object parameter)

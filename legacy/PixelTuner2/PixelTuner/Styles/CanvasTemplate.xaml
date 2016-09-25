@@ -23,6 +23,17 @@
                             Fill="{Binding Fill}" 
                             RenderTransform="{Binding Transform}"
                             Data="{Binding Geometry}">
+                    <Path.ToolTip>
+                        <TextBlock Text="{Binding Path}" />
+                    </Path.ToolTip>
+                    <Path.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Markup">
+                                <MenuItem Header="Copy" Command="{Binding CopyMarkupCommand}"/>
+                                <MenuItem Header="Paste" Command="{Binding PasteMarkupCommand}"/>
+                            </MenuItem>
+                        </ContextMenu>
+                    </Path.ContextMenu>
                 </Path>
             </Canvas>
         </ItemsControl>

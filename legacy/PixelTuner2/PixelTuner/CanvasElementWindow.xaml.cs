@@ -55,7 +55,6 @@ namespace PixelTuner
         private void Button_MouseEnter(object sender, MouseEventArgs e)
         {
             Button b = sender as Button;
-            Console.WriteLine(e.LeftButton);
             if (e.LeftButton == MouseButtonState.Pressed ||
                 e.MouseDevice.LeftButton == MouseButtonState.Pressed)
             {
@@ -67,6 +66,20 @@ namespace PixelTuner
         private void Button_MouseDown(object sender, MouseButtonEventArgs e)
         {
             e.Handled = false;
+        }
+
+        private void Button_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var btn = sender as Button;
+            if (btn != null)
+            {
+                var dc = btn.DataContext as LedTile;
+                if (dc != null)
+                {
+                    var w = new SetLedNumberWindow(dc);
+                    w.ShowDialog();
+                }
+            }
         }
     }
 }

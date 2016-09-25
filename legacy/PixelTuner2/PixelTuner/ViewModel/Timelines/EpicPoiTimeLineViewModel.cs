@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Media;
+using System.Xml.Serialization;
 using Common.Controls;
 
 namespace PixelTuner.ViewModel
@@ -31,6 +32,13 @@ namespace PixelTuner.ViewModel
 
     public class EpicPoiTimeLineViewModel : TimeLineViewModel
     {
+        [XmlAttribute]
+        public override int TimelineHeightPx
+        {
+            get { return 5; }
+            set { }
+        }
+
         public EpicPoiTimeLineViewModel()
         {
             SetBackgrounds(Color.FromRgb(80, 60, 60), Color.FromRgb(70, 50, 50));
@@ -49,10 +57,6 @@ namespace PixelTuner.ViewModel
         }
 
         #endregion
-
-        public override object Clone()
-        {
-            return base.Clone();
-        }
+        
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Media.Imaging;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows.Media;
 using System.Windows.Input;
 
@@ -167,7 +168,7 @@ namespace PixelTuner.ViewModel
             throw new NotImplementedException();
         }
 
-        public override object Clone()
+        public override object Clone(FileInfo fi = null)
         {
             SolidColorThumbnailViewModel result = (SolidColorThumbnailViewModel)base.Clone();
             result._image = this._image;
@@ -179,7 +180,7 @@ namespace PixelTuner.ViewModel
             return result;
         }
 
-        protected override ReplaceItemWindow OpenReplaceWindow()
+        public override ReplaceItemWindow OpenReplaceWindow()
         {
             return new ReplaceItemWindow(new EffectsViewModel(
                 (String)System.Windows.Application.Current.TryFindResource("Menu_Window_Effects"))

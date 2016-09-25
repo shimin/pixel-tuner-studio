@@ -2,6 +2,7 @@
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using System.Collections.ObjectModel;
+using System.IO;
 
 namespace PixelTuner.ViewModel
 {
@@ -170,14 +171,14 @@ namespace PixelTuner.ViewModel
             throw new NotImplementedException();
         }
 
-        protected override ReplaceItemWindow OpenReplaceWindow()
+        public override ReplaceItemWindow OpenReplaceWindow()
         {
             return new ReplaceItemWindow(new EffectsViewModel(
                 (String)System.Windows.Application.Current.TryFindResource("Menu_Window_Effects"))
             );
         }
 
-        public override object Clone()
+        public override object Clone(FileInfo fi = null)
         {
             EffectThumbnailViewModel result = (EffectThumbnailViewModel)base.Clone();
             result._image = this._image;

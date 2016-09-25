@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Collections.ObjectModel;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Expression.Interactivity.Core;
 
 namespace PixelTuner.ViewModel
@@ -37,7 +38,7 @@ namespace PixelTuner.ViewModel
         }
 
         double _opacityVal = 0.75;
-        [XmlAttribute]
+        [XmlIgnore]
         public double OpacityVal
         {
             get
@@ -77,9 +78,18 @@ namespace PixelTuner.ViewModel
                 return Index % Parent.ColumnsCount;
             }
         }
-
+        
+        private bool _selected = false;
         [XmlAttribute]
-        public bool Selected { get; set; } = false;
+        public bool Selected
+        {
+            get { return _selected; }
+            set
+            {
+                _selected = value;
+                RaisePropertyChanged("Selected");
+            }
+        }
 
         #endregion
 
@@ -105,6 +115,16 @@ namespace PixelTuner.ViewModel
                 Selected = true;
             }
         }
+
+        public override object Clone()
+        {
+            var newObj = (LedTile)base.Clone();
+            newObj._selected = _selected;
+            newObj._ledNumber = _ledNumber;
+            newObj.Index = Index;
+            newObj.Parent = Parent;
+            return newObj;
+        }
     }
 
     public class CanvasElementViewModel : ViewModelBase, Common.Controls.ITimeLineMeta
@@ -115,6 +135,14 @@ namespace PixelTuner.ViewModel
             //SelectedLeds = new ObservableCollection<LedTile>();
             SetSizeCommand = new ActionCommand(SetSize);
             OnDoubleClickCommand = new DelegateCommand(OnDoubleClick);
+            CopyMarkupCommand = new ActionCommand(OnCopyMarkupCommand);
+            PasteMarkupCommand = new RelayCommand(OnPasteMarkupCommand, CanPasteMarkup);
+            LedTiles.CollectionChanged += LedTiles_CollectionChanged;
+        }
+
+        private void LedTiles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            foreach (LedTile eNewItem in e.NewItems) { eNewItem.Parent = this; }
         }
 
         #region Properties
@@ -134,7 +162,7 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        [XmlElement]
+        [XmlArray]
         public ObservableCollection<LedTile> LedTiles
         {
             get;
@@ -149,14 +177,15 @@ namespace PixelTuner.ViewModel
         //}
 
         [XmlIgnore]
-        public List<Point> OrderedLeds
+        public List<System.Drawing.Point> OrderedLeds
         {
             get
             {
-                List<Point> result = new List<Point>();
-                foreach (var l in LedTiles)
+                var result = new List<System.Drawing.Point>();
+                var ordered = LedTiles.OrderBy(o => o.LedNumber);
+                foreach (var l in ordered)
                 {
-                    if (l.Selected) result.Add(new Point(l.X, l.Y));
+                    if (l.Selected) result.Add(new System.Drawing.Point(l.X, l.Y));
                 }
                 return result;
             }
@@ -201,6 +230,7 @@ namespace PixelTuner.ViewModel
         }
 
         string _path;
+        [XmlAttribute]
         public string Path
         {
             get { return _path; }
@@ -276,6 +306,27 @@ namespace PixelTuner.ViewModel
             wnd.Owner = Application.Current.MainWindow;
             wnd.ShowDialog();
         }
+        
+        [XmlIgnore]
+        public ICommand CopyMarkupCommand { get; private set; }
+
+        private void OnCopyMarkupCommand(object arg)
+        {
+            CanvasViewModel.CopyMarkup(this);
+        }
+        
+        [XmlIgnore]
+        public ICommand PasteMarkupCommand { get; private set; }
+
+        public bool CanPasteMarkup(object arg)
+        {
+            return CanvasViewModel.CanPasteMarkup();
+        }
+
+        private void OnPasteMarkupCommand(object arg)
+        {
+            CanvasViewModel.PasteMarkup(this);
+        }
 
         #endregion
 
@@ -300,21 +351,38 @@ namespace PixelTuner.ViewModel
         public int GetLastNumber()
         {
             int idx = 0;
-            foreach (var ledTile in LedTiles)
+            SortedList<int, LedTile> sorted = new SortedList<int, LedTile>();
+            foreach (var tile in LedTiles)
             {
-                if (ledTile.Selected) idx++;
+                if (tile.Selected)
+                {
+                    if (sorted.ContainsKey(tile.LedNumber))
+                    {
+                        tile.Selected = false;
+                        tile.LedNumber = 0;
+                    }
+                    else
+                    {
+                        sorted.Add(tile.LedNumber, tile);
+                    }
+                }
             }
-            return idx;
+            if (sorted.Count != 0) idx = sorted.Last().Key;
+            return ++idx;
         }
 
         public override object Clone()
         {
             var newObj = (CanvasElementViewModel)base.Clone();
-            newObj._fill = this._fill;
-            newObj._geometry = this._geometry;
-            newObj._path = this._path;
-            newObj._stroke = this._stroke;
-            newObj._transform = this._transform;
+            newObj._fill = _fill;
+            newObj._geometry = _geometry;
+            newObj._path = _path;
+            newObj._stroke = _stroke;
+            newObj._transform = _transform;
+            newObj._columnsCount = _columnsCount;
+            newObj._rowsCount = _rowsCount;
+            newObj._tilesMargin = _tilesMargin;
+            newObj.LedTiles = new ObservableCollection<LedTile>(LedTiles);
             return newObj;
         }
     }

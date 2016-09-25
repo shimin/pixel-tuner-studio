@@ -49,12 +49,16 @@ namespace PixelTuner.ViewModel
             return base.ToType(conversionType, provider);
         }
 
-        protected override ReplaceItemWindow OpenReplaceWindow()
+        public override ReplaceItemWindow OpenReplaceWindow()
         {
             return new ReplaceItemWindow(new GradientsViewModel(
                 (String)System.Windows.Application.Current.TryFindResource("Menu_Window_Gradients"))
             );
         }
 
+        public override object Clone(FileInfo fi = null)
+        {
+            return (GradientThumbnailViewModel)base.Clone(fi);
+        }
     }
 }

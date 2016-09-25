@@ -52,6 +52,7 @@
             <File Id="CommunicationLib" Source="..\PixelTuner\bin\$(var.Configuration)\Communication.dll" />
             <File Id="eDmxArtNetLib" Source="..\PixelTuner\bin\$(var.Configuration)\eDmx.ArtNet.dll" />
             <File Id="ImageProcessorLib" Source="..\PixelTuner\bin\$(var.Configuration)\ImageProcessor.dll" />
+            <File Id="InteractionsLib" Source="..\PixelTuner\bin\$(var.Configuration)\Microsoft.Expression.Interactions.dll" />
             <File Id="NAudioLib" Source="..\PixelTuner\bin\$(var.Configuration)\NAudio.dll" />
             <File Id="TagLib" Source="..\PixelTuner\bin\$(var.Configuration)\taglib-sharp.dll" />
             <File Id="PixelTuner.exe" Name="PixelTuner.exe" Source="..\PixelTuner\bin\$(var.Configuration)\PixelTuner.exe" KeyPath='yes'>
@@ -75,15 +76,17 @@
           <Directory Id="ResourceLocation_de" Name="de">
             <Component Id="PixelTuner.com.de" Guid="734B1DAE-D31C-41B8-A49E-A623249E59B2">
               <File Id="Rosources_de" Source="..\PixelTuner\bin\$(var.Configuration)\de\Workspace.resources.dll" />
-              <!--<File Id="Rosources_de2" Source="..\PixelTuner\bin\$(var.Configuration)\de\System.Windows.Interactivity.resources.dll" />-->
+              <File Id="Rosources_de2" Source="..\PixelTuner\bin\$(var.Configuration)\de\System.Windows.Interactivity.resources.dll" />
+              <File Id="Resources_de3" Source="..\PixelTuner\bin\$(var.Configuration)\de\Microsoft.Expression.Interactions.resources.dll"/>
             </Component>
           </Directory>
 
-          <!--<Directory Id="ResourceLocation_en" Name="en">
+          <Directory Id="ResourceLocation_en" Name="en">
             <Component Id="PixelTuner.com.en" Guid="b0b3a919-8cca-4393-95e0-4f0d49cfc3ff">
               <File Id="Rosources_en" Source="..\PixelTuner\bin\$(var.Configuration)\en\System.Windows.Interactivity.resources.dll" />
+              <File Id="Resources_en2" Source="..\PixelTuner\bin\$(var.Configuration)\en\Microsoft.Expression.Interactions.resources.dll"/>
             </Component>
-          </Directory>-->
+          </Directory>
 
           <!--<Directory Id="ResourceLocation_en_US" Name="en-US">
             <Component Id="PixelTuner.com.en_US" Guid="872F9BE8-C7CA-485A-83AF-CF822255135E">
@@ -94,14 +97,16 @@
           <Directory Id="ResourceLocation_es" Name="es">
             <Component Id="PixelTuner.com.es" Guid="FFFE2969-59C2-4A42-B4B7-6D5473F8131C">
               <File Id="Rosources_es" Source="..\PixelTuner\bin\$(var.Configuration)\es\Workspace.resources.dll" />
-              <!--<File Id="Rosources_es2" Source="..\PixelTuner\bin\$(var.Configuration)\es\System.Windows.Interactivity.resources.dll" />-->
+              <File Id="Rosources_es2" Source="..\PixelTuner\bin\$(var.Configuration)\es\System.Windows.Interactivity.resources.dll" />
+              <File Id="Resources_es3" Source="..\PixelTuner\bin\$(var.Configuration)\es\Microsoft.Expression.Interactions.resources.dll"/>
             </Component>
           </Directory>
 
           <Directory Id="ResourceLocation_fr" Name="fr">
             <Component Id="PixelTuner.com.fr" Guid="97ED9B40-435E-455F-9B8D-9C9D836E4205">
               <File Id="Rosources_fr" Source="..\PixelTuner\bin\$(var.Configuration)\fr\Workspace.resources.dll" />
-              <!--<File Id="Rosources_fr2" Source="..\PixelTuner\bin\$(var.Configuration)\fr\System.Windows.Interactivity.resources.dll" />-->
+              <File Id="Rosources_fr2" Source="..\PixelTuner\bin\$(var.Configuration)\fr\System.Windows.Interactivity.resources.dll" />
+              <File Id="Resources_fr3" Source="..\PixelTuner\bin\$(var.Configuration)\fr\Microsoft.Expression.Interactions.resources.dll"/>
             </Component>
           </Directory>
 
@@ -114,21 +119,24 @@
           <Directory Id="ResourceLocation_it" Name="it">
             <Component Id="PixelTuner.com.it" Guid="7076224B-CF85-43B0-9F9E-BE16A57AFEC7">
               <File Id="Rosources_it" Source="..\PixelTuner\bin\$(var.Configuration)\it\Workspace.resources.dll" />
-              <!--<File Id="Rosources_it2" Source="..\PixelTuner\bin\$(var.Configuration)\it\System.Windows.Interactivity.resources.dll" />-->
+              <File Id="Rosources_it2" Source="..\PixelTuner\bin\$(var.Configuration)\it\System.Windows.Interactivity.resources.dll" />
+              <File Id="Resources_it3" Source="..\PixelTuner\bin\$(var.Configuration)\it\Microsoft.Expression.Interactions.resources.dll"/>
             </Component>
           </Directory>
 
-          <!--<Directory Id="ResourceLocation_ja" Name="ja">
+          <Directory Id="ResourceLocation_ja" Name="ja">
             <Component Id="PixelTuner.com.ja" Guid="27bd84d7-07f0-4161-8d38-1a8d9120654e">
               <File Id="Rosources_ja" Source="..\PixelTuner\bin\$(var.Configuration)\ja\System.Windows.Interactivity.resources.dll" />
+              <File Id="Resources_ja2" Source="..\PixelTuner\bin\$(var.Configuration)\ja\Microsoft.Expression.Interactions.resources.dll"/>
             </Component>
-          </Directory>-->
+          </Directory>
 
-          <!--<Directory Id="ResourceLocation_ko" Name="ko">
+          <Directory Id="ResourceLocation_ko" Name="ko">
             <Component Id="PixelTuner.com.ko" Guid="f111ef9f-edb7-4bc3-95c8-23855fbfe1bc">
               <File Id="Rosources_ko" Source="..\PixelTuner\bin\$(var.Configuration)\ko\System.Windows.Interactivity.resources.dll" />
+              <File Id="Resources_ko2" Source="..\PixelTuner\bin\$(var.Configuration)\ko\Microsoft.Expression.Interactions.resources.dll"/>
             </Component>
-          </Directory>-->
+          </Directory>
 
           <Directory Id="ResourceLocation_pt_BR" Name="pt-BR">
             <Component Id="PixelTuner.com.pt_BR" Guid="F80E9D5F-EFF8-432F-B2B7-8C2F66EC3774">
@@ -157,15 +165,17 @@
           <Directory Id="ResourceLocation_zh_Hans" Name="zh-Hans">
             <Component Id="PixelTuner.com.zh_Hans" Guid="EE6163A2-0845-46B1-A34F-8F3AD594F0ED">
               <File Id="Rosources_zh_Hans" Source="..\PixelTuner\bin\$(var.Configuration)\zh-Hans\Workspace.resources.dll" />
-              <!--<File Id="Rosources_zh_Hans2" Source="..\PixelTuner\bin\$(var.Configuration)\zh-Hans\System.Windows.Interactivity.resources.dll" />-->
+              <File Id="Rosources_zh_Hans2" Source="..\PixelTuner\bin\$(var.Configuration)\zh-Hans\System.Windows.Interactivity.resources.dll" />
+              <File Id="Resources_zh_Hans3" Source="..\PixelTuner\bin\$(var.Configuration)\zh-Hans\Microsoft.Expression.Interactions.resources.dll"/>
             </Component>
           </Directory>
 
-          <!--<Directory Id="ResourceLocation_zh_Hant" Name="zh-Hant">
+          <Directory Id="ResourceLocation_zh_Hant" Name="zh-Hant">
             <Component Id="PixelTuner.com.zh_Hant" Guid="58477f2e-fb9a-4c91-a5b6-cd1ffc18095d">
               <File Id="Rosources_zh_Hant" Source="..\PixelTuner\bin\$(var.Configuration)\zh-Hant\System.Windows.Interactivity.resources.dll" />
+              <File Id="Resources_zh_Hant2" Source="..\PixelTuner\bin\$(var.Configuration)\zh-Hant\Microsoft.Expression.Interactions.resources.dll"/>
             </Component>
-          </Directory>-->
+          </Directory>
         </Directory>
       </Directory>
 
@@ -189,7 +199,9 @@
       </Directory>
 
       <Directory Id="WIX_DIR_MYVIDEO">
-        <Directory Id="VideosFolder" Name="Clips"/>
+        <Directory Id="PixelTuner2ContentV" Name="PixelTuner 2">
+          <Directory Id="VideosFolder" Name="Clips"/>
+        </Directory>
       </Directory>
 
       <Directory Id="WIX_DIR_RESOURCES">
@@ -213,17 +225,6 @@
       </Directory>
 
     </Directory>
-
-    <!--<DirectoryRef Id="TARGETDIR">
-      
-    --><!--<Merge Id="VCRedist" SourceFile="vcredist\Microsoft_VC100_CRT_x64.msm" DiskId="1" Language="0"/>--><!--
-    
-      <Merge Id="VCRedist1" SourceFile="vcredist\Microsoft_VC100_CRT_x86.msm" DiskId="1" Language="0"/>
-      
-    --><!--<Merge Id="VCRedist2" SourceFile="vcredist\Microsoft_VC110_CRT_x64.msm" DiskId="1" Language="0"/>--><!--
-    
-      <Merge Id="VCRedist3" SourceFile="vcredist\Microsoft_VC110_CRT_x86.msm" DiskId="1" Language="0"/>
-    </DirectoryRef>-->
 
     <DirectoryRef Id="INSTALLLOCATION">
       <Component Id="SharpVectors" Guid="af9296e1-4dcd-4028-b355-57f7a7e72282">
@@ -1718,11 +1719,173 @@
     <DirectoryRef Id="GradientsFolder">
       <Component Id="DefaultGradients" Guid="bd323f30-425e-4279-87bd-fb79cc987143">
         <CreateFolder/>
-        <File Id="_g_effect1_jpg" Source="..\PixelTuner\Gradients\g_effect1.jpg" />
-        <File Id="_g_rainbow_jpg" Source="..\PixelTuner\Gradients\g_rainbow.jpg" />
+        <File Id="blue_black_jpg" Source="..\PixelTuner\Gradients\blue-black.jpg" />
+        <File Id="blue_cyan_red_jpg" Source="..\PixelTuner\Gradients\blue-cyan-red.jpg" />
+        <File Id="blue_cyan_jpg" Source="..\PixelTuner\Gradients\blue-cyan.jpg" />
+        <File Id="blue_cyan2_jpg" Source="..\PixelTuner\Gradients\blue-cyan2.jpg" />
+        <File Id="blue_green_jpg" Source="..\PixelTuner\Gradients\blue-green.jpg" />
+        <File Id="blue_green2_jpg" Source="..\PixelTuner\Gradients\blue-green2.jpg" />
+        <File Id="blue_orange_jpg" Source="..\PixelTuner\Gradients\blue-orange.jpg" />
+        <File Id="blue_purple_jpg" Source="..\PixelTuner\Gradients\blue-purple.jpg" />
+        <File Id="blue_white_black_jpg" Source="..\PixelTuner\Gradients\blue-white-black.jpg" />
+        <File Id="blue_white_black2_jpg" Source="..\PixelTuner\Gradients\blue-white-black2.jpg" />
+        <File Id="blue_white_cyan_jpg" Source="..\PixelTuner\Gradients\blue-white-cyan.jpg" />
+        <File Id="blue_white_jpg" Source="..\PixelTuner\Gradients\blue-white.jpg" />
+        <File Id="blue_white2_jpg" Source="..\PixelTuner\Gradients\blue-white2.jpg" />
+        <File Id="blue_yellow_purple_jpg" Source="..\PixelTuner\Gradients\blue-yellow-purple.jpg" />
+        <File Id="blue_yellow_jpg" Source="..\PixelTuner\Gradients\blue-yellow.jpg" />
+        <File Id="blue_yellow2_jpg" Source="..\PixelTuner\Gradients\blue-yellow2.jpg" />
+        <File Id="blue_jpg" Source="..\PixelTuner\Gradients\blue.jpg" />
+        <File Id="blue2_jpg" Source="..\PixelTuner\Gradients\blue2.jpg" />
+        <File Id="blue3_jpg" Source="..\PixelTuner\Gradients\blue3.jpg" />
+        <File Id="cyan_black_jpg" Source="..\PixelTuner\Gradients\cyan-black.jpg" />
+        <File Id="cyan_blue_jpg" Source="..\PixelTuner\Gradients\cyan-blue.jpg" />
+        <File Id="cyan_green_purple_jpg" Source="..\PixelTuner\Gradients\cyan-green-purple.jpg" />
+        <File Id="cyan_red_jpg" Source="..\PixelTuner\Gradients\cyan-red.jpg" />
+        <File Id="cyan_white_black_jpg" Source="..\PixelTuner\Gradients\cyan-white-black.jpg" />
+        <File Id="cyan_white_green_jpg" Source="..\PixelTuner\Gradients\cyan-white-green.jpg" />
+        <File Id="cyan_white_jpg" Source="..\PixelTuner\Gradients\cyan-white.jpg" />
+        <File Id="cyan_white2_jpg" Source="..\PixelTuner\Gradients\cyan-white2.jpg" />
+        <File Id="cyan_jpg" Source="..\PixelTuner\Gradients\cyan.jpg" />
+        <File Id="cyan2_jpg" Source="..\PixelTuner\Gradients\cyan2.jpg" />
+        <File Id="cyan3_jpg" Source="..\PixelTuner\Gradients\cyan3.jpg" />
+        <File Id="green_black_jpg" Source="..\PixelTuner\Gradients\green-black.jpg" />
+        <File Id="green_purple_jpg" Source="..\PixelTuner\Gradients\green-purple.jpg" />
+        <File Id="green_purple2_jpg" Source="..\PixelTuner\Gradients\green-purple2.jpg" />
+        <File Id="green_red_jpg" Source="..\PixelTuner\Gradients\green-red.jpg" />
+        <File Id="green_white_black_jpg" Source="..\PixelTuner\Gradients\green-white-black.jpg" />
+        <File Id="green_white_yellow_jpg" Source="..\PixelTuner\Gradients\green-white-yellow.jpg" />
+        <File Id="green_white_jpg" Source="..\PixelTuner\Gradients\green-white.jpg" />
+        <File Id="green_yellow_blue_jpg" Source="..\PixelTuner\Gradients\green-yellow-blue.jpg" />
+        <File Id="green_yellow_purple_jpg" Source="..\PixelTuner\Gradients\green-yellow-purple.jpg" />
+        <File Id="green_jpg" Source="..\PixelTuner\Gradients\green.jpg" />
+        <File Id="green2_jpg" Source="..\PixelTuner\Gradients\green2.jpg" />
+        <File Id="green3_jpg" Source="..\PixelTuner\Gradients\green3.jpg" />
+        <File Id="g_effect1_jpg" Source="..\PixelTuner\Gradients\g_effect1.jpg" />
+        <File Id="g_rainbow_jpg" Source="..\PixelTuner\Gradients\g_rainbow.jpg" />
+        <File Id="lime_black_jpg" Source="..\PixelTuner\Gradients\lime-black.jpg" />
+        <File Id="lime_cyan_jpg" Source="..\PixelTuner\Gradients\lime-cyan.jpg" />
+        <File Id="lime_purple_jpg" Source="..\PixelTuner\Gradients\lime-purple.jpg" />
+        <File Id="lime_red_blue_jpg" Source="..\PixelTuner\Gradients\lime-red-blue.jpg" />
+        <File Id="lime_violet_jpg" Source="..\PixelTuner\Gradients\lime-violet.jpg" />
+        <File Id="lime_white_black_jpg" Source="..\PixelTuner\Gradients\lime-white-black.jpg" />
+        <File Id="lime3_jpg" Source="..\PixelTuner\Gradients\lime3.jpg" />
+        <File Id="orange_black_jpg" Source="..\PixelTuner\Gradients\orange-black.jpg" />
+        <File Id="orange_blue_jpg" Source="..\PixelTuner\Gradients\orange-blue.jpg" />
+        <File Id="orange_blue2_jpg" Source="..\PixelTuner\Gradients\orange-blue2.jpg" />
+        <File Id="orange_cyan_blue_jpg" Source="..\PixelTuner\Gradients\orange-cyan-blue.jpg" />
+        <File Id="orange_lime_jpg" Source="..\PixelTuner\Gradients\orange-lime.jpg" />
+        <File Id="orange_purple_green_jpg" Source="..\PixelTuner\Gradients\orange-purple-green.jpg" />
+        <File Id="orange_white_black_jpg" Source="..\PixelTuner\Gradients\orange-white-black.jpg" />
+        <File Id="orange_jpg" Source="..\PixelTuner\Gradients\orange.jpg" />
+        <File Id="orange2_jpg" Source="..\PixelTuner\Gradients\orange2.jpg" />
+        <File Id="orange3_jpg" Source="..\PixelTuner\Gradients\orange3.jpg" />
+        <File Id="purple_black_jpg" Source="..\PixelTuner\Gradients\purple-black.jpg" />
+        <File Id="purple_blue_yellow_jpg" Source="..\PixelTuner\Gradients\purple-blue-yellow.jpg" />
+        <File Id="purple_cyan_jpg" Source="..\PixelTuner\Gradients\purple-cyan.jpg" />
+        <File Id="purple_cyan2_jpg" Source="..\PixelTuner\Gradients\purple-cyan2.jpg" />
+        <File Id="purple_green_jpg" Source="..\PixelTuner\Gradients\purple-green.jpg" />
+        <File Id="purple_oange_jpg" Source="..\PixelTuner\Gradients\purple-oange.jpg" />
+        <File Id="purple_red_jpg" Source="..\PixelTuner\Gradients\purple-red.jpg" />
+        <File Id="purple_white_black_jpg" Source="..\PixelTuner\Gradients\purple-white-black.jpg" />
+        <File Id="purple_white_blue_jpg" Source="..\PixelTuner\Gradients\purple-white-blue.jpg" />
+        <File Id="purple_white_jpg" Source="..\PixelTuner\Gradients\purple-white.jpg" />
+        <File Id="purple_white2_jpg" Source="..\PixelTuner\Gradients\purple-white2.jpg" />
+        <File Id="purple_yellow_jpg" Source="..\PixelTuner\Gradients\purple-yellow.jpg" />
+        <File Id="purple_jpg" Source="..\PixelTuner\Gradients\purple.jpg" />
+        <File Id="purple2_jpg" Source="..\PixelTuner\Gradients\purple2.jpg" />
+        <File Id="purple3_jpg" Source="..\PixelTuner\Gradients\purple3.jpg" />
+        <File Id="rainbow_jpg" Source="..\PixelTuner\Gradients\rainbow.jpg" />
+        <File Id="rainbow2_jpg" Source="..\PixelTuner\Gradients\rainbow2.jpg" />
+        <File Id="red_black_jpg" Source="..\PixelTuner\Gradients\red-black.jpg" />
+        <File Id="red_blue_yellow_jpg" Source="..\PixelTuner\Gradients\red-blue-yellow.jpg" />
+        <File Id="red_blue_jpg" Source="..\PixelTuner\Gradients\red-blue.jpg" />
+        <File Id="red_blue2_jpg" Source="..\PixelTuner\Gradients\red-blue2.jpg" />
+        <File Id="red_blue3_jpg" Source="..\PixelTuner\Gradients\red-blue3.jpg" />
+        <File Id="red_cyan_jpg" Source="..\PixelTuner\Gradients\red-cyan.jpg" />
+        <File Id="red_green_jpg" Source="..\PixelTuner\Gradients\red-green.jpg" />
+        <File Id="red_purple_green_jpg" Source="..\PixelTuner\Gradients\red-purple-green.jpg" />
+        <File Id="red_white_black_jpg" Source="..\PixelTuner\Gradients\red-white-black.jpg" />
+        <File Id="red_white_violet_jpg" Source="..\PixelTuner\Gradients\red-white-violet.jpg" />
+        <File Id="red_white_jpg" Source="..\PixelTuner\Gradients\red-white.jpg" />
+        <File Id="red_jpg" Source="..\PixelTuner\Gradients\red.jpg" />
+        <File Id="red2_jpg" Source="..\PixelTuner\Gradients\red2.jpg" />
+        <File Id="red3_jpg" Source="..\PixelTuner\Gradients\red3.jpg" />
+        <File Id="violet_black_jpg" Source="..\PixelTuner\Gradients\violet-black.jpg" />
+        <File Id="violet_blue_green_jpg" Source="..\PixelTuner\Gradients\violet-blue-green.jpg" />
+        <File Id="violet_cyan_orange_jpg" Source="..\PixelTuner\Gradients\violet-cyan-orange.jpg" />
+        <File Id="violet_green_jpg" Source="..\PixelTuner\Gradients\violet-green.jpg" />
+        <File Id="violet_lime_jpg" Source="..\PixelTuner\Gradients\violet-lime.jpg" />
+        <File Id="violet_red_jpg" Source="..\PixelTuner\Gradients\violet-red.jpg" />
+        <File Id="violet_white_black_jpg" Source="..\PixelTuner\Gradients\violet-white-black.jpg" />
+        <File Id="violet_white_black2_jpg" Source="..\PixelTuner\Gradients\violet-white-black2.jpg" />
+        <File Id="violet_white_blue_jpg" Source="..\PixelTuner\Gradients\violet-white-blue.jpg" />
+        <File Id="violet_white_jpg" Source="..\PixelTuner\Gradients\violet-white.jpg" />
+        <File Id="violet_jpg" Source="..\PixelTuner\Gradients\violet.jpg" />
+        <File Id="violet2_jpg" Source="..\PixelTuner\Gradients\violet2.jpg" />
+        <File Id="violet3_jpg" Source="..\PixelTuner\Gradients\violet3.jpg" />
+        <File Id="white_blue_jpg" Source="..\PixelTuner\Gradients\white-blue.jpg" />
+        <File Id="white_blue2_jpg" Source="..\PixelTuner\Gradients\white-blue2.jpg" />
+        <File Id="white_blue3_jpg" Source="..\PixelTuner\Gradients\white-blue3.jpg" />
+        <File Id="white_blue4_jpg" Source="..\PixelTuner\Gradients\white-blue4.jpg" />
+        <File Id="white_cyan_jpg" Source="..\PixelTuner\Gradients\white-cyan.jpg" />
+        <File Id="white_cyan2_jpg" Source="..\PixelTuner\Gradients\white-cyan2.jpg" />
+        <File Id="white_cyan3_jpg" Source="..\PixelTuner\Gradients\white-cyan3.jpg" />
+        <File Id="white_green_jpg" Source="..\PixelTuner\Gradients\white-green.jpg" />
+        <File Id="white_green2_jpg" Source="..\PixelTuner\Gradients\white-green2.jpg" />
+        <File Id="white_lime_jpg" Source="..\PixelTuner\Gradients\white-lime.jpg" />
+        <File Id="white_lime2_jpg" Source="..\PixelTuner\Gradients\white-lime2.jpg" />
+        <File Id="white_lime3_jpg" Source="..\PixelTuner\Gradients\white-lime3.jpg" />
+        <File Id="white_orange_jpg" Source="..\PixelTuner\Gradients\white-orange.jpg" />
+        <File Id="white_orange2_jpg" Source="..\PixelTuner\Gradients\white-orange2.jpg" />
+        <File Id="white_orange3_jpg" Source="..\PixelTuner\Gradients\white-orange3.jpg" />
+        <File Id="white_orange4_jpg" Source="..\PixelTuner\Gradients\white-orange4.jpg" />
+        <File Id="white_purple_jpg" Source="..\PixelTuner\Gradients\white-purple.jpg" />
+        <File Id="white_purple2_jpg" Source="..\PixelTuner\Gradients\white-purple2.jpg" />
+        <File Id="white_purple3_jpg" Source="..\PixelTuner\Gradients\white-purple3.jpg" />
+        <File Id="white_red_jpg" Source="..\PixelTuner\Gradients\white-red.jpg" />
+        <File Id="white_red2_jpg" Source="..\PixelTuner\Gradients\white-red2.jpg" />
+        <File Id="white_red3_jpg" Source="..\PixelTuner\Gradients\white-red3.jpg" />
+        <File Id="white_violet_jpg" Source="..\PixelTuner\Gradients\white-violet.jpg" />
+        <File Id="white_violet2_jpg" Source="..\PixelTuner\Gradients\white-violet2.jpg" />
+        <File Id="white_violet3_jpg" Source="..\PixelTuner\Gradients\white-violet3.jpg" />
+        <File Id="white_yellow_jpg" Source="..\PixelTuner\Gradients\white-yellow.jpg" />
+        <File Id="white_yellow2_jpg" Source="..\PixelTuner\Gradients\white-yellow2.jpg" />
+        <File Id="white_jpg" Source="..\PixelTuner\Gradients\white.jpg" />
+        <File Id="white2_jpg" Source="..\PixelTuner\Gradients\white2.jpg" />
+        <File Id="yellow_black_jpg" Source="..\PixelTuner\Gradients\yellow-black.jpg" />
+        <File Id="yellow_purple_jpg" Source="..\PixelTuner\Gradients\yellow-purple.jpg" />
+        <File Id="yellow_red_cyan_jpg" Source="..\PixelTuner\Gradients\yellow-red-cyan.jpg" />
+        <File Id="yellow_violet_jpg" Source="..\PixelTuner\Gradients\yellow-violet.jpg" />
+        <File Id="yellow_white_black_jpg" Source="..\PixelTuner\Gradients\yellow-white-black.jpg" />
+        <File Id="yellow_white_red_jpg" Source="..\PixelTuner\Gradients\yellow-white-red.jpg" />
+        <File Id="yellow_jpg" Source="..\PixelTuner\Gradients\yellow.jpg" />
+        <File Id="yellow2_jpg" Source="..\PixelTuner\Gradients\yellow2.jpg" />
+        <File Id="yellow3_jpg" Source="..\PixelTuner\Gradients\yellow3.jpg" />
       </Component>
     </DirectoryRef>
 
+    <DirectoryRef Id="VideosFolder">
+      <Component Id="DefaultVideos" Guid="c323cc0d-b8ea-4050-a420-b957949be68a">
+        <CreateFolder/>
+        <File Id="electric_gif" Source="..\PixelTuner\Videos\electric.gif" />
+        <File Id="gif001_gif" Source="..\PixelTuner\Videos\gif001.gif" />
+        <File Id="loader_gif" Source="..\PixelTuner\Videos\loader.gif" />
+        <File Id="output_gif" Source="..\PixelTuner\Videos\output.gif" />
+        <File Id="output1_gif" Source="..\PixelTuner\Videos\output1.gif" />
+        <File Id="output3_gif" Source="..\PixelTuner\Videos\output3.gif" />
+        <File Id="output4_gif" Source="..\PixelTuner\Videos\output4.gif" />
+        <File Id="output5_gif" Source="..\PixelTuner\Videos\output5.gif" />
+        <File Id="output6_gif" Source="..\PixelTuner\Videos\output6.gif" />
+        <File Id="output7_gif" Source="..\PixelTuner\Videos\output7.gif" />
+        <File Id="output8_gif" Source="..\PixelTuner\Videos\output8.gif" />
+        <File Id="plasma_gif" Source="..\PixelTuner\Videos\plasma.gif" />
+        <File Id="pulse_gif" Source="..\PixelTuner\Videos\pulse.gif" />
+        <File Id="redsphere_gif" Source="..\PixelTuner\Videos\redsphere.gif" />
+        <File Id="waves_gif" Source="..\PixelTuner\Videos\waves.gif" />
+      </Component>
+    </DirectoryRef>
+    
     <DirectoryRef Id="SchemasFolder">
       <Component Id="DefaultSchemas" Guid="0da32cc2-208b-4609-9c1c-bd4bdea65311">
         <CreateFolder/>
@@ -1732,35 +1895,31 @@
     </DirectoryRef>
 
     <Feature Id="ProductFeature" Title="PixelTuner" Level="1">
-      <!--<MergeRef Id="VCRedist"/>-->
-      <!--<MergeRef Id="VCRedist1"/>-->
-      <!--<MergeRef Id="VCRedist2"/>-->
-      <!--<MergeRef Id="VCRedist3"/>-->
       <!-- TODO: Remove the comments around this ComponentRef element and the Component above in order to add resources to this installer. -->
       <ComponentRef Id="InstallPathRegWriter" />
       <ComponentRef Id="PixelTuner.com" />
       <ComponentRef Id="DockData"/>
       <ComponentRef Id="SharpVectors" />
-      <!--<ComponentRef Id="PixelTuner.com.en" />-->
+      <ComponentRef Id="PixelTuner.com.en" />
       <!--<ComponentRef Id="PixelTuner.com.en_US" />-->
       <ComponentRef Id="PixelTuner.com.de" />
       <ComponentRef Id="PixelTuner.com.es" />
       <ComponentRef Id="PixelTuner.com.fr" />
       <ComponentRef Id="PixelTuner.com.hu" />
-      <!--<ComponentRef Id="PixelTuner.com.ja" />-->
-      <!--<ComponentRef Id="PixelTuner.com.ko" />-->
+      <ComponentRef Id="PixelTuner.com.ja" />
+      <ComponentRef Id="PixelTuner.com.ko" />
       <ComponentRef Id="PixelTuner.com.it" />
       <ComponentRef Id="PixelTuner.com.pt_BR" />
       <ComponentRef Id="PixelTuner.com.ro" />
       <ComponentRef Id="PixelTuner.com.ru" />
       <ComponentRef Id="PixelTuner.com.sv" />
       <ComponentRef Id="PixelTuner.com.zh_Hans" />
-      <!--<ComponentRef Id="PixelTuner.com.zh_Hant" />-->
+      <ComponentRef Id="PixelTuner.com.zh_Hant" />
       <ComponentRef Id='ProgramMenuDir' />
       <ComponentRef Id="DefaultContent" />
       <ComponentRef Id="DefaultGradients"/>
       <ComponentRef Id="DefaultSchemas"/>
-
+      <ComponentRef Id="DefaultVideos"/>
     </Feature>
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION" />
     <Icon Id="PixelTuner.exe" SourceFile="..\PixelTuner\bin\$(var.Configuration)\PixelTuner.exe" />

@@ -81,7 +81,7 @@
     <system:String x:Key="Preview_Animate">Animate</system:String>
     <system:String x:Key="Global_ImagesHeightMismatch">"Copied images doesn't match project height."</system:String>
     <system:String x:Key="Global_PixelElementLinkError">"Pixel segment sketch isn't assigned. Just drag it from canvas window."</system:String>
-    <system:String x:Key="Global_SaveChanges">"Save changes for file '{0}'?"</system:String>
+    <system:String x:Key="Global_SaveChanges">"Save changes to file '{0}'?"</system:String>
     <system:String x:Key="Global_NotEnoughtSpace">Not enough device memory.</system:String>
     <system:String x:Key="Global_TimelineHigherThanDevice">Pictures height&#160;is&#160;{0}. It's&#160;more&#160;than&#160;{1}&#160;-&#160;actual device&#160;leds&#160;count. All&#160;pics will&#160;be cropped&#160;for&#160;{2}&#160;pixels on&#160;bottom. Continue&#160;anyway?</system:String>
     <system:String x:Key="Global_TimelineLowerThanDevice">Pictures height&#160;is&#160;{0}. It's&#160;less&#160;than&#160;{1}&#160;-&#160;actual device&#160;leds&#160;count. All&#160;pics will&#160;be extended&#160;for&#160;{2}&#160;pixels with&#160;black&#160;field on bottom. Continue&#160;anyway?</system:String>
@@ -143,4 +143,12 @@
     <system:String x:Key="ElementMarkup_Spacing">Spacing:</system:String>
     <system:String x:Key="ElementMarkup_Import">Load sketch</system:String>
     <system:String x:Key="VideoOffsetWindow_Title">Video offset</system:String>
+    <system:String x:Key="FixMissingWindow_CantFind">The following file couldn't be found at specified location:</system:String>
+    <system:String x:Key="FixMissingWindow_WhatToDo">What would you like to do?</system:String>
+    <system:String x:Key="FixMissingWindow_SetBaseDirectory">Set a new files location</system:String>
+    <system:String x:Key="FixMissingWindow_SetOtherImageFromCollection">Replace with other one from collection</system:String>
+    <system:String x:Key="FixMissingWindow_SetOtherImageFromDrive">Replace with other one from drive</system:String>
+    <system:String x:Key="FixMissingWindow_SetFileToIgnore">Ignore missing file and leave it offline</system:String>
+    <system:String x:Key="FixMissingWindow_SetFileToIgnoreAll">Ignore all missing files and leave them offline</system:String>
+    <system:String x:Key="FixMissingWindow_HeightMismatch">Image and timeline height mismatch.</system:String>
 </ResourceDictionary>

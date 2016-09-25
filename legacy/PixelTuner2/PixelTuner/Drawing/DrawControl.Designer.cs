@@ -46,9 +46,6 @@
             this.boxFrontColor = new System.Windows.Forms.Button();
             this.boxDummyButton = new System.Windows.Forms.Button();
             this.boxBgColor = new System.Windows.Forms.Button();
-            this.boxTableLayout = new System.Windows.Forms.TableLayoutPanel();
-            this.boxCanvasHolder = new System.Windows.Forms.Panel();
-            this.boxSplit = new System.Windows.Forms.SplitContainer();
             this.boxCanvas = new PixelTuner.Drawing.PixelCanvas();
             this.boxPipetteTT = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
@@ -58,16 +55,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.boxWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxPointSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxHeight)).BeginInit();
-            this.boxTableLayout.SuspendLayout();
-            this.boxCanvasHolder.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.boxSplit)).BeginInit();
-            this.boxSplit.Panel1.SuspendLayout();
-            this.boxSplit.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer
             // 
-            this.splitContainer.BackColor = System.Drawing.SystemColors.Control;
+            this.splitContainer.BackColor = System.Drawing.Color.Transparent;
             this.splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer.IsSplitterFixed = true;
@@ -97,8 +89,10 @@
             // 
             // splitContainer.Panel2
             // 
-            this.splitContainer.Panel2.Controls.Add(this.boxTableLayout);
-            this.splitContainer.Size = new System.Drawing.Size(872, 241);
+            this.splitContainer.Panel2.AutoScroll = true;
+            this.splitContainer.Panel2.BackColor = System.Drawing.Color.Transparent;
+            this.splitContainer.Panel2.Controls.Add(this.boxCanvas);
+            this.splitContainer.Size = new System.Drawing.Size(660, 200);
             this.splitContainer.SplitterDistance = 33;
             this.splitContainer.SplitterWidth = 2;
             this.splitContainer.TabIndex = 0;
@@ -235,6 +229,11 @@
             0,
             0});
             this.boxHeight.Location = new System.Drawing.Point(375, 5);
+            this.boxHeight.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
             this.boxHeight.Minimum = new decimal(new int[] {
             10,
             0,
@@ -358,66 +357,20 @@
             this.boxBgColor.UseVisualStyleBackColor = false;
             this.boxBgColor.Click += new System.EventHandler(this.boxBgColor_Click);
             // 
-            // boxTableLayout
-            // 
-            this.boxTableLayout.ColumnCount = 8;
-            this.boxTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 115F));
-            this.boxTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 98F));
-            this.boxTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 31F));
-            this.boxTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 173F));
-            this.boxTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.boxTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 108F));
-            this.boxTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 58F));
-            this.boxTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 186F));
-            this.boxTableLayout.Controls.Add(this.boxCanvasHolder, 0, 0);
-            this.boxTableLayout.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.boxTableLayout.Location = new System.Drawing.Point(0, 0);
-            this.boxTableLayout.Margin = new System.Windows.Forms.Padding(0);
-            this.boxTableLayout.Name = "boxTableLayout";
-            this.boxTableLayout.RowCount = 1;
-            this.boxTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.boxTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 206F));
-            this.boxTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 206F));
-            this.boxTableLayout.Size = new System.Drawing.Size(872, 206);
-            this.boxTableLayout.TabIndex = 0;
-            // 
-            // boxCanvasHolder
-            // 
-            this.boxTableLayout.SetColumnSpan(this.boxCanvasHolder, 8);
-            this.boxCanvasHolder.Controls.Add(this.boxSplit);
-            this.boxCanvasHolder.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.boxCanvasHolder.Location = new System.Drawing.Point(0, 0);
-            this.boxCanvasHolder.Margin = new System.Windows.Forms.Padding(0);
-            this.boxCanvasHolder.Name = "boxCanvasHolder";
-            this.boxCanvasHolder.Size = new System.Drawing.Size(872, 206);
-            this.boxCanvasHolder.TabIndex = 1;
-            // 
-            // boxSplit
-            // 
-            this.boxSplit.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.boxSplit.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.boxSplit.Location = new System.Drawing.Point(0, 0);
-            this.boxSplit.Margin = new System.Windows.Forms.Padding(0);
-            this.boxSplit.Name = "boxSplit";
-            // 
-            // boxSplit.Panel1
-            // 
-            this.boxSplit.Panel1.Controls.Add(this.boxCanvas);
-            this.boxSplit.Panel2MinSize = 0;
-            this.boxSplit.Size = new System.Drawing.Size(872, 206);
-            this.boxSplit.SplitterDistance = 820;
-            this.boxSplit.TabIndex = 17;
-            // 
             // boxCanvas
             // 
+            this.boxCanvas.AutoScroll = true;
             this.boxCanvas.BackColor = System.Drawing.Color.Transparent;
             this.boxCanvas.Dock = System.Windows.Forms.DockStyle.Fill;
             this.boxCanvas.Location = new System.Drawing.Point(0, 0);
             this.boxCanvas.Margin = new System.Windows.Forms.Padding(0);
             this.boxCanvas.Name = "boxCanvas";
-            this.boxCanvas.Size = new System.Drawing.Size(820, 206);
-            this.boxCanvas.TabIndex = 16;
+            this.boxCanvas.Size = new System.Drawing.Size(660, 165);
+            this.boxCanvas.TabIndex = 19;
+            this.boxCanvas.Paint += new System.Windows.Forms.PaintEventHandler(this.boxCanvas_Paint);
             this.boxCanvas.MouseDown += new System.Windows.Forms.MouseEventHandler(this.boxCanvas_MouseDown);
+            this.boxCanvas.MouseEnter += new System.EventHandler(this.boxCanvas_MouseEnter);
+            this.boxCanvas.MouseLeave += new System.EventHandler(this.boxCanvas_MouseLeave);
             this.boxCanvas.MouseMove += new System.Windows.Forms.MouseEventHandler(this.boxCanvas_MouseMove);
             this.boxCanvas.MouseUp += new System.Windows.Forms.MouseEventHandler(this.boxCanvas_MouseUp);
             // 
@@ -425,12 +378,16 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScroll = true;
+            this.AutoSize = true;
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.splitContainer);
             this.Margin = new System.Windows.Forms.Padding(0);
             this.MinimumSize = new System.Drawing.Size(660, 200);
             this.Name = "DrawControl";
-            this.Size = new System.Drawing.Size(872, 241);
-            this.Load += new System.EventHandler(this.DrawControl_Load);
+            this.Size = new System.Drawing.Size(660, 200);
+            this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.DrawControl_PreviewKeyDown);
             this.splitContainer.Panel1.ResumeLayout(false);
             this.splitContainer.Panel1.PerformLayout();
             this.splitContainer.Panel2.ResumeLayout(false);
@@ -439,11 +396,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.boxWidth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxPointSize)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxHeight)).EndInit();
-            this.boxTableLayout.ResumeLayout(false);
-            this.boxCanvasHolder.ResumeLayout(false);
-            this.boxSplit.Panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.boxSplit)).EndInit();
-            this.boxSplit.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -455,10 +407,6 @@
         private System.Windows.Forms.Button boxBgColor;
         private System.Windows.Forms.Button boxFillBG;
         private System.Windows.Forms.Button boxTextButton;
-        private System.Windows.Forms.TableLayoutPanel boxTableLayout;
-        private System.Windows.Forms.Panel boxCanvasHolder;
-        private System.Windows.Forms.SplitContainer boxSplit;
-        private PixelCanvas boxCanvas;
         private System.Windows.Forms.Button boxSelect;
         private System.Windows.Forms.Button boxBmpImport;
         private System.Windows.Forms.NumericUpDown boxHeight;
@@ -472,5 +420,6 @@
         private System.Windows.Forms.ToolTip boxPipetteTT;
         private System.Windows.Forms.Button boxFlipH;
         private System.Windows.Forms.Button boxFlipV;
+        private PixelCanvas boxCanvas;
     }
 }

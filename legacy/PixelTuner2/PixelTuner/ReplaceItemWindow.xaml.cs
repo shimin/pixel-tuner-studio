@@ -19,17 +19,26 @@ namespace PixelTuner
     /// <summary>
     /// Interaction logic for ReplaceItemWindow.xaml
     /// </summary>
-    public partial class ReplaceItemWindow : Window
+    public partial class ReplaceItemWindow : Window, IReplaceItem
     {
+        public int Height { get; set; }
+
         public ReplaceItemWindow()
             : this(new ImagesViewModel("ReplaceItemWindow"))
-        {   
+        {
         }
 
         public ReplaceItemWindow(ViewModelBase model)
         {
             InitializeComponent();
             DataContext = model;
+            Height = Settings.Default.LineHeight;
+            Loaded += ReplaceItemWindow_Loaded;
+        }
+
+        private void ReplaceItemWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            (DataContext as ImagesViewModel)?.RefreshImagesCollection(Height);
         }
 
         private void boxThumbnails_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
@@ -55,7 +64,7 @@ namespace PixelTuner
         private void SearchHandler(object sender, RoutedEventArgs e)
         {
             var s = sender as TextBox;
-            (this.DataContext as ImagesViewModel).RefreshImagesCollection(Settings.Default.LineHeight);
+            (this.DataContext as ImagesViewModel)?.RefreshImagesCollection(Height);
         }
 
         private void ListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)

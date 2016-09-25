@@ -127,5 +127,19 @@ namespace PixelTuner
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        private void PictureEditor_OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            {
+                if (e.Key == Key.Z) DrawControl.Undo();
+                else if (e.Key == Key.Y) DrawControl.Redo();
+            }
+            else if (e.Key == Key.Escape)
+            {
+                DrawControl.ClearCopyBuffer();
+                DrawControl.Invalidate();
+            }
+        }
     }
 }

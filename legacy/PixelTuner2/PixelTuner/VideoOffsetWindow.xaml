@@ -7,6 +7,7 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:PixelTuner"
         WindowStyle="ToolWindow"
+        Background="#ff2a2a2a"
         mc:Ignorable="d"
         Title="{StaticResource VideoOffsetWindow_Title}" Height="300" Width="400">
     <Window.Resources>
@@ -24,37 +25,28 @@
         <MediaElement Name="boxMediaElement"
                       HorizontalAlignment="Left"
                       VerticalAlignment="Top"
+                      Stretch="Fill"
                       MediaOpened="BoxMediaElement_OnMediaOpened"
                       Width="{Binding Path=MediaWidth}"
+                      Height="{Binding Path=MediaHeight}"
                       Margin="{Binding Path=MediaMargin}"
                       Source="{Binding Path=Thumbnail.FullName}">
-            <MediaElement.RenderTransform>
-                <ScaleTransform ScaleY="{Binding ElementName=videoWindow, Path=MediaYScale}"/>
-            </MediaElement.RenderTransform>
         </MediaElement>
-        <DockPanel Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top">
-            <Path Name="boxFigure"
+        <Path Name="boxFigure"
                   StrokeThickness="0" 
                   Stretch="Uniform"
                   Fill="#00000000"
                   Stroke="{Binding ElementName=videoWindow, Path=CanvasElement.Stroke}" 
                   Data="{Binding ElementName=videoWindow, Path=CanvasElement.Geometry}">
-            </Path>
-        </DockPanel>
-        <ItemsControl Grid.Column="0" 
-                      HorizontalAlignment="Left"
+        </Path>
+        <ItemsControl HorizontalAlignment="Left"
                       VerticalAlignment="Top"
                       ItemsSource="{Binding ElementName=videoWindow, Path=CanvasElement.LedTiles}"
                       Width="{Binding ElementName=boxFigure, Path=ActualWidth}" 
                       Height="{Binding ElementName=boxFigure, Path=ActualHeight}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Border BorderBrush="#bfffffff" Margin="-2" BorderThickness="4"></Border>
-                    <!--<Button Background="Transparent" 
-                            Opacity="0.25"
-                            Margin="2"
-                            Content="{Binding LedNumber}">
-                    </Button>-->
+                    <Border BorderBrush="#ffffffff" Margin="-2" BorderThickness="4"></Border>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>

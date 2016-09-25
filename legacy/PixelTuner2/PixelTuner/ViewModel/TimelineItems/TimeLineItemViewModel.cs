@@ -22,7 +22,7 @@ namespace PixelTuner.ViewModel
 {
     public class TimeLineItemViewModel : FileSystemInfo, ITimeLineDataItem, INotifyPropertyChanged, IConvertible
     {
-        FileInfo _fi = null;
+        protected FileInfo _fi = null;
 
         public TimeLineItemViewModel()
             : this(null)
@@ -259,10 +259,16 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        [XmlIgnore]
+        private int _actualHeight = 0;
+        [XmlAttribute]
         public int ActualHeight
         {
-            get { return ImageSource == null ? 0 : ImageSource.PixelHeight; }
+            get
+            {
+                if (ImageSource != null) _actualHeight = ImageSource.PixelHeight;
+                return _actualHeight;
+            }
+            set { _actualHeight = value; }
         }
 
         private Guid _guid = Guid.NewGuid();
@@ -272,9 +278,7 @@ namespace PixelTuner.ViewModel
             get { return _guid; }
             private set { _guid = value; }
         }
-
-
-
+        
         public virtual string ContentID
         {
             get
@@ -285,11 +289,27 @@ namespace PixelTuner.ViewModel
 
         #endregion
 
-        public virtual object Clone()
+        public virtual void Replace(string path)
+        {
+            if (File.Exists(path))
+            {
+                _fi = new FileInfo(path);
+            }
+        }
+
+        public virtual void ReplaceWithBlank(int projectHeight = 0)
+        {
+            var b = new System.Drawing.Bitmap(10, ActualHeight != 0 ? ActualHeight : projectHeight);
+            var p = Path.GetTempFileName().Replace(".tmp", ".bmp");
+            b.Save(p, System.Drawing.Imaging.ImageFormat.Bmp);
+            _fi = new FileInfo(p);
+        }
+
+        public virtual object Clone(FileInfo fi = null)
         {
             TimeLineItemViewModel result = (TimeLineItemViewModel)Activator.CreateInstance(GetType());
             result._guid = _guid;
-            result._fi = this._fi;
+            result._fi = fi ?? this._fi;
             result.StartTime = this.StartTime;
             result.EndTime = this.EndTime;
             result.TimelineViewExpanded = this.TimelineViewExpanded;
@@ -349,7 +369,9 @@ namespace PixelTuner.ViewModel
 
         protected virtual void OnReplace(object parameter)
         {
+            var p = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, this);
             ReplaceItemWindow w = OpenReplaceWindow();
+            w.Height = p.TimelineHeightPx;
             w.Owner = Application.Current.MainWindow;
             w.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             if (w.ShowDialog() == true)
@@ -357,7 +379,6 @@ namespace PixelTuner.ViewModel
                 TimeLineItemViewModel newItem = w.SelectedItem as TimeLineItemViewModel;
                 if (newItem != null)
                 {
-                    var p = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, this);
                     if (p != null)
                     {
                         RootViewModel.This.ActiveDocument.PushUndo(false, p);
@@ -373,7 +394,7 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        protected virtual ReplaceItemWindow OpenReplaceWindow()
+        public virtual ReplaceItemWindow OpenReplaceWindow()
         {
             return new ReplaceItemWindow();
         }

@@ -143,4 +143,12 @@
     <system:String x:Key="ElementMarkup_Spacing">Abstand:</system:String>
     <system:String x:Key="ElementMarkup_Import">Last skizze</system:String>
     <system:String x:Key="VideoOffsetWindow_Title">Video-offset</system:String>
+    <system:String x:Key="FixMissingWindow_CantFind">Die Datei kann unter der angegebenen Adresse nicht gefunden werden:</system:String>
+    <system:String x:Key="FixMissingWindow_WhatToDo">Bitte wählen Sie aus folgenden Möglichkeiten:</system:String>
+    <system:String x:Key="FixMissingWindow_SetBaseDirectory">Neuen Pfad zur Datei angeben</system:String>
+    <system:String x:Key="FixMissingWindow_SetOtherImageFromCollection">Mit einer anderen Datei aus Sammlung ersetzen</system:String>
+    <system:String x:Key="FixMissingWindow_SetOtherImageFromDrive">Mit einer anderen Datei von der Festplatte ersetzen</system:String>
+    <system:String x:Key="FixMissingWindow_SetFileToIgnore">Die fehlende Datei ignorieren und offline lassen</system:String>
+    <system:String x:Key="FixMissingWindow_SetFileToIgnoreAll">Alle fehlenden Dateien ignorieren und offline lassen</system:String>
+    <system:String x:Key="FixMissingWindow_HeightMismatch">Bild und Timeline Höhe stimmt nicht überein.</system:String>
 </ResourceDictionary>

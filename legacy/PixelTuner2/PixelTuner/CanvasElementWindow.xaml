@@ -68,8 +68,56 @@
                         MouseLeftButtonDown="Button_MouseDown"
                         MouseDown="Button_MouseDown"
                         MouseEnter="Button_MouseEnter"
-                        Margin="{Binding ElementName=boxTailGrid, Path=DataContext.TilesMargin}"
-                        Content="{Binding LedNumber}">
+                        MouseDoubleClick="Button_OnMouseDoubleClick"
+                        Margin="{Binding ElementName=boxTailGrid, Path=DataContext.TilesMargin}">
+                        <Button.ToolTip>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{Binding LedNumber}"/>
+                                <!--<TextBlock Text="{Binding Selected}"/>-->
+                            </StackPanel>
+                        </Button.ToolTip>
+                        <Button.Content>
+                            <TextBlock Text="{Binding LedNumber}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Button.Content>
+                        <Button.Template>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Border Name="Border" 
+                                        BorderBrush="{TemplateBinding BorderBrush}" 
+                                        BorderThickness="{TemplateBinding BorderThickness}" 
+                                        Background="{TemplateBinding Background}">
+                                    <ContentPresenter Content="{TemplateBinding Content}" 
+                                                      ContentTemplate="{TemplateBinding ContentTemplate}" 
+                                                      Margin="{TemplateBinding Padding}" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="Button.IsFocused" Value="True">
+                                        <Setter TargetName="Border" Property="Background" Value="Transparent" />
+                                    </Trigger>
+
+                                    <Trigger Property="IsMouseOver" Value="False">
+                                        <Setter TargetName="Border" Property="Background" Value="Transparent" />
+                                        <Setter TargetName="Border" Property="Opacity" Value="1.0" />
+                                    </Trigger>
+                                    <EventTrigger RoutedEvent="MouseLeave">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetName="Border" Storyboard.TargetProperty="Opacity" From="0.2" To="1"></DoubleAnimation>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                    <EventTrigger RoutedEvent="MouseEnter">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetName="Border" Storyboard.TargetProperty="Opacity" From="0.2" To="0.2"></DoubleAnimation>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                    <DataTrigger Binding="{Binding Selected}" Value="true">
+                                        <Setter TargetName="Border" Property="Background" Value="#a0ff0000"/>
+                                    </DataTrigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
                     </Button>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

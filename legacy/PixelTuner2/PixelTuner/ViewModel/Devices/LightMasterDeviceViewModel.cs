@@ -115,7 +115,7 @@ namespace PixelTuner.ViewModel
 
         public static bool TimelineFilter(TimeLineViewModel l)
         {
-            return l is LightTimeLineViewModel;
+            return l.GetType() == typeof(LightTimeLineViewModel);
         }
 
         private bool ValidateProject(FileViewModel file, int projectSize)

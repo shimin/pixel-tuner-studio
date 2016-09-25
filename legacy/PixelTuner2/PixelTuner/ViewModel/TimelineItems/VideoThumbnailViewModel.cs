@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.IO;
@@ -136,7 +137,36 @@ namespace PixelTuner.ViewModel
             throw new NotImplementedException();
         }
 
-        public override object Clone()
+
+        protected override void OnReplace(object parameter)
+        {
+            var p = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, this);
+            var w = new ReplaceVideoItemWindow(new VideosViewModel(
+                (String)System.Windows.Application.Current.TryFindResource("Menu_Window_Videos")));
+
+            w.Owner = Application.Current.MainWindow;
+            w.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            if (w.ShowDialog() == true)
+            {
+                TimeLineItemViewModel newItem = w.SelectedItem as TimeLineItemViewModel;
+                if (newItem != null)
+                {
+                    if (p != null)
+                    {
+                        RootViewModel.This.ActiveDocument.PushUndo(false, p);
+                        int idx = p.Items.IndexOf(this);
+                        newItem.StartTime = this.StartTime;
+                        newItem.EndTime = this.EndTime;
+                        newItem.Stretching = this.Stretching;
+                        p.Items.Remove(this);
+                        p.Items.Insert(idx, newItem);
+                        p.IsChanged = true;
+                    }
+                }
+            }
+        }
+        
+        public override object Clone(FileInfo fi = null)
         {
             var item = (VideoThumbnailViewModel)base.Clone();
             item.XOffset = XOffset;

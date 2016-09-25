@@ -31,8 +31,6 @@ namespace PixelTuner.ViewModel.Timelines
 
     public class VideoTimeLineViewModel : LightTimeLineViewModel
     {
-
-
         #region ITimeLineManager Members
 
         ITimeLineManager _dragManager;

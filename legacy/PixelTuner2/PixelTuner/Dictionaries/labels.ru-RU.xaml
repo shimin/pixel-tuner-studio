@@ -143,4 +143,12 @@
     <system:String x:Key="ElementMarkup_Spacing">Промежуток:</system:String>
     <system:String x:Key="ElementMarkup_Import">Выбрать эскиз</system:String>
     <system:String x:Key="VideoOffsetWindow_Title">Смещение видео</system:String>
+    <system:String x:Key="FixMissingWindow_CantFind">Не удается найти файл по указанному адресу:</system:String>
+    <system:String x:Key="FixMissingWindow_WhatToDo">Как с ним поступить:</system:String>
+    <system:String x:Key="FixMissingWindow_SetBaseDirectory">Задать новое место файлов</system:String>
+    <system:String x:Key="FixMissingWindow_SetOtherImageFromCollection">Заменить другим файлом из коллекции</system:String>
+    <system:String x:Key="FixMissingWindow_SetOtherImageFromDrive">Заменить другим файлом с диска</system:String>
+    <system:String x:Key="FixMissingWindow_SetFileToIgnore">Игнорировать пропущенный файл и оставить незагруженным</system:String>
+    <system:String x:Key="FixMissingWindow_SetFileToIgnoreAll">Игнорировать все пропущенные файлы и оставить незагруженными</system:String>
+    <system:String x:Key="FixMissingWindow_HeightMismatch">Не совпадает высота таймлайна и выбранного файла.</system:String>
 </ResourceDictionary>

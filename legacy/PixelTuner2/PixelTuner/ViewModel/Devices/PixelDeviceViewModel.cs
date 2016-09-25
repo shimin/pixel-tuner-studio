@@ -26,9 +26,13 @@ namespace PixelTuner.ViewModel
 
         private static int FirmwareFileVersionV3 { get; set; }
 
+        private static int FirmwareFileVersionV4 { get; set; }
+
         private static byte[] _firmwareBytesV2;
 
         private static byte[] _firmwareBytesV3;
+
+        private static byte[] _firmwareBytesV4;
 
         private static string _firmwareFileName = "flash.bin";
 
@@ -83,8 +87,10 @@ namespace PixelTuner.ViewModel
             {
                 if (PlatformVersion == 2)
                     return (FirmwareVersion < FirmwareFileVersionV2) && !BootMode;
-                else if (PlatformVersion == 3)
+                if (PlatformVersion == 3)
                     return (FirmwareVersion < FirmwareFileVersionV3) && !BootMode;
+                if (PlatformVersion == 4)
+                    return (FirmwareVersion < FirmwareFileVersionV4) && !BootMode;
                 return false;
             }
         }
@@ -101,6 +107,10 @@ namespace PixelTuner.ViewModel
             streamInfo = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash_v3.bin"));
             _firmwareBytesV3 = Common.Collections.StreamHelper.ReadFully(streamInfo.Stream);
             FirmwareFileVersionV3 = _firmwareBytesV3[52];
+
+            streamInfo = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash_v4.bin"));
+            _firmwareBytesV4 = Common.Collections.StreamHelper.ReadFully(streamInfo.Stream);
+            FirmwareFileVersionV4 = _firmwareBytesV4[52];
         }
 
         public PixelDeviceViewModel(PixelDevice device)
@@ -118,7 +128,7 @@ namespace PixelTuner.ViewModel
         protected override bool CanUploadFirmware(object parameter)
         {
             var fwPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _firmwareFileName);
-            return base.CanUploadFirmware(null) && (File.Exists(fwPath) || (_firmwareBytesV2 != null && _firmwareBytesV3 != null));
+            return base.CanUploadFirmware(null) && (File.Exists(fwPath) || (_firmwareBytesV2 != null && _firmwareBytesV3 != null && _firmwareBytesV4 != null));
         }
 
         /// <summary>
@@ -142,6 +152,7 @@ namespace PixelTuner.ViewModel
                 {
                     if (PlatformVersion == 2) binaryData = _firmwareBytesV2;
                     else if (PlatformVersion == 3) binaryData = _firmwareBytesV3;
+                    else if (PlatformVersion == 4) binaryData = _firmwareBytesV4;
                 }
                 if (binaryData == null) return;
 
@@ -250,8 +261,7 @@ namespace PixelTuner.ViewModel
         }
 
         #endregion
-
+        
         #endregion
-
     }
 }

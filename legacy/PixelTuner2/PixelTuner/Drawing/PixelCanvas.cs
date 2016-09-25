@@ -17,6 +17,7 @@ namespace PixelTuner.Drawing
             this.DoubleBuffered = true;
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            AutoScroll = true;
             UpdateStyles();
         }
     }

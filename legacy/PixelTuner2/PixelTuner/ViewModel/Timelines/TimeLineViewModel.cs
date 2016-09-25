@@ -128,9 +128,9 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        int _timelineHeightPx = 120;
-        [XmlIgnore]
-        public int TimelineHeightPx
+        int _timelineHeightPx = 0;
+        [XmlAttribute]
+        public virtual int TimelineHeightPx
         {
             get { return _timelineHeightPx; }
             set { _timelineHeightPx = value; RaisePropertyChanged("TimelineHeightPx"); }

@@ -63,8 +63,8 @@ namespace PixelTuner
         {
             get
             {
-                double pixelSizeW = PathWidth / CanvasElement?.ColumnsCount ?? 0;
-                double pixelSizeH = PathHeight / CanvasElement?.RowsCount ?? 0;
+                double pixelSizeW = boxFigure.ActualWidth / CanvasElement?.ColumnsCount ?? 0;
+                double pixelSizeH = boxFigure.ActualHeight / CanvasElement?.RowsCount ?? 0;
                 var result = new Thickness()
                 {
                     Left = -1 * Thumbnail.XOffset * pixelSizeW,
@@ -83,23 +83,23 @@ namespace PixelTuner
             get
             {
                 if (CanvasElement == null) return 0;
-                double pixelSize = PathWidth/CanvasElement?.ColumnsCount ?? 0;
+                double pixelSize = boxFigure.ActualWidth/CanvasElement?.ColumnsCount ?? 0;
                 return MediaNaturalWidth * pixelSize == 0 ? 100 : MediaNaturalWidth * pixelSize;
             }
             set { }
         }
-        
-        public double MediaYScale
+
+        public double MediaHeight
         {
             get
             {
-                double pixelSizeW = PathWidth / CanvasElement?.ColumnsCount ?? 1;
-                double pixelSizeH = PathHeight / CanvasElement?.RowsCount ?? 1;
-                return pixelSizeH/pixelSizeW;
+                if (CanvasElement == null) return 0;
+                double pixelSize = boxFigure.ActualHeight / CanvasElement?.RowsCount ?? 0;
+                return MediaNaturalHeight * pixelSize == 0 ? 100 : MediaNaturalHeight * pixelSize;
             }
             set { }
         }
-
+        
         public double PathWidth { get; set; }
 
         public double PathHeight { get; set; }
@@ -117,8 +117,8 @@ namespace PixelTuner
                 PathWidth = boxFigure.ActualWidth;
                 PathHeight = boxFigure.ActualHeight;
                 RaisePropertyChanged("MediaWidth");
+                RaisePropertyChanged("MediaHeight");
                 RaisePropertyChanged("MediaMargin");
-                RaisePropertyChanged("MediaYScale");
             };
 
             DataContext = this;
@@ -134,8 +134,8 @@ namespace PixelTuner
         private void BoxMediaElement_OnMediaOpened(object sender, RoutedEventArgs e)
         {
             RaisePropertyChanged("MediaWidth");
+            RaisePropertyChanged("MediaHeight");
             RaisePropertyChanged("MediaMargin");
-            RaisePropertyChanged("MediaYScale");
         }
     }
 }

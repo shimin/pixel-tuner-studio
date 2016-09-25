@@ -52,7 +52,7 @@ namespace PixelTuner.ViewModel
         }
 
         private ObservableCollection<CanvasElementViewModel> _elements = new ObservableCollection<CanvasElementViewModel>();
-        [XmlElement]
+        [XmlArray]
         public ObservableCollection<CanvasElementViewModel> Elements
         {
             get { return _elements; }
@@ -231,6 +231,37 @@ namespace PixelTuner.ViewModel
                 if (element.LedTiles.Contains(led)) return element;
             }
             return null;
+        }
+
+        private static CanvasElementViewModel _markupHostElement = null;
+
+        public static void CopyMarkup(CanvasElementViewModel elementToCopyFrom)
+        {
+            _markupHostElement = new CanvasElementViewModel();
+            _markupHostElement.LedTiles = new ObservableCollection<LedTile>(elementToCopyFrom.LedTiles);
+            _markupHostElement.ColumnsCount = elementToCopyFrom.ColumnsCount;
+            _markupHostElement.RowsCount = elementToCopyFrom.RowsCount;
+            _markupHostElement.TilesMargin = elementToCopyFrom.TilesMargin;
+        }
+
+        public static bool CanPasteMarkup()
+        {
+            return _markupHostElement != null;
+        }
+
+        public static void PasteMarkup(CanvasElementViewModel elementToPasteTo)
+        {
+            if (CanPasteMarkup())
+            {
+                elementToPasteTo.LedTiles = new ObservableCollection<LedTile>(_markupHostElement.LedTiles);
+                foreach (var ledTile in elementToPasteTo.LedTiles)
+                {
+                    ledTile.Parent = elementToPasteTo;
+                }
+                elementToPasteTo.ColumnsCount = _markupHostElement.ColumnsCount;
+                elementToPasteTo.RowsCount = _markupHostElement.RowsCount;
+                elementToPasteTo.TilesMargin = _markupHostElement.TilesMargin;
+            }
         }
     }
 }

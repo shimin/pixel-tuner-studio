@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Common.ViewModel;
 using Communication.Service;
 using System.Windows;
@@ -217,6 +218,39 @@ namespace PixelTuner.ViewModel
         protected virtual void OnUploadFirmware(object parameter)
         {
             
+        }
+
+        #endregion
+        
+        #region WriteMacCommand
+        RelayCommand _writeMacCommand = null;
+        public ICommand WriteMacCommand => _writeMacCommand ?? (_writeMacCommand = new RelayCommand(OnWriteMac, CanWriteMac));
+
+        protected virtual bool CanWriteMac(object parameter)
+        {
+            var il = RootViewModel.This.DevicesModel.Illuminators.FirstOrDefault();
+            return il != null;
+        }
+
+        protected virtual void OnWriteMac(object parameter)
+        {
+            var il = RootViewModel.This.DevicesModel.Illuminators.FirstOrDefault();
+            if (il == null) return;
+            var mac = il.Device.Mac;
+            ushort b1 = (ushort) (((ushort) mac[0] << 8 | mac[1]));
+            ushort b2 = (ushort)(((ushort)mac[2] << 8 | mac[3]));
+            ushort b3 = (ushort)(((ushort)mac[4] << 8 | mac[5]));
+            ushort b4 = (ushort)(((ushort)mac[6] << 8 | mac[7]));
+
+            var settings = new List<DeviceFeature>
+            {
+                new DeviceFeature(6, b1),
+                new DeviceFeature(7, b2),
+                new DeviceFeature(8, b3),
+                new DeviceFeature(9, b4),
+            };
+
+            Device.WriteSettings(settings);
         }
 
         #endregion

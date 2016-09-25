@@ -6,6 +6,7 @@ using System.IO;
 using System.Windows;
 using Common.Collections;
 using Communication.Service;
+using PixelTuner.ViewModel.Devices;
 
 namespace PixelTuner.ViewModel
 {
@@ -68,6 +69,14 @@ namespace PixelTuner.ViewModel
             else if (e.Device is SimplePoiDevice)
             {
                 var model = new EpicPoiDeviceViewModel(e.Device as SimplePoiDevice);
+                Devices.Add(model);
+
+                if (model.BootMode && ContinueUpdate() && model.UploadFirmwareCommand.CanExecute(null))
+                    model.UploadFirmwareCommand.Execute(null);
+            }
+            else if (e.Device is VideoModule)
+            {
+                var model = new VideoDeviceViewModel(e.Device as VideoModule);
                 Devices.Add(model);
 
                 if (model.BootMode && ContinueUpdate() && model.UploadFirmwareCommand.CanExecute(null))

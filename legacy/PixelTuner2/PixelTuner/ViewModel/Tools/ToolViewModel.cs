@@ -25,6 +25,7 @@ namespace PixelTuner.ViewModel
         #region IsVisible
 
         private bool _isVisible = false;
+        [XmlIgnore]
         public bool IsVisible
         {
             get { return _isVisible; }

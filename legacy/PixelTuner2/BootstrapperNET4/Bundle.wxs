@@ -14,7 +14,7 @@
       <Payload Compressed="yes" SourceFile="NetfxLicense.rtf"/>
     </BootstrapperApplicationRef>
     <Chain>
-      <PackageGroupRef Id="NetFx46Web"/>
+      <PackageGroupRef Id="NetFx40Web"/>
       <PackageGroupRef Id="DriverInstaller"/>
       <PackageGroupRef Id="DriverInstaller_x64"/>
       <PackageGroupRef Id="PixelTunerInstaller"/>

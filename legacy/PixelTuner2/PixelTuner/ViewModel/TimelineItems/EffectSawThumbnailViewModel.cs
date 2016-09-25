@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Media.Imaging;
@@ -45,7 +46,7 @@ namespace PixelTuner.ViewModel
             if (w.NeedRefresh) RootViewModel.NotifySettingsChanged();
         }
         
-        public override object Clone()
+        public override object Clone(FileInfo fi = null)
         {
             EffectSawThumbnailViewModel result = (EffectSawThumbnailViewModel)base.Clone();
             result.T1 = this.T1;

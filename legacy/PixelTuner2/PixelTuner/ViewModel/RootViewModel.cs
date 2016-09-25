@@ -1,11 +1,13 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Xml;
 using System.Xml.Serialization;
@@ -15,6 +17,11 @@ using PixelTuner.Properties;
 using PixelTuner.Controls.ThumbListView;
 using Workspace.Layout;
 using Common.Log;
+using PixelTuner.ViewModel.Devices;
+using Application = System.Windows.Application;
+using MessageBox = System.Windows.MessageBox;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
+using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
 
 namespace PixelTuner.ViewModel
 {
@@ -208,6 +215,8 @@ namespace PixelTuner.ViewModel
                 return assembly.GetName().Version.ToString();
             }
         }
+
+        private FixMissingWindow _fixMissingWnd = null;
 
         private bool _updatesAvailable = false;
         public bool UpdatesAvailable
@@ -638,17 +647,14 @@ namespace PixelTuner.ViewModel
                             try
                             {
                                 var file = (FileViewModel)_projectSerializer.Deserialize(tr);
+                                file.IsDirty = false;
+                                FixMissingLinks(file);
                                 file.FilePath = path;
-                                this._files.Add(file);
-                                if (!string.IsNullOrEmpty(file.AudioPath))
-                                    file.OpenAudio.Execute(file.AudioPath);
+                                _files.Add(file);
+                                if (!string.IsNullOrEmpty(file.AudioPath)) file.OpenAudio.Execute(file.AudioPath);
                                 ActiveDocument = file;
-                                ActiveDocument.IsDirty = false;
-
-                                if (LastUsedFileHandler != null)
-                                    LastUsedFileHandler.Invoke(path);
-
-                                RemoveBrokenReferences();
+                                LastUsedFileHandler?.Invoke(path);
+                                IgnoreAllMissingLinks(file);
                             }
                             catch (Exception ex)
                             {
@@ -666,6 +672,130 @@ namespace PixelTuner.ViewModel
                     MessageBox.Show(msg, Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+        }
+
+        private void FixMissingLinks(FileViewModel file)
+        {
+            var brokenItem = GetBrokenLink(file);
+            while (brokenItem != null)
+            {
+                file.IsDirty = true;
+                var line = TimelineHelper.FindParentTimeline(file, brokenItem);
+                var wnd = new FixMissingWindow(
+                    () => //ReplaceAllMissingLinks,
+                    {
+                        var dialog = new FolderBrowserDialog();
+                        if (dialog.ShowDialog() == DialogResult.OK)
+                        {
+                            ReplaceAllMissingLinks(file, dialog.SelectedPath);
+                        }
+                    },
+                    () => //SetOtherImageFromCollection,
+                    {
+                        var targetHeight = line.TimelineHeightPx != 0 ? line.TimelineHeightPx : file.LineHeight;
+                        IReplaceItem w = brokenItem.OpenReplaceWindow();
+                        w.Height = targetHeight;
+                        if (brokenItem is VideoThumbnailViewModel) w = new ReplaceVideoItemWindow(VideosModel);
+                        if (((Window)w).ShowDialog() == true)
+                        {
+                            TimeLineItemViewModel newItem = w.SelectedItem as TimeLineItemViewModel;
+                            if (newItem.ActualHeight == targetHeight || brokenItem.GetType() == typeof(VideoThumbnailViewModel))
+                            {
+                                brokenItem.Replace(newItem.FullName);
+                            }
+                            else
+                            {
+                                MessageBox.Show(
+                                    (string) Application.Current.TryFindResource("FixMissingWindow_HeightMismatch"),
+                                    "PixelTuner",
+                                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                            }
+                        }
+                    },
+                    () => //SetOtherImageFromDrive,
+                    {
+                        var ofd = new OpenFileDialog {Filter = "Images|*.bmp;*.jpg;*.jpeg;*.png"};
+                        if (brokenItem is VideoThumbnailViewModel) ofd.Filter = "Clips|*.avi;*.gif;";
+                        if (ofd.ShowDialog() == true)
+                        {
+                            var b = Bitmap.FromFile(ofd.FileName);
+                            var targetHeight = line.TimelineHeightPx != 0 ? line.TimelineHeightPx : file.LineHeight;
+
+                            if (b.Height == targetHeight || brokenItem.GetType() == typeof(VideoThumbnailViewModel))
+                            {
+                                brokenItem.Replace(ofd.FileName);
+                            }
+                            else
+                            {
+                                MessageBox.Show(
+                                    (string) Application.Current.TryFindResource("FixMissingWindow_HeightMismatch"),
+                                    "PixelTuner",
+                                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                            }
+                        }
+                    },
+                    () => //SetFileToIgnore,
+                    {
+                        brokenItem.ReplaceWithBlank(file.LineHeight);
+                    },
+                    () => //SetAllFilesToIgnore);
+                    {
+                        IgnoreAllMissingLinks(file);
+                    })
+                {
+                    MissingPath = brokenItem.FullName,
+                    Owner = Application.Current.MainWindow,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner
+                };
+
+                if (wnd.ShowDialog() == true)
+                {
+                    wnd.SelectedAction.Invoke();
+                }
+                else
+                {
+                    break;
+                }
+
+                brokenItem = GetBrokenLink(file);
+            }
+        }
+
+        private void ReplaceAllMissingLinks(FileViewModel file, string dialogSelectedPath)
+        {
+            foreach (var timeLine in file.TimeLines)
+            {
+                if (timeLine.GetType() != typeof(LightTimeLineViewModel))
+                    for (int i = 0; i < timeLine.Items.Count; i++)
+                    {
+                        var item = timeLine.Items[i] as TimeLineItemViewModel;
+                        item.Replace(Path.Combine(dialogSelectedPath, item.Name));
+                    }
+            }
+        }
+        
+        private void IgnoreAllMissingLinks(FileViewModel file)
+        {
+            foreach (var timeLine in file.TimeLines)
+            {
+                if (timeLine.GetType() != typeof(LightTimeLineViewModel))
+                    for (int i = 0; i < timeLine.Items.Count; i++)
+                    {
+                        var item = (timeLine.Items[i] as TimeLineItemViewModel);
+                        if (!File.Exists(item.FullName)) item.ReplaceWithBlank(file.LineHeight);
+                    }
+            }
+        }
+
+        private TimeLineItemViewModel GetBrokenLink(FileViewModel file)
+        {
+            foreach (var timeLine in file.TimeLines)
+            {
+                if (timeLine.GetType() != typeof(LightTimeLineViewModel))
+                    foreach (TimeLineItemViewModel lineItem in timeLine.Items)
+                        if (!File.Exists(lineItem.FullName)) { return lineItem; }
+            }
+            return null;
         }
 
         #endregion 
@@ -851,7 +981,8 @@ namespace PixelTuner.ViewModel
             bool canExport = (ActiveDocument.TimeLines.Count((i) => 
                 PixelDeviceViewModel.TimelineFilter(i) && (i as PixelTimeLineViewModel).LineHeight == ActiveDocument.LineHeight) > 0)
                 || (ActiveDocument.TimeLines.Count(LightMasterDeviceViewModel.TimelineFilter) > 0)
-                || (ActiveDocument.TimeLines.Count(EpicPoiDeviceViewModel.TimelineFilter) > 0);
+                || (ActiveDocument.TimeLines.Count(EpicPoiDeviceViewModel.TimelineFilter) > 0)
+                || (ActiveDocument.TimeLines.Count(VideoDeviceViewModel.TimelineFilter) > 0);
             return canExport;
         }
 
@@ -865,7 +996,8 @@ namespace PixelTuner.ViewModel
             TimelinesToUpload dialog = null;
 
             if (fileToSave.TimeLines.Count((i) => 
-                PixelDeviceViewModel.TimelineFilter(i) && (i as PixelTimeLineViewModel).LineHeight == ActiveDocument.LineHeight) > 0)
+                PixelDeviceViewModel.TimelineFilter(i) 
+                && (i as PixelTimeLineViewModel).LineHeight == ActiveDocument.LineHeight) > 0)
             {
                 dialog = new TimelinesToUpload((i) => 
                     PixelDeviceViewModel.TimelineFilter(i) && (i as PixelTimeLineViewModel).LineHeight == ActiveDocument.LineHeight);
@@ -877,10 +1009,10 @@ namespace PixelTuner.ViewModel
                     var dlg = new SaveFileDialog();
                     dlg.Filter = "Binary project file|*.bin";
                     if (dlg.ShowDialog().GetValueOrDefault())
-                        fileToSave.FilePath = dlg.FileName;
-
-                    File.WriteAllBytes(fileToSave.FilePath,
-                        fileToSave.GetPixelBinaryPresentation(dialog.SelectedTimeLines, (byte)fileToSave.LineHeight).ToArray());
+                    {
+                        File.WriteAllBytes(dlg.FileName,
+                            fileToSave.GetPixelBinaryPresentation(dialog.SelectedTimeLines, (byte) fileToSave.LineHeight).ToArray());
+                    }
                 }
             }
 
@@ -894,9 +1026,10 @@ namespace PixelTuner.ViewModel
                     var dlg = new SaveFileDialog();
                     dlg.Filter = "Binary project file|*.bin";
                     if (dlg.ShowDialog().GetValueOrDefault())
-                        fileToSave.FilePath = dlg.FileName;
-
-                    File.WriteAllBytes(fileToSave.FilePath, fileToSave.GetLightBinaryPresentation(dialog.SelectedTimeLines).ToArray());
+                    {
+                        File.WriteAllBytes(dlg.FileName,
+                            fileToSave.GetLightBinaryPresentation(dialog.SelectedTimeLines).ToArray());
+                    }
                 }
             }
 
@@ -910,11 +1043,30 @@ namespace PixelTuner.ViewModel
                     var dlg = new SaveFileDialog();
                     dlg.Filter = "Binary project file|*.bin";
                     if (dlg.ShowDialog().GetValueOrDefault())
-                        fileToSave.FilePath = dlg.FileName;
-
-                    File.WriteAllBytes(fileToSave.FilePath, fileToSave.GetEpicBinaryPresentation(dialog.SelectedTimeLines).ToArray());
+                    {
+                        File.WriteAllBytes(dlg.FileName,
+                            fileToSave.GetEpicBinaryPresentation(dialog.SelectedTimeLines).ToArray());
+                    }
                 }
             }
+
+            if (fileToSave.TimeLines.Count(VideoDeviceViewModel.TimelineFilter) > 0)
+            {
+                dialog = new TimelinesToUpload(VideoDeviceViewModel.TimelineFilter);
+                dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                dialog.Owner = Application.Current.MainWindow;
+                if (dialog.ShowDialog() == true)
+                {
+                    var dlg = new SaveFileDialog();
+                    dlg.Filter = "Binary project file|*.bin";
+                    if (dlg.ShowDialog().GetValueOrDefault())
+                    {
+                        File.WriteAllBytes(dlg.FileName,
+                            fileToSave.GetVideoBinaryPresentation(dialog.SelectedTimeLines.First()).ToArray());
+                    }
+                }
+            }
+
         }
 
         public Visibility ExportCommandVisibility

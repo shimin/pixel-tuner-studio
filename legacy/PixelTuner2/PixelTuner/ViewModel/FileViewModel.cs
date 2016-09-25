@@ -946,8 +946,16 @@ namespace PixelTuner.ViewModel
             var player = (NAudioEngine)SoundPlayer;
             if (IsSyncAvailable && IsSyncOn && RootViewModel.This.DevicesModel.Illuminators.Count > 0)
             {
-                RootViewModel.This.DevicesModel.Illuminators.First().Pause(
-                    player.CurrentTime, Settings.Default.Discreteness);
+                if (player.IsPlaying)
+                {
+                    RootViewModel.This.DevicesModel.Illuminators.First().Pause(
+                        player.CurrentTime, Settings.Default.Discreteness);
+                }
+                else
+                {
+                    RootViewModel.This.DevicesModel.Illuminators.First().Play(
+                        player.CurrentTime, Settings.Default.Discreteness);
+                }
             }
             player.Pause();
         }
@@ -978,12 +986,12 @@ namespace PixelTuner.ViewModel
         {
             var player = (NAudioEngine)SoundPlayer;
             player.ChannelPosition = player.InitialChannelPosition;
+            player.Stop();
             if (IsSyncAvailable && IsSyncOn && RootViewModel.This.DevicesModel.Illuminators.Count > 0)
             {
                 RootViewModel.This.DevicesModel.Illuminators.First().Stop(
                     player.CurrentTime, Settings.Default.Discreteness);
             }
-            player.Stop();
         }
 
         #endregion
@@ -1118,6 +1126,60 @@ namespace PixelTuner.ViewModel
                 project.TimeLines.Add(file);
             }
 
+            return project;
+        }
+
+        public List<byte> GetVideoBinaryPresentation(TimeLineViewModel line)
+        {
+            ColorDepth depth = ColorDepth.Bit24;
+            try { depth = (ColorDepth)ColorDepth.Parse(typeof(ColorDepth), Settings.Default.ColorDepth); }
+            catch { }
+
+            var images = new List<ImagesCollectionItem>();
+            PixelProjectFile project = CreateVideoProjectFile(line, images, depth);
+            ImagesCollection c = new ImagesCollection(images);
+            var buf = project.GetBinary(c);
+#if(DEBUG)
+            string logFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".\\Logs");
+            Directory.CreateDirectory(logFolder);
+            string projectFileName = Path.Combine(logFolder, "video-project " + DateTime.Now.ToString("dd_MM_yyyy___HH_mm_ss_fff") + ".bin");
+            File.WriteAllBytes(projectFileName, buf.ToArray());
+#endif
+            return buf;
+        }
+
+        private PixelProjectFile CreateVideoProjectFile(
+            TimeLineViewModel line,
+            IList<ImagesCollectionItem> imagesCollection,
+            ColorDepth depth)
+        {
+            var project = new PixelProjectFile();
+            var videoLine = line as VideoTimeLineViewModel;
+
+            if (videoLine?.MetaData == null
+                || videoLine.MetaData.OrderedLeds.Count == 0 
+                || line.Items.Count == 0 
+                || !line.IsSelectedToUpload)
+                return project;
+    
+            var file = new PixelTimelineFile() { TimeLineHeight = (ushort)videoLine.MetaData.OrderedLeds.Count};
+                
+            List<ITimeLineDataItem> timelineItems = FillGabs(line.Items, line.Start.Value, CreateBlankPixelItem);
+            foreach (TimeLineItemViewModel item in timelineItems)
+            {
+                string path = item.FullName.ToLower();
+                var duration = (item.EndTime.Value - item.StartTime.Value).TotalMilliseconds;       // duration = end time - start time
+                double startMilliseconds = (item.StartTime.Value - line.Start.Value).TotalMilliseconds;    // start ms = start time - timeline start time
+                UInt16 mask = item.LaserOn ? (ushort)1 : (ushort)0;
+                var imageFile = new VideoImageFile(path, 400, (UInt32)duration, (UInt32)startMilliseconds, mask);
+                var image = new ImagesCollectionVideoItem(path, videoLine.MetaData.OrderedLeds, depth);
+                imageFile.Brightness = image.Brightness = item.Brightness;
+                imagesCollection.Add(image);
+
+                file.Images.Add(imageFile);
+            }
+            project.TimeLines.Add(file);
+            
             return project;
         }
 
@@ -1267,7 +1329,7 @@ namespace PixelTuner.ViewModel
             item.EndTime = end;
             return item;
         }
-
+        
         private GradientThumbnailViewModel CreateBlankGradientItem(DateTime begin, DateTime end)
         {
             var item = new GradientThumbnailViewModel();
@@ -1448,7 +1510,7 @@ namespace PixelTuner.ViewModel
                 foreach (var item in RootViewModel.This.CopiedItems)
                 {
                     var pixelLine = selectedLine as PixelTimeLineViewModel;
-                    if (pixelLine != null && item.ActualHeight != pixelLine.LineHeight)
+                    if (pixelLine != null && (item.ActualHeight != pixelLine.LineHeight && pixelLine.LineHeight != 0))
                     {
                         MessageBox.Show(((String)Application.Current.TryFindResource("Global_ImagesHeightMismatch")).Replace("\"", ""));
                         return;

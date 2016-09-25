@@ -43,6 +43,7 @@
                                                         ItemContainerStyle="{StaticResource DeviceUploadMenuItemStyle}"
                                                         Style="{StaticResource DeviceUploadMainMenuItemStyle}">
                                             </MenuItem>
+                                            <MenuItem Header="Link to remote control" Command="{Binding WriteMacCommand}"></MenuItem>
                                         </ContextMenu>
                                     </TextBlock.ContextMenu>
                         </TextBlock>
