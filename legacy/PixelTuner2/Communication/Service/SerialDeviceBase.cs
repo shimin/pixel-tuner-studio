@@ -160,8 +160,12 @@ namespace Communication.Service
             set { _platformVersion = value; }
         }
 
+        protected static int DefaultReadTimeout = 2000;
+
+        protected static int DefaultWriteTimeout = 2000;
+
         #endregion
-        
+
         #region Events
 
         public event DisconnectedDelegate Disconnected;
@@ -241,8 +245,8 @@ namespace Communication.Service
             if (Port != null && Port.IsOpen)
             {
                 _portName = _port.PortName;
-                _port.ReadTimeout = 2000;
-                _port.WriteTimeout = 2000;
+                _port.ReadTimeout = DefaultReadTimeout;
+                _port.WriteTimeout = DefaultWriteTimeout;
                 GC.SuppressFinalize(_port.BaseStream);
             }
         }
@@ -280,7 +284,7 @@ namespace Communication.Service
         protected virtual byte[] DoSession(byte[] query)
         {
             OnSessionStarted(this, new List<byte>(query));
-            LogMessage("Request: " + Logger.BytesToString(query), MessageType.Debug);
+            LogMessage($"Request R({Port.ReadTimeout}) W{Port.WriteTimeout}: {Logger.BytesToString(query)}", MessageType.Debug);
             List<byte> data = new List<byte>();
             try
             {
@@ -301,7 +305,7 @@ namespace Communication.Service
                     catch { throw new TimeoutException("Packet ID reading timeout."); }
                     if (num != query[0])
                     {
-                        throw new ArgumentException(string.Format("Wrong answer {0} on request {1}.", num.ToString("X2"), query[0].ToString("X2")));
+                        throw new ArgumentException($"Wrong answer {num:X2} on request {query[0]:X2}.");
                     }
                     // reading of packet length
                     int count = -1;
@@ -410,9 +414,9 @@ namespace Communication.Service
                 {
                     try
                     {
-                        Port.ReadTimeout = 500;
+                        Port.ReadTimeout = 5000;
                         DoSession(new PixelDevicePacket(PixelDeviceCommand.SWITCH_TO_BOOT, null));
-                        Port.ReadTimeout = 0x7530;
+                        Port.ReadTimeout = DefaultReadTimeout;
                     }
                     catch (Exception exception)
                     {
@@ -422,21 +426,53 @@ namespace Communication.Service
             }
         }
 
+        public virtual void WriteSettings(List<DeviceFeature> settings)
+        {
+            lock (this._longOperation)
+            {
+                Busy = true;
+                SetStatus(ConnectionStatus.Uploading);
+                try
+                {
+                    Port.WriteTimeout = 30000;
+                    Port.ReadTimeout = 30000;
+                    var data = new List<byte>();
+                    foreach (var feature in settings)
+                    {
+                        data.AddRange(feature.GetBytes());
+                        if (data.Count < 60) continue;
+                        DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_SETTINGS, data));
+                        data.Clear();
+                    }
+                    if (data.Count <= 0) return;
+                    DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_SETTINGS, data));
+                    data.Clear();
+                }
+                catch (Exception exception)
+                {
+                    Logger?.WriteException(exception);
+                }
+                finally
+                {
+                    Busy = false;
+                    SetStatus(ConnectionStatus.Online);
+                    Port.ReadTimeout = DefaultReadTimeout;
+                    Port.WriteTimeout = DefaultWriteTimeout;
+                }
+            }
+        }
+
         public virtual void WriteFile(List<byte> binaryData)
         {
             lock (this._longOperation)
             {
-                int readTimeout = 2000;
-                int writeTimeout = 2000;
                 Busy = true;
                 SetStatus(ConnectionStatus.Uploading);
                 bool noExceptions = false;
                 try
                 {
-                    readTimeout = Port.ReadTimeout;
-                    writeTimeout = Port.WriteTimeout;
-                    Port.WriteTimeout = 10000;
-                    Port.ReadTimeout = 20000;
+                    Port.WriteTimeout = 30000;
+                    Port.ReadTimeout = 30000;
                     List<byte> data = new List<byte>();
                     var answer = DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_IDATA_MODE, BitConverter.GetBytes(binaryData.Count)));
                     if (answer.Data[0] == 0x00)
@@ -472,8 +508,8 @@ namespace Communication.Service
                     Busy = false;
                     if (noExceptions)
                         SetStatus(ConnectionStatus.Online);
-                    Port.ReadTimeout = readTimeout;
-                    Port.WriteTimeout = writeTimeout;
+                    Port.ReadTimeout = DefaultReadTimeout;
+                    Port.WriteTimeout = DefaultWriteTimeout;
                 }
             }
         }
@@ -484,14 +520,10 @@ namespace Communication.Service
             {
                 Busy = true;
                 SetStatus(ConnectionStatus.Uploading);
-                int readTimeout = 2000;
-                int writeTimeout = 2000;
                 try
                 {
-                    readTimeout = Port.ReadTimeout;
-                    writeTimeout = Port.WriteTimeout;
-                    Port.WriteTimeout = 10000;
-                    Port.ReadTimeout = 20000;
+                    Port.WriteTimeout = 30000;
+                    Port.ReadTimeout = 30000;
                     List<byte> data = new List<byte>();
                     DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_IFLASH_MODE, null));
                     foreach (byte num in binaryData)
@@ -519,8 +551,8 @@ namespace Communication.Service
                 {
                     Busy = false;
                     SetStatus(ConnectionStatus.Online);
-                    Port.ReadTimeout = readTimeout;
-                    Port.WriteTimeout = writeTimeout;
+                    Port.ReadTimeout = DefaultReadTimeout;
+                    Port.WriteTimeout = DefaultWriteTimeout;
                 }
             }
         }

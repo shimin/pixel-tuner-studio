@@ -90,9 +90,9 @@ namespace Communication.Service
                     PlatformVersion = data[0];
                     BootVersion = data[1];
                     FirmwareVersion = data[2];
-                    data.CopyTo(3, Mac, 0, 8);
-                    PanID = BitConverter.ToUInt16(data.ToArray(), 11);
-                    Channel = data[13];
+                    data.CopyTo(10, Mac, 0, 8);
+                    PanID = BitConverter.ToUInt16(data.ToArray(), 18);
+                    Channel = data[20];
                 }
                 catch (Exception exception)
                 {

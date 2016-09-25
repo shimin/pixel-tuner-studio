@@ -12,6 +12,8 @@ namespace Communication.Pixelate
 
         public System.Drawing.Color TimelineColorSelection { get; set; }
 
+        public ushort TimeLineHeight { get; set; }
+
         public List<PixelImageFile> Images { get; set; }
 
         public PixelTimelineFile()

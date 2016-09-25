@@ -68,6 +68,9 @@
     <Compile Include="Gradient\GradientTimeLineFile.cs" />
     <Compile Include="Pixelate\ColorProfile.cs" />
     <Compile Include="Pixelate\ColorProfile3528.cs" />
+    <Compile Include="Pixelate\ImagesCollectionVideoItem.cs" />
+    <Compile Include="Pixelate\VideoImageFile.cs" />
+    <Compile Include="Pixelate\VideoTimelineFile.cs" />
     <Compile Include="Service\DeviceEventArgs.cs" />
     <Compile Include="Service\DeviceSessionEventArgs.cs" />
     <Compile Include="Service\DeviceStatus.cs" />
@@ -90,6 +93,7 @@
     <Compile Include="Service\PixelDeviceTimeout.cs" />
     <Compile Include="Service\SerialDeviceBase.cs" />
     <Compile Include="Service\LightMasterDevice.cs" />
+    <Compile Include="Service\VideoModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">

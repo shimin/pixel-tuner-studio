@@ -84,7 +84,7 @@ namespace Communication.Pixelate
             return size;
         }
 
-        public List<byte> GetBinary(byte targetHeight)
+        public List<byte> GetBinary(ushort targetHeight)
         {
             List<byte> result = new List<byte>();
             foreach (var desc in _descriptors.Values)

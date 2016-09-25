@@ -41,6 +41,33 @@ namespace Communication.Pixelate
             return size;
         }
 
+        public List<byte> GetBinary(ImagesCollection images)
+        {
+            // ignore empty timelines
+            var nonEmptyLines = new List<PixelTimelineFile>();
+            TimeLines.ForEach(tl =>
+            {
+                if (tl.Images.Count > 0)
+                {
+                    nonEmptyLines.Add(tl);
+                    return;
+                }
+            });
+            if (nonEmptyLines.Count == 0) return new List<byte>();
+            ushort targetHeight = nonEmptyLines.First().TimeLineHeight;
+            List<byte> result = CreateProjectHeader(nonEmptyLines, targetHeight);
+
+            var firstFreeAddress = GenerateTimelineAddresses(nonEmptyLines, result);              // timeline addresses
+            images.SetBlockAddress(firstFreeAddress);
+
+            nonEmptyLines.ForEach((tl) => { result.AddRange(tl.GetBinary(images)); });  // timelines data
+            result.AddRange(images.GetBinary(targetHeight));                            // images data
+
+            SetBinarySize(result);
+
+            return result;
+        }
+
         public List<byte> GetBinary(ImagesCollection images, byte targetHeight)
         {
             // ignore empty timelines
@@ -65,6 +92,16 @@ namespace Communication.Pixelate
             List<byte> result = new List<byte>(projectPrefix);                          // header
             result.Add(formatVersion);
             result.Add(targetHeight);                                                   // project images height
+            result.AddRange(new byte[4]);                                               // binary total size field
+            result.Add((byte)timeLines.Count);                                          // timelines count
+            return result;
+        }
+
+        private List<byte> CreateProjectHeader(List<PixelTimelineFile> timeLines, ushort targetHeight)
+        {
+            List<byte> result = new List<byte>(projectPrefix);                          // header
+            result.Add(formatVersion);
+            result.AddRange(BitConverter.GetBytes(targetHeight));                       // project images height
             result.AddRange(new byte[4]);                                               // binary total size field
             result.Add((byte)timeLines.Count);                                          // timelines count
             return result;

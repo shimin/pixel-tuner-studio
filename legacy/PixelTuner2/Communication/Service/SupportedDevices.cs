@@ -27,6 +27,11 @@ namespace Communication.Service
             dictionary.Add("E-PICBOOT", "Pixel Poi 3 (Boot mode)");
             idClassPairs.Add("E-PICBOOT", "Communication.Service.PixelDevice");
 
+            dictionary.Add("E-PIC_v4FW", "Pixel Poi 4");
+            idClassPairs.Add("E-PIC_v4FW", "Communication.Service.PixelDevice");
+            dictionary.Add("E-PIC_v4BOOT", "Pixel Poi 4 (Boot mode)");
+            idClassPairs.Add("E-PIC_v4BOOT", "Communication.Service.PixelDevice");
+
             dictionary.Add("E-PIC_SFW", "Simple poi");
             idClassPairs.Add("E-PIC_SFW", "Communication.Service.SimplePoiDevice");
             dictionary.Add("E-PIC_SBOOT", "Simple poi");
@@ -42,6 +47,11 @@ namespace Communication.Service
             dictionary.Add("ILFW", "Illuminator");
             idClassPairs.Add("ILFW", "Communication.Service.IlluminatorDevice");
 
+            dictionary.Add("VIDEOBOOT", "Video module (Boot mode)");
+            idClassPairs.Add("VIDEOBOOT", "Communication.Service.VideoDevice");
+            dictionary.Add("VIDEOFW", "Video module");
+            idClassPairs.Add("VIDEOFW", "Communication.Service.VideoDevice");
+            
             dictionary.Add("UDMXBOOT", "uDmx master (Boot mode)");  // unused
             dictionary.Add("UDMXFW", "uDmx master");                // unused
             dictionary.Add("PP2BOOT", "Pixel Poi 2 (Boot mode)");   // unused

@@ -10,7 +10,7 @@ namespace Communication.Pixelate
 {
     public class ImagesCollectionItem
     {
-        const int ParametersFieldSize = 0;
+        const int ParametersFieldSize = 1;
 
         /// <summary>
         /// parameter to limit white color brightness
@@ -39,13 +39,13 @@ namespace Communication.Pixelate
             }
         }
 
-        string _path;
+        protected string _path;
         public string Path
         {
             get { return _path; }
         }
 
-        Bitmap _bitmap;
+        protected Bitmap _bitmap;
         public Bitmap Bitmap
         {
             get { return _bitmap; }
@@ -59,7 +59,7 @@ namespace Communication.Pixelate
         /// </summary>
         public UInt32 StartAddress
         {
-            get { return _startAddress + ParametersFieldSize; }
+            get { return _startAddress; }
             set
             {
                 _startAddress = value;
@@ -83,18 +83,23 @@ namespace Communication.Pixelate
             get { return _binary == null ? 0 : (UInt32)_binary.Count; }
         }
 
-        List<byte> _binary = null;
+        protected List<byte> _binary = null;
 
-        ColorDepth _depth = ColorDepth.Bit24;
+        protected ColorDepth _depth = ColorDepth.Bit24;
         
         #endregion
 
         #region Constructor
 
-        public ImagesCollectionItem(string imagePath, byte targetHeight, ColorDepth depth)
+        public ImagesCollectionItem(string imagePath, UInt16 targetHeight, ColorDepth depth)
         {
             _path = imagePath;
             _depth = depth;
+            LoadFile(targetHeight);
+        }
+        
+        protected virtual void LoadFile(UInt16 targetHeight)
+        {
             if (File.Exists(_path))
             {
                 _bitmap = Bitmap.FromFile(_path) as Bitmap;
@@ -111,7 +116,7 @@ namespace Communication.Pixelate
 
         #region Methods
 
-        private void GetColumn(byte targetHeight, int column, List<Color> columnColors)
+        private void GetColumn(UInt16 targetHeight, int column, List<Color> columnColors)
         {
             int firstLineOffset = targetHeight - Bitmap.Height;
             for (int row = 0; row < targetHeight; row++)
@@ -133,7 +138,7 @@ namespace Communication.Pixelate
             }
         }
 
-        internal int GetSize(byte targetHeight)
+        internal virtual int GetSize(UInt16 targetHeight)
         {
             int size = 0;
             if (Bitmap != null || File.Exists(_path))
@@ -167,7 +172,7 @@ namespace Communication.Pixelate
         /// <param name="targetHeight">Number of rows, height in pixels, LEDs on each side of poi.</param>
         /// <param name="vlueSize">Bits to store color value.</param>
         /// <returns></returns>
-        public List<byte> GetBinary(byte targetHeight)
+        public List<byte> GetBinary(UInt16 targetHeight)
         {
             if (Bitmap != null)
             {
@@ -190,7 +195,7 @@ namespace Communication.Pixelate
             return _binary;
         }
 
-        private List<byte> GetBinary36(byte targetHeight)
+        private List<byte> GetBinary36(UInt16 targetHeight)
         {
             List<byte> binary = new List<byte>();
             AttachParameters(binary, ColorDepth.Bit36);
@@ -216,7 +221,7 @@ namespace Communication.Pixelate
             return binary;
         }
 
-        private List<byte> GetBinary24(byte targetHeight)
+        private List<byte> GetBinary24(UInt16 targetHeight)
         {
             List<byte> binary = new List<byte>();
             AttachParameters(binary, ColorDepth.Bit24);
@@ -233,7 +238,7 @@ namespace Communication.Pixelate
             return binary;
         }
 
-        private List<byte> GetBinary12(byte targetHeight)
+        private List<byte> GetBinary12(UInt16 targetHeight)
         {
             List<byte> binary = new List<byte>();
             AttachParameters(binary, ColorDepth.Bit12);
@@ -327,7 +332,7 @@ namespace Communication.Pixelate
             return BitConverter.GetBytes((byte)(15 * result / byte.MaxValue));
         }
 
-        private Color ApplyRestrictions(byte targetHeight, Color c)
+        private Color ApplyRestrictions(UInt16 targetHeight, Color c)
         {
             float colorMult = (float)Brightness / 100;
 

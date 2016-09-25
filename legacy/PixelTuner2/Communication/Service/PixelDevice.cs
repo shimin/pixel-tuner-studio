@@ -78,53 +78,6 @@ namespace Communication.Service
             this.Name = SupportedDevices.TryGetName("");
         }
 
-        public virtual void WriteSettings(List<DeviceFeature> settings)
-        {
-            lock (this._longOperation)
-            {
-                int readTimeout = 2000;
-                int writeTimeout = 2000;
-                this.Busy = true;
-                base.SetStatus(ConnectionStatus.Uploading);
-                try
-                {
-                    readTimeout = Port.ReadTimeout;
-                    writeTimeout = Port.WriteTimeout;
-                    Port.WriteTimeout = 10000;
-                    Port.ReadTimeout = 20000;
-                    List<byte> data = new List<byte>();
-                    foreach (DeviceFeature feature in settings)
-                    {
-                        data.AddRange(feature.GetBytes());
-                        if (data.Count >= 60)
-                        {
-                            base.DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_SETTINGS, data));
-                            data.Clear();
-                        }
-                    }
-                    if (data.Count > 0)
-                    {
-                        base.DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_SETTINGS, data));
-                        data.Clear();
-                    }
-                }
-                catch (Exception exception)
-                {
-                    if (base.Logger != null)
-                    {
-                        base.Logger.WriteException(exception);
-                    }
-                }
-                finally
-                {
-                    this.Busy = false;
-                    base.SetStatus(ConnectionStatus.Online);
-                    Port.ReadTimeout = readTimeout;
-                    Port.WriteTimeout = writeTimeout;
-                }
-            }
-        }
-
         public void SetColor(Color c, byte ledIndex)
         {
             lock (this._longOperation)
