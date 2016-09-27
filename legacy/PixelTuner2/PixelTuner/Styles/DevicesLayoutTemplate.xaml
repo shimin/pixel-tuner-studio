@@ -17,15 +17,6 @@
                                              ItemsSource="{Binding Devices, UpdateSourceTrigger=PropertyChanged}"
                                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                              SelectionMode="Single">
-                <ListBox.Style>
-                    <Style>
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding ElementName=boxDevicesList, Path=SelectedItem.Busy}" Value="true">
-                                <Setter Property="ListBox.IsEnabled" Value="false"></Setter>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </ListBox.Style>
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -34,18 +25,18 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}">
-                                    <TextBlock.ContextMenu>
-                                        <ContextMenu DataContext="{Binding RelativeSource={RelativeSource Mode=Self}, Path=PlacementTarget.DataContext}">
-                                            <MenuItem Header="{StaticResource Dev_Menu_RefreshBrain}" Command="{Binding UploadFirmwareCommand}"></MenuItem>
-                                            <MenuItem Header="{StaticResource Dev_Menu_Upload}"
-                                                        x:Name="UploadMainMenu"
-                                                        ItemsSource="{Binding Source={StaticResource RootContext}, Path=Files}"
-                                                        ItemContainerStyle="{StaticResource DeviceUploadMenuItemStyle}"
-                                                        Style="{StaticResource DeviceUploadMainMenuItemStyle}">
-                                            </MenuItem>
-                                            <MenuItem Header="Link to remote control" Command="{Binding WriteMacCommand}"></MenuItem>
-                                        </ContextMenu>
-                                    </TextBlock.ContextMenu>
+                            <TextBlock.ContextMenu>
+                                <ContextMenu IsEnabled="{Binding IsBusy}" DataContext="{Binding RelativeSource={RelativeSource Mode=Self}, Path=PlacementTarget.DataContext}">
+                                    <MenuItem Header="{StaticResource Dev_Menu_RefreshBrain}" Command="{Binding UploadFirmwareCommand}"></MenuItem>
+                                    <MenuItem Header="{StaticResource Dev_Menu_Upload}"
+                                                x:Name="UploadMainMenu"
+                                                ItemsSource="{Binding Source={StaticResource RootContext}, Path=Files}"
+                                                ItemContainerStyle="{StaticResource DeviceUploadMenuItemStyle}"
+                                                Style="{StaticResource DeviceUploadMainMenuItemStyle}">
+                                    </MenuItem>
+                                    <MenuItem Header="Link to remote control" Command="{Binding WriteMacCommand}"></MenuItem>
+                                </ContextMenu>
+                            </TextBlock.ContextMenu>
                         </TextBlock>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
