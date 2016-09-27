@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using Common.Controls;
 
 namespace PixelTuner.ViewModel.Timelines
@@ -31,6 +32,13 @@ namespace PixelTuner.ViewModel.Timelines
 
     public class VideoTimeLineViewModel : LightTimeLineViewModel
     {
+        [XmlAttribute]
+        public int LineHeight
+        {
+            get { return MetaData?.OrderedLeds.Count ?? 0; }
+            set { }
+        }
+
         #region ITimeLineManager Members
 
         ITimeLineManager _dragManager;

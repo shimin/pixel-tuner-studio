@@ -265,7 +265,11 @@ namespace PixelTuner.ViewModel
         {
             get
             {
-                if (ImageSource != null) _actualHeight = ImageSource.PixelHeight;
+                try
+                {
+                    _actualHeight = ImageSource?.PixelHeight ?? 0;
+                }
+                catch { }
                 return _actualHeight;
             }
             set { _actualHeight = value; }
@@ -686,7 +690,7 @@ namespace PixelTuner.ViewModel
         public new DateTime CreationTime { get { return _fi.CreationTime; } set { _fi.CreationTime = value; } }
         public new DateTime CreationTimeUtc { get { return _fi.CreationTimeUtc; } set { _fi.CreationTimeUtc = value; } }
         public new string Extension { get { return _fi.Extension; } }
-        public override string FullName { get { return _fi.FullName; } }
+        public override string FullName { get { return _fi?.FullName ?? ""; } }
         public new DateTime LastAccessTime { get { return _fi.LastAccessTime; } set { _fi.LastAccessTime = value; } }
         public new DateTime LastAccessTimeUtc { get { return _fi.LastAccessTimeUtc; } set { _fi.LastAccessTimeUtc = value; } }
         public new DateTime LastWriteTime { get { return _fi.LastWriteTime; } set { _fi.LastWriteTime = value; } }

@@ -18,7 +18,6 @@ namespace PixelTuner.ViewModel
         }
 
         public GradientThumbnailViewModel()
-            : base()
         {
 
         }

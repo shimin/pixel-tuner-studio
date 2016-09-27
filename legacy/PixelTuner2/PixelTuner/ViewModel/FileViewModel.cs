@@ -1105,10 +1105,11 @@ namespace PixelTuner.ViewModel
             {
                 if (line.Items.Count == 0 || !line.IsSelectedToUpload) continue;
                 var file = new PixelTimelineFile();
+                var pixelLine = line as PixelTimeLineViewModel;
 
                 var currentTime = line.Start.Value;
 
-                List<ITimeLineDataItem> timelineItems = FillGabs(line.Items, line.Start.Value, CreateBlankPixelItem);
+                List<ITimeLineDataItem> timelineItems = FillGabs(line.Items, line.Start.Value, CreateBlankPixelItem, pixelLine.LineHeight);
                 foreach (TimeLineItemViewModel item in timelineItems)
                 {
                     string path = item.FullName.ToLower();
@@ -1164,7 +1165,7 @@ namespace PixelTuner.ViewModel
     
             var file = new PixelTimelineFile() { TimeLineHeight = (ushort)videoLine.MetaData.OrderedLeds.Count};
                 
-            List<ITimeLineDataItem> timelineItems = FillGabs(line.Items, line.Start.Value, CreateBlankPixelItem);
+            List<ITimeLineDataItem> timelineItems = FillGabs(line.Items, line.Start.Value, CreateBlankVideoItem, videoLine.LineHeight);
             foreach (TimeLineItemViewModel item in timelineItems)
             {
                 string path = item.FullName.ToLower();
@@ -1214,7 +1215,8 @@ namespace PixelTuner.ViewModel
                 var file = new GradientTimeLineFile();
 
                 var currentTime = line.Start.Value;
-                foreach (TimeLineItemViewModel item in line.Items)
+                List<ITimeLineDataItem> timelineItems = FillGabs(line.Items, line.Start.Value, CreateBlankGradientItem);
+                foreach (TimeLineItemViewModel item in timelineItems)
                 {
                     string path = item.FullName.ToLower();
                     double startMilliseconds = 0;
@@ -1289,24 +1291,26 @@ namespace PixelTuner.ViewModel
             return buf;
         }
 
-        delegate ITimeLineDataItem CreateBlankItemDelegate(DateTime start, DateTime end);
+        delegate ITimeLineDataItem CreateBlankItemDelegate(DateTime start, DateTime end, int height = 0);
 
-        private List<ITimeLineDataItem> FillGabs(ObservableCollection<ITimeLineDataItem> items, DateTime startTime, CreateBlankItemDelegate CreateBlankItem)
+        private List<ITimeLineDataItem> FillGabs(ObservableCollection<ITimeLineDataItem> items, DateTime startTime, CreateBlankItemDelegate CreateBlankItem, int targetHeight = 0)
         {
             var result = new List<ITimeLineDataItem>();
-
+            
             var firstItem = items.First();
+            int height = targetHeight != 0 ? targetHeight : (firstItem as TimeLineItemViewModel).ActualHeight;
+
             if (firstItem != null)
             {
                 if (startTime != firstItem.StartTime)
-                    result.Add(CreateBlankItem(startTime, firstItem.StartTime.Value));
+                    result.Add(CreateBlankItem(startTime, firstItem.StartTime.Value, height));
 
                 for (int i = 0; i < items.Count - 1; i++)
                 {
                     result.Add(items[i]);
                     if (items[i].EndTime != items[i + 1].StartTime)
                     {
-                        result.Add(CreateBlankItem(items[i].EndTime.Value, items[i + 1].StartTime.Value));
+                        result.Add(CreateBlankItem(items[i].EndTime.Value, items[i + 1].StartTime.Value, height));
                     }
                 }
                 result.Add(items.Last());
@@ -1314,7 +1318,7 @@ namespace PixelTuner.ViewModel
             return result;
         }
 
-        private SolidColorThumbnailViewModel CreateBlankLightItem(DateTime begin, DateTime end)
+        private SolidColorThumbnailViewModel CreateBlankLightItem(DateTime begin, DateTime end, int height = 0)
         {
             var item = new SolidColorThumbnailViewModel(null, "Solid Color");
             item.StartTime = begin;
@@ -1322,17 +1326,27 @@ namespace PixelTuner.ViewModel
             return item;
         }
 
-        private PixelThumbnailViewModel CreateBlankPixelItem(DateTime begin, DateTime end)
+        private PixelThumbnailViewModel CreateBlankPixelItem(DateTime begin, DateTime end, int height = 0)
         {
             var item = new PixelThumbnailViewModel(new FileInfo("black.jpg"));
             item.StartTime = begin;
             item.EndTime = end;
+            item.ReplaceWithBlank(height);
             return item;
         }
         
-        private GradientThumbnailViewModel CreateBlankGradientItem(DateTime begin, DateTime end)
+        private GradientThumbnailViewModel CreateBlankGradientItem(DateTime begin, DateTime end, int height = 0)
         {
             var item = new GradientThumbnailViewModel();
+            item.StartTime = begin;
+            item.EndTime = end;
+            return item;
+        }
+
+        private VideoThumbnailViewModel CreateBlankVideoItem(DateTime begin, DateTime end, int height = 0)
+        {
+            var item = new VideoThumbnailViewModel();
+            item.ReplaceWithBlank(height);
             item.StartTime = begin;
             item.EndTime = end;
             return item;
