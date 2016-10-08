@@ -22,7 +22,7 @@
             <TextBlock Text="Как с ним поступить:" Foreground="White"></TextBlock>
         </StackPanel>
         <StackPanel Orientation="Vertical" Margin="12,0" Grid.Row="1">
-            <RadioButton Margin="5,2" Name="boxSetBaseDirectory" Content="Задать новое место файлов" Foreground="White" IsChecked="True"/>
+            <RadioButton Margin="5,2" Name="boxSetBaseDirectory" Content="Задать новое место всех файлов" Foreground="White" IsChecked="True"/>
             <RadioButton Margin="5,2" Name="boxSetOtherImageFromCollection" Content="Заменить другим файлом из коллекции" Foreground="White" />
             <RadioButton Margin="5,2" Name="boxSetOtherImageFromDrive" Content="Заменить другим файлом с диска" Foreground="White" />
             <RadioButton Margin="5,2" Name="boxSetFileToIgnore" Content="Игнорировать пропущенный файл и оставить незагруженным" Foreground="White" />

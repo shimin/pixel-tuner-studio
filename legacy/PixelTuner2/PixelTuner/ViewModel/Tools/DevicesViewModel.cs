@@ -118,9 +118,11 @@ namespace PixelTuner.ViewModel
         {
             return MessageBox.Show(
                 "Continue update?", 
-                "PixelTuner", 
+                "PixelTuner",
                 MessageBoxButton.YesNo,
-                MessageBoxImage.Question) == MessageBoxResult.Yes;
+                MessageBoxImage.Question,
+                MessageBoxResult.No,
+                MessageBoxOptions.ServiceNotification) == MessageBoxResult.Yes;
         }
     }
 }

@@ -49,6 +49,7 @@
             this.boxProductID = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
             this.boxTabPage1 = new System.Windows.Forms.TabPage();
+            this.boxSaveBIN = new System.Windows.Forms.LinkLabel();
             this.boxLogToFile = new System.Windows.Forms.CheckBox();
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
@@ -96,7 +97,6 @@
             this.boxSampleR = new System.Windows.Forms.TrackBar();
             this.boxActualColor = new System.Windows.Forms.Panel();
             this.boxSampleColor = new System.Windows.Forms.Panel();
-            this.boxSaveBIN = new System.Windows.Forms.LinkLabel();
             this.statusStrip1.SuspendLayout();
             this.boxTab.SuspendLayout();
             this.boxTabPage0.SuspendLayout();
@@ -125,8 +125,6 @@
             // 
             // statusStrip1
             // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.boxStatus});
             this.statusStrip1.Location = new System.Drawing.Point(0, 394);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(621, 22);
@@ -140,8 +138,8 @@
             // 
             // boxTab
             // 
-            this.boxTab.Controls.Add(this.boxTabPage0);
             this.boxTab.Controls.Add(this.boxTabPage1);
+            this.boxTab.Controls.Add(this.boxTabPage0);
             this.boxTab.Controls.Add(this.boxTabPage2);
             this.boxTab.Dock = System.Windows.Forms.DockStyle.Fill;
             this.boxTab.Location = new System.Drawing.Point(0, 0);
@@ -369,6 +367,17 @@
             this.boxTabPage1.TabIndex = 0;
             this.boxTabPage1.Text = "Тест связи Serial";
             this.boxTabPage1.UseVisualStyleBackColor = true;
+            // 
+            // boxSaveBIN
+            // 
+            this.boxSaveBIN.AutoSize = true;
+            this.boxSaveBIN.Location = new System.Drawing.Point(400, 10);
+            this.boxSaveBIN.Name = "boxSaveBIN";
+            this.boxSaveBIN.Size = new System.Drawing.Size(75, 13);
+            this.boxSaveBIN.TabIndex = 37;
+            this.boxSaveBIN.TabStop = true;
+            this.boxSaveBIN.Text = "Экспорт лога";
+            this.boxSaveBIN.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.boxSaveBIN_LinkClicked);
             // 
             // boxLogToFile
             // 
@@ -934,17 +943,6 @@
             this.boxSampleColor.Size = new System.Drawing.Size(147, 45);
             this.boxSampleColor.TabIndex = 0;
             // 
-            // boxSaveBIN
-            // 
-            this.boxSaveBIN.AutoSize = true;
-            this.boxSaveBIN.Location = new System.Drawing.Point(400, 10);
-            this.boxSaveBIN.Name = "boxSaveBIN";
-            this.boxSaveBIN.Size = new System.Drawing.Size(75, 13);
-            this.boxSaveBIN.TabIndex = 37;
-            this.boxSaveBIN.TabStop = true;
-            this.boxSaveBIN.Text = "Экспорт лога";
-            this.boxSaveBIN.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.boxSaveBIN_LinkClicked);
-            // 
             // MainFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -956,6 +954,7 @@
             this.Name = "MainFrm";
             this.Text = "Связь";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFrm_FormClosing);
+            this.Load += new System.EventHandler(this.MainFrm_Load);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.boxTab.ResumeLayout(false);

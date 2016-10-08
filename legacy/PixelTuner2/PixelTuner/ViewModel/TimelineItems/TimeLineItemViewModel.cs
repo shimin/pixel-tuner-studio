@@ -375,7 +375,15 @@ namespace PixelTuner.ViewModel
         {
             var p = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, this);
             ReplaceItemWindow w = OpenReplaceWindow();
-            w.Height = p.TimelineHeightPx;
+            try
+            {
+                w.Height = 0;
+                w.Height = (int) parameter;
+            }
+            catch {}
+
+            if (w.Height == 0) w.Height = p.TimelineHeightPx;
+
             w.Owner = Application.Current.MainWindow;
             w.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             if (w.ShowDialog() == true)

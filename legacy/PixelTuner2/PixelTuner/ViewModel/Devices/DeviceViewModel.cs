@@ -14,17 +14,13 @@ namespace PixelTuner.ViewModel
 
         public SerialDeviceBase Device { get; private set; }
 
-        public bool BootMode
-        {
-            get
-            {
-                return Device != null ? Device.BootMode : false;
-            }
-        }
+        public bool BootMode => Device?.BootMode ?? false;
 
+        //public bool Busy => Device?.Busy ?? false;
         public bool Busy
         {
-            get { return Device == null ? false : Device.Busy; }
+            get { return !Device?.Busy ?? true; }
+            set { }
         }
 
         public virtual string FullName
@@ -47,7 +43,7 @@ namespace PixelTuner.ViewModel
         /// </summary>
         public int FirmwareVersion
         {
-            get { return Device == null ? 0 : Device.FirmwareVersion; }
+            get { return Device?.FirmwareVersion ?? 0; }
             private set { RaisePropertyChanged("FirmwareVersion"); RaisePropertyChanged("FullName"); }
         }
 
@@ -56,7 +52,7 @@ namespace PixelTuner.ViewModel
         /// </summary>
         public int BootVersion
         {
-            get { return Device == null ? 0 : Device.BootVersion; }
+            get { return Device?.BootVersion ?? 0; }
             private set { RaisePropertyChanged("BootVersion"); RaisePropertyChanged("FullName"); }
         }
 
@@ -65,7 +61,7 @@ namespace PixelTuner.ViewModel
         /// </summary>
         public int PlatformVersion
         {
-            get { return Device == null ? 0 : Device.PlatformVersion; }
+            get { return Device?.PlatformVersion ?? 0; }
             private set { RaisePropertyChanged("PlatformVersion"); RaisePropertyChanged("FullName"); }
         }
 
@@ -91,6 +87,7 @@ namespace PixelTuner.ViewModel
         public DeviceViewModel(SerialDeviceBase device)
         {
             Device = device;
+            Device.PropertyChanged += RaisePropertyChanged;
 
             device.StatusChanged += new SerialDeviceBase.StatusDelegate(device_StatusChanged);
             device.SessionFinished += new SerialDeviceBase.SessionDelegate(device_SessionFinished);

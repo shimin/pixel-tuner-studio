@@ -26,7 +26,8 @@
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}">
                             <TextBlock.ContextMenu>
-                                <ContextMenu IsEnabled="{Binding IsBusy}" DataContext="{Binding RelativeSource={RelativeSource Mode=Self}, Path=PlacementTarget.DataContext}">
+                                <ContextMenu Visibility="{Binding Busy, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" 
+                                             DataContext="{Binding RelativeSource={RelativeSource Mode=Self}, Path=PlacementTarget.DataContext}">
                                     <MenuItem Header="{StaticResource Dev_Menu_RefreshBrain}" Command="{Binding UploadFirmwareCommand}"></MenuItem>
                                     <MenuItem Header="{StaticResource Dev_Menu_Upload}"
                                                 x:Name="UploadMainMenu"

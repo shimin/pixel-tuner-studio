@@ -27,12 +27,16 @@ namespace ConnectionTester
             if (!boxLog.InvokeRequired)
             {
                 boxLog.Text += formattedMessage + "\n";
+                boxLog.SelectionStart = boxLog.Text.Length;
+                boxLog.ScrollToCaret();
             }
             else
             {
-                boxLog.Invoke((MethodInvoker)delegate
+                boxLog.Invoke((MethodInvoker) delegate
                 {
                     boxLog.Text += formattedMessage + "\n";
+                    boxLog.SelectionStart = boxLog.Text.Length;
+                    boxLog.ScrollToCaret();
                 });
             }
         }

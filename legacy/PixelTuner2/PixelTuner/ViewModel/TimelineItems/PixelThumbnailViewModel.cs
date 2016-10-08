@@ -56,6 +56,11 @@ namespace PixelTuner.ViewModel
             RaisePropertyChanged("LaserOnButtonColor");
         }
 
+        protected override void OnReplace(object parameter)
+        {
+            base.OnReplace(ActualHeight);
+        }
+
         protected override void GenericEdit(object parameter)
         {
             ItemWindow w = new ItemWindow(this);

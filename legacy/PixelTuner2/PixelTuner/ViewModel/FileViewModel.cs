@@ -20,6 +20,7 @@ using Communication.Gradient;
 using Communication;
 using System.Windows.Media;
 using System.Collections.Specialized;
+using System.Threading;
 using Common.ViewModel;
 using PixelTuner.ViewModel.Timelines;
 
@@ -109,8 +110,9 @@ namespace PixelTuner.ViewModel
             OnFileChanged(sender, e);
         }
 
-        internal void UpdatePreview(TimeSpan timeSpan)
+        internal void UpdatePreview(object arg)
         {
+            var timeSpan = (TimeSpan)arg;
             if (RootViewModel.This.CanvasModel.IsVisible && _parsedProject != null)
             {
                 var line = SelectedTimeline;
@@ -1028,6 +1030,9 @@ namespace PixelTuner.ViewModel
         #endregion
 
         #region NAudio Engine Events
+
+        private Thread _updateThread = null;
+
         private void NAudioEngine_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
@@ -1037,9 +1042,22 @@ namespace PixelTuner.ViewModel
                     if (!SoundPlayer.IsPlaying)
                     {
                         var lines = TimeLines.Where(item => item is LightTimeLineViewModel);
-                        //_parsedProject = LightBinaryProject.Parse(GetLightBinaryPresentation(lines));
+                        _parsedProject = LightBinaryProject.Parse(GetLightBinaryPresentation(lines));
                     }
-                    UpdatePreview(SoundPlayer.CurrentTime);
+                    if (SoundPlayer.IsPlaying)
+                    {
+                        if (IsSyncAvailable && IsSyncOn && RootViewModel.This.DevicesModel.Illuminators.Count > 0)
+                        {
+                            RootViewModel.This.DevicesModel.Illuminators.First().Play(SoundPlayer.CurrentTime, Settings.Default.Discreteness);
+                        }
+                    }
+                    if (_updateThread == null) _updateThread = new Thread(UpdatePreview);
+                    if (_updateThread != null && !_updateThread.IsAlive)
+                    {
+                        _updateThread = new Thread(UpdatePreview);
+                        _updateThread.Start(SoundPlayer.CurrentTime);
+                    }
+                    //UpdatePreview(SoundPlayer.CurrentTime);
                     RaisePropertyChanged("ProgressLineVisibility");
                     RaisePropertyChanged("ProgressLinePosition");
                     break;

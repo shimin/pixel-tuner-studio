@@ -31,6 +31,9 @@ namespace ConnectionTester
         public MainFrm()
         {
             Settings.Default.Reload();
+            _uploadProjectThread = new Thread(UploadProject);
+            _uploadFirmwareThread = new Thread(UploadFirmware);
+
             foreach (var s in Settings.Default.requests) requestsSource.Add(s);
 
             InitializeComponent();
@@ -165,7 +168,18 @@ namespace ConnectionTester
             receivedData.Clear();
         }
 
+        private Thread _uploadProjectThread = null;
         private void boxLoadProj_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (_uploadProjectThread != null && !_uploadProjectThread.IsAlive)
+            {
+                _uploadProjectThread = new Thread(UploadProject);
+                _uploadProjectThread.Start();
+            }
+            //UploadProject();
+        }
+
+        private void UploadProject()
         {
             if (_device == null)
             {
@@ -206,13 +220,24 @@ namespace ConnectionTester
                     _device.WriteFile(binaryData);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 SetStatus(ex.Message, Common.Log.MessageType.Error, 0);
             }
         }
 
+        private Thread _uploadFirmwareThread = null;
         private void boxLoadFW_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (_uploadFirmwareThread != null && !_uploadFirmwareThread.IsAlive)
+            {
+                _uploadFirmwareThread = new Thread(UploadFirmware);
+                _uploadFirmwareThread.Start();
+            }
+            //UploadFirmware();
+        }
+
+        private void UploadFirmware()
         {
             if (_device == null)
             {
@@ -648,5 +673,9 @@ namespace ConnectionTester
             }
         }
 
+        private void MainFrm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
