@@ -47,10 +47,10 @@ namespace Communication.Service
             dictionary.Add("ILFW", "Illuminator");
             idClassPairs.Add("ILFW", "Communication.Service.IlluminatorDevice");
 
-            dictionary.Add("VIDEOBOOT", "Video module (Boot mode)");
-            idClassPairs.Add("VIDEOBOOT", "Communication.Service.VideoDevice");
-            dictionary.Add("VIDEOFW", "Video module");
-            idClassPairs.Add("VIDEOFW", "Communication.Service.VideoDevice");
+            dictionary.Add("WPLR_v1BOOT", "Video module (Boot mode)");
+            idClassPairs.Add("WPLR_v1BOOT", "Communication.Service.VideoDevice");
+            dictionary.Add("WPLR_v1", "Video module");
+            idClassPairs.Add("WPLR_v1", "Communication.Service.VideoDevice");
             
             dictionary.Add("UDMXBOOT", "uDmx master (Boot mode)");  // unused
             dictionary.Add("UDMXFW", "uDmx master");                // unused

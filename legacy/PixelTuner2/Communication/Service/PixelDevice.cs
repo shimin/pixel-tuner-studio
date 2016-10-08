@@ -55,7 +55,11 @@ namespace Communication.Service
         public float EnergyLevel
         {
             get { return _energyLevel; }
-            set { _energyLevel = value; }
+            set
+            {
+                _energyLevel = value;
+                PropertyChanged?.Invoke("EnergyLevel");
+            }
         }
 
         byte _ledsTotal = 0;

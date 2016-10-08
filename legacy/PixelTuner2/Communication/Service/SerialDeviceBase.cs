@@ -14,6 +14,10 @@ namespace Communication.Service
     {
         private Thread _portMonitor = null;
 
+        public delegate void NotifyPropertyChanged(string propertyName);
+
+        public NotifyPropertyChanged PropertyChanged = null;
+
         public static SerialDeviceBase Create(SerialPort p)
         {
             SerialDeviceBase dev = null;
@@ -118,7 +122,16 @@ namespace Communication.Service
 
         public bool BootMode { get; protected set; }
 
-        public bool Busy { get; protected set; }
+        private bool _busy = false;
+        public bool Busy
+        {
+            get { return _busy; }
+            protected set
+            {
+                _busy = value;
+                PropertyChanged?.Invoke("Busy");
+            }
+        }
 
         public string Name { get; set; }
 
