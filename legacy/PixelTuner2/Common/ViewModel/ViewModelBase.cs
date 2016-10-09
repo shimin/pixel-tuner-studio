@@ -6,14 +6,6 @@ namespace Common.ViewModel
 {
     public class ViewModelBase : INotifyPropertyChanged
     {
-        private Guid _guid = Guid.NewGuid();
-        [XmlIgnore]
-        public Guid Guid
-        {
-            get { return _guid; }
-            private set { _guid = value; }
-        }
-
         protected virtual void RaisePropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
@@ -25,7 +17,6 @@ namespace Common.ViewModel
         public virtual object Clone()
         {
             var modelCopy = (ViewModelBase)Activator.CreateInstance(this.GetType());
-            modelCopy._guid = _guid;
             return modelCopy;
         }
     }
