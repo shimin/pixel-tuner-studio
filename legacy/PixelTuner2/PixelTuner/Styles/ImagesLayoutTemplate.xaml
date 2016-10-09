@@ -4,7 +4,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:ct="clr-namespace:Common.Controls;assembly=Common"
                     xmlns:dd="clr-namespace:Common.DragDrop;assembly=Common"
-                    xmlns:tlw="clr-namespace:PixelTuner.Controls.ThumbListView">
+                    xmlns:tlw="clr-namespace:PixelTuner.Controls.ThumbListView"
+                    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit">
     
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/PixelTuner;component/Styles/SharedStyles.xaml" />
@@ -25,7 +26,20 @@
                 <Button Style="{StaticResource WhiteLinkButton}" DockPanel.Dock="Left" Content="{StaticResource PictureEditor_CropAdjust}" Click="Crop_Button_Click" Margin="4,2,4,0" IsEnabled="{Binding ElementName=boxThumbnails, Path=DataContext.IsSomethingSelected, Mode=OneWay}"></Button>
                 <Button Style="{StaticResource WhiteLinkButton}" DockPanel.Dock="Left" Content="{StaticResource PictureEditor_Delete}" Click="Delete_Button_Click" Margin="4,2,4,0" IsEnabled="{Binding ElementName=boxThumbnails, Path=DataContext.IsSomethingSelected, Mode=OneWay}"></Button>
                 <Button Style="{StaticResource WhiteLinkButton}" DockPanel.Dock="Left" Content="{StaticResource PictureEditor_Update}" Click="Resfresh_Button_Click" Margin="4,2,4,0"></Button>
-                <ct:SearchTextBox Text="{Binding SearchPattern, UpdateSourceTrigger=PropertyChanged}" Height="20" Margin="8,2,0,0" VerticalAlignment="Top" HorizontalAlignment="Stretch" Search="SearchHandler"/>
+                <TextBlock Margin="30,3,2,0" Foreground="{StaticResource TextBrush}" Text="{StaticResource Doc_Lbl_Height}" />
+                <xctk:DoubleUpDown
+                    Height="20"
+                    Increment="5"
+                    Minimum="5" 
+                    Maximum="400" 
+                    Margin="4,2,0,0"
+                    Width="60"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Stretch"
+                    Value="{Binding Path=LineHeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    ParsingNumberStyle="Integer" 
+                    IsTabStop="True" />
+                <ct:SearchTextBox Text="{Binding SearchPattern, UpdateSourceTrigger=PropertyChanged}" Height="20" Margin="4,2,0,0" VerticalAlignment="Top" HorizontalAlignment="Stretch" Search="SearchHandler"/>
             </DockPanel>
             <ListView 
                 x:Name="boxThumbnails"

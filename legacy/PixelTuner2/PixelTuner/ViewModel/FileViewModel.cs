@@ -363,20 +363,7 @@ namespace PixelTuner.ViewModel
                 RaisePropertyChanged("ProgressLinePosition");
             }
         }
-
-        int _lineHeight = Settings.Default.LineHeight;
-        [XmlAttribute]
-        public int LineHeight
-        {
-            get { return _lineHeight; }
-            set
-            {
-                _lineHeight = value;
-                Settings.Default.LineHeight = value;
-                RaisePropertyChanged("LineHeight");
-            }
-        }
-
+        
         [XmlIgnore]
         public int ProjectSize
         {
@@ -1483,15 +1470,9 @@ namespace PixelTuner.ViewModel
             if (RootViewModel.This.CopiedTimeline != null)
             {
                 var tl = (TimeLineViewModel)RootViewModel.This.CopiedTimeline.Clone();
-                if (tl.Items.Count > 0 && ((TimeLineItemViewModel)tl.Items[0]).ActualHeight != this.LineHeight)
-                {
-                    MessageBox.Show((String)Application.Current.TryFindResource("Global_ImagesHeightMismatch"));
-                    return;
-                }
                 PushUndo(false);
                 TimeLines.Add(tl);
             }
-
 
             TimeLineViewModel selectedLine = SelectedTimeline;
             if (selectedLine != null)

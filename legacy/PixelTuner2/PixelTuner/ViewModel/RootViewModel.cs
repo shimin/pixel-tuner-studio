@@ -163,36 +163,19 @@ namespace PixelTuner.ViewModel
         {
             if (_activeDocument == null)
             {
-                ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
+                ImagesModel.RefreshImagesCollection(ImagesModel.LineHeight);
                 //VideosModel.RefreshVideosCollection(Settings.Default.LineHeight);
                 CanvasModel = null;
                 GradientsModel.RefreshImagesCollection();
             }
             else
             {
-                Settings.Default.LineHeight = _activeDocument.LineHeight;
-                ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
-                //VideosModel.RefreshVideosCollection(Settings.Default.LineHeight);
+                ImagesModel.RefreshImagesCollection(ImagesModel.LineHeight);
                 GradientsModel.RefreshImagesCollection();
                 CanvasModel = ActiveDocument.Canvas;
-                e.NewDocument.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(NewDocument_PropertyChanged);
-                if (e.OldDocument != null)
-                    e.OldDocument.PropertyChanged -= NewDocument_PropertyChanged;
             }
         }
-
-        void NewDocument_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "LineHeight")
-                if (sender is FileViewModel)
-                {
-                    Settings.Default.LineHeight = (sender as FileViewModel).LineHeight;
-                    ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
-                    //VideosModel.RefreshVideosCollection(Settings.Default.LineHeight);
-                    GradientsModel.RefreshImagesCollection();
-                }
-        }
-
+        
         public static void NotifySettingsChanged()
         {
             RaiseApplicationSettingsChanged();
@@ -502,12 +485,12 @@ namespace PixelTuner.ViewModel
             {
                 try
                 {
-                    ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight, itemToRemove.FullName);
+                    ImagesModel.RefreshImagesCollection(ImagesModel.LineHeight, itemToRemove.FullName);
                     RemoveBrokenReferences();
                 }
                 catch (Exception ex)
                 {
-                    ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
+                    ImagesModel.RefreshImagesCollection(ImagesModel.LineHeight);
                     Console.WriteLine(ex.Message);
                 }
             }
@@ -692,7 +675,7 @@ namespace PixelTuner.ViewModel
                     },
                     () => //SetOtherImageFromCollection,
                     {
-                        var targetHeight = line.TimelineHeightPx != 0 ? line.TimelineHeightPx : file.LineHeight;
+                        var targetHeight = line.TimelineHeightPx != 0 ? line.TimelineHeightPx : Settings.Default.LineHeight;
                         IReplaceItem w = brokenItem.OpenReplaceWindow();
                         w.Height = targetHeight;
                         if (brokenItem is VideoThumbnailViewModel) w = new ReplaceVideoItemWindow(VideosModel);
@@ -719,7 +702,7 @@ namespace PixelTuner.ViewModel
                         if (ofd.ShowDialog() == true)
                         {
                             var b = Bitmap.FromFile(ofd.FileName);
-                            var targetHeight = line.TimelineHeightPx != 0 ? line.TimelineHeightPx : file.LineHeight;
+                            var targetHeight = line.TimelineHeightPx != 0 ? line.TimelineHeightPx : Settings.Default.LineHeight;
 
                             if (b.Height == targetHeight || brokenItem.GetType() == typeof(VideoThumbnailViewModel))
                             {
@@ -736,7 +719,7 @@ namespace PixelTuner.ViewModel
                     },
                     () => //SetFileToIgnore,
                     {
-                        brokenItem.ReplaceWithBlank(file.LineHeight);
+                        brokenItem.ReplaceWithBlank(Settings.Default.LineHeight);
                     },
                     () => //SetAllFilesToIgnore);
                     {
@@ -782,7 +765,7 @@ namespace PixelTuner.ViewModel
                     for (int i = 0; i < timeLine.Items.Count; i++)
                     {
                         var item = (timeLine.Items[i] as TimeLineItemViewModel);
-                        if (!File.Exists(item.FullName)) item.ReplaceWithBlank(file.LineHeight);
+                        if (!File.Exists(item.FullName)) item.ReplaceWithBlank(Settings.Default.LineHeight);
                     }
             }
         }
@@ -1197,8 +1180,7 @@ namespace PixelTuner.ViewModel
             dw.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             dw.ShowDialog();
 
-            ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
-            //VideosModel.RefreshVideosCollection(Settings.Default.LineHeight);
+            ImagesModel.RefreshImagesCollection(ImagesModel.LineHeight);
             GradientsModel.RefreshImagesCollection();
 
             foreach (var f in Files)

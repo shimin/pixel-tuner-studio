@@ -178,7 +178,7 @@ namespace PixelTuner.ViewModel
 
         protected override void OnUploadCommand(object parameter)
         {
-            Progress = 0;
+            //Progress = 0;
             FileViewModel file = parameter as FileViewModel;
             if (file == null) return;
 
@@ -220,30 +220,36 @@ namespace PixelTuner.ViewModel
                     Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Information);
                 return false;
             }
-            if (file.LineHeight > LedsTotal)
+
+            foreach (var line in file.TimeLines)
             {
-                if (MessageBox.Show(
-                    String.Format(
-                        (String)Application.Current.TryFindResource("Global_TimelineHigherThanDevice"),
-                        file.LineHeight,
-                        LedsTotal,
-                        file.LineHeight - LedsTotal),
-                    Application.Current.MainWindow.Title, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                if (line.TimelineHeightPx > LedsTotal)
                 {
-                    return false;
+                    if (MessageBox.Show(
+                            String.Format(
+                                (String) Application.Current.TryFindResource("Global_TimelineHigherThanDevice"),
+                                line.TimelineHeightPx,
+                                LedsTotal,
+                                line.TimelineHeightPx - LedsTotal),
+                            Application.Current.MainWindow.Title, MessageBoxButton.YesNo, MessageBoxImage.Question) ==
+                        MessageBoxResult.No)
+                    {
+                        return false;
+                    }
                 }
-            }
-            if (file.LineHeight < LedsTotal)
-            {
-                if (MessageBox.Show(
-                    String.Format(
-                        (String)Application.Current.TryFindResource("Global_TimelineLowerThanDevice"),
-                        file.LineHeight,
-                        LedsTotal,
-                        LedsTotal - file.LineHeight),
-                    Application.Current.MainWindow.Title, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                if (line.TimelineHeightPx < LedsTotal)
                 {
-                    return false;
+                    if (MessageBox.Show(
+                            String.Format(
+                                (String) Application.Current.TryFindResource("Global_TimelineLowerThanDevice"),
+                                line.TimelineHeightPx,
+                                LedsTotal,
+                                LedsTotal - line.TimelineHeightPx),
+                            Application.Current.MainWindow.Title, MessageBoxButton.YesNo, MessageBoxImage.Question) ==
+                        MessageBoxResult.No)
+                    {
+                        return false;
+                    }
                 }
             }
             return true;

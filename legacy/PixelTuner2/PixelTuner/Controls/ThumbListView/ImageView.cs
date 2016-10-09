@@ -65,7 +65,7 @@ namespace PixelTuner.Controls.ThumbListView
             }
             
             if (sb.Length > 0) MessageBox.Show(sb.ToString());
-            imagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
+            imagesModel.RefreshImagesCollection(imagesModel.LineHeight);
             imagesView.Dispatcher.Invoke(new Action(() => imagesView.Focus()));
         }
 
@@ -127,7 +127,7 @@ namespace PixelTuner.Controls.ThumbListView
         private void SearchHandler(object sender, RoutedEventArgs e)
         {
             var s = sender as TextBox;
-            RootViewModel.This.ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
+            RootViewModel.This.ImagesModel.RefreshImagesCollection(RootViewModel.This.ImagesModel.LineHeight);
         }
 
         private void ListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -199,7 +199,7 @@ namespace PixelTuner.Controls.ThumbListView
             {
                 img.Save(saveDialog.FileName);
             }
-            RootViewModel.This.ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
+            RootViewModel.This.ImagesModel.RefreshImagesCollection(RootViewModel.This.ImagesModel.LineHeight);
         }
 
         private void Delete_Button_Click(object sender, RoutedEventArgs e)
@@ -218,7 +218,7 @@ namespace PixelTuner.Controls.ThumbListView
 
         private void Resfresh_Button_Click(object sender, RoutedEventArgs e)
         {
-            RootViewModel.This.ImagesModel.RefreshImagesCollection(Settings.Default.LineHeight);
+            RootViewModel.This.ImagesModel.RefreshImagesCollection(RootViewModel.This.ImagesModel.LineHeight);
         }
 
         private void Change_Button_Click(object sender, RoutedEventArgs e)

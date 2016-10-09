@@ -75,22 +75,7 @@
                     Maximum="{Binding MaxUnitSize}" 
                     Value="{Binding UnitSize, Converter={StaticResource LogUnitSizeConverter}}"/>
 
-            <TextBlock Grid.Row="0" Grid.Column="3" Margin="16,4,4,0" Foreground="{StaticResource TextBrush}" Text="{StaticResource Doc_Lbl_Height}" />
-
-            <xctk:DoubleUpDown 
-                Increment="5"
-                Minimum="5" 
-                Maximum="400" 
-                Grid.Column="4" 
-                Margin="4,2,2,0"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Top" 
-                IsManipulationEnabled="True"
-                Value="{Binding Path=LineHeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                ParsingNumberStyle="Integer" 
-                IsTabStop="True" />
-
-            <StackPanel Grid.Row="0" Grid.Column="5" Margin="12,-2,1,1"  Orientation="Horizontal" Height="26">
+            <StackPanel Grid.Row="0" Grid.Column="3" Margin="12,-2,1,1"  Orientation="Horizontal" Height="26">
                 <Button Name="boxOpenAudioButton" Width="88" Height="22" Margin="0,0,8,0" Command="{Binding OpenAudio}" Content="{StaticResource Doc_Lbl_ImportTrack}" Focusable="False"></Button>
                 <Button Name="boxPlayButton" Width="20" Height="20" Command="{Binding PlayAudio}" Style="{StaticResource ButtonPlayStyle}" Focusable="False"/>
                 <Button Name="boxPauseButton" Width="20" Height="20" Command="{Binding PauseAudio}" Style="{StaticResource ButtonPauseStyle}" Focusable="False"/>

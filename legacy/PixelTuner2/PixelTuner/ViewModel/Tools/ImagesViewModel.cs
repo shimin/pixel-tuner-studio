@@ -32,6 +32,13 @@ namespace PixelTuner.ViewModel
             set { _searchPattern = value; RaisePropertyChanged("SearchPattern"); }
         }
 
+        private int _lineHeight = Properties.Settings.Default.LineHeight;
+        public int LineHeight
+        {
+            get { return _lineHeight; }
+            set { _lineHeight = value; RaisePropertyChanged("LineHeight"); RefreshImagesCollection(value); }
+        }
+
         public const string ToolContentId = "ImagesTool";
 
         private void MenuItem_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -76,7 +83,7 @@ namespace PixelTuner.ViewModel
                 return _selectedItem != null;
             }
         }
-
+        
         Thread t = null;
         public void RefreshImagesCollection(int height = 0, string itemToRemove = "")
         {

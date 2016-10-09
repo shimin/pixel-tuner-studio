@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Common.ViewModel;
-using Communication.Service;
 using System.Windows;
 using System.Windows.Input;
+using Common.Helpers;
+using Common.ViewModel;
+using Communication.Service;
 
 namespace PixelTuner.ViewModel
 {
@@ -13,6 +14,8 @@ namespace PixelTuner.ViewModel
         #region Properties
 
         public SerialDeviceBase Device { get; private set; }
+
+        private Guid aGuid = Guid.NewGuid();
 
         public bool BootMode => Device?.BootMode ?? false;
 
@@ -89,8 +92,8 @@ namespace PixelTuner.ViewModel
             Device = device;
             Device.PropertyChanged += RaisePropertyChanged;
 
-            device.StatusChanged += new SerialDeviceBase.StatusDelegate(device_StatusChanged);
-            device.SessionFinished += new SerialDeviceBase.SessionDelegate(device_SessionFinished);
+            device.StatusChanged += device_StatusChanged;
+            device.SessionFinished += device_SessionFinished;
 
             RootViewModel.ApplicationSettingsChanged += ProjectUpdateHandler;
             RootViewModel.This.ActiveDocumentChanged += (x, e) =>
@@ -122,7 +125,7 @@ namespace PixelTuner.ViewModel
             get
             {
                 var status = Device == null ? ConnectionStatus.Offline : Device.Status;
-                return (String)Application.Current.TryFindResource(Common.Helpers.EnumHelper.GetDescription(status));
+                return (String)Application.Current.TryFindResource(EnumHelper.GetDescription(status));
             }
         }
 
@@ -130,20 +133,20 @@ namespace PixelTuner.ViewModel
         public int ProgressMax
         {
             get { return _progressMax; }
-            set { RaisePropertyChanged("ProgressMax"); RaisePropertyChanged("Progress"); _progressMax = value; }
+            set { _progressMax = value; RaisePropertyChanged("ProgressMax"); RaisePropertyChanged("Progress");  }
         }
 
-        int _progressMin = 0;
+        int _progressMin;
 
         public int ProgressMin
         {
             get { return _progressMin; }
-            set { RaisePropertyChanged("ProgressMin"); RaisePropertyChanged("Progress"); _progressMin = value; }
+            set { _progressMin = value; RaisePropertyChanged("ProgressMin"); RaisePropertyChanged("Progress"); }
         }
 
         object _sync = new object();
 
-        int _progress = 0;
+        int _progress;
         public int Progress
         {
             get { return _progress; }
@@ -172,7 +175,11 @@ namespace PixelTuner.ViewModel
 
         void device_SessionFinished(DeviceSessionEventArgs e)
         {
-            Progress += Step;
+            if (!Busy)
+            {
+                Progress += Step;
+                Console.WriteLine($"Progress: {Progress}");
+            }
         }
 
         void device_StatusChanged(EventArgs e)
@@ -186,6 +193,7 @@ namespace PixelTuner.ViewModel
             ProgressMin = 0;
             ProgressMax = SerialDeviceBase.EstimateRequestsCount(binaryData.Count) + 1;
             Step = 1;
+            Console.WriteLine($"Init Params!!!! \n ProgressMin: {ProgressMin}, ProgressMax: {ProgressMax}");
         }
 
         #endregion
@@ -193,14 +201,14 @@ namespace PixelTuner.ViewModel
         #region ViewModel commands
 
         #region UploadFirmwareCommand
-        RelayCommand _uploadFirmwareCommand = null;
+        RelayCommand _uploadFirmwareCommand;
         public ICommand UploadFirmwareCommand
         {
             get
             {
                 if (_uploadFirmwareCommand == null)
                 {
-                    _uploadFirmwareCommand = new RelayCommand((p) => OnUploadFirmware(p), (p) => CanUploadFirmware(p));
+                    _uploadFirmwareCommand = new RelayCommand(p => OnUploadFirmware(p), p => CanUploadFirmware(p));
                 }
 
                 return _uploadFirmwareCommand;
@@ -220,7 +228,7 @@ namespace PixelTuner.ViewModel
         #endregion
         
         #region WriteMacCommand
-        RelayCommand _writeMacCommand = null;
+        RelayCommand _writeMacCommand;
         public ICommand WriteMacCommand => _writeMacCommand ?? (_writeMacCommand = new RelayCommand(OnWriteMac, CanWriteMac));
 
         protected virtual bool CanWriteMac(object parameter)
@@ -234,17 +242,17 @@ namespace PixelTuner.ViewModel
             var il = RootViewModel.This.DevicesModel.Illuminators.FirstOrDefault();
             if (il == null) return;
             var mac = il.Device.Mac;
-            ushort b1 = (ushort) (((ushort) mac[0] << 8 | mac[1]));
-            ushort b2 = (ushort)(((ushort)mac[2] << 8 | mac[3]));
-            ushort b3 = (ushort)(((ushort)mac[4] << 8 | mac[5]));
-            ushort b4 = (ushort)(((ushort)mac[6] << 8 | mac[7]));
+            ushort b1 = (ushort) ((mac[0] << 8 | mac[1]));
+            ushort b2 = (ushort)((mac[2] << 8 | mac[3]));
+            ushort b3 = (ushort)((mac[4] << 8 | mac[5]));
+            ushort b4 = (ushort)((mac[6] << 8 | mac[7]));
 
             var settings = new List<DeviceFeature>
             {
                 new DeviceFeature(6, b1),
                 new DeviceFeature(7, b2),
                 new DeviceFeature(8, b3),
-                new DeviceFeature(9, b4),
+                new DeviceFeature(9, b4)
             };
 
             Device.WriteSettings(settings);
@@ -253,14 +261,14 @@ namespace PixelTuner.ViewModel
         #endregion
 
         #region UploadCommand
-        RelayCommand _uploadCommand = null;
+        RelayCommand _uploadCommand;
         public ICommand UploadCommand
         {
             get
             {
                 if (_uploadCommand == null)
                 {
-                    _uploadCommand = new RelayCommand((p) => OnUploadCommand(p), (p) => CanUploadCommand(p));
+                    _uploadCommand = new RelayCommand(p => OnUploadCommand(p), p => CanUploadCommand(p));
                 }
 
                 return _uploadCommand;
@@ -280,14 +288,14 @@ namespace PixelTuner.ViewModel
         #endregion
 
         #region AutoUpdateCommand
-        RelayCommand _autoUpdateCommand = null;
+        RelayCommand _autoUpdateCommand;
         public ICommand AutoUpdateCommand
         {
             get
             {
                 if (_autoUpdateCommand == null)
                 {
-                    _autoUpdateCommand = new RelayCommand((p) => OnAutoUpdateCommand(p), (p) => CanAutoUpdateCommand(p));
+                    _autoUpdateCommand = new RelayCommand(p => OnAutoUpdateCommand(p), p => CanAutoUpdateCommand(p));
                 }
 
                 return _autoUpdateCommand;
@@ -307,14 +315,14 @@ namespace PixelTuner.ViewModel
         #endregion
 
         #region UpdatePostponeCommand
-        RelayCommand _updatePostponeCommand = null;
+        RelayCommand _updatePostponeCommand;
         public ICommand UpdatePostponeCommand
         {
             get
             {
                 if (_updatePostponeCommand == null)
                 {
-                    _updatePostponeCommand = new RelayCommand((p) => OnUpdatePostponeCommand(p), (p) => CanUpdatePostponeCommand(p));
+                    _updatePostponeCommand = new RelayCommand(p => OnUpdatePostponeCommand(p), p => CanUpdatePostponeCommand(p));
                 }
 
                 return _updatePostponeCommand;
