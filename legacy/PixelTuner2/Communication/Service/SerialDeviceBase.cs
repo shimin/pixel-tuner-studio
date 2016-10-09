@@ -262,6 +262,7 @@ namespace Communication.Service
                 _port.WriteTimeout = DefaultWriteTimeout;
                 GC.SuppressFinalize(_port.BaseStream);
             }
+            RunMonitoring();
         }
 
         private void RunMonitoring()
@@ -277,7 +278,8 @@ namespace Communication.Service
                     }
                     catch
                     {
-                        Port.Dispose();
+                        try { Port.Dispose(); }
+                        catch { }
                     }
                 }
             });
