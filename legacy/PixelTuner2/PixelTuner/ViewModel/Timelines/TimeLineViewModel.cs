@@ -232,6 +232,7 @@ namespace PixelTuner.ViewModel
         public TimeLineViewModel()
         {
             Items = new ObservableCollection<ITimeLineDataItem>();
+            Items.CollectionChanged += (sender, args) => { Parent?.RaiseFileChanged(); };
             XmlItems = new DelegatedIList<TimeLineItemViewModel, TimeLineItem>(Items);
         }
         
@@ -392,8 +393,9 @@ namespace PixelTuner.ViewModel
             timelineCopy.MetaData = this.MetaData;
             timelineCopy.ToolsetMargin = this.ToolsetMargin;
             timelineCopy.Start = this.Start;
+            timelineCopy.Items = new ObservableCollection<ITimeLineDataItem>();
             foreach (var item in this.Items)
-                timelineCopy.Items.Add((ITimeLineDataItem)(item as TimeLineItemViewModel).Clone());
+                timelineCopy.Items.Add((ITimeLineDataItem)item.Clone());
             return timelineCopy;
         }
 
@@ -421,7 +423,7 @@ namespace PixelTuner.ViewModel
 
         private void OnPreviewChanges(object parameter)
         {
-            Parent.PushUndo(false, this);
+            Parent.PushUndo(false);
         }
 
         #endregion
@@ -477,7 +479,7 @@ namespace PixelTuner.ViewModel
         {
             if (itemsToPaste.Count > 0)
             {
-                Parent.PushUndo(false, this);
+                Parent.PushUndo(false);
                 DateTime? startTime = GetStartTimeByIndex(insertIndex);
                 TimeSpan delta = startTime.Value - itemsToPaste.First().StartTime.Value;
 

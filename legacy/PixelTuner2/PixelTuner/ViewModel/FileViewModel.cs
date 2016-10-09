@@ -535,14 +535,9 @@ namespace PixelTuner.ViewModel
             if (ViewLoaded)
             {
                 var state = new ObservableCollection<TimeLineViewModel>();
-                if (oldModel == null)
-                {
-                    foreach (var l in _timeLines) state.Add((TimeLineViewModel)l.Clone());
-                }
-                else
-                {
-                    state.Add((TimeLineViewModel)oldModel.Clone());
-                }
+
+                foreach (var l in _timeLines) state.Add((TimeLineViewModel)l.Clone());
+
                 _undoStack.Push(state);
                 if (!keepRedoStack) _redoStack.Clear();
             }
@@ -572,18 +567,10 @@ namespace PixelTuner.ViewModel
                 _timeLines.CollectionChanged -= _timeLines_CollectionChanged;
                 
                 var state = _undoStack.Pop();
-                if (state.Count > 1) PushRedo();
-                else
-                {
-                    int idx = 0;
-                    foreach (var l in _timeLines)
-                        if (l.Guid != state[0].Guid) { idx++; }
-                        else break;
+                PushRedo();
 
-                    PushRedo(_timeLines[idx]);
-                }
                 SetState(state);
-
+                RaiseFileChanged();
                 _timeLines.CollectionChanged += _timeLines_CollectionChanged;
             }
         }
@@ -595,39 +582,19 @@ namespace PixelTuner.ViewModel
                 _timeLines.CollectionChanged -= _timeLines_CollectionChanged;
                 
                 var state = _redoStack.Pop();
-                if (state.Count > 1) PushUndo(true);
-                else
-                {
-                    int idx = 0;
-                    foreach (var l in _timeLines)
-                        if (l.Guid != state[0].Guid) { idx++; }
-                        else break;
-
-                    PushUndo(true, _timeLines[idx]);
-                }
+                PushUndo(true);
                 SetState(state);
-
+                RaiseFileChanged();
                 _timeLines.CollectionChanged += _timeLines_CollectionChanged;
             }
         }
 
         private void SetState(ObservableCollection<TimeLineViewModel> state)
         {
-            if (state.Count > 1)
+            if (state.Count > 0)
             {
                 _timeLines.Clear();
                 foreach (var l in state) _timeLines.Add(l);
-            }
-            else
-            {
-                int idx = 0;
-                foreach (var l in _timeLines)
-                {
-                    if (l.Guid == state[0].Guid) { break; }
-                    idx++;
-                }
-                _timeLines.RemoveAt(idx);
-                _timeLines.Insert(idx, state[0]);
             }
         }
 
@@ -1515,13 +1482,14 @@ namespace PixelTuner.ViewModel
         {
             if (RootViewModel.This.CopiedTimeline != null)
             {
-                var tl = RootViewModel.This.CopiedTimeline;
+                var tl = (TimeLineViewModel)RootViewModel.This.CopiedTimeline.Clone();
                 if (tl.Items.Count > 0 && ((TimeLineItemViewModel)tl.Items[0]).ActualHeight != this.LineHeight)
                 {
                     MessageBox.Show((String)Application.Current.TryFindResource("Global_ImagesHeightMismatch"));
                     return;
                 }
-                TimeLines.Add(RootViewModel.This.CopiedTimeline);
+                PushUndo(false);
+                TimeLines.Add(tl);
             }
 
 
@@ -1554,7 +1522,7 @@ namespace PixelTuner.ViewModel
 
         internal void DeleteSelectedItems()
         {
-            RootViewModel.This.ActiveDocument.PushUndo(false);
+            PushUndo(false);
             _selectedItems.ForEach(i => {
                 i.IsSelected = false;
                 foreach(var l in TimeLines)
@@ -1587,5 +1555,10 @@ namespace PixelTuner.ViewModel
         }
 
         public event EventHandler FileChanged;
+
+        public void RaiseFileChanged()
+        {
+            OnFileChanged(this, null);
+        }
     }
 }

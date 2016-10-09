@@ -153,7 +153,7 @@ namespace PixelTuner.ViewModel
                 {
                     if (p != null)
                     {
-                        RootViewModel.This.ActiveDocument.PushUndo(false, p);
+                        RootViewModel.This.ActiveDocument.PushUndo(false);
                         int idx = p.Items.IndexOf(this);
                         newItem.StartTime = this.StartTime;
                         newItem.EndTime = this.EndTime;

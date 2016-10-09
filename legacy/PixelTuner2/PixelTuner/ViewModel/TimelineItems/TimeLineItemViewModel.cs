@@ -274,14 +274,6 @@ namespace PixelTuner.ViewModel
             }
             set { _actualHeight = value; }
         }
-
-        private Guid _guid = Guid.NewGuid();
-        [XmlIgnore]
-        public Guid Guid
-        {
-            get { return _guid; }
-            private set { _guid = value; }
-        }
         
         public virtual string ContentID
         {
@@ -312,7 +304,6 @@ namespace PixelTuner.ViewModel
         public virtual object Clone(FileInfo fi = null)
         {
             TimeLineItemViewModel result = (TimeLineItemViewModel)Activator.CreateInstance(GetType());
-            result._guid = _guid;
             result._fi = fi ?? this._fi;
             result.StartTime = this.StartTime;
             result.EndTime = this.EndTime;
@@ -393,7 +384,7 @@ namespace PixelTuner.ViewModel
                 {
                     if (p != null)
                     {
-                        RootViewModel.This.ActiveDocument.PushUndo(false, p);
+                        RootViewModel.This.ActiveDocument.PushUndo(false);
                         int idx = p.Items.IndexOf(this);
                         newItem.StartTime = this.StartTime;
                         newItem.EndTime = this.EndTime;
@@ -451,7 +442,7 @@ namespace PixelTuner.ViewModel
             var p = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, this);
             if (p != null)
             {
-                RootViewModel.This.ActiveDocument.PushUndo(false, p);
+                RootViewModel.This.ActiveDocument.PushUndo(false);
                 int idxToPaste = p.Items.IndexOf(this);
                 var splittedPart = (TimeLineItemViewModel)this.Clone();
                 this.StartTime = this.StartTime + timeSpan;
@@ -490,7 +481,7 @@ namespace PixelTuner.ViewModel
             if (w.ShowDialog() == true)
             {
                 var p = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, this);
-                if (p != null) { RootViewModel.This.ActiveDocument.PushUndo(false, p); }
+                if (p != null) { RootViewModel.This.ActiveDocument.PushUndo(false); }
 
                 this.Stretching = w.Stretching;
             }
@@ -524,7 +515,7 @@ namespace PixelTuner.ViewModel
             var p = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, this);
             if (p != null)
             {
-                RootViewModel.This.ActiveDocument.PushUndo(false, p);
+                RootViewModel.This.ActiveDocument.PushUndo(false);
                 p.IsChanged = true;
                 p.Items.Remove(this);
             }
@@ -834,7 +825,7 @@ namespace PixelTuner.ViewModel
             if (w.Top + w.Height > Application.Current.MainWindow.Top + Application.Current.MainWindow.Height)
                 w.Top = location.Y - w.Height;
         }
-
+        
         #endregion
     }
 }
