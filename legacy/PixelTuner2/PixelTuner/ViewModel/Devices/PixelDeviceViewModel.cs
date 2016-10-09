@@ -184,7 +184,7 @@ namespace PixelTuner.ViewModel
 
             try
             {
-                TimelinesToUpload dialog = new TimelinesToUpload(i => TimelineFilter(i) && (i as PixelTimeLineViewModel).LineHeight == LedsTotal);
+                TimelinesToUpload dialog = new TimelinesToUpload(i => TimelineFilter(i) && (i as PixelTimeLineViewModel).LineHeight == LedsTotal, file);
                 dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 dialog.Owner = Application.Current.MainWindow;
                 if (dialog.ShowDialog() == true)
@@ -221,30 +221,32 @@ namespace PixelTuner.ViewModel
                 return false;
             }
 
-            foreach (var line in file.TimeLines)
+            foreach (var l in file.TimeLines)
             {
-                if (line.TimelineHeightPx > LedsTotal)
+                var line = l as PixelTimeLineViewModel;
+                if (line == null || !line.IsSelectedToUpload) continue;
+                if (line.LineHeight > LedsTotal)
                 {
                     if (MessageBox.Show(
                             String.Format(
                                 (String) Application.Current.TryFindResource("Global_TimelineHigherThanDevice"),
-                                line.TimelineHeightPx,
+                                line.LineHeight,
                                 LedsTotal,
-                                line.TimelineHeightPx - LedsTotal),
+                                line.LineHeight - LedsTotal),
                             Application.Current.MainWindow.Title, MessageBoxButton.YesNo, MessageBoxImage.Question) ==
                         MessageBoxResult.No)
                     {
                         return false;
                     }
                 }
-                if (line.TimelineHeightPx < LedsTotal)
+                if (line.LineHeight < LedsTotal)
                 {
                     if (MessageBox.Show(
                             String.Format(
                                 (String) Application.Current.TryFindResource("Global_TimelineLowerThanDevice"),
-                                line.TimelineHeightPx,
+                                line.LineHeight,
                                 LedsTotal,
-                                LedsTotal - line.TimelineHeightPx),
+                                LedsTotal - line.LineHeight),
                             Application.Current.MainWindow.Title, MessageBoxButton.YesNo, MessageBoxImage.Question) ==
                         MessageBoxResult.No)
                     {

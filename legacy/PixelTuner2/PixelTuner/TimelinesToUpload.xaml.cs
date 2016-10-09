@@ -42,10 +42,15 @@ namespace PixelTuner
             }
         }
 
-        public TimelinesToUpload(Func<TimeLineViewModel, bool> filter)
+        public TimelinesToUpload(Func<TimeLineViewModel, bool> filter, FileViewModel file)
         {
             DataContext = this;
-            TimeLines = RootViewModel.This.ActiveDocument.TimeLines.Where(filter);
+            foreach (var line in file.TimeLines)
+            {
+                line.IsSelectedToUpload = false;
+            }
+            TimeLines = file.TimeLines.Where(filter);
+            TimeLines.All(l => l.IsSelectedToUpload = true);
             InitializeComponent();
             //DataContext = RootViewModel.This.ActiveDocument;
 

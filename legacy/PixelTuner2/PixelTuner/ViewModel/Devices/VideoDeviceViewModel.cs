@@ -81,7 +81,7 @@ namespace PixelTuner.ViewModel.Devices
 
             if (model != null)
             {
-                TimelinesToUpload dialog = new TimelinesToUpload(TimelineFilter);
+                TimelinesToUpload dialog = new TimelinesToUpload(TimelineFilter, model);
                 dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 dialog.Owner = Application.Current.MainWindow;
                 if (dialog.ShowDialog() == true)

@@ -36,7 +36,13 @@ namespace PixelTuner.ViewModel
         public int LineHeight
         {
             get { return _lineHeight; }
-            set { _lineHeight = value; RaisePropertyChanged("LineHeight"); RefreshImagesCollection(value); }
+            set
+            {
+                _lineHeight = value;
+                Properties.Settings.Default.LineHeight = value;
+                RaisePropertyChanged("LineHeight");
+                RefreshImagesCollection(value);
+            }
         }
 
         public const string ToolContentId = "ImagesTool";

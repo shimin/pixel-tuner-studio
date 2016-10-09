@@ -962,7 +962,7 @@ namespace PixelTuner.ViewModel
             if (ActiveDocument == null) return false;
 
             bool canExport = (ActiveDocument.TimeLines.Count((i) => 
-                PixelDeviceViewModel.TimelineFilter(i) && (i as PixelTimeLineViewModel).LineHeight == ActiveDocument.LineHeight) > 0)
+                PixelDeviceViewModel.TimelineFilter(i) && (i as PixelTimeLineViewModel).LineHeight == Settings.Default.LineHeight) > 0)
                 || (ActiveDocument.TimeLines.Count(LightMasterDeviceViewModel.TimelineFilter) > 0)
                 || (ActiveDocument.TimeLines.Count(EpicPoiDeviceViewModel.TimelineFilter) > 0)
                 || (ActiveDocument.TimeLines.Count(VideoDeviceViewModel.TimelineFilter) > 0);
@@ -979,11 +979,10 @@ namespace PixelTuner.ViewModel
             TimelinesToUpload dialog = null;
 
             if (fileToSave.TimeLines.Count((i) => 
-                PixelDeviceViewModel.TimelineFilter(i) 
-                && (i as PixelTimeLineViewModel).LineHeight == ActiveDocument.LineHeight) > 0)
+                PixelDeviceViewModel.TimelineFilter(i) && (i as PixelTimeLineViewModel).LineHeight == Settings.Default.LineHeight) > 0)
             {
                 dialog = new TimelinesToUpload((i) => 
-                    PixelDeviceViewModel.TimelineFilter(i) && (i as PixelTimeLineViewModel).LineHeight == ActiveDocument.LineHeight);
+                    PixelDeviceViewModel.TimelineFilter(i) && (i as PixelTimeLineViewModel).LineHeight == Settings.Default.LineHeight, RootViewModel.This.ActiveDocument);
 
                 dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 dialog.Owner = Application.Current.MainWindow;
@@ -994,14 +993,14 @@ namespace PixelTuner.ViewModel
                     if (dlg.ShowDialog().GetValueOrDefault())
                     {
                         File.WriteAllBytes(dlg.FileName,
-                            fileToSave.GetPixelBinaryPresentation(dialog.SelectedTimeLines, (byte) fileToSave.LineHeight).ToArray());
+                            fileToSave.GetPixelBinaryPresentation(dialog.SelectedTimeLines, (byte) Settings.Default.LineHeight).ToArray());
                     }
                 }
             }
 
             if (fileToSave.TimeLines.Count(LightMasterDeviceViewModel.TimelineFilter) > 0)
             {
-                dialog = new TimelinesToUpload(LightMasterDeviceViewModel.TimelineFilter);
+                dialog = new TimelinesToUpload(LightMasterDeviceViewModel.TimelineFilter, RootViewModel.This.ActiveDocument);
                 dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 dialog.Owner = Application.Current.MainWindow;
                 if (dialog.ShowDialog() == true)
@@ -1018,7 +1017,7 @@ namespace PixelTuner.ViewModel
 
             if (fileToSave.TimeLines.Count(EpicPoiDeviceViewModel.TimelineFilter) > 0)
             {
-                dialog = new TimelinesToUpload(EpicPoiDeviceViewModel.TimelineFilter);
+                dialog = new TimelinesToUpload(EpicPoiDeviceViewModel.TimelineFilter, RootViewModel.This.ActiveDocument);
                 dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 dialog.Owner = Application.Current.MainWindow;
                 if (dialog.ShowDialog() == true)
@@ -1035,7 +1034,7 @@ namespace PixelTuner.ViewModel
 
             if (fileToSave.TimeLines.Count(VideoDeviceViewModel.TimelineFilter) > 0)
             {
-                dialog = new TimelinesToUpload(VideoDeviceViewModel.TimelineFilter);
+                dialog = new TimelinesToUpload(VideoDeviceViewModel.TimelineFilter, RootViewModel.This.ActiveDocument);
                 dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 dialog.Owner = Application.Current.MainWindow;
                 if (dialog.ShowDialog() == true)

@@ -131,7 +131,7 @@ namespace PixelTuner.ViewModel
             FileViewModel file = parameter as FileViewModel;
             if (file == null) return;
 
-            TimelinesToUpload dialog = new TimelinesToUpload(TimelineFilter);
+            TimelinesToUpload dialog = new TimelinesToUpload(TimelineFilter, file);
             dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             dialog.Owner = Application.Current.MainWindow;
             if (dialog.ShowDialog() == true)

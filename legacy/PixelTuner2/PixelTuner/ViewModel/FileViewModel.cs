@@ -424,6 +424,7 @@ namespace PixelTuner.ViewModel
                     && RootViewModel.This.DevicesModel.Devices.Count != 0)
                 {
                     n = DeviceHelper.Devices.Count(i => i is PixelDevice);
+                    if (n == 0) return 0;
                     return n * 16 + 20;
                 }
                 return n;
