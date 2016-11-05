@@ -188,6 +188,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="IPMaskedTextBox\IPMaskedTextBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Magnifier\Themes\Generic.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -418,6 +422,9 @@
     <Compile Include="Core\Utilities\WeakEventListener.cs" />
     <Compile Include="Core\Utilities\WindowUtilities.cs" />
     <Compile Include="Core\WeakCollectionChangedWrapper.cs" />
+    <Compile Include="IPMaskedTextBox\IPMaskedTextBox.xaml.cs">
+      <DependentUpon>IPMaskedTextBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="NumericUpDown\Implementation\AllowedSpecialValuesEnum.cs" />
     <Compile Include="Panels\AnimatorConverter.cs" />
     <Compile Include="Panels\Animators.cs" />
