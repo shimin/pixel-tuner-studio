@@ -226,6 +226,19 @@
         </DataTemplate.Triggers>
     </DataTemplate>
 
+    <Style x:Key="TimelineToolTip" TargetType="ToolTip">
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToolTip">
+                    <StackPanel Width="120" Height="20" Background="Blue">
+                        <Label Content="{Binding LineTag}" FontWeight="Bold" Foreground="White"/>
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <ControlTemplate x:Key="TimeLineTools">
         <Grid x:Name="boxTimelineTools" Background="#4a4a4a" ToolTipService.IsEnabled="{Binding IsMetaDataSet}">
             <Grid.RowDefinitions>
@@ -235,6 +248,11 @@
             <Grid.Resources>
                 <ccv:ControlVisibilityConverter x:Key="ControlVisibilityConverter"/>
             </Grid.Resources>
+            <Border Background="#4a4a4a">
+                <Border.ToolTip>
+                    <ToolTip Style="{StaticResource TimelineToolTip}" DataContext="{Binding Path=PlacementTarget, RelativeSource={x:Static RelativeSource.Self}}"/>
+                </Border.ToolTip>
+            </Border>
             <StackPanel>
                 <Button Height="14" Margin="4,3,2,0" Style="{StaticResource ButtonUpStyle}" Command="{Binding MoveUp}"></Button>
                 <Button Height="14" Margin="4,0,2,1" Style="{StaticResource ButtonDownStyle}" Command="{Binding MoveDown}"></Button>

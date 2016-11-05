@@ -51,8 +51,39 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="WPFHexaEditor, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WPFHexaEditor.0.8.1.2\lib\WPFHexaEditor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HexBox\BuiltInContextMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="HexBox\ByteCharConverters.cs" />
+    <Compile Include="HexBox\ByteCollection.cs" />
+    <Compile Include="HexBox\BytePositionInfo.cs" />
+    <Compile Include="HexBox\DataBlock.cs" />
+    <Compile Include="HexBox\DataMap.cs" />
+    <Compile Include="HexBox\DynamicByteProvider.cs" />
+    <Compile Include="HexBox\DynamicFileByteProvider.cs" />
+    <Compile Include="HexBox\FileByteProvider.cs" />
+    <Compile Include="HexBox\FileDataBlock.cs" />
+    <Compile Include="HexBox\FindOptions.cs" />
+    <Compile Include="HexBox\HexBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="HexBox\HexCasing.cs" />
+    <Compile Include="HexBox\IByteProvider.cs" />
+    <Compile Include="HexBox\MemoryDataBlock.cs" />
+    <Compile Include="HexBox\NativeMethods.cs" />
+    <Compile Include="HexBox\Util.cs" />
+    <Compile Include="HexWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HexWindow.Designer.cs">
+      <DependentUpon>HexWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="LoggerRichTextBox.cs" />
     <Compile Include="MainFrm.cs">
       <SubType>Form</SubType>
@@ -63,6 +94,9 @@
     <Compile Include="PixelDeviceTest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="HexWindow.resx">
+      <DependentUpon>HexWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainFrm.resx">
       <DependentUpon>MainFrm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -78,6 +112,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="PixelTuner_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

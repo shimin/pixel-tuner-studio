@@ -102,6 +102,7 @@ namespace PixelTuner.ViewModel
             var e = (obj as System.Windows.Controls.MediaElement);
             e.Source = new Uri(FullName);
             e.Play();
+            e.Pause();
         }
 
         private void OnClick(object obj)

@@ -9,8 +9,8 @@ namespace ConnectionTester
 {
     internal class PixelDeviceTest : PixelDevice
     {
-        internal PixelDeviceTest(SerialPort port)
-            : base(port)
+        internal PixelDeviceTest(SerialPort port, bool runMonitoring = true)
+            : base(port, runMonitoring)
         {
 
         }

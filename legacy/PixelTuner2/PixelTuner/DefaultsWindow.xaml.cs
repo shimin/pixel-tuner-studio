@@ -29,6 +29,13 @@ namespace PixelTuner
             this.DataContext = this;
             InitializeComponent();
 
+            boxIP.SetIP(Settings.Default.WifiIP);
+            boxMulticastIP.SetIP(Settings.Default.MulticastIP);
+            boxLedsCount1.Value = Settings.Default.StripLedsCount1;
+            boxLedsCount2.Value = Settings.Default.StripLedsCount2;
+            boxLedsType.SelectedIndex = Settings.Default.LedsType - 1 < 0 ? 0 : Settings.Default.LedsType - 1;
+            boxPass.Text = Settings.Default.WifiPass;
+
             RaisePropertyChanged("Stretching");
             RaisePropertyChanged("DefaultDuration");
 
@@ -60,6 +67,46 @@ namespace PixelTuner
         {
             get { return _defaultDuration; }
             set { _defaultDuration = value; RaisePropertyChanged("DefaultDuration"); }
+        }
+
+        private string _ssid = Settings.Default.Ssid;
+
+        public string Ssid
+        {
+            get { return _ssid; }
+            set { _ssid = value; }
+        }
+
+        private string _wifiPass = Settings.Default.WifiPass;
+
+        public string WifiPass
+        {
+            get { return _wifiPass; }
+            set { _wifiPass = value; }
+        }
+
+        private string _wifiIP = Settings.Default.WifiIP;
+
+        public string WifiIp
+        {
+            get { return _wifiIP; }
+            set { _wifiIP = value; boxIP.SetIP(value); }
+        }
+        
+        private ushort _wifiPort = Settings.Default.WifiPort;
+
+        public ushort WifiPort
+        {
+            get { return _wifiPort; }
+            set { _wifiPort = value; }
+        }
+
+        private string[] _supportedLedTypes = new string[] { "ws2812", "ws2801", "apa102", "lpd6803", "lpd8803", "dmx" };
+
+        public string[] SupportedLedTypes
+        {
+            get { return _supportedLedTypes; }
+            set { _supportedLedTypes = value; }
         }
 
         bool _useTimeSpan = Settings.Default.TimeSpanMode;
@@ -152,6 +199,15 @@ namespace PixelTuner
             Settings.Default.ExitMenuOnDoubleClick = ExitMenuOnDoubleClick;
             Settings.Default.CollapseGaps = CollapseGaps;
             Settings.Default.Discreteness = Discreteness;
+            Settings.Default.Ssid = boxSSId.Text;
+            Settings.Default.WifiPass = boxPass.Text;
+            Settings.Default.WifiIP =
+                $"{boxIP.FirstBox.Text}.{boxIP.SecondBox.Text}.{boxIP.ThirdBox.Text}.{boxIP.FourthBox.Text}";
+            Settings.Default.MulticastIP =
+                $"{boxMulticastIP.FirstBox.Text}.{boxMulticastIP.SecondBox.Text}.{boxMulticastIP.ThirdBox.Text}.{boxMulticastIP.FourthBox.Text}";
+            Settings.Default.LedsType = ++boxLedsType.SelectedIndex;
+            Settings.Default.StripLedsCount1 = (ushort)boxLedsCount1.Value;
+            Settings.Default.StripLedsCount2 = (ushort)boxLedsCount2.Value;
             Settings.Default.Save();
             
             PixelTuner.ViewModel.RootViewModel.NotifySettingsChanged();
@@ -194,14 +250,31 @@ namespace PixelTuner
         private void OnWriteSettings(object parameter)
         {
             List<DeviceFeature> settings = new List<DeviceFeature>();
-            settings.Add(new DeviceFeature(1, FadeDownMenuAfter));
-            settings.Add(new DeviceFeature(2, Settings.Default.ShutdownAfterIdle));
-            settings.Add(new DeviceFeature(3, (ushort)(ExitMenuOnDoubleClick ? 1 : 0)));
+            settings.Add(new DeviceFeature(1, BitConverter.GetBytes((ushort)FadeDownMenuAfter)));
+            settings.Add(new DeviceFeature(2, BitConverter.GetBytes((ushort)Settings.Default.ShutdownAfterIdle)));
+            settings.Add(new DeviceFeature(3, BitConverter.GetBytes((ushort)(ExitMenuOnDoubleClick ? 1 : 0))));
 
-            DeviceHelper.WriteSettings(settings);
+            DeviceHelper.WriteSettings<PixelDevice>(settings);
         }
 
-        #endregion 
+        #endregion
 
+        private void boxDoIt_Click(object sender, RoutedEventArgs e)
+        {
+            List<DeviceFeature> settings = new List<DeviceFeature>();
+            settings.Add(new DeviceFeature(5, Encoding.ASCII.GetBytes(boxSSId.Text + "\n")));
+            settings.Add(new DeviceFeature(6, Encoding.ASCII.GetBytes(boxPass.Text + "\n")));
+            settings.Add(new DeviceFeature(7, boxIP.GetByteArray()));
+            settings.Add(new DeviceFeature(8, BitConverter.GetBytes(WifiPort)));
+
+            byte[] ledStripLengthParameter = new byte[4];
+            BitConverter.GetBytes((ushort)boxLedsCount1.Value).CopyTo(ledStripLengthParameter, 0);
+            BitConverter.GetBytes((ushort)boxLedsCount2.Value).CopyTo(ledStripLengthParameter, 2);
+
+            settings.Add(new DeviceFeature(9, ledStripLengthParameter));
+            settings.Add(new DeviceFeature(10, BitConverter.GetBytes((ushort)(boxLedsType.SelectedIndex + 1))));
+
+            DeviceHelper.WriteSettings<VideoDevice>(settings);
+        }
     }
 }

@@ -21,6 +21,7 @@ using Communication;
 using System.Windows.Media;
 using System.Collections.Specialized;
 using System.Threading;
+using System.Threading.Tasks;
 using Common.ViewModel;
 using PixelTuner.ViewModel.Timelines;
 
@@ -395,6 +396,19 @@ namespace PixelTuner.ViewModel
             set { _isSyncOn = value; RaisePropertyChanged("IsSyncOn"); }
         }
 
+        private bool _isWifiSyncOn = false;
+        [XmlIgnore]
+        public bool IsWifiSyncOn
+        {
+            get { return _isWifiSyncOn; }
+            set
+            {
+                _isWifiSyncOn = value;
+                RootViewModel.This.WifiPlayer.IsOnAir = value;
+                RaisePropertyChanged("IsWifiSyncOn");
+            }
+        }
+        
         [XmlIgnore]
         public string RadioModuleMac
         {
@@ -423,7 +437,7 @@ namespace PixelTuner.ViewModel
                 if (RootViewModel.This.DevicesModel != null
                     && RootViewModel.This.DevicesModel.Devices.Count != 0)
                 {
-                    n = DeviceHelper.Devices.Count(i => i is PixelDevice);
+                    n = DeviceHelper.Devices.Count(i => i.GetType() == typeof(PixelDevice));
                     if (n == 0) return 0;
                     return n * 16 + 20;
                 }
@@ -907,11 +921,13 @@ namespace PixelTuner.ViewModel
                 {
                     RootViewModel.This.DevicesModel.Illuminators.First().Pause(
                         player.CurrentTime, Settings.Default.Discreteness);
+                    RootViewModel.This.WifiPlayer.Pause(player.CurrentTime, Settings.Default.Discreteness);
                 }
                 else
                 {
                     RootViewModel.This.DevicesModel.Illuminators.First().Play(
                         player.CurrentTime, Settings.Default.Discreteness);
+                    RootViewModel.This.WifiPlayer.Play(player.CurrentTime, Settings.Default.Discreteness);
                 }
             }
             player.Pause();
@@ -948,6 +964,7 @@ namespace PixelTuner.ViewModel
             {
                 RootViewModel.This.DevicesModel.Illuminators.First().Stop(
                     player.CurrentTime, Settings.Default.Discreteness);
+                RootViewModel.This.WifiPlayer.Stop(player.CurrentTime, Settings.Default.Discreteness);
             }
         }
 
@@ -988,6 +1005,8 @@ namespace PixelTuner.ViewModel
 
         private Thread _updateThread = null;
 
+        private Task _updateTask = null;
+
         private void NAudioEngine_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
@@ -999,20 +1018,26 @@ namespace PixelTuner.ViewModel
                         var lines = TimeLines.Where(item => item is LightTimeLineViewModel);
                         _parsedProject = LightBinaryProject.Parse(GetLightBinaryPresentation(lines));
                     }
+
                     if (SoundPlayer.IsPlaying)
                     {
                         if (IsSyncAvailable && IsSyncOn && RootViewModel.This.DevicesModel.Illuminators.Count > 0)
                         {
                             RootViewModel.This.DevicesModel.Illuminators.First().Play(SoundPlayer.CurrentTime, Settings.Default.Discreteness);
                         }
+                        if (IsWifiSyncOn) RootViewModel.This.WifiPlayer.Play(SoundPlayer.CurrentTime, Settings.Default.Discreteness);
                     }
-                    if (_updateThread == null) _updateThread = new Thread(UpdatePreview);
-                    if (_updateThread != null && !_updateThread.IsAlive)
-                    {
-                        _updateThread = new Thread(UpdatePreview);
-                        _updateThread.Start(SoundPlayer.CurrentTime);
-                    }
-                    //UpdatePreview(SoundPlayer.CurrentTime);
+                    //if (_updateThread == null) _updateThread = new Thread(UpdatePreview);
+                    //if (_updateThread != null && !_updateThread.IsAlive)
+                    //{
+                    //    _updateThread = new Thread(UpdatePreview);
+                    //    _updateThread.Start(SoundPlayer.CurrentTime);
+                    //}
+                    if (!IsSyncOn && !IsWifiSyncOn) UpdatePreview(SoundPlayer.CurrentTime);
+                    
+                    //if (_updateTask == null) _updateTask = new Task(new Action(() => UpdatePreview(SoundPlayer.CurrentTime)));
+                    //if (_updateTask.Status != TaskStatus.Running) _updateTask.Start();
+
                     RaisePropertyChanged("ProgressLineVisibility");
                     RaisePropertyChanged("ProgressLinePosition");
                     break;
@@ -1021,11 +1046,12 @@ namespace PixelTuner.ViewModel
                     break;
             }
         }
+        
         #endregion
 
         #region Project generation
 
-        public int EvaluatePixelBinarySize(byte targetHeight)
+        public int EvaluatePixelBinarySize(ushort targetHeight)
         {
             ColorDepth depth = ColorDepth.Bit24;
             try { depth = (ColorDepth)ColorDepth.Parse(typeof(ColorDepth), Settings.Default.ColorDepth); }
@@ -1048,7 +1074,7 @@ namespace PixelTuner.ViewModel
 
         public List<byte> GetPixelBinaryPresentation(
             IEnumerable<TimeLineViewModel> lines, 
-            byte targetHeight)
+            ushort targetHeight)
         {
             ColorDepth depth = ColorDepth.Bit24;
             try { depth = (ColorDepth)ColorDepth.Parse(typeof(ColorDepth), Settings.Default.ColorDepth); }
@@ -1057,7 +1083,7 @@ namespace PixelTuner.ViewModel
             var images = new List<ImagesCollectionItem>();
             PixelProjectFile project = CreatePixelProjectFile(lines, images, targetHeight, depth);
             ImagesCollection c = new ImagesCollection(images);
-            var buf = project.GetBinary(c, targetHeight);
+            var buf = project.GetBinary(c, (ushort)targetHeight);
 #if(DEBUG)
             string logFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".\\Logs");
             Directory.CreateDirectory(logFolder);
@@ -1070,7 +1096,7 @@ namespace PixelTuner.ViewModel
         private PixelProjectFile CreatePixelProjectFile(
             IEnumerable<TimeLineViewModel> lines,
             IList<ImagesCollectionItem> imagesCollection, 
-            byte targetHeight, 
+            ushort targetHeight, 
             ColorDepth depth)
         {
             var project = new PixelProjectFile();
@@ -1103,23 +1129,24 @@ namespace PixelTuner.ViewModel
             return project;
         }
 
+
         public List<byte> GetVideoBinaryPresentation(TimeLineViewModel line)
         {
-            ColorDepth depth = ColorDepth.Bit24;
-            try { depth = (ColorDepth)ColorDepth.Parse(typeof(ColorDepth), Settings.Default.ColorDepth); }
-            catch { }
+                ColorDepth depth = ColorDepth.Bit24;
+                try { depth = (ColorDepth)ColorDepth.Parse(typeof(ColorDepth), Settings.Default.ColorDepth); }
+                catch { }
 
-            var images = new List<ImagesCollectionItem>();
-            PixelProjectFile project = CreateVideoProjectFile(line, images, depth);
-            ImagesCollection c = new ImagesCollection(images);
-            var buf = project.GetBinary(c);
-#if(DEBUG)
-            string logFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".\\Logs");
-            Directory.CreateDirectory(logFolder);
-            string projectFileName = Path.Combine(logFolder, "video-project " + DateTime.Now.ToString("dd_MM_yyyy___HH_mm_ss_fff") + ".bin");
-            File.WriteAllBytes(projectFileName, buf.ToArray());
-#endif
-            return buf;
+                var images = new List<ImagesCollectionItem>();
+                PixelProjectFile project = CreateVideoProjectFile(line, images, depth);
+                ImagesCollection c = new ImagesCollection(images);
+                var buf = project.GetBinary(c);
+    #if(DEBUG)
+                string logFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".\\Logs");
+                Directory.CreateDirectory(logFolder);
+                string projectFileName = Path.Combine(logFolder, "video-project " + DateTime.Now.ToString("dd_MM_yyyy___HH_mm_ss_fff") + ".bin");
+                File.WriteAllBytes(projectFileName, buf.ToArray());
+    #endif
+                return buf;
         }
 
         private PixelProjectFile CreateVideoProjectFile(
@@ -1136,7 +1163,7 @@ namespace PixelTuner.ViewModel
                 || !line.IsSelectedToUpload)
                 return project;
     
-            var file = new PixelTimelineFile() { TimeLineHeight = (ushort)videoLine.MetaData.OrderedLeds.Count};
+            var file = new PixelTimelineFile() { TimeLineHeight = (byte)videoLine.MetaData.OrderedLeds.Count};
                 
             List<ITimeLineDataItem> timelineItems = FillGabs(line.Items, line.Start.Value, CreateBlankVideoItem, videoLine.LineHeight);
             foreach (TimeLineItemViewModel item in timelineItems)
@@ -1145,7 +1172,7 @@ namespace PixelTuner.ViewModel
                 var duration = (item.EndTime.Value - item.StartTime.Value).TotalMilliseconds;       // duration = end time - start time
                 double startMilliseconds = (item.StartTime.Value - line.Start.Value).TotalMilliseconds;    // start ms = start time - timeline start time
                 UInt16 mask = item.LaserOn ? (ushort)1 : (ushort)0;
-                var imageFile = new VideoImageFile(path, 400, (UInt32)duration, (UInt32)startMilliseconds, mask);
+                var imageFile = new VideoImageFile(path, 40, (UInt32)duration, (UInt32)startMilliseconds, mask);
                 var image = new ImagesCollectionVideoItem(path, videoLine.MetaData.OrderedLeds, depth);
                 imageFile.Brightness = image.Brightness = item.Brightness;
                 imagesCollection.Add(image);

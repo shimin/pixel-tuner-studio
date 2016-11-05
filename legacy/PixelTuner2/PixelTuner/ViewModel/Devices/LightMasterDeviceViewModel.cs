@@ -94,23 +94,27 @@ namespace PixelTuner.ViewModel
             Progress = 0;
             FileViewModel model = parameter as FileViewModel;
 
-            if (model != null)
-            {
-                TimelinesToUpload dialog = new TimelinesToUpload(TimelineFilter, model);
-                dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                dialog.Owner = Application.Current.MainWindow;
-                if (dialog.ShowDialog() == true)
+            Application.Current.MainWindow.Dispatcher.Invoke(new Action(() =>
                 {
-                    List<byte> data = model.GetLightBinaryPresentation(dialog.SelectedTimeLines);
-                    if (ValidateProject(model, data.Count / 1024))
+                    if (model != null)
                     {
-                        InitializeProgressBar(data);
-                        BackgroundWorker worker = new BackgroundWorker();
-                        worker.DoWork += (x, e) => Device.WriteFile(data);
-                        worker.RunWorkerAsync();
+                        TimelinesToUpload dialog = new TimelinesToUpload(TimelineFilter, model);
+                        dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                        dialog.Owner = Application.Current.MainWindow;
+                        if (dialog.ShowDialog() == true)
+                        {
+                            List<byte> data = model.GetLightBinaryPresentation(dialog.SelectedTimeLines);
+                            if (ValidateProject(model, data.Count/1024))
+                            {
+                                InitializeProgressBar(data);
+                                BackgroundWorker worker = new BackgroundWorker();
+                                worker.DoWork += (x, e) => Device.WriteFile(data);
+                                worker.RunWorkerAsync();
+                            }
+                        }
                     }
                 }
-            }
+            ));
         }
 
         public static bool TimelineFilter(TimeLineViewModel l)

@@ -34,7 +34,7 @@ namespace PixelTuner.ViewModel
 
         private static byte[] _firmwareBytesV4;
 
-        private static string _firmwareFileName = "flash.bin";
+        private static string _firmwareFileName = "Flash.bin";
 
         public int ActiveProjectSize
         {
@@ -72,7 +72,7 @@ namespace PixelTuner.ViewModel
         /// <summary>
         /// Число диодов в устройстве
         /// </summary>
-        public byte LedsTotal
+        public ushort LedsTotal
         {
             get { return Device == null ? byte.MinValue : Device.LedsTotal; }
             private set { RaisePropertyChanged("LedsTotal"); }
@@ -100,7 +100,7 @@ namespace PixelTuner.ViewModel
 
         static PixelDeviceViewModel()
         {
-            var streamInfo = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash.bin"));
+            var streamInfo = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash_v2.bin"));
             _firmwareBytesV2 = Common.Collections.StreamHelper.ReadFully(streamInfo.Stream);
             FirmwareFileVersionV2 = _firmwareBytesV2[52];
 
@@ -132,7 +132,7 @@ namespace PixelTuner.ViewModel
         }
 
         /// <summary>
-        /// Tries to upload firmware. Firstly, check parameter, than try to load "flash.bin" from directory, than load FW from resources
+        /// Tries to upload firmware. Firstly, check parameter, than try to load "Flash.bin" from directory, than load FW from resources
         /// </summary>
         /// <param name="parameter">firmware bytes</param>
         protected override void OnUploadFirmware(object parameter)

@@ -122,7 +122,7 @@
             <Setter.Value>
                 <DataTemplate>
                     <Border Background="White">
-                        <MediaElement Height="80" Name="boxVideoHost" LoadedBehavior="Manual">
+                        <MediaElement Height="80" Name="boxVideoHost" ScrubbingEnabled="True" LoadedBehavior="Manual">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MediaEnded">
                                     <i:InvokeCommandAction Command="{Binding Path=OnMediaEndedCommand}" CommandParameter="{Binding ElementName=boxVideoHost}"/>

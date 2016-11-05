@@ -98,6 +98,8 @@
                     </TextBlock.ToolTip>
                 </TextBlock>
                 <CheckBox IsChecked="{Binding IsSyncOn}" Height="28" Focusable="False" IsEnabled="{Binding IsSyncAvailable}" Style="{StaticResource SliderSwitchStyle}" Margin="0,0,0,2" />
+                <TextBlock Text="Wifi sync:" Margin="12,4,1,1" Foreground="{StaticResource TextBrush}"></TextBlock>
+                <CheckBox IsChecked="{Binding IsWifiSyncOn}" Height="28" Focusable="False" Style="{StaticResource SliderSwitchStyle}" Margin="0,0,0,2" />
             </StackPanel>
             
             <Grid x:Name="MemoryGrid" 

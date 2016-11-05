@@ -6,7 +6,6 @@ using System.IO;
 using System.Windows;
 using Common.Collections;
 using Communication.Service;
-using PixelTuner.ViewModel.Devices;
 
 namespace PixelTuner.ViewModel
 {
@@ -45,7 +44,7 @@ namespace PixelTuner.ViewModel
 
         void DeviceHelper_DeviceFound(DeviceEventArgs e)
         {
-            if (e.Device is LightMasterDevice)
+            if (e.Device.GetType() == typeof(LightMasterDevice))
             {
                 var model = new LightMasterDeviceViewModel(e.Device as LightMasterDevice);
                 Devices.Add(model);
@@ -53,12 +52,12 @@ namespace PixelTuner.ViewModel
                 if (model.BootMode && ContinueUpdate() && model.UploadFirmwareCommand.CanExecute(null))
                     model.UploadFirmwareCommand.Execute(null);
             }
-            else if (e.Device is IlluminatorDevice)
+            else if (e.Device.GetType() == typeof(IlluminatorDevice))
             {
                 var model = new IlluminatorDeviceViewModel(e.Device as IlluminatorDevice);
                 Illuminators.Add(model);
             }
-            else if (e.Device is PixelDevice)
+            else if (e.Device.GetType() == typeof(PixelDevice))
             {
                 var model = new PixelDeviceViewModel(e.Device as PixelDevice);
                 Devices.Add(model);
@@ -66,7 +65,7 @@ namespace PixelTuner.ViewModel
                 if (model.BootMode && ContinueUpdate() && model.UploadFirmwareCommand.CanExecute(null))
                     model.UploadFirmwareCommand.Execute(null);
             }
-            else if (e.Device is SimplePoiDevice)
+            else if (e.Device.GetType() == typeof(SimplePoiDevice))
             {
                 var model = new EpicPoiDeviceViewModel(e.Device as SimplePoiDevice);
                 Devices.Add(model);
@@ -74,9 +73,9 @@ namespace PixelTuner.ViewModel
                 if (model.BootMode && ContinueUpdate() && model.UploadFirmwareCommand.CanExecute(null))
                     model.UploadFirmwareCommand.Execute(null);
             }
-            else if (e.Device is VideoModule)
+            else if (e.Device.GetType() == typeof(VideoDevice))
             {
-                var model = new VideoDeviceViewModel(e.Device as VideoModule);
+                var model = new VideoDeviceViewModel(e.Device as VideoDevice);
                 Devices.Add(model);
 
                 if (model.BootMode && ContinueUpdate() && model.UploadFirmwareCommand.CanExecute(null))

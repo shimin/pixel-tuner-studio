@@ -142,7 +142,8 @@ namespace PixelTuner.ViewModel
 
         private void LedTiles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            foreach (LedTile eNewItem in e.NewItems) { eNewItem.Parent = this; }
+            if (e != null && e.NewItems != null)
+                foreach (LedTile eNewItem in e.NewItems) { eNewItem.Parent = this; }
         }
 
         #region Properties
@@ -245,7 +246,7 @@ namespace PixelTuner.ViewModel
             set { _stroke = value; RaisePropertyChanged("Stroke"); }
         }
 
-        Brush _fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+        Brush _fill = new SolidColorBrush(Color.FromRgb(255, 0, 0));
         [XmlIgnore]
         public Brush Fill
         {
@@ -253,11 +254,15 @@ namespace PixelTuner.ViewModel
             set { _fill = value; RaisePropertyChanged("Fill"); }
         }
 
-        Transform _transform;
+        Transform _transform = new MatrixTransform();
         [XmlIgnore]
         public Transform Transform
         {
-            get { return _transform; }
+            get
+            {
+                if (_transform == null) _transform = new MatrixTransform();
+                return _transform;
+            }
             set { _transform = value; RaisePropertyChanged("Transform"); RaisePropertyChanged("PreviewTransform"); }
         }
 

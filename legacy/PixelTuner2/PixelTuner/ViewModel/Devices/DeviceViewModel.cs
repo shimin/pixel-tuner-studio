@@ -242,23 +242,50 @@ namespace PixelTuner.ViewModel
             var il = RootViewModel.This.DevicesModel.Illuminators.FirstOrDefault();
             if (il == null) return;
             var mac = il.Device.Mac;
-            ushort b1 = (ushort) ((mac[0] << 8 | mac[1]));
+            //mac = MixBytes(mac);
+            mac = MixBytes2(mac);
+            /*ushort b1 = (ushort) ((mac[0] << 8 | mac[1]));
             ushort b2 = (ushort)((mac[2] << 8 | mac[3]));
             ushort b3 = (ushort)((mac[4] << 8 | mac[5]));
             ushort b4 = (ushort)((mac[6] << 8 | mac[7]));
 
             var settings = new List<DeviceFeature>
             {
-                new DeviceFeature(6, b1),
-                new DeviceFeature(7, b2),
-                new DeviceFeature(8, b3),
-                new DeviceFeature(9, b4)
-            };
+                new DeviceFeature(6, BitConverter.GetBytes(b1)),
+                new DeviceFeature(7, BitConverter.GetBytes(b2)),
+                new DeviceFeature(8, BitConverter.GetBytes(b3)),
+                new DeviceFeature(9, BitConverter.GetBytes(b4))
+            };*/
 
+            var settings = new List<DeviceFeature>
+            {
+                new DeviceFeature(4, mac),
+            };
             Device.WriteSettings(settings);
         }
 
         #endregion
+
+        byte[] MixBytes(byte[] src)
+        {
+            byte[] result = new byte[src.Length];
+            for (int i = 0; i < src.Length - 1; i+=2)
+            {
+                result[i] = src[i + 1];
+                result[i + 1] = src[i];
+            }
+            return result;
+        }
+
+        byte[] MixBytes2(byte[] src)
+        {
+            byte[] result = new byte[src.Length];
+            for (int i = 0; i < src.Length; i++)
+            {
+                result[i] = src[src.Length - 1 - i];
+            }
+            return result;
+        }
 
         #region UploadCommand
         RelayCommand _uploadCommand;

@@ -177,7 +177,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Properties\Settings.Designer.cs" />
+    <Compile Include="Properties\Settings1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="RepeatItemWindow.xaml.cs">
       <DependentUpon>RepeatItemWindow.xaml</DependentUpon>
     </Compile>
@@ -261,6 +265,7 @@
     <Compile Include="ViewModel\Tools\ToolViewModel.cs" />
     <Compile Include="ViewModel\Tools\VideosViewModel.cs" />
     <Compile Include="ViewModel\UndoRedoEventArgs.cs" />
+    <Compile Include="ViewModel\WifiPlayerDevice.cs" />
     <Page Include="ArtNetWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -443,7 +448,11 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="App.config" />
-    <Resource Include="Files\Flash.bin" />
+    <Resource Include="Files\Flash_v2.bin" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings1.Designer.cs</LastGenOutput>
+    </None>
     <Resource Include="Files\Flash_Epic.bin" />
     <Resource Include="Files\Flash_IL.bin" />
     <Resource Include="Files\Flash_LR.bin" />
@@ -458,10 +467,6 @@
     <Resource Include="Files\Flash_v4.bin" />
     <None Include="packages.config" />
     <None Include="PixelTunerDock.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings1.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">

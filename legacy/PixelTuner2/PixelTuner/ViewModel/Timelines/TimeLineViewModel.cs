@@ -42,6 +42,14 @@ namespace PixelTuner.ViewModel
     {
         #region Properties
 
+        private string _lineTag = "Timeline";
+        [XmlAttribute]
+        public string LineTag
+        {
+            get { return _lineTag; }
+            set { _lineTag = value; }
+        }
+
         FileViewModel _parent;
         [XmlIgnore]
         public FileViewModel Parent
@@ -172,11 +180,13 @@ namespace PixelTuner.ViewModel
                 if (ce != null)
                 {
                     MetaDataPath = ce.Path;
+                    var transform = ce.Transform;
+                    if (transform == null) transform = new MatrixTransform();
                     PreviewTransform = new MatrixTransform(
-                        ce.Transform.Value.M11,
-                        ce.Transform.Value.M12,
-                        ce.Transform.Value.M21,
-                        ce.Transform.Value.M22,
+                        transform.Value.M11,
+                        transform.Value.M12,
+                        transform.Value.M21,
+                        transform.Value.M22,
                         -ce.Geometry.Bounds.Left,
                         -ce.Geometry.Bounds.Top);
                 }
@@ -380,6 +390,8 @@ namespace PixelTuner.ViewModel
         public override object Clone()
         {
             var timelineCopy = (TimeLineViewModel)base.Clone();
+            timelineCopy.Items = new ObservableCollection<ITimeLineDataItem>();
+            timelineCopy.XmlItems = new DelegatedIList<TimeLineItemViewModel, TimeLineItem>(timelineCopy.Items);
             timelineCopy.Parent = this.Parent;
             timelineCopy.Background = Background;
             timelineCopy.IsChanged = true;
@@ -393,7 +405,6 @@ namespace PixelTuner.ViewModel
             timelineCopy.MetaData = this.MetaData;
             timelineCopy.ToolsetMargin = this.ToolsetMargin;
             timelineCopy.Start = this.Start;
-            timelineCopy.Items = new ObservableCollection<ITimeLineDataItem>();
             foreach (var item in this.Items)
                 timelineCopy.Items.Add((ITimeLineDataItem)item.Clone());
             return timelineCopy;

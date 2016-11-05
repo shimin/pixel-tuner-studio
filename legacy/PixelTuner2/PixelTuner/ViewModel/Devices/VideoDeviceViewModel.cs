@@ -8,13 +8,13 @@ using System.Windows;
 using Communication.Service;
 using PixelTuner.ViewModel.Timelines;
 
-namespace PixelTuner.ViewModel.Devices
+namespace PixelTuner.ViewModel
 {
     public class VideoDeviceViewModel : DeviceViewModel
     {
         #region Properties
 
-        public new VideoModule Device { get; private set; }
+        public new VideoDevice Device { get; private set; }
 
         private static int FirmwareFileVersion { get; set; }
 
@@ -33,6 +33,15 @@ namespace PixelTuner.ViewModel.Devices
             {
                 RaisePropertyChanged("FullName");
             }
+        }
+
+        /// <summary>
+        /// Число диодов в устройстве
+        /// </summary>
+        public ushort LedsTotal
+        {
+            get { return Device == null ? byte.MinValue : Device.LedsTotal; }
+            private set { RaisePropertyChanged("LedsTotal"); }
         }
 
         /// <summary>
@@ -61,7 +70,7 @@ namespace PixelTuner.ViewModel.Devices
             FirmwareFileVersion = _firmwareBytes[52];
         }
 
-        public VideoDeviceViewModel(VideoModule device)
+        public VideoDeviceViewModel(VideoDevice device)
             : base(device)
         {
             Device = device;
@@ -86,7 +95,8 @@ namespace PixelTuner.ViewModel.Devices
                 dialog.Owner = Application.Current.MainWindow;
                 if (dialog.ShowDialog() == true)
                 {
-                    List<byte> data = model.GetVideoBinaryPresentation(dialog.SelectedTimeLines.First());
+                    var line = dialog.SelectedTimeLines.First();
+                    List<byte> data = model.GetVideoBinaryPresentation(line);
                     if (ValidateProject(model, data.Count / 1024))
                     {
                         InitializeProgressBar(data);
@@ -105,7 +115,7 @@ namespace PixelTuner.ViewModel.Devices
 
         private bool ValidateProject(FileViewModel file, int projectSize)
         {
-            if (projectSize >= MaxMemory)
+            if (false && projectSize >= MaxMemory)
             {
                 MessageBox.Show((string)Application.Current.TryFindResource("Global_NotEnoughtSpace"),
                     Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Asterisk);

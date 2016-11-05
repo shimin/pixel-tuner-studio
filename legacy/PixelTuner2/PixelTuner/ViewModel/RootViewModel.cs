@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -14,10 +13,7 @@ using System.Xml.Serialization;
 
 using Common.ViewModel;
 using PixelTuner.Properties;
-using PixelTuner.Controls.ThumbListView;
-using Workspace.Layout;
 using Common.Log;
-using PixelTuner.ViewModel.Devices;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
@@ -417,6 +413,18 @@ namespace PixelTuner.ViewModel
             }
             set { _canvasModel = value; RaisePropertyChanged("CanvasModel"); }
         }
+
+        private WifiPlayerDevice _wifiPlayer = null;
+        public WifiPlayerDevice WifiPlayer
+        {
+            get
+            {
+                if (_wifiPlayer == null) _wifiPlayer = new WifiPlayerDevice();
+                return _wifiPlayer;
+            }
+            set { _wifiPlayer = value; }
+        }
+
 
         DevicesViewModel _devicesModel = null;
         public DevicesViewModel DevicesModel
@@ -1043,8 +1051,9 @@ namespace PixelTuner.ViewModel
                     dlg.Filter = "Binary project file|*.bin";
                     if (dlg.ShowDialog().GetValueOrDefault())
                     {
-                        File.WriteAllBytes(dlg.FileName,
-                            fileToSave.GetVideoBinaryPresentation(dialog.SelectedTimeLines.First()).ToArray());
+                        var line = dialog.SelectedTimeLines.First();
+                        if (line != null)
+                            File.WriteAllBytes(dlg.FileName, fileToSave.GetVideoBinaryPresentation(line).ToArray());
                     }
                 }
             }
@@ -1098,25 +1107,33 @@ namespace PixelTuner.ViewModel
 
         internal bool Close(FileViewModel fileToClose)
         {
-            if (fileToClose.IsDirty)
+            try
             {
-                var res = MessageBox.Show(string.Format((String)Application.Current.TryFindResource("Global_SaveChanges"), fileToClose.FileName),
-                    Application.Current.MainWindow.Title, MessageBoxButton.YesNoCancel);
-                if (res == MessageBoxResult.Cancel)
-                    return false;
-                if (res == MessageBoxResult.Yes)
+                if (fileToClose.IsDirty)
                 {
-                    Save(fileToClose);
+                    var res =
+                        MessageBox.Show(
+                            string.Format((String) Application.Current.TryFindResource("Global_SaveChanges"),
+                                fileToClose.FileName),
+                            Application.Current.MainWindow.Title, MessageBoxButton.YesNoCancel);
+                    if (res == MessageBoxResult.Cancel)
+                        return false;
+                    if (res == MessageBoxResult.Yes)
+                    {
+                        Save(fileToClose);
+                    }
                 }
+
+                FileViewModel oldDoc = _activeDocument;
+                _files.Remove(fileToClose);
+                _activeDocument = _files.Count > 0 ? _files.Last() : null;
+                RaisePropertyChanged("ActiveDocument");
+                if (ActiveDocumentChanged != null)
+                    ActiveDocumentChanged(this, new DocumentChangedEventArgs(oldDoc, _activeDocument));
             }
-
-            FileViewModel oldDoc = _activeDocument;
-            _files.Remove(fileToClose);
-            _activeDocument = _files.Count > 0 ? _files.Last() : null;
-            RaisePropertyChanged("ActiveDocument");
-            if (ActiveDocumentChanged != null)
-                ActiveDocumentChanged(this, new DocumentChangedEventArgs(oldDoc, _activeDocument));
-
+            catch
+            {
+            }
             return true;
         }
 

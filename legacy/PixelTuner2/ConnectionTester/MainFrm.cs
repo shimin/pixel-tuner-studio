@@ -73,7 +73,7 @@ namespace ConnectionTester
             try
             {
                 port.Open();
-                _device = new PixelDeviceTest(port);
+                _device = new PixelDeviceTest(port, false);
                 _device.Logger = new Common.Log.Logger(_logTarget);
                 _device.SessionFinished += new SerialDeviceBase.SessionDelegate(_device_SessionFinished);
                 SetStatus("Порт открыт", Common.Log.MessageType.Info, 0);
