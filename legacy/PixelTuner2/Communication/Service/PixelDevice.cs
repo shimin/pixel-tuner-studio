@@ -62,11 +62,11 @@ namespace Communication.Service
             }
         }
 
-        byte _ledsTotal = 0;
+        ushort _ledsTotal = 0;
         /// <summary>
         /// Число диодов в устройстве
         /// </summary>
-        public byte LedsTotal
+        public ushort LedsTotal
         {
             get { return _ledsTotal; }
             set { _ledsTotal = value; }
@@ -74,8 +74,8 @@ namespace Communication.Service
 
         #endregion
 
-        public PixelDevice(SerialPort port)
-            : base(port)
+        public PixelDevice(SerialPort port, bool runMonitoring = true)
+            : base(port, runMonitoring)
         {
             this.WriteReadDelay = 0;
             this._fullName = "";
@@ -136,13 +136,15 @@ namespace Communication.Service
                 try
                 {
                     List<byte> data = base.DoSession(new PixelDevicePacket(PixelDeviceCommand.INFO, null)).Data;
-                    int num = (data[4] << 8) | data[5];
+                    
                     PlatformVersion = data[0];
-                    EnergyLevel = num;
                     BootVersion = data[1];
+                    if (Name.Contains("E-PIC_v4")) PlatformVersion = 4;
                     FirmwareVersion = data[2];
-                    LedsTotal = data[3];
-                    byte[] memSizeArray = new byte[4] { data[9], data[8], data[7], data[6] };
+                    LedsTotal = (ushort)((data[3] << 8) | data[4]);
+                    int num = (data[5] << 8) | data[6];
+                    EnergyLevel = num;
+                    byte[] memSizeArray = new byte[4] { data[10], data[9], data[8], data[7] };
                     MaxMemory = BitConverter.ToUInt32(memSizeArray, 0);
                 }
                 catch (Exception exception)

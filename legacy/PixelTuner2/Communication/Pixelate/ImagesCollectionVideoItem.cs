@@ -52,11 +52,21 @@ namespace Communication.Pixelate
         private void CopyPixelData(Bitmap bitmap, Bitmap frame, List<Point> points, int frameIdx)
         {
             int row = 0;
-            foreach (var point in points)
+            try
             {
-                var px = frame.GetPixel(point.X, point.Y);
-                bitmap.SetPixel(frameIdx, row, px);
-                row++;
+                foreach (var point in points)
+                {
+                    var px = Color.Black;
+                    if (point.X < frame.Width && point.Y < frame.Height)
+                        px = frame.GetPixel(point.X, point.Y);
+                    //Console.WriteLine($"X={point.X}, Y={point.Y}");
+                    bitmap.SetPixel(frameIdx, row, px);
+                    row++;
+                }
+            }
+            catch(Exception ex)
+            {
+                
             }
         }
     }

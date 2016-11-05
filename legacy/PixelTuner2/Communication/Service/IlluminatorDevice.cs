@@ -8,14 +8,6 @@ namespace Communication.Service
 {
     public class IlluminatorDevice : SerialDeviceBase
     {
-        public enum PlaybackCommand
-        {
-            play = 2,
-            pause = 3,
-            stop = 4,
-            seek = 5
-        }
-
         #region Properties
         
         byte[] _mac = new byte[8];
@@ -50,8 +42,8 @@ namespace Communication.Service
 
         #endregion
 
-        public IlluminatorDevice(SerialPort port)
-            : base(port)
+        public IlluminatorDevice(SerialPort port, bool runMonitoring = true)
+            : base(port, runMonitoring)
         {
             
         }
@@ -59,25 +51,25 @@ namespace Communication.Service
         public void PlayCommand(TimeSpan timePoint)
         {
             //System.Diagnostics.Debug.WriteLine("Play: " + timePoint.TotalMilliseconds.ToString());
-            WriteCommand(PlaybackCommand.play, timePoint);
+            WriteCommand(PlaybackState.play, timePoint);
         }
 
         public void PauseCommand(TimeSpan timePoint)
         {
             //System.Diagnostics.Debug.WriteLine("Pause: " + timePoint.TotalMilliseconds.ToString());
-            WriteCommand(PlaybackCommand.pause, timePoint);
+            WriteCommand(PlaybackState.pause, timePoint);
         }
 
         public void StopCommand(TimeSpan timePoint)
         {
             //System.Diagnostics.Debug.WriteLine("Stop: " + timePoint.TotalMilliseconds.ToString());
-            WriteCommand(PlaybackCommand.stop, timePoint);
+            WriteCommand(PlaybackState.stop, timePoint);
         }
 
         public void SeekCommand(TimeSpan timePoint)
         {
             //System.Diagnostics.Debug.WriteLine("Seek: " + timePoint.TotalMilliseconds.ToString());
-            WriteCommand(PlaybackCommand.seek, timePoint);
+            WriteCommand(PlaybackState.seek, timePoint);
         }
 
         public override void GetInfo()
@@ -100,6 +92,7 @@ namespace Communication.Service
                     {
                         Logger.WriteException(exception);
                     }
+                    throw exception;
                 }
                 finally
                 {
@@ -109,7 +102,7 @@ namespace Communication.Service
             }
         }
 
-        public virtual bool WriteCommand(PlaybackCommand cmd, TimeSpan timeStamp)
+        public virtual bool WriteCommand(PlaybackState cmd, TimeSpan timeStamp)
         {
             PixelDevicePacket request = null;
             var parameters = new List<byte>() { (byte)cmd };

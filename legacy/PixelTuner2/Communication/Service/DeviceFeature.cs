@@ -13,29 +13,44 @@ namespace Communication.Service
             get { return _id; }
             set { _id = value; }
         }
+        
+        private List<byte> _val;
 
-        UInt16 _val;
-        public UInt16 Val
+        public List<byte> Val
         {
             get { return _val; }
             set { _val = value; }
         }
 
+        //left major, right minor
+
+        //UInt16 _val;
+        //public UInt16 Val
+        //{
+        //    get { return _val; }
+        //    set { _val = value; }
+        //}
+        
         public byte[] GetBytes()
         {
-            byte[] result = new byte[4];
-            result[0] = (byte)((_id >> 8) & 0xff);
-            result[1] = (byte)(_id & 0xff);
+            var len = (ushort)_val.Count;
+            var result = new List<byte>()
+            {
+                (byte) (_id & 0xff),
+                (byte) ((_id >> 8) & 0xff),
+                
+                (byte) (len & 0xff),
+                (byte) ((len >> 8) & 0xff)
+            };
+            result.AddRange(_val);
 
-            result[2] = (byte)((_val >> 8) & 0xff);
-            result[3] = (byte)(_val & 0xff);
-            return result;
+            return result.ToArray();
         }
 
-        public DeviceFeature(UInt16 id, UInt16 val)
+        public DeviceFeature(UInt16 id, byte[] val)
         {
             _id = id;
-            _val = val;
+            Val = new List<byte>(val);
         }
     }
 }

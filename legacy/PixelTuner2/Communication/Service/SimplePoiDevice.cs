@@ -8,8 +8,8 @@ namespace Communication.Service
 {
     public class SimplePoiDevice : SerialDeviceBase
     {
-        public SimplePoiDevice(SerialPort port)
-            : base(port)
+        public SimplePoiDevice(SerialPort port, bool runMonitoring = true)
+            : base(port, runMonitoring)
         {
 
         }
@@ -66,7 +66,7 @@ namespace Communication.Service
                     {
                         base.Logger.WriteException(exception);
                     }
-                    throw;
+                    throw exception;
                 }
                 finally
                 {

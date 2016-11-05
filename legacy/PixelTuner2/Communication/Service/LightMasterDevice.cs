@@ -9,8 +9,8 @@ namespace Communication.Service
 {
     public class LightMasterDevice : SerialDeviceBase
     {
-        public LightMasterDevice(SerialPort port)
-            : base(port)
+        public LightMasterDevice(SerialPort port, bool runMonitoring = true)
+            : base(port, runMonitoring)
         {
             WriteReadDelay = 5;
         }
@@ -135,6 +135,7 @@ namespace Communication.Service
                     {
                         base.Logger.WriteException(exception);
                     }
+                    throw exception;
                 }
                 finally
                 {

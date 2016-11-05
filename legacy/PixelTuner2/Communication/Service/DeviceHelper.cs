@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.IO.Ports;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Communication.Service
 {
@@ -40,6 +41,7 @@ namespace Communication.Service
             _keepSeeking = false;
             if (DeviceSeekerThread != null && DeviceSeekerThread.IsAlive)
                 DeviceSeekerThread.Join();
+            Devices.ForEach((d) => { d.Disconnect(); });
         }
 
         /// <summary>
@@ -89,7 +91,7 @@ namespace Communication.Service
                     Devices.Add(d);
                     OnDeviceFound(d);
                 }
-                catch { }
+                catch (Exception ex) { }
             }
         }
 
@@ -135,14 +137,29 @@ namespace Communication.Service
             }
         }
 
-        public static void WriteSettings(List<DeviceFeature> settings)
+        //public static void WriteSettings(List<DeviceFeature> settings)
+        //{
+        //    foreach (PixelDevice d in _devices)
+        //    {
+        //        d.WriteSettings(settings);
+        //    }
+        //}
+
+        public static void WriteSettings<T>(List<DeviceFeature> settings)
+            where T : SerialDeviceBase
         {
-            foreach (PixelDevice d in _devices)
+            try
             {
-                d.WriteSettings(settings);
+                var selected = _devices.Where(d => d is T);
+                foreach (T d in selected)
+                    d.WriteSettings(settings);
+            }
+            catch (Exception ex)
+            {
+                
             }
         }
-        
+
         #region Events
 
         public delegate void DeviceChangedDelegate(DeviceEventArgs e);

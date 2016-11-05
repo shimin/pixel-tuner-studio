@@ -34,9 +34,11 @@ namespace Communication.Service
 
             dictionary.Add("E-PIC_SFW", "E-pic poi");
             idClassPairs.Add("E-PIC_SFW", "Communication.Service.SimplePoiDevice");
-            dictionary.Add("E-PIC_SBOOT", "E-pic poi");
+            dictionary.Add("E-PIC_SBOOT", "E-pic poi (Boot mode)");
+            dictionary.Add("E-PIC_SBO", "E-pic poi (Boot mode)");
             idClassPairs.Add("E-PIC_SBOOT", "Communication.Service.SimplePoiDevice");
-            
+            idClassPairs.Add("E-PIC_SBO", "Communication.Service.SimplePoiDevice");
+
             dictionary.Add("LRBOOT", "Light master (Boot mode)");
             idClassPairs.Add("LRBOOT", "Communication.Service.LightMasterDevice");
             dictionary.Add("LRFW", "Light master");
@@ -47,10 +49,10 @@ namespace Communication.Service
             dictionary.Add("ILFW", "Illuminator");
             idClassPairs.Add("ILFW", "Communication.Service.IlluminatorDevice");
 
-            dictionary.Add("WPLR_v1BOOT", "Video module (Boot mode)");
-            idClassPairs.Add("WPLR_v1BOOT", "Communication.Service.VideoDevice");
-            dictionary.Add("WPLR_v1", "Video module");
-            idClassPairs.Add("WPLR_v1", "Communication.Service.VideoDevice");
+            dictionary.Add("PLR_v1BOOT", "Video module (Boot mode)");
+            idClassPairs.Add("PLR_v1BOOT", "Communication.Service.VideoDevice");
+            dictionary.Add("PLR_v1FW", "Video module");
+            idClassPairs.Add("PLR_v1FW", "Communication.Service.VideoDevice");
             
             dictionary.Add("UDMXBOOT", "uDmx master (Boot mode)");  // unused
             dictionary.Add("UDMXFW", "uDmx master");                // unused

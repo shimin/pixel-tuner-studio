@@ -37,7 +37,7 @@ namespace Communication.Gradient
                 {
                     v.StartAddress = desc.StartAddress;
                     bin.AddRange(BitConverter.GetBytes(v.StartAddress));    // 4 bytes
-                    bin.AddRange(BitConverter.GetBytes(v.Stretching));      // 2 bytes
+                    bin.AddRange(BitConverter.GetBytes((UInt16)(v.Stretching * 5)));  // 2 bytes
                     bin.AddRange(BitConverter.GetBytes(v.Mask));            // 2 bytes
                     bin.AddRange(BitConverter.GetBytes(v.StartTime));       // 4 bytes
                 }

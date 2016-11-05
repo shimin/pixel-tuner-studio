@@ -74,7 +74,7 @@ namespace Communication.Pixelate
             }
         }
 
-        internal int GetSize(byte targetHeight)
+        internal int GetSize(ushort targetHeight)
         {
             int size = 0;
             foreach (var desc in _descriptors.Values)

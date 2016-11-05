@@ -28,7 +28,7 @@ namespace Communication.Pixelate
 
         #region Methods
         
-        public int GetBinarySize(ImagesCollection images, byte targetHeight)
+        public int GetBinarySize(ImagesCollection images, ushort targetHeight)
         {
             int size = 0;
             var notEmptyLines = new List<PixelTimelineFile>();
@@ -54,7 +54,7 @@ namespace Communication.Pixelate
                 }
             });
             if (nonEmptyLines.Count == 0) return new List<byte>();
-            ushort targetHeight = nonEmptyLines.First().TimeLineHeight;
+            ushort targetHeight = (ushort)nonEmptyLines.First().TimeLineHeight;
             List<byte> result = CreateProjectHeader(nonEmptyLines, targetHeight);
 
             var firstFreeAddress = GenerateTimelineAddresses(nonEmptyLines, result);              // timeline addresses
@@ -68,13 +68,13 @@ namespace Communication.Pixelate
             return result;
         }
 
-        public List<byte> GetBinary(ImagesCollection images, byte targetHeight)
+        public List<byte> GetBinary(ImagesCollection images, ushort targetHeight)
         {
             // ignore empty timelines
             var nonEmptyLines = new List<PixelTimelineFile>();
             TimeLines.ForEach(tl => { if (tl.Images.Count > 0) nonEmptyLines.Add(tl); });
 
-            List<byte> result = CreateProjectHeader(nonEmptyLines, targetHeight);
+            List<byte> result = CreateProjectHeader(nonEmptyLines, (ushort)targetHeight);
 
             var firstFreeAddress = GenerateTimelineAddresses(nonEmptyLines, result);              // timeline addresses
             images.SetBlockAddress(firstFreeAddress);
@@ -115,7 +115,7 @@ namespace Communication.Pixelate
         {
             UInt32 size = (UInt32)result.Count;
             byte[] sizeBytes = BitConverter.GetBytes(size);
-            int projectHeaderOffset = projectPrefix.Count + 2 * sizeof(byte);
+            int projectHeaderOffset = projectPrefix.Count + 3 * sizeof(byte);
             for (int i = projectHeaderOffset; i < projectHeaderOffset + sizeBytes.Length; i++)
                 result[i] = sizeBytes[i - projectHeaderOffset];
         }

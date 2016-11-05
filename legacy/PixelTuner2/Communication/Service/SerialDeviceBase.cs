@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Management;
+using System.Net.Mime;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -29,7 +30,7 @@ namespace Communication.Service
 
                 var devName = SupportedDevices.TryGetType(deviceName);
                 var devType = Type.GetType(devName);
-                dev = Activator.CreateInstance(devType, p) as SerialDeviceBase;
+                dev = Activator.CreateInstance(devType, p, true) as SerialDeviceBase;
                 dev.Initialize(null);
             }
 
@@ -172,7 +173,7 @@ namespace Communication.Service
             get { return _platformVersion; }
             set { _platformVersion = value; }
         }
-
+        
         protected static int DefaultReadTimeout = 2000;
 
         protected static int DefaultWriteTimeout = 2000;
@@ -252,7 +253,7 @@ namespace Communication.Service
 
         #endregion
 
-        public SerialDeviceBase(SerialPort port)
+        public SerialDeviceBase(SerialPort port, bool runMonitoring = true)
         {
             Port = port;
             if (Port != null && Port.IsOpen)
@@ -262,23 +263,23 @@ namespace Communication.Service
                 _port.WriteTimeout = DefaultWriteTimeout;
                 GC.SuppressFinalize(_port.BaseStream);
             }
-            RunMonitoring();
+            if (runMonitoring) RunMonitoring();
         }
 
         private void RunMonitoring()
         {
             _portMonitor = new Thread(() =>
             {
-                while (Port.IsOpen)
+                while (Port != null && Port.IsOpen)
                 {
                     try
                     {
-                        GetInfo();
+                        if (!Busy) GetInfo();
                         Thread.Sleep(1000);
                     }
                     catch
                     {
-                        try { Port.Dispose(); }
+                        try { Port.Dispose(); OnDisconnected(); }
                         catch { }
                     }
                 }
@@ -344,6 +345,8 @@ namespace Communication.Service
                     }
                     
                     data.AddRange(buffer);
+                    if (num == (byte)PixelDeviceCommand.WRITE_BLOCK && data[2] != 0xff)
+                        throw new ArgumentException("Data block write error");
                     LogMessage("Result:  " + Logger.BytesToString(buffer), MessageType.Debug);
                 }
             }
@@ -368,7 +371,7 @@ namespace Communication.Service
             }
             catch (Exception ex)
             {
-                Logger.WriteException(ex);
+                Logger?.WriteException(ex);
                 throw ex;
             }
             if (answer != null)
@@ -582,13 +585,20 @@ namespace Communication.Service
                 {
                     try
                     {
+                        if (Port.IsOpen)
+                            try
+                            {
+                                Port.Close();
+                            }
+                            catch
+                            {
+                            }
                         GC.ReRegisterForFinalize(_port);
-                        Port.Close();
                         Port = null;
                         SetStatus(ConnectionStatus.Offline);
                         OnDisconnected();
                     }
-                    catch
+                    catch (Exception ex)
                     {
                     }
                 }
