@@ -79,7 +79,9 @@
       <DependentUpon>NumericUpDown.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\RecentFileList.cs" />
+    <Compile Include="Controls\RenameTextBox\RenameTextBox.cs" />
     <Compile Include="Controls\SearchTextBox\SearchTextBox.cs" />
+    <Compile Include="Controls\SizeObserver.cs" />
     <Compile Include="Controls\TimeLine\ITimeLineDataItem.cs" />
     <Compile Include="Controls\TimeLine\ITimeLineManager.cs" />
     <Compile Include="Controls\TimeLine\ITimeLineMeta.cs" />
