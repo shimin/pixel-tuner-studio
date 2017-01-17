@@ -11,10 +11,14 @@ namespace Communication.Pixelate
     public class ImagesCollectionVideoItem : ImagesCollectionItem
     {
         private List<Point> _points;
+        private int _xOffset = 0;
+        private int _yOffset = 0;
 
-        public ImagesCollectionVideoItem(string imagePath, List<Point> points,  ColorDepth depth)
+        public ImagesCollectionVideoItem(string imagePath, List<Point> points,  ColorDepth depth, int xOffset, int yOffset)
             : base(imagePath, (UInt16)points.Count, depth)
         {
+            _xOffset = xOffset;
+            _yOffset = yOffset;
             _points = points;
             Load((ushort) points.Count);
         }
@@ -58,7 +62,7 @@ namespace Communication.Pixelate
                 {
                     var px = Color.Black;
                     if (point.X < frame.Width && point.Y < frame.Height)
-                        px = frame.GetPixel(point.X, point.Y);
+                        px = frame.GetPixel(point.X + _xOffset, point.Y + _yOffset);
                     //Console.WriteLine($"X={point.X}, Y={point.Y}");
                     bitmap.SetPixel(frameIdx, row, px);
                     row++;

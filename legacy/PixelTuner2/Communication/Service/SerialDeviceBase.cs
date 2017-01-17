@@ -306,6 +306,7 @@ namespace Communication.Service
             {
                 lock (this._syncSession)
                 {
+                    if (Port == null) return data.ToArray();
                     Port.DiscardInBuffer();
                     Port.DiscardOutBuffer();
                     Port.Write(query, 0, query.Length);
