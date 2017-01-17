@@ -149,8 +149,11 @@ namespace PixelTuner.ViewModel
         {
             get
             {
-                if (string.IsNullOrEmpty(FullName)) _image = new BitmapImage();
-                else _image = ImageHelper.CreateImage(new Uri(FullName, UriKind.Absolute));
+                if (_image == null)
+                {
+                    if (string.IsNullOrEmpty(FullName)) _image = new BitmapImage();
+                    else _image = ImageHelper.CreateImage(new Uri(FullName, UriKind.Absolute));
+                }
                 return _image;
                 //if (_image == null) return DependencyProperty.UnsetValue;
                 //return _image;
@@ -421,7 +424,7 @@ namespace PixelTuner.ViewModel
 
         public virtual bool CanSplit(object parameter)
         {
-            return (this.EndTime.Value - this.StartTime.Value).TotalMilliseconds >= 100;
+            return (this.EndTime.Value - this.StartTime.Value).TotalMilliseconds >= 50;
         }
 
         private void OnSplit(object parameter)
@@ -431,7 +434,7 @@ namespace PixelTuner.ViewModel
 
             if (w.ShowDialog() == true)
             {
-                if (w.Duration < (this.EndTime - this.StartTime) && w.Duration.TotalMilliseconds > 50)
+                if (w.Duration < (this.EndTime - this.StartTime) && w.Duration.TotalMilliseconds > 20)
                     Split(w.Duration);
             }
             if (w.NeedRefresh) RootViewModel.NotifySettingsChanged();

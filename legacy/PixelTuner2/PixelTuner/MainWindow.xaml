@@ -75,7 +75,7 @@
         
         <ToolBarTray Grid.Row="1">
             <ToolBar>
-                <ComboBox ItemsSource="{Binding AnchorStepCollection}" DisplayMemberPath="Value" SelectedValuePath="Key" MinWidth="64" SelectedValue="{Binding AnchorStep}"></ComboBox>
+                <ComboBox ItemsSource="{Binding AnchorStepCollection}" DisplayMemberPath="Value" SelectedValuePath="Key" MinWidth="64" SelectedValue="{Binding AnchorStep}"/>
                 <Button Name="boxSwitchInsertMode" Padding="0" Grid.Row="1" Height="20" Width="Auto" Click="boxSwitchInsertMode_Click">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">

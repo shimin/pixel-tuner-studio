@@ -234,9 +234,9 @@ namespace PixelTuner
         private void TryClose()
         {
             GetDuraionControlValues();
-            if (Duration.TotalMilliseconds < 100)
+            if (Duration.TotalMilliseconds < 10)
             {
-                MessageBox.Show("Too short time interval. Should be longer than 100 ms.");
+                MessageBox.Show("Too short time interval. Should be longer than 10 ms.");
                 return;
             }
             this.DialogResult = true;

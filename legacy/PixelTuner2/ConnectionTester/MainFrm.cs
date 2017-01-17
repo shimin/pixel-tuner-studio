@@ -9,6 +9,8 @@ using System.Windows.Forms;
 using System.IO.Ports;
 using ConnectionTester.Properties;
 using System.IO;
+using System.Net;
+using System.Net.Sockets;
 using Communication.Service;
 using LibHID;
 using System.Threading;
@@ -676,6 +678,48 @@ namespace ConnectionTester
         private void MainFrm_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private UdpClient _udpСlient = null;
+
+        private void boxConnectNet_Click(object sender, EventArgs e)
+        {
+            _udpСlient = new UdpClient();
+            _udpСlient.Connect(IPAddress.Parse(boxIPNet.Text), (int)boxPortNet.Value);
+            boxConnectNet.Enabled = false;
+            boxDisconnectNet.Enabled = true;
+        }
+
+        private void boxDisconnectNet_Click(object sender, EventArgs e)
+        {
+            _udpСlient.Close();
+            _udpСlient = null;
+            boxConnectNet.Enabled = true;
+            boxDisconnectNet.Enabled = false;
+        }
+
+        private void boxPlayNet_Click(object sender, EventArgs e)
+        {
+            if (_udpСlient != null)
+            {
+                _udpСlient.Send(new byte[] {0x50, 0x05, 0x02, 0x00, 0x00, 0x00, 0x00, 0x0d }, 8);
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (_udpСlient != null)
+            {
+                _udpСlient.Send(new byte[] { 0x50, 0x05, 0x03, 0x00, 0x00, 0x00, 0x00, 0x0d }, 8);
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (_udpСlient != null)
+            {
+                _udpСlient.Send(new byte[] { 0x50, 0x05, 0x04, 0x00, 0x00, 0x00, 0x00, 0x0d }, 8);
+            }
         }
     }
 }

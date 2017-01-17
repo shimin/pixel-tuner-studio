@@ -47,7 +47,7 @@ namespace PixelTuner.ViewModel
         public string LineTag
         {
             get { return _lineTag; }
-            set { _lineTag = value; }
+            set { _lineTag = value; RaisePropertyChanged("LineTag"); }
         }
 
         FileViewModel _parent;
@@ -121,6 +121,14 @@ namespace PixelTuner.ViewModel
             set { _isChanged = value; if (Parent != null) Parent.IsDirty = true; }
         }
 
+        private bool _lineTagEditionVisible;
+        [XmlIgnore]
+        public bool LineTagEditionVisible
+        {
+            get { return _lineTagEditionVisible; }
+            set { _lineTagEditionVisible = value; RaisePropertyChanged("LineTagEditionVisible"); }
+        }
+
         System.Windows.Thickness _toolsetMargin = new Thickness(-27, 0, 0, 0);
         [XmlIgnore]
         public Thickness ToolsetMargin
@@ -192,7 +200,15 @@ namespace PixelTuner.ViewModel
                 }
                 RaisePropertyChanged("MetaData");
                 RaisePropertyChanged("IsMetaDataSet");
+                RaisePropertyChanged("LineHeight");
+                RaisePropertyChanged("PreviewVisible");
             }
+        }
+
+        public bool PreviewVisible
+        {
+            get { return MetaData != null; }
+            set { }
         }
 
         MatrixTransform _previewTransform = null;
@@ -242,7 +258,33 @@ namespace PixelTuner.ViewModel
         public TimeLineViewModel()
         {
             Items = new ObservableCollection<ITimeLineDataItem>();
-            Items.CollectionChanged += (sender, args) => { Parent?.RaiseFileChanged(); };
+            Items.CollectionChanged += (sender, args) =>
+            {
+                /*if (Parent != null && Parent.SoundPlayer != null && Parent.SoundPlayer.ChannelLength > 0)
+                {
+                    if (args.NewItems != null && args.NewItems.Count > 0)
+                    {
+                        DateTime firstElementStart = (args.NewItems[0] as TimeLineItemViewModel).StartTime.Value;
+                        DateTime currentTime = new DateTime(2, 1, 1).Add(Parent.SoundPlayer.CurrentTime);
+                        var delta = currentTime - firstElementStart;
+                        foreach (TimeLineItemViewModel i in args.NewItems)
+                        {
+                            i.StartTime = i.StartTime + delta;
+                            i.EndTime = i.EndTime + delta;
+                        }
+                    }
+                }
+                for (int i = Items.Count - 1; i > 0 && args.NewItems != null; i--)
+                {
+                    if (Items[i].StartTime > Items[i - 1].EndTime)
+                    {
+                        var delta = Items[i - 1].EndTime - Items[i].StartTime;
+                        Items[i - 1].EndTime = Items[i].StartTime;
+                        Items[i - 1].StartTime = Items[i - 1].StartTime - delta;
+                    }
+                }*/
+                Parent?.RaiseFileChanged();
+            };
             XmlItems = new DelegatedIList<TimeLineItemViewModel, TimeLineItem>(Items);
         }
         
@@ -282,6 +324,60 @@ namespace PixelTuner.ViewModel
                 Parent.TimeLines.Move(old, old - 1);
                 Parent.TimeLines.All(arg => { arg.RaisePropertyChanged("Background"); return false; });
             }
+        }
+
+        #endregion
+        #region ChangeLineTag
+        RelayCommand _changeLineTagCommand = null;
+        public ICommand ChangeLineTag
+        {
+            get
+            {
+                if (_changeLineTagCommand == null)
+                {
+                    _changeLineTagCommand = new RelayCommand((p) => OnChangeLineTag(p), (p) => CanChangeLineTag(p));
+                }
+
+                return _changeLineTagCommand;
+            }
+        }
+
+        protected virtual bool CanChangeLineTag(object parameter)
+        {
+            return true;
+        }
+
+        protected virtual void OnChangeLineTag(object parameter)
+        {
+            LineTagEditionVisible = true;
+        }
+
+        #endregion
+        
+        #region HandleTagKeyDown
+        RelayCommand _handleTagKeyDownCommand;
+        public ICommand HandleTagKeyDown
+        {
+            get
+            {
+                if (_handleTagKeyDownCommand == null)
+                {
+                    _handleTagKeyDownCommand = new RelayCommand((p) => OnHandleTagKeyDown(p), (p) => CanHandleTagKeyDown(p));
+                }
+
+                return _handleTagKeyDownCommand;
+            }
+        }
+
+        protected virtual bool CanHandleTagKeyDown(object parameter)
+        {
+            return true;
+        }
+
+        protected virtual void OnHandleTagKeyDown(object parameter)
+        {
+            LineTagEditionVisible = false;
+            RaisePropertyChanged("LineTag");
         }
 
         #endregion
@@ -398,6 +494,7 @@ namespace PixelTuner.ViewModel
             timelineCopy.IsLineHeightVisible = IsLineHeightVisible;
             timelineCopy.IsSelectedToUpload = IsSelectedToUpload;
             timelineCopy.MetaDataPath = MetaDataPath;
+            timelineCopy.LineTag = LineTag;
             timelineCopy.PreviewTransform = PreviewTransform;
             timelineCopy.TimelineHeightPx = TimelineHeightPx;
             timelineCopy.TimelinePreviewWidth = TimelinePreviewWidth;
@@ -491,8 +588,19 @@ namespace PixelTuner.ViewModel
             if (itemsToPaste.Count > 0)
             {
                 Parent.PushUndo(false);
-                DateTime? startTime = GetStartTimeByIndex(insertIndex);
-                TimeSpan delta = startTime.Value - itemsToPaste.First().StartTime.Value;
+                DateTime? startTime = null;
+                bool hasCursor = false;
+                if (Parent.SoundPlayer != null && Parent.SoundPlayer.WaveformData != null)
+                {
+                    startTime = Start.Value.Add(Parent.SoundPlayer.CurrentTime);
+                    insertIndex = GetInsertionIndexByTime(startTime);
+                    hasCursor = true;
+                }
+                else
+                {
+                    startTime = GetStartTimeByIndex(insertIndex);
+                }
+                TimeSpan delta = startTime.Value - itemsToPaste.First().StartTime.Value.AddYears(1);
 
                 List<ITimeLineDataItem> copiedItems = new List<ITimeLineDataItem>();
                 foreach (var i in itemsToPaste)
@@ -500,12 +608,15 @@ namespace PixelTuner.ViewModel
                     var clone = (ITimeLineDataItem)i.Clone();
                     clone.StartTime = clone.StartTime + delta;
                     clone.EndTime = clone.EndTime + delta;
+                    if (clone.StartTime.Value.Year < 2) clone.StartTime = clone.StartTime.Value.AddYears(1);
+                    if (clone.EndTime.Value.Year < 2) clone.EndTime = clone.EndTime.Value.AddYears(1);
                     copiedItems.Add(clone);
                 }
 
                 var keyTimeEnd = copiedItems.Last().EndTime;
                 var keyTimeStart = copiedItems.First().StartTime;
-                if (PixelTuner.Properties.Settings.Default.CutNextItems)
+
+                if (PixelTuner.Properties.Settings.Default.CutNextItems || hasCursor)
                 {
                     CutItemsWithinInterval(keyTimeStart, keyTimeEnd);
                 }
@@ -523,20 +634,41 @@ namespace PixelTuner.ViewModel
             }
         }
 
+        private int GetInsertionIndexByTime(DateTime? timePoint)
+        {
+            for (int i = 0; i < Items.Count; i++)
+            {
+                if (timePoint.Value <= Items[i].StartTime.Value) return i;
+                else if (timePoint.Value > Items[i].StartTime.Value && timePoint.Value <= Items[i].EndTime.Value) return i+1;
+                else if (Items.Count > i + 1 && timePoint.Value > Items[i].EndTime.Value && timePoint.Value < Items[i + 1].StartTime.Value) return i + 1;
+            }
+            return Items.Count;
+        }
+
         /// <summary>
         /// Removes item if it's fully within time interval and adjusts only start time otherwise.
         /// </summary>
         /// <param name="start">Start of time interval</param>
         /// <param name="end">End of time interval</param>
-        internal void CutItemsWithinInterval(DateTime? start, DateTime? end)
+        internal int CutItemsWithinInterval(DateTime? start, DateTime? end)
         {
+            int removed = 0;
             List<ITimeLineDataItem> itemsToRemove = new List<ITimeLineDataItem>();
+            TimeLineItemViewModel first = FindItemByTime(start.Value);
+            if (first != null)
+            {
+                if (first.StartTime != start) first.EndTime = start;
+                else removed += 1;
+            }
+
             foreach (var i in Items)
             {
                 if (i.EndTime <= end && i.StartTime >= start) itemsToRemove.Add(i);
                 else if (i.StartTime < end && i.StartTime >= start) i.StartTime = end;
             }
+
             itemsToRemove.ForEach(i => { (i as TimeLineItemViewModel).DisposeMe.Execute(null); });
+            return removed;
         }
 
         /// <summary>
@@ -546,6 +678,7 @@ namespace PixelTuner.ViewModel
         /// <param name="moveInterval">Borders move interval</param>
         internal void MoveItemsAfterIndex(DateTime? start, TimeSpan moveInterval)
         {
+            List<ITimeLineDataItem> itemsToRemove = new List<ITimeLineDataItem>();
             if (moveInterval.TotalMilliseconds > 0)
             {
                 foreach (var i in Items)
@@ -583,6 +716,7 @@ namespace PixelTuner.ViewModel
                 else
                 {
                     int idx = Items.IndexOf(_lastFoundItem);
+                    if (idx >= 0)
                     for (; idx < Items.Count; idx++)
                     {
                         if (timePoint >= Items[idx].StartTime.Value && timePoint < Items[idx].EndTime.Value)

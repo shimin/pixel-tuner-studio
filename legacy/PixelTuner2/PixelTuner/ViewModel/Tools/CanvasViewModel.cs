@@ -208,7 +208,7 @@ namespace PixelTuner.ViewModel
                     newElement.Geometry = (e as GeometryDrawing).Geometry;
                     newElement.Transform = transform;
                     newElement.Path = e.GetValue(System.Windows.FrameworkElement.NameProperty) as string;
-                    newElement.Fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+                    newElement.SetFill(new SolidColorBrush(Color.FromRgb(0, 0, 0)));
                     if (!ElementsDictionary.ContainsKey(newElement.Path))
                     {
                         ElementsDictionary.Add(newElement.Path, newElement);
@@ -218,7 +218,7 @@ namespace PixelTuner.ViewModel
                     {
                         ElementsDictionary[newElement.Path].Geometry = newElement.Geometry;
                         ElementsDictionary[newElement.Path].Transform = newElement.Transform;
-                        ElementsDictionary[newElement.Path].Fill = newElement.Fill;
+                        ElementsDictionary[newElement.Path].SetFill(newElement.Fill);
                     }
                 }
             }

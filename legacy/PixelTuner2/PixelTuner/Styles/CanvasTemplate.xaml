@@ -2,6 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:model="clr-namespace:PixelTuner.ViewModel"
                     xmlns:dd="clr-namespace:Common.DragDrop;assembly=Common"
+                    xmlns:c="clr-namespace:Common.Controls;assembly=Common"
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                     x:Class="PixelTuner.Styles.CanvasTemplate"
                     x:ClassModifier="internal">
@@ -17,14 +18,31 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
             <Canvas>
-                <Path 
+                <Path c:SizeObserver.Observe="True"
+                      c:SizeObserver.ObservedWidth="{Binding ActualWidth, Mode=OneWayToSource}"
+                      c:SizeObserver.ObservedHeight="{Binding ActualHeight, Mode=OneWayToSource}"
+                      Name="boxPath"
                             Stroke="{Binding Stroke}" 
                             StrokeThickness="1" 
-                            Fill="{Binding Fill}" 
+                            Fill="{Binding Fill}"                 
                             RenderTransform="{Binding Transform}"
                             Data="{Binding Geometry}">
                     <Path.ToolTip>
-                        <TextBlock Text="{Binding Path}" />
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="{Binding Path}" />
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Width: "></TextBlock>
+                                <TextBlock Text="{Binding ColumnsCount}"></TextBlock>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Height: "></TextBlock>
+                                <TextBlock Text="{Binding RowsCount}"></TextBlock>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Active: "></TextBlock>
+                                <TextBlock Text="{Binding OrderedLeds.Count}"></TextBlock>
+                            </StackPanel>
+                        </StackPanel>
                     </Path.ToolTip>
                     <Path.ContextMenu>
                         <ContextMenu>

@@ -65,6 +65,14 @@ namespace PixelTuner.ViewModel
                 if (model.BootMode && ContinueUpdate() && model.UploadFirmwareCommand.CanExecute(null))
                     model.UploadFirmwareCommand.Execute(null);
             }
+            else if (e.Device.GetType() == typeof(PixelHoop))
+            {
+                var model = new PixelHoopViewModel(e.Device as PixelHoop);
+                Devices.Add(model);
+
+                if (model.BootMode && ContinueUpdate() && model.UploadFirmwareCommand.CanExecute(null))
+                    model.UploadFirmwareCommand.Execute(null);
+            }
             else if (e.Device.GetType() == typeof(SimplePoiDevice))
             {
                 var model = new EpicPoiDeviceViewModel(e.Device as SimplePoiDevice);

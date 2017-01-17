@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Windows;
 using System.Windows.Forms;
@@ -39,6 +40,13 @@ namespace PixelTuner.ViewModel
         public static Logger Logger = null;
 #endif
         internal delegate void LastUsedFileChangedDelegate(string path);
+
+        private UdpClient _udpСlient = null;
+        public UdpClient UdpСlient
+        {
+            get { return _udpСlient; }
+            set { _udpСlient = value; }
+        }
 
         private LastUsedFileChangedDelegate _lastUsedFileHandler;
         internal LastUsedFileChangedDelegate LastUsedFileHandler
@@ -414,16 +422,16 @@ namespace PixelTuner.ViewModel
             set { _canvasModel = value; RaisePropertyChanged("CanvasModel"); }
         }
 
-        private WifiPlayerDevice _wifiPlayer = null;
-        public WifiPlayerDevice WifiPlayer
-        {
-            get
-            {
-                if (_wifiPlayer == null) _wifiPlayer = new WifiPlayerDevice();
-                return _wifiPlayer;
-            }
-            set { _wifiPlayer = value; }
-        }
+        //private WifiPlayerDevice _wifiPlayer = null;
+        //public WifiPlayerDevice WifiPlayer
+        //{
+        //    get
+        //    {
+        //        if (_wifiPlayer == null) _wifiPlayer = new WifiPlayerDevice();
+        //        return _wifiPlayer;
+        //    }
+        //    set { _wifiPlayer = value; }
+        //}
 
 
         DevicesViewModel _devicesModel = null;
@@ -895,8 +903,7 @@ namespace PixelTuner.ViewModel
                 if (dlg.ShowDialog() == true)
                 {
                     fileToSave.FilePath = dlg.FileName;
-                    if (LastUsedFileHandler != null)
-                        LastUsedFileHandler.Invoke(dlg.FileName);
+                    LastUsedFileHandler?.Invoke(dlg.FileName);
                 }
                 else
                 {
@@ -906,6 +913,7 @@ namespace PixelTuner.ViewModel
 
             if (fileToSave.FilePath != null)
             {
+                ValidateFile(fileToSave);
                 using (XmlTextWriter tw = new XmlTextWriter(fileToSave.FilePath, Encoding.UTF8))
                 {
                     tw.Formatting = Formatting.Indented;
@@ -917,6 +925,18 @@ namespace PixelTuner.ViewModel
                 foreach (var t in fileToSave.TimeLines) { t.IsChanged = false; }
                 fileToSave.IsDirty = false;
                 fileToSave.FileName = "";
+            }
+        }
+
+        private void ValidateFile(FileViewModel fileToSave)
+        {
+            foreach (var line in fileToSave.TimeLines)
+            {
+                for (int i = 0; i < line.Items.Count - 1; i++)
+                {
+                    if (line.Items[i].EndTime > line.Items[i + 1].StartTime)
+                        line.Items[i].EndTime = line.Items[i + 1].StartTime;
+                }
             }
         }
 
@@ -1051,9 +1071,10 @@ namespace PixelTuner.ViewModel
                     dlg.Filter = "Binary project file|*.bin";
                     if (dlg.ShowDialog().GetValueOrDefault())
                     {
-                        var line = dialog.SelectedTimeLines.First();
-                        if (line != null)
-                            File.WriteAllBytes(dlg.FileName, fileToSave.GetVideoBinaryPresentation(line).ToArray());
+                        //var line = dialog.SelectedTimeLines.First();
+                        //if (line != null)
+                        var bin = fileToSave.GetVideoBinaryPresentation(dialog.SelectedTimeLines).ToArray();
+                        File.WriteAllBytes(dlg.FileName, bin);
                     }
                 }
             }

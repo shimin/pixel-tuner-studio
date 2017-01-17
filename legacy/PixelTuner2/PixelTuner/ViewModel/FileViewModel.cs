@@ -20,6 +20,8 @@ using Communication.Gradient;
 using Communication;
 using System.Windows.Media;
 using System.Collections.Specialized;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.ViewModel;
@@ -113,53 +115,84 @@ namespace PixelTuner.ViewModel
 
         internal void UpdatePreview(object arg)
         {
-            var timeSpan = (TimeSpan)arg;
+            var timePoint = (TimeSpan)arg;
             if (RootViewModel.This.CanvasModel.IsVisible && _parsedProject != null)
             {
-                var line = SelectedTimeline;
-                if (line != null && RootViewModel.This.ProjectPlayerModel.IsVisible && !(line is LightTimeLineViewModel))
-                {
-                    var timePoint = line.Start.Value.Add(timeSpan);
-                    RootViewModel.This.ProjectPlayerModel.DisplayModel = line.FindItemByTime(timePoint);
-                }
-                var lines = TimeLines.Where(item => item is LightTimeLineViewModel);
-                if (lines.Count() > 0)
-                {
-                    int channelID = 0;
-                    var sample = _parsedProject.GetColors(timeSpan);
-                    int maxIdx = CalcMaxSampleColors(lines, sample);
+                // update Pixel Poi preview
+                UpdatePixelPoiView(timePoint);
 
-                    foreach (LightTimeLineViewModel l in lines)
+                // update Light Suit preview
+                UpdateLightSuitView(timePoint);
+
+                // update Pixel Suit preview
+                UpdatePixelSuitView(timePoint);
+            }
+        }
+
+        private void UpdatePixelSuitView(TimeSpan timeStamp)
+        {
+            var lines = TimeLines.Where(item => item.GetType() == typeof(VideoTimeLineViewModel));
+            var timeLineViewModels = lines as TimeLineViewModel[] ?? lines.ToArray();
+            if (!timeLineViewModels.Any()) return;
+            foreach (VideoTimeLineViewModel l in timeLineViewModels)
+            {
+                if (l.Items.Count == 0 || l.MetaData == null || l.Start == null) continue;
+                var time = l.Start.Value.Add(timeStamp);
+
+                var element = RootViewModel.This.CanvasModel.ElementsDictionary[l.MetaData.Path];
+                var item = l.FindItemByTime(time) as VideoThumbnailViewModel;
+                if (item != null) element.SetFill(item.ImageSource, item.XOffset, item.YOffset);
+                else element.SetFill(new SolidColorBrush(Color.FromRgb(0, 0, 0)));
+            }
+        }
+
+        private void UpdateLightSuitView(TimeSpan timeStamp)
+        {
+            var lines = TimeLines.Where(item => item.GetType() == typeof(LightTimeLineViewModel));
+            var timeLineViewModels = lines as TimeLineViewModel[] ?? lines.ToArray();
+            if (!timeLineViewModels.Any()) return;
+
+            var channelId = 0;
+            var sample = _parsedProject.GetColors(timeStamp);
+            var maxIdx = CalcMaxSampleColors(timeLineViewModels, sample);
+            foreach (LightTimeLineViewModel l in timeLineViewModels)
+            {
+                if (l.Items.Count == 0 || l.MetaData == null) continue;
+                var elementColor = Colors.Black;
+                var element = RootViewModel.This.CanvasModel.ElementsDictionary[l.MetaData.Path];
+
+                if (sample != null && channelId/3 < maxIdx)
+                {
+                    if (l.IsMonochrome)
                     {
-                        if (l.Items.Count != 0 && l.MetaData != null)
-                        {
-                            var elementColor = Colors.Black;
-                            var element = RootViewModel.This.CanvasModel.ElementsDictionary[l.MetaData.Path];
+                        var amount = sample[channelId/3].R;
+                        if (channelId%3 == 1) amount = sample[channelId/3].G;
+                        else if (channelId%3 == 2) amount = sample[channelId/3].B;
 
-                            if (sample != null && channelID / 3 < maxIdx)
-                            {
-                                if (l.IsMonochrome)
-                                {
-                                    var amount = sample[channelID / 3].R;
-                                    if (channelID % 3 == 1) amount = sample[channelID / 3].G;
-                                    else if (channelID % 3 == 2) amount = sample[channelID / 3].B;
-
-                                    elementColor = Color.FromRgb(amount, amount, amount);
-                                    channelID++;
-                                }
-                                else
-                                {
-                                    if (channelID % 3 != 0) channelID += 3 - channelID % 3;
-                                    elementColor = Color.FromRgb(sample[channelID / 3].R, sample[channelID / 3].G, sample[channelID / 3].B);
-                                    channelID += 3;
-                                }
-                            }
-                            
-                            element.Fill = l.MetaData.Fill = new SolidColorBrush(elementColor);
-                        }
+                        elementColor = Color.FromRgb(amount, amount, amount);
+                        channelId++;
+                    }
+                    else
+                    {
+                        if (channelId%3 != 0) channelId += 3 - channelId%3;
+                        elementColor = Color.FromRgb(sample[channelId/3].R, sample[channelId/3].G, sample[channelId/3].B);
+                        channelId += 3;
                     }
                 }
+                var f = new SolidColorBrush(elementColor);
+                l.MetaData.SetFill(f);
+                element.SetFill(f);
             }
+        }
+
+        private void UpdatePixelPoiView(TimeSpan timeStamp)
+        {
+            var line = SelectedTimeline;
+            if (line == null || !RootViewModel.This.ProjectPlayerModel.IsVisible || line is LightTimeLineViewModel)
+                return;
+            if (line.Start == null) return;
+            var time = line.Start.Value.Add(timeStamp);
+            RootViewModel.This.ProjectPlayerModel.DisplayModel = line.FindItemByTime(time);
         }
 
         private int CalcMaxSampleColors(IEnumerable<TimeLineViewModel> src, List<ColorStruct> sample)
@@ -396,19 +429,19 @@ namespace PixelTuner.ViewModel
             set { _isSyncOn = value; RaisePropertyChanged("IsSyncOn"); }
         }
 
-        private bool _isWifiSyncOn = false;
-        [XmlIgnore]
-        public bool IsWifiSyncOn
-        {
-            get { return _isWifiSyncOn; }
-            set
-            {
-                _isWifiSyncOn = value;
-                RootViewModel.This.WifiPlayer.IsOnAir = value;
-                RaisePropertyChanged("IsWifiSyncOn");
-            }
-        }
-        
+        //private bool _isWifiSyncOn = false;
+        //[XmlIgnore]
+        //public bool IsWifiSyncOn
+        //{
+        //    get { return _isWifiSyncOn; }
+        //    set
+        //    {
+        //        _isWifiSyncOn = value;
+        //        //RootViewModel.This.WifiPlayer.IsOnAir = value;
+        //        RaisePropertyChanged("IsWifiSyncOn");
+        //    }
+        //}
+
         [XmlIgnore]
         public string RadioModuleMac
         {
@@ -840,6 +873,7 @@ namespace PixelTuner.ViewModel
                 if (dlg.ShowDialog() == true && File.Exists(dlg.FileName))
                 {
                     ((NAudioEngine)SoundPlayer).OpenFile(dlg.FileName);
+                    IsDirty = true;
                     RaisePropertyChanged("WaveFormLength");
                     AudioPath = dlg.FileName;
                 }
@@ -851,6 +885,79 @@ namespace PixelTuner.ViewModel
             }
         }
 
+        #endregion
+
+        #region ConnectCommand
+        private RelayCommand _connectCommand = null;
+        public ICommand ConnectCommand
+        {
+            get
+            {
+                if (_connectCommand == null)
+                {
+                    _connectCommand = new RelayCommand((p) => OnConnect(p), (p) => CanConnect(p));
+                }
+
+                return _connectCommand;
+            }
+        }
+
+        private bool CanConnect(object p)
+        {
+            return RootViewModel.This.UdpСlient == null;
+        }
+
+        private void OnConnect(object p)
+        {
+            try
+            {
+                RootViewModel.This.UdpСlient = new UdpClient();
+                RootViewModel.This.UdpСlient.DontFragment = true;
+                RootViewModel.This.UdpСlient.Connect(Settings.Default.MulticastIP, Settings.Default.WifiPort);
+                //RootViewModel.This.UdpСlient.ExclusiveAddressUse = false;
+                //{
+                //    DontFragment = true
+                //};
+                WifiDevicesWindow w = new WifiDevicesWindow();
+                w.Owner = Application.Current.MainWindow;
+                w.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                RootViewModel.This.UdpСlient.Send(new byte[] {0x50, 0x05, 0x04, 0x00, 0x00, 0x00, 0x00, 0x0d}, 8);
+                w.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(Application.Current.MainWindow, ex.Message, "Error");
+                RootViewModel.This.UdpСlient = null;
+            }
+        }
+        #endregion
+
+        #region DisconnectCommand
+
+        private RelayCommand _disconnectCommand = null;
+        public ICommand DisconnectCommand
+        {
+            get
+            {
+                if (_disconnectCommand == null)
+                {
+                    _disconnectCommand = new RelayCommand((p) => OnDisconnect(p), (p) => CanDisconnect(p));
+                }
+
+                return _disconnectCommand;
+            }
+        }
+
+        private bool CanDisconnect(object p)
+        {
+            return RootViewModel.This.UdpСlient != null;
+        }
+
+        private void OnDisconnect(object p)
+        {
+            RootViewModel.This.UdpСlient.Close();
+            RootViewModel.This.UdpСlient = null;
+        }
         #endregion
 
         #region PlayAudioCommand
@@ -883,6 +990,14 @@ namespace PixelTuner.ViewModel
             {
                 RootViewModel.This.DevicesModel.Illuminators.First().Play(
                     player.CurrentTime, PixelTuner.Properties.Settings.Default.Discreteness);
+            }
+            //if (IsWifiSyncOn) RootViewModel.This.WifiPlayer.Play(player.CurrentTime, Settings.Default.Discreteness);
+            if (RootViewModel.This.UdpСlient != null)
+            {
+                var timeBytes = BitConverter.GetBytes((UInt32) player.CurrentTime.TotalMilliseconds);
+                var cmd = new byte[] {0x50, 0x05, 0x02, 0x00, 0x00, 0x00, 0x00, 0x0d};
+                timeBytes.CopyTo(cmd, 3);
+                RootViewModel.This.UdpСlient.Send(cmd, 8);
             }
 
             player.Play();
@@ -921,13 +1036,36 @@ namespace PixelTuner.ViewModel
                 {
                     RootViewModel.This.DevicesModel.Illuminators.First().Pause(
                         player.CurrentTime, Settings.Default.Discreteness);
-                    RootViewModel.This.WifiPlayer.Pause(player.CurrentTime, Settings.Default.Discreteness);
                 }
                 else
                 {
                     RootViewModel.This.DevicesModel.Illuminators.First().Play(
                         player.CurrentTime, Settings.Default.Discreteness);
-                    RootViewModel.This.WifiPlayer.Play(player.CurrentTime, Settings.Default.Discreteness);
+                }
+            }
+
+            if (player.IsPlaying)
+            {
+                //if (IsWifiSyncOn)
+                //    RootViewModel.This.WifiPlayer.Pause(player.CurrentTime, Settings.Default.Discreteness);
+                if (RootViewModel.This.UdpСlient != null)
+                {
+                    var timeBytes = BitConverter.GetBytes((UInt32)player.CurrentTime.TotalMilliseconds);
+                    var cmd = new byte[] {0x50, 0x05, 0x03, 0x00, 0x00, 0x00, 0x00, 0x0d};
+                    timeBytes.CopyTo(cmd, 3);
+                    RootViewModel.This.UdpСlient.Send(cmd, 8);
+                }
+            }
+            else
+            {
+                //if (IsWifiSyncOn)
+                //    RootViewModel.This.WifiPlayer.Play(player.CurrentTime, Settings.Default.Discreteness);
+                if (RootViewModel.This.UdpСlient != null)
+                {
+                    var timeBytes = BitConverter.GetBytes((UInt32)player.CurrentTime.TotalMilliseconds);
+                    var cmd = new byte[] { 0x50, 0x05, 0x02, 0x00, 0x00, 0x00, 0x00, 0x0d };
+                    timeBytes.CopyTo(cmd, 3);
+                    RootViewModel.This.UdpСlient.Send(cmd, 8);
                 }
             }
             player.Pause();
@@ -964,7 +1102,13 @@ namespace PixelTuner.ViewModel
             {
                 RootViewModel.This.DevicesModel.Illuminators.First().Stop(
                     player.CurrentTime, Settings.Default.Discreteness);
-                RootViewModel.This.WifiPlayer.Stop(player.CurrentTime, Settings.Default.Discreteness);
+            }
+            //if (IsWifiSyncOn)
+            //    RootViewModel.This.WifiPlayer.Stop(player.CurrentTime, Settings.Default.Discreteness);
+            //RootViewModel.This.WifiPlayer.SendCommand(PlaybackState.stop, player.CurrentTime);
+            if (RootViewModel.This.UdpСlient != null)
+            {
+                RootViewModel.This.UdpСlient.Send(new byte[] { 0x50, 0x05, 0x04, 0x00, 0x00, 0x00, 0x00, 0x0d }, 8);
             }
         }
 
@@ -1025,7 +1169,7 @@ namespace PixelTuner.ViewModel
                         {
                             RootViewModel.This.DevicesModel.Illuminators.First().Play(SoundPlayer.CurrentTime, Settings.Default.Discreteness);
                         }
-                        if (IsWifiSyncOn) RootViewModel.This.WifiPlayer.Play(SoundPlayer.CurrentTime, Settings.Default.Discreteness);
+                        //if (IsWifiSyncOn) RootViewModel.This.WifiPlayer.Play(SoundPlayer.CurrentTime, Settings.Default.Discreteness);
                     }
                     //if (_updateThread == null) _updateThread = new Thread(UpdatePreview);
                     //if (_updateThread != null && !_updateThread.IsAlive)
@@ -1033,7 +1177,8 @@ namespace PixelTuner.ViewModel
                     //    _updateThread = new Thread(UpdatePreview);
                     //    _updateThread.Start(SoundPlayer.CurrentTime);
                     //}
-                    if (!IsSyncOn && !IsWifiSyncOn) UpdatePreview(SoundPlayer.CurrentTime);
+                    if (!IsSyncOn && RootViewModel.This.UdpСlient == null)
+                        UpdatePreview(SoundPlayer.CurrentTime);
                     
                     //if (_updateTask == null) _updateTask = new Task(new Action(() => UpdatePreview(SoundPlayer.CurrentTime)));
                     //if (_updateTask.Status != TaskStatus.Running) _updateTask.Start();
@@ -1130,23 +1275,135 @@ namespace PixelTuner.ViewModel
         }
 
 
-        public List<byte> GetVideoBinaryPresentation(TimeLineViewModel line)
+        public List<byte> GetVideoBinaryPresentation(IEnumerable<TimeLineViewModel> lines)
         {
-                ColorDepth depth = ColorDepth.Bit24;
-                try { depth = (ColorDepth)ColorDepth.Parse(typeof(ColorDepth), Settings.Default.ColorDepth); }
-                catch { }
+            ColorDepth depth = ColorDepth.Bit24;
+            try { depth = (ColorDepth)ColorDepth.Parse(typeof(ColorDepth), Settings.Default.ColorDepth); }
+            catch { }
 
-                var images = new List<ImagesCollectionItem>();
-                PixelProjectFile project = CreateVideoProjectFile(line, images, depth);
-                ImagesCollection c = new ImagesCollection(images);
-                var buf = project.GetBinary(c);
-    #if(DEBUG)
-                string logFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".\\Logs");
-                Directory.CreateDirectory(logFolder);
-                string projectFileName = Path.Combine(logFolder, "video-project " + DateTime.Now.ToString("dd_MM_yyyy___HH_mm_ss_fff") + ".bin");
-                File.WriteAllBytes(projectFileName, buf.ToArray());
-    #endif
-                return buf;
+            var images = new List<ImagesCollectionItem>();
+            PixelProjectFile project = null;
+            if (lines.Count() > 1)
+            {
+                project = CreateVideoProjectFile(lines.ElementAt(0), lines.ElementAt(1), images, depth);
+            }
+            else
+            {
+                project = CreateVideoProjectFile(lines.ElementAt(0), images, depth);
+            }
+            ImagesCollection c = new ImagesCollection(images);
+            var buf = project.GetBinary(c);
+#if(DEBUG)
+            string logFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".\\Logs");
+            Directory.CreateDirectory(logFolder);
+            string projectFileName = Path.Combine(logFolder, "video-project " + DateTime.Now.ToString("dd_MM_yyyy___HH_mm_ss_fff") + ".bin");
+            File.WriteAllBytes(projectFileName, buf.ToArray());
+#endif
+            return buf;
+        }
+
+        private struct DoubleTimeLineItem
+        {
+            public VideoThumbnailViewModel First;
+            public VideoThumbnailViewModel Second;
+        }
+
+        private PixelProjectFile CreateVideoProjectFile(
+            TimeLineViewModel channel1,
+            TimeLineViewModel channel2,
+            IList<ImagesCollectionItem> imagesCollection,
+            ColorDepth depth)
+        {
+            var project = new PixelProjectFile();
+            var videoLine1 = channel1 as VideoTimeLineViewModel;
+            var videoLine2 = channel2 as VideoTimeLineViewModel;
+
+            if (videoLine1?.MetaData == null
+                || videoLine1.MetaData.OrderedLeds.Count == 0
+                || videoLine1.Items.Count == 0
+                || !videoLine1.IsSelectedToUpload)
+                return project;
+
+            if (videoLine2?.MetaData == null
+                || videoLine2.MetaData.OrderedLeds.Count == 0
+                || videoLine2.Items.Count == 0
+                || !videoLine2.IsSelectedToUpload)
+                return project;
+
+            var file = new PixelTimelineFile()
+            {
+                TimeLineHeight = (ushort) (videoLine1.MetaData.OrderedLeds.Count + videoLine2.MetaData.OrderedLeds.Count)
+            };
+
+            List<ITimeLineDataItem> timelineItems1 = FillGabs(videoLine1.Items, videoLine1.Start.Value, CreateBlankVideoItem, videoLine1.LineHeight);
+            List<ITimeLineDataItem> timelineItems2 = FillGabs(videoLine2.Items, videoLine2.Start.Value, CreateBlankVideoItem, videoLine2.LineHeight);
+
+            List<DateTime?> intervals = GetSyncedIntervals(timelineItems1, timelineItems2);
+            
+            timelineItems1 = SplitItems(timelineItems1, intervals);
+            timelineItems2 = SplitItems(timelineItems2, intervals);
+
+            List<DoubleTimeLineItem> doubleItems = new List<DoubleTimeLineItem>();
+            for (int i = 0; i < intervals.Count; i++) doubleItems.Add(new DoubleTimeLineItem()
+            {
+                First = (VideoThumbnailViewModel)timelineItems1[i],
+                Second = (VideoThumbnailViewModel)timelineItems2[i]
+            });
+            
+            foreach (DoubleTimeLineItem dItem in doubleItems)
+            {
+                string path1 = dItem.First.FullName.ToLower();
+                string path2 = dItem.Second.FullName.ToLower();
+
+                var duration = (dItem.First.EndTime.Value - dItem.First.StartTime.Value).TotalMilliseconds;       // duration = end time - start time
+                double startMilliseconds = (dItem.First.StartTime.Value - videoLine1.Start.Value).TotalMilliseconds;           // start ms = start time - timeline start time
+                UInt16 mask = dItem.First.LaserOn ? (ushort)1 : (ushort)0;
+
+                var imageFile = new VideoImageFile(path1, 40, (UInt32)duration, (UInt32)startMilliseconds, mask);
+                var image = new ImagesCollectionVideoDoubleItem(path1, path2, 
+                    videoLine1.MetaData.OrderedLeds, videoLine2.MetaData.OrderedLeds, 
+                    dItem.First.XOffset, dItem.First.YOffset,
+                    dItem.Second.XOffset, dItem.Second.YOffset,
+                    depth);
+
+                imageFile.Brightness = image.Brightness = dItem.First.Brightness;
+                imagesCollection.Add(image);
+
+                file.Images.Add(imageFile);
+            }
+            project.TimeLines.Add(file);
+            return project;
+        }
+
+        private List<ITimeLineDataItem> SplitItems(List<ITimeLineDataItem> timelineItems1, List<DateTime?> intervals)
+        {
+            List<ITimeLineDataItem> result = new List<ITimeLineDataItem>();
+            for (int i = 0; i < timelineItems1.Count; i++)
+            {
+                foreach (var endPoint in intervals)
+                {
+                    if (endPoint > timelineItems1[i].StartTime && endPoint <= timelineItems1[i].EndTime)
+                        result.Add((ITimeLineDataItem)timelineItems1[i].Clone());
+
+                    if (endPoint > timelineItems1[i].EndTime) break;
+                }
+            }
+
+            for (int i = 0; i < intervals.Count - 1; i++)
+                result[i + 1].StartTime = result[i].EndTime = intervals[i];
+
+            return result;
+        }
+
+        private List<DateTime?> GetSyncedIntervals(List<ITimeLineDataItem> timelineItems1, List<ITimeLineDataItem> timelineItems2)
+        {
+            var result = new SortedList<DateTime, DateTime?>();
+            foreach (var item in timelineItems1) result.Add(item.EndTime.Value, item.EndTime);
+            foreach (var item in timelineItems2)
+                if (!result.ContainsKey(item.EndTime.Value))
+                    result.Add(item.EndTime.Value, item.EndTime);
+
+            return new List<DateTime?>(result.Values);
         }
 
         private PixelProjectFile CreateVideoProjectFile(
@@ -1163,17 +1420,17 @@ namespace PixelTuner.ViewModel
                 || !line.IsSelectedToUpload)
                 return project;
     
-            var file = new PixelTimelineFile() { TimeLineHeight = (byte)videoLine.MetaData.OrderedLeds.Count};
+            var file = new PixelTimelineFile() { TimeLineHeight = (ushort)videoLine.MetaData.OrderedLeds.Count};
                 
             List<ITimeLineDataItem> timelineItems = FillGabs(line.Items, line.Start.Value, CreateBlankVideoItem, videoLine.LineHeight);
-            foreach (TimeLineItemViewModel item in timelineItems)
+            foreach (VideoThumbnailViewModel item in timelineItems)
             {
                 string path = item.FullName.ToLower();
                 var duration = (item.EndTime.Value - item.StartTime.Value).TotalMilliseconds;       // duration = end time - start time
                 double startMilliseconds = (item.StartTime.Value - line.Start.Value).TotalMilliseconds;    // start ms = start time - timeline start time
                 UInt16 mask = item.LaserOn ? (ushort)1 : (ushort)0;
                 var imageFile = new VideoImageFile(path, 40, (UInt32)duration, (UInt32)startMilliseconds, mask);
-                var image = new ImagesCollectionVideoItem(path, videoLine.MetaData.OrderedLeds, depth);
+                var image = new ImagesCollectionVideoItem(path, videoLine.MetaData.OrderedLeds, depth, item.XOffset, item.YOffset);
                 imageFile.Brightness = image.Brightness = item.Brightness;
                 imagesCollection.Add(image);
 

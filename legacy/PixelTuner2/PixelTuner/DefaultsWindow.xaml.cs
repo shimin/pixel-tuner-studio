@@ -205,7 +205,8 @@ namespace PixelTuner
                 $"{boxIP.FirstBox.Text}.{boxIP.SecondBox.Text}.{boxIP.ThirdBox.Text}.{boxIP.FourthBox.Text}";
             Settings.Default.MulticastIP =
                 $"{boxMulticastIP.FirstBox.Text}.{boxMulticastIP.SecondBox.Text}.{boxMulticastIP.ThirdBox.Text}.{boxMulticastIP.FourthBox.Text}";
-            Settings.Default.LedsType = ++boxLedsType.SelectedIndex;
+            Settings.Default.WifiPort = (ushort)boxPort.Value;
+            Settings.Default.LedsType = boxLedsType.SelectedIndex + 1;
             Settings.Default.StripLedsCount1 = (ushort)boxLedsCount1.Value;
             Settings.Default.StripLedsCount2 = (ushort)boxLedsCount2.Value;
             Settings.Default.Save();
@@ -275,6 +276,7 @@ namespace PixelTuner
             settings.Add(new DeviceFeature(10, BitConverter.GetBytes((ushort)(boxLedsType.SelectedIndex + 1))));
 
             DeviceHelper.WriteSettings<VideoDevice>(settings);
+            DeviceHelper.WriteSettings<PixelHoop>(settings);
         }
     }
 }

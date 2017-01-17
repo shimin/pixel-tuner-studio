@@ -240,49 +240,85 @@
     </Style>
 
     <ControlTemplate x:Key="TimeLineTools">
-        <Grid x:Name="boxTimelineTools" Background="#4a4a4a" ToolTipService.IsEnabled="{Binding IsMetaDataSet}">
+        <StackPanel Orientation="Horizontal">
+        <Grid x:Name="boxTimelineTools" ToolTipService.IsEnabled="{Binding IsMetaDataSet}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="26" />
+            </Grid.ColumnDefinitions>
             <Grid.Resources>
                 <ccv:ControlVisibilityConverter x:Key="ControlVisibilityConverter"/>
             </Grid.Resources>
-            <Border Background="#4a4a4a">
-                <Border.ToolTip>
-                    <ToolTip Style="{StaticResource TimelineToolTip}" DataContext="{Binding Path=PlacementTarget, RelativeSource={x:Static RelativeSource.Self}}"/>
-                </Border.ToolTip>
-            </Border>
-            <StackPanel>
-                <Button Height="14" Margin="4,3,2,0" Style="{StaticResource ButtonUpStyle}" Command="{Binding MoveUp}"></Button>
-                <Button Height="14" Margin="4,0,2,1" Style="{StaticResource ButtonDownStyle}" Command="{Binding MoveDown}"></Button>
-                <Button Height="16" Margin="4,1,2,1" Style="{StaticResource ButtonDeleteLineStyle}" Command="{Binding DeleteLine}"></Button>
-                <Button Height="16" Margin="4,1,2,1" Style="{StaticResource ButtonCloneStyle}" Command="{Binding CloneLine}"></Button>
-                <Rectangle Width="14" Height="14" Margin="4,1,2,1" Style="{StaticResource MonochromeSwitcherStyle}" Visibility="{Binding IsMonochrome, Converter={StaticResource ControlVisibilityConverter}, FallbackValue=Collapsed}">
-                    <acb:CommandBehaviorCollection.Behaviors>
-                        <acb:BehaviorBinding Event="MouseDown" Command="{Binding SwitchMonochromeMode}" />
-                    </acb:CommandBehaviorCollection.Behaviors>
-                </Rectangle>
-            </StackPanel>
-            <TextBlock Text="{Binding LineHeight}" Grid.Row="1" TextAlignment="Center" Visibility="{Binding LineHeight, Converter={StaticResource ControlVisibilityConverter}, FallbackValue=Collapsed}" Foreground="#8f8f8f" />
-            <Grid.ToolTip>
-                <ToolTip Padding="0" Margin="0" DataContext="{Binding Path=PlacementTarget, RelativeSource={x:Static RelativeSource.Self}}">
-                    <Canvas Margin="0" Width="120" Height="120" Background="{Binding Background}" ClipToBounds="True">
-                        <Path Stroke="Black" 
-                              Margin="5" 
-                              StrokeThickness="1" 
-                              Fill="{Binding DataContext.MetaData.Fill}" 
-                              RenderTransform="{Binding DataContext.PreviewTransform}"
-                              Data="{Binding DataContext.MetaData.Geometry}"/>
-                        <Rectangle Stroke="{Binding Background}"
-                                   StrokeThickness="5"
-                                   Width="122" 
-                                   Height="122"
-                                   Margin="-1"/>
-                    </Canvas>
-                </ToolTip>
-            </Grid.ToolTip>
-        </Grid>
+            <Border Background="#4a4a4a" Width="26" Height="100" Grid.Column="0" Grid.RowSpan="2"></Border>
+
+                <StackPanel IsHitTestVisible="True">
+                    <Button Height="14" Margin="4,3,2,0" Style="{StaticResource ButtonUpStyle}" Command="{Binding MoveUp}"></Button>
+                    <Button Height="14" Margin="4,0,2,1" Style="{StaticResource ButtonDownStyle}" Command="{Binding MoveDown}"></Button>
+                    <Button Height="16" Margin="4,1,2,1" Style="{StaticResource ButtonDeleteLineStyle}" Command="{Binding DeleteLine}"></Button>
+                    <Button Height="16" Margin="4,1,2,1" Style="{StaticResource ButtonCloneStyle}" Command="{Binding CloneLine}"></Button>
+                    <Rectangle Width="14" Height="14" Margin="4,1,2,1" Style="{StaticResource MonochromeSwitcherStyle}" Visibility="{Binding IsMonochrome, Converter={StaticResource ControlVisibilityConverter}, FallbackValue=Collapsed}">
+                        <acb:CommandBehaviorCollection.Behaviors>
+                            <acb:BehaviorBinding Event="MouseDown" Command="{Binding SwitchMonochromeMode}" />
+                        </acb:CommandBehaviorCollection.Behaviors>
+                    </Rectangle>
+                </StackPanel>
+
+                <TextBlock Name="boxLineHeight"  Text="{Binding LineHeight}" Grid.Row="1" TextAlignment="Center"
+                       Visibility="{Binding LineHeight, Converter={StaticResource ControlVisibilityConverter}, FallbackValue=Collapsed}" Foreground="#8f8f8f" />
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="120"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <!--<Button Grid.Column="1" Width="120" Height="20" VerticalAlignment="Top">"sdhjfkdhsjkfh"</Button>-->
+                <Polygon IsHitTestVisible="True"
+                Focusable="False"
+                Grid.Column="0"
+                Points="0,0,120,0,100,14,0,14,0,0">
+                    <Polygon.Fill>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#ff4a4a4a" Offset="0" />
+                            <GradientStop Color="#ff6a6a6a" Offset="1" />
+                        </LinearGradientBrush>
+                    </Polygon.Fill>
+                    <Polygon.Stroke>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#ff4a4a4a" Offset="0.4"/>
+                            <GradientStop Color="#ff000000" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Polygon.Stroke>
+                </Polygon>
+                <TextBlock Grid.Column="0" Focusable="False" Text="{Binding LineTag}" 
+                           VerticalAlignment="Top" Foreground="White" FontSize="10" Height="12" Margin="8,-1,8,1" Padding="0">
+                <acb:CommandBehaviorCollection.Behaviors>
+                    <acb:BehaviorBinding Event="MouseLeftButtonDown" Command="{Binding ChangeLineTag}" />
+                </acb:CommandBehaviorCollection.Behaviors>
+                    <TextBlock.ToolTip>
+                        <ToolTip Padding="0" Margin="0" 
+                                 Visibility="{Binding PreviewVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <Canvas Margin="0" Width="120" Height="120" Background="{Binding Background}" ClipToBounds="True">
+                                <Path 
+                                Stroke="Black" 
+                                StrokeThickness="1" 
+                                Width="120"
+                                Height="120"
+                                Stretch="Uniform"
+                                Fill="{Binding Path=MetaData.Fill}"
+                                Data="{Binding Path=MetaData.Geometry}"/>
+                            </Canvas>
+                        </ToolTip>
+                    </TextBlock.ToolTip>
+                </TextBlock>
+                <ct:RenameTextBox Grid.Column="0" VerticalAlignment="Top" 
+                              Text="{Binding LineTag, UpdateSourceTrigger=PropertyChanged}" 
+                              VerticalContentAlignment="Top"
+                              Visibility="{Binding LineTagEditionVisible, Converter={StaticResource BoolToVisibilityConverter}}" 
+                              FontSize="9" Height="14" Margin="0" Padding="0"/>
+            </Grid>
+        </StackPanel>
     </ControlTemplate>
     
     <DataTemplate DataType="{x:Type vm:TimeLineViewModel}">
@@ -315,7 +351,7 @@
                         MetaTemplate="{StaticResource MetaTemplate}"
                         MetaData="{Binding MetaData, Mode=TwoWay}"
                         PreviewChangesCommand="{Binding PreviewChanges}">
-                        <Control Grid.Column="0" Margin="{Binding ToolsetMargin}" Template="{StaticResource TimeLineTools}" Width="26" Height="100"/>
+                        <Control Margin="{Binding ToolsetMargin}" Template="{StaticResource TimeLineTools}" Width="146" Height="100"/>
                     </ct:TimeLineControl>
                 </Grid>
             </Border>

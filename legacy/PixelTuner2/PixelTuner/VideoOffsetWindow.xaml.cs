@@ -121,6 +121,24 @@ namespace PixelTuner
                 RaisePropertyChanged("MediaMargin");
             };
 
+            Closing += (sender, args) =>
+            {
+                if (Thumbnail == null || boxForAll.IsChecked == null || boxForAll.IsChecked.Value == false) return;
+                var parent = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, Thumbnail);
+                bool skipItems = true;
+                for (int i = 0; i < parent.Items.Count; i++)
+                {
+                    if (parent.Items[i] == Thumbnail) skipItems = false;
+                    if (!skipItems)
+                    {
+                        var videoItem = (parent.Items[i] as VideoThumbnailViewModel);
+                        if (videoItem == null) continue;
+                        videoItem.XOffset = Thumbnail.XOffset;
+                        videoItem.YOffset = Thumbnail.YOffset;
+                    }
+                }
+            };
+
             DataContext = this;
         }
 

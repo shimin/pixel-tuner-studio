@@ -157,6 +157,58 @@
                             </Grid>
                         </DataTemplate>
 
+                        <DataTemplate DataType="{x:Type vm:PixelHoopViewModel}">
+                            <Grid HorizontalAlignment="Stretch" 
+                                  Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DockPanel}}}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="82"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"></RowDefinition>
+                                    <RowDefinition Height="{Binding ElementName=UploadProgressBar, Path=Height}"></RowDefinition>
+                                    <RowDefinition Height="16"></RowDefinition>
+                                    <RowDefinition Height="16"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <StackPanel x:Name="descriptionsStack" Grid.Row="0" Grid.Column="0" Orientation="Vertical">
+                                    <TextBlock Text="{StaticResource Dev_Props_Name}" Margin="0,2,0,0" />
+                                    <TextBlock Text="{StaticResource Dev_Props_Power}" />
+                                    <TextBlock Text="{StaticResource Dev_Props_Length}" />
+                                    <TextBlock Text="{StaticResource Dev_Props_Status}" />
+                                </StackPanel>
+                                <StackPanel x:Name="valuesStack" Grid.Row="0" Grid.Column="1" Orientation="Vertical">
+                                    <TextBlock Text="{Binding FullName}" Margin="0,3,0,0"/>
+                                    <ProgressBar Value="{Binding EnergyLevel, Mode=OneWay}" Margin="0,3,0,0" Style="{StaticResource ProgressBarStyle}"/>
+                                    <TextBlock Text="{Binding LedsTotal}" Margin="0,0,0,0"/>
+                                    <TextBlock Text="{Binding Status}" Margin="0,0,0,0"/>
+                                </StackPanel>
+                                <ProgressBar 
+                                                    x:Name="UploadProgressBar"
+                                                    Value="{Binding Progress}" 
+                                                    Minimum="{Binding ProgressMin}" 
+                                                    Maximum="{Binding ProgressMax}" 
+                                                    Style="{StaticResource OperationProgressBarStyle}"
+                                                    Grid.ColumnSpan="2"
+                                                    Grid.Row="1"
+                                                    Margin="0,2,0,0" />
+                                <TextBlock Text="{StaticResource Dev_Props_UpdateNeeded}" 
+                                                           Foreground="#d0d010" 
+                                                           Margin="0,2,0,0" 
+                                                           Visibility="{Binding UpdateNeeded, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Hidden}}"
+                                                           Grid.Row="2" Grid.ColumnSpan="2"/>
+                                <Button Style="{StaticResource WhiteLinkButton}" 
+                                                        Content="{StaticResource Dev_Props_Update}" 
+                                                        Command="{Binding AutoUpdateCommand}" 
+                                                        Visibility="{Binding UpdateNeeded, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Hidden}}"
+                                                        Grid.Row="3" Margin="8,0,0,0" />
+                                <Button Style="{StaticResource WhiteLinkButton}" 
+                                                        Content="{StaticResource Dev_Props_Postpone}" 
+                                                        Command="{Binding UpdatePostponeCommand}" 
+                                                        Visibility="{Binding UpdateNeeded, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Hidden}}"
+                                                        Grid.Row="3" Grid.Column="1" />
+                            </Grid>
+                        </DataTemplate>
+                        
                         <DataTemplate DataType="{x:Type vm:EpicPoiDeviceViewModel}">
                             <Grid HorizontalAlignment="Stretch" 
                                   Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DockPanel}}}">

@@ -2,13 +2,22 @@
 using Common.ViewModel;
 using System.Xml.Serialization;
 using System.Windows.Input;
-using System.Windows;
 using System.Windows.Controls;
 using System.Collections.ObjectModel;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
+using System.Timers;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using Common.Imaging;
 using Microsoft.Expression.Interactivity.Core;
+using Application = System.Windows.Application;
+using Brush = System.Windows.Media.Brush;
+using Color = System.Windows.Media.Color;
 
 namespace PixelTuner.ViewModel
 {
@@ -138,6 +147,7 @@ namespace PixelTuner.ViewModel
             CopyMarkupCommand = new ActionCommand(OnCopyMarkupCommand);
             PasteMarkupCommand = new RelayCommand(OnPasteMarkupCommand, CanPasteMarkup);
             LedTiles.CollectionChanged += LedTiles_CollectionChanged;
+            Application.Current.Exit += (sender, args) => { _frameTimer?.Stop(); };
         }
 
         private void LedTiles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -251,7 +261,7 @@ namespace PixelTuner.ViewModel
         public Brush Fill
         {
             get { return _fill; }
-            set { _fill = value; RaisePropertyChanged("Fill"); }
+            private set { _fill = value; RaisePropertyChanged("Fill"); }
         }
 
         Transform _transform = new MatrixTransform();
@@ -266,6 +276,28 @@ namespace PixelTuner.ViewModel
             set { _transform = value; RaisePropertyChanged("Transform"); RaisePropertyChanged("PreviewTransform"); }
         }
 
+        private int _xPlaybackOffset;
+        [XmlIgnore]
+        public int XPlaybackOffset
+        {
+            get { return _xPlaybackOffset; }
+            set { _xPlaybackOffset = value; RaisePropertyChanged("XPlaybackOffset"); }
+        }
+
+        private int _yPlaybackOffset;
+        [XmlIgnore]
+        public int YPlaybackOffset
+        {
+            get { return _yPlaybackOffset; }
+            set { _yPlaybackOffset = value; RaisePropertyChanged("YPlaybackOffset"); }
+        }
+        
+        [XmlIgnore]
+        public double ActualWidth { get; set; }
+
+        [XmlIgnore]
+        public double ActualHeight { get; set; }
+        
         [XmlIgnore]
         public Transform PreviewTransform
         {
@@ -293,6 +325,9 @@ namespace PixelTuner.ViewModel
             }
             set { }
         }
+
+        [XmlIgnore]
+        public Size RenderSize { get; set; }
 
         #endregion
         
@@ -374,6 +409,85 @@ namespace PixelTuner.ViewModel
             }
             if (sorted.Count != 0) idx = sorted.Last().Key;
             return ++idx;
+        }
+
+        public void SetFill(Brush fill)
+        {
+            Fill = fill;
+        }
+
+        private Uri _currentUri = null;
+        private int _currentFrameIdx = 0;
+        private List<BitmapFrame> _frames = null;
+        private System.Timers.Timer _frameTimer;
+        private int _xOffset, _yOffset;
+
+        public void SetFill(ImageSource image, int xOffset, int yOffset)
+        {
+            if (image == null)
+            {
+                if (_frameTimer != null)
+                {
+                    _frameTimer.Stop();
+                    _frameTimer = null;
+                }
+            }
+            _xOffset = xOffset;
+            _yOffset = yOffset;
+
+            var bImage = image as BitmapImage;
+            if (bImage == null)
+            {
+                if (_frameTimer != null)
+                {
+                    _frameTimer.Stop();
+                    _frameTimer = null;
+                }
+                return;
+            }
+            if (bImage.UriSource == _currentUri) return;
+
+            _currentUri = bImage.UriSource;
+            _currentFrameIdx = 0;
+            if (_frameTimer != null)
+            {
+                _frameTimer.Stop();
+                _frameTimer = null;
+            }
+
+            BitmapDecoder bd = new GifBitmapDecoder(_currentUri, BitmapCreateOptions.None, BitmapCacheOption.Default);
+            _frames = new List<BitmapFrame>(bd.Frames);
+            _frameTimer = new Timer(120);
+            _frameTimer.Elapsed += FrameUpdater;
+            _frameTimer.Start();
+        }
+
+        private void FrameUpdater(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            try
+            {
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
+                    var image = _frames[_currentFrameIdx];
+                    var xScale = image.Width / ColumnsCount;
+                    var yScale = image.Height / RowsCount;
+
+                    Fill = new ImageBrush(image)
+                    {
+                        AlignmentX = AlignmentX.Left,
+                        AlignmentY = AlignmentY.Top,
+                        RelativeTransform = new ScaleTransform(xScale, yScale),
+                        Transform = new TranslateTransform(-_xOffset * (ActualWidth / ColumnsCount), -_yOffset * (ActualHeight / RowsCount))
+                    };
+
+                    _currentFrameIdx = (_currentFrameIdx + 3) % _frames.Count;
+                }));
+            }
+            catch (Exception ex)
+            {
+                
+            }
+            
         }
 
         public override object Clone()

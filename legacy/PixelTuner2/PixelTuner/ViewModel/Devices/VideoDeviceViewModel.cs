@@ -93,10 +93,10 @@ namespace PixelTuner.ViewModel
                 TimelinesToUpload dialog = new TimelinesToUpload(TimelineFilter, model);
                 dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 dialog.Owner = Application.Current.MainWindow;
-                if (dialog.ShowDialog() == true)
+                if (dialog.ShowDialog() == true && dialog.SelectedTimeLines.Count() > 0)
                 {
-                    var line = dialog.SelectedTimeLines.First();
-                    List<byte> data = model.GetVideoBinaryPresentation(line);
+                    //var line = dialog.SelectedTimeLines.First();
+                    List<byte> data = model.GetVideoBinaryPresentation(dialog.SelectedTimeLines);
                     if (ValidateProject(model, data.Count / 1024))
                     {
                         InitializeProgressBar(data);

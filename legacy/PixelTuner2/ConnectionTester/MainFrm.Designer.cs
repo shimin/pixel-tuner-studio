@@ -31,23 +31,6 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.boxStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.boxTab = new System.Windows.Forms.TabControl();
-            this.boxTabPage0 = new System.Windows.Forms.TabPage();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.boxUploadFileHID = new System.Windows.Forms.LinkLabel();
-            this.boxChooseFileToUploadHID = new System.Windows.Forms.LinkLabel();
-            this.boxGetDeviceListHID = new System.Windows.Forms.LinkLabel();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.boxFilterNull = new System.Windows.Forms.CheckBox();
-            this.boxLogToFileHID = new System.Windows.Forms.CheckBox();
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-            this.boxLogHID = new System.Windows.Forms.RichTextBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label11 = new System.Windows.Forms.Label();
-            this.boxDisconnectHID = new System.Windows.Forms.LinkLabel();
-            this.boxVendorID = new System.Windows.Forms.TextBox();
-            this.boxConnectHID = new System.Windows.Forms.LinkLabel();
-            this.boxProductID = new System.Windows.Forms.TextBox();
-            this.label12 = new System.Windows.Forms.Label();
             this.boxTabPage1 = new System.Windows.Forms.TabPage();
             this.boxSaveBIN = new System.Windows.Forms.LinkLabel();
             this.boxLogToFile = new System.Windows.Forms.CheckBox();
@@ -72,6 +55,23 @@
             this.boxConnect = new System.Windows.Forms.LinkLabel();
             this.label1 = new System.Windows.Forms.Label();
             this.boxPortNum = new System.Windows.Forms.NumericUpDown();
+            this.boxTabPage0 = new System.Windows.Forms.TabPage();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.boxUploadFileHID = new System.Windows.Forms.LinkLabel();
+            this.boxChooseFileToUploadHID = new System.Windows.Forms.LinkLabel();
+            this.boxGetDeviceListHID = new System.Windows.Forms.LinkLabel();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.boxFilterNull = new System.Windows.Forms.CheckBox();
+            this.boxLogToFileHID = new System.Windows.Forms.CheckBox();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.boxLogHID = new System.Windows.Forms.RichTextBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.boxDisconnectHID = new System.Windows.Forms.LinkLabel();
+            this.boxVendorID = new System.Windows.Forms.TextBox();
+            this.boxConnectHID = new System.Windows.Forms.LinkLabel();
+            this.boxProductID = new System.Windows.Forms.TextBox();
+            this.label12 = new System.Windows.Forms.Label();
             this.boxTabPage2 = new System.Windows.Forms.TabPage();
             this.boxSetPixel = new System.Windows.Forms.Button();
             this.boxPixelNumber = new System.Windows.Forms.NumericUpDown();
@@ -97,16 +97,23 @@
             this.boxSampleR = new System.Windows.Forms.TrackBar();
             this.boxActualColor = new System.Windows.Forms.Panel();
             this.boxSampleColor = new System.Windows.Forms.Panel();
-            this.statusStrip1.SuspendLayout();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.boxIPNet = new System.Windows.Forms.TextBox();
+            this.boxPortNet = new System.Windows.Forms.NumericUpDown();
+            this.boxConnectNet = new System.Windows.Forms.Button();
+            this.boxDisconnectNet = new System.Windows.Forms.Button();
+            this.boxPlayNet = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
             this.boxTab.SuspendLayout();
-            this.boxTabPage0.SuspendLayout();
-            this.groupBox3.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox1.SuspendLayout();
             this.boxTabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.boxDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxRepeatCount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxPortNum)).BeginInit();
+            this.boxTabPage0.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.boxTabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.boxPixelNumber)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxActualBnum)).BeginInit();
@@ -121,6 +128,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.boxSampleB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxSampleG)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxSampleR)).BeginInit();
+            this.tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.boxPortNet)).BeginInit();
             this.SuspendLayout();
             // 
             // statusStrip1
@@ -141,199 +150,13 @@
             this.boxTab.Controls.Add(this.boxTabPage1);
             this.boxTab.Controls.Add(this.boxTabPage0);
             this.boxTab.Controls.Add(this.boxTabPage2);
+            this.boxTab.Controls.Add(this.tabPage1);
             this.boxTab.Dock = System.Windows.Forms.DockStyle.Fill;
             this.boxTab.Location = new System.Drawing.Point(0, 0);
             this.boxTab.Name = "boxTab";
             this.boxTab.SelectedIndex = 0;
             this.boxTab.Size = new System.Drawing.Size(621, 394);
             this.boxTab.TabIndex = 7;
-            // 
-            // boxTabPage0
-            // 
-            this.boxTabPage0.Controls.Add(this.groupBox3);
-            this.boxTabPage0.Controls.Add(this.groupBox2);
-            this.boxTabPage0.Controls.Add(this.boxLogHID);
-            this.boxTabPage0.Controls.Add(this.groupBox1);
-            this.boxTabPage0.Location = new System.Drawing.Point(4, 22);
-            this.boxTabPage0.Name = "boxTabPage0";
-            this.boxTabPage0.Size = new System.Drawing.Size(613, 368);
-            this.boxTabPage0.TabIndex = 2;
-            this.boxTabPage0.Text = "Тест связи HID";
-            this.boxTabPage0.UseVisualStyleBackColor = true;
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox3.Controls.Add(this.boxUploadFileHID);
-            this.groupBox3.Controls.Add(this.boxChooseFileToUploadHID);
-            this.groupBox3.Controls.Add(this.boxGetDeviceListHID);
-            this.groupBox3.Location = new System.Drawing.Point(210, 3);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(164, 108);
-            this.groupBox3.TabIndex = 41;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Команды";
-            // 
-            // boxUploadFileHID
-            // 
-            this.boxUploadFileHID.AutoSize = true;
-            this.boxUploadFileHID.Location = new System.Drawing.Point(6, 73);
-            this.boxUploadFileHID.Name = "boxUploadFileHID";
-            this.boxUploadFileHID.Size = new System.Drawing.Size(59, 13);
-            this.boxUploadFileHID.TabIndex = 6;
-            this.boxUploadFileHID.TabStop = true;
-            this.boxUploadFileHID.Text = "Загрузить";
-            this.boxUploadFileHID.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.boxUploadFileHID_LinkClicked);
-            // 
-            // boxChooseFileToUploadHID
-            // 
-            this.boxChooseFileToUploadHID.AutoSize = true;
-            this.boxChooseFileToUploadHID.Location = new System.Drawing.Point(6, 49);
-            this.boxChooseFileToUploadHID.Name = "boxChooseFileToUploadHID";
-            this.boxChooseFileToUploadHID.Size = new System.Drawing.Size(89, 13);
-            this.boxChooseFileToUploadHID.TabIndex = 5;
-            this.boxChooseFileToUploadHID.TabStop = true;
-            this.boxChooseFileToUploadHID.Text = "Выбрать файл...";
-            this.boxChooseFileToUploadHID.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.boxChooseFileToUploadHID_LinkClicked);
-            // 
-            // boxGetDeviceListHID
-            // 
-            this.boxGetDeviceListHID.AutoSize = true;
-            this.boxGetDeviceListHID.Location = new System.Drawing.Point(6, 23);
-            this.boxGetDeviceListHID.Name = "boxGetDeviceListHID";
-            this.boxGetDeviceListHID.Size = new System.Drawing.Size(147, 13);
-            this.boxGetDeviceListHID.TabIndex = 4;
-            this.boxGetDeviceListHID.TabStop = true;
-            this.boxGetDeviceListHID.Text = "Получить список устройств";
-            this.boxGetDeviceListHID.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.boxGetDeviceListHID_LinkClicked);
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.boxFilterNull);
-            this.groupBox2.Controls.Add(this.boxLogToFileHID);
-            this.groupBox2.Controls.Add(this.linkLabel1);
-            this.groupBox2.Location = new System.Drawing.Point(380, 3);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(230, 108);
-            this.groupBox2.TabIndex = 40;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Лог";
-            // 
-            // boxFilterNull
-            // 
-            this.boxFilterNull.AutoSize = true;
-            this.boxFilterNull.Location = new System.Drawing.Point(9, 68);
-            this.boxFilterNull.Name = "boxFilterNull";
-            this.boxFilterNull.Size = new System.Drawing.Size(100, 17);
-            this.boxFilterNull.TabIndex = 40;
-            this.boxFilterNull.Text = "фильтруй нули";
-            this.boxFilterNull.UseVisualStyleBackColor = true;
-            // 
-            // boxLogToFileHID
-            // 
-            this.boxLogToFileHID.AutoSize = true;
-            this.boxLogToFileHID.Location = new System.Drawing.Point(9, 45);
-            this.boxLogToFileHID.Name = "boxLogToFileHID";
-            this.boxLogToFileHID.Size = new System.Drawing.Size(81, 17);
-            this.boxLogToFileHID.TabIndex = 39;
-            this.boxLogToFileHID.Text = "лог в файл";
-            this.boxLogToFileHID.UseVisualStyleBackColor = true;
-            this.boxLogToFileHID.CheckedChanged += new System.EventHandler(this.boxLogToFileHID_CheckedChanged);
-            // 
-            // linkLabel1
-            // 
-            this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(6, 20);
-            this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(54, 13);
-            this.linkLabel1.TabIndex = 38;
-            this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "Очистить";
-            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
-            // 
-            // boxLogHID
-            // 
-            this.boxLogHID.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.boxLogHID.Location = new System.Drawing.Point(0, 117);
-            this.boxLogHID.Name = "boxLogHID";
-            this.boxLogHID.ReadOnly = true;
-            this.boxLogHID.Size = new System.Drawing.Size(607, 251);
-            this.boxLogHID.TabIndex = 37;
-            this.boxLogHID.Text = "";
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.label11);
-            this.groupBox1.Controls.Add(this.boxDisconnectHID);
-            this.groupBox1.Controls.Add(this.boxVendorID);
-            this.groupBox1.Controls.Add(this.boxConnectHID);
-            this.groupBox1.Controls.Add(this.boxProductID);
-            this.groupBox1.Controls.Add(this.label12);
-            this.groupBox1.Location = new System.Drawing.Point(8, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(196, 108);
-            this.groupBox1.TabIndex = 6;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Подключение";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(9, 26);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(52, 13);
-            this.label11.TabIndex = 2;
-            this.label11.Text = "VendorID";
-            // 
-            // boxDisconnectHID
-            // 
-            this.boxDisconnectHID.AutoSize = true;
-            this.boxDisconnectHID.Location = new System.Drawing.Point(122, 84);
-            this.boxDisconnectHID.Name = "boxDisconnectHID";
-            this.boxDisconnectHID.Size = new System.Drawing.Size(62, 13);
-            this.boxDisconnectHID.TabIndex = 5;
-            this.boxDisconnectHID.TabStop = true;
-            this.boxDisconnectHID.Text = "Отключить";
-            this.boxDisconnectHID.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.boxDisconnectHID_LinkClicked);
-            // 
-            // boxVendorID
-            // 
-            this.boxVendorID.Location = new System.Drawing.Point(81, 23);
-            this.boxVendorID.Name = "boxVendorID";
-            this.boxVendorID.Size = new System.Drawing.Size(100, 20);
-            this.boxVendorID.TabIndex = 0;
-            // 
-            // boxConnectHID
-            // 
-            this.boxConnectHID.AutoSize = true;
-            this.boxConnectHID.Location = new System.Drawing.Point(47, 84);
-            this.boxConnectHID.Name = "boxConnectHID";
-            this.boxConnectHID.Size = new System.Drawing.Size(69, 13);
-            this.boxConnectHID.TabIndex = 4;
-            this.boxConnectHID.TabStop = true;
-            this.boxConnectHID.Text = "Подключить";
-            this.boxConnectHID.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.boxConnectHID_LinkClicked);
-            // 
-            // boxProductID
-            // 
-            this.boxProductID.Location = new System.Drawing.Point(81, 49);
-            this.boxProductID.Name = "boxProductID";
-            this.boxProductID.Size = new System.Drawing.Size(100, 20);
-            this.boxProductID.TabIndex = 1;
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(9, 52);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(55, 13);
-            this.label12.TabIndex = 3;
-            this.label12.Text = "ProductID";
             // 
             // boxTabPage1
             // 
@@ -640,6 +463,193 @@
             0,
             0});
             // 
+            // boxTabPage0
+            // 
+            this.boxTabPage0.Controls.Add(this.groupBox3);
+            this.boxTabPage0.Controls.Add(this.groupBox2);
+            this.boxTabPage0.Controls.Add(this.boxLogHID);
+            this.boxTabPage0.Controls.Add(this.groupBox1);
+            this.boxTabPage0.Location = new System.Drawing.Point(4, 22);
+            this.boxTabPage0.Name = "boxTabPage0";
+            this.boxTabPage0.Size = new System.Drawing.Size(613, 368);
+            this.boxTabPage0.TabIndex = 2;
+            this.boxTabPage0.Text = "Тест связи HID";
+            this.boxTabPage0.UseVisualStyleBackColor = true;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.boxUploadFileHID);
+            this.groupBox3.Controls.Add(this.boxChooseFileToUploadHID);
+            this.groupBox3.Controls.Add(this.boxGetDeviceListHID);
+            this.groupBox3.Location = new System.Drawing.Point(210, 3);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(164, 108);
+            this.groupBox3.TabIndex = 41;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Команды";
+            // 
+            // boxUploadFileHID
+            // 
+            this.boxUploadFileHID.AutoSize = true;
+            this.boxUploadFileHID.Location = new System.Drawing.Point(6, 73);
+            this.boxUploadFileHID.Name = "boxUploadFileHID";
+            this.boxUploadFileHID.Size = new System.Drawing.Size(59, 13);
+            this.boxUploadFileHID.TabIndex = 6;
+            this.boxUploadFileHID.TabStop = true;
+            this.boxUploadFileHID.Text = "Загрузить";
+            this.boxUploadFileHID.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.boxUploadFileHID_LinkClicked);
+            // 
+            // boxChooseFileToUploadHID
+            // 
+            this.boxChooseFileToUploadHID.AutoSize = true;
+            this.boxChooseFileToUploadHID.Location = new System.Drawing.Point(6, 49);
+            this.boxChooseFileToUploadHID.Name = "boxChooseFileToUploadHID";
+            this.boxChooseFileToUploadHID.Size = new System.Drawing.Size(89, 13);
+            this.boxChooseFileToUploadHID.TabIndex = 5;
+            this.boxChooseFileToUploadHID.TabStop = true;
+            this.boxChooseFileToUploadHID.Text = "Выбрать файл...";
+            this.boxChooseFileToUploadHID.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.boxChooseFileToUploadHID_LinkClicked);
+            // 
+            // boxGetDeviceListHID
+            // 
+            this.boxGetDeviceListHID.AutoSize = true;
+            this.boxGetDeviceListHID.Location = new System.Drawing.Point(6, 23);
+            this.boxGetDeviceListHID.Name = "boxGetDeviceListHID";
+            this.boxGetDeviceListHID.Size = new System.Drawing.Size(147, 13);
+            this.boxGetDeviceListHID.TabIndex = 4;
+            this.boxGetDeviceListHID.TabStop = true;
+            this.boxGetDeviceListHID.Text = "Получить список устройств";
+            this.boxGetDeviceListHID.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.boxGetDeviceListHID_LinkClicked);
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.boxFilterNull);
+            this.groupBox2.Controls.Add(this.boxLogToFileHID);
+            this.groupBox2.Controls.Add(this.linkLabel1);
+            this.groupBox2.Location = new System.Drawing.Point(380, 3);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(230, 108);
+            this.groupBox2.TabIndex = 40;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Лог";
+            // 
+            // boxFilterNull
+            // 
+            this.boxFilterNull.AutoSize = true;
+            this.boxFilterNull.Location = new System.Drawing.Point(9, 68);
+            this.boxFilterNull.Name = "boxFilterNull";
+            this.boxFilterNull.Size = new System.Drawing.Size(100, 17);
+            this.boxFilterNull.TabIndex = 40;
+            this.boxFilterNull.Text = "фильтруй нули";
+            this.boxFilterNull.UseVisualStyleBackColor = true;
+            // 
+            // boxLogToFileHID
+            // 
+            this.boxLogToFileHID.AutoSize = true;
+            this.boxLogToFileHID.Location = new System.Drawing.Point(9, 45);
+            this.boxLogToFileHID.Name = "boxLogToFileHID";
+            this.boxLogToFileHID.Size = new System.Drawing.Size(81, 17);
+            this.boxLogToFileHID.TabIndex = 39;
+            this.boxLogToFileHID.Text = "лог в файл";
+            this.boxLogToFileHID.UseVisualStyleBackColor = true;
+            this.boxLogToFileHID.CheckedChanged += new System.EventHandler(this.boxLogToFileHID_CheckedChanged);
+            // 
+            // linkLabel1
+            // 
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.Location = new System.Drawing.Point(6, 20);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(54, 13);
+            this.linkLabel1.TabIndex = 38;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "Очистить";
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+            // 
+            // boxLogHID
+            // 
+            this.boxLogHID.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.boxLogHID.Location = new System.Drawing.Point(0, 117);
+            this.boxLogHID.Name = "boxLogHID";
+            this.boxLogHID.ReadOnly = true;
+            this.boxLogHID.Size = new System.Drawing.Size(607, 251);
+            this.boxLogHID.TabIndex = 37;
+            this.boxLogHID.Text = "";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.label11);
+            this.groupBox1.Controls.Add(this.boxDisconnectHID);
+            this.groupBox1.Controls.Add(this.boxVendorID);
+            this.groupBox1.Controls.Add(this.boxConnectHID);
+            this.groupBox1.Controls.Add(this.boxProductID);
+            this.groupBox1.Controls.Add(this.label12);
+            this.groupBox1.Location = new System.Drawing.Point(8, 3);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(196, 108);
+            this.groupBox1.TabIndex = 6;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Подключение";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(9, 26);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(52, 13);
+            this.label11.TabIndex = 2;
+            this.label11.Text = "VendorID";
+            // 
+            // boxDisconnectHID
+            // 
+            this.boxDisconnectHID.AutoSize = true;
+            this.boxDisconnectHID.Location = new System.Drawing.Point(122, 84);
+            this.boxDisconnectHID.Name = "boxDisconnectHID";
+            this.boxDisconnectHID.Size = new System.Drawing.Size(62, 13);
+            this.boxDisconnectHID.TabIndex = 5;
+            this.boxDisconnectHID.TabStop = true;
+            this.boxDisconnectHID.Text = "Отключить";
+            this.boxDisconnectHID.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.boxDisconnectHID_LinkClicked);
+            // 
+            // boxVendorID
+            // 
+            this.boxVendorID.Location = new System.Drawing.Point(81, 23);
+            this.boxVendorID.Name = "boxVendorID";
+            this.boxVendorID.Size = new System.Drawing.Size(100, 20);
+            this.boxVendorID.TabIndex = 0;
+            // 
+            // boxConnectHID
+            // 
+            this.boxConnectHID.AutoSize = true;
+            this.boxConnectHID.Location = new System.Drawing.Point(47, 84);
+            this.boxConnectHID.Name = "boxConnectHID";
+            this.boxConnectHID.Size = new System.Drawing.Size(69, 13);
+            this.boxConnectHID.TabIndex = 4;
+            this.boxConnectHID.TabStop = true;
+            this.boxConnectHID.Text = "Подключить";
+            this.boxConnectHID.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.boxConnectHID_LinkClicked);
+            // 
+            // boxProductID
+            // 
+            this.boxProductID.Location = new System.Drawing.Point(81, 49);
+            this.boxProductID.Name = "boxProductID";
+            this.boxProductID.Size = new System.Drawing.Size(100, 20);
+            this.boxProductID.TabIndex = 1;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(9, 52);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(55, 13);
+            this.label12.TabIndex = 3;
+            this.label12.Text = "ProductID";
+            // 
             // boxTabPage2
             // 
             this.boxTabPage2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
@@ -943,6 +953,99 @@
             this.boxSampleColor.Size = new System.Drawing.Size(147, 45);
             this.boxSampleColor.TabIndex = 0;
             // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.button3);
+            this.tabPage1.Controls.Add(this.button2);
+            this.tabPage1.Controls.Add(this.boxPlayNet);
+            this.tabPage1.Controls.Add(this.boxDisconnectNet);
+            this.tabPage1.Controls.Add(this.boxConnectNet);
+            this.tabPage1.Controls.Add(this.boxPortNet);
+            this.tabPage1.Controls.Add(this.boxIPNet);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(613, 368);
+            this.tabPage1.TabIndex = 3;
+            this.tabPage1.Text = "Network";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // boxIPNet
+            // 
+            this.boxIPNet.Location = new System.Drawing.Point(8, 6);
+            this.boxIPNet.Name = "boxIPNet";
+            this.boxIPNet.Size = new System.Drawing.Size(145, 20);
+            this.boxIPNet.TabIndex = 0;
+            this.boxIPNet.Text = "192.168.1.255";
+            // 
+            // boxPortNet
+            // 
+            this.boxPortNet.Location = new System.Drawing.Point(8, 32);
+            this.boxPortNet.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.boxPortNet.Name = "boxPortNet";
+            this.boxPortNet.Size = new System.Drawing.Size(145, 20);
+            this.boxPortNet.TabIndex = 1;
+            this.boxPortNet.Value = new decimal(new int[] {
+            333,
+            0,
+            0,
+            0});
+            // 
+            // boxConnectNet
+            // 
+            this.boxConnectNet.Location = new System.Drawing.Point(8, 58);
+            this.boxConnectNet.Name = "boxConnectNet";
+            this.boxConnectNet.Size = new System.Drawing.Size(145, 26);
+            this.boxConnectNet.TabIndex = 2;
+            this.boxConnectNet.Text = "Подключиться";
+            this.boxConnectNet.UseVisualStyleBackColor = true;
+            this.boxConnectNet.Click += new System.EventHandler(this.boxConnectNet_Click);
+            // 
+            // boxDisconnectNet
+            // 
+            this.boxDisconnectNet.Enabled = false;
+            this.boxDisconnectNet.Location = new System.Drawing.Point(8, 90);
+            this.boxDisconnectNet.Name = "boxDisconnectNet";
+            this.boxDisconnectNet.Size = new System.Drawing.Size(145, 26);
+            this.boxDisconnectNet.TabIndex = 3;
+            this.boxDisconnectNet.Text = "Отключиться";
+            this.boxDisconnectNet.UseVisualStyleBackColor = true;
+            this.boxDisconnectNet.Click += new System.EventHandler(this.boxDisconnectNet_Click);
+            // 
+            // boxPlayNet
+            // 
+            this.boxPlayNet.Location = new System.Drawing.Point(238, 6);
+            this.boxPlayNet.Name = "boxPlayNet";
+            this.boxPlayNet.Size = new System.Drawing.Size(145, 26);
+            this.boxPlayNet.TabIndex = 4;
+            this.boxPlayNet.Text = "Старт";
+            this.boxPlayNet.UseVisualStyleBackColor = true;
+            this.boxPlayNet.Click += new System.EventHandler(this.boxPlayNet_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(238, 38);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(145, 26);
+            this.button2.TabIndex = 5;
+            this.button2.Text = "Пауза";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(238, 70);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(145, 26);
+            this.button3.TabIndex = 6;
+            this.button3.Text = "Стоп";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
             // MainFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -955,9 +1058,12 @@
             this.Text = "Связь";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFrm_FormClosing);
             this.Load += new System.EventHandler(this.MainFrm_Load);
-            this.statusStrip1.ResumeLayout(false);
-            this.statusStrip1.PerformLayout();
             this.boxTab.ResumeLayout(false);
+            this.boxTabPage1.ResumeLayout(false);
+            this.boxTabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.boxDelay)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.boxRepeatCount)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.boxPortNum)).EndInit();
             this.boxTabPage0.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
@@ -965,11 +1071,6 @@
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.boxTabPage1.ResumeLayout(false);
-            this.boxTabPage1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.boxDelay)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.boxRepeatCount)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.boxPortNum)).EndInit();
             this.boxTabPage2.ResumeLayout(false);
             this.boxTabPage2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.boxPixelNumber)).EndInit();
@@ -985,6 +1086,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.boxSampleB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxSampleG)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxSampleR)).EndInit();
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.boxPortNet)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1061,6 +1165,14 @@
         private System.Windows.Forms.LinkLabel boxUploadFileHID;
         private System.Windows.Forms.CheckBox boxFilterNull;
         private System.Windows.Forms.LinkLabel boxSaveBIN;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.NumericUpDown boxPortNet;
+        private System.Windows.Forms.TextBox boxIPNet;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button boxPlayNet;
+        private System.Windows.Forms.Button boxDisconnectNet;
+        private System.Windows.Forms.Button boxConnectNet;
     }
 }
 

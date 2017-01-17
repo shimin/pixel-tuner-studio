@@ -32,12 +32,14 @@
                         <ItemsControl KeyboardNavigation.IsTabStop="False" VerticalAlignment="Stretch">
                             <Border x:Name="boxTimelineBorder" KeyboardNavigation.IsTabStop="False" Background="{Binding Background}">
                                 <StackPanel KeyboardNavigation.IsTabStop="False" Height="60" Orientation="Horizontal">
-                                    <Canvas KeyboardNavigation.IsTabStop="False" Width="{StaticResource FilePreviewAreaWidth}" Background="{Binding Background}">
+                                    <Canvas KeyboardNavigation.IsTabStop="False" Width="{StaticResource FilePreviewAreaWidth}" 
+                                            Background="{Binding Background}" ClipToBounds="True">
                                         <Path 
                                             Stroke="Black" 
                                             StrokeThickness="1" 
                                             Fill="{Binding Path=MetaData.Fill}"
-                                            RenderTransform="{Binding Path=PreviewTransform}"
+                                            Height="60"
+                                            Stretch="Uniform"
                                             Data="{Binding Path=MetaData.Geometry}"/>
                                     </Canvas>
                                     <CheckBox IsChecked="{Binding IsSelectedToUpload}" Margin="22"/>

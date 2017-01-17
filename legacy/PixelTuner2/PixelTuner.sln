@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "PixelTunerSetup", "PixelTunerSetup\PixelTunerSetup.wixproj", "{67B17699-647C-4B71-AC03-FAB81131A63F}"
 EndProject
@@ -63,7 +63,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpGL.SceneGraph", "Sharp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpGL.WPF", "SharpGL\SharpGL.WPF\SharpGL.WPF.csproj", "{53E67055-13D2-4467-BB57-79589AFAC2CD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A13D3DE4-C441-4295-A317-2E43BA70B984}"
+	ProjectSection(SolutionItems) = preProject
+		Performance1.psess = Performance1.psess
+		Performance2.psess = Performance2.psess
+	EndProjectSection
+EndProject
 Global
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
