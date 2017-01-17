@@ -2997,7 +2997,7 @@ namespace Workspace
             layoutItem._ClearDefaultBindings();
             if (LayoutItemContainerStyle != null)
                 layoutItem.Style = LayoutItemContainerStyle;
-            else if (LayoutItemContainerStyleSelector != null)
+            else if (LayoutItemContainerStyleSelector != null) 
                 layoutItem.Style = LayoutItemContainerStyleSelector.SelectStyle(layoutItem.Model, layoutItem);
             layoutItem._SetDefaultBindings();
         }

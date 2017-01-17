@@ -87,8 +87,8 @@ using System.Windows.Markup;
 
 #pragma warning disable 1699
 [assembly: AssemblyDelaySign( false )]
-[assembly: AssemblyVersion("2.0.6.4")]
-[assembly: AssemblyFileVersion("2.0.6.4")]
+[assembly: AssemblyVersion("2.0.6.6")]
+[assembly: AssemblyFileVersion("2.0.6.6")]
 #pragma warning restore 1699
 
 
