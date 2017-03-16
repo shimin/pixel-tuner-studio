@@ -256,6 +256,7 @@ namespace PixelTuner
             settings.Add(new DeviceFeature(3, BitConverter.GetBytes((ushort)(ExitMenuOnDoubleClick ? 1 : 0))));
 
             DeviceHelper.WriteSettings<PixelDevice>(settings);
+            DeviceHelper.WriteSettings<PixelHoop>(settings);
         }
 
         #endregion
@@ -263,8 +264,10 @@ namespace PixelTuner
         private void boxDoIt_Click(object sender, RoutedEventArgs e)
         {
             List<DeviceFeature> settings = new List<DeviceFeature>();
-            settings.Add(new DeviceFeature(5, Encoding.ASCII.GetBytes(boxSSId.Text + "\n")));
-            settings.Add(new DeviceFeature(6, Encoding.ASCII.GetBytes(boxPass.Text + "\n")));
+            settings.Add(new DeviceFeature(5, Encoding.ASCII.GetBytes(boxSSId.Text + (char)0)));
+            settings.Add(new DeviceFeature(6, Encoding.ASCII.GetBytes(boxPass.Text + (char)0)));
+            //settings.Add(new DeviceFeature(5, Encoding.ASCII.GetBytes(boxSSId.Text + "\n")));
+            //settings.Add(new DeviceFeature(6, Encoding.ASCII.GetBytes(boxPass.Text + "\n")));
             settings.Add(new DeviceFeature(7, boxIP.GetByteArray()));
             settings.Add(new DeviceFeature(8, BitConverter.GetBytes(WifiPort)));
 

@@ -888,6 +888,9 @@ namespace PixelTuner.ViewModel
         #endregion
 
         #region ConnectCommand
+
+        private Timer _stopTimer = null;
+
         private RelayCommand _connectCommand = null;
         public ICommand ConnectCommand
         {
@@ -918,16 +921,29 @@ namespace PixelTuner.ViewModel
                 //{
                 //    DontFragment = true
                 //};
-                WifiDevicesWindow w = new WifiDevicesWindow();
+                var w = new WifiDevicesWindow(RootViewModel.This.UdpСlient);
                 w.Owner = Application.Current.MainWindow;
                 w.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 RootViewModel.This.UdpСlient.Send(new byte[] {0x50, 0x05, 0x04, 0x00, 0x00, 0x00, 0x00, 0x0d}, 8);
                 w.ShowDialog();
+                _stopTimer = new Timer(StopTimerCallback, null, 1000, 1000);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(Application.Current.MainWindow, ex.Message, "Error");
                 RootViewModel.This.UdpСlient = null;
+            }
+        }
+
+        private void StopTimerCallback(object arg)
+        {
+            try
+            {
+                if (RootViewModel.This.UdpСlient != null && !SoundPlayer.IsPlaying)
+                    RootViewModel.This.UdpСlient.Send(new byte[] {0x50, 0x05, 0x04, 0x00, 0x00, 0x00, 0x00, 0x0d}, 8);
+            }
+            catch
+            {
             }
         }
         #endregion
@@ -955,6 +971,9 @@ namespace PixelTuner.ViewModel
 
         private void OnDisconnect(object p)
         {
+            _stopTimer.Change(Timeout.Infinite, Timeout.Infinite);
+            _stopTimer.Dispose();
+            _stopTimer = null;
             RootViewModel.This.UdpСlient.Close();
             RootViewModel.This.UdpСlient = null;
         }
@@ -997,6 +1016,8 @@ namespace PixelTuner.ViewModel
                 var timeBytes = BitConverter.GetBytes((UInt32) player.CurrentTime.TotalMilliseconds);
                 var cmd = new byte[] {0x50, 0x05, 0x02, 0x00, 0x00, 0x00, 0x00, 0x0d};
                 timeBytes.CopyTo(cmd, 3);
+                RootViewModel.This.UdpСlient.Send(cmd, 8);
+                RootViewModel.This.UdpСlient.Send(cmd, 8);
                 RootViewModel.This.UdpСlient.Send(cmd, 8);
             }
 
@@ -1151,6 +1172,10 @@ namespace PixelTuner.ViewModel
 
         private Task _updateTask = null;
 
+        private UInt32 _previousTimepoint = 0;
+
+        private uint _syncInterval = 1000;
+
         private void NAudioEngine_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
@@ -1168,6 +1193,19 @@ namespace PixelTuner.ViewModel
                         if (IsSyncAvailable && IsSyncOn && RootViewModel.This.DevicesModel.Illuminators.Count > 0)
                         {
                             RootViewModel.This.DevicesModel.Illuminators.First().Play(SoundPlayer.CurrentTime, Settings.Default.Discreteness);
+                        }
+                        if (RootViewModel.This.UdpСlient != null)
+                        {
+                            UInt32 timepoint = (UInt32)SoundPlayer.CurrentTime.TotalMilliseconds;
+                            if (timepoint > 10000 && _syncInterval != 10000) _syncInterval = 10000;
+                            if (timepoint - _previousTimepoint > _syncInterval)
+                            {
+                                //Console.WriteLine($"Timepoint: {SoundPlayer.CurrentTime}");
+                                _previousTimepoint = timepoint;
+                                List<byte> cmd = new List<byte>(new byte[] {0x50, 0x05, 0x02, 0x0d});
+                                cmd.InsertRange(3, BitConverter.GetBytes(timepoint));
+                                RootViewModel.This.UdpСlient.Send(cmd.ToArray(), 8);
+                            }
                         }
                         //if (IsWifiSyncOn) RootViewModel.This.WifiPlayer.Play(SoundPlayer.CurrentTime, Settings.Default.Discreteness);
                     }
@@ -1259,7 +1297,7 @@ namespace PixelTuner.ViewModel
                     string path = item.FullName.ToLower();
                     var duration = (item.EndTime.Value - item.StartTime.Value).TotalMilliseconds;       // duration = end time - start time
                     double startMilliseconds = (item.StartTime.Value - line.Start.Value).TotalMilliseconds;    // start ms = start time - timeline start time
-                    UInt16 mask = item.LaserOn ? (ushort)1 : (ushort)0;
+                    UInt16 mask = item.LaserOn ? (ushort)0xffff : (ushort)0;
                     var imageFile = new PixelImageFile(path, (UInt16)item.Stretching, (UInt32)duration, (UInt32)startMilliseconds, mask);
                     var image = new ImagesCollectionItem(path, targetHeight, depth);
                     imageFile.Brightness = image.Brightness = item.Brightness;

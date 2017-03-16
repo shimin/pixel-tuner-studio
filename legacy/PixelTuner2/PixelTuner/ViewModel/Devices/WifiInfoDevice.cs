@@ -19,9 +19,15 @@ namespace PixelTuner.ViewModel.Devices
         UdpClient _client = new UdpClient();
 
         public WifiInfoDevice()
+            : this(Settings.Default.MulticastIP, Settings.Default.WifiPort)
+        {
+        }
+
+        public WifiInfoDevice(string ip, int port)
         {
             _client.DontFragment = true;
-            _client.Connect(Settings.Default.MulticastIP, Settings.Default.WifiPort);
+            _client.Connect(ip, port);
+            _iPString = ip;
         }
 
         string _iPString;

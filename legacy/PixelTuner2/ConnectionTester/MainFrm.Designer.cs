@@ -98,13 +98,13 @@
             this.boxActualColor = new System.Windows.Forms.Panel();
             this.boxSampleColor = new System.Windows.Forms.Panel();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.boxIPNet = new System.Windows.Forms.TextBox();
-            this.boxPortNet = new System.Windows.Forms.NumericUpDown();
-            this.boxConnectNet = new System.Windows.Forms.Button();
-            this.boxDisconnectNet = new System.Windows.Forms.Button();
-            this.boxPlayNet = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.boxPlayNet = new System.Windows.Forms.Button();
+            this.boxDisconnectNet = new System.Windows.Forms.Button();
+            this.boxConnectNet = new System.Windows.Forms.Button();
+            this.boxPortNet = new System.Windows.Forms.NumericUpDown();
+            this.boxIPNet = new System.Windows.Forms.TextBox();
             this.boxTab.SuspendLayout();
             this.boxTabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.boxDelay)).BeginInit();
@@ -449,6 +449,11 @@
             // boxPortNum
             // 
             this.boxPortNum.Location = new System.Drawing.Point(43, 8);
+            this.boxPortNum.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
             this.boxPortNum.Minimum = new decimal(new int[] {
             1,
             0,
@@ -970,13 +975,56 @@
             this.tabPage1.Text = "Network";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // boxIPNet
+            // button3
             // 
-            this.boxIPNet.Location = new System.Drawing.Point(8, 6);
-            this.boxIPNet.Name = "boxIPNet";
-            this.boxIPNet.Size = new System.Drawing.Size(145, 20);
-            this.boxIPNet.TabIndex = 0;
-            this.boxIPNet.Text = "192.168.1.255";
+            this.button3.Location = new System.Drawing.Point(238, 70);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(145, 26);
+            this.button3.TabIndex = 6;
+            this.button3.Text = "Стоп";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(238, 38);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(145, 26);
+            this.button2.TabIndex = 5;
+            this.button2.Text = "Пауза";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // boxPlayNet
+            // 
+            this.boxPlayNet.Location = new System.Drawing.Point(238, 6);
+            this.boxPlayNet.Name = "boxPlayNet";
+            this.boxPlayNet.Size = new System.Drawing.Size(145, 26);
+            this.boxPlayNet.TabIndex = 4;
+            this.boxPlayNet.Text = "Старт";
+            this.boxPlayNet.UseVisualStyleBackColor = true;
+            this.boxPlayNet.Click += new System.EventHandler(this.boxPlayNet_Click);
+            // 
+            // boxDisconnectNet
+            // 
+            this.boxDisconnectNet.Enabled = false;
+            this.boxDisconnectNet.Location = new System.Drawing.Point(8, 90);
+            this.boxDisconnectNet.Name = "boxDisconnectNet";
+            this.boxDisconnectNet.Size = new System.Drawing.Size(145, 26);
+            this.boxDisconnectNet.TabIndex = 3;
+            this.boxDisconnectNet.Text = "Отключиться";
+            this.boxDisconnectNet.UseVisualStyleBackColor = true;
+            this.boxDisconnectNet.Click += new System.EventHandler(this.boxDisconnectNet_Click);
+            // 
+            // boxConnectNet
+            // 
+            this.boxConnectNet.Location = new System.Drawing.Point(8, 58);
+            this.boxConnectNet.Name = "boxConnectNet";
+            this.boxConnectNet.Size = new System.Drawing.Size(145, 26);
+            this.boxConnectNet.TabIndex = 2;
+            this.boxConnectNet.Text = "Подключиться";
+            this.boxConnectNet.UseVisualStyleBackColor = true;
+            this.boxConnectNet.Click += new System.EventHandler(this.boxConnectNet_Click);
             // 
             // boxPortNet
             // 
@@ -995,56 +1043,13 @@
             0,
             0});
             // 
-            // boxConnectNet
+            // boxIPNet
             // 
-            this.boxConnectNet.Location = new System.Drawing.Point(8, 58);
-            this.boxConnectNet.Name = "boxConnectNet";
-            this.boxConnectNet.Size = new System.Drawing.Size(145, 26);
-            this.boxConnectNet.TabIndex = 2;
-            this.boxConnectNet.Text = "Подключиться";
-            this.boxConnectNet.UseVisualStyleBackColor = true;
-            this.boxConnectNet.Click += new System.EventHandler(this.boxConnectNet_Click);
-            // 
-            // boxDisconnectNet
-            // 
-            this.boxDisconnectNet.Enabled = false;
-            this.boxDisconnectNet.Location = new System.Drawing.Point(8, 90);
-            this.boxDisconnectNet.Name = "boxDisconnectNet";
-            this.boxDisconnectNet.Size = new System.Drawing.Size(145, 26);
-            this.boxDisconnectNet.TabIndex = 3;
-            this.boxDisconnectNet.Text = "Отключиться";
-            this.boxDisconnectNet.UseVisualStyleBackColor = true;
-            this.boxDisconnectNet.Click += new System.EventHandler(this.boxDisconnectNet_Click);
-            // 
-            // boxPlayNet
-            // 
-            this.boxPlayNet.Location = new System.Drawing.Point(238, 6);
-            this.boxPlayNet.Name = "boxPlayNet";
-            this.boxPlayNet.Size = new System.Drawing.Size(145, 26);
-            this.boxPlayNet.TabIndex = 4;
-            this.boxPlayNet.Text = "Старт";
-            this.boxPlayNet.UseVisualStyleBackColor = true;
-            this.boxPlayNet.Click += new System.EventHandler(this.boxPlayNet_Click);
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(238, 38);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(145, 26);
-            this.button2.TabIndex = 5;
-            this.button2.Text = "Пауза";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(238, 70);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(145, 26);
-            this.button3.TabIndex = 6;
-            this.button3.Text = "Стоп";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.boxIPNet.Location = new System.Drawing.Point(8, 6);
+            this.boxIPNet.Name = "boxIPNet";
+            this.boxIPNet.Size = new System.Drawing.Size(145, 20);
+            this.boxIPNet.TabIndex = 0;
+            this.boxIPNet.Text = "192.168.1.255";
             // 
             // MainFrm
             // 

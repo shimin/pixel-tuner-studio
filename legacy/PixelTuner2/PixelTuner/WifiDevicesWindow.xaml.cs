@@ -72,33 +72,79 @@ namespace PixelTuner
             set { OnPropertyChanged("TotalDevices"); }
         }
 
-        private Socket _client = null;
+        //private Socket _client = null;
+        private UdpClient _udpClient = null;
 
         Dictionary<string, WifiInfoDevice> _devicesDictionary = new Dictionary<string, WifiInfoDevice>();
 
         StateObject state = new StateObject();
+
+        private bool _goOn = true;
         
-        public WifiDevicesWindow()
+        public WifiDevicesWindow(UdpClient udpClient)
         {
+            _udpClient = new UdpClient(Settings.Default.WifiPort);
+            _goOn = true;
             InitializeComponent();
             DataContext = this;
             Closing += WifiDevicesWindow_Closing;
-            _client = new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.Udp);
-            //_client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
-            //_client.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.PacketInformation, true);
-            _client.Bind(new IPEndPoint(IPAddress.Any, 333));
             Devices.CollectionChanged += (sender, args) => { OnPropertyChanged("TotalDevices"); };
+            _udpClient.BeginReceive(new AsyncCallback(ReceivedCallback), state);
+            //_client = new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.Udp);
+            ////_client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
+            ////_client.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.PacketInformation, true);
+            //_client.Bind(new IPEndPoint(IPAddress.Any, 333));
+            //try
+            //{
+            //    Receive(_client, state, _devicesDictionary, _devices);
+            //}
+            //catch (Exception e)
+            //{
+            //    MessageBox.Show(e.ToString());
+            //}
+        }
+
+        private void ReceivedCallback(IAsyncResult result)
+        {
+            IPEndPoint remoteEnd = new IPEndPoint(IPAddress.Any, 333);
             try
             {
-                Receive(_client, state, _devicesDictionary, _devices);
+                if (_udpClient != null && _udpClient.Client != null)
+                {
+                    byte[] received = _udpClient.EndReceive(result, ref remoteEnd);
+                    var ipString = remoteEnd.ToString();
+
+                    Application.Current.Dispatcher.Invoke(new Action(() =>
+                    {
+                        if (state.DevicesDictionary.ContainsKey(ipString))
+                        {
+                            _devicesDictionary[ipString].LastAnswer = BytesToString(state.GetData());
+                        }
+                        else
+                        {
+                            var d = new WifiInfoDevice(remoteEnd.Address.ToString(), Settings.Default.WifiPort);
+                            if (received[0] == 0x50)
+                            {
+                                d.LastAnswer = BytesToString(received);
+                                _devicesDictionary.Add(ipString, d);
+                                _devices.Add(d);
+                            }
+                        }
+                    }));
+                    if (_goOn) _udpClient.BeginReceive(ReceivedCallback, state);
+                }
             }
-            catch (Exception e)
+            catch
             {
-                MessageBox.Show(e.ToString());
+                if (_udpClient != null && _udpClient.Client != null && _goOn)
+                    _udpClient.BeginReceive(ReceivedCallback, state);
             }
         }
 
-        private static void Receive(Socket client, StateObject state, Dictionary<string, WifiInfoDevice> devicesDictionary, ObservableCollection<WifiInfoDevice> devices)
+        private static void Receive(Socket client, 
+            StateObject state, 
+            Dictionary<string, WifiInfoDevice> devicesDictionary, 
+            ObservableCollection<WifiInfoDevice> devices)
         {
             try
             {
@@ -118,7 +164,9 @@ namespace PixelTuner
 
         private void WifiDevicesWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            
+            _goOn = false;
+            _udpClient.Close();
+            _udpClient = null;
         }
 
         private static void ReceiveCallback(IAsyncResult iar)
