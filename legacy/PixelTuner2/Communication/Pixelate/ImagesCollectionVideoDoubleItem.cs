@@ -89,15 +89,16 @@ namespace Communication.Pixelate
                 foreach (var point in points1)
                 {
                     var px = Color.Black;
-                    if (point.X < frame1.Width && point.Y < frame1.Height)
+                    if (point.X < frame1.Width + _xOffset1 && point.Y < frame1.Height + _yOffset1)
                         px = frame1.GetPixel(point.X + _xOffset1, point.Y + _yOffset1);
+
                     bitmap.SetPixel(frameIdx, row, px);
                     row++;
                 }
                 foreach (var point in points2)
                 {
                     var px = Color.Black;
-                    if (point.X < frame2.Width && point.Y < frame2.Height)
+                    if (point.X < frame2.Width + _xOffset2 && point.Y < frame2.Height + _yOffset2)
                         px = frame2.GetPixel(point.X + _xOffset2, point.Y + _yOffset2);
                     bitmap.SetPixel(frameIdx, row, px);
                     row++;

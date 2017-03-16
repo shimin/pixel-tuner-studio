@@ -47,7 +47,12 @@ namespace Communication.Binarize
                     val.Add(cs);
                 }
 
-                if (val.Count > 0) result._samples.Add(key, val);
+                if (val.Count > 0)
+                    if (result._samples.ContainsKey(key)) result._samples[key] = val;
+                    else
+                    {
+                        result._samples.Add(key, val);
+                    }
             }
 
             return result;
