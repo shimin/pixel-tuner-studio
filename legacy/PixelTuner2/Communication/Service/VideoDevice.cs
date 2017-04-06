@@ -25,6 +25,7 @@ namespace Communication.Service
                     BootVersion = data[1];
                     FirmwareVersion = data[2];
                     LedsTotal = (ushort)((data[3] << 8) | data[4]);
+                    Tag = Encoding.GetEncoding(1251).GetString(data.ToArray(), 45, 12).TrimEnd(new char[] {(char) 0});
                 }
                 catch (Exception exception)
                 {

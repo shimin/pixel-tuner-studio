@@ -72,6 +72,17 @@ namespace Communication.Service
             set { _ledsTotal = value; }
         }
 
+        private string _tag;
+        public string Tag
+        {
+            get { return _tag; }
+            set
+            {
+                _tag = value;
+                PropertyChanged?.Invoke("Tag");
+            }
+        }
+
         #endregion
 
         public PixelDevice(SerialPort port, bool runMonitoring = true)

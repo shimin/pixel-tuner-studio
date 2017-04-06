@@ -86,17 +86,7 @@ namespace Communication.Pixelate
 
             return result;
         }
-
-        private List<byte> CreateProjectHeader(List<PixelTimelineFile> timeLines, byte targetHeight)
-        {
-            List<byte> result = new List<byte>(projectPrefix);                          // header
-            result.Add(formatVersion);
-            result.Add(targetHeight);                                                   // project images height
-            result.AddRange(new byte[4]);                                               // binary total size field
-            result.Add((byte)timeLines.Count);                                          // timelines count
-            return result;
-        }
-
+        
         private List<byte> CreateProjectHeader(List<PixelTimelineFile> timeLines, ushort targetHeight)
         {
             List<byte> result = new List<byte>(projectPrefix);                          // header

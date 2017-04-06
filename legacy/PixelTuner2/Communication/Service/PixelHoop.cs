@@ -65,6 +65,17 @@ namespace Communication.Service
             set { _ledsTotal = value; }
         }
 
+        private string _tag;
+        public string Tag
+        {
+            get { return _tag; }
+            set
+            {
+                _tag = value;
+                PropertyChanged?.Invoke("Tag");
+            }
+        }
+
         #endregion
 
         public PixelHoop(SerialPort port, bool runMonitoring = true)
@@ -139,6 +150,7 @@ namespace Communication.Service
                     EnergyLevel = num;
                     byte[] memSizeArray = new byte[4] { data[10], data[9], data[8], data[7] };
                     MaxMemory = BitConverter.ToUInt32(memSizeArray, 0);
+                    Tag = Encoding.GetEncoding(1251).GetString(data.ToArray(), 45, 12).TrimEnd(new char[] { (char)0 });
                 }
                 catch (Exception exception)
                 {
