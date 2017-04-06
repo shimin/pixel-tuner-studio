@@ -63,6 +63,7 @@
     <system:String x:Key="Dev_Menu_Upload">Projekt laden</system:String>
     <system:String x:Key="Dev_Props_Channels">Kanäle:</system:String>
     <system:String x:Key="Dev_Props_Name">Gerät:</system:String>
+    <system:String x:Key="Dev_Props_Tag">Tag:</system:String>
     <system:String x:Key="Dev_Props_Memory">Speicher:</system:String>
     <system:String x:Key="Dev_Props_Power">Aufladen:</system:String>
     <system:String x:Key="Dev_Props_Status">Status:</system:String>

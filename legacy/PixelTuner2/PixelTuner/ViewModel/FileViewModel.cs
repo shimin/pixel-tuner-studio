@@ -924,7 +924,6 @@ namespace PixelTuner.ViewModel
                 var w = new WifiDevicesWindow(RootViewModel.This.UdpСlient);
                 w.Owner = Application.Current.MainWindow;
                 w.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                RootViewModel.This.UdpСlient.Send(new byte[] {0x50, 0x05, 0x04, 0x00, 0x00, 0x00, 0x00, 0x0d}, 8);
                 w.ShowDialog();
                 _stopTimer = new Timer(StopTimerCallback, null, 1000, 1000);
             }
@@ -1197,7 +1196,7 @@ namespace PixelTuner.ViewModel
                         if (RootViewModel.This.UdpСlient != null)
                         {
                             UInt32 timepoint = (UInt32)SoundPlayer.CurrentTime.TotalMilliseconds;
-                            if (timepoint > 10000 && _syncInterval != 10000) _syncInterval = 10000;
+                            if (timepoint > 2000 && _syncInterval != 2000) _syncInterval = 2000;
                             if (timepoint - _previousTimepoint > _syncInterval)
                             {
                                 //Console.WriteLine($"Timepoint: {SoundPlayer.CurrentTime}");

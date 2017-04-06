@@ -385,7 +385,7 @@ namespace PixelTuner.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("65535")]
+        [global::System.Configuration.DefaultSettingValueAttribute("333")]
         public ushort WifiPort {
             get {
                 return ((ushort)(this["WifiPort"]));
@@ -440,6 +440,18 @@ namespace PixelTuner.Properties {
             }
             set {
                 this["MulticastIP"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string WifiTag {
+            get {
+                return ((string)(this["WifiTag"]));
+            }
+            set {
+                this["WifiTag"] = value;
             }
         }
     }

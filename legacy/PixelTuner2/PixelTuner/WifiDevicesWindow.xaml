@@ -6,23 +6,23 @@
         xmlns:local="clr-namespace:PixelTuner"
         mc:Ignorable="d"
         Background="#ff1a1a1a"
-        Title="Wifi Devices" Height="500" Width="450">
+        Title="Wifi Devices" Height="500" Width="350" MinWidth="320">
     <Window.Resources>
         <ResourceDictionary>
             <DataTemplate x:Key="WifiDeviceTemplate">
                 <Grid Margin="10,2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="20"></ColumnDefinition>
-                        <ColumnDefinition Width="120"></ColumnDefinition>
-                        <ColumnDefinition Width="60"></ColumnDefinition>
-                        <ColumnDefinition Width="150"></ColumnDefinition>
+                        <ColumnDefinition Width="100"></ColumnDefinition>
+                        <ColumnDefinition Width="32"></ColumnDefinition>
                         <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="60"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="IP: " Foreground="White" Grid.Column="0" VerticalAlignment="Center"></TextBlock>
                     <TextBlock Text="{Binding IPString}" Foreground="White" Grid.Column="1" VerticalAlignment="Center"></TextBlock>
-                    <TextBlock Text="Answer" Foreground="White" Grid.Column="2" VerticalAlignment="Center"></TextBlock>
-                    <TextBlock Text="{Binding LastAnswer}" Foreground="White" Grid.Column="3" VerticalAlignment="Center"></TextBlock>
-                    <Rectangle Width="150" Height="26" Grid.Column="3">
+                    <TextBlock Text="Tag: " Foreground="White" Grid.Column="2" VerticalAlignment="Center"></TextBlock>
+                    <TextBlock Text="{Binding Tag}" Foreground="White" Grid.Column="3" VerticalAlignment="Center"></TextBlock>
+                    <Rectangle Width="60" Height="26" Grid.Column="3" HorizontalAlignment="Right" ToolTip="{Binding LastAnswer}">
                         <Rectangle.Fill>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
                                 <GradientStop Color="#001a1a1a" Offset="0"></GradientStop>
@@ -30,7 +30,7 @@
                             </LinearGradientBrush>
                         </Rectangle.Fill>
                     </Rectangle>
-                    <StackPanel Orientation="Horizontal" Grid.Column="4" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Stretch">
                         <Button Content="Play" Command="{Binding PlayCommand}" Margin="1,2"></Button>
                         <Button Content="Stop" Command="{Binding StopCommand}" Margin="1,2"></Button>
                     </StackPanel>
@@ -46,7 +46,7 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="300"></ColumnDefinition>
+                <ColumnDefinition Width="200"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Foreground="White" Margin="8" VerticalAlignment="Center" Text="{Binding TotalDevices}"></TextBlock>

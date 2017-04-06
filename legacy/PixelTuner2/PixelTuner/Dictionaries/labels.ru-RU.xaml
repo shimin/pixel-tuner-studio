@@ -63,6 +63,7 @@
     <system:String x:Key="Dev_Menu_Upload">Загрузить проект</system:String>
     <system:String x:Key="Dev_Props_Channels">Каналов:</system:String>
     <system:String x:Key="Dev_Props_Name">Устройство:</system:String>
+    <system:String x:Key="Dev_Props_Tag">Имя:</system:String>
     <system:String x:Key="Dev_Props_Memory">Память:</system:String>
     <system:String x:Key="Dev_Props_Power">Зарядка:</system:String>
     <system:String x:Key="Dev_Props_Status">Статус:</system:String>

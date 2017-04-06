@@ -37,13 +37,28 @@ namespace PixelTuner.ViewModel.Devices
             get { return _iPString; }
             set { _iPString = value; OnPropertyChanged("IPString"); }
         }
-
-        private string _lastAnswer;
-
+        
         public string LastAnswer
         {
-            get { return _lastAnswer; }
-            set { _lastAnswer = value; OnPropertyChanged("LastAnswer"); }
+            get { return BytesToString(RawData); }
+            set { }
+        }
+
+        private byte[] _rawData;
+
+        public byte[] RawData
+        {
+            get { return _rawData; }
+            set { _rawData = value; OnPropertyChanged("Tag"); OnPropertyChanged("LastAnswer"); }
+        }
+
+        public string Tag
+        {
+            get
+            {
+                return Encoding.GetEncoding(1251).GetString(RawData, 45, 12).TrimEnd(new char[] { (char)0 });
+            }
+            set { }
         }
 
         #region PlayAudioCommand
@@ -144,6 +159,14 @@ namespace PixelTuner.ViewModel.Devices
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private string BytesToString(byte[] src)
+        {
+            string result = "";
+            for (int i = 0; i < src.Length; i++)
+                result += src[i].ToString("X2") + " ";
+            return result;
         }
 
         public void Init()

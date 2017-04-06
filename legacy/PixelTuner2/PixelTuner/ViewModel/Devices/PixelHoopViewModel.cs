@@ -69,6 +69,15 @@ namespace PixelTuner.ViewModel
         }
 
         /// <summary>
+        /// Число диодов в устройстве
+        /// </summary>
+        public string Tag
+        {
+            get { return Device == null ? "" : Device.Tag; }
+            private set { RaisePropertyChanged("Tag"); }
+        }
+
+        /// <summary>
         /// Свойство определяет, показывать ли контролы, связанные с обновлением прошивки
         /// </summary>
         public override bool UpdateNeeded

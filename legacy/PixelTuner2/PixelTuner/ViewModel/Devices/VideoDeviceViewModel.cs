@@ -40,8 +40,17 @@ namespace PixelTuner.ViewModel
         /// </summary>
         public ushort LedsTotal
         {
-            get { return Device == null ? byte.MinValue : Device.LedsTotal; }
+            get { return Device?.LedsTotal ?? byte.MinValue; }
             private set { RaisePropertyChanged("LedsTotal"); }
+        }
+
+        /// <summary>
+        /// Число диодов в устройстве
+        /// </summary>
+        public string Tag
+        {
+            get { return Device == null ? "" : Device.Tag; }
+            private set { RaisePropertyChanged("Tag"); }
         }
 
         /// <summary>

@@ -63,6 +63,7 @@
     <system:String x:Key="Dev_Menu_Upload">Upload project</system:String>
     <system:String x:Key="Dev_Props_Channels">Channels:</system:String>
     <system:String x:Key="Dev_Props_Name">Device:</system:String>
+    <system:String x:Key="Dev_Props_Tag">Tag:</system:String>
     <system:String x:Key="Dev_Props_Memory">Memory:</system:String>
     <system:String x:Key="Dev_Props_Power">Battery:</system:String>
     <system:String x:Key="Dev_Props_Status">Status:</system:String>

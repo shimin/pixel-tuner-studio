@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -75,6 +76,8 @@ namespace PixelTuner
         //private Socket _client = null;
         private UdpClient _udpClient = null;
 
+        byte[] _packet = new byte[] { 0x49, 0x00, 0x0d };
+
         Dictionary<string, WifiInfoDevice> _devicesDictionary = new Dictionary<string, WifiInfoDevice>();
 
         StateObject state = new StateObject();
@@ -90,6 +93,7 @@ namespace PixelTuner
             Closing += WifiDevicesWindow_Closing;
             Devices.CollectionChanged += (sender, args) => { OnPropertyChanged("TotalDevices"); };
             _udpClient.BeginReceive(new AsyncCallback(ReceivedCallback), state);
+            RootViewModel.This.UdpСlient.Send(_packet, 3);
             //_client = new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.Udp);
             ////_client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
             ////_client.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.PacketInformation, true);
@@ -116,16 +120,16 @@ namespace PixelTuner
 
                     Application.Current.Dispatcher.Invoke(new Action(() =>
                     {
-                        if (state.DevicesDictionary.ContainsKey(ipString))
+                        if (_devicesDictionary.ContainsKey(ipString))
                         {
-                            _devicesDictionary[ipString].LastAnswer = BytesToString(state.GetData());
+                            _devicesDictionary[ipString].RawData = received;
                         }
                         else
                         {
                             var d = new WifiInfoDevice(remoteEnd.Address.ToString(), Settings.Default.WifiPort);
-                            if (received[0] == 0x50)
+                            if (received[0] == 0x49 && received.Length > 3)
                             {
-                                d.LastAnswer = BytesToString(received);
+                                d.RawData = received;
                                 _devicesDictionary.Add(ipString, d);
                                 _devices.Add(d);
                             }
@@ -140,93 +144,14 @@ namespace PixelTuner
                     _udpClient.BeginReceive(ReceivedCallback, state);
             }
         }
-
-        private static void Receive(Socket client, 
-            StateObject state, 
-            Dictionary<string, WifiInfoDevice> devicesDictionary, 
-            ObservableCollection<WifiInfoDevice> devices)
-        {
-            try
-            {
-                state.workSocket = client;
-                state.DevicesDictionary = devicesDictionary;
-                state.Devices = devices;
-
-                var ep = (EndPoint)new IPEndPoint(IPAddress.Any, 333);
-                SocketFlags flags = SocketFlags.None;
-                client.BeginReceiveMessageFrom(state.buffer, 0, StateObject.BufferSize, flags, ref ep, ReceiveCallback, state);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-        }
-
+        
         private void WifiDevicesWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             _goOn = false;
             _udpClient.Close();
             _udpClient = null;
         }
-
-        private static void ReceiveCallback(IAsyncResult iar)
-        {
-            StateObject state = (StateObject)iar.AsyncState;
-            Socket client = state.workSocket;
-
-            IPPacketInformation packetInfo;
-            EndPoint remoteEnd = new IPEndPoint(IPAddress.Any, 333);
-            SocketFlags flags = SocketFlags.None;
-
-            if (client != null)
-            {
-                int received = client.EndReceiveMessageFrom(iar, ref flags, ref remoteEnd, out packetInfo);
-                var epstr = remoteEnd.ToString();
-                //Console.WriteLine($@"{received} bytes received from {remoteEnd} to {packetInfo.Address}");
-
-                Application.Current.Dispatcher.Invoke(new Action(() =>
-                {
-                    if (state.DevicesDictionary.ContainsKey(remoteEnd.ToString()))
-                    {
-                        state.DevicesDictionary[remoteEnd.ToString()].LastAnswer = BytesToString(state.GetData());
-                    }
-                    else
-                    {
-                        var d = new WifiInfoDevice();
-                        d.IPString = remoteEnd.ToString();
-                        var data = state.GetData();
-                        if (data[0] == 0x50)
-                        {
-                            d.LastAnswer = BytesToString(data);
-                            d.Init();
-                            state.DevicesDictionary.Add(remoteEnd.ToString(), d);
-                            state.Devices.Add(d);
-                        }
-                    }
-                }));
-                if (state.Continue)
-                {
-                    var ep = (EndPoint) new IPEndPoint(IPAddress.Any, 0);
-                    flags = SocketFlags.None;
-                    client.BeginReceiveMessageFrom(state.buffer, 0, StateObject.BufferSize, flags, ref ep,
-                        ReceiveCallback, state);
-                }
-                else
-                {
-                    client.Shutdown(SocketShutdown.Both);
-                    client.Close();
-                }
-            }
-        }
         
-        static string BytesToString(byte[] src)
-        {
-            string result = "";
-            for (int i = 0; i < src.Length; i++)
-                result += src[i].ToString("X2") + " ";
-            return result;
-        }
-
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
             Close();
@@ -238,7 +163,7 @@ namespace PixelTuner
             {
                 try
                 {
-                    RootViewModel.This.UdpСlient.Send(new byte[] { 0x50, 0x05, 0x04, 0x00, 0x00, 0x00, 0x00, 0x0d }, 8);
+                    RootViewModel.This.UdpСlient.Send(_packet, 3);
                 }
                 catch (Exception ex)
                 {

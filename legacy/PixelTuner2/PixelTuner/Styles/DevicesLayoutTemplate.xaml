@@ -72,11 +72,13 @@
                                     <TextBlock Text="{StaticResource Dev_Props_Name}" Margin="0,2,0,0" />
                                     <TextBlock Text="{StaticResource Dev_Props_Length}" />
                                     <TextBlock Text="{StaticResource Dev_Props_Status}" />
+                                    <TextBlock Text="{StaticResource Dev_Props_Tag}"></TextBlock>
                                 </StackPanel>
                                 <StackPanel x:Name="valuesStack" Grid.Row="0" Grid.Column="1" Orientation="Vertical">
                                     <TextBlock Text="{Binding FullName}" Margin="0,3,0,0"/>
                                     <TextBlock Text="{Binding LedsTotal}" Margin="0,0,0,0"/>
                                     <TextBlock Text="{Binding Status}" Margin="0,0,0,0"/>
+                                    <TextBlock Text="{Binding Tag}" Margin="0"></TextBlock>
                                 </StackPanel>
                                 <ProgressBar 
                                                     x:Name="UploadProgressBar"
@@ -175,12 +177,14 @@
                                     <TextBlock Text="{StaticResource Dev_Props_Power}" />
                                     <TextBlock Text="{StaticResource Dev_Props_Length}" />
                                     <TextBlock Text="{StaticResource Dev_Props_Status}" />
+                                    <TextBlock Text="{StaticResource Dev_Props_Tag}" />
                                 </StackPanel>
                                 <StackPanel x:Name="valuesStack" Grid.Row="0" Grid.Column="1" Orientation="Vertical">
                                     <TextBlock Text="{Binding FullName}" Margin="0,3,0,0"/>
                                     <ProgressBar Value="{Binding EnergyLevel, Mode=OneWay}" Margin="0,3,0,0" Style="{StaticResource ProgressBarStyle}"/>
                                     <TextBlock Text="{Binding LedsTotal}" Margin="0,0,0,0"/>
                                     <TextBlock Text="{Binding Status}" Margin="0,0,0,0"/>
+                                    <TextBlock Text="{Binding Tag}" Margin="0"></TextBlock>
                                 </StackPanel>
                                 <ProgressBar 
                                                     x:Name="UploadProgressBar"

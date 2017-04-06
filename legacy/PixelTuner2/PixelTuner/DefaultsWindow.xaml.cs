@@ -35,6 +35,7 @@ namespace PixelTuner
             boxLedsCount2.Value = Settings.Default.StripLedsCount2;
             boxLedsType.SelectedIndex = Settings.Default.LedsType - 1 < 0 ? 0 : Settings.Default.LedsType - 1;
             boxPass.Text = Settings.Default.WifiPass;
+            boxTag.Text = Settings.Default.WifiTag;
 
             RaisePropertyChanged("Stretching");
             RaisePropertyChanged("DefaultDuration");
@@ -100,6 +101,8 @@ namespace PixelTuner
             get { return _wifiPort; }
             set { _wifiPort = value; }
         }
+
+        public string WifiTag { get; set; }
 
         private string[] _supportedLedTypes = new string[] { "ws2812", "ws2801", "apa102", "lpd6803", "lpd8803", "dmx" };
 
@@ -209,6 +212,7 @@ namespace PixelTuner
             Settings.Default.LedsType = boxLedsType.SelectedIndex + 1;
             Settings.Default.StripLedsCount1 = (ushort)boxLedsCount1.Value;
             Settings.Default.StripLedsCount2 = (ushort)boxLedsCount2.Value;
+            Settings.Default.WifiTag = boxTag.Text;
             Settings.Default.Save();
             
             PixelTuner.ViewModel.RootViewModel.NotifySettingsChanged();
@@ -266,8 +270,6 @@ namespace PixelTuner
             List<DeviceFeature> settings = new List<DeviceFeature>();
             settings.Add(new DeviceFeature(5, Encoding.ASCII.GetBytes(boxSSId.Text + (char)0)));
             settings.Add(new DeviceFeature(6, Encoding.ASCII.GetBytes(boxPass.Text + (char)0)));
-            //settings.Add(new DeviceFeature(5, Encoding.ASCII.GetBytes(boxSSId.Text + "\n")));
-            //settings.Add(new DeviceFeature(6, Encoding.ASCII.GetBytes(boxPass.Text + "\n")));
             settings.Add(new DeviceFeature(7, boxIP.GetByteArray()));
             settings.Add(new DeviceFeature(8, BitConverter.GetBytes(WifiPort)));
 
@@ -277,6 +279,7 @@ namespace PixelTuner
 
             settings.Add(new DeviceFeature(9, ledStripLengthParameter));
             settings.Add(new DeviceFeature(10, BitConverter.GetBytes((ushort)(boxLedsType.SelectedIndex + 1))));
+            settings.Add(new DeviceFeature(11, Encoding.GetEncoding(1251).GetBytes(boxTag.Text + (char)0)));
 
             DeviceHelper.WriteSettings<VideoDevice>(settings);
             DeviceHelper.WriteSettings<PixelHoop>(settings);
