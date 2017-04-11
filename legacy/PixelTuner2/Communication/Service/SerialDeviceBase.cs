@@ -453,8 +453,8 @@ namespace Communication.Service
                 SetStatus(ConnectionStatus.Uploading);
                 try
                 {
-                    Port.WriteTimeout = 30000;
-                    Port.ReadTimeout = 30000;
+                    Port.WriteTimeout = 2000;
+                    Port.ReadTimeout = 2000;
                     var data = new List<byte>();
                     foreach (var feature in settings)
                     {
@@ -490,8 +490,8 @@ namespace Communication.Service
                 bool noExceptions = false;
                 try
                 {
-                    Port.WriteTimeout = 30000;
-                    Port.ReadTimeout = 30000;
+                    Port.WriteTimeout = 10000;
+                    Port.ReadTimeout = 10000;
                     List<byte> data = new List<byte>();
                     var answer = DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_IDATA_MODE, BitConverter.GetBytes(binaryData.Count)));
                     if (answer.Data[0] == 0x00)
@@ -541,8 +541,8 @@ namespace Communication.Service
                 SetStatus(ConnectionStatus.Uploading);
                 try
                 {
-                    Port.WriteTimeout = 30000;
-                    Port.ReadTimeout = 30000;
+                    Port.WriteTimeout = 10000;
+                    Port.ReadTimeout = 10000;
                     List<byte> data = new List<byte>();
                     DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_IFLASH_MODE, null));
                     foreach (byte num in binaryData)
