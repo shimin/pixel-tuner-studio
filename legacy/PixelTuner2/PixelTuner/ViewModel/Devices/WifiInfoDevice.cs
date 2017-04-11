@@ -56,7 +56,7 @@ namespace PixelTuner.ViewModel.Devices
         {
             get
             {
-                return Encoding.GetEncoding(1251).GetString(RawData, 45, 12).TrimEnd(new char[] { (char)0 });
+                return Encoding.GetEncoding(1251).GetString(RawData, 47, 12).TrimEnd(new char[] { (char)0 });
             }
             set { }
         }

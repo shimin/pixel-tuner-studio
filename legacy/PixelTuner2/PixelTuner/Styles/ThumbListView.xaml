@@ -122,19 +122,11 @@
             <Setter.Value>
                 <DataTemplate>
                     <Border Background="White">
-                        <MediaElement Height="80" Name="boxVideoHost" ScrubbingEnabled="True" LoadedBehavior="Manual">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="MediaEnded">
-                                    <i:InvokeCommandAction Command="{Binding Path=OnMediaEndedCommand}" CommandParameter="{Binding ElementName=boxVideoHost}"/>
-                                </i:EventTrigger>
-                                <i:EventTrigger EventName="Loaded">
-                                    <i:InvokeCommandAction Command="{Binding Path=OnLoadedCommand}" CommandParameter="{Binding ElementName=boxVideoHost}"/>
-                                </i:EventTrigger>
-                                <i:EventTrigger EventName="MouseLeftButtonDown">
-                                    <i:InvokeCommandAction Command="{Binding Path=OnClickCommand}" CommandParameter="{Binding ElementName=boxVideoHost}"/>
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                        </MediaElement>
+                        <Image Height="50" Margin="2">
+                            <Image.Source>
+                                <BitmapImage UriSource="{Binding FullName}" CacheOption="OnLoad" />
+                            </Image.Source>
+                        </Image>
                     </Border>
                 </DataTemplate>
             </Setter.Value>
