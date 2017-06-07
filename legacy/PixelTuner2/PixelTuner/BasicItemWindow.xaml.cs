@@ -40,12 +40,24 @@ namespace PixelTuner
         {
             get
             {
-                return !(_initialDuration.Minutes == boxLengthMin.Value
+                if (UseTimeDuration)
+                    return !(_initialDuration.Minutes == boxLengthMin.Value
                             && _initialDuration.Seconds == boxLengthSec.Value
                             && _initialDuration.Milliseconds == boxLengthMs.Value);
+                else
+                    return !(_initialEnd.Minute == boxLengthMin.Value
+                            && _initialEnd.Second == boxLengthSec.Value
+                            && _initialEnd.Millisecond == boxLengthMs.Value);
             }
         }
-        
+
+        private bool _useTimeDuration;
+        public bool UseTimeDuration
+        {
+            get { return _useTimeDuration; }
+            set { _useTimeDuration = value; RaisePropertyChanged("UseTimeDuration"); RaisePropertyChanged("DurationChanged"); }
+        }
+
         public bool BrightnessChanged
         {
             get
@@ -102,6 +114,7 @@ namespace PixelTuner
             _initialEnd = End = context.EndTime.Value;
             _initialDuration = _initialEnd - _initialStart;
             _initialBrightness = Brightness = context.Brightness;
+            
             InitializeComponent();
             Initialize();
             DataContext = this;
@@ -110,15 +123,14 @@ namespace PixelTuner
         
         private void Initialize()
         {
+            UseTimeDuration = PixelTuner.Properties.Settings.Default.TimeSpanMode;
+
             boxStartMin.Value = Start.Minute;
             boxStartSec.Value = Start.Second;
             boxStartMs.Value = Start.Millisecond;
 
-            var duration = End - Start;
-            boxLengthMin.Value = duration.Minutes;
-            boxLengthSec.Value = duration.Seconds;
-            boxLengthMs.Value = duration.Milliseconds;
-
+            SetDurationControlValues();
+            
             boxBrightness.Value = Brightness;
             NeedRefresh = false;
         }
@@ -126,8 +138,7 @@ namespace PixelTuner
         void BasicItemWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Start = new DateTime(Start.Year, Start.Month, Start.Day, Start.Hour, (int)boxStartMin.Value, (int)boxStartSec.Value, (int)boxStartMs.Value);
-            Duration = new TimeSpan(0, 0, (int)boxLengthMin.Value, (int)boxLengthSec.Value, (int)boxLengthMs.Value);
-            End = Start + Duration;
+            GetDuraionControlValues();
 
             Brightness = (byte)boxBrightness.Value;
             ForAll = (bool)boxForAll.IsChecked;
@@ -172,10 +183,48 @@ namespace PixelTuner
             NotifyBindings();
         }
 
+        private void boxSwitchTimeMode_Click(object sender, RoutedEventArgs e)
+        {
+            GetDuraionControlValues();
+            UseTimeDuration = !UseTimeDuration;
+            SetDurationControlValues();
+        }
+
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = true; 
             this.Close(); 
+        }
+
+        private void SetDurationControlValues()
+        {
+            var duration = End - Start;
+            if (!UseTimeDuration)
+            {
+                boxLengthMin.Value = End.Minute;
+                boxLengthSec.Value = End.Second;
+                boxLengthMs.Value = End.Millisecond;
+            }
+            else
+            {
+                boxLengthMin.Value = duration.Minutes;
+                boxLengthSec.Value = duration.Seconds;
+                boxLengthMs.Value = duration.Milliseconds;
+            }
+        }
+
+        private void GetDuraionControlValues()
+        {
+            if (UseTimeDuration)
+            {
+                Duration = new TimeSpan(0, 0, (int)boxLengthMin.Value, (int)boxLengthSec.Value, (int)boxLengthMs.Value);
+                End = Start + Duration;
+            }
+            else
+            {
+                End = new DateTime(Start.Year, Start.Month, Start.Day, Start.Hour, (int)boxLengthMin.Value, (int)boxLengthSec.Value, (int)boxLengthMs.Value);
+                Duration = End - Start;
+            }
         }
 
     }

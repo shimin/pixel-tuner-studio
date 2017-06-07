@@ -25,13 +25,14 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.ViewModel;
-using PixelTuner.ViewModel.Timelines;
 
 namespace PixelTuner.ViewModel
 {
     public class FileViewModel : PaneViewModel, IDisposable
     {
         public delegate void InitializePlaybackDelegate(NAudioEngine soundEngine);
+
+        private List<Color> DefaultLineTagColors = null;
 
         public FileViewModel()
             : this(Path.GetTempFileName())
@@ -44,6 +45,19 @@ namespace PixelTuner.ViewModel
             ViewLoaded = false;
             FilePath = filePath;
             Title = FileName;
+            DefaultLineTagColors = new List<Color>(new Color[]
+            {
+                Color.FromRgb(0,0,255),
+                Color.FromRgb(255,0,0),
+                Color.FromRgb(0,255,0),
+                Color.FromRgb(255,0,255),
+                Color.FromRgb(0,255,255),
+                Color.FromRgb(255,255,0),
+                Color.FromRgb(255,255,255),
+                Color.FromRgb(127,127,0),
+                Color.FromRgb(127,0,127),
+                Color.FromRgb(0,127,127)
+            });
             _timeLines.CollectionChanged += new NotifyCollectionChangedEventHandler(_timeLines_CollectionChanged);
 
             Devices = new SafeObservable<PixelDeviceViewModel>();
@@ -116,16 +130,23 @@ namespace PixelTuner.ViewModel
         internal void UpdatePreview(object arg)
         {
             var timePoint = (TimeSpan)arg;
-            if (RootViewModel.This.CanvasModel.IsVisible && _parsedProject != null)
+            try
             {
-                // update Pixel Poi preview
-                UpdatePixelPoiView(timePoint);
+                if (RootViewModel.This.CanvasModel.IsVisible && _parsedProject != null)
+                {
+                    // update Pixel Poi preview
+                    UpdatePixelPoiView(timePoint);
 
-                // update Light Suit preview
-                UpdateLightSuitView(timePoint);
+                    // update Light Suit preview
+                    UpdateLightSuitView(timePoint);
 
-                // update Pixel Suit preview
-                UpdatePixelSuitView(timePoint);
+                    // update Pixel Suit preview
+                    UpdatePixelSuitView(timePoint);
+                }
+            }
+            catch (Exception ex)
+            {
+                
             }
         }
 
@@ -574,6 +595,8 @@ namespace PixelTuner.ViewModel
                 foreach (var l in _timeLines) state.Add((TimeLineViewModel)l.Clone());
 
                 _undoStack.Push(state);
+                _undoCanvasStack.Push((CanvasViewModel)Canvas.Clone());
+
                 if (!keepRedoStack) _redoStack.Clear();
             }
         }
@@ -592,6 +615,7 @@ namespace PixelTuner.ViewModel
                     state.Add((TimeLineViewModel)oldModel.Clone());
                 }
                 _redoStack.Push(state);
+                _redoCanvasStack.Push((CanvasViewModel)Canvas.Clone());
             }
         }
 
@@ -602,8 +626,11 @@ namespace PixelTuner.ViewModel
                 _timeLines.CollectionChanged -= _timeLines_CollectionChanged;
                 
                 var state = _undoStack.Pop();
+                var c = _undoCanvasStack.Pop();
+
                 PushRedo();
 
+                Canvas = c;
                 SetState(state);
                 RaiseFileChanged();
                 _timeLines.CollectionChanged += _timeLines_CollectionChanged;
@@ -617,7 +644,11 @@ namespace PixelTuner.ViewModel
                 _timeLines.CollectionChanged -= _timeLines_CollectionChanged;
                 
                 var state = _redoStack.Pop();
+                var c = _redoCanvasStack.Pop();
+
                 PushUndo(true);
+
+                Canvas = c;
                 SetState(state);
                 RaiseFileChanged();
                 _timeLines.CollectionChanged += _timeLines_CollectionChanged;
@@ -635,6 +666,8 @@ namespace PixelTuner.ViewModel
 
         Stack<ObservableCollection<TimeLineViewModel>> _undoStack = new Stack<ObservableCollection<TimeLineViewModel>>();
         Stack<ObservableCollection<TimeLineViewModel>> _redoStack = new Stack<ObservableCollection<TimeLineViewModel>>();
+        Stack<CanvasViewModel> _undoCanvasStack = new Stack<CanvasViewModel>();
+        Stack<CanvasViewModel> _redoCanvasStack = new Stack<CanvasViewModel>();
 
         #endregion
 
@@ -746,8 +779,7 @@ namespace PixelTuner.ViewModel
 
         private bool CanAddPixelLine(object parameter)
         {
-            bool can = TimeLines.Count(arg => { return arg is PixelTimeLineViewModel; }) <= 20;
-            return can;
+            return TimeLines.OfType<PixelTimeLineViewModel>().Count() < 20;
         }
 
         private void OnAddPixelLine(object parameter)
@@ -775,13 +807,17 @@ namespace PixelTuner.ViewModel
 
         private bool CanAddEpicLine(object parameter)
         {
-            return TimeLines.Count < 254;
+            return TimeLines.OfType<EpicPoiTimeLineViewModel>().Count() < 20;
+            //return TimeLines.Count<EpicPoiTimeLineViewModel>() < 254;
         }
 
         private void OnAddEpicLine(object parameter)
         {
             PushUndo(false);
-            _timeLines.Add(new EpicPoiTimeLineViewModel());
+            var c = TimeLines.OfType<EpicPoiTimeLineViewModel>().Count();
+            var l = new EpicPoiTimeLineViewModel();
+            l.LineColorTag = DefaultLineTagColors[c%DefaultLineTagColors.Count];
+            _timeLines.Add(l);
         }
 
         #endregion
@@ -837,7 +873,10 @@ namespace PixelTuner.ViewModel
         private void OnAddPixelSuitLine(object parameter)
         {
             PushUndo(false);
-            _timeLines.Add(new VideoTimeLineViewModel());
+            var c = TimeLines.OfType<VideoTimeLineViewModel>().Count();
+            var l = new VideoTimeLineViewModel();
+            l.LineColorTag = DefaultLineTagColors[c % DefaultLineTagColors.Count];
+            _timeLines.Add(l);
         }
 
         #endregion
@@ -1284,18 +1323,20 @@ namespace PixelTuner.ViewModel
             var project = new PixelProjectFile();
             foreach (TimeLineViewModel line in lines)
             {
-                if (line.Items.Count == 0 || !line.IsSelectedToUpload) continue;
-                var file = new PixelTimelineFile();
                 var pixelLine = line as PixelTimeLineViewModel;
+                if (pixelLine == null || pixelLine.Items.Count == 0 || !pixelLine.IsSelectedToUpload) continue;
+                var file = new PixelTimelineFile();
+                file.TimelineColor = System.Drawing.Color.FromArgb(
+                    pixelLine.LineColorTag.A, pixelLine.LineColorTag.R /10, pixelLine.LineColorTag.G/10, pixelLine.LineColorTag.B/10);
+                
+                var currentTime = pixelLine.Start.Value;
 
-                var currentTime = line.Start.Value;
-
-                List<ITimeLineDataItem> timelineItems = FillGabs(line.Items, line.Start.Value, CreateBlankPixelItem, pixelLine.LineHeight);
-                foreach (TimeLineItemViewModel item in timelineItems)
+                List<ITimeLineDataItem> timepixelLineItems = FillGabs(pixelLine.Items, pixelLine.Start.Value, CreateBlankPixelItem, pixelLine.LineHeight);
+                foreach (TimeLineItemViewModel item in timepixelLineItems)
                 {
                     string path = item.FullName.ToLower();
                     var duration = (item.EndTime.Value - item.StartTime.Value).TotalMilliseconds;       // duration = end time - start time
-                    double startMilliseconds = (item.StartTime.Value - line.Start.Value).TotalMilliseconds;    // start ms = start time - timeline start time
+                    double startMilliseconds = (item.StartTime.Value - pixelLine.Start.Value).TotalMilliseconds;    // start ms = start time - timepixelLine start time
                     UInt16 mask = item.LaserOn ? (ushort)0xffff : (ushort)0;
                     var imageFile = new PixelImageFile(path, (UInt16)item.Stretching, (UInt32)duration, (UInt32)startMilliseconds, mask);
                     var image = new ImagesCollectionItem(path, targetHeight, depth);
@@ -1396,12 +1437,12 @@ namespace PixelTuner.ViewModel
                 double startMilliseconds = (dItem.First.StartTime.Value - videoLine1.Start.Value).TotalMilliseconds;           // start ms = start time - timeline start time
                 UInt16 mask = dItem.First.LaserOn ? (ushort)1 : (ushort)0;
 
-                var imageFile = new VideoImageFile(path1, 40, (UInt32)duration, (UInt32)startMilliseconds, mask);
+                var imageFile = new VideoImageFile(path1, 50, (UInt32)duration, (UInt32)startMilliseconds, mask);
                 var image = new ImagesCollectionVideoDoubleItem(path1, path2, 
                     videoLine1.MetaData.OrderedLeds, videoLine2.MetaData.OrderedLeds, 
                     dItem.First.XOffset, dItem.First.YOffset,
                     dItem.Second.XOffset, dItem.Second.YOffset,
-                    depth);
+                    depth, dItem.First.Brightness, dItem.Second.Brightness );
 
                 imageFile.Brightness = image.Brightness = dItem.First.Brightness;
                 imagesCollection.Add(image);
@@ -1466,8 +1507,8 @@ namespace PixelTuner.ViewModel
                 var duration = (item.EndTime.Value - item.StartTime.Value).TotalMilliseconds;       // duration = end time - start time
                 double startMilliseconds = (item.StartTime.Value - line.Start.Value).TotalMilliseconds;    // start ms = start time - timeline start time
                 UInt16 mask = item.LaserOn ? (ushort)1 : (ushort)0;
-                var imageFile = new VideoImageFile(path, 40, (UInt32)duration, (UInt32)startMilliseconds, mask);
-                var image = new ImagesCollectionVideoItem(path, videoLine.MetaData.OrderedLeds, depth, item.XOffset, item.YOffset);
+                var imageFile = new VideoImageFile(path, 50, (UInt32)duration, (UInt32)startMilliseconds, mask);
+                var image = new ImagesCollectionVideoItem(path, videoLine.MetaData.OrderedLeds, depth, item.XOffset, item.YOffset, item.Brightness);
                 imageFile.Brightness = image.Brightness = item.Brightness;
                 imagesCollection.Add(image);
 
@@ -1505,8 +1546,12 @@ namespace PixelTuner.ViewModel
             var project = new GradientProjectFile();
             foreach (TimeLineViewModel line in lines)
             {
-                if (line.Items.Count == 0 || !line.IsSelectedToUpload) continue;
+                var epicLine = line as EpicPoiTimeLineViewModel;
+                if (epicLine == null || line.Items.Count == 0 || !line.IsSelectedToUpload) continue;
+
                 var file = new GradientTimeLineFile();
+                file.TimelineColor = System.Drawing.Color.FromArgb(255, epicLine.LineColorTag.R, epicLine.LineColorTag.G,
+                    epicLine.LineColorTag.B);
 
                 var currentTime = line.Start.Value;
                 List<ITimeLineDataItem> timelineItems = FillGabs(line.Items, line.Start.Value, CreateBlankGradientItem);

@@ -264,6 +264,15 @@
                             <acb:BehaviorBinding Event="MouseDown" Command="{Binding SwitchMonochromeMode}" />
                         </acb:CommandBehaviorCollection.Behaviors>
                     </Rectangle>
+                    <Rectangle Width="14" Height="14" Margin="4,1,2,1" ToolTip="Timeline color displayed in device menu." StrokeThickness="1" Stroke="#a0ffffff"
+                               Visibility="{Binding LineColorTag, Converter={StaticResource ControlVisibilityConverter}, FallbackValue=Collapsed}" >
+                        <Rectangle.Fill>
+                            <SolidColorBrush Color="{Binding LineColorTag, FallbackValue=Transparent}"></SolidColorBrush>
+                        </Rectangle.Fill>
+                        <acb:CommandBehaviorCollection.Behaviors>
+                            <acb:BehaviorBinding Event="MouseDown" Command="{Binding SetLineColorTag}" />
+                        </acb:CommandBehaviorCollection.Behaviors>
+                    </Rectangle>
                 </StackPanel>
 
                 <TextBlock Name="boxLineHeight"  Text="{Binding LineHeight}" Grid.Row="1" TextAlignment="Center"

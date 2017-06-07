@@ -6,6 +6,8 @@ using System.Text;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Xml.Serialization;
 using Microsoft.Expression.Interactivity.Core;
 
@@ -166,7 +168,21 @@ namespace PixelTuner.ViewModel
                 }
             }
         }
-        
+
+        public override void ReplaceWithBlank(int projectHeight = 0)
+        {
+            BitmapEncoder encoder = new GifBitmapEncoder();
+            RenderTargetBitmap bmp = new RenderTargetBitmap(50, projectHeight, 96, 96, PixelFormats.Default);
+            
+            encoder.Frames.Add(BitmapFrame.Create(bmp));
+            var p = Path.GetTempFileName().Replace(".tmp", ".bmp");
+            _fi = new FileInfo(p);
+            using (Stream stm = File.Create(p))
+            {
+                encoder.Save(stm);
+            }
+        }
+
         public override object Clone(FileInfo fi = null)
         {
             var item = (VideoThumbnailViewModel)base.Clone();

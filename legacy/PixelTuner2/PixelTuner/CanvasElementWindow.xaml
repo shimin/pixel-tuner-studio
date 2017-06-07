@@ -138,6 +138,6 @@
             <xctk:DecimalUpDown Name="boxTilesMargin" Value="{Binding TilesMargin}" Background="White" Margin="6" Minimum="0" Maximum="100"/>
         </StackPanel>
         
-        <Button Grid.Column="1" Name="boxCloseBtn" Content="{StaticResource Menu_File_Close}" Grid.Row="1" Width="80" HorizontalAlignment="Right" Click="boxCloseBtn_Click" Margin="2"/>
+        <Button Grid.Column="1" Name="boxCloseBtn" Content="OK" Grid.Row="1" Width="80" HorizontalAlignment="Right" Click="boxCloseBtn_Click" Margin="2"/>
     </Grid>
 </Window>

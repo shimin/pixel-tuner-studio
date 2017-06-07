@@ -488,7 +488,7 @@ namespace PixelTuner.ViewModel
             var timelineCopy = (TimeLineViewModel)base.Clone();
             timelineCopy.Items = new ObservableCollection<ITimeLineDataItem>();
             timelineCopy.XmlItems = new DelegatedIList<TimeLineItemViewModel, TimeLineItem>(timelineCopy.Items);
-            timelineCopy.Parent = this.Parent;
+            timelineCopy.Parent = Parent;
             timelineCopy.Background = Background;
             timelineCopy.IsChanged = true;
             timelineCopy.IsLineHeightVisible = IsLineHeightVisible;
@@ -498,11 +498,11 @@ namespace PixelTuner.ViewModel
             timelineCopy.PreviewTransform = PreviewTransform;
             timelineCopy.TimelineHeightPx = TimelineHeightPx;
             timelineCopy.TimelinePreviewWidth = TimelinePreviewWidth;
-            timelineCopy.DefaultTimeInterval = this.DefaultTimeInterval;
-            timelineCopy.MetaData = this.MetaData;
-            timelineCopy.ToolsetMargin = this.ToolsetMargin;
-            timelineCopy.Start = this.Start;
-            foreach (var item in this.Items)
+            timelineCopy.DefaultTimeInterval = DefaultTimeInterval;
+            timelineCopy.MetaData = (CanvasElementViewModel)MetaData?.Clone();
+            timelineCopy.ToolsetMargin = ToolsetMargin;
+            timelineCopy.Start = Start;
+            foreach (var item in Items)
                 timelineCopy.Items.Add((ITimeLineDataItem)item.Clone());
             return timelineCopy;
         }

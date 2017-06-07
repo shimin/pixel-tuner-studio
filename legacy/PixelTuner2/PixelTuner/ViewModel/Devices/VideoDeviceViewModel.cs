@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using Communication.Service;
-using PixelTuner.ViewModel.Timelines;
 
 namespace PixelTuner.ViewModel
 {

@@ -583,6 +583,7 @@ namespace PixelTuner.ViewModel
 
                 this.StartTime = start > p.Start.Value ? start : p.Start.Value;
                 this.EndTime = this.StartTime + duration;
+                this.Brightness = brightness;
 
                 List<ITimeLineDataItem> toRemove = new List<ITimeLineDataItem>();
                 for (int i = idx - 2; i >= 0; i--)
@@ -607,6 +608,7 @@ namespace PixelTuner.ViewModel
                         if (p.Items[idx].StartTime.Value < lastUsed) p.Items[idx].StartTime = lastUsed;
                         p.Items[idx].EndTime = p.Items[idx].StartTime.Value.Add(duration);
                     }
+                    if (brightnessChanged) itm.Brightness = brightness;
                     lastUsed = itm.EndTime.Value;
                     idx++;
                 }

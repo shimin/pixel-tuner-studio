@@ -47,8 +47,28 @@
                             </Border>
                         </ItemsControl>
                     </DataTemplate>
-                    
-                    <DataTemplate DataType="{x:Type vm:PixelTimeLineViewModel}">
+
+                        <DataTemplate DataType="{x:Type vm:VideoTimeLineViewModel}">
+                            <ItemsControl KeyboardNavigation.IsTabStop="False" VerticalAlignment="Stretch">
+                                <Border x:Name="boxTimelineBorder" KeyboardNavigation.IsTabStop="False" Background="{Binding Background}">
+                                    <StackPanel KeyboardNavigation.IsTabStop="False" Height="60" Orientation="Horizontal">
+                                        <Canvas KeyboardNavigation.IsTabStop="False" Width="{StaticResource FilePreviewAreaWidth}" 
+                                            Background="{Binding Background}" ClipToBounds="True">
+                                            <Path 
+                                            Stroke="Black" 
+                                            StrokeThickness="1" 
+                                            Fill="{Binding Path=MetaData.Fill}"
+                                            Height="60"
+                                            Stretch="Uniform"
+                                            Data="{Binding Path=MetaData.Geometry}"/>
+                                        </Canvas>
+                                        <CheckBox IsChecked="{Binding IsSelectedToUpload}" Margin="22"/>
+                                    </StackPanel>
+                                </Border>
+                            </ItemsControl>
+                        </DataTemplate>
+
+                        <DataTemplate DataType="{x:Type vm:PixelTimeLineViewModel}">
                         <ItemsControl KeyboardNavigation.IsTabStop="False">
                             <Border x:Name="boxTimelineBorder" KeyboardNavigation.IsTabStop="False" Background="{Binding Background}">
                                 <StackPanel KeyboardNavigation.IsTabStop="False" Height="60" Orientation="Horizontal">

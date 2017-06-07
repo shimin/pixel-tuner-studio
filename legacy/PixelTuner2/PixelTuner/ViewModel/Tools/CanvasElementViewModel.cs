@@ -341,10 +341,17 @@ namespace PixelTuner.ViewModel
 
         private void OnDoubleClick(object arg)
         {
+            var doc = RootViewModel.This.ActiveDocument;
+            doc.PushUndo(true);
+
             var wnd = new CanvasElementWindow();
             wnd.CanvasElement = this;
             wnd.Owner = Application.Current.MainWindow;
-            wnd.ShowDialog();
+            
+            if (wnd.ShowDialog() == true)
+            {
+                doc.IsDirty = true;
+            }
         }
         
         [XmlIgnore]

@@ -103,8 +103,13 @@ namespace PixelTuner.ViewModel
             byte[] binaryData = parameter as byte[];
             
             if (binaryData == null)
-                binaryData = File.ReadAllBytes(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _firmwareFileName));
-            
+                try
+                {
+                    binaryData =
+                        File.ReadAllBytes(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _firmwareFileName));
+                }
+                catch { }
+
             if (binaryData == null)
                 binaryData = _firmwareBytes;
 

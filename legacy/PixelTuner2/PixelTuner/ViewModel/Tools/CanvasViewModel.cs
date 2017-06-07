@@ -11,6 +11,7 @@ using PixelTuner.Auxiliary;
 using PixelTuner.Properties;
 using SharpVectors.Converters;
 using SharpVectors.Renderers.Wpf;
+using SharpVectors.Runtime;
 
 
 namespace PixelTuner.ViewModel
@@ -81,6 +82,8 @@ namespace PixelTuner.ViewModel
         [XmlIgnore]
         public Dictionary<string, CanvasElementViewModel> ElementsDictionary { get; set; } = new Dictionary<string, CanvasElementViewModel>();
 
+        Guid _guid = Guid.NewGuid();
+
         #endregion
 
         public CanvasViewModel()
@@ -111,6 +114,19 @@ namespace PixelTuner.ViewModel
             _settings = new WpfDrawingSettings();
             _settings.CultureInfo = _settings.NeutralCultureInfo;
             RootViewModel.This.ActiveDocumentChanged += new RootViewModel.DocumentChangedEventHandler(OnActiveDocumentChanged);
+        }
+
+        public override object Clone()
+        {
+            var newItem = (CanvasViewModel)base.Clone();
+            newItem._content = _content;
+            newItem.LoadedView = LoadedView;
+            newItem.PageSize = PageSize;
+            foreach (var c in Elements)
+            {
+                newItem.Elements.Add((CanvasElementViewModel)c.Clone());
+            }
+            return newItem;
         }
 
         void OnActiveDocumentChanged(object sender, EventArgs e)

@@ -645,7 +645,7 @@ namespace PixelTuner.ViewModel
                         {
                             try
                             {
-                                var file = (FileViewModel)_projectSerializer.Deserialize(tr);
+                                var file = (FileViewModel) _projectSerializer.Deserialize(tr);
                                 file.IsDirty = false;
                                 FixMissingLinks(file);
                                 file.FilePath = path;
@@ -655,11 +655,17 @@ namespace PixelTuner.ViewModel
                                 LastUsedFileHandler?.Invoke(path);
                                 IgnoreAllMissingLinks(file);
                             }
+                            catch (OperationCanceledException ex)
+                            {
+                                MessageBox.Show(ex.Message, Application.Current.MainWindow.Title, MessageBoxButton.OK,
+                                    MessageBoxImage.Information);
+                            }
                             catch (Exception ex)
                             {
                                 ResourceDictionary rd = Application.Current.Resources.MergedDictionaries[0];
                                 string msg = (String)rd["Doc_Open_DeserializeError"];
-                                MessageBox.Show(msg + "\n" + ex.Message, Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
+                                MessageBox.Show(msg + "\n" + ex.Message, Application.Current.MainWindow.Title, MessageBoxButton.OK, 
+                                    MessageBoxImage.Error);
                             }
                         }
                     }
@@ -753,7 +759,7 @@ namespace PixelTuner.ViewModel
                 }
                 else
                 {
-                    break;
+                    throw new OperationCanceledException("Operation cancelled.");
                 }
 
                 brokenItem = GetBrokenLink(file);
@@ -781,7 +787,15 @@ namespace PixelTuner.ViewModel
                     for (int i = 0; i < timeLine.Items.Count; i++)
                     {
                         var item = (timeLine.Items[i] as TimeLineItemViewModel);
-                        if (!File.Exists(item.FullName)) item.ReplaceWithBlank(Settings.Default.LineHeight);
+                        if (!File.Exists(item.FullName))
+                            if (item is VideoThumbnailViewModel)
+                            {
+                                (item as VideoThumbnailViewModel).ReplaceWithBlank(Settings.Default.LineHeight);
+                            }
+                            else
+                            {
+                                item.ReplaceWithBlank(Settings.Default.LineHeight);
+                            }
                     }
             }
         }
@@ -1146,6 +1160,8 @@ namespace PixelTuner.ViewModel
                 }
 
                 FileViewModel oldDoc = _activeDocument;
+                if (fileToClose.DisconnectCommand.CanExecute(null)) fileToClose.DisconnectCommand.Execute(null);
+                if (fileToClose.StopAudio.CanExecute(null)) fileToClose.StopAudio.Execute(null);
                 _files.Remove(fileToClose);
                 _activeDocument = _files.Count > 0 ? _files.Last() : null;
                 RaisePropertyChanged("ActiveDocument");
