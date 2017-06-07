@@ -21,13 +21,18 @@ namespace Communication.Pixelate
         public int LastFrame1 = 0;
         public int LastFrame2 = 0;
 
+        private byte _brightness1 = 100;
+        private byte _brightness2 = 100;
+
         private string _path2 = "";
 
         public ImagesCollectionVideoDoubleItem(string imagePath1, string imagePath2,
             List<Point> points1, List<Point> points2, 
-            int xOffset1, int yOffset1, int xOffset2, int yOffset2, ColorDepth depth)
+            int xOffset1, int yOffset1, int xOffset2, int yOffset2, ColorDepth depth, byte brightness1, byte brightness2)
             : base(imagePath1, (UInt16)(points1.Count + points2.Count), depth)
         {
+            _brightness1 = brightness1;
+            _brightness2 = brightness2;
             _xOffset1 = xOffset1;
             _yOffset1 = yOffset1;
             _points1 = points1;
@@ -72,6 +77,12 @@ namespace Communication.Pixelate
             }
             var size = GetSize((ushort)(targetHeight1 + targetHeight2));
             _binary = new List<byte>(new byte[size]);
+#if (DEBUG)
+            string picturesPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+            var p = "bitmap_" + DateTime.Now.ToString("HH-mm-ss_ffff") + ".bmp";
+            var savePath = System.IO.Path.Combine(picturesPath, p);
+            _bitmap.Save(savePath);
+#endif
         }
 
         protected override void LoadFile(ushort targetHeight)
@@ -89,18 +100,25 @@ namespace Communication.Pixelate
                 foreach (var point in points1)
                 {
                     var px = Color.Black;
-                    if (point.X < frame1.Width + _xOffset1 && point.Y < frame1.Height + _yOffset1)
-                        px = frame1.GetPixel(point.X + _xOffset1, point.Y + _yOffset1);
+                    try
+                    {
+                        if (point.X + _xOffset1 < frame1.Width && point.Y + _yOffset1 < frame1.Height)
+                            px = frame1.GetPixel(point.X + _xOffset1, point.Y + _yOffset1);
+                    }
+                    catch { }
 
-                    bitmap.SetPixel(frameIdx, row, px);
+                    bitmap.SetPixel(frameIdx, row, SetBrightness(px, _brightness1));
                     row++;
                 }
                 foreach (var point in points2)
                 {
                     var px = Color.Black;
-                    if (point.X < frame2.Width + _xOffset2 && point.Y < frame2.Height + _yOffset2)
-                        px = frame2.GetPixel(point.X + _xOffset2, point.Y + _yOffset2);
-                    bitmap.SetPixel(frameIdx, row, px);
+                    try
+                    {
+                        if (point.X + _xOffset2 < frame2.Width && point.Y + _yOffset2 < frame2.Height)
+                            px = frame2.GetPixel(point.X + _xOffset2, point.Y + _yOffset2);
+                    } catch { }
+                    bitmap.SetPixel(frameIdx, row, SetBrightness(px, _brightness2));
                     row++;
                 }
             }
@@ -108,6 +126,17 @@ namespace Communication.Pixelate
             {
 
             }
+        }
+
+        protected Color SetBrightness(Color c, byte brightness)
+        {
+            float colorMult = (float)brightness / 100;
+
+            byte r = (byte)(c.R * colorMult);
+            byte g = (byte)(c.G * colorMult);
+            byte b = (byte)(c.B * colorMult);
+            
+            return Color.FromArgb(r, g, b);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Communication.Pixelate
         /// <summary>
         /// parameter to limit white color brightness
         /// </summary>
-        const byte WTRSHLD = 200;
+        protected const byte WTRSHLD = 200;
 
         /// <summary>
         /// apply restrictions after pixel amount
@@ -332,7 +332,7 @@ namespace Communication.Pixelate
             return BitConverter.GetBytes((byte)(15 * result / byte.MaxValue));
         }
 
-        private Color ApplyRestrictions(UInt16 targetHeight, Color c)
+        protected virtual Color ApplyRestrictions(UInt16 targetHeight, Color c)
         {
             float colorMult = (float)Brightness / 100;
 

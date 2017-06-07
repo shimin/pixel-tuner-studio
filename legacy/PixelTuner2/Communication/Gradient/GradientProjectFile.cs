@@ -9,7 +9,9 @@ namespace Communication.Gradient
     {
         #region Fields
         
-        List<byte> projectPrefix = new List<byte>(Encoding.ASCII.GetBytes("EPIC"));
+        List<byte> projectPrefix = new List<byte>(Encoding.ASCII.GetBytes("PPOI"));
+
+        private byte formatVersion = 1;
 
         public List<GradientTimeLineFile> TimeLines { get; set; }
 
@@ -62,6 +64,8 @@ namespace Communication.Gradient
         private List<byte> CreateProjectHeader(List<GradientTimeLineFile> timeLines, byte targetHeight)
         {
             List<byte> result = new List<byte>(projectPrefix);                          // header
+            result.Add(formatVersion);
+            result.AddRange(BitConverter.GetBytes(targetHeight));                       // project images height
             result.AddRange(new byte[4]);                                               // binary total size field
             result.Add((byte)timeLines.Count);                                          // timelines count
             return result;
@@ -75,11 +79,11 @@ namespace Communication.Gradient
         {
             UInt32 size = (UInt32)result.Count;
             byte[] sizeBytes = BitConverter.GetBytes(size);
-            int projectHeaderOffset = projectPrefix.Count;
+            int projectHeaderOffset = projectPrefix.Count + 3 * sizeof(byte);
             for (int i = projectHeaderOffset; i < projectHeaderOffset + sizeBytes.Length; i++)
                 result[i] = sizeBytes[i - projectHeaderOffset];
         }
-
+        
         /// <summary>
         /// Generates timeline addresses, writes it to the binary and returns first available address after
         /// timeline address list section

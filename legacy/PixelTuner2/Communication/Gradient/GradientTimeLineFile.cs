@@ -19,13 +19,16 @@ namespace Communication.Gradient
 
         internal UInt32 GetSize()
         {
-            return (UInt32)(GradientImageFile.Size * Images.Count + 2 + 3 + 4);
+            return (UInt32)(GradientImageFile.Size * Images.Count + 2 + 3 + 3 + 4);
         }
 
         internal List<byte> GetBinary(GradientsCollection imgCollection)
         {
             var bin = new List<byte>();
             bin.AddRange(BitConverter.GetBytes((UInt16)Images.Count));      // 2 byte images count
+            bin.Add(TimelineColor.R);                                       // 1 byte R
+            bin.Add(TimelineColor.G);                                       // 1 byte G
+            bin.Add(TimelineColor.B);                                       // 1 byte B
             bin.Add(TimelineColor.R);                                       // 1 byte R
             bin.Add(TimelineColor.G);                                       // 1 byte G
             bin.Add(TimelineColor.B);                                       // 1 byte B
