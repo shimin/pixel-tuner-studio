@@ -24,6 +24,7 @@ namespace Communication.Pixelate
         private byte _brightness1 = 100;
         private byte _brightness2 = 100;
 
+        private ColorProfileWS2812 _profile = new ColorProfileWS2812();
         private string _path2 = "";
 
         public ImagesCollectionVideoDoubleItem(string imagePath1, string imagePath2,
@@ -73,7 +74,7 @@ namespace Communication.Pixelate
             }
             else
             {
-                _bitmap = new Bitmap(1, targetHeight1 + targetHeight2);
+                _bitmap = new Bitmap(5, targetHeight1 + targetHeight2);
             }
             var size = GetSize((ushort)(targetHeight1 + targetHeight2));
             _binary = new List<byte>(new byte[size]);
@@ -106,8 +107,9 @@ namespace Communication.Pixelate
                             px = frame1.GetPixel(point.X + _xOffset1, point.Y + _yOffset1);
                     }
                     catch { }
-
-                    bitmap.SetPixel(frameIdx, row, SetBrightness(px, _brightness1));
+                    px = SetBrightness(px, _brightness2);       // set brightness
+                    px = Color.FromArgb(_profile.R[px.R], _profile.G[px.G], _profile.B[px.R]);      // set color profile
+                    bitmap.SetPixel(frameIdx, row, px);
                     row++;
                 }
                 foreach (var point in points2)
@@ -118,7 +120,9 @@ namespace Communication.Pixelate
                         if (point.X + _xOffset2 < frame2.Width && point.Y + _yOffset2 < frame2.Height)
                             px = frame2.GetPixel(point.X + _xOffset2, point.Y + _yOffset2);
                     } catch { }
-                    bitmap.SetPixel(frameIdx, row, SetBrightness(px, _brightness2));
+                    px = SetBrightness(px, _brightness2);       // set brightness
+                    px = Color.FromArgb(_profile.R[px.R], _profile.G[px.G], _profile.B[px.R]);      // set color profile
+                    bitmap.SetPixel(frameIdx, row, px);
                     row++;
                 }
             }

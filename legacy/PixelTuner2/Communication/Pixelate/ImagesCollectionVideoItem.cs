@@ -13,6 +13,7 @@ namespace Communication.Pixelate
         private List<Point> _points;
         private int _xOffset = 0;
         private int _yOffset = 0;
+        private ColorProfileWS2812 _profile = new ColorProfileWS2812();
 
         public ImagesCollectionVideoItem(string imagePath, List<Point> points,  ColorDepth depth, int xOffset, int yOffset, byte brightness)
             : base(imagePath, (UInt16)points.Count, depth)
@@ -43,7 +44,7 @@ namespace Communication.Pixelate
             }
             else
             {
-                _bitmap = new Bitmap(1, targetHeight);
+                _bitmap = new Bitmap(5, targetHeight);
             }
             var size = GetSize(targetHeight);
             _binary = new List<byte>(new byte[size]);
@@ -64,8 +65,9 @@ namespace Communication.Pixelate
                     var px = Color.Black;
                     if (point.X < frame.Width && point.Y < frame.Height)
                         px = frame.GetPixel(point.X + _xOffset, point.Y + _yOffset);
-                    //Console.WriteLine($"X={point.X}, Y={point.Y}");
-                    bitmap.SetPixel(frameIdx, row, ApplyRestrictions((ushort)bitmap.Height, px));
+                    px = SetBrightness(px, Brightness);     // set brightness
+                    px = Color.FromArgb(_profile.R[px.R], _profile.G[px.G], _profile.B[px.R]);      // set color profile
+                    bitmap.SetPixel(frameIdx, row, px);
                     row++;
                 }
             }
@@ -73,6 +75,17 @@ namespace Communication.Pixelate
             {
                 
             }
+        }
+
+        protected Color SetBrightness(Color c, byte brightness)
+        {
+            float colorMult = (float)brightness / 100;
+
+            byte r = (byte)(c.R * colorMult);
+            byte g = (byte)(c.G * colorMult);
+            byte b = (byte)(c.B * colorMult);
+
+            return Color.FromArgb(r, g, b);
         }
     }
 }
