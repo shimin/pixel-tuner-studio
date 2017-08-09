@@ -52,5 +52,11 @@ namespace Communication.Service
             _id = id;
             Val = new List<byte>(val);
         }
+
+        public DeviceFeature(UInt16 id, byte val)
+        {
+            _id = id;
+            Val = new List<byte> { val };
+        }
     }
 }

@@ -42,6 +42,11 @@ namespace Communication.Service
             return ((transmissionDataSize / UsualPacketSize) + (((transmissionDataSize % UsualPacketSize) == 0) ? 2 : 3));
         }
 
+        public static int EstimateProjectRequestsCount(int transmissionDataSize)
+        {
+            return ((transmissionDataSize / ProjectPacketSize) + (((transmissionDataSize % ProjectPacketSize) == 0) ? 2 : 3));
+        }
+
         private static byte[] GetNameBytes(SerialPort p)
         {
             p.DiscardInBuffer();
@@ -137,6 +142,14 @@ namespace Communication.Service
         public string Name { get; set; }
 
         public static int UsualPacketSize
+        {
+            get
+            {
+                return 60;
+            }
+        }
+
+        public static int ProjectPacketSize
         {
             get
             {
@@ -503,7 +516,7 @@ namespace Communication.Service
                     foreach (byte num in binaryData)
                     {
                         data.Add(num);
-                        if (data.Count == UsualPacketSize)
+                        if (data.Count == ProjectPacketSize)
                         {
                             DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_BLOCK, data));
                             data.Clear();
