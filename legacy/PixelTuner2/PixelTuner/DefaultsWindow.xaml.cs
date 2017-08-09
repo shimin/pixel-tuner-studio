@@ -111,6 +111,14 @@ namespace PixelTuner
             get { return _supportedLedTypes; }
             set { _supportedLedTypes = value; }
         }
+        
+        private string[] _ledOrderOptions = new string[] { "RGB", "RBG", "GRB", "GBR", "BRG", "BGR" };
+
+        public string[] LedOrderOptions
+        {
+            get { return _ledOrderOptions; }
+            set { _ledOrderOptions = value; }
+        }
 
         bool _useTimeSpan = Settings.Default.TimeSpanMode;
         public bool UseTimeSpan
@@ -281,6 +289,14 @@ namespace PixelTuner
             settings.Add(new DeviceFeature(10, BitConverter.GetBytes((ushort)(boxLedsType.SelectedIndex + 1))));
             settings.Add(new DeviceFeature(11, Encoding.GetEncoding(1251).GetBytes(boxTag.Text + (char)0)));
 
+            DeviceHelper.WriteSettings<VideoDevice>(settings);
+            DeviceHelper.WriteSettings<PixelHoop>(settings);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            List<DeviceFeature> settings = new List<DeviceFeature>();
+            settings.Add(new DeviceFeature(12, (byte)(boxLedsOrder.SelectedIndex + 1)));
             DeviceHelper.WriteSettings<VideoDevice>(settings);
             DeviceHelper.WriteSettings<PixelHoop>(settings);
         }
