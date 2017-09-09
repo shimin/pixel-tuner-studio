@@ -286,7 +286,7 @@ namespace Communication.Pixelate
 ,3310
 ,3410
 ,3510
-,3610
+,3550
         };
 
         private UInt16[] _g = new UInt16[] {0
@@ -543,8 +543,8 @@ namespace Communication.Pixelate
 ,3410
 ,3460
 ,3510
-,3560
-,3610
+,3600
+,3900
         };
 
         private UInt16[] _r = new UInt16[] {0

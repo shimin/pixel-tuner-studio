@@ -66,7 +66,7 @@ namespace Communication.Pixelate
                     if (point.X < frame.Width && point.Y < frame.Height)
                         px = frame.GetPixel(point.X + _xOffset, point.Y + _yOffset);
                     px = SetBrightness(px, Brightness);     // set brightness
-                    px = Color.FromArgb(_profile.R[px.R], _profile.G[px.G], _profile.B[px.R]);      // set color profile
+                    px = Color.FromArgb(_profile.R[px.R], _profile.G[px.G], _profile.B[px.B]);      // set color profile
                     bitmap.SetPixel(frameIdx, row, px);
                     row++;
                 }

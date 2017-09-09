@@ -29,8 +29,9 @@ namespace Communication.Service
             {
                 if (data == null)
                     throw new ArgumentNullException("Dispatching bytes array wasn't specified", "data");
-                if (data.Count > PixelDevice.UsualPacketSize)
-                    throw new ArgumentOutOfRangeException(String.Format("Packet length is over maximum {0}", PixelDevice.UsualPacketSize), "data");
+                if (data.Count > Math.Max(PixelDevice.UsualPacketSize, PixelDevice.ProjectPacketSize))
+                    throw new ArgumentOutOfRangeException(String.Format("Packet length is over maximum {0}",
+                        Math.Max(PixelDevice.UsualPacketSize, PixelDevice.ProjectPacketSize)), "data");
             }
             if (data != null)
             {

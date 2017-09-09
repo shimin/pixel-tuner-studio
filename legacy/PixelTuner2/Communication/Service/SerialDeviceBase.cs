@@ -37,16 +37,11 @@ namespace Communication.Service
             return dev;
         }
 
-        public static int EstimateRequestsCount(int transmissionDataSize)
+        public static int EstimateRequestsCount(int transmissionDataSize, int packetSize)
         {
-            return ((transmissionDataSize / UsualPacketSize) + (((transmissionDataSize % UsualPacketSize) == 0) ? 2 : 3));
+            return ((transmissionDataSize / packetSize) + (((transmissionDataSize % packetSize) == 0) ? 2 : 3));
         }
-
-        public static int EstimateProjectRequestsCount(int transmissionDataSize)
-        {
-            return ((transmissionDataSize / ProjectPacketSize) + (((transmissionDataSize % ProjectPacketSize) == 0) ? 2 : 3));
-        }
-
+        
         private static byte[] GetNameBytes(SerialPort p)
         {
             p.DiscardInBuffer();
@@ -153,7 +148,7 @@ namespace Communication.Service
         {
             get
             {
-                return 60;
+                return 250;
             }
         }
 
@@ -472,7 +467,7 @@ namespace Communication.Service
                     foreach (var feature in settings)
                     {
                         data.AddRange(feature.GetBytes());
-                        if (data.Count < 60) continue;
+                        if (data.Count < PixelDevice.UsualPacketSize) continue;
                         DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_SETTINGS, data));
                         data.Clear();
                     }
@@ -494,7 +489,7 @@ namespace Communication.Service
             }
         }
 
-        public virtual void WriteFile(List<byte> binaryData)
+        public virtual void WriteFile(List<byte> binaryData, int packetSize)
         {
             lock (this._longOperation)
             {
@@ -516,7 +511,7 @@ namespace Communication.Service
                     foreach (byte num in binaryData)
                     {
                         data.Add(num);
-                        if (data.Count == ProjectPacketSize)
+                        if (data.Count == packetSize)
                         {
                             DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_BLOCK, data));
                             data.Clear();

@@ -108,7 +108,7 @@ namespace Communication.Pixelate
                     }
                     catch { }
                     px = SetBrightness(px, _brightness2);       // set brightness
-                    px = Color.FromArgb(_profile.R[px.R], _profile.G[px.G], _profile.B[px.R]);      // set color profile
+                    px = Color.FromArgb(_profile.R[px.R], _profile.G[px.G], _profile.B[px.B]);      // set color profile
                     bitmap.SetPixel(frameIdx, row, px);
                     row++;
                 }
@@ -121,7 +121,7 @@ namespace Communication.Pixelate
                             px = frame2.GetPixel(point.X + _xOffset2, point.Y + _yOffset2);
                     } catch { }
                     px = SetBrightness(px, _brightness2);       // set brightness
-                    px = Color.FromArgb(_profile.R[px.R], _profile.G[px.G], _profile.B[px.R]);      // set color profile
+                    px = Color.FromArgb(_profile.R[px.R], _profile.G[px.G], _profile.B[px.B]);      // set color profile
                     bitmap.SetPixel(frameIdx, row, px);
                     row++;
                 }

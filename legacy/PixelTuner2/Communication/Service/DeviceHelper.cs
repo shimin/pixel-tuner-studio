@@ -65,7 +65,7 @@ namespace Communication.Service
                             var tryCreateDeviceOperation = AsyncOperationManager.CreateOperation(portName);
                             tryCreateDeviceOperation.Post(TryCreateDeice, port);
                         }
-                        catch
+                        catch (Exception ex)
                         {
                             port.Dispose();
                             port = null;
