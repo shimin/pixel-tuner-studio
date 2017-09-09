@@ -188,10 +188,10 @@ namespace PixelTuner.ViewModel
             RaisePropertyChanged("Status");
         }
 
-        protected void InitializeProgressBar(IList<byte> binaryData)
+        protected void InitializeProgressBar(IList<byte> binaryData, int packetSize)
         {
             ProgressMin = 0;
-            ProgressMax = SerialDeviceBase.EstimateRequestsCount(binaryData.Count) + 1;
+            ProgressMax = SerialDeviceBase.EstimateRequestsCount(binaryData.Count, packetSize) + 1;
             Step = 1;
             Console.WriteLine($"Init Params!!!! \n ProgressMin: {ProgressMin}, ProgressMax: {ProgressMax}");
         }

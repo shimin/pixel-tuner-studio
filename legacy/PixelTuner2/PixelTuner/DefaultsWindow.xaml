@@ -101,8 +101,8 @@
                         <iPmaskedtextbox:IPMaskedTextBox Name="boxIP" ToolTip="PixelTuner hosting machine IP" Height="22" Background="White" HorizontalAlignment="Left"/>
                         <xctk:DecimalUpDown Name="boxPort" Value="{Binding WifiPort}" Width="124" Minimum="0" Background="White" Maximum="65535" HorizontalAlignment="Left" Height="18" Margin="2,2,0,2"/>
                         <StackPanel Orientation="Horizontal">
-                            <xctk:DecimalUpDown Name="boxLedsCount1" Value="{Binding LedsCount1}" ToolTip="channel1" Width="60" Minimum="0" Background="White" Maximum="512" HorizontalAlignment="Left" Height="18" Margin="2,2,0,2"/>
-                            <xctk:DecimalUpDown Name="boxLedsCount2" Value="{Binding LedsCount2}" ToolTip="channel2" Width="60" Minimum="0" Background="White" Maximum="512" HorizontalAlignment="Left" Height="18" Margin="2,2,0,2"/>
+                            <xctk:DecimalUpDown Name="boxLedsCount1" Value="{Binding LedsCount1}" ToolTip="channel1" Width="60" Minimum="0" Background="White" Maximum="1024" HorizontalAlignment="Left" Height="18" Margin="2,2,0,2"/>
+                            <xctk:DecimalUpDown Name="boxLedsCount2" Value="{Binding LedsCount2}" ToolTip="channel2" Width="60" Minimum="0" Background="White" Maximum="1024" HorizontalAlignment="Left" Height="18" Margin="2,2,0,2"/>
                         </StackPanel>
                         <ComboBox Name="boxLedsType" Width="124" Height="22" HorizontalAlignment="Left" ItemsSource="{Binding SupportedLedTypes}"/>
                         <iPmaskedtextbox:IPMaskedTextBox Name="boxMulticastIP" ToolTip="Subnet multicas address (ends on .255 like x.x.x.255)" Height="22" Background="White" HorizontalAlignment="Left"/>

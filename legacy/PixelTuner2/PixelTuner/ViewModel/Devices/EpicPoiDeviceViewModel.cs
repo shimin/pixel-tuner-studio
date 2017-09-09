@@ -116,7 +116,7 @@ namespace PixelTuner.ViewModel
             if (binaryData == null) return;
 
             BackgroundWorker bgWorker = new BackgroundWorker();
-            InitializeProgressBar(binaryData);
+            InitializeProgressBar(binaryData, PixelDevice.UsualPacketSize);
             bgWorker.DoWork += (x, e) => Device.WriteFirmware(new List<byte>(binaryData));
             bgWorker.RunWorkerAsync();
         } 
@@ -142,12 +142,12 @@ namespace PixelTuner.ViewModel
             if (dialog.ShowDialog() == true)
             {
                 List<byte> data = file.GetEpicBinaryPresentation(dialog.SelectedTimeLines);
-                InitializeProgressBar(data);
+                InitializeProgressBar(data, PixelDevice.UsualPacketSize);
                 RaisePropertyChanged("ProgressMax");
                 if (data.Count / 1024 <= MaxMemory) // project size in KB
                 {
                     BackgroundWorker bgWorker = new BackgroundWorker();
-                    bgWorker.DoWork += (x, e) => Device.WriteFile(data);
+                    bgWorker.DoWork += (x, e) => Device.WriteFile(data, PixelDevice.UsualPacketSize);
                     bgWorker.RunWorkerAsync();
                 }
                 else

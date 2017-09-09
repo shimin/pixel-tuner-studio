@@ -206,7 +206,7 @@ namespace ConnectionTester
                         for (int i = 0; i < boxRepeatCount.Value; i++)
                         {
                             if (_device.Port != null)
-                                _device.WriteFile(binaryData);
+                                _device.WriteFile(binaryData, PixelDevice.UsualPacketSize);
                             else
                             {
                                 _logTarget.NewMessage("Port is null, trying to make new.", Common.Log.MessageType.Alert, "ConnectionTester", 0);
@@ -219,7 +219,7 @@ namespace ConnectionTester
                 }
                 else
                 {
-                    _device.WriteFile(binaryData);
+                    _device.WriteFile(binaryData, PixelDevice.UsualPacketSize);
                 }
             }
             catch (Exception ex)

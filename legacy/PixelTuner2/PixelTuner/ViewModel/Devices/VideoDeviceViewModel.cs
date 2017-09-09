@@ -107,9 +107,9 @@ namespace PixelTuner.ViewModel
                     List<byte> data = model.GetVideoBinaryPresentation(dialog.SelectedTimeLines);
                     if (ValidateProject(model, data.Count / 1024))
                     {
-                        InitializeProgressBar(data);
+                        InitializeProgressBar(data, PixelDevice.ProjectPacketSize);
                         BackgroundWorker worker = new BackgroundWorker();
-                        worker.DoWork += (x, e) => Device.WriteFile(data);
+                        worker.DoWork += (x, e) => Device.WriteFile(data, PixelDevice.ProjectPacketSize);
                         worker.RunWorkerAsync();
                     }
                 }
@@ -162,7 +162,7 @@ namespace PixelTuner.ViewModel
                 if (binaryData == null) return;
 
                 BackgroundWorker worker = new BackgroundWorker();
-                InitializeProgressBar(binaryData);
+                InitializeProgressBar(binaryData, PixelDevice.UsualPacketSize);
                 worker.DoWork += (x, e) => Device.WriteFirmware(new List<byte>(binaryData));
                 worker.RunWorkerAsync();
             }
