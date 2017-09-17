@@ -83,6 +83,20 @@ namespace Communication.Service
             }
         }
 
+        private byte[] _selfMac;
+        public byte[] SelfMac
+        {
+            get { return _selfMac; }
+            set { _selfMac = value; PropertyChanged?.Invoke("SelfMac"); }
+        }
+
+        private byte[] _remoteMac;
+        public byte[] RemoteMac
+        {
+            get { return _remoteMac; }
+            set { _remoteMac = value; PropertyChanged?.Invoke("RemoteMac"); }
+        }
+
         #endregion
 
         public PixelDevice(SerialPort port, bool runMonitoring = true)
@@ -157,6 +171,10 @@ namespace Communication.Service
                     EnergyLevel = num;
                     byte[] memSizeArray = new byte[4] { data[10], data[9], data[8], data[7] };
                     MaxMemory = BitConverter.ToUInt32(memSizeArray, 0);
+                    SelfMac = new byte[8];
+                    RemoteMac = new byte[8];
+                    data.CopyTo(11, SelfMac, 0, 8);
+                    data.CopyTo(22, RemoteMac, 0, 8);
                 }
                 catch (Exception exception)
                 {

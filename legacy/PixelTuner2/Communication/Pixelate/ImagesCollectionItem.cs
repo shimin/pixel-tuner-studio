@@ -231,9 +231,21 @@ namespace Communication.Pixelate
             {
                 List<Color> columnColors = new List<Color>();
                 GetColumn(targetHeight, column, columnColors);
-                foreach (var c in columnColors) binary.Add(Map8To8(ApplyRestrictions(targetHeight, c), ColorComponent.R));
-                foreach (var c in columnColors) binary.Add(Map8To8(ApplyRestrictions(targetHeight, c), ColorComponent.G));
-                foreach (var c in columnColors) binary.Add(Map8To8(ApplyRestrictions(targetHeight, c), ColorComponent.B));   
+                if (targetHeight == 80)
+                {
+                    foreach (var c in columnColors)
+                        binary.Add(Map8To8(ApplyRestrictions(targetHeight, c), ColorComponent.R));
+                    foreach (var c in columnColors)
+                        binary.Add(Map8To8(ApplyRestrictions(targetHeight, c), ColorComponent.G));
+                    foreach (var c in columnColors)
+                        binary.Add(Map8To8(ApplyRestrictions(targetHeight, c), ColorComponent.B));
+                }
+                else
+                {
+                    foreach (var c in columnColors) binary.Add(Map8To8(c, ColorComponent.R));
+                    foreach (var c in columnColors) binary.Add(Map8To8(c, ColorComponent.G));
+                    foreach (var c in columnColors) binary.Add(Map8To8(c, ColorComponent.B));
+                }
             }
             return binary;
         }
@@ -314,8 +326,8 @@ namespace Communication.Pixelate
             switch (cc)
             {
                 case ColorComponent.R: result = c.R; break;
-                case ColorComponent.G: result = c.G; break;
-                case ColorComponent.B: result = c.B; break;
+                case ColorComponent.G: result = (byte)(c.G * 0.6); break;
+                case ColorComponent.B: result = (byte)(c.B * 0.8); break;
             }
             return result;
         }
