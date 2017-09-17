@@ -15,6 +15,8 @@ namespace PixelTuner.ViewModel
 
         public const string ToolContentId = "DevicesTool";
 
+        public byte[] MasterMac { get; set; }
+
         public SafeObservable<DeviceViewModel> Devices
         {
             get;

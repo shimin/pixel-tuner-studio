@@ -61,6 +61,8 @@
     <system:String x:Key="Item_Menu_SetRepeatCount">задать число повторов</system:String>
     <system:String x:Key="Dev_Menu_RefreshBrain">Освежить мозги</system:String>
     <system:String x:Key="Dev_Menu_Upload">Загрузить проект</system:String>
+    <system:String x:Key="Dev_Menu_Link">Связать с радио модулем</system:String>
+    <system:String x:Key="Dev_Menu_SetAsMaster">Сделать управляющим</system:String>
     <system:String x:Key="Dev_Props_Channels">Каналов:</system:String>
     <system:String x:Key="Dev_Props_Name">Устройство:</system:String>
     <system:String x:Key="Dev_Props_Tag">Имя:</system:String>

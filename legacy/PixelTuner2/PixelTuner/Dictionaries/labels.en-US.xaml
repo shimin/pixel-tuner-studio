@@ -61,6 +61,8 @@
     <system:String x:Key="Item_Menu_SetRepeatCount">set repeat count</system:String>
     <system:String x:Key="Dev_Menu_RefreshBrain">Refresh brain</system:String>
     <system:String x:Key="Dev_Menu_Upload">Upload project</system:String>
+    <system:String x:Key="Dev_Menu_Link">Bind to remote control</system:String>
+    <system:String x:Key="Dev_Menu_SetAsMaster">Set as master</system:String>
     <system:String x:Key="Dev_Props_Channels">Channels:</system:String>
     <system:String x:Key="Dev_Props_Name">Device:</system:String>
     <system:String x:Key="Dev_Props_Tag">Tag:</system:String>

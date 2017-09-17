@@ -199,7 +199,7 @@ namespace PixelTuner.ViewModel
         #endregion
 
         #region ViewModel commands
-
+        
         #region UploadFirmwareCommand
         RelayCommand _uploadFirmwareCommand;
         public ICommand UploadFirmwareCommand
@@ -234,34 +234,42 @@ namespace PixelTuner.ViewModel
         protected virtual bool CanWriteMac(object parameter)
         {
             var il = RootViewModel.This.DevicesModel.Illuminators.FirstOrDefault();
-            return il != null;
+            return il != null || RootViewModel.This.DevicesModel.MasterMac != null;
         }
 
         protected virtual void OnWriteMac(object parameter)
         {
             var il = RootViewModel.This.DevicesModel.Illuminators.FirstOrDefault();
-            if (il == null) return;
-            var mac = il.Device.Mac;
-            //mac = MixBytes(mac);
-            mac = MixBytes2(mac);
-            /*ushort b1 = (ushort) ((mac[0] << 8 | mac[1]));
-            ushort b2 = (ushort)((mac[2] << 8 | mac[3]));
-            ushort b3 = (ushort)((mac[4] << 8 | mac[5]));
-            ushort b4 = (ushort)((mac[6] << 8 | mac[7]));
 
-            var settings = new List<DeviceFeature>
+            if (il != null)
             {
-                new DeviceFeature(6, BitConverter.GetBytes(b1)),
-                new DeviceFeature(7, BitConverter.GetBytes(b2)),
-                new DeviceFeature(8, BitConverter.GetBytes(b3)),
-                new DeviceFeature(9, BitConverter.GetBytes(b4))
-            };*/
+                RootViewModel.This.DevicesModel.MasterMac = MixBytes2(il.Device.Mac);
+            }
 
-            var settings = new List<DeviceFeature>
+            var mac = RootViewModel.This.DevicesModel.MasterMac;
+            if (mac != null)
             {
-                new DeviceFeature(4, mac),
-            };
-            Device.WriteSettings(settings);
+                var settings = new List<DeviceFeature>
+                {
+                    new DeviceFeature(4, mac),
+                };
+                Device.WriteSettings(settings);
+            }
+        }
+
+        #endregion
+
+        #region SetAsMasterCommand
+        RelayCommand _setAsMasterCommand;
+        public ICommand SetAsMasterCommand => _setAsMasterCommand ?? (_setAsMasterCommand = new RelayCommand(OnSetAsMaster, CanSetAsMaster));
+
+        protected virtual bool CanSetAsMaster(object parameter)
+        {
+            return false;
+        }
+
+        protected virtual void OnSetAsMaster(object parameter)
+        {
         }
 
         #endregion
@@ -277,7 +285,7 @@ namespace PixelTuner.ViewModel
             return result;
         }
 
-        byte[] MixBytes2(byte[] src)
+        protected byte[] MixBytes2(byte[] src)
         {
             byte[] result = new byte[src.Length];
             for (int i = 0; i < src.Length; i++)

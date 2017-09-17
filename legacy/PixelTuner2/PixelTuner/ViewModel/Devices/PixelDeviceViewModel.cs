@@ -270,7 +270,29 @@ namespace PixelTuner.ViewModel
         }
 
         #endregion
-        
+
+        #region SetAsMasterCommand
+
+        protected override void OnSetAsMaster(object parameter)
+        {
+            var mac = Device.SelfMac;
+
+            mac = MixBytes2(mac);
+            var settings = new List<DeviceFeature>
+            {
+                new DeviceFeature(4, mac),
+            };
+            Device.WriteSettings(settings);
+            RootViewModel.This.DevicesModel.MasterMac = mac;
+        }
+
+        protected override bool CanSetAsMaster(object parameter)
+        {
+            return Device.PlatformVersion == 4;
+        }
+
+        #endregion
+
         #endregion
     }
 }
