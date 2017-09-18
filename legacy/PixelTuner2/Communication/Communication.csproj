@@ -70,8 +70,10 @@
     <Compile Include="Pixelate\ColorProfileWS2812.cs" />
     <Compile Include="Pixelate\ColorProfile.cs" />
     <Compile Include="Pixelate\ColorProfile3528.cs" />
+    <Compile Include="Pixelate\ImagesCollectionFanItem.cs" />
     <Compile Include="Pixelate\ImagesCollectionVideoDoubleItem.cs" />
     <Compile Include="Pixelate\ImagesCollectionVideoItem.cs" />
+    <Compile Include="Pixelate\PixelFanImageFile.cs" />
     <Compile Include="Pixelate\VideoImageFile.cs" />
     <Compile Include="Pixelate\VideoTimelineFile.cs" />
     <Compile Include="Service\PixelHoop.cs" />
