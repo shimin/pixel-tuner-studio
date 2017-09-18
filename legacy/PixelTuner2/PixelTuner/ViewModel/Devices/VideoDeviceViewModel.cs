@@ -103,7 +103,6 @@ namespace PixelTuner.ViewModel
                 dialog.Owner = Application.Current.MainWindow;
                 if (dialog.ShowDialog() == true && dialog.SelectedTimeLines.Count() > 0)
                 {
-                    //var line = dialog.SelectedTimeLines.First();
                     List<byte> data = model.GetVideoBinaryPresentation(dialog.SelectedTimeLines);
                     if (ValidateProject(model, data.Count / 1024))
                     {
@@ -113,12 +112,34 @@ namespace PixelTuner.ViewModel
                         worker.RunWorkerAsync();
                     }
                 }
+                else
+                {
+                    TimelinesToUpload d2 = new TimelinesToUpload(TimelineFilterFan, model);
+                    d2.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    d2.Owner = Application.Current.MainWindow;
+                    if (d2.ShowDialog() == true && d2.SelectedTimeLines.Count() > 0)
+                    {
+                        List<byte> data = model.GetFanBinaryPresentation(d2.SelectedTimeLines.First());
+                        if (ValidateProject(model, data.Count / 1024))
+                        {
+                            InitializeProgressBar(data, PixelDevice.ProjectPacketSize);
+                            BackgroundWorker worker = new BackgroundWorker();
+                            worker.DoWork += (x, e) => Device.WriteFile(data, PixelDevice.ProjectPacketSize);
+                            worker.RunWorkerAsync();
+                        }
+                    }
+                }
             }
         }
 
         public static bool TimelineFilter(TimeLineViewModel l)
         {
             return l.GetType() == typeof(VideoTimeLineViewModel);
+        }
+
+        public static bool TimelineFilterFan(TimeLineViewModel l)
+        {
+            return l.GetType() == typeof(PixelTimeLineViewModel);
         }
 
         private bool ValidateProject(FileViewModel file, int projectSize)

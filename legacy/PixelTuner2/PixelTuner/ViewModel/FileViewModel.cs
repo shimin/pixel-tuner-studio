@@ -1453,6 +1453,57 @@ namespace PixelTuner.ViewModel
             return project;
         }
 
+        public List<byte> GetFanBinaryPresentation(TimeLineViewModel line)
+        {
+            ColorDepth depth = ColorDepth.Bit24;
+            try { depth = (ColorDepth)ColorDepth.Parse(typeof(ColorDepth), Settings.Default.ColorDepth); }
+            catch { }
+
+            var images = new List<ImagesCollectionItem>();
+            PixelProjectFile project = null;
+            project = CreateFanProjectFile(line, images, 84, depth);
+            ImagesCollection c = new ImagesCollection(images);
+            var buf = project.GetBinary(c, 84);
+#if(DEBUG)
+            string logFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".\\Logs");
+            Directory.CreateDirectory(logFolder);
+            string projectFileName = Path.Combine(logFolder, "video-project " + DateTime.Now.ToString("dd_MM_yyyy___HH_mm_ss_fff") + ".bin");
+            File.WriteAllBytes(projectFileName, buf.ToArray());
+#endif
+            return buf;
+        }
+
+        private PixelProjectFile CreateFanProjectFile(TimeLineViewModel line,
+            IList<ImagesCollectionItem> imagesCollection,
+            ushort targetHeight,
+            ColorDepth depth)
+        {
+            var project = new PixelProjectFile();
+            var file = new PixelTimelineFile();
+            var pixelLine = line as PixelTimeLineViewModel;
+
+            var currentTime = line.Start.Value;
+
+            List<ITimeLineDataItem> timelineItems = FillGabs(line.Items, line.Start.Value, CreateBlankPixelItem, pixelLine.LineHeight * 6);
+            foreach (TimeLineItemViewModel item in timelineItems)
+            {
+                string path = item.FullName.ToLower();
+                var duration = (item.EndTime.Value - item.StartTime.Value).TotalMilliseconds;       // duration = end time - start time
+                double startMilliseconds = (item.StartTime.Value - line.Start.Value).TotalMilliseconds;    // start ms = start time - timeline start time
+                UInt16 mask = item.LaserOn ? (ushort)0xffff : (ushort)0;
+                var imageFile = new PixelFanImageFile(path, (UInt16)item.Stretching, (UInt32)duration, (UInt32)startMilliseconds, mask);
+                var image = new ImagesCollectionFanItem(path, depth);
+                imageFile.Brightness = image.Brightness = item.Brightness;
+                imagesCollection.Add(image);
+
+                file.Images.Add(imageFile);
+                currentTime = item.EndTime.Value;
+            }
+            project.TimeLines.Add(file);
+
+            return project;
+        }
+
         private List<ITimeLineDataItem> SplitItems(List<ITimeLineDataItem> timelineItems1, List<DateTime?> intervals)
         {
             List<ITimeLineDataItem> result = new List<ITimeLineDataItem>();
