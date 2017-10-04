@@ -59,8 +59,8 @@
             </ItemsControl.ItemsPanel>
         </ItemsControl>
         <StackPanel Grid.Column="1">
-            <xctk:DecimalUpDown Value="{Binding ElementName=videoWindow, Path=Thumbnail.XOffset}" Margin="4" Minimum="0"/>
-            <xctk:DecimalUpDown Value="{Binding ElementName=videoWindow, Path=Thumbnail.YOffset}" Margin="4" Minimum="0"/>
+            <xctk:DecimalUpDown Value="{Binding ElementName=videoWindow, Path=Thumbnail.XOffset}" Margin="4"/>
+            <xctk:DecimalUpDown Value="{Binding ElementName=videoWindow, Path=Thumbnail.YOffset}" Margin="4"/>
             <CheckBox Name="boxForAll" Foreground="White">For all</CheckBox>
         </StackPanel>
     </Grid>

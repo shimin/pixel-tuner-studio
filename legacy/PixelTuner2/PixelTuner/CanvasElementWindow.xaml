@@ -28,13 +28,13 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-            
+
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/PixelTuner;component/Styles/SharedStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-    
+
     <Grid Margin="8">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -44,89 +44,101 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="24"/>
         </Grid.RowDefinitions>
-        <!--<MediaElement Visibility="{Binding MediaVisible, Converter={StaticResource BoolToVisibilityConverter}}" Source="{Binding Path=Thumbnail.FullName}" />-->
-        <DockPanel>
-            <Path Name="boxFigure"
-                  Grid.Row="0"
-                  Stroke="{Binding Stroke}" 
-                  StrokeThickness="1" 
-                  Stretch="Uniform"
-                  Data="{Binding Geometry}">
-            </Path>
-        </DockPanel>
 
-        <ItemsControl 
-            ItemsSource="{Binding LedTiles}"
-            Width="{Binding ElementName=boxFigure, Path=ActualWidth}" 
-            Height="{Binding ElementName=boxFigure, Path=ActualHeight}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Button 
-                        Background="Transparent" 
-                        Command="{Binding TurnOnCommand}" 
-                        Opacity="{Binding OpacityVal}" 
-                        MouseLeftButtonDown="Button_MouseDown"
-                        MouseDown="Button_MouseDown"
-                        MouseEnter="Button_MouseEnter"
-                        MouseDoubleClick="Button_OnMouseDoubleClick"
-                        Margin="{Binding ElementName=boxTailGrid, Path=DataContext.TilesMargin}">
-                        <Button.ToolTip>
-                            <StackPanel Orientation="Vertical">
-                                <TextBlock Text="{Binding LedNumber}"/>
-                                <!--<TextBlock Text="{Binding Selected}"/>-->
-                            </StackPanel>
-                        </Button.ToolTip>
-                        <Button.Content>
-                            <TextBlock Text="{Binding LedNumber}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Button.Content>
-                        <Button.Template>
-                            <ControlTemplate TargetType="{x:Type Button}">
-                                <Border Name="Border" 
-                                        BorderBrush="{TemplateBinding BorderBrush}" 
-                                        BorderThickness="{TemplateBinding BorderThickness}" 
-                                        Background="{TemplateBinding Background}">
-                                    <ContentPresenter Content="{TemplateBinding Content}" 
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+
+        <Grid>
+            <Grid.LayoutTransform>
+                <!-- This ScaleTransform implements the zooming and is bound the Value of the ZoomSlider -->
+                <ScaleTransform ScaleX="{Binding ElementName=ZoomSlider, Path=Value}" ScaleY="{Binding ElementName=ZoomSlider, Path=Value}" />
+            </Grid.LayoutTransform>
+            <DockPanel>
+                <Path Name="boxFigure"
+                        Grid.Row="0"
+                        Stroke="{Binding Stroke}" 
+                        StrokeThickness="1" 
+                        Stretch="Uniform"
+                        Data="{Binding Geometry}">
+                </Path>
+            </DockPanel>
+
+            <ItemsControl 
+                ItemsSource="{Binding LedTiles}"
+                Width="{Binding ElementName=boxFigure, Path=ActualWidth}" 
+                Height="{Binding ElementName=boxFigure, Path=ActualHeight}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button 
+                                Background="Transparent" 
+                                Command="{Binding TurnOnCommand}" 
+                                Opacity="{Binding OpacityVal}" 
+                                MouseLeftButtonDown="Button_MouseDown"
+                                MouseDown="Button_MouseDown"
+                                MouseEnter="Button_MouseEnter"
+                                MouseDoubleClick="Button_OnMouseDoubleClick"
+                                Margin="{Binding ElementName=boxTailGrid, Path=DataContext.TilesMargin}">
+                                <Button.ToolTip>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{Binding LedNumber}"/>
+                                    </StackPanel>
+                                </Button.ToolTip>
+                                <Button.Content>
+                                    <Viewbox Stretch="Uniform">
+                                        <TextBlock Text="{Binding LedNumber}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Viewbox>
+                                </Button.Content>
+                                <Button.Template>
+                                    <ControlTemplate TargetType="{x:Type Button}">
+                                        <Border 
+                                            Name="Border"
+                                            CornerRadius="8"
+                                            BorderBrush="{TemplateBinding BorderBrush}" 
+                                            BorderThickness="{TemplateBinding BorderThickness}" 
+                                            Background="{TemplateBinding Background}">
+                                            <ContentPresenter Content="{TemplateBinding Content}" 
                                                       ContentTemplate="{TemplateBinding ContentTemplate}" 
                                                       Margin="{TemplateBinding Padding}" />
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="Button.IsFocused" Value="True">
-                                        <Setter TargetName="Border" Property="Background" Value="Transparent" />
-                                    </Trigger>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="Button.IsFocused" Value="True">
+                                                <Setter TargetName="Border" Property="Background" Value="Transparent" />
+                                            </Trigger>
 
-                                    <Trigger Property="IsMouseOver" Value="False">
-                                        <Setter TargetName="Border" Property="Background" Value="Transparent" />
-                                        <Setter TargetName="Border" Property="Opacity" Value="1.0" />
-                                    </Trigger>
-                                    <EventTrigger RoutedEvent="MouseLeave">
-                                        <BeginStoryboard>
-                                            <Storyboard>
-                                                <DoubleAnimation Storyboard.TargetName="Border" Storyboard.TargetProperty="Opacity" From="0.2" To="1"></DoubleAnimation>
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </EventTrigger>
-                                    <EventTrigger RoutedEvent="MouseEnter">
-                                        <BeginStoryboard>
-                                            <Storyboard>
-                                                <DoubleAnimation Storyboard.TargetName="Border" Storyboard.TargetProperty="Opacity" From="0.2" To="0.2"></DoubleAnimation>
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </EventTrigger>
-                                    <DataTrigger Binding="{Binding Selected}" Value="true">
-                                        <Setter TargetName="Border" Property="Background" Value="#a0ff0000"/>
-                                    </DataTrigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <UniformGrid Name="boxTailGrid" Columns="{Binding ColumnsCount}" Rows="{Binding RowsCount}" Background="Transparent" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-        </ItemsControl>
+                                            <Trigger Property="IsMouseOver" Value="False">
+                                                <Setter TargetName="Border" Property="Background" Value="Transparent" />
+                                                <Setter TargetName="Border" Property="Opacity" Value="1.0" />
+                                            </Trigger>
+                                            <EventTrigger RoutedEvent="MouseLeave">
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetName="Border" Storyboard.TargetProperty="Opacity" From="0.2" To="1"></DoubleAnimation>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </EventTrigger>
+                                            <EventTrigger RoutedEvent="MouseEnter">
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetName="Border" Storyboard.TargetProperty="Opacity" From="0.2" To="0.2"></DoubleAnimation>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </EventTrigger>
+                                            <DataTrigger Binding="{Binding Selected}" Value="true">
+                                                <Setter TargetName="Border" Property="Background" Value="#a0ff0000"/>
+                                            </DataTrigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Name="boxTailGrid" Columns="{Binding ColumnsCount}" Rows="{Binding RowsCount}" Background="Transparent" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </Grid>
+        </ScrollViewer>
 
         <StackPanel Grid.Column="1">
             <TextBlock Text="{StaticResource ElementMarkup_Rows}"/>
@@ -136,8 +148,10 @@
             <Button Content="{StaticResource ElementMarkup_Set}" Command="{Binding SetSizeCommand}"/>
             <TextBlock Text="Spacing: "/>
             <xctk:DecimalUpDown Name="boxTilesMargin" Value="{Binding TilesMargin}" Background="White" Margin="6" Minimum="0" Maximum="100"/>
+            <TextBlock Text="Zoom:"></TextBlock>
+            <Slider x:Name="ZoomSlider" Orientation="Horizontal" Minimum="1.0" Maximum="8.0" LargeChange="0.25" SmallChange="0.01"  Value="1.0" />
         </StackPanel>
-        
+
         <Button Grid.Column="1" Name="boxCloseBtn" Content="OK" Grid.Row="1" Width="80" HorizontalAlignment="Right" Click="boxCloseBtn_Click" Margin="2"/>
     </Grid>
 </Window>
