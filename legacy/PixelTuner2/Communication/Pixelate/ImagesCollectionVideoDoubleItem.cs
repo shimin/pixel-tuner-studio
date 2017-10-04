@@ -101,12 +101,13 @@ namespace Communication.Pixelate
                 foreach (var point in points1)
                 {
                     var px = Color.Black;
-                    try
+                    if (point.X + _xOffset1 < frame1.Width &&
+                        point.Y + _yOffset1 < frame1.Height &&
+                        point.X + _xOffset1 >= 0 &&
+                        point.Y + _yOffset1 >= 0)
                     {
-                        if (point.X + _xOffset1 < frame1.Width && point.Y + _yOffset1 < frame1.Height)
-                            px = frame1.GetPixel(point.X + _xOffset1, point.Y + _yOffset1);
+                        px = frame1.GetPixel(point.X + _xOffset1, point.Y + _yOffset1);
                     }
-                    catch { }
                     px = SetBrightness(px, _brightness2);       // set brightness
                     px = ColorProfileWS2812.Modify(px);         // set color profile
                     bitmap.SetPixel(frameIdx, row, px);
@@ -115,11 +116,13 @@ namespace Communication.Pixelate
                 foreach (var point in points2)
                 {
                     var px = Color.Black;
-                    try
+                    if (point.X + _xOffset2 < frame2.Width &&
+                        point.Y + _yOffset2 < frame2.Height &&
+                        point.X + _xOffset2 >= 0 &&
+                        point.Y + _yOffset2 >= 0)
                     {
-                        if (point.X + _xOffset2 < frame2.Width && point.Y + _yOffset2 < frame2.Height)
-                            px = frame2.GetPixel(point.X + _xOffset2, point.Y + _yOffset2);
-                    } catch { }
+                        px = frame2.GetPixel(point.X + _xOffset2, point.Y + _yOffset2);
+                    }
                     px = SetBrightness(px, _brightness2);       // set brightness
                     px = ColorProfileWS2812.Modify(px);         // set color profile
                     bitmap.SetPixel(frameIdx, row, px);

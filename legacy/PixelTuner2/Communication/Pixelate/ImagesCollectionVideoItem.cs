@@ -63,8 +63,14 @@ namespace Communication.Pixelate
                 foreach (var point in points)
                 {
                     var px = Color.Black;
-                    if (point.X < frame.Width && point.Y < frame.Height)
+
+                    if (point.X + _xOffset < frame.Width &&
+                        point.Y + _yOffset < frame.Height &&
+                        point.X + _xOffset >= 0 &&
+                        point.Y + _yOffset >= 0)
+                    {
                         px = frame.GetPixel(point.X + _xOffset, point.Y + _yOffset);
+                    }
                     px = SetBrightness(px, Brightness);     // set brightness
                     px = ColorProfileWS2812.Modify(px);     // set color profile
                     bitmap.SetPixel(frameIdx, row, px);
