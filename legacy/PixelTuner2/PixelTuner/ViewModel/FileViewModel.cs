@@ -1456,14 +1456,15 @@ namespace PixelTuner.ViewModel
         public List<byte> GetFanBinaryPresentation(TimeLineViewModel line)
         {
             ColorDepth depth = ColorDepth.Bit24;
+            ushort height = (ushort)((PixelTimeLineViewModel) line).LineHeight;
             try { depth = (ColorDepth)ColorDepth.Parse(typeof(ColorDepth), Settings.Default.ColorDepth); }
             catch { }
 
             var images = new List<ImagesCollectionItem>();
             PixelProjectFile project = null;
-            project = CreateFanProjectFile(line, images, 84, depth);
+            project = CreateFanProjectFile(line, images, height, depth);
             ImagesCollection c = new ImagesCollection(images);
-            var buf = project.GetBinary(c, 84);
+            var buf = project.GetBinary(c, height);
 #if(DEBUG)
             string logFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".\\Logs");
             Directory.CreateDirectory(logFolder);
@@ -1492,7 +1493,7 @@ namespace PixelTuner.ViewModel
                 double startMilliseconds = (item.StartTime.Value - line.Start.Value).TotalMilliseconds;    // start ms = start time - timeline start time
                 UInt16 mask = item.LaserOn ? (ushort)0xffff : (ushort)0;
                 var imageFile = new PixelFanImageFile(path, (UInt16)item.Stretching, (UInt32)duration, (UInt32)startMilliseconds, mask);
-                var image = new ImagesCollectionFanItem(path, depth);
+                var image = new ImagesCollectionItem(path, targetHeight, depth);
                 imageFile.Brightness = image.Brightness = item.Brightness;
                 imagesCollection.Add(image);
 
