@@ -121,7 +121,7 @@ namespace PixelTuner.ViewModel
             {
                 StartTime = item.StartTime,
                 EndTime = item.EndTime,
-                FullName = item.FullName,
+                FullName = item.UseFullName ? item.FullName : Path.Combine("./", item.Name),
                 Stretching = item.Stretching,
                 Brightness = item.Brightness,
                 LaserOn = item.LaserOn,

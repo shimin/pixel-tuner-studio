@@ -277,7 +277,7 @@ namespace PixelTuner.ViewModel
             get;
             private set;
         }
-
+        
         [XmlElement]
         public CanvasViewModel Canvas
         {
@@ -335,7 +335,7 @@ namespace PixelTuner.ViewModel
         }
 
         private string _filePath = null;
-        [XmlAttribute]
+        [XmlIgnore]
         public string FilePath
         {
             get { return _filePath; }
@@ -1946,6 +1946,17 @@ namespace PixelTuner.ViewModel
         {
             if (FileChanged != null)
                 FileChanged(sender, e);
+        }
+
+        public override object Clone()
+        {
+            var item = (FileViewModel)base.Clone();
+            item.Canvas = (CanvasViewModel)Canvas.Clone();
+            item.TimeLines = new ObservableCollection<TimeLineViewModel>();
+            foreach (var line in TimeLines)
+                item.TimeLines.Add((TimeLineViewModel)line.Clone());
+            item.UnitSize = UnitSize;
+            return item;
         }
 
         public void Dispose()

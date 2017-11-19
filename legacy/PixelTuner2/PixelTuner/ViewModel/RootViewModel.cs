@@ -628,11 +628,12 @@ namespace PixelTuner.ViewModel
                 if (dlg.ShowDialog().GetValueOrDefault())
                     path = dlg.FileName;
             }
-
+            
             if (path != null)
             {
                 try
                 {
+                    Directory.SetCurrentDirectory(Path.GetDirectoryName(path));
                     using (FileStream fs = new FileStream(path, FileMode.Open))
                     {
                         // replace xsi:type to correctly open old projects
@@ -657,8 +658,8 @@ namespace PixelTuner.ViewModel
                             }
                             catch (OperationCanceledException ex)
                             {
-                                MessageBox.Show(ex.Message, Application.Current.MainWindow.Title, MessageBoxButton.OK,
-                                    MessageBoxImage.Information);
+                                //MessageBox.Show(ex.Message, Application.Current.MainWindow.Title, MessageBoxButton.OK,
+                                    //MessageBoxImage.Information);
                             }
                             catch (Exception ex)
                             {
@@ -669,6 +670,7 @@ namespace PixelTuner.ViewModel
                             }
                         }
                     }
+                    Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
                 }
                 catch
                 {
@@ -760,6 +762,7 @@ namespace PixelTuner.ViewModel
                 else
                 {
                     throw new OperationCanceledException("Operation cancelled.");
+                    //return;
                 }
 
                 brokenItem = GetBrokenLink(file);
@@ -983,40 +986,40 @@ namespace PixelTuner.ViewModel
 
         #endregion 
 
-        #region ExportCommand
+        #region ExportBinCommand
 #if DEBUG
-        RelayCommand _exportCommand = null;
-        public ICommand ExportCommand
+        RelayCommand _exportBinCommand = null;
+        public ICommand ExportBinCommand
         {
             get
             {
-                if (_exportCommand == null)
+                if (_exportBinCommand == null)
                 {
-                    _exportCommand = new RelayCommand((p) => OnExport(p), (p) => CanExport(p));
+                    _exportBinCommand = new RelayCommand((p) => OnExportBin(p), (p) => CanExportBin(p));
                 }
 
-                return _exportCommand;
+                return _exportBinCommand;
             }
         }
 
-        private bool CanExport(object parameter)
+        private bool CanExportBin(object parameter)
         {
             if (ActiveDocument == null) return false;
 
-            bool canExport = (ActiveDocument.TimeLines.Count((i) => 
+            bool canExportBin = (ActiveDocument.TimeLines.Count((i) => 
                 PixelDeviceViewModel.TimelineFilter(i) && (i as PixelTimeLineViewModel).LineHeight == Settings.Default.LineHeight) > 0)
                 || (ActiveDocument.TimeLines.Count(LightMasterDeviceViewModel.TimelineFilter) > 0)
                 || (ActiveDocument.TimeLines.Count(EpicPoiDeviceViewModel.TimelineFilter) > 0)
                 || (ActiveDocument.TimeLines.Count(VideoDeviceViewModel.TimelineFilter) > 0);
-            return canExport;
+            return canExportBin;
         }
 
-        private void OnExport(object parameter)
+        private void OnExportBin(object parameter)
         {
-            Export(ActiveDocument);
+            ExportBin(ActiveDocument);
         }
 
-        internal void Export(FileViewModel fileToSave, bool saveAsFlag = false)
+        internal void ExportBin(FileViewModel fileToSave, bool saveAsFlag = false)
         {
             TimelinesToUpload dialog = null;
 
@@ -1095,7 +1098,7 @@ namespace PixelTuner.ViewModel
 
         }
 
-        public Visibility ExportCommandVisibility
+        public Visibility ExportBinCommandVisibility
         {
             get
             {
@@ -1103,7 +1106,7 @@ namespace PixelTuner.ViewModel
             }
         }
 #else
-        public Visibility ExportCommandVisibility
+        public Visibility ExportBinCommandVisibility
         {
             get
             {
@@ -1111,8 +1114,107 @@ namespace PixelTuner.ViewModel
             }
         }
 #endif
+        #endregion
 
+        #region ExportCommand
+        RelayCommand _exportCommand = null;
+        public ICommand ExportCommand
+        {
+            get
+            {
+                if (_exportCommand == null)
+                {
+                    _exportCommand = new RelayCommand((p) => OnExport(p), (p) => CanExport(p));
+                }
 
+                return _exportCommand;
+            }
+        }
+
+        private bool CanExport(object parameter)
+        {
+            if (ActiveDocument == null) return false;
+
+            return true;
+        }
+
+        private void OnExport(object parameter)
+        {
+            Export(ActiveDocument);
+        }
+
+        internal void Export(FileViewModel fileToSave, bool saveAsFlag = false)
+        {
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            var doc = (FileViewModel)fileToSave.Clone();
+            if (fbd.ShowDialog() == DialogResult.OK)
+            {
+                foreach(var line in doc.TimeLines)
+                {
+                    if (line is LightTimeLineViewModel) continue;
+                    foreach(TimeLineItemViewModel file in line.Items)
+                    {
+                        var path = Path.Combine(fbd.SelectedPath, file.Name);
+                        if (File.Exists(path))
+                        {
+                            var dResult = MessageBox.Show(string.Format("Overwrite file {0}?", path),
+                                "PixelTuner", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+
+                            if ( dResult == MessageBoxResult.Yes)
+                                file.CopyTo(path);
+                            else if (dResult == MessageBoxResult.Cancel)
+                            {
+                                return;
+                            }
+                        }
+                        else
+                            file.CopyTo(path);
+                        file.UseFullName = false;
+                    }
+                }
+            }
+            ValidateFile(doc);
+            var projectName = Path.Combine(fbd.SelectedPath, fileToSave.FileName.Replace("*", ""));
+            using (XmlTextWriter tw = new XmlTextWriter(projectName, Encoding.UTF8))
+            {
+                tw.Formatting = Formatting.Indented;
+                _projectSerializer.Serialize(tw, doc);
+
+                if (ActiveDocumentChanged != null)
+                    ActiveDocumentChanged(this, new DocumentChangedEventArgs(_activeDocument, _activeDocument));
+            }
+            foreach (var t in fileToSave.TimeLines) { t.IsChanged = false; }
+            fileToSave.IsDirty = false;
+            fileToSave.FileName = "";
+            /*
+            if (fileToSave.TimeLines.Count(VideoDeviceViewModel.TimelineFilter) > 0)
+            {
+                dialog = new TimelinesToUpload(VideoDeviceViewModel.TimelineFilter, RootViewModel.This.ActiveDocument);
+                dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                dialog.Owner = Application.Current.MainWindow;
+                if (dialog.ShowDialog() == true)
+                {
+                    var dlg = new SaveFileDialog();
+                    dlg.Filter = "Binary project file|*.bin";
+                    if (dlg.ShowDialog().GetValueOrDefault())
+                    {
+                        //var line = dialog.SelectedTimeLines.First();
+                        //if (line != null)
+                        //var bin = fileToSave.GetVideoBinaryPresentation(dialog.SelectedTimeLines).ToArray();
+                        //File.WriteAllBytes(dlg.FileName, bin);
+                    }
+                }
+            }
+            */
+        }
+
+        public Visibility ExportCommandVisibility
+        {
+            get
+            {
+                return Visibility.Visible;
+            }
+        }
         #endregion
 
         #region CloseCommand
