@@ -10,7 +10,15 @@ using System.ComponentModel;
 using System.Windows.Media.Imaging;
 using Common.Imaging;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using System.Windows.Input;
+using Application = System.Windows.Application;
+using DataFormats = System.Windows.DataFormats;
+using DragEventArgs = System.Windows.DragEventArgs;
+using ListView = System.Windows.Controls.ListView;
+using ListViewItem = System.Windows.Controls.ListViewItem;
+using MessageBox = System.Windows.MessageBox;
+using TextBox = System.Windows.Controls.TextBox;
 
 namespace PixelTuner.Controls.ThumbListView
 {
@@ -154,6 +162,64 @@ namespace PixelTuner.Controls.ThumbListView
         {
             RootViewModel.This.VideosModel.RefreshVideosCollection();
         }
+
+        #region Bmp import
+
+        private byte[] GifAnimation = { 33, 255, 11, 78, 69, 84, 83, 67, 65, 80, 69, 50, 46, 48, 3, 1, 0, 0, 0 };
+        private byte[] Delay = { 0, 0 };
+        public void WriteGifImg(byte[] B, BinaryWriter BW)
+        {
+            B[785] = Delay[0]; //5 secs delay
+            B[786] = Delay[1];
+            B[798] = (byte)(B[798] | 0X87);
+            BW.Write(B, 781, 18);
+            BW.Write(B, 13, 768);
+            BW.Write(B, 799, B.Length - 800);
+        }
+
+        private void BmpImport_Button_Click(object sender, RoutedEventArgs e)
+        {
+            using (FolderBrowserDialog fbd = new FolderBrowserDialog())
+            {
+                fbd.RootFolder = Environment.SpecialFolder.MyPictures;
+                if (fbd.ShowDialog() == DialogResult.OK)
+                {
+                    using (SaveFileDialog sfd = new SaveFileDialog())
+                    {
+                        sfd.InitialDirectory = Path.Combine(Environment.SpecialFolder.MyVideos.ToString(), "PixelTuner 2\\Clips");
+                        sfd.Filter = "Gif files (*.gif)|*.gif";
+                        if (sfd.ShowDialog() == DialogResult.OK)
+                        {
+                            string GifFile = sfd.FileName;
+
+                            string[] Files = Directory.GetFiles(fbd.SelectedPath, "*.bmp");
+                            MemoryStream MS = new MemoryStream();
+                            BinaryReader BR = new BinaryReader(MS);
+                            BinaryWriter BW = new BinaryWriter(new FileStream(GifFile, FileMode.Create));
+                            System.Drawing.Image.FromFile(Files[0]).Save(MS, System.Drawing.Imaging.ImageFormat.Gif);
+                            byte[] B = MS.ToArray();
+                            B[10] = (byte)(B[10] & 0X78); //No global color table.
+                            BW.Write(B, 0, 13);
+                            BW.Write(GifAnimation);
+                            WriteGifImg(B, BW);
+                            for (int I = 1; I < Files.Length; I++)
+                            {
+                                MS.SetLength(0);
+                                System.Drawing.Image.FromFile(Files[I]).Save(MS, System.Drawing.Imaging.ImageFormat.Gif);
+                                B = MS.ToArray();
+                                WriteGifImg(B, BW);
+                            }
+                            BW.Write(B[B.Length - 1]);
+                            BW.Close();
+                            MS.Dispose();
+                        }
+                    }
+                }
+            }
+            RootViewModel.This.VideosModel.RefreshVideosCollection();
+        }
+
+        #endregion
 
         #endregion
     }

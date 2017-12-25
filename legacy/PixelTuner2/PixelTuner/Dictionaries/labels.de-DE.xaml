@@ -95,6 +95,7 @@
     <system:String x:Key="PictureEditor_CropAdjust">Crop/Adjust</system:String>
     <system:String x:Key="PictureEditor_Delete">Löschen</system:String>
     <system:String x:Key="PictureEditor_Update">Aktualisieren</system:String>
+    <system:String x:Key="PictureEditor_BmpImport">Bmp import</system:String>
     <system:String x:Key="PictureEditor_Search">Suchen</system:String>
     <system:String x:Key="ColorAdjustPage_BrightnessContrast">Helligkeit/Kontrast</system:String>
     <system:String x:Key="ColorAdjustPage_Brightness">Helligkeit</system:String>

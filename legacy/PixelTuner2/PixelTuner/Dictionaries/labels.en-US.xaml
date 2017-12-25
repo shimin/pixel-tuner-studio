@@ -96,6 +96,7 @@
     <system:String x:Key="PictureEditor_Delete">Delete</system:String>
     <system:String x:Key="PictureEditor_Update">Refresh</system:String>
     <system:String x:Key="PictureEditor_Search">Search</system:String>
+    <system:String x:Key="PictureEditor_BmpImport">Bmp import</system:String>
     <system:String x:Key="ColorAdjustPage_BrightnessContrast">Brightness/Contrast</system:String>
     <system:String x:Key="ColorAdjustPage_Brightness">Brightness</system:String>
     <system:String x:Key="ColorAdjustPage_Contrast">Contrast</system:String>

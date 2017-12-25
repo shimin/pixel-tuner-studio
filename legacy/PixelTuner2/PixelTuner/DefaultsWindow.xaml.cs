@@ -291,6 +291,14 @@ namespace PixelTuner
 
             DeviceHelper.WriteSettings<VideoDevice>(settings);
             DeviceHelper.WriteSettings<PixelHoop>(settings);
+
+            List<DeviceFeature> pixelDeviceSettings = new List<DeviceFeature>();
+            pixelDeviceSettings.Add(new DeviceFeature(5, Encoding.ASCII.GetBytes(boxSSId.Text + (char)0)));
+            pixelDeviceSettings.Add(new DeviceFeature(6, Encoding.ASCII.GetBytes(boxPass.Text + (char)0)));
+            pixelDeviceSettings.Add(new DeviceFeature(7, boxIP.GetByteArray()));
+            pixelDeviceSettings.Add(new DeviceFeature(8, BitConverter.GetBytes(WifiPort)));
+            pixelDeviceSettings.Add(new DeviceFeature(11, Encoding.GetEncoding(1251).GetBytes(boxTag.Text + (char)0)));
+            DeviceHelper.WriteSettings<PixelDevice>(pixelDeviceSettings);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

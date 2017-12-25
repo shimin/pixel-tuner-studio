@@ -31,7 +31,7 @@
                     Height="20"
                     Increment="5"
                     Minimum="5" 
-                    Maximum="400" 
+                    Maximum="10000" 
                     Margin="4,2,0,0"
                     Width="60"
                     VerticalAlignment="Top"

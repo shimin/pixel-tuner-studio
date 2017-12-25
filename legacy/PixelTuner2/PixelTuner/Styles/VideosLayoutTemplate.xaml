@@ -22,6 +22,7 @@
             <DockPanel LastChildFill="True" Margin="1,0,0,-2" Background="#00ffffff">
                 <Button Style="{StaticResource WhiteLinkButton}" DockPanel.Dock="Left" Content="{StaticResource PictureEditor_Delete}" Click="Delete_Button_Click" Margin="4,2,4,0" IsEnabled="{Binding ElementName=boxThumbnails, Path=DataContext.IsSomethingSelected, Mode=OneWay}"></Button>
                 <Button Style="{StaticResource WhiteLinkButton}" DockPanel.Dock="Left" Content="{StaticResource PictureEditor_Update}" Click="Resfresh_Button_Click" Margin="4,2,4,0"></Button>
+                <Button Style="{StaticResource WhiteLinkButton}" DockPanel.Dock="Left" Content="{StaticResource PictureEditor_BmpImport}" Click="BmpImport_Button_Click" Margin="4,2,4,0"></Button>
                 <ct:SearchTextBox Text="{Binding SearchPattern, UpdateSourceTrigger=PropertyChanged}" Height="20" Margin="8,2,0,0" VerticalAlignment="Top" HorizontalAlignment="Stretch" Search="SearchHandler"></ct:SearchTextBox>
             </DockPanel>
             <ListView 

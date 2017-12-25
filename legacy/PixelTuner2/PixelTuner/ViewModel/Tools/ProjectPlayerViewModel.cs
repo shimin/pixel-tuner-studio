@@ -257,6 +257,7 @@ namespace PixelTuner.ViewModel
         private static BitmapSource CreateBorder(ImageSource source, Thickness margin)
         {
             double width = source.Width + margin.Left + margin.Right;
+            width = width < 1 ? 1 : width;
             double height = source.Height + margin.Top + margin.Bottom;
 
             var internalArea = new Rect(

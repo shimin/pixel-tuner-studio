@@ -1339,8 +1339,8 @@ namespace PixelTuner.ViewModel
                     double startMilliseconds = (item.StartTime.Value - pixelLine.Start.Value).TotalMilliseconds;    // start ms = start time - timepixelLine start time
                     UInt16 mask = item.LaserOn ? (ushort)0xffff : (ushort)0;
                     var imageFile = new PixelImageFile(path, (UInt16)item.Stretching, (UInt32)duration, (UInt32)startMilliseconds, mask);
-                    var image = new ImagesCollectionItem(path, targetHeight, depth);
-                    imageFile.Brightness = image.Brightness = item.Brightness;
+                    var image = new ImagesCollectionItem(path, targetHeight, depth, item.Brightness);
+                    imageFile.Brightness = item.Brightness;
                     imagesCollection.Add(image);
 
                     file.Images.Add(imageFile);
@@ -1464,7 +1464,7 @@ namespace PixelTuner.ViewModel
             PixelProjectFile project = null;
             project = CreateFanProjectFile(line, images, height, depth);
             ImagesCollection c = new ImagesCollection(images);
-            var buf = project.GetBinary(c, height);
+            var buf = project.GetBinary(c, (ushort)(height));
 #if(DEBUG)
             string logFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".\\Logs");
             Directory.CreateDirectory(logFolder);
@@ -1493,7 +1493,7 @@ namespace PixelTuner.ViewModel
                 double startMilliseconds = (item.StartTime.Value - line.Start.Value).TotalMilliseconds;    // start ms = start time - timeline start time
                 UInt16 mask = item.LaserOn ? (ushort)0xffff : (ushort)0;
                 var imageFile = new PixelFanImageFile(path, (UInt16)item.Stretching, (UInt32)duration, (UInt32)startMilliseconds, mask);
-                var image = new ImagesCollectionItem(path, targetHeight, depth);
+                var image = new ImagesCollectionItem(path, 32, depth, item.Brightness);
                 imageFile.Brightness = image.Brightness = item.Brightness;
                 imagesCollection.Add(image);
 
