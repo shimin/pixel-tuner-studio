@@ -32,7 +32,7 @@ namespace PixelTuner.ViewModel
             var result = new TimeLineItemGradient();
             result.StartTime = item.StartTime;
             result.EndTime = item.EndTime;
-            result.FullName = item.FullName;
+            result.FullName = item.UseFullName ? item.FullName : Path.Combine("./", item.Name);
             result.Stretching = item.Stretching;
             result.Brightness = item.Brightness;
             result.LaserOn = item.LaserOn;

@@ -35,6 +35,7 @@
     <system:String x:Key="Menu_File_Open">Projekt öffnen</system:String>
     <system:String x:Key="Menu_File_Save">Speichern</system:String>
     <system:String x:Key="Menu_File_SaveAs">Speichern als...</system:String>
+    <system:String x:Key="Menu_File_ExportBin">Export bin</system:String>
     <system:String x:Key="Menu_File_Export">Export..</system:String>
     <system:String x:Key="Menu_File_ExportCompressed">Export compressed..</system:String>
     <system:String x:Key="Menu_File_Close">Schließen</system:String>

@@ -42,9 +42,24 @@ namespace PixelTuner.ViewModel
             RaisePropertyChanged("Start");
             RaisePropertyChanged("End");
         }
-        
+
         #region Properties
 
+        private bool _useFullName = true;
+        [XmlIgnore]
+        public bool UseFullName
+        {
+            get
+            {
+                return _useFullName;
+            }
+
+            set
+            {
+                _useFullName = value;
+            }
+        }
+        
         public object StartIcon
         {
             get
@@ -694,6 +709,7 @@ namespace PixelTuner.ViewModel
         public new DateTime CreationTime { get { return _fi.CreationTime; } set { _fi.CreationTime = value; } }
         public new DateTime CreationTimeUtc { get { return _fi.CreationTimeUtc; } set { _fi.CreationTimeUtc = value; } }
         public new string Extension { get { return _fi.Extension; } }
+        private string _fullName = null;
         public override string FullName { get { return _fi?.FullName ?? ""; } }
         public new DateTime LastAccessTime { get { return _fi.LastAccessTime; } set { _fi.LastAccessTime = value; } }
         public new DateTime LastAccessTimeUtc { get { return _fi.LastAccessTimeUtc; } set { _fi.LastAccessTimeUtc = value; } }
@@ -717,7 +733,7 @@ namespace PixelTuner.ViewModel
             var result = new TimeLineItem();
             result.StartTime = item.StartTime;
             result.EndTime = item.EndTime;
-            result.FullName = item.FullName;
+            result.FullName = item.UseFullName ? item.FullName : Path.Combine("./", item.Name);
             result.Stretching = item.Stretching;
             result.Brightness = item.Brightness;
             result.LaserOn = item.LaserOn;
