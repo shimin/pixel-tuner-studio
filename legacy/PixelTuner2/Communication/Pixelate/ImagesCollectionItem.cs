@@ -91,8 +91,9 @@ namespace Communication.Pixelate
 
         #region Constructor
 
-        public ImagesCollectionItem(string imagePath, UInt16 targetHeight, ColorDepth depth)
+        public ImagesCollectionItem(string imagePath, UInt16 targetHeight, ColorDepth depth, byte brightness)
         {
+            Brightness = brightness;
             _path = imagePath;
             _depth = depth;
             LoadFile(targetHeight);
@@ -359,7 +360,7 @@ namespace Communication.Pixelate
             return Color.FromArgb(r, g, b);
         }
 
-        private static void AttachParameters(List<byte> binary, ColorDepth depth)
+        protected static void AttachParameters(List<byte> binary, ColorDepth depth)
         {
             if (depth == ColorDepth.Bit12) { binary.Add(4); }
             else if (depth == ColorDepth.Bit24) { binary.Add(8); }

@@ -16,9 +16,8 @@ namespace Communication.Pixelate
         private ColorProfileWS2812 _profile = new ColorProfileWS2812();
 
         public ImagesCollectionVideoItem(string imagePath, List<Point> points,  ColorDepth depth, int xOffset, int yOffset, byte brightness)
-            : base(imagePath, (UInt16)points.Count, depth)
+            : base(imagePath, (UInt16)points.Count, depth, brightness)
         {
-            Brightness = brightness;
             _xOffset = xOffset;
             _yOffset = yOffset;
             _points = points;

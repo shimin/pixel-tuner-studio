@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,49 +13,105 @@ namespace Communication.Pixelate
         private List<Point> _points;
         private int _xOffset = 0;
         private int _yOffset = 0;
-        int rays = 6;
-        int length = 14;
+        private byte _brightness;
+        int _rays = 6;
+        int _length = 32;
 
-        public ImagesCollectionFanItem(string imagePath, ColorDepth depth)
-            : base(imagePath, (UInt16)84, depth)
+        public ImagesCollectionFanItem(string imagePath, int rays, int length, ColorDepth depth, byte brightness)
+            : base(imagePath, (UInt16)(rays * length), depth, brightness)
         {
+            _rays = rays;
+            _length = length;
+            _brightness = brightness;
+            LoadFile((UInt16)(rays * length));
         }
-        
-        protected override void LoadFile(ushort targetHeight)
+
+        /*protected override void LoadFile(ushort targetHeight)
         {
-            int columnHeight = rays * length;
+            int columnHeight = _rays * _length;
 
             if (File.Exists(_path))
             {
                 _bitmap = Bitmap.FromFile(_path) as Bitmap;
-                int rayDistance = _bitmap.Width / rays;
+                int rayDistance = _bitmap.Width / _rays;
 
-                var b = new Bitmap(_bitmap.Width, columnHeight);
+                var width = _bitmap.Width%_rays == 0 ? _bitmap.Width/_rays : _bitmap.Width/_rays + 1;
+                var b = new Bitmap(_bitmap.Width / _rays, columnHeight);
                 int combinedColumnPixelIdx = 0;
-                int normalizedWidth = (_bitmap.Width / rays) * rays;
 
-                for (int idx = 0; idx < normalizedWidth; idx++)
+                for (int idx = 0; idx < (_bitmap.Width / _rays) * _rays; idx += _rays)
                 {
-                    for (int ray = 0; ray < rays; ray++)
+                    for (int ray = 0; ray < _rays; ray++)
                     {
                         Color px = Color.Black;
                         if (ray % 2 == 0)
-                            for (int row = length - 1; row >= 0; row--)
+                            for (int row = _length - 1; row >= 0; row--)
                             {
-                                px = _bitmap.GetPixel((idx + ray * rayDistance) % normalizedWidth, row);
-                                b.SetPixel(idx, combinedColumnPixelIdx, px);
+                                px = _bitmap.GetPixel(idx + ray, row);
+                                px = SetBrightness(px, Brightness);        // set brightness
+                                px = ColorProfileWS2812.Modify(px);         // set color profile
+                                b.SetPixel(idx / _rays, combinedColumnPixelIdx, px);
                                 combinedColumnPixelIdx = (combinedColumnPixelIdx + 1) % columnHeight;
                             }
                         else
-                            for (int row = 0; row < length; row++)
+                            for (int row = 0; row < _length; row++)
                             {
-                                px = _bitmap.GetPixel((idx + ray * rayDistance) % normalizedWidth, row);
-                                b.SetPixel(idx, combinedColumnPixelIdx, px);
+                                px = _bitmap.GetPixel(idx + ray, row);
+                                px = SetBrightness(px, Brightness);        // set brightness
+                                px = ColorProfileWS2812.Modify(px);         // set color profile
+                                b.SetPixel(idx / _rays, combinedColumnPixelIdx, px);
                                 combinedColumnPixelIdx = (combinedColumnPixelIdx + 1) % columnHeight;
                             }
                     }
                 }
                 _bitmap = b;
+                _bitmap.Save(@"c:\test.bmp", ImageFormat.Bmp);
+            }
+            else
+            {
+                _bitmap = new Bitmap(10, columnHeight);
+            }
+            var size = GetSize((ushort)columnHeight);
+            _binary = new List<byte>(new byte[size]);
+        }*/
+
+        protected override void LoadFile(ushort targetHeight)
+        {
+            int columnHeight = _rays * _length;
+
+            if (File.Exists(_path))
+            {
+                _bitmap = Bitmap.FromFile(_path) as Bitmap;
+                var b = new Bitmap(_bitmap.Width, columnHeight);
+                int combinedColumnPixelIdx = 0;
+
+                for (int column = 0; column < _bitmap.Width; column++)
+                {
+                    for (int ray = 0; ray < _rays; ray++)
+                    {
+                        Color px = Color.Black;
+                        if (ray % 2 == 0)
+                            for (int row = _length - 1; row >= 0; row--)
+                            {
+                                px = _bitmap.GetPixel(column, row);
+                                px = SetBrightness(px, Brightness);        // set brightness
+                                px = ColorProfileWS2812.Modify(px);         // set color profile
+                                b.SetPixel(column, combinedColumnPixelIdx, px);
+                                combinedColumnPixelIdx = (combinedColumnPixelIdx + 1) % columnHeight;
+                            }
+                        else
+                            for (int row = 0; row < _length; row++)
+                            {
+                                px = _bitmap.GetPixel(column, row);
+                                px = SetBrightness(px, Brightness);        // set brightness
+                                px = ColorProfileWS2812.Modify(px);         // set color profile
+                                b.SetPixel(column, combinedColumnPixelIdx, px);
+                                combinedColumnPixelIdx = (combinedColumnPixelIdx + 1) % columnHeight;
+                            }
+                    }
+                }
+                _bitmap = b;
+                _bitmap.Save(@"c:\test.bmp", ImageFormat.Bmp);
             }
             else
             {
@@ -64,25 +121,15 @@ namespace Communication.Pixelate
             _binary = new List<byte>(new byte[size]);
         }
 
-        private void CopyPixelData(Bitmap bitmap, Bitmap frame, List<Point> points, int frameIdx)
+        protected Color SetBrightness(Color c, byte brightness)
         {
-            int row = 0;
-            try
-            {
-                foreach (var point in points)
-                {
-                    var px = Color.Black;
-                    if (point.X < frame.Width && point.Y < frame.Height)
-                        px = frame.GetPixel(point.X + _xOffset, point.Y + _yOffset);
-                    //Console.WriteLine($"X={point.X}, Y={point.Y}");
-                    bitmap.SetPixel(frameIdx, row, ColorProfileWS2812.Modify(px));
-                    row++;
-                }
-            }
-            catch (Exception ex)
-            {
+            float colorMult = (float)brightness / 100;
 
-            }
+            byte r = (byte)(c.R * colorMult);
+            byte g = (byte)(c.G * colorMult);
+            byte b = (byte)(c.B * colorMult);
+
+            return Color.FromArgb(r, g, b);
         }
     }
 }
