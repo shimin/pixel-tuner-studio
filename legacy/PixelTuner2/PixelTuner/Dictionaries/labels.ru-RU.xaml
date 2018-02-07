@@ -98,6 +98,7 @@
     <system:String x:Key="PictureEditor_Update">Обновить</system:String>
     <system:String x:Key="PictureEditor_Search">Поиск</system:String>
     <system:String x:Key="PictureEditor_BmpImport">Импорт из Bmp</system:String>
+    <system:String x:Key="PictureEditor_VideoImport">Импорт видео</system:String>
     <system:String x:Key="ColorAdjustPage_BrightnessContrast">Яркость/Контраст</system:String>
     <system:String x:Key="ColorAdjustPage_Brightness">Яркость</system:String>
     <system:String x:Key="ColorAdjustPage_Contrast">Контраст</system:String>

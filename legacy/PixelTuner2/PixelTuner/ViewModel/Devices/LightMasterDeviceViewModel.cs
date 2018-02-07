@@ -21,7 +21,11 @@ namespace PixelTuner.ViewModel
 
         private static int FirmwareFileVersion { get; set; }
 
+        private static int FirmwareFileVersionV3 { get; set; }
+
         private static byte[] _firmwareBytes;
+
+        private static byte[] _firmwareBytesV3;
 
         private static string _firmwareFileName = "flashLR.bin";
 
@@ -63,7 +67,11 @@ namespace PixelTuner.ViewModel
         {
             get
             {
-                return ((FirmwareVersion < FirmwareFileVersion) && !BootMode);
+                if (PlatformVersion == 2)
+                    return (FirmwareVersion < FirmwareFileVersion) && !BootMode;
+                if (PlatformVersion == 3)
+                    return (FirmwareVersion < FirmwareFileVersionV3) && !BootMode;
+                return false;
             }
         }
 
@@ -74,6 +82,10 @@ namespace PixelTuner.ViewModel
             var streamInfo = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash_LR.bin"));
             _firmwareBytes = Common.Collections.StreamHelper.ReadFully(streamInfo.Stream);
             FirmwareFileVersion = _firmwareBytes[52];
+
+            streamInfo = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash_LRv3.bin"));
+            _firmwareBytesV3 = Common.Collections.StreamHelper.ReadFully(streamInfo.Stream);
+            FirmwareFileVersionV3 = _firmwareBytesV3[52];
         }
 
         public LightMasterDeviceViewModel(LightMasterDevice device)

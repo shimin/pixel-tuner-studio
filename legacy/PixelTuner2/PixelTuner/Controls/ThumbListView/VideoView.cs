@@ -181,7 +181,7 @@ namespace PixelTuner.Controls.ThumbListView
         {
             using (FolderBrowserDialog fbd = new FolderBrowserDialog())
             {
-                fbd.RootFolder = Environment.SpecialFolder.MyPictures;
+                fbd.SelectedPath = Environment.SpecialFolder.MyPictures.ToString();
                 if (fbd.ShowDialog() == DialogResult.OK)
                 {
                     using (SaveFileDialog sfd = new SaveFileDialog())
@@ -217,6 +217,25 @@ namespace PixelTuner.Controls.ThumbListView
                 }
             }
             RootViewModel.This.VideosModel.RefreshVideosCollection();
+        }
+
+        private void VideoImport_Button_Click(object sender, RoutedEventArgs e)
+        {
+            var ofd = new Microsoft.Win32.OpenFileDialog();
+            ofd.Filter = "video files (*.avi)|*.avi;*.mp4;*.mov;*.mpg;*.mpeg";
+            if (ofd.ShowDialog() == true)
+            {
+                // SourcePath = ofd.FileName;
+                var importWindow = new VideoImportWindow();
+                importWindow.SourcePath = ofd.FileName;
+                importWindow.UpdateInfo();
+                importWindow.Owner = Application.Current.MainWindow;
+                if (importWindow.ShowDialog() == true)
+                {
+                    importWindow.SaveGif(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyVideos), 
+                        "PixelTuner 2\\Clips\\" + Path.GetFileNameWithoutExtension(ofd.FileName) + ".gif"));
+                }
+            }
         }
 
         #endregion

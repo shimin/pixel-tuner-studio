@@ -54,6 +54,7 @@
             <File Id="ImageProcessorLib" Source="..\PixelTuner\bin\$(var.Configuration)\ImageProcessor.dll" />
             <File Id="InteractionsLib" Source="..\PixelTuner\bin\$(var.Configuration)\Microsoft.Expression.Interactions.dll" />
             <File Id="NAudioLib" Source="..\PixelTuner\bin\$(var.Configuration)\NAudio.dll" />
+            <File Id="MediaToolkitLib" Source="..\PixelTuner\bin\$(var.Configuration)\MediaToolkit.dll" />
             <File Id="TagLib" Source="..\PixelTuner\bin\$(var.Configuration)\taglib-sharp.dll" />
             <File Id="PixelTuner.exe" Name="PixelTuner.exe" Source="..\PixelTuner\bin\$(var.Configuration)\PixelTuner.exe" KeyPath='yes'>
               <Shortcut Id="startmenuPixelTuner" Directory="ProgramMenuDir" Name="PixelTuner 2"
