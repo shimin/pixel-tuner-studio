@@ -112,6 +112,7 @@
     <Compile Include="Helpers\EnumHelper.cs" />
     <Compile Include="Helpers\GridHelper.cs" />
     <Compile Include="Helpers\UsbNoification.cs" />
+    <Compile Include="Imaging\GifWriter.cs" />
     <Compile Include="Imaging\WarpGrid.cs" />
     <Compile Include="Imaging\ImageHelper.cs" />
     <Compile Include="Imaging\ImageProcessor.cs" />
