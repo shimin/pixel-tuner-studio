@@ -47,7 +47,7 @@ namespace PixelTuner
                 var maxRepeatCount = duration.TotalMilliseconds/item.ImageSource.PixelWidth/4;
                 var minRepeatCount = duration.TotalMilliseconds/item.ImageSource.PixelWidth/255;
                 //in case of K is milliseconds to display one pixel column
-                var K = (duration.TotalMilliseconds/boxRepeatCount.Value)/item.ImageSource.PixelWidth;
+                var K = (duration.TotalMilliseconds/boxRepeatCount.Value)/item.ImageSource.PixelWidth * 5;
                 if (K >= 3 && K <= 255)
                 {
                     Stretching = (int) K;
