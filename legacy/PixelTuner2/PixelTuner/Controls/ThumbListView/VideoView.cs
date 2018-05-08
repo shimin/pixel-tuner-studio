@@ -19,6 +19,7 @@ using ListView = System.Windows.Controls.ListView;
 using ListViewItem = System.Windows.Controls.ListViewItem;
 using MessageBox = System.Windows.MessageBox;
 using TextBox = System.Windows.Controls.TextBox;
+using System.Collections.Generic;
 
 namespace PixelTuner.Controls.ThumbListView
 {
@@ -165,17 +166,8 @@ namespace PixelTuner.Controls.ThumbListView
 
         #region Bmp import
 
-        private byte[] GifAnimation = { 33, 255, 11, 78, 69, 84, 83, 67, 65, 80, 69, 50, 46, 48, 3, 1, 0, 0, 0 };
-        private byte[] Delay = { 0, 0 };
-        public void WriteGifImg(byte[] B, BinaryWriter BW)
-        {
-            B[785] = Delay[0]; //5 secs delay
-            B[786] = Delay[1];
-            B[798] = (byte)(B[798] | 0X87);
-            BW.Write(B, 781, 18);
-            BW.Write(B, 13, 768);
-            BW.Write(B, 799, B.Length - 800);
-        }
+        [System.Runtime.InteropServices.DllImport("gdi32.dll")]
+        public static extern bool DeleteObject(IntPtr hObject);
 
         private void BmpImport_Button_Click(object sender, RoutedEventArgs e)
         {
@@ -191,32 +183,101 @@ namespace PixelTuner.Controls.ThumbListView
                         if (sfd.ShowDialog() == DialogResult.OK)
                         {
                             string GifFile = sfd.FileName;
-
                             string[] Files = Directory.GetFiles(fbd.SelectedPath, "*.bmp");
-                            MemoryStream MS = new MemoryStream();
-                            BinaryReader BR = new BinaryReader(MS);
-                            BinaryWriter BW = new BinaryWriter(new FileStream(GifFile, FileMode.Create));
-                            System.Drawing.Image.FromFile(Files[0]).Save(MS, System.Drawing.Imaging.ImageFormat.Gif);
-                            byte[] B = MS.ToArray();
-                            B[10] = (byte)(B[10] & 0X78); //No global color table.
-                            BW.Write(B, 0, 13);
-                            BW.Write(GifAnimation);
-                            WriteGifImg(B, BW);
-                            for (int I = 1; I < Files.Length; I++)
-                            {
-                                MS.SetLength(0);
-                                System.Drawing.Image.FromFile(Files[I]).Save(MS, System.Drawing.Imaging.ImageFormat.Gif);
-                                B = MS.ToArray();
-                                WriteGifImg(B, BW);
-                            }
-                            BW.Write(B[B.Length - 1]);
-                            BW.Close();
-                            MS.Dispose();
+                            SaveGif(GifFile, Files);
                         }
                     }
                 }
             }
             RootViewModel.This.VideosModel.RefreshVideosCollection();
+        }
+
+        private void SaveGif(string GifFile, string[] Files)
+        {
+            try {
+                var gEnc = new GifBitmapEncoder();
+                foreach (var f in Files)
+                {
+                    var bmpImage = (System.Drawing.Bitmap)System.Drawing.Bitmap.FromFile(f, true);
+                    var bmp = bmpImage.GetHbitmap();
+                    var src = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+                        bmp,
+                        IntPtr.Zero,
+                        Int32Rect.Empty,
+                        BitmapSizeOptions.FromEmptyOptions());
+                    gEnc.Frames.Add(BitmapFrame.Create(src));
+
+                    DeleteObject(bmp); // recommended, handle memory leak
+                }
+
+                using (FileStream fs = new FileStream(GifFile, FileMode.Create))
+                {
+                    gEnc.Save(fs);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (File.Exists(GifFile))
+                    File.Delete(GifFile);
+            }
+        }
+
+        private byte[] GifAnimation = { 33, 255, 11, 78, 69, 84, 83, 67, 65, 80, 69, 50, 46, 48, 3, 1, 0, 0, 0 };
+        private byte[] Delay = { 0, 0 };
+        public void WriteGifImg(byte[] B, BinaryWriter BW)
+        {
+            B[785] = Delay[0]; //5 secs delay
+            B[786] = Delay[1];
+            B[798] = (byte)(B[798] | 0X87);
+            BW.Write(B, 781, 18);
+            BW.Write(B, 13, 768);
+            BW.Write(B, 799, B.Length - 800);
+        }
+
+        public void SaveGif2(string path, string[] Files)
+        {
+            MemoryStream MS = new MemoryStream();
+            BinaryReader BR = new BinaryReader(MS);
+            BinaryWriter BW = new BinaryWriter(new FileStream(path, FileMode.Create));
+            System.Drawing.Image.FromFile(Files[0]).Save(MS, System.Drawing.Imaging.ImageFormat.Gif);
+            byte[] B = MS.ToArray();
+            B[10] = (byte)(B[10] & 0X78); //No global color table.
+            BW.Write(B, 0, 13);
+            BW.Write(GifAnimation);
+            WriteGifImg(B, BW);
+            for (int I = 1; I < Files.Length; I++)
+            {
+                MS.SetLength(0);
+                System.Drawing.Image.FromFile(Files[I]).Save(MS, System.Drawing.Imaging.ImageFormat.Gif);
+                B = MS.ToArray();
+                WriteGifImg(B, BW);
+            }
+            BW.Write(B[B.Length - 1]);
+            BW.Close();
+            MS.Dispose();
+        }
+
+        public void SaveGif3(string path, List<System.Drawing.Bitmap> Files)
+        {
+            MemoryStream MS = new MemoryStream();
+            BinaryReader BR = new BinaryReader(MS);
+            BinaryWriter BW = new BinaryWriter(new FileStream(path, FileMode.Create));
+            Files[0].Save(MS, System.Drawing.Imaging.ImageFormat.Gif);
+            byte[] B = MS.ToArray();
+            B[10] = (byte)(B[10] & 0X78); //No global color table.
+            BW.Write(B, 0, 13);
+            BW.Write(GifAnimation);
+            WriteGifImg(B, BW);
+            for (int I = 1; I < Files.Count; I++)
+            {
+                MS.SetLength(0);
+                Files[I].Save(MS, System.Drawing.Imaging.ImageFormat.Gif);
+                B = MS.ToArray();
+                WriteGifImg(B, BW);
+            }
+            BW.Write(B[B.Length - 1]);
+            BW.Close();
+            MS.Dispose();
         }
 
         private void VideoImport_Button_Click(object sender, RoutedEventArgs e)

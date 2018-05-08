@@ -207,7 +207,7 @@ namespace PixelTuner.ViewModel
             w.Owner = Application.Current.MainWindow;
             w.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             if (w.ShowDialog() == true)
-            {
+            { 
                 TimeLineItemViewModel newItem = w.SelectedItem as TimeLineItemViewModel;
                 if (newItem != null)
                 {
@@ -218,6 +218,8 @@ namespace PixelTuner.ViewModel
                         newItem.StartTime = this.StartTime;
                         newItem.EndTime = this.EndTime;
                         newItem.Stretching = this.Stretching;
+                        (newItem as VideoThumbnailViewModel).XOffset = this.XOffset;
+                        (newItem as VideoThumbnailViewModel).YOffset = this.YOffset;
                         p.Items.Remove(this);
                         p.Items.Insert(idx, newItem);
                         p.IsChanged = true;

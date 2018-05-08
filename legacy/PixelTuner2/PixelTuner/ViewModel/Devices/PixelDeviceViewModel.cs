@@ -282,6 +282,7 @@ namespace PixelTuner.ViewModel
             if (PlatformVersion == 2) FirmwareFileVersionV2 = FirmwareVersion;
             else if (PlatformVersion == 3) FirmwareFileVersionV3 = FirmwareVersion;
             else if (PlatformVersion == 4) FirmwareFileVersionV4 = FirmwareVersion;
+            else if (PlatformVersion == 5) FirmwareFileVersionV5 = FirmwareVersion;
             RaisePropertyChanged("UpdateNeeded");
         }
 
