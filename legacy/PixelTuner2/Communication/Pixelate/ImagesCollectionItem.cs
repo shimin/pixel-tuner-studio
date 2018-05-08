@@ -11,17 +11,7 @@ namespace Communication.Pixelate
     public class ImagesCollectionItem
     {
         const int ParametersFieldSize = 1;
-
-        /// <summary>
-        /// parameter to limit white color brightness
-        /// </summary>
-        protected const byte WTRSHLD = 200;
-
-        /// <summary>
-        /// apply restrictions after pixel amount
-        /// </summary>
-        const uint ApplyThresholdAfter = 65;
-
+        
         public enum ColorComponent
         {
             R,
@@ -207,17 +197,17 @@ namespace Communication.Pixelate
                 List<Color> columnColors = new List<Color>();
                 GetColumn(targetHeight, column, columnColors);
                 var cp = new ColorProfile();
-                if (targetHeight > 100)
+                if (targetHeight >= 100)
                     cp = new ColorProfile3528();
 
                 foreach (var c in columnColors) binary.AddRange(
-                    Map8To12(ApplyRestrictions(targetHeight, c), ColorComponent.R, cp)); // 400 mcd
+                    Map8To12(SetBrightness(targetHeight, c), ColorComponent.R, cp)); // 400 mcd
 
                 foreach (var c in columnColors)
-                    binary.AddRange(Map8To12(ApplyRestrictions(targetHeight, c), ColorComponent.G, cp)); // 800 mcd
+                    binary.AddRange(Map8To12(SetBrightness(targetHeight, c), ColorComponent.G, cp)); // 800 mcd
 
                 foreach (var c in columnColors)
-                    binary.AddRange(Map8To12(ApplyRestrictions(targetHeight, c), ColorComponent.B, cp)); // 200 mcd
+                    binary.AddRange(Map8To12(SetBrightness(targetHeight, c), ColorComponent.B, cp)); // 200 mcd
             }
             return binary;
         }
@@ -235,11 +225,11 @@ namespace Communication.Pixelate
                 if (targetHeight == 80)
                 {
                     foreach (var c in columnColors)
-                        binary.Add(Map8To8(ApplyRestrictions(targetHeight, c), ColorComponent.R));
+                        binary.Add(Map8To8(SetBrightness(targetHeight, c), ColorComponent.R));
                     foreach (var c in columnColors)
-                        binary.Add(Map8To8(ApplyRestrictions(targetHeight, c), ColorComponent.G));
+                        binary.Add(Map8To8(SetBrightness(targetHeight, c), ColorComponent.G));
                     foreach (var c in columnColors)
-                        binary.Add(Map8To8(ApplyRestrictions(targetHeight, c), ColorComponent.B));
+                        binary.Add(Map8To8(SetBrightness(targetHeight, c), ColorComponent.B));
                 }
                 else
                 {
@@ -266,10 +256,10 @@ namespace Communication.Pixelate
                 int idx = 0;
                 foreach (var c in columnColors)
                 {
-                    if (idx == 0) { value = (byte)((Map8To4(ApplyRestrictions(targetHeight, c), ColorComponent.R)[0] & 0x0f) << 4); idx++; }
+                    if (idx == 0) { value = (byte)((Map8To4(SetBrightness(targetHeight, c), ColorComponent.R)[0] & 0x0f) << 4); idx++; }
                     else
                     {
-                        value += (byte)(Map8To4(ApplyRestrictions(targetHeight, c), ColorComponent.R)[0] & 0x0f);
+                        value += (byte)(Map8To4(SetBrightness(targetHeight, c), ColorComponent.R)[0] & 0x0f);
                         binary.Add(value);
                         idx = 0;
                     }
@@ -278,10 +268,10 @@ namespace Communication.Pixelate
                 idx = 0;
                 foreach (var c in columnColors)
                 {
-                    if (idx == 0) { value = (byte)((Map8To4(ApplyRestrictions(targetHeight, c), ColorComponent.G)[0] & 0x0f) << 4); idx++; }
+                    if (idx == 0) { value = (byte)((Map8To4(SetBrightness(targetHeight, c), ColorComponent.G)[0] & 0x0f) << 4); idx++; }
                     else
                     {
-                        value += (byte)(Map8To4(ApplyRestrictions(targetHeight, c), ColorComponent.G)[0] & 0x0f);
+                        value += (byte)(Map8To4(SetBrightness(targetHeight, c), ColorComponent.G)[0] & 0x0f);
                         binary.Add(value);
                         idx = 0;
                     }
@@ -290,10 +280,10 @@ namespace Communication.Pixelate
                 idx = 0;
                 foreach (var c in columnColors)
                 {
-                    if (idx == 0) { value = (byte)((Map8To4(ApplyRestrictions(targetHeight, c), ColorComponent.B)[0] & 0x0f) << 4); idx++; }
+                    if (idx == 0) { value = (byte)((Map8To4(SetBrightness(targetHeight, c), ColorComponent.B)[0] & 0x0f) << 4); idx++; }
                     else
                     {
-                        value += (byte)(Map8To4(ApplyRestrictions(targetHeight, c), ColorComponent.B)[0] & 0x0f);
+                        value += (byte)(Map8To4(SetBrightness(targetHeight, c), ColorComponent.B)[0] & 0x0f);
                         binary.Add(value);
                         idx = 0;
                     }
@@ -324,13 +314,14 @@ namespace Communication.Pixelate
         private byte Map8To8(Color c, ColorComponent cc)
         {
             byte result = 0;
+            float colorMult = Brightness / 100.0f;
             switch (cc)
             {
                 case ColorComponent.R: result = c.R; break;
                 case ColorComponent.G: result = (byte)(c.G * 0.6); break;
                 case ColorComponent.B: result = (byte)(c.B * 0.8); break;
             }
-            return result;
+            return (byte)(result * colorMult);
         }
 
         private IList<byte> Map8To4(Color c, ColorComponent cc)
@@ -345,18 +336,14 @@ namespace Communication.Pixelate
             return BitConverter.GetBytes((byte)(15 * result / byte.MaxValue));
         }
 
-        protected virtual Color ApplyRestrictions(UInt16 targetHeight, Color c)
+        protected virtual Color SetBrightness(UInt16 targetHeight, Color c)
         {
             float colorMult = (float)Brightness / 100;
 
             byte r = (byte)(c.R * colorMult);
             byte g = (byte)(c.G * colorMult);
             byte b = (byte)(c.B * colorMult);
-
-            r = targetHeight > ApplyThresholdAfter && r > WTRSHLD && g > WTRSHLD && b > WTRSHLD ? WTRSHLD : r;
-            g = targetHeight > ApplyThresholdAfter && r > WTRSHLD && g > WTRSHLD && b > WTRSHLD ? WTRSHLD : g;
-            b = targetHeight > ApplyThresholdAfter && r > WTRSHLD && g > WTRSHLD && b > WTRSHLD ? WTRSHLD : b;
-
+            
             return Color.FromArgb(r, g, b);
         }
 

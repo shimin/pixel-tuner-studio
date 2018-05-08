@@ -54,6 +54,11 @@ namespace Communication.Service
             dictionary.Add("LRFW", "Light master");
             idClassPairs.Add("LRFW", "Communication.Service.LightMasterDevice");
 
+            dictionary.Add("LR_v3BOOT", "Light master (Boot mode)");
+            idClassPairs.Add("LR_v3BOOT", "Communication.Service.LightMasterDevice");
+            dictionary.Add("LR_v3FW", "Light master");
+            idClassPairs.Add("LR_v3FW", "Communication.Service.LightMasterDevice");
+
             dictionary.Add("ILBOOT", "Illuminator (Boot mode)");
             idClassPairs.Add("ILBOOT", "Communication.Service.IlluminatorDevice");
             dictionary.Add("ILFW", "Illuminator");

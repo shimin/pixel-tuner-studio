@@ -121,7 +121,7 @@ namespace Communication.Service
                     EnergyLevel = num;
                     BootVersion = data[1];
                     FirmwareVersion = data[2];
-                    ChannelsTotal = data[3];
+                    ChannelsTotal = data[4];
                     BatteryLevel = BitConverter.ToUInt16(data.ToArray(), 4);
                     MemoryAvailable = BitConverter.ToUInt32(data.ToArray(), 6);
                     data.CopyTo(10, Mac, 0, 8);

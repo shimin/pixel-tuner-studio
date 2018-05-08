@@ -24,7 +24,6 @@ namespace Communication.Pixelate
         private byte _brightness1 = 100;
         private byte _brightness2 = 100;
 
-        private ColorProfileWS2812 _profile = new ColorProfileWS2812();
         private string _path2 = "";
 
         public ImagesCollectionVideoDoubleItem(string imagePath1, string imagePath2,
@@ -51,22 +50,35 @@ namespace Communication.Pixelate
             {
                 Image gifImg1 = Image.FromFile(_path);
                 var dimension1 = new FrameDimension(gifImg1.FrameDimensionsList[0]);
+                
+                // Open a Stream and decode a GIF image
+                Stream imageStreamSource = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.Read);
+                var decoder = new System.Windows.Media.Imaging.GifBitmapDecoder(
+                    imageStreamSource, System.Windows.Media.Imaging.BitmapCreateOptions.PreservePixelFormat,
+                    System.Windows.Media.Imaging.BitmapCacheOption.Default);
+
+                Stream imageStreamSource2 = new FileStream(_path2, FileMode.Open, FileAccess.Read, FileShare.Read);
+                var decoder2 = new System.Windows.Media.Imaging.GifBitmapDecoder(
+                    imageStreamSource2, System.Windows.Media.Imaging.BitmapCreateOptions.PreservePixelFormat,
+                    System.Windows.Media.Imaging.BitmapCacheOption.Default);
 
                 Image gifImg2 = Image.FromFile(_path2);
                 var dimension2 = new FrameDimension(gifImg2.FrameDimensionsList[0]);
 
-                var frameCount1 = gifImg1.GetFrameCount(dimension1);
-                var frameCount2 = gifImg2.GetFrameCount(dimension2);
+                var frameCount1 = Math.Max(gifImg1.GetFrameCount(dimension1), decoder.Frames.Count);
+                var frameCount2 = Math.Max(gifImg2.GetFrameCount(dimension2), decoder2.Frames.Count);
 
                 var frameCount = Math.Max(frameCount1, frameCount2);
                 _bitmap = new Bitmap(frameCount, targetHeight1 + targetHeight2);
 
                 for (int idx = 0; idx < frameCount; idx++)
                 {
-                    gifImg1.SelectActiveFrame(dimension1, idx % frameCount1);
-                    gifImg2.SelectActiveFrame(dimension2, idx % frameCount2);
-                    var frame1 = new Bitmap(gifImg1);
-                    var frame2 = new Bitmap(gifImg2);
+                    //gifImg1.SelectActiveFrame(dimension1, idx % frameCount1);
+                    //gifImg2.SelectActiveFrame(dimension2, idx % frameCount2);
+                    var f1 = decoder.Frames[idx % frameCount1];
+                    var f2 = decoder2.Frames[idx % frameCount2];
+                    var frame1 = Common.Imaging.ImageHelper.BitmapImageToBitmap<System.Windows.Media.Imaging.BmpBitmapEncoder>(f1);//new Bitmap(gifImg1);
+                    var frame2 = Common.Imaging.ImageHelper.BitmapImageToBitmap<System.Windows.Media.Imaging.BmpBitmapEncoder>(f2); //new Bitmap(gifImg2);
                     CopyPixelData(_bitmap, frame1, frame2, _points1, _points2, idx);
                 }
                 LastFrame1 = frameCount%frameCount1;
@@ -124,7 +136,7 @@ namespace Communication.Pixelate
                         px = frame2.GetPixel(point.X + _xOffset2, point.Y + _yOffset2);
                     }
                     px = SetBrightness(px, _brightness2);       // set brightness
-                    px = ColorProfileWS2812.Modify(px);         // set color profile
+                    px = ColorProfileWS2812.Modify(px);       // set color profile
                     bitmap.SetPixel(frameIdx, row, px);
                     row++;
                 }

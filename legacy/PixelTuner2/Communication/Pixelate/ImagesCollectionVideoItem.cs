@@ -13,7 +13,6 @@ namespace Communication.Pixelate
         private List<Point> _points;
         private int _xOffset = 0;
         private int _yOffset = 0;
-        private ColorProfileWS2812 _profile = new ColorProfileWS2812();
 
         public ImagesCollectionVideoItem(string imagePath, List<Point> points,  ColorDepth depth, int xOffset, int yOffset, byte brightness)
             : base(imagePath, (UInt16)points.Count, depth, brightness)
@@ -31,13 +30,19 @@ namespace Communication.Pixelate
                 Image gifImg = Image.FromFile(_path);
                 var dimension = new FrameDimension(gifImg.FrameDimensionsList[0]);
 
-                var frameCount = gifImg.GetFrameCount(dimension);
+                // Open a Stream and decode a GIF image
+                Stream imageStreamSource = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.Read);
+                var decoder = new System.Windows.Media.Imaging.GifBitmapDecoder(
+                    imageStreamSource, System.Windows.Media.Imaging.BitmapCreateOptions.PreservePixelFormat,
+                    System.Windows.Media.Imaging.BitmapCacheOption.Default);
+
+                var frameCount = Math.Max(gifImg.GetFrameCount(dimension), decoder.Frames.Count);
                 _bitmap = new Bitmap(frameCount, targetHeight);
 
                 for (int idx = 0; idx < frameCount; idx++)
                 {
-                    gifImg.SelectActiveFrame(dimension, idx);
-                    var frame = new Bitmap(gifImg);
+                    var f1 = decoder.Frames[idx];
+                    var frame = Common.Imaging.ImageHelper.BitmapImageToBitmap<System.Windows.Media.Imaging.BmpBitmapEncoder>(f1);//new Bitmap(gifImg1);
                     CopyPixelData(_bitmap, frame, _points, idx);
                 }
             }
