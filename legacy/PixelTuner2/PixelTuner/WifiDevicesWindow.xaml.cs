@@ -76,6 +76,8 @@ namespace PixelTuner
         //private Socket _client = null;
         private UdpClient _udpClient = null;
 
+        private IPEndPoint _broadcastEP = null;
+
         byte[] _packet = new byte[] { 0x49, 0x00, 0x0d };
 
         Dictionary<string, WifiInfoDevice> _devicesDictionary = new Dictionary<string, WifiInfoDevice>();
@@ -86,14 +88,16 @@ namespace PixelTuner
         
         public WifiDevicesWindow(UdpClient udpClient)
         {
-            _udpClient = new UdpClient(Settings.Default.WifiPort);
+            //var epStr = udpClient.Client.LocalEndPoint.ToString();
+            _broadcastEP = new IPEndPoint(IPAddress.Parse("255.255.255.255"), Settings.Default.WifiPort);
+            _udpClient = udpClient;
             _goOn = true;
             InitializeComponent();
             DataContext = this;
             Closing += WifiDevicesWindow_Closing;
             Devices.CollectionChanged += (sender, args) => { OnPropertyChanged("TotalDevices"); };
             _udpClient.BeginReceive(new AsyncCallback(ReceivedCallback), state);
-            RootViewModel.This.UdpСlient.Send(_packet, 3);
+            _udpClient.Send(_packet, 3, _broadcastEP);
             //_client = new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.Udp);
             ////_client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
             ////_client.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.PacketInformation, true);
@@ -148,8 +152,8 @@ namespace PixelTuner
         private void WifiDevicesWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             _goOn = false;
-            _udpClient.Close();
-            _udpClient = null;
+            //_udpClient.Close();
+            //_udpClient = null;
         }
         
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
@@ -163,7 +167,7 @@ namespace PixelTuner
             {
                 try
                 {
-                    RootViewModel.This.UdpСlient.Send(_packet, 3);
+                    RootViewModel.This.UdpСlient.Send(_packet, 3, _broadcastEP);
                 }
                 catch (Exception ex)
                 {

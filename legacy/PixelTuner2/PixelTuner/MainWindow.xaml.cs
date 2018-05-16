@@ -91,6 +91,15 @@ namespace PixelTuner
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            if (RootViewModel.This.UdpСlient != null)
+            {
+                try
+                {
+                    RootViewModel.This.UdpСlient.Close();
+                    RootViewModel.This.UdpСlient = null;
+                }
+                catch { }
+            }
             DeviceHelper.StopSeeking();
             Settings.Default.Save();
             var filesToClose = new List<FileViewModel>(RootViewModel.This.Files);

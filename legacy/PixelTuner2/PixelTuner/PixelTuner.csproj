@@ -164,6 +164,7 @@
     <Compile Include="Import\TransformPage.xaml.cs">
       <DependentUpon>TransformPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UdpClientBroadcast.cs" />
     <Compile Include="VideoItemWindow.xaml.cs">
       <DependentUpon>VideoItemWindow.xaml</DependentUpon>
     </Compile>
