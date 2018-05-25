@@ -49,6 +49,7 @@ namespace PixelTuner.ViewModel
             OnMediaEndedCommand = new Microsoft.Expression.Interactivity.Core.ActionCommand(OnMediaEnded);
             OnLoadedCommand = new ActionCommand(OnMediaLoaded);
             OnClickCommand = new ActionCommand(OnClick);
+            Stretching = 40;
         }
 
         public override bool CanThumbnail(object parameter)
@@ -76,6 +77,62 @@ namespace PixelTuner.ViewModel
                 if (w.ShowDialog() == true)
                 {
 
+                }
+            }
+        }
+
+        protected override void GenericEdit(object parameter)
+        {
+            VideoItemWindow w = new VideoItemWindow(this);
+            var location = Application.Current.MainWindow.PointToScreen(Mouse.GetPosition(Application.Current.MainWindow));
+            w.Left = location.X - w.Width / 2;
+            w.Top = location.Y - w.Height / 2;
+            if (w.ShowDialog() == true)
+            {
+                ApplyChanges(w.Start, w.Duration, w.Stretching, w.Brightness, w.ForAll, w.DurationChanged, w.StretchingChanged, w.BrightnessChanged);
+            }
+            if (w.NeedRefresh) RootViewModel.NotifySettingsChanged();
+        }
+
+        private void ApplyChanges(DateTime start, TimeSpan duration,
+            int stretching, byte brightness, bool forAll, bool durationChanged,
+            bool stretchChanged, bool brightnessChanged)
+        {
+            var p = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, this);
+            if (p != null)
+            {
+                int idx = p.Items.IndexOf(this) + 1;
+
+                this.StartTime = start > p.Start.Value ? start : p.Start.Value;
+                this.EndTime = this.StartTime + duration;
+                this.Stretching = stretching;
+                this.Brightness = brightness;
+
+                var thisIdx = p.Items.IndexOf(this);
+                if (thisIdx < p.Items.Count - 1 && !forAll && this.EndTime.Value > p.Items[thisIdx + 1].StartTime.Value)
+                    if (PixelTuner.Properties.Settings.Default.CutNextItems)
+                    {
+                        p.CutItemsWithinInterval(p.Items[thisIdx + 1].StartTime, this.EndTime);
+                    }
+                    else
+                    {
+                        TimeSpan moveInterval = EndTime.Value - p.Items[thisIdx + 1].StartTime.Value;
+                        p.MoveItemsAfterIndex(p.Items[thisIdx + 1].StartTime, moveInterval);
+                    }
+
+                DateTime lastUsed = this.EndTime.Value;
+                while (forAll && idx < p.Items.Count)
+                {
+                    var itm = (p.Items[idx] as TimeLineItemViewModel);
+                    if (durationChanged)
+                    {
+                        if (p.Items[idx].StartTime.Value < lastUsed) p.Items[idx].StartTime = lastUsed;
+                        p.Items[idx].EndTime = p.Items[idx].StartTime.Value.Add(duration);
+                    }
+                    if (stretchChanged) itm.Stretching = stretching;
+                    if (brightnessChanged) itm.Brightness = brightness;
+                    lastUsed = itm.EndTime.Value;
+                    idx++;
                 }
             }
         }
@@ -150,7 +207,7 @@ namespace PixelTuner.ViewModel
             w.Owner = Application.Current.MainWindow;
             w.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             if (w.ShowDialog() == true)
-            {
+            { 
                 TimeLineItemViewModel newItem = w.SelectedItem as TimeLineItemViewModel;
                 if (newItem != null)
                 {
@@ -161,6 +218,8 @@ namespace PixelTuner.ViewModel
                         newItem.StartTime = this.StartTime;
                         newItem.EndTime = this.EndTime;
                         newItem.Stretching = this.Stretching;
+                        (newItem as VideoThumbnailViewModel).XOffset = this.XOffset;
+                        (newItem as VideoThumbnailViewModel).YOffset = this.YOffset;
                         p.Items.Remove(this);
                         p.Items.Insert(idx, newItem);
                         p.IsChanged = true;

@@ -929,7 +929,7 @@ namespace PixelTuner.ViewModel
         #region ConnectCommand
 
         private Timer _stopTimer = null;
-
+        private IPEndPoint _broadcastEP = null;
         private RelayCommand _connectCommand = null;
         public ICommand ConnectCommand
         {
@@ -953,13 +953,11 @@ namespace PixelTuner.ViewModel
         {
             try
             {
-                RootViewModel.This.UdpСlient = new UdpClient();
+                RootViewModel.This.UdpСlient = new UdpClientBroadcast();
+                RootViewModel.This.UdpСlient.Client.Bind(new IPEndPoint(IPAddress.Any, Settings.Default.WifiPort));
                 RootViewModel.This.UdpСlient.DontFragment = true;
-                RootViewModel.This.UdpСlient.Connect(Settings.Default.MulticastIP, Settings.Default.WifiPort);
-                //RootViewModel.This.UdpСlient.ExclusiveAddressUse = false;
-                //{
-                //    DontFragment = true
-                //};
+                _broadcastEP = new IPEndPoint(IPAddress.Parse("255.255.255.255"), Settings.Default.WifiPort);
+                //RootViewModel.This.UdpСlient.Connect("255.255.255.255", Settings.Default.WifiPort);
                 var w = new WifiDevicesWindow(RootViewModel.This.UdpСlient);
                 w.Owner = Application.Current.MainWindow;
                 w.WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -978,7 +976,7 @@ namespace PixelTuner.ViewModel
             try
             {
                 if (RootViewModel.This.UdpСlient != null && !SoundPlayer.IsPlaying)
-                    RootViewModel.This.UdpСlient.Send(new byte[] {0x50, 0x05, 0x04, 0x00, 0x00, 0x00, 0x00, 0x0d}, 8);
+                    RootViewModel.This.UdpСlient.Send(new byte[] {0x50, 0x05, 0x04, 0x00, 0x00, 0x00, 0x00, 0x0d}, 8, _broadcastEP);
             }
             catch
             {
@@ -1054,9 +1052,9 @@ namespace PixelTuner.ViewModel
                 var timeBytes = BitConverter.GetBytes((UInt32) player.CurrentTime.TotalMilliseconds);
                 var cmd = new byte[] {0x50, 0x05, 0x02, 0x00, 0x00, 0x00, 0x00, 0x0d};
                 timeBytes.CopyTo(cmd, 3);
-                RootViewModel.This.UdpСlient.Send(cmd, 8);
-                RootViewModel.This.UdpСlient.Send(cmd, 8);
-                RootViewModel.This.UdpСlient.Send(cmd, 8);
+                RootViewModel.This.UdpСlient.Send(cmd, 8, _broadcastEP);
+                RootViewModel.This.UdpСlient.Send(cmd, 8, _broadcastEP);
+                RootViewModel.This.UdpСlient.Send(cmd, 8, _broadcastEP);
             }
 
             player.Play();
@@ -1112,7 +1110,7 @@ namespace PixelTuner.ViewModel
                     var timeBytes = BitConverter.GetBytes((UInt32)player.CurrentTime.TotalMilliseconds);
                     var cmd = new byte[] {0x50, 0x05, 0x03, 0x00, 0x00, 0x00, 0x00, 0x0d};
                     timeBytes.CopyTo(cmd, 3);
-                    RootViewModel.This.UdpСlient.Send(cmd, 8);
+                    RootViewModel.This.UdpСlient.Send(cmd, 8, _broadcastEP);
                 }
             }
             else
@@ -1124,7 +1122,7 @@ namespace PixelTuner.ViewModel
                     var timeBytes = BitConverter.GetBytes((UInt32)player.CurrentTime.TotalMilliseconds);
                     var cmd = new byte[] { 0x50, 0x05, 0x02, 0x00, 0x00, 0x00, 0x00, 0x0d };
                     timeBytes.CopyTo(cmd, 3);
-                    RootViewModel.This.UdpСlient.Send(cmd, 8);
+                    RootViewModel.This.UdpСlient.Send(cmd, 8, _broadcastEP);
                 }
             }
             player.Pause();
@@ -1167,7 +1165,7 @@ namespace PixelTuner.ViewModel
             //RootViewModel.This.WifiPlayer.SendCommand(PlaybackState.stop, player.CurrentTime);
             if (RootViewModel.This.UdpСlient != null)
             {
-                RootViewModel.This.UdpСlient.Send(new byte[] { 0x50, 0x05, 0x04, 0x00, 0x00, 0x00, 0x00, 0x0d }, 8);
+                RootViewModel.This.UdpСlient.Send(new byte[] { 0x50, 0x05, 0x04, 0x00, 0x00, 0x00, 0x00, 0x0d }, 8, _broadcastEP);
             }
         }
 
@@ -1242,7 +1240,7 @@ namespace PixelTuner.ViewModel
                                 _previousTimepoint = timepoint;
                                 List<byte> cmd = new List<byte>(new byte[] {0x50, 0x05, 0x02, 0x0d});
                                 cmd.InsertRange(3, BitConverter.GetBytes(timepoint));
-                                RootViewModel.This.UdpСlient.Send(cmd.ToArray(), 8);
+                                RootViewModel.This.UdpСlient.Send(cmd.ToArray(), 8, _broadcastEP);
                             }
                         }
                         //if (IsWifiSyncOn) RootViewModel.This.WifiPlayer.Play(SoundPlayer.CurrentTime, Settings.Default.Discreteness);
@@ -1437,7 +1435,7 @@ namespace PixelTuner.ViewModel
                 double startMilliseconds = (dItem.First.StartTime.Value - videoLine1.Start.Value).TotalMilliseconds;           // start ms = start time - timeline start time
                 UInt16 mask = dItem.First.LaserOn ? (ushort)1 : (ushort)0;
 
-                var imageFile = new VideoImageFile(path1, 50, (UInt32)duration, (UInt32)startMilliseconds, mask);
+                var imageFile = new VideoImageFile(path1, (ushort)dItem.First.Stretching, (UInt32)duration, (UInt32)startMilliseconds, mask);
                 var image = new ImagesCollectionVideoDoubleItem(path1, path2, 
                     videoLine1.MetaData.OrderedLeds, videoLine2.MetaData.OrderedLeds, 
                     dItem.First.XOffset, dItem.First.YOffset,
@@ -1559,7 +1557,7 @@ namespace PixelTuner.ViewModel
                 var duration = (item.EndTime.Value - item.StartTime.Value).TotalMilliseconds;       // duration = end time - start time
                 double startMilliseconds = (item.StartTime.Value - line.Start.Value).TotalMilliseconds;    // start ms = start time - timeline start time
                 UInt16 mask = item.LaserOn ? (ushort)1 : (ushort)0;
-                var imageFile = new VideoImageFile(path, 50, (UInt32)duration, (UInt32)startMilliseconds, mask);
+                var imageFile = new VideoImageFile(path, (ushort)item.Stretching, (UInt32)duration, (UInt32)startMilliseconds, mask);
                 var image = new ImagesCollectionVideoItem(path, videoLine.MetaData.OrderedLeds, depth, item.XOffset, item.YOffset, item.Brightness);
                 imageFile.Brightness = image.Brightness = item.Brightness;
                 imagesCollection.Add(image);

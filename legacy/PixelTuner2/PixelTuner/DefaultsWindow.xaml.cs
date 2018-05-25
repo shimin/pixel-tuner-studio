@@ -298,7 +298,9 @@ namespace PixelTuner
             pixelDeviceSettings.Add(new DeviceFeature(7, boxIP.GetByteArray()));
             pixelDeviceSettings.Add(new DeviceFeature(8, BitConverter.GetBytes(WifiPort)));
             pixelDeviceSettings.Add(new DeviceFeature(11, Encoding.GetEncoding(1251).GetBytes(boxTag.Text + (char)0)));
+
             DeviceHelper.WriteSettings<PixelDevice>(pixelDeviceSettings);
+            DeviceHelper.WriteSettings<LightMasterDevice>(pixelDeviceSettings);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

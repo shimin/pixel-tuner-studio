@@ -1155,20 +1155,8 @@ namespace PixelTuner.ViewModel
                     foreach(TimeLineItemViewModel file in line.Items)
                     {
                         var path = Path.Combine(fbd.SelectedPath, file.Name);
-                        if (File.Exists(path))
-                        {
-                            var dResult = MessageBox.Show(string.Format("Overwrite file {0}?", path),
-                                "PixelTuner", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-
-                            if ( dResult == MessageBoxResult.Yes)
-                                file.CopyTo(path);
-                            else if (dResult == MessageBoxResult.Cancel)
-                            {
-                                return;
-                            }
-                        }
-                        else
-                            file.CopyTo(path);
+                        if (!File.Exists(path))
+                          file.CopyTo(path);
                         file.UseFullName = false;
                     }
                 }
