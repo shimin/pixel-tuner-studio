@@ -1492,7 +1492,7 @@ namespace PixelTuner.ViewModel
                 var duration = (item.EndTime.Value - item.StartTime.Value).TotalMilliseconds;       // duration = end time - start time
                 double startMilliseconds = (item.StartTime.Value - line.Start.Value).TotalMilliseconds;    // start ms = start time - timeline start time
                 UInt16 mask = item.LaserOn ? (ushort)0xffff : (ushort)0;
-                var imageFile = new PixelFanImageFile(path, (UInt16)item.Stretching, (UInt32)duration, (UInt32)startMilliseconds, mask);
+                var imageFile = new PixelImageFile(path, (UInt16)item.Stretching, (UInt32)duration, (UInt32)startMilliseconds, mask);
                 var image = new ImagesCollectionItem(path, 32, depth, item.Brightness);
                 imageFile.Brightness = image.Brightness = item.Brightness;
                 imagesCollection.Add(image);
