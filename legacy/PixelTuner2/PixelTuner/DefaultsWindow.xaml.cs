@@ -310,5 +310,20 @@ namespace PixelTuner
             DeviceHelper.WriteSettings<VideoDevice>(settings);
             DeviceHelper.WriteSettings<PixelHoop>(settings);
         }
+
+        private void boxLedsType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (boxLedsType.SelectedValue.ToString() == "apa102")
+            {
+                boxLedsCount1.Maximum = 2048;
+                boxLedsCount2.Value = boxLedsCount2.Maximum = 0;
+            }
+            else
+            {
+                boxLedsCount1.Maximum = 1024;
+                if (boxLedsCount1.Value > 1024) boxLedsCount1.Value = 1024;
+                boxLedsCount2.Maximum = 1024;
+            }
+        }
     }
 }
