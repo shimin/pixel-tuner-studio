@@ -17,11 +17,16 @@ namespace Communication.Service
 
             dictionary.Add("\0\r", "Pixel Poi (Very First Version)");
 
-            dictionary.Add("STM32BOOT", "Pixel Poi 2 (Boot mode)");
-            idClassPairs.Add("STM32BOOT", "Communication.Service.PixelDevice");
-            dictionary.Add("STM32FW", "Pixel Poi 2");
-            idClassPairs.Add("STM32FW", "Communication.Service.PixelDevice");
-            
+            //dictionary.Add("STM32BOOT", "Pixel Poi 2 (Boot mode)");
+            //idClassPairs.Add("STM32BOOT", "Communication.Service.PixelDevice");
+            //dictionary.Add("STM32FW", "Pixel Poi 2");
+            //idClassPairs.Add("STM32FW", "Communication.Service.PixelDevice");
+
+            dictionary.Add("STM32BOOT", "Pixel Poi 2 (Not supported)");
+            idClassPairs.Add("STM32BOOT", "Communication.Service.GenericSerialDevice");
+            dictionary.Add("STM32FW", "Pixel Poi 2 (Not supported)");
+            idClassPairs.Add("STM32FW", "Communication.Service.GenericSerialDevice");
+
             dictionary.Add("E-PIC_FW", "Pixel Poi 3");
             idClassPairs.Add("E-PIC_FW", "Communication.Service.PixelDevice");
             dictionary.Add("E-PICBOOT", "Pixel Poi 3 (Boot mode)");

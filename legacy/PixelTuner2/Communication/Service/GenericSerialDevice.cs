@@ -8,13 +8,18 @@ namespace Communication.Service
 {
     public class GenericSerialDevice : SerialDeviceBase
     {
-        public GenericSerialDevice(SerialPort port)
+        public GenericSerialDevice(SerialPort port, bool runMonitoring = true)
             : base(port)
         {
 
         }
 
-        
+        public override bool Busy
+        {
+            get { return true; }
+            protected set { }
+        }
+
         public override void GetInfo()
         {
             lock (this._longOperation)

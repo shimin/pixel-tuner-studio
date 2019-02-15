@@ -124,7 +124,7 @@ namespace Communication.Service
         public bool BootMode { get; protected set; }
 
         private bool _busy = false;
-        public bool Busy
+        public virtual bool Busy
         {
             get { return _busy; }
             protected set
