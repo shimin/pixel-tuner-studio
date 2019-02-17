@@ -199,6 +199,14 @@ namespace SongReader
             }
         }
 
+        private void deviceLookup(object sender, RoutedEventArgs e)
+        {
+            WifiDevicesWindow w = new WifiDevicesWindow(_udpClient, ep);
+            w.Owner = this;
+            w.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            w.ShowDialog();
+        }
+
         UInt32 _lastMsSent = 0;
 
         void songTime_Tick(object sender, EventArgs e)
@@ -309,6 +317,8 @@ namespace SongReader
 
         private void Play(object sender, RoutedEventArgs e)
         {
+            songStartTime.Content = TimeSpan.FromSeconds(player.Position.TotalSeconds).ToString(@"mm\:ss");
+            songEndTime.Content = TimeSpan.FromSeconds(player.NaturalDuration.TimeSpan.TotalSeconds).ToString(@"mm\:ss");
             player.Play();
             songTime.Start();
             _playbackStatus = Status.play;

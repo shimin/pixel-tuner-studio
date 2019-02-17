@@ -142,5 +142,29 @@ namespace EpicPlayer.Properties {
                 this["StopCmd"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("192.168.0.255")]
+        public string MulticastIP {
+            get {
+                return ((string)(this["MulticastIP"]));
+            }
+            set {
+                this["MulticastIP"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("333")]
+        public ushort WifiPort {
+            get {
+                return ((ushort)(this["WifiPort"]));
+            }
+            set {
+                this["WifiPort"] = value;
+            }
+        }
     }
 }
