@@ -163,14 +163,24 @@ namespace PixelTuner.ViewModel
         {
             try
             {
-                byte[] binaryData = parameter as byte[];
+                var binaryData = parameter as byte[];
 
                 var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _firmwareFileName);
                 if (binaryData == null && File.Exists(path))
                     binaryData = File.ReadAllBytes(path);
 
                 if (binaryData == null)
-                    binaryData = _firmwareBytes;
+                {
+                    switch (PlatformVersion)
+                    {
+                        case 2:
+                            binaryData = _firmwareBytes;
+                            break;
+                        case 3:
+                            binaryData = _firmwareBytesV3;
+                            break;
+                    }
+                }
 
                 if (binaryData == null) return;
 

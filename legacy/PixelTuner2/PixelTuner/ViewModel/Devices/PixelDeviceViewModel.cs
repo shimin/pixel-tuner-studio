@@ -292,20 +292,40 @@ namespace PixelTuner.ViewModel
 
         protected override void OnSetAsMaster(object parameter)
         {
-            var mac = Device.SelfMac;
-
-            mac = MixBytes2(mac);
-            var settings = new List<DeviceFeature>
+            if (Device.PlatformVersion == 4)
             {
-                new DeviceFeature(4, mac),
-            };
-            Device.WriteSettings(settings);
-            RootViewModel.This.DevicesModel.MasterMac = mac;
+                var mac = Device.SelfMac;
+
+                mac = MixBytes2(mac);
+                var settings = new List<DeviceFeature>
+                    {
+                        new DeviceFeature(4, mac),
+                    };
+                Device.WriteSettings(settings);
+                RootViewModel.This.DevicesModel.MasterMac = mac;
+            } 
+            else if (Device.PlatformVersion == 5)
+            {
+                var answer = MessageBox.Show("Make device control all others?", "PixelTuner 2", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                List<DeviceFeature> settings = new List<DeviceFeature>();
+                if (answer == MessageBoxResult.Yes)
+                {
+                    var mask = BitConverter.GetBytes((ushort) 0x01);
+                    settings.Add(new DeviceFeature(0x0d, mask));
+                    Device.WriteSettings(settings);
+                }
+                else if (answer == MessageBoxResult.No)
+                {
+                    var mask = BitConverter.GetBytes((ushort) 0x00);
+                    settings.Add(new DeviceFeature(0x0d, mask));
+                    Device.WriteSettings(settings);
+                }
+            }
         }
 
         protected override bool CanSetAsMaster(object parameter)
         {
-            return Device.PlatformVersion == 4;
+            return Device.PlatformVersion == 4 || Device.PlatformVersion == 5;
         }
 
         #endregion
