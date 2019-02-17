@@ -310,12 +310,14 @@ namespace PixelTuner.ViewModel
                 List<DeviceFeature> settings = new List<DeviceFeature>();
                 if (answer == MessageBoxResult.Yes)
                 {
-                    settings.Add(new DeviceFeature(0x0d, 0x01));
+                    var mask = BitConverter.GetBytes((ushort) 0x01);
+                    settings.Add(new DeviceFeature(0x0d, mask));
                     Device.WriteSettings(settings);
                 }
                 else if (answer == MessageBoxResult.No)
                 {
-                    settings.Add(new DeviceFeature(0x0d, 0x00));
+                    var mask = BitConverter.GetBytes((ushort) 0x00);
+                    settings.Add(new DeviceFeature(0x0d, mask));
                     Device.WriteSettings(settings);
                 }
             }
