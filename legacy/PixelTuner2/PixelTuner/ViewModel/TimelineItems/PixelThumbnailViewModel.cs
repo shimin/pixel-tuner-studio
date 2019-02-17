@@ -64,9 +64,11 @@ namespace PixelTuner.ViewModel
         protected override void GenericEdit(object parameter)
         {
             ItemWindow w = new ItemWindow(this);
-            var location = Application.Current.MainWindow.PointToScreen(Mouse.GetPosition(Application.Current.MainWindow));
-            w.Left = location.X - w.Width / 2;
-            w.Top = location.Y - w.Height / 2;
+            w.Owner = Application.Current.MainWindow;
+            w.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            //var location = Application.Current.MainWindow.PointToScreen(Mouse.GetPosition(Application.Current.MainWindow));
+            //w.Left = location.X - w.Width / 2;
+            //w.Top = location.Y - w.Height / 2;
             if (w.ShowDialog() == true)
             {
                 ApplyChanges(w.Start, w.Duration, w.Stretching, w.Brightness, w.LaserOn, w.ForAll, w.DurationChanged, w.StretchingChanged, w.BrightnessChanged, w.LaserOnChanged);

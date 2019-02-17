@@ -445,7 +445,9 @@ namespace PixelTuner.ViewModel
         private void OnSplit(object parameter)
         {
             SplitItemWindow w = new SplitItemWindow(this);
-            SetWindowPosition(w);
+            w.Owner = Application.Current.MainWindow;
+            w.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            //SetWindowPosition(w);
 
             if (w.ShowDialog() == true)
             {
@@ -494,7 +496,9 @@ namespace PixelTuner.ViewModel
         private void OnRepeat(object parameter)
         {
             RepeatItemWindow w = new RepeatItemWindow(this);
-            SetWindowPosition(w);
+            w.Owner = Application.Current.MainWindow;
+            w.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            //SetWindowPosition(w);
 
             if (w.ShowDialog() == true)
             {
@@ -580,7 +584,9 @@ namespace PixelTuner.ViewModel
         protected virtual void GenericEdit(object parameter)
         {
             BasicItemWindow w = new BasicItemWindow(this);
-            SetWindowPosition(w);
+            w.Owner = Application.Current.MainWindow;
+            w.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            //SetWindowPosition(w);
 
             if (w.ShowDialog() == true)
             {
