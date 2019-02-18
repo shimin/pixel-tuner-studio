@@ -166,5 +166,17 @@ namespace EpicPlayer.Properties {
                 this["WifiPort"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int InterfaceIdx {
+            get {
+                return ((int)(this["InterfaceIdx"]));
+            }
+            set {
+                this["InterfaceIdx"] = value;
+            }
+        }
     }
 }

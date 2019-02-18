@@ -17,7 +17,8 @@
         </Grid.ColumnDefinitions>
         <StackPanel Orientation="Vertical">
             <Button x:Name="FileUpload" Content="Open audio" Height="32" Margin="8,8,8,2" Click="loadFile" />
-            <TextBox x:Name="boxMulticastAddress" ToolTip="Multicast Address" Margin="8,4" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Height="22"/>
+            <TextBox x:Name="boxMulticastAddress" ToolTip="Multicast Address" Margin="8,4" Visibility="Collapsed" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Height="22"/>
+            <ComboBox x:Name="boxInterfaces" ToolTip="Network interface to communicate" HorizontalContentAlignment="Center" Margin="8,4" Height="24" SelectionChanged="BoxInterfaces_OnSelectionChanged"></ComboBox>
             <Button x:Name="DeviceLookup" Content="Device lookup" Height="32" Margin="8,3,8,2" Click="deviceLookup" />
             <Label x:Name="songTitle" Content="" Foreground="White" Margin="8"/>
             <ProgressBar x:Name="songProgress" BorderThickness="0" HorizontalAlignment="Stretch" Height="24" Margin="8,4" Background="#1aFFFFFF" Foreground="#FF29EE4D"/>

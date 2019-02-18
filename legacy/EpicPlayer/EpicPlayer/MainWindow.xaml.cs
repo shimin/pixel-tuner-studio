@@ -9,6 +9,8 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Threading;
 using System.Net;
+using System.Net.NetworkInformation;
+using System.Windows.Controls;
 
 namespace SongReader
 {
@@ -41,6 +43,40 @@ namespace SongReader
         }
     }
 
+    internal class InterfaceInfo
+    {
+        private NetworkInterface _nIface;
+
+        public NetworkInterface NetworkInterfaceInfo
+        {
+            get { return _nIface; }
+        }
+
+        public InterfaceInfo(NetworkInterface niface)
+        {
+            _nIface = niface;
+        }
+
+        public override string ToString()
+        {
+            string name = "Unknown";
+            if (_nIface != null)
+            {
+                var ipProps = _nIface.GetIPProperties();
+
+                foreach (var ip in ipProps.UnicastAddresses)
+                {
+                    if ((_nIface.OperationalStatus == OperationalStatus.Up)
+                        && (ip.Address.AddressFamily == AddressFamily.InterNetwork))
+                    {
+                        name = _nIface.Description + " | " + ip.Address.ToString();
+                    }
+                }
+            }
+            return name;
+        }
+    }
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -64,10 +100,10 @@ namespace SongReader
         
         ArtNet.Sockets.ArtNetSocket artnet = new ArtNet.Sockets.ArtNetSocket();
 
+        private bool _suppressPlaybackCommands = false;
+
         public MainWindow()
         {
-            UInt32 src = 3155340801;
-            var b = System.BitConverter.GetBytes(src);
             InitializeComponent();
             Closing += MainWindow_Closing;
             playbackPanel.IsEnabled = false;
@@ -86,8 +122,7 @@ namespace SongReader
                 boxArtnetStart.Text = Settings.Default.StartCmd;
                 boxArtnetStop.Text = Settings.Default.StopCmd;
                 boxArtnetPause.Text = Settings.Default.PauseCmd;
-
-                ep = new IPEndPoint(IPAddress.Parse(boxMulticastAddress.Text), 333);
+                
                 _lastMsSent = 0;
                 if (_stopTimer == null)
                     _stopTimer = new Timer(StopTimerCallback, null, 1000, 1000);
@@ -98,7 +133,7 @@ namespace SongReader
                     player.Open(new Uri(Settings.Default.FilePath));
                     songTitle.Content = path;
                     //sets default items
-                    _playbackStatus = Status.play;
+                    _playbackStatus = Status.stop;
                     playStatus.Content = EnumHelper.GetDescription<Status>(_playbackStatus);
 
                     if (firstTime == 0)
@@ -113,10 +148,53 @@ namespace SongReader
                     firstTime = 1;
                     playbackPanel.IsEnabled = true;
                 }
+                InitializeNetworkList();
             }
             catch (Exception ex)
             {
                 //MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void InitializeNetworkList()
+        {
+            var interfaces = NetworkInterface.GetAllNetworkInterfaces();
+            for (int i = 0; i < interfaces.Length; i++)
+            {
+                if (interfaces[i].OperationalStatus == OperationalStatus.Up &&
+                    (interfaces[i].NetworkInterfaceType == NetworkInterfaceType.Ethernet ||
+                     interfaces[i].NetworkInterfaceType == NetworkInterfaceType.Wireless80211))
+                {
+                    boxInterfaces.Items.Add(new InterfaceInfo(interfaces[i]));
+                }
+            }
+            if (boxInterfaces.Items.Count > 0) boxInterfaces.SelectedIndex = Settings.Default.InterfaceIdx;
+        }
+
+        private void InitializeInterface()
+        {
+            try
+            {
+                if (boxInterfaces.SelectedIndex != -1)
+                {
+                    var ni = boxInterfaces.SelectedItem as InterfaceInfo;
+                    var ipProps = ni.NetworkInterfaceInfo.GetIPProperties();
+                    string ipstr = "0.0.0.0";
+
+                    foreach (var ip in ipProps.UnicastAddresses)
+                    {
+                        if ((ni.NetworkInterfaceInfo.OperationalStatus == OperationalStatus.Up)
+                            && (ip.Address.AddressFamily == AddressFamily.InterNetwork))
+                        {
+                            ipstr = ip.Address.ToString();
+                        }
+                    }
+                    ipstr = ipstr.Substring(0, ipstr.LastIndexOf(".")) + ".255";
+                    ep = new IPEndPoint(IPAddress.Parse(ipstr), 333);
+                }
+            }
+            catch
+            {
             }
         }
 
@@ -138,7 +216,8 @@ namespace SongReader
             Settings.Default.Channel = boxArtnetChannel.Text;
             Settings.Default.StartCmd = boxArtnetStart.Text;
             Settings.Default.StopCmd = boxArtnetStop.Text;
-            Settings.Default.PauseCmd = boxArtnetPause.Text;  
+            Settings.Default.PauseCmd = boxArtnetPause.Text;
+            Settings.Default.InterfaceIdx = boxInterfaces.SelectedIndex;
 
             Settings.Default.Save();
         }
@@ -201,10 +280,17 @@ namespace SongReader
 
         private void deviceLookup(object sender, RoutedEventArgs e)
         {
+            _suppressPlaybackCommands = true;
             WifiDevicesWindow w = new WifiDevicesWindow(_udpClient, ep);
             w.Owner = this;
             w.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             w.ShowDialog();
+            _suppressPlaybackCommands = false;
+        }
+
+        private void BoxInterfaces_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            InitializeInterface();
         }
 
         UInt32 _lastMsSent = 0;
@@ -229,7 +315,7 @@ namespace SongReader
                 {
                     var cmd = _playBytes;
                     BitConverter.GetBytes(timepoint).CopyTo(cmd, 3);
-                    if (_udpClient != null) _udpClient.Send(cmd, 8, ep);
+                    if (_udpClient != null && !_suppressPlaybackCommands) _udpClient.Send(cmd, 8, ep);
                 }
                 catch (Exception ex)
                 {
@@ -250,14 +336,15 @@ namespace SongReader
 
         private void Pause(object sender, RoutedEventArgs e)
         {
+            if (_playbackStatus == Status.stop) return;
+
             player.Pause();
             _playbackStatus = Status.pause;
             playStatus.Content = EnumHelper.GetDescription<Status>(_playbackStatus);
 
             try
             {
-                var cmd = _playbackStatus == Status.play ? _pauseBytes : _playBytes;
-                if (_playbackStatus == Status.stop) return;
+                var cmd = _pauseBytes;
                 var timepoint = (UInt32)player.Position.TotalMilliseconds;
                 BitConverter.GetBytes(timepoint).CopyTo(cmd, 3);
                 if (_udpClient != null) _udpClient.Send(cmd, 8, ep);
@@ -341,7 +428,7 @@ namespace SongReader
         {
             try
             {
-                if (_udpClient != null && _playbackStatus == Status.stop)
+                if (_udpClient != null && !_suppressPlaybackCommands && _playbackStatus == Status.stop)
                 {
                     var cmd = _stopBytes;
                     UInt32 timepoint = 0;

@@ -38,5 +38,8 @@
     <Setting Name="WifiPort" Type="System.UInt16" Scope="User">
       <Value Profile="(Default)">333</Value>
     </Setting>
+    <Setting Name="InterfaceIdx" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
