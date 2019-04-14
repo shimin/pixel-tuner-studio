@@ -79,11 +79,17 @@ namespace PixelTuner
         private void MainWnd_Unloaded(object sender, RoutedEventArgs e)
         {
             var serializer = new Workspace.Layout.Serialization.XmlLayoutSerializer(dockManager);
+            var dirPath = Path.Combine(_dataPath, @"PixelTuner 2");
+            var filePath = Path.Combine(dirPath, AppID + "Dock.config");
             try
             {
-                serializer.Serialize(Path.Combine(_dataPath, @"PixelTuner 2\" + AppID + "Dock.config"));
+                if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
+                serializer.Serialize(filePath);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         private static void UiInvoke(Action a)
