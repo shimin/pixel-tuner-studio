@@ -133,6 +133,20 @@ namespace PixelTuner
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
             base.OnPreviewKeyDown(e);
+            if (e.Key == Key.S)
+            {
+                var doc = RootViewModel.This.ActiveDocument;
+                if (doc != null && doc.SoundPlayer.WaveformData != null && doc.SoundPlayer.ChannelPosition > 0)
+                {
+                    var l = doc.SelectedTimeline;
+                    if (l != null)
+                    {
+                        var time = l.Start.Value.AddMilliseconds((int)(doc.SoundPlayer.CurrentTime.TotalMilliseconds / 50) * 50);
+                        var item = doc.SelectedTimeline.FindItemByTime(time);
+                        item?.Split(time - item.StartTime.Value);
+                    }
+                }
+            }
             if (e.Key == Key.Space)
             {
                 var doc = RootViewModel.This.ActiveDocument;

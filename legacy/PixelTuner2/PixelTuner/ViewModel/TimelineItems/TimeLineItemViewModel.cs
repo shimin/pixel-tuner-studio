@@ -457,7 +457,7 @@ namespace PixelTuner.ViewModel
             if (w.NeedRefresh) RootViewModel.NotifySettingsChanged();
         }
 
-        private void Split(TimeSpan timeSpan)
+        public void Split(TimeSpan timeSpan)
         {
             var p = TimelineHelper.FindParentTimeline(RootViewModel.This.ActiveDocument, this);
             if (p != null)
