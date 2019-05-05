@@ -77,65 +77,12 @@
           <Directory Id="ResourceLocation_de" Name="de">
             <Component Id="PixelTuner.com.de" Guid="734B1DAE-D31C-41B8-A49E-A623249E59B2">
               <File Id="Rosources_de" Source="..\PixelTuner\bin\$(var.Configuration)\de\Workspace.resources.dll" />
-              <File Id="Rosources_de2" Source="..\PixelTuner\bin\$(var.Configuration)\de\System.Windows.Interactivity.resources.dll" />
-              <File Id="Resources_de3" Source="..\PixelTuner\bin\$(var.Configuration)\de\Microsoft.Expression.Interactions.resources.dll"/>
-            </Component>
-          </Directory>
-
-          <Directory Id="ResourceLocation_en" Name="en">
-            <Component Id="PixelTuner.com.en" Guid="b0b3a919-8cca-4393-95e0-4f0d49cfc3ff">
-              <File Id="Rosources_en" Source="..\PixelTuner\bin\$(var.Configuration)\en\System.Windows.Interactivity.resources.dll" />
-              <File Id="Resources_en2" Source="..\PixelTuner\bin\$(var.Configuration)\en\Microsoft.Expression.Interactions.resources.dll"/>
-            </Component>
-          </Directory>
-
-          <!--<Directory Id="ResourceLocation_en_US" Name="en-US">
-            <Component Id="PixelTuner.com.en_US" Guid="872F9BE8-C7CA-485A-83AF-CF822255135E">
-              <File Id="Rosources_en_US" Source="..\PixelTuner\bin\$(var.Configuration)\en-US\PixelTuner.resources.dll" />
-            </Component>
-          </Directory>-->
-
-          <Directory Id="ResourceLocation_es" Name="es">
-            <Component Id="PixelTuner.com.es" Guid="FFFE2969-59C2-4A42-B4B7-6D5473F8131C">
-              <File Id="Rosources_es" Source="..\PixelTuner\bin\$(var.Configuration)\es\Workspace.resources.dll" />
-              <File Id="Rosources_es2" Source="..\PixelTuner\bin\$(var.Configuration)\es\System.Windows.Interactivity.resources.dll" />
-              <File Id="Resources_es3" Source="..\PixelTuner\bin\$(var.Configuration)\es\Microsoft.Expression.Interactions.resources.dll"/>
-            </Component>
-          </Directory>
-
-          <Directory Id="ResourceLocation_fr" Name="fr">
-            <Component Id="PixelTuner.com.fr" Guid="97ED9B40-435E-455F-9B8D-9C9D836E4205">
-              <File Id="Rosources_fr" Source="..\PixelTuner\bin\$(var.Configuration)\fr\Workspace.resources.dll" />
-              <File Id="Rosources_fr2" Source="..\PixelTuner\bin\$(var.Configuration)\fr\System.Windows.Interactivity.resources.dll" />
-              <File Id="Resources_fr3" Source="..\PixelTuner\bin\$(var.Configuration)\fr\Microsoft.Expression.Interactions.resources.dll"/>
             </Component>
           </Directory>
 
           <Directory Id="ResourceLocation_hu" Name="hu">
             <Component Id="PixelTuner.com.hu" Guid="67CAF05E-044E-41E9-901F-7AA5CCA87F3C">
               <File Id="Rosources_hu" Source="..\PixelTuner\bin\$(var.Configuration)\hu\Workspace.resources.dll" />
-            </Component>
-          </Directory>
-
-          <Directory Id="ResourceLocation_it" Name="it">
-            <Component Id="PixelTuner.com.it" Guid="7076224B-CF85-43B0-9F9E-BE16A57AFEC7">
-              <File Id="Rosources_it" Source="..\PixelTuner\bin\$(var.Configuration)\it\Workspace.resources.dll" />
-              <File Id="Rosources_it2" Source="..\PixelTuner\bin\$(var.Configuration)\it\System.Windows.Interactivity.resources.dll" />
-              <File Id="Resources_it3" Source="..\PixelTuner\bin\$(var.Configuration)\it\Microsoft.Expression.Interactions.resources.dll"/>
-            </Component>
-          </Directory>
-
-          <Directory Id="ResourceLocation_ja" Name="ja">
-            <Component Id="PixelTuner.com.ja" Guid="27bd84d7-07f0-4161-8d38-1a8d9120654e">
-              <File Id="Rosources_ja" Source="..\PixelTuner\bin\$(var.Configuration)\ja\System.Windows.Interactivity.resources.dll" />
-              <File Id="Resources_ja2" Source="..\PixelTuner\bin\$(var.Configuration)\ja\Microsoft.Expression.Interactions.resources.dll"/>
-            </Component>
-          </Directory>
-
-          <Directory Id="ResourceLocation_ko" Name="ko">
-            <Component Id="PixelTuner.com.ko" Guid="f111ef9f-edb7-4bc3-95c8-23855fbfe1bc">
-              <File Id="Rosources_ko" Source="..\PixelTuner\bin\$(var.Configuration)\ko\System.Windows.Interactivity.resources.dll" />
-              <File Id="Resources_ko2" Source="..\PixelTuner\bin\$(var.Configuration)\ko\Microsoft.Expression.Interactions.resources.dll"/>
             </Component>
           </Directory>
 
@@ -166,17 +113,9 @@
           <Directory Id="ResourceLocation_zh_Hans" Name="zh-Hans">
             <Component Id="PixelTuner.com.zh_Hans" Guid="EE6163A2-0845-46B1-A34F-8F3AD594F0ED">
               <File Id="Rosources_zh_Hans" Source="..\PixelTuner\bin\$(var.Configuration)\zh-Hans\Workspace.resources.dll" />
-              <File Id="Rosources_zh_Hans2" Source="..\PixelTuner\bin\$(var.Configuration)\zh-Hans\System.Windows.Interactivity.resources.dll" />
-              <File Id="Resources_zh_Hans3" Source="..\PixelTuner\bin\$(var.Configuration)\zh-Hans\Microsoft.Expression.Interactions.resources.dll"/>
             </Component>
           </Directory>
 
-          <Directory Id="ResourceLocation_zh_Hant" Name="zh-Hant">
-            <Component Id="PixelTuner.com.zh_Hant" Guid="58477f2e-fb9a-4c91-a5b6-cd1ffc18095d">
-              <File Id="Rosources_zh_Hant" Source="..\PixelTuner\bin\$(var.Configuration)\zh-Hant\System.Windows.Interactivity.resources.dll" />
-              <File Id="Resources_zh_Hant2" Source="..\PixelTuner\bin\$(var.Configuration)\zh-Hant\Microsoft.Expression.Interactions.resources.dll"/>
-            </Component>
-          </Directory>
         </Directory>
       </Directory>
 
@@ -1901,21 +1840,13 @@
       <ComponentRef Id="PixelTuner.com" />
       <ComponentRef Id="DockData"/>
       <ComponentRef Id="SharpVectors" />
-      <ComponentRef Id="PixelTuner.com.en" />
-      <!--<ComponentRef Id="PixelTuner.com.en_US" />-->
       <ComponentRef Id="PixelTuner.com.de" />
-      <ComponentRef Id="PixelTuner.com.es" />
-      <ComponentRef Id="PixelTuner.com.fr" />
       <ComponentRef Id="PixelTuner.com.hu" />
-      <ComponentRef Id="PixelTuner.com.ja" />
-      <ComponentRef Id="PixelTuner.com.ko" />
-      <ComponentRef Id="PixelTuner.com.it" />
       <ComponentRef Id="PixelTuner.com.pt_BR" />
       <ComponentRef Id="PixelTuner.com.ro" />
       <ComponentRef Id="PixelTuner.com.ru" />
       <ComponentRef Id="PixelTuner.com.sv" />
       <ComponentRef Id="PixelTuner.com.zh_Hans" />
-      <ComponentRef Id="PixelTuner.com.zh_Hant" />
       <ComponentRef Id='ProgramMenuDir' />
       <ComponentRef Id="DefaultContent" />
       <ComponentRef Id="DefaultGradients"/>

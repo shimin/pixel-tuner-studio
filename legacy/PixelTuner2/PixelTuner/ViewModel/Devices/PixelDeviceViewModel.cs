@@ -30,6 +30,8 @@ namespace PixelTuner.ViewModel
 
         private static int FirmwareFileVersionV5 { get; set; }
 
+        private static int FirmwareFileVersionV6 { get; set; }
+
         private static byte[] _firmwareBytesV2;
 
         private static byte[] _firmwareBytesV3;
@@ -37,6 +39,8 @@ namespace PixelTuner.ViewModel
         private static byte[] _firmwareBytesV4;
 
         private static byte[] _firmwareBytesV5;
+
+        private static byte[] _firmwareBytesV6;
 
         private static string _firmwareFileName = "Flash.bin";
 
@@ -97,6 +101,8 @@ namespace PixelTuner.ViewModel
                     return (FirmwareVersion < FirmwareFileVersionV4) && !BootMode;
                 if (PlatformVersion == 5)
                     return (FirmwareVersion < FirmwareFileVersionV5) && !BootMode;
+                if (PlatformVersion == 6)
+                    return (FirmwareVersion < FirmwareFileVersionV6) && !BootMode;
                 return false;
             }
         }
@@ -121,6 +127,11 @@ namespace PixelTuner.ViewModel
             streamInfo = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash_v5.bin"));
             _firmwareBytesV5 = Common.Collections.StreamHelper.ReadFully(streamInfo.Stream);
             FirmwareFileVersionV5 = _firmwareBytesV5[52];
+
+            //streamInfo = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash_v6.bin"));
+            //_firmwareBytesV6 = Common.Collections.StreamHelper.ReadFully(streamInfo.Stream);
+            _firmwareBytesV6 = _firmwareBytesV5;
+            FirmwareFileVersionV6 = _firmwareBytesV6[52];
         }
 
         public PixelDeviceViewModel(PixelDevice device)
@@ -143,7 +154,8 @@ namespace PixelTuner.ViewModel
                    || (_firmwareBytesV2 != null 
                     && _firmwareBytesV3 != null 
                     && _firmwareBytesV4 != null
-                    && _firmwareBytesV5 != null));
+                    && _firmwareBytesV5 != null
+                    && _firmwareBytesV6 != null));
         }
 
         /// <summary>
@@ -169,6 +181,7 @@ namespace PixelTuner.ViewModel
                     else if (PlatformVersion == 3) binaryData = _firmwareBytesV3;
                     else if (PlatformVersion == 4) binaryData = _firmwareBytesV4;
                     else if (PlatformVersion == 5) binaryData = _firmwareBytesV5;
+                    else if (PlatformVersion == 6) binaryData = _firmwareBytesV6;
                 }
                 if (binaryData == null) return;
 
@@ -283,6 +296,7 @@ namespace PixelTuner.ViewModel
             else if (PlatformVersion == 3) FirmwareFileVersionV3 = FirmwareVersion;
             else if (PlatformVersion == 4) FirmwareFileVersionV4 = FirmwareVersion;
             else if (PlatformVersion == 5) FirmwareFileVersionV5 = FirmwareVersion;
+            else if (PlatformVersion == 6) FirmwareFileVersionV6 = FirmwareVersion;
             RaisePropertyChanged("UpdateNeeded");
         }
 
@@ -304,7 +318,7 @@ namespace PixelTuner.ViewModel
                 Device.WriteSettings(settings);
                 RootViewModel.This.DevicesModel.MasterMac = mac;
             } 
-            else if (Device.PlatformVersion == 5)
+            else if (Device.PlatformVersion == 5 || Device.PlatformVersion == 6)
             {
                 var answer = MessageBox.Show("Make device control all others?", "PixelTuner 2", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                 List<DeviceFeature> settings = new List<DeviceFeature>();
@@ -325,7 +339,7 @@ namespace PixelTuner.ViewModel
 
         protected override bool CanSetAsMaster(object parameter)
         {
-            return Device.PlatformVersion == 4 || Device.PlatformVersion == 5;
+            return Device.PlatformVersion == 4 || Device.PlatformVersion == 5 || Device.PlatformVersion == 6;
         }
 
         #endregion
