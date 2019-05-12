@@ -202,22 +202,6 @@ namespace NAudio
         {
             get;
             set;
-            //get { return initialChannelPosition; }
-            //set
-            //{
-            //    if (!inInitChannelSet)
-            //    {
-            //        inInitChannelSet = true; // Avoid recursion
-            //        double oldValue = initialChannelPosition;
-            //        double position = Math.Max(0, Math.Min(value, ChannelLength));
-            //        if (!inChannelTimerUpdate && ActiveStream != null)
-            //            ActiveStream.Position = (long)((position / ActiveStream.TotalTime.TotalSeconds) * ActiveStream.Length);
-            //        initialChannelPosition = position;
-            //        if (oldValue != initialChannelPosition)
-            //            NotifyPropertyChanged("InitialChannelPosition");
-            //        inInitChannelSet = false;
-            //    }
-            //}
         }
 
         public TimeSpan CurrentTime
@@ -341,6 +325,7 @@ namespace NAudio
                 {
                     float[] clonedData = (float[])waveformCompressedPoints.Clone();
 
+                    if (Application.Current != null)
                     Application.Current.Dispatcher.Invoke(new Action(() =>
                     {
                         WaveformData = clonedData;
@@ -356,6 +341,8 @@ namespace NAudio
             }
 
             float[] finalClonedData = (float[])waveformCompressedPoints.Clone();
+
+            if (Application.Current != null)
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 fullLevelData = waveformData.ToArray();

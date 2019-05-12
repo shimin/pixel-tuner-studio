@@ -133,6 +133,21 @@ namespace PixelTuner
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
             base.OnPreviewKeyDown(e);
+            if (e.Handled) return;
+            if (e.Key == Key.S && e.KeyboardDevice.Modifiers == ModifierKeys.None)
+            {
+                var doc = RootViewModel.This.ActiveDocument;
+                if (doc != null && doc.SoundPlayer.WaveformData != null && doc.SoundPlayer.ChannelPosition > 0)
+                {
+                    var l = doc.SelectedTimeline;
+                    if (l != null)
+                    {
+                        var time = l.Start.Value.AddMilliseconds((int)(doc.SoundPlayer.CurrentTime.TotalMilliseconds / 50) * 50);
+                        var item = doc.SelectedTimeline.FindItemByTime(time);
+                        item?.Split(time - item.StartTime.Value);
+                    }
+                }
+            }
             if (e.Key == Key.Space)
             {
                 var doc = RootViewModel.This.ActiveDocument;
@@ -142,6 +157,24 @@ namespace PixelTuner
                     {
                         if (doc.StopAudio.CanExecute(null))
                             doc.StopAudio.Execute(null);
+                    }
+                    else
+                    {
+                        if (doc.PlayAudio.CanExecute(null))
+                            doc.PlayAudio.Execute(null);
+                    }
+                }
+            }
+
+            if (e.Key == Key.Enter && e.KeyboardDevice.Modifiers == ModifierKeys.None)
+            {
+                var doc = RootViewModel.This.ActiveDocument;
+                if (doc != null)
+                {
+                    if (doc.SoundPlayer.IsPlaying)
+                    {
+                        if (doc.PauseAudio.CanExecute(null))
+                            doc.PauseAudio.Execute(null);
                     }
                     else
                     {

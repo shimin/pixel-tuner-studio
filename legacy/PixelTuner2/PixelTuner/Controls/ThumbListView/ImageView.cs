@@ -224,30 +224,36 @@ namespace PixelTuner.Controls.ThumbListView
         private void Change_Button_Click(object sender, RoutedEventArgs e)
         {
             var thumbItem = RootViewModel.This.ImagesModel.SelectedItem;
-
-            if (thumbItem != null)
+            try
             {
-                var image = System.Drawing.Image.FromFile(thumbItem.FullName);
-                if (image != null)
+                if (thumbItem != null)
                 {
-                    var c = new PixelTuner.Drawing.ConfigurationItem(Settings.Default.LineHeight, 84, 8);
-                    c.SetScaledImage(image, true);
-
-                    PictureEditor pe = new PictureEditor(c);
-                    pe.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
-                    pe.Owner = Application.Current.MainWindow;
-                    pe.ShowDialog();
-                    var img = pe.Config.GetScaledImage();
-                    var saveDialog = new System.Windows.Forms.SaveFileDialog();
-                    saveDialog.FileName = thumbItem.Name;
-                    saveDialog.InitialDirectory = _sourcePath;
-                    saveDialog.Filter = "Bmp files|*.bmp";
-                    if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    var image = System.Drawing.Image.FromFile(thumbItem.FullName);
+                    if (image != null)
                     {
-                        img.Save(saveDialog.FileName);
+                        var c = new PixelTuner.Drawing.ConfigurationItem(Settings.Default.LineHeight, 84, 8);
+                        c.SetScaledImage(image, true);
+
+                        PictureEditor pe = new PictureEditor(c);
+                        pe.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
+                        pe.Owner = Application.Current.MainWindow;
+                        pe.ShowDialog();
+                        var img = pe.Config.GetScaledImage();
+                        var saveDialog = new System.Windows.Forms.SaveFileDialog();
+                        saveDialog.FileName = thumbItem.Name;
+                        saveDialog.InitialDirectory = _sourcePath;
+                        saveDialog.Filter = "Bmp files|*.bmp";
+                        if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                        {
+                            img.Save(saveDialog.FileName);
+                        }
+                        RootViewModel.This.ImagesModel.RefreshImagesCollection();
                     }
-                    RootViewModel.This.ImagesModel.RefreshImagesCollection();
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "PixelTuner 2", MessageBoxButton.OK, MessageBoxImage.Stop);
             }
         }
 

@@ -141,5 +141,23 @@ namespace PixelTuner.Styles
                 (_waveformScroll.DataContext as INotifyPropertyChanged).PropertyChanged += FileLayoutTemplate_PropertyChanged;
             }
         }
+
+        private void boxTime_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (_waveformScroll != null)
+            {
+                FileViewModel vm = _waveformScroll.DataContext as FileViewModel;
+                if (vm != null)
+                {
+                    TimePickerWindow w = new TimePickerWindow();
+                    w.Time = vm.SoundPlayer.CurrentTime;
+                    if (w.ShowDialog() == true)
+                    {
+                        var position = w.Time.TotalSeconds + w.Time.Milliseconds / 1000;
+                        vm.SoundPlayer.InitialChannelPosition = vm.SoundPlayer.ChannelPosition = position;
+                    }
+                }
+            }
+        }
     }
 }
