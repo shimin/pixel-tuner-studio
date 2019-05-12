@@ -144,7 +144,7 @@ namespace PixelTuner.ViewModel
 
         private bool ValidateProject(FileViewModel file, int projectSize)
         {
-            if (false && projectSize >= MaxMemory)
+            if (false && projectSize >= MaxMemory * 1024)
             {
                 MessageBox.Show((string)Application.Current.TryFindResource("Global_NotEnoughtSpace"),
                     Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Asterisk);
