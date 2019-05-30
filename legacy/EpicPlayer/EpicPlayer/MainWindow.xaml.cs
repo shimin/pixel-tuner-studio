@@ -111,7 +111,7 @@ namespace SongReader
             try
             {
                 Settings.Default.Reload();
-                _udpClient = new UdpClient(AddressFamily.InterNetwork);
+                _udpClient = new UdpClient(333);
                 boxMulticastAddress.Text = Settings.Default.Multicast;
 
                 boxArtnetIP.Text = Settings.Default.IP;

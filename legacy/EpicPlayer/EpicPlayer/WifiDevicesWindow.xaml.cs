@@ -61,9 +61,6 @@ namespace SongReader
             set { OnPropertyChanged("TotalDevices"); }
         }
 
-        //private Socket _client = null;
-        private UdpClient _udpListener = null;
-
         private UdpClient _udpSender = null;
 
         private IPEndPoint _broadcastEP = null;
@@ -80,14 +77,13 @@ namespace SongReader
         {
             _broadcastEP = remoteEP;
             _udpSender = udpSender;
-            _udpListener = new UdpClient(Settings.Default.WifiPort);
             _goOn = true;
             InitializeComponent();
             DataContext = this;
             Closing += WifiDevicesWindow_Closing;
             Devices.CollectionChanged += (sender, args) => { OnPropertyChanged("TotalDevices"); };
-            _udpListener.BeginReceive(new AsyncCallback(ReceivedCallback), state);
             _udpSender.Send(_packet, 3, _broadcastEP);
+            _udpSender.BeginReceive(new AsyncCallback(ReceivedCallback), state);
         }
 
         private void ReceivedCallback(IAsyncResult result)
@@ -95,9 +91,9 @@ namespace SongReader
             IPEndPoint remoteEnd = new IPEndPoint(IPAddress.Any, 333);
             try
             {
-                if (_udpListener != null && _udpListener.Client != null)
+                if (_udpSender != null && _udpSender.Client != null)
                 {
-                    byte[] received = _udpListener.EndReceive(result, ref remoteEnd);
+                    byte[] received = _udpSender.EndReceive(result, ref remoteEnd);
                     var ipString = remoteEnd.ToString();
 
                     Application.Current.Dispatcher.Invoke(new Action(() =>
@@ -117,21 +113,19 @@ namespace SongReader
                             }
                         }
                     }));
-                    if (_goOn) _udpListener.BeginReceive(ReceivedCallback, state);
+                    if (_goOn) _udpSender.BeginReceive(ReceivedCallback, state);
                 }
             }
             catch
             {
-                if (_udpListener != null && _udpListener.Client != null && _goOn)
-                    _udpListener.BeginReceive(ReceivedCallback, state);
+                if (_udpSender != null && _udpSender.Client != null && _goOn)
+                    _udpSender.BeginReceive(ReceivedCallback, state);
             }
         }
 
         private void WifiDevicesWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             _goOn = false;
-            _udpListener.Close();
-            _udpListener = null;
         }
 
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
