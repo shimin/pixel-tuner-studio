@@ -20,6 +20,7 @@
     <system:String x:Key="Menu_Settings_Defaults_Window">Default values</system:String>
     <system:String x:Key="Menu_Settings_Defaults">Set default values</system:String>
     <system:String x:Key="Menu_Settings_Artnet_Window">ArtNet</system:String>
+    <system:String x:Key="Menu_Settings_Defaults_WIFI">WiFi settings</system:String>
     <system:String x:Key="Menu_Settings">Settings</system:String>
     <system:String x:Key="Menu_Window_Devices">Devices</system:String>
     <system:String x:Key="Menu_Window_Projects">Projects</system:String>

@@ -17,10 +17,11 @@
     <system:String x:Key="Menu_Settings_Defaults_WriteDeviceSettings">In angeschlossene Geräte schreiben</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Device">Gerät</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Software">Programm</system:String>
-    <system:String x:Key="Menu_Settings_Defaults_Window">ЗDefault Werte</system:String>
+    <system:String x:Key="Menu_Settings_Defaults_Window">Default Werte</system:String>
     <system:String x:Key="Menu_Settings_Defaults">Default Werte</system:String>
     <system:String x:Key="Menu_Settings_Artnet_Window">ArtNet</system:String>
     <system:String x:Key="Menu_Settings">Einstellungen</system:String>
+    <system:String x:Key="Menu_Settings_Defaults_WIFI">Wlan einstellungen</system:String>
     <system:String x:Key="Menu_Window_Devices">Geräte</system:String>
     <system:String x:Key="Menu_Window_Projects">Projekten</system:String>
     <system:String x:Key="Menu_Window_ProjectPlayer">Anschauen</system:String>

@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Windows;
@@ -46,6 +47,20 @@ namespace PixelTuner.ViewModel
         {
             get { return _udpСlient; }
             set { _udpСlient = value; }
+        }
+
+        private IPEndPoint _broadcastEP = null;
+        public IPEndPoint BroadcastEp
+        {
+            get { return _broadcastEP; }
+            set { _broadcastEP = value; }
+        }
+        
+        private System.Threading.Timer _stopTimer = null;
+        public System.Threading.Timer StopTimer
+        {
+            get { return _stopTimer; }
+            set { _stopTimer = value; }
         }
 
         private LastUsedFileChangedDelegate _lastUsedFileHandler;

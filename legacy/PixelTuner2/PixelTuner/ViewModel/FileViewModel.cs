@@ -928,8 +928,6 @@ namespace PixelTuner.ViewModel
 
         #region ConnectCommand
 
-        private Timer _stopTimer = null;
-
         private RelayCommand _connectCommand = null;
         public ICommand ConnectCommand
         {
@@ -953,14 +951,23 @@ namespace PixelTuner.ViewModel
         {
             try
             {
-                RootViewModel.This.UdpСlient = new UdpClientBroadcast();
-                RootViewModel.This.UdpСlient.Connect(Settings.Default.MulticastIP, Settings.Default.WifiPort);
-                RootViewModel.This.UdpСlient.DontFragment = true;
-                var w = new WifiDevicesWindow(RootViewModel.This.UdpСlient);
-                w.Owner = Application.Current.MainWindow;
-                w.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                w.ShowDialog();
-                _stopTimer = new Timer(StopTimerCallback, null, 1000, 1000);
+                SelectInterfaceWindow siw = new SelectInterfaceWindow();
+                siw.Owner = Application.Current.MainWindow;
+                siw.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                if (siw.ShowDialog() == true)
+                {
+                    RootViewModel.This.BroadcastEp = siw.InterfaceSelected;
+                    RootViewModel.This.UdpСlient = new UdpClient(333);
+                    //RootViewModel.This.UdpСlient.Connect(Settings.Default.MulticastIP, Settings.Default.WifiPort);
+                    RootViewModel.This.UdpСlient.DontFragment = true;
+                    var w = new WifiDevicesWindow(RootViewModel.This.UdpСlient, RootViewModel.This.BroadcastEp);
+                    w.Owner = Application.Current.MainWindow;
+                    w.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    if (w.ShowDialog() == true && RootViewModel.This.StopTimer != null)
+                    {
+                        RootViewModel.This.StopTimer = new Timer(StopTimerCallback, null, 1000, 1000);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -974,7 +981,7 @@ namespace PixelTuner.ViewModel
             try
             {
                 if (RootViewModel.This.UdpСlient != null && !SoundPlayer.IsPlaying)
-                    RootViewModel.This.UdpСlient.Send(new byte[] {0x50, 0x05, 0x04, 0x00, 0x00, 0x00, 0x00, 0x0d}, 8);
+                    RootViewModel.This.UdpСlient.Send(new byte[] {0x50, 0x05, 0x04, 0x00, 0x00, 0x00, 0x00, 0x0d}, 8, RootViewModel.This.BroadcastEp);
             }
             catch
             {
@@ -1005,11 +1012,15 @@ namespace PixelTuner.ViewModel
 
         private void OnDisconnect(object p)
         {
-            _stopTimer.Change(Timeout.Infinite, Timeout.Infinite);
-            _stopTimer.Dispose();
-            _stopTimer = null;
+            if (RootViewModel.This.StopTimer != null)
+            {
+                RootViewModel.This.StopTimer.Change(Timeout.Infinite, Timeout.Infinite);
+                RootViewModel.This.StopTimer.Dispose();
+                RootViewModel.This.StopTimer = null;
+            }
             RootViewModel.This.UdpСlient.Close();
             RootViewModel.This.UdpСlient = null;
+            RootViewModel.This.BroadcastEp = null;
         }
         #endregion
 
@@ -1047,12 +1058,24 @@ namespace PixelTuner.ViewModel
             //if (IsWifiSyncOn) RootViewModel.This.WifiPlayer.Play(player.CurrentTime, Settings.Default.Discreteness);
             if (RootViewModel.This.UdpСlient != null)
             {
+                if (RootViewModel.This.StopTimer != null)
+                {
+                    RootViewModel.This.StopTimer.Change(Timeout.Infinite, Timeout.Infinite);
+                    RootViewModel.This.StopTimer.Dispose();
+                    RootViewModel.This.StopTimer = null;
+                }
+
                 var timeBytes = BitConverter.GetBytes((UInt32) player.CurrentTime.TotalMilliseconds);
                 var cmd = new byte[] {0x50, 0x05, 0x02, 0x00, 0x00, 0x00, 0x00, 0x0d};
                 timeBytes.CopyTo(cmd, 3);
-                RootViewModel.This.UdpСlient.Send(cmd, 8);
-                RootViewModel.This.UdpСlient.Send(cmd, 8);
-                RootViewModel.This.UdpСlient.Send(cmd, 8);
+                try
+                {
+                    RootViewModel.This.UdpСlient.Send(cmd, 8, RootViewModel.This.BroadcastEp);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
 
             player.Play();
@@ -1108,7 +1131,7 @@ namespace PixelTuner.ViewModel
                     var timeBytes = BitConverter.GetBytes((UInt32)player.CurrentTime.TotalMilliseconds);
                     var cmd = new byte[] {0x50, 0x05, 0x03, 0x00, 0x00, 0x00, 0x00, 0x0d};
                     timeBytes.CopyTo(cmd, 3);
-                    RootViewModel.This.UdpСlient.Send(cmd, 8);
+                    RootViewModel.This.UdpСlient.Send(cmd, 8, RootViewModel.This.BroadcastEp);
                 }
             }
             else
@@ -1120,7 +1143,7 @@ namespace PixelTuner.ViewModel
                     var timeBytes = BitConverter.GetBytes((UInt32)player.CurrentTime.TotalMilliseconds);
                     var cmd = new byte[] { 0x50, 0x05, 0x02, 0x00, 0x00, 0x00, 0x00, 0x0d };
                     timeBytes.CopyTo(cmd, 3);
-                    RootViewModel.This.UdpСlient.Send(cmd, 8);
+                    RootViewModel.This.UdpСlient.Send(cmd, 8, RootViewModel.This.BroadcastEp);
                 }
             }
             player.Pause();
@@ -1158,12 +1181,20 @@ namespace PixelTuner.ViewModel
                 RootViewModel.This.DevicesModel.Illuminators.First().Stop(
                     player.CurrentTime, Settings.Default.Discreteness);
             }
+            if (RootViewModel.This.StopTimer == null)
+            {
+                RootViewModel.This.StopTimer = new Timer(StopTimerCallback, null, 1000, 1000);
+            }
+            else
+            {
+                RootViewModel.This.StopTimer.Change(Timeout.Infinite, 1000);
+            }
             //if (IsWifiSyncOn)
             //    RootViewModel.This.WifiPlayer.Stop(player.CurrentTime, Settings.Default.Discreteness);
             //RootViewModel.This.WifiPlayer.SendCommand(PlaybackState.stop, player.CurrentTime);
             if (RootViewModel.This.UdpСlient != null)
             {
-                RootViewModel.This.UdpСlient.Send(new byte[] { 0x50, 0x05, 0x04, 0x00, 0x00, 0x00, 0x00, 0x0d }, 8);
+                RootViewModel.This.UdpСlient.Send(new byte[] { 0x50, 0x05, 0x04, 0x00, 0x00, 0x00, 0x00, 0x0d }, 8, RootViewModel.This.BroadcastEp);
             }
         }
 
@@ -1238,7 +1269,7 @@ namespace PixelTuner.ViewModel
                                 _previousTimepoint = timepoint;
                                 List<byte> cmd = new List<byte>(new byte[] {0x50, 0x05, 0x02, 0x0d});
                                 cmd.InsertRange(3, BitConverter.GetBytes(timepoint));
-                                RootViewModel.This.UdpСlient.Send(cmd.ToArray(), 8);
+                                RootViewModel.This.UdpСlient.Send(cmd.ToArray(), 8, RootViewModel.This.BroadcastEp);
                             }
                         }
                         //if (IsWifiSyncOn) RootViewModel.This.WifiPlayer.Play(SoundPlayer.CurrentTime, Settings.Default.Discreteness);
