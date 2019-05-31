@@ -46,7 +46,7 @@
                         <xctk:MaskedTextBox Name="boxPass" Text="{Binding WifiPass}" ToolTip="Hotspot wifi pass" MaxLength="14" Height="22" HorizontalAlignment="Stretch"/>
                         <xctk:MaskedTextBox Name="boxTag" Text="{Binding WifiTag}" ToolTip="Video module or pixel hoop tag" MaxLength="10" Height="22" HorizontalAlignment="Stretch"/>
                     </StackPanel>
-                    <Button Name="boxDoItWifi" Grid.Row="1" Grid.Column="1" Style="{StaticResource BlueLinkButton}" HorizontalAlignment="Right" Content="Write to connected devices" Click="boxDoIt_Click"></Button>
+                    <Button Name="boxDoItWifi" Grid.Row="1" Grid.Column="1" Style="{StaticResource BlueLinkButton}" HorizontalAlignment="Right" Content="Write to connected devices" Click="boxWriteWifiSettings_Click"></Button>
                 </Grid>
             </TabItem>
             <TabItem Header="{StaticResource Menu_Settings_Defaults_Software}" IsSelected="True" TabIndex="1">
@@ -96,7 +96,7 @@
                     <Button Command="{Binding WriteSettingsCommand}" HorizontalAlignment="Right" Content="{StaticResource Menu_Settings_Defaults_WriteDeviceSettings}" Margin="4" Height="28" Name="boxWriteSettings" Style="{StaticResource BlueLinkButton}" Grid.Row="1" />
                 </Grid>
             </TabItem>
-            <TabItem Header="Hoop/Video Module" TabIndex="3">
+            <TabItem Header="Pixel hoop/Video Module" TabIndex="3">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="120"/>

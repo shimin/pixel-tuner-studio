@@ -273,13 +273,24 @@ namespace PixelTuner
 
         #endregion
 
-        private void boxDoIt_Click(object sender, RoutedEventArgs e)
+        private void boxWriteWifiSettings_Click(object sender, RoutedEventArgs e)
         {
             List<DeviceFeature> settings = new List<DeviceFeature>();
+
             settings.Add(new DeviceFeature(5, Encoding.ASCII.GetBytes(boxSSId.Text + (char)0)));
             settings.Add(new DeviceFeature(6, Encoding.ASCII.GetBytes(boxPass.Text + (char)0)));
             settings.Add(new DeviceFeature(7, boxIP.GetByteArray()));
-            settings.Add(new DeviceFeature(8, BitConverter.GetBytes(WifiPort)));
+            //settings.Add(new DeviceFeature(8, BitConverter.GetBytes(WifiPort)));
+            settings.Add(new DeviceFeature(11, Encoding.GetEncoding(1251).GetBytes(boxTag.Text + (char)0)));
+            DeviceHelper.WriteSettings<VideoDevice>(settings);
+            DeviceHelper.WriteSettings<PixelHoop>(settings);
+            DeviceHelper.WriteSettings<PixelDevice>(settings);
+            DeviceHelper.WriteSettings<LightMasterDevice>(settings);
+        }
+
+        private void boxDoIt_Click(object sender, RoutedEventArgs e)
+        {
+            List<DeviceFeature> settings = new List<DeviceFeature>();
 
             byte[] ledStripLengthParameter = new byte[4];
             BitConverter.GetBytes((ushort)boxLedsCount1.Value).CopyTo(ledStripLengthParameter, 0);
@@ -287,20 +298,10 @@ namespace PixelTuner
 
             settings.Add(new DeviceFeature(9, ledStripLengthParameter));
             settings.Add(new DeviceFeature(10, BitConverter.GetBytes((ushort)(boxLedsType.SelectedIndex + 1))));
-            settings.Add(new DeviceFeature(11, Encoding.GetEncoding(1251).GetBytes(boxTag.Text + (char)0)));
 
             DeviceHelper.WriteSettings<VideoDevice>(settings);
             DeviceHelper.WriteSettings<PixelHoop>(settings);
 
-            List<DeviceFeature> pixelDeviceSettings = new List<DeviceFeature>();
-            pixelDeviceSettings.Add(new DeviceFeature(5, Encoding.ASCII.GetBytes(boxSSId.Text + (char)0)));
-            pixelDeviceSettings.Add(new DeviceFeature(6, Encoding.ASCII.GetBytes(boxPass.Text + (char)0)));
-            pixelDeviceSettings.Add(new DeviceFeature(7, boxIP.GetByteArray()));
-            pixelDeviceSettings.Add(new DeviceFeature(8, BitConverter.GetBytes(WifiPort)));
-            pixelDeviceSettings.Add(new DeviceFeature(11, Encoding.GetEncoding(1251).GetBytes(boxTag.Text + (char)0)));
-
-            DeviceHelper.WriteSettings<PixelDevice>(pixelDeviceSettings);
-            DeviceHelper.WriteSettings<LightMasterDevice>(pixelDeviceSettings);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
