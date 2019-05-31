@@ -164,6 +164,9 @@
     <Compile Include="Import\TransformPage.xaml.cs">
       <DependentUpon>TransformPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SelectInterfaceWindow.xaml.cs">
+      <DependentUpon>SelectInterfaceWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TimePickerWindow.xaml.cs">
       <DependentUpon>TimePickerWindow.xaml</DependentUpon>
     </Compile>
@@ -351,6 +354,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="TimePickerWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SelectInterfaceWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -16,10 +16,11 @@
     <system:String x:Key="Menu_Settings_Defaults_MaxStretching">Макс. возможное горизонтальное растяжение</system:String>
     <system:String x:Key="Menu_Settings_Defaults_WriteDeviceSettings">Записать в подключенные устройства</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Device">Устройство</system:String>
-    <system:String x:Key="Menu_Settings_Defaults_Software">Программа</system:String>
+    <system:String x:Key="Menu_Settings_Defaults_Software">Настройки PixelTuner</system:String>
     <system:String x:Key="Menu_Settings_Defaults_Window">Значения по умолчанию</system:String>
     <system:String x:Key="Menu_Settings_Defaults">Значения по умолчанию</system:String>
     <system:String x:Key="Menu_Settings_Artnet_Window">ArtNet</system:String>
+    <system:String x:Key="Menu_Settings_Defaults_WIFI">Настройки WiFi</system:String>
     <system:String x:Key="Menu_Settings">Настройки</system:String>
     <system:String x:Key="Menu_Window_Devices">Устройства</system:String>
     <system:String x:Key="Menu_Window_Projects">Проекты</system:String>
