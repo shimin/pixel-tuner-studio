@@ -242,6 +242,10 @@
     <Compile Include="ViewModel\Devices\PixelHoopViewModel.cs" />
     <Compile Include="ViewModel\Devices\VideoDeviceViewModel.cs" />
     <Compile Include="ViewModel\Devices\WifiInfoDevice.cs" />
+    <Compile Include="ViewModel\Devices\WifiLightMasterDeviceViewModel.cs" />
+    <Compile Include="ViewModel\Devices\WifiPixelDeviceViewModel.cs" />
+    <Compile Include="ViewModel\Devices\WifiPixelHoopDeviceViewModel.cs" />
+    <Compile Include="ViewModel\Devices\WifiVideoDeviceViewModel.cs" />
     <Compile Include="ViewModel\FileViewModel.cs" />
     <Compile Include="ViewModel\IReplaceItem.cs" />
     <Compile Include="ViewModel\Network\InterfaceInfo.cs" />
@@ -659,6 +663,7 @@
     <Resource Include="Images\_grey_Arrow-UpDisabled.png" />
     <Resource Include="Images\_grey_Arrow-UpLight.png" />
     <None Include="Images\DrawingTool\text_spacing.png" />
+    <Resource Include="Images\infoicon.png" />
     <Content Include="Schemas\human.svg" />
     <Content Include="Schemas\human_1.svg" />
   </ItemGroup>
