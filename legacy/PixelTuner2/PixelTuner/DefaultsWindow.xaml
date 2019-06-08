@@ -37,14 +37,18 @@
                         <RowDefinition Height="20"/>
                     </Grid.RowDefinitions>
                     <StackPanel Orientation="Vertical" Margin="4">
-                        <TextBlock Text="SSId:" Margin="2" TextAlignment="Right"></TextBlock>
-                        <TextBlock Text="Pass:" Margin="2, 4" TextAlignment="Right"></TextBlock>
-                        <TextBlock Text="Tag:" Margin="2,4" TextAlignment="Right"></TextBlock>
+                        <TextBlock Text="SSId" Margin="2,4" TextAlignment="Right"></TextBlock>
+                        <TextBlock Text="Pass" Margin="2,4" TextAlignment="Right"></TextBlock>
+                        <TextBlock Text="Tag" Margin="2,4" TextAlignment="Right"></TextBlock>
+                        <TextBlock Text="IP" Margin="2,4" TextAlignment="Right"></TextBlock>
+                        <TextBlock Text="Port" Margin="2,4" TextAlignment="Right"></TextBlock>
                     </StackPanel>
                     <StackPanel Grid.Column="1" Orientation="Vertical" Margin="4">
-                        <xctk:MaskedTextBox Name="boxSSId" Text="{Binding Ssid}" ToolTip="Hotspot wifi network" MaxLength="10" Height="22" HorizontalAlignment="Stretch"/>
-                        <xctk:MaskedTextBox Name="boxPass" Text="{Binding WifiPass}" ToolTip="Hotspot wifi pass" MaxLength="14" Height="22" HorizontalAlignment="Stretch"/>
-                        <xctk:MaskedTextBox Name="boxTag" Text="{Binding WifiTag}" ToolTip="Video module or pixel hoop tag" MaxLength="10" Height="22" HorizontalAlignment="Stretch"/>
+                        <xctk:MaskedTextBox Name="boxSSId" Text="{Binding Ssid}" ToolTip="Hotspot wifi network" MaxLength="10" Height="22" Margin="1" HorizontalAlignment="Stretch"/>
+                        <xctk:MaskedTextBox Name="boxPass" Text="{Binding WifiPass}" ToolTip="Hotspot wifi pass" MaxLength="14" Height="22" Margin="1" HorizontalAlignment="Stretch"/>
+                        <xctk:MaskedTextBox Name="boxTag" Text="{Binding WifiTag}" ToolTip="Video module or pixel hoop tag" MaxLength="10" Height="22" Margin="1" HorizontalAlignment="Stretch"/>
+                        <ComboBox x:Name="boxInterfaces" ToolTip="Network interface to communicate" VerticalAlignment="Top" HorizontalContentAlignment="Center" Margin="1" HorizontalAlignment="Stretch" Height="24"/>
+                        <xctk:DecimalUpDown Name="boxPort" Value="{Binding WifiPort}" Width="124" Minimum="0" Background="White" Maximum="65535" HorizontalAlignment="Left" Margin="1" Height="22"/>
                     </StackPanel>
                     <Button Name="boxDoItWifi" Grid.Row="1" Grid.Column="1" Style="{StaticResource BlueLinkButton}" HorizontalAlignment="Right" Content="Write to connected devices" Click="boxWriteWifiSettings_Click"></Button>
                 </Grid>
@@ -62,14 +66,14 @@
                     </StackPanel>
                     <StackPanel Name="stackPanel4" ForceCursor="True">
                         <Label Content="{StaticResource Menu_Settings_Defaults_UseTimespan}" Height="22" Padding="6,2,0,0" Name="label5" />
-                        <Label Content="{StaticResource Menu_Settings_Defaults_CollapseGaps}" Height="22" Padding="6,2,0,0" Name="label1" />
-                        <Label Content="{StaticResource Menu_Settings_Defaults_Duration}" Height="22" Padding="6,2,0,0" />
-                        <Label Content="{StaticResource Menu_Settings_Defaults_Stretching}" Height="22" Padding="6,2,0,0"/>
+                        <Label Content="{StaticResource Menu_Settings_Defaults_CollapseGaps}" Height="22" Padding="6,5,0,0" Name="label1" />
+                        <Label Content="{StaticResource Menu_Settings_Defaults_Duration}" Height="22" Padding="6,5,0,0" />
+                        <Label Content="{StaticResource Menu_Settings_Defaults_Stretching}" Height="22" Padding="6,7,0,0"/>
                         <StackPanel Orientation="Horizontal">
-                            <Label Content="{StaticResource Menu_Settings_Defaults_Compression}" Height="22" Padding="6,7,0,0" />
-                            <Label Content="{Binding ElementName=stackPanel3, Path=DataContext.CompressionText}" Height="22" Padding="6,7,0,0" />
+                            <Label Content="{StaticResource Menu_Settings_Defaults_Compression}" Height="28" Padding="6,12,0,0" />
+                            <Label Content="{Binding ElementName=stackPanel3, Path=DataContext.CompressionText}" Height="28" Padding="6,12,0,0" />
                         </StackPanel>
-                        <Label Content="{StaticResource Menu_Settings_Defaults_MaxStretching}" Height="32" Padding="6,14,0,0"/>
+                        <Label Content="{StaticResource Menu_Settings_Defaults_MaxStretching}" Height="32" Padding="6,12,0,0"/>
                         <Label Content="{StaticResource Menu_Settings_Defaults_Rate}" Height="26" Padding="6,4,0,0" Name="label6" />
                     </StackPanel>
                 </StackPanel>
@@ -83,7 +87,7 @@
                     <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Horizontal" Grid.RowSpan="2">
                         <StackPanel Width="81">
                             <CheckBox x:Name="boxExitMenuOnDoubleClick" IsChecked="{Binding ExitMenuOnDoubleClick}" Margin="4" TabIndex="20" />
-                            <Slider Minimum="0" Maximum="30" Value="{Binding ElementName=stackPanel3, Path=DataContext.FadeDownMenuAfter, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" TabIndex="50" />
+                            <Slider Minimum="0" Maximum="30" Margin="4,0" Value="{Binding ElementName=stackPanel3, Path=DataContext.FadeDownMenuAfter, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" TabIndex="50" />
                         </StackPanel>
                         <StackPanel ForceCursor="True">
                             <Label Content="{StaticResource Menu_Settings_Defaults_ExitMenuOnDoubleClick}" Height="22" Padding="6,2,0,0"/>
@@ -107,22 +111,17 @@
                         <RowDefinition Height="20"/>
                     </Grid.RowDefinitions>
                     <StackPanel Orientation="Vertical" Margin="4">
-                        <TextBlock Text="IP:" Margin="2" TextAlignment="Right" Visibility="Collapsed"></TextBlock>
-                        <TextBlock Text="Port:" Margin="2,4" TextAlignment="Right" Visibility="Collapsed"></TextBlock>
                         <TextBlock Text="LEDs count:" Margin="2" TextAlignment="Right"></TextBlock>
                         <TextBlock Text="LEDs type:" Margin="2,4" TextAlignment="Right"></TextBlock>
                         <TextBlock Text="Multicast address:" Margin="2,4" TextAlignment="Right" Visibility="Collapsed"></TextBlock>
                         <TextBlock Text="Bytes order:" Margin="2,4" TextAlignment="Right"></TextBlock>
                     </StackPanel>
                     <StackPanel Grid.Column="1" Orientation="Vertical" Margin="4">
-                        <iPmaskedtextbox:IPMaskedTextBox Name="boxIP" ToolTip="PixelTuner hosting machine IP" Height="22" Background="White" HorizontalAlignment="Left" Visibility="Collapsed"/>
-                        <xctk:DecimalUpDown Name="boxPort" Value="{Binding WifiPort}" Width="124" Minimum="0" Background="White" Maximum="65535" HorizontalAlignment="Left" Height="18" Margin="2,2,0,2" Visibility="Collapsed"/>
                         <StackPanel Orientation="Horizontal">
                             <xctk:DecimalUpDown Name="boxLedsCount1" Value="{Binding LedsCount1}" ToolTip="channel1" Width="60" Minimum="0" Background="White" Maximum="1024" HorizontalAlignment="Left" Height="18" Margin="2,2,0,2"/>
                             <xctk:DecimalUpDown Name="boxLedsCount2" Value="{Binding LedsCount2}" ToolTip="channel2" Width="60" Minimum="0" Background="White" Maximum="1024" HorizontalAlignment="Left" Height="18" Margin="2,2,0,2"/>
                         </StackPanel>
                         <ComboBox Name="boxLedsType" Width="124" Height="22" HorizontalAlignment="Left" ItemsSource="{Binding SupportedLedTypes}" SelectionChanged="boxLedsType_SelectionChanged"/>
-                        <iPmaskedtextbox:IPMaskedTextBox Name="boxMulticastIP" ToolTip="Subnet multicas address (ends on .255 like x.x.x.255)" Height="22" Background="White" HorizontalAlignment="Left" Visibility="Collapsed"/>
                         <StackPanel Orientation="Horizontal">
                             <ComboBox Name="boxLedsOrder" Width="124" Height="22" HorizontalAlignment="Left" Margin="0,2" ItemsSource="{Binding LedOrderOptions}" SelectedIndex="2"/>
                             <Button Style="{DynamicResource BlueLinkButton}" Margin="4" Click="Button_Click">Write</Button>

@@ -75,7 +75,7 @@ namespace ConnectionTester
             try
             {
                 port.Open();
-                _device = new PixelDeviceTest(port, false);
+                _device = new PixelDeviceTest(new SerialTransport(port), false);
                 _device.Logger = new Common.Log.Logger(_logTarget);
                 _device.SessionFinished += new SerialDeviceBase.SessionDelegate(_device_SessionFinished);
                 SetStatus("Порт открыт", Common.Log.MessageType.Info, 0);
@@ -205,7 +205,7 @@ namespace ConnectionTester
                     {
                         for (int i = 0; i < boxRepeatCount.Value; i++)
                         {
-                            if (_device.Port != null)
+                            if (_device.ChannelID != null)
                                 _device.WriteFile(binaryData, PixelDevice.UsualPacketSize);
                             else
                             {
@@ -462,7 +462,7 @@ namespace ConnectionTester
 
         private void boxEnterTest_Click(object sender, EventArgs e)
         {
-            if (_device != null && _device.Port.IsOpen)
+            if (_device != null && _device.Transport.IsOpen)
             {
                 _device.EnterTestMode();
             }
@@ -474,7 +474,7 @@ namespace ConnectionTester
 
         private void boxExitTest_Click(object sender, EventArgs e)
         {
-            if (_device != null && _device.Port.IsOpen)
+            if (_device != null && _device.Transport.IsOpen)
             {
                 _device.ExitTestMode();
             }
@@ -486,7 +486,7 @@ namespace ConnectionTester
 
         private void boxSetPixel_Click(object sender, EventArgs e)
         {
-            if (_device != null && _device.Port.IsOpen)
+            if (_device != null && _device.Transport.IsOpen)
             {
                 _device.SetPixelColor(boxPixelNumber.Value, boxSampleColor.BackColor);
             }

@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using PixelTuner.Properties;
+using PixelTuner.ViewModel.Network;
 
 namespace PixelTuner
 {
@@ -47,41 +48,7 @@ namespace PixelTuner
             return enumerationValue.ToString();
         }
     }
-
-    internal class InterfaceInfo
-    {
-        private NetworkInterface _nIface;
-
-        public NetworkInterface NetworkInterfaceInfo
-        {
-            get { return _nIface; }
-        }
-
-        public InterfaceInfo(NetworkInterface niface)
-        {
-            _nIface = niface;
-        }
-
-        public override string ToString()
-        {
-            string name = "Unknown";
-            if (_nIface != null)
-            {
-                var ipProps = _nIface.GetIPProperties();
-
-                foreach (var ip in ipProps.UnicastAddresses)
-                {
-                    if ((_nIface.OperationalStatus == OperationalStatus.Up)
-                        && (ip.Address.AddressFamily == AddressFamily.InterNetwork))
-                    {
-                        name = _nIface.Description + " | " + ip.Address.ToString();
-                    }
-                }
-            }
-            return name;
-        }
-    }
-
+    
     /// <summary>
     /// Interaction logic for SelectInterfaceWindow.xaml
     /// </summary>

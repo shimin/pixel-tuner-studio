@@ -16,6 +16,10 @@ using Communication.Service;
 using Communication.Pixelate;
 using PixelTuner.ViewModel;
 using Communication;
+using System.Net.Sockets;
+using System.Net.NetworkInformation;
+using PixelTuner.ViewModel.Network;
+using System.Net;
 
 namespace PixelTuner
 {
@@ -28,9 +32,7 @@ namespace PixelTuner
         {
             this.DataContext = this;
             InitializeComponent();
-
-            boxIP.SetIP(Settings.Default.WifiIP);
-            boxMulticastIP.SetIP(Settings.Default.MulticastIP);
+            InitializeNetworkList();
             boxLedsCount1.Value = Settings.Default.StripLedsCount1;
             boxLedsCount2.Value = Settings.Default.StripLedsCount2;
             boxLedsType.SelectedIndex = Settings.Default.LedsType - 1 < 0 ? 0 : Settings.Default.LedsType - 1;
@@ -84,14 +86,6 @@ namespace PixelTuner
         {
             get { return _wifiPass; }
             set { _wifiPass = value; }
-        }
-
-        private string _wifiIP = Settings.Default.WifiIP;
-
-        public string WifiIp
-        {
-            get { return _wifiIP; }
-            set { _wifiIP = value; boxIP.SetIP(value); }
         }
         
         private ushort _wifiPort = Settings.Default.WifiPort;
@@ -200,6 +194,48 @@ namespace PixelTuner
             }
         }
 
+        private void InitializeNetworkList()
+        {
+            var interfaces = NetworkInterface.GetAllNetworkInterfaces();
+            for (int i = 0; i < interfaces.Length; i++)
+            {
+                if (interfaces[i].OperationalStatus == OperationalStatus.Up &&
+                    (interfaces[i].NetworkInterfaceType == NetworkInterfaceType.Ethernet ||
+                     interfaces[i].NetworkInterfaceType == NetworkInterfaceType.Wireless80211))
+                {
+                    boxInterfaces.Items.Add(new InterfaceInfo(interfaces[i]));
+                }
+            }
+            if (boxInterfaces.Items.Count > 0) boxInterfaces.SelectedIndex = Settings.Default.InterfaceIdx;
+        }
+
+        private void InitializeInterface(out string localIP, out string multicastIP)
+        {
+            string ipstr = "0.0.0.0";
+            try
+            {
+                if (boxInterfaces.SelectedIndex != -1)
+                {
+                    var ni = boxInterfaces.SelectedItem as InterfaceInfo;
+                    var ipProps = ni.NetworkInterfaceInfo.GetIPProperties();
+
+                    foreach (var ip in ipProps.UnicastAddresses)
+                    {
+                        if ((ni.NetworkInterfaceInfo.OperationalStatus == OperationalStatus.Up)
+                            && (ip.Address.AddressFamily == AddressFamily.InterNetwork))
+                        {
+                            ipstr = ip.Address.ToString();
+                        }
+                    }
+                }
+            }
+            catch
+            {
+            }
+            localIP = ipstr;
+            multicastIP = ipstr.Substring(0, ipstr.LastIndexOf(".")) + ".255";
+        }
+
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             Settings.Default.FadeDownMenuAfter = FadeDownMenuAfter;
@@ -212,10 +248,11 @@ namespace PixelTuner
             Settings.Default.Discreteness = Discreteness;
             Settings.Default.Ssid = boxSSId.Text;
             Settings.Default.WifiPass = boxPass.Text;
-            Settings.Default.WifiIP =
-                $"{boxIP.FirstBox.Text}.{boxIP.SecondBox.Text}.{boxIP.ThirdBox.Text}.{boxIP.FourthBox.Text}";
-            Settings.Default.MulticastIP =
-                $"{boxMulticastIP.FirstBox.Text}.{boxMulticastIP.SecondBox.Text}.{boxMulticastIP.ThirdBox.Text}.{boxMulticastIP.FourthBox.Text}";
+            string ip, multicastIP;
+            InitializeInterface(out ip, out multicastIP);
+            Settings.Default.WifiIP = ip;
+            Settings.Default.MulticastIP = multicastIP;
+            Settings.Default.InterfaceIdx = boxInterfaces.SelectedIndex;
             Settings.Default.WifiPort = (ushort)boxPort.Value;
             Settings.Default.LedsType = boxLedsType.SelectedIndex + 1;
             Settings.Default.StripLedsCount1 = (ushort)boxLedsCount1.Value;
@@ -275,12 +312,14 @@ namespace PixelTuner
 
         private void boxWriteWifiSettings_Click(object sender, RoutedEventArgs e)
         {
-            List<DeviceFeature> settings = new List<DeviceFeature>();
+            string ip, multicastIP;
+            InitializeInterface(out ip, out multicastIP);
 
+            List<DeviceFeature> settings = new List<DeviceFeature>();
             settings.Add(new DeviceFeature(5, Encoding.ASCII.GetBytes(boxSSId.Text + (char)0)));
             settings.Add(new DeviceFeature(6, Encoding.ASCII.GetBytes(boxPass.Text + (char)0)));
-            settings.Add(new DeviceFeature(7, boxIP.GetByteArray()));
-            //settings.Add(new DeviceFeature(8, BitConverter.GetBytes(WifiPort)));
+            settings.Add(new DeviceFeature(7, IPAddress.Parse(ip).GetAddressBytes()));
+            settings.Add(new DeviceFeature(8, BitConverter.GetBytes(WifiPort)));
             settings.Add(new DeviceFeature(11, Encoding.GetEncoding(1251).GetBytes(boxTag.Text + (char)0)));
             DeviceHelper.WriteSettings<VideoDevice>(settings);
             DeviceHelper.WriteSettings<PixelHoop>(settings);
