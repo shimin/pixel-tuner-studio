@@ -29,12 +29,12 @@ namespace PixelTuner.Selectors
             set;
         }
 
-        public DataTemplate ProjectsViewTemplate
+        public DataTemplate NetworkViewTemplate
         {
             get;
             set;
         }
-
+        
         public DataTemplate ProjectPlayerViewTemplate
         {
             get;
@@ -90,9 +90,6 @@ namespace PixelTuner.Selectors
             if (item is DevicesViewModel)
                 return DevicesViewTemplate;
 
-            if (item is ProjectsViewModel)
-                return ProjectsViewTemplate;
-
             if (item is ImagesViewModel)
                 return ImagesViewTemplate;
 
@@ -107,6 +104,9 @@ namespace PixelTuner.Selectors
 
             if (item is CanvasViewModel)
                 return CanvasViewTemplate;
+
+            if (item is NetworkViewModel)
+                return NetworkViewTemplate;
 
             return base.SelectTemplate(item, container);
         }

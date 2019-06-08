@@ -411,7 +411,7 @@ namespace PixelTuner.ViewModel
                         VideosModel,
                         GradientsModel,
                         DevicesModel,
-                        ProjectsModel,
+                        NetworkModel,
                         ImagesModel,
                         ProjectPlayerModel,
                         EffectsModel
@@ -448,6 +448,24 @@ namespace PixelTuner.ViewModel
         //    set { _wifiPlayer = value; }
         //}
 
+        #region Network model
+
+        NetworkViewModel _networkModel = null;
+        public NetworkViewModel NetworkModel
+        {
+            get
+            {
+                if (_networkModel == null)
+                    _networkModel = new NetworkViewModel(
+                        (string)Application.Current.TryFindResource("Menu_Window_NetworkDevices"));
+
+                return _networkModel;
+            }
+        }
+
+        #endregion
+
+        #region Devices model
 
         DevicesViewModel _devicesModel = null;
         public DevicesViewModel DevicesModel
@@ -462,21 +480,7 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        ProjectsViewModel _projectsModel = null;
-        public ProjectsViewModel ProjectsModel
-        {
-            get
-            {
-                if (_projectsModel == null)
-                {
-                    _projectsModel = new ProjectsViewModel(
-                        (String)Application.Current.TryFindResource("Menu_Window_Projects"));
-                    _projectsModel.InitializeFilesList(_files);
-                }
-
-                return _projectsModel;
-            }
-        }
+        #endregion
 
         ProjectPlayerViewModel _projectPlayerModel = null;
         public ProjectPlayerViewModel ProjectPlayerModel

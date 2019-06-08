@@ -244,6 +244,7 @@
     <Compile Include="ViewModel\Devices\WifiInfoDevice.cs" />
     <Compile Include="ViewModel\FileViewModel.cs" />
     <Compile Include="ViewModel\IReplaceItem.cs" />
+    <Compile Include="ViewModel\Network\InterfaceInfo.cs" />
     <Compile Include="ViewModel\PaneViewModel.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
     <Compile Include="ViewModel\RootViewModel.cs" />
@@ -275,6 +276,7 @@
     <Compile Include="ViewModel\Tools\EffectsViewModel.cs" />
     <Compile Include="ViewModel\Tools\GradientsViewModel.cs" />
     <Compile Include="ViewModel\Tools\ImagesViewModel.cs" />
+    <Compile Include="ViewModel\Tools\NetworkViewModel.cs" />
     <Compile Include="ViewModel\Tools\ProjectPlayerViewModel.cs" />
     <Compile Include="ViewModel\Tools\ProjectsViewModel.cs" />
     <Compile Include="ViewModel\Tools\RefreshParameters.cs" />
@@ -350,6 +352,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Import\TransformPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\NetworkLayoutTemplate.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

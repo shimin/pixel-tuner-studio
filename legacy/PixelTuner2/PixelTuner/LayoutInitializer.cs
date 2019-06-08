@@ -52,6 +52,13 @@ namespace PixelTuner
                 return true;
             }
 
+            var networkPane = layout.Descendents().OfType<LayoutAnchorablePane>().FirstOrDefault(d => d.Name == "NetworkTool");
+            if (networkPane != null)
+            {
+                networkPane.Children.Add(anchorableToShow);
+                return true;
+            }
+
             var imagesPane = layout.Descendents().OfType<LayoutAnchorablePane>().FirstOrDefault(d => d.Name == "ImagesTool");
             if (imagesPane != null)
             {

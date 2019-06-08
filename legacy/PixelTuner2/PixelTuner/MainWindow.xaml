@@ -22,6 +22,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/PixelTuner;component/Styles/DevicesLayoutTemplate.xaml" />
+                <ResourceDictionary Source="/PixelTuner;component/Styles/NetworkLayoutTemplate.xaml" />
                 <ResourceDictionary Source="/PixelTuner;component/Styles/FileLayoutTemplate.xaml" />
                 <ResourceDictionary Source="/PixelTuner;component/Styles/ProjectPlayerLayoutTemplate.xaml" />
                 <ResourceDictionary Source="/PixelTuner;component/Styles/ImagesLayoutTemplate.xaml" />
@@ -63,7 +64,7 @@
             <MenuItem Header="{StaticResource Menu_Window}">
                 <MenuItem Header="{StaticResource Menu_Window_Window}">
                     <MenuItem Header="{StaticResource Menu_Window_ProjectPlayer}" IsCheckable="True" IsChecked="{Binding ProjectPlayerModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-                    <MenuItem Header="{StaticResource Menu_Window_Projects}" IsCheckable="True" IsChecked="{Binding ProjectsModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                    <MenuItem Header="{StaticResource Menu_Window_NetworkDevices}" IsCheckable="True" IsChecked="{Binding NetworkModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                     <MenuItem Header="{StaticResource Menu_Window_Devices}" IsCheckable="True" IsChecked="{Binding DevicesModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                     <MenuItem Header="{StaticResource Menu_Window_Canvas}" IsCheckable="True" IsChecked="{Binding CanvasModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                     <MenuItem Header="{StaticResource Menu_Window_Images}" IsCheckable="True" IsChecked="{Binding ImagesModel.IsVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
@@ -117,6 +118,7 @@
                 <sl:PanesTemplateSelector 
                     CanvasViewTemplate="{StaticResource CanvasTemplate}"
                     DevicesViewTemplate="{StaticResource DevicesLayoutTemplate}"
+                    NetworkViewTemplate="{StaticResource NetworkLayoutTemplate}"
                     ImagesViewTemplate="{StaticResource ImagesLayoutTemplate}"
                     FileViewTemplate="{StaticResource FileLayoutTemplate}"
                     ProjectPlayerViewTemplate="{StaticResource ProjectPlayerLayoutTemplate}"
@@ -157,6 +159,7 @@
                     <avalonDock:LayoutAnchorablePaneGroup Orientation="Vertical" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120">
                         <avalonDock:LayoutAnchorablePane Name="ProjectsTool" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120"/>
                         <avalonDock:LayoutAnchorablePane Name="DevicesTool" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120"/>
+                        <avalonDock:LayoutAnchorablePane Name="NetworkTool" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120"/>
                         <avalonDock:LayoutAnchorablePane Name="ProjectPlayerTool" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120"/>
                         <avalonDock:LayoutAnchorablePane Name="CanvasTool" DockWidth="160" DockHeight="120" DockMinHeight="100" DockMinWidth="120"/>
                     </avalonDock:LayoutAnchorablePaneGroup>

@@ -23,6 +23,7 @@
     <system:String x:Key="Menu_Settings">Einstellungen</system:String>
     <system:String x:Key="Menu_Settings_Defaults_WIFI">Wlan einstellungen</system:String>
     <system:String x:Key="Menu_Window_Devices">Geräte</system:String>
+    <system:String x:Key="Menu_Window_NetworkDevices">Lan Geräte</system:String>
     <system:String x:Key="Menu_Window_Projects">Projekten</system:String>
     <system:String x:Key="Menu_Window_ProjectPlayer">Anschauen</system:String>
     <system:String x:Key="Menu_Window_Canvas">Canvas</system:String>

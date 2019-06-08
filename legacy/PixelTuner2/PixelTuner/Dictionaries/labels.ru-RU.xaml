@@ -23,6 +23,7 @@
     <system:String x:Key="Menu_Settings_Defaults_WIFI">Настройки WiFi</system:String>
     <system:String x:Key="Menu_Settings">Настройки</system:String>
     <system:String x:Key="Menu_Window_Devices">Устройства</system:String>
+    <system:String x:Key="Menu_Window_NetworkDevices">Сетевые устройства</system:String>
     <system:String x:Key="Menu_Window_Projects">Проекты</system:String>
     <system:String x:Key="Menu_Window_ProjectPlayer">Просмотр</system:String>
     <system:String x:Key="Menu_Window_Canvas">Схема</system:String>
