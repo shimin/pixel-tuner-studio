@@ -8,7 +8,8 @@ namespace Communication.Service
 {
     public class VideoDevice : PixelDevice
     {
-        public VideoDevice(SerialPort port, bool runMonitoring = true) : base(port, runMonitoring)
+        public VideoDevice(ITransport transport, bool runMonitoring = true) 
+            : base(transport, runMonitoring)
         {
         }
 

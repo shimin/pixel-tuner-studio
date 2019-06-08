@@ -19,7 +19,7 @@ namespace Communication.Service
 
         public NotifyPropertyChanged PropertyChanged = null;
 
-        public static SerialDeviceBase Create(SerialPort p)
+        public static SerialDeviceBase Create(ITransport p)
         {
             SerialDeviceBase dev = null;
 
@@ -42,7 +42,7 @@ namespace Communication.Service
             return ((transmissionDataSize / packetSize) + (((transmissionDataSize % packetSize) == 0) ? 2 : 3));
         }
         
-        private static byte[] GetNameBytes(SerialPort p)
+        private static byte[] GetNameBytes(ITransport p)
         {
             p.DiscardInBuffer();
             p.DiscardOutBuffer();
@@ -71,6 +71,12 @@ namespace Communication.Service
                 if (num3 != count) throw new Exception();
             }
             catch { throw new TimeoutException("Device name reading timeout."); }
+            try
+            {
+                int end = p.ReadByte();
+            }
+            catch { throw new TimeoutException("Packet 0x0D reading timeout."); }
+
             return buffer;
         }
 
@@ -80,29 +86,29 @@ namespace Communication.Service
         private object _syncSession = new object();        
         private ManagementEventWatcher w = null;
 
-        protected SerialPort _port = null;
-        public SerialPort Port
+        protected ITransport _transport = null;
+        public ITransport Transport
         {
             get
             {
-                return _port;
+                return _transport;
             }
             set
             {
-                _port = value;
+                _transport = value;
             }
         }
 
-        protected string _portName = null;
-        public string PortName
+        protected string _channelID = null;
+        public string ChannelID
         {
             get
             {
-                return _portName;
+                return _channelID;
             }
             set
             {
-                _portName = value;
+                _channelID = value;
             }
         }
 
@@ -244,7 +250,7 @@ namespace Communication.Service
         {
             if (obj is SerialDeviceBase)
             {
-                return ((obj as SerialDeviceBase).PortName == PortName);
+                return ((obj as SerialDeviceBase).ChannelID == ChannelID);
             }
             return base.Equals(obj);
         }
@@ -261,15 +267,15 @@ namespace Communication.Service
 
         #endregion
 
-        public SerialDeviceBase(SerialPort port, bool runMonitoring = true)
+        public SerialDeviceBase(ITransport t, bool runMonitoring = true)
         {
-            Port = port;
-            if (Port != null && Port.IsOpen)
+            Transport = t;
+            if (Transport != null && Transport.IsOpen)
             {
-                _portName = _port.PortName;
-                _port.ReadTimeout = DefaultReadTimeout;
-                _port.WriteTimeout = DefaultWriteTimeout;
-                GC.SuppressFinalize(_port.BaseStream);
+                _channelID = _transport.ChannelID;
+                _transport.ReadTimeout = DefaultReadTimeout;
+                _transport.WriteTimeout = DefaultWriteTimeout;
+                GC.SuppressFinalize(_transport.BaseStream);
             }
             if (runMonitoring) RunMonitoring();
         }
@@ -278,7 +284,7 @@ namespace Communication.Service
         {
             _portMonitor = new Thread(() =>
             {
-                while (Port != null && Port.IsOpen)
+                while (Transport != null && Transport.IsOpen)
                 {
                     try
                     {
@@ -287,7 +293,7 @@ namespace Communication.Service
                     }
                     catch
                     {
-                        try { Port.Dispose(); OnDisconnected(); }
+                        try { Dispose(); OnDisconnected(); }
                         catch { }
                     }
                 }
@@ -308,23 +314,23 @@ namespace Communication.Service
         protected virtual byte[] DoSession(byte[] query)
         {
             OnSessionStarted(this, new List<byte>(query));
-            LogMessage($"Request R({Port.ReadTimeout}) W{Port.WriteTimeout}: {Logger.BytesToString(query)}", MessageType.Debug);
+            LogMessage($"Request R({Transport.ReadTimeout}) W{Transport.WriteTimeout}: {Logger.BytesToString(query)}", MessageType.Debug);
             List<byte> data = new List<byte>();
             try
             {
                 lock (this._syncSession)
                 {
-                    if (Port == null) return data.ToArray();
-                    Port.DiscardInBuffer();
-                    Port.DiscardOutBuffer();
-                    Port.Write(query, 0, query.Length);
+                    if (Transport == null) return data.ToArray();
+                    Transport.DiscardInBuffer();
+                    Transport.DiscardOutBuffer();
+                    Transport.Write(query, 0, query.Length);
 
                     Thread.Sleep(WriteReadDelay);
                     // reading of packet ID
                     int num = -1;
                     try
                     {
-                        num = Port.ReadByte();
+                        num = Transport.ReadByte();
                         data.Add((byte)num);
                     }
                     catch { throw new TimeoutException("Packet ID reading timeout."); }
@@ -336,7 +342,7 @@ namespace Communication.Service
                     int count = -1;
                     try
                     {
-                        count = Port.ReadByte();
+                        count = Transport.ReadByte();
                         data.Add((byte)count);
                     }
                     catch { throw new TimeoutException("Packet length reading timeout."); }
@@ -345,7 +351,7 @@ namespace Communication.Service
                     int num3 = 0;
                     try
                     {
-                        num3 = Port.Read(buffer, 0, count);
+                        num3 = Transport.Read(buffer, 0, count);
                     }
                     catch { throw new TimeoutException("Packet data reading timeout."); }
                     if (num3 != count)
@@ -354,6 +360,13 @@ namespace Communication.Service
                     }
                     
                     data.AddRange(buffer);
+
+                    try
+                    {
+                        int end = Transport.ReadByte();
+                    }
+                    catch { throw new TimeoutException("Packet 0x0D reading timeout."); }
+
                     if (num == (byte)PixelDeviceCommand.WRITE_BLOCK && data[2] != 0xff)
                         throw new ArgumentException("Data block write error");
                     LogMessage("Result:  " + Logger.BytesToString(buffer), MessageType.Debug);
@@ -437,13 +450,13 @@ namespace Communication.Service
         {
             lock (this._longOperation)
             {
-                if (Port != null)
+                if (Transport != null)
                 {
                     try
                     {
-                        Port.ReadTimeout = 5000;
+                        Transport.ReadTimeout = 5000;
                         DoSession(new PixelDevicePacket(PixelDeviceCommand.SWITCH_TO_BOOT, null));
-                        Port.ReadTimeout = DefaultReadTimeout;
+                        Transport.ReadTimeout = DefaultReadTimeout;
                     }
                     catch (Exception exception)
                     {
@@ -461,8 +474,8 @@ namespace Communication.Service
                 SetStatus(ConnectionStatus.Uploading);
                 try
                 {
-                    Port.WriteTimeout = 5000;
-                    Port.ReadTimeout = 5000;
+                    Transport.WriteTimeout = 5000;
+                    Transport.ReadTimeout = 5000;
                     var data = new List<byte>();
                     foreach (var feature in settings)
                     {
@@ -483,8 +496,8 @@ namespace Communication.Service
                 {
                     Busy = false;
                     SetStatus(ConnectionStatus.Online);
-                    Port.ReadTimeout = DefaultReadTimeout;
-                    Port.WriteTimeout = DefaultWriteTimeout;
+                    Transport.ReadTimeout = DefaultReadTimeout;
+                    Transport.WriteTimeout = DefaultWriteTimeout;
                 }
             }
         }
@@ -498,8 +511,8 @@ namespace Communication.Service
                 bool noExceptions = false;
                 try
                 {
-                    Port.WriteTimeout = 30000;
-                    Port.ReadTimeout = 30000;
+                    Transport.WriteTimeout = 30000;
+                    Transport.ReadTimeout = 30000;
                     List<byte> data = new List<byte>();
                     var answer = DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_IDATA_MODE, BitConverter.GetBytes(binaryData.Count)));
                     if (answer.Data[0] == 0x00)
@@ -535,8 +548,8 @@ namespace Communication.Service
                     Busy = false;
                     if (noExceptions)
                         SetStatus(ConnectionStatus.Online);
-                    Port.ReadTimeout = DefaultReadTimeout;
-                    Port.WriteTimeout = DefaultWriteTimeout;
+                    Transport.ReadTimeout = DefaultReadTimeout;
+                    Transport.WriteTimeout = DefaultWriteTimeout;
                 }
             }
         }
@@ -549,8 +562,8 @@ namespace Communication.Service
                 SetStatus(ConnectionStatus.Uploading);
                 try
                 {
-                    Port.WriteTimeout = 30000;
-                    Port.ReadTimeout = 30000;
+                    Transport.WriteTimeout = 30000;
+                    Transport.ReadTimeout = 30000;
                     List<byte> data = new List<byte>();
                     DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_IFLASH_MODE, null));
                     foreach (byte num in binaryData)
@@ -568,7 +581,7 @@ namespace Communication.Service
                         data.Clear();
                     }
                     List<byte> rawData = new PixelDevicePacket(PixelDeviceCommand.END_WRITE_FLASH, null).RawData;
-                    Port.Write(rawData.ToArray(), 0, rawData.Count);
+                    Transport.Write(rawData.ToArray(), 0, rawData.Count);
                 }
                 catch (Exception exception)
                 {
@@ -578,8 +591,8 @@ namespace Communication.Service
                 {
                     Busy = false;
                     SetStatus(ConnectionStatus.Online);
-                    Port.ReadTimeout = DefaultReadTimeout;
-                    Port.WriteTimeout = DefaultWriteTimeout;
+                    Transport.ReadTimeout = DefaultReadTimeout;
+                    Transport.WriteTimeout = DefaultWriteTimeout;
                 }
             }
         }
@@ -590,20 +603,20 @@ namespace Communication.Service
         {
             lock (this._syncSession)
             {
-                if (Port != null)
+                if (Transport != null)
                 {
                     try
                     {
-                        if (Port.IsOpen)
+                        if (Transport.IsOpen)
                             try
                             {
-                                Port.Close();
+                                Transport.Close();
                             }
                             catch
                             {
                             }
-                        GC.ReRegisterForFinalize(_port);
-                        Port = null;
+                        GC.ReRegisterForFinalize(_transport);
+                        Transport = null;
                         SetStatus(ConnectionStatus.Offline);
                         OnDisconnected();
                     }

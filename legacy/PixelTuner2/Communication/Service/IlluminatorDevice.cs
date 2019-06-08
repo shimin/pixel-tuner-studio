@@ -42,8 +42,8 @@ namespace Communication.Service
 
         #endregion
 
-        public IlluminatorDevice(SerialPort port, bool runMonitoring = true)
-            : base(port, runMonitoring)
+        public IlluminatorDevice(ITransport transport, bool runMonitoring = true)
+            : base(transport, runMonitoring)
         {
             
         }

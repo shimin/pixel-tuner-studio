@@ -78,6 +78,7 @@
     <Compile Include="Pixelate\PixelFanImageFile.cs" />
     <Compile Include="Pixelate\VideoImageFile.cs" />
     <Compile Include="Pixelate\VideoTimelineFile.cs" />
+    <Compile Include="Service\ITransport.cs" />
     <Compile Include="Service\PixelHoop.cs" />
     <Compile Include="Service\DeviceEventArgs.cs" />
     <Compile Include="Service\DeviceSessionEventArgs.cs" />
@@ -97,11 +98,13 @@
     <Compile Include="Service\PixelDevice.cs" />
     <Compile Include="Service\PixelDeviceCommand.cs" />
     <Compile Include="Service\PlaybackState.cs" />
+    <Compile Include="Service\SerialTransport.cs" />
     <Compile Include="Service\SimplePoiDevice.cs" />
     <Compile Include="Service\SupportedDevices.cs" />
     <Compile Include="Service\PixelDeviceTimeout.cs" />
     <Compile Include="Service\SerialDeviceBase.cs" />
     <Compile Include="Service\LightMasterDevice.cs" />
+    <Compile Include="Service\TcpTransport.cs" />
     <Compile Include="Service\VideoDevice.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -9,8 +9,8 @@ namespace Communication.Service
 {
     public class LightMasterDevice : SerialDeviceBase
     {
-        public LightMasterDevice(SerialPort port, bool runMonitoring = true)
-            : base(port, runMonitoring)
+        public LightMasterDevice(ITransport transport, bool runMonitoring = true)
+            : base(transport, runMonitoring)
         {
             WriteReadDelay = 5;
         }
@@ -107,6 +107,13 @@ namespace Communication.Service
             set { _serverMac = value; }
         }
 
+        private string _tag;
+        public string Tag
+        {
+            get { return _tag; }
+            set { _tag = value; }
+        }
+
         #endregion
 
         public override void GetInfo()
@@ -128,6 +135,10 @@ namespace Communication.Service
                     PanID = BitConverter.ToUInt16(data.ToArray(), 18);
                     ChannelID = data[19];
                     data.CopyTo(20, ServerMac, 0, 8);
+                    if (PlatformVersion >= 2)
+                    {
+                        Tag = Encoding.GetEncoding(1251).GetString(data.ToArray(), 45, 12).TrimEnd(new char[] { (char)0 });
+                    }
                 }
                 catch (Exception exception)
                 {

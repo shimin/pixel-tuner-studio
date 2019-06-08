@@ -63,7 +63,7 @@ namespace Communication.Service
                         {
                             port.Open();
                             var tryCreateDeviceOperation = AsyncOperationManager.CreateOperation(portName);
-                            tryCreateDeviceOperation.Post(TryCreateDeice, port);
+                            tryCreateDeviceOperation.Post(TryCreateDevice, port);
                         }
                         catch (Exception ex)
                         {
@@ -80,14 +80,15 @@ namespace Communication.Service
             }
         }
 
-        private static void TryCreateDeice(object arg)
+        private static void TryCreateDevice(object arg)
         {
             var p = arg as SerialPort;
             if (p != null && p.IsOpen)
             {
                 try
                 {
-                    var d = SerialDeviceBase.Create(p);
+                    SerialTransport t = new SerialTransport(p);
+                    var d = SerialDeviceBase.Create(t);
                     Devices.Add(d);
                     OnDeviceFound(d);
                 }
@@ -97,8 +98,8 @@ namespace Communication.Service
 
         private static void CheckConnection(string portName)
         {
-            var device = Devices.Find((d) => { return d.PortName == portName; });
-            if (device.Port == null || !device.Port.IsOpen)
+            var device = Devices.Find((d) => { return d.ChannelID == portName; });
+            if (device.Transport == null || !device.Transport.IsOpen)
             {
                 Devices.Remove(device);
                 device.Dispose();
@@ -121,7 +122,7 @@ namespace Communication.Service
 
         private static bool DeviceExists(string portName)
         {
-            bool deviceExists = Devices.Exists((d) => { return d.PortName == portName; });
+            bool deviceExists = Devices.Exists((d) => { return d.ChannelID == portName; });
             return deviceExists;
         }
 

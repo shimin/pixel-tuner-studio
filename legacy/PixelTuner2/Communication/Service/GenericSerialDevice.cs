@@ -8,8 +8,8 @@ namespace Communication.Service
 {
     public class GenericSerialDevice : SerialDeviceBase
     {
-        public GenericSerialDevice(SerialPort port, bool runMonitoring = true)
-            : base(port)
+        public GenericSerialDevice(ITransport transport, bool runMonitoring = true)
+            : base(transport, false)
         {
 
         }

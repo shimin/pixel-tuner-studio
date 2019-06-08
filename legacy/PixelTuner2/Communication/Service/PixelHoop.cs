@@ -78,8 +78,8 @@ namespace Communication.Service
 
         #endregion
 
-        public PixelHoop(SerialPort port, bool runMonitoring = true)
-            : base(port, runMonitoring)
+        public PixelHoop(ITransport transport, bool runMonitoring = true)
+            : base(transport, runMonitoring)
         {
             this.WriteReadDelay = 0;
             this._fullName = "";

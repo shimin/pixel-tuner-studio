@@ -99,8 +99,8 @@ namespace Communication.Service
 
         #endregion
 
-        public PixelDevice(SerialPort port, bool runMonitoring = true)
-            : base(port, runMonitoring)
+        public PixelDevice(ITransport transport, bool runMonitoring = true)
+            : base(transport, runMonitoring)
         {
             this.WriteReadDelay = 0;
             this._fullName = "";
@@ -175,6 +175,10 @@ namespace Communication.Service
                     RemoteMac = new byte[8];
                     data.CopyTo(11, SelfMac, 0, 8);
                     data.CopyTo(22, RemoteMac, 0, 8);
+                    if (PlatformVersion >= 5)
+                    {
+                        Tag = Encoding.GetEncoding(1251).GetString(data.ToArray(), 45, 12).TrimEnd(new char[] { (char)0 });
+                    }
                 }
                 catch (Exception exception)
                 {

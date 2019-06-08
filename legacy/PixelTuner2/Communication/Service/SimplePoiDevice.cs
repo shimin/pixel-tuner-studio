@@ -8,8 +8,8 @@ namespace Communication.Service
 {
     public class SimplePoiDevice : SerialDeviceBase
     {
-        public SimplePoiDevice(SerialPort port, bool runMonitoring = true)
-            : base(port, runMonitoring)
+        public SimplePoiDevice(ITransport transport, bool runMonitoring = true)
+            : base(transport, runMonitoring)
         {
 
         }
