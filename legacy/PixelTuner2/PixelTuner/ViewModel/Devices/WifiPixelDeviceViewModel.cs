@@ -33,10 +33,7 @@ namespace PixelTuner.ViewModel.Devices
         public bool CanPlay(object parameter) => ((Device != null) && ((Device.Transport != null) && Device.Transport.IsOpen));
 
         public bool CanStop(object parameter) => ((Device != null) && ((Device.Transport != null) && Device.Transport.IsOpen));
-
-        protected override bool CanUploadCommand(object parameter) =>
-            ((RootViewModel.This.ActiveDocument != null) && CanUploadCommand(parameter));
-
+        
         private string FormatInfo()
         {
             return $@"Version: {PlatformVersion}.{BootVersion}.{FirmwareVersion}
@@ -60,9 +57,14 @@ Memory: { MaxMemory} ";
             Device.Transport.Write(new byte[] { 80, 5, 4, 0, 0, 0, 0, 13 }, 0, 8);
         }
 
+        protected override bool CanUploadCommand(object parameter)
+        {
+            return base.CanUploadCommand(parameter) && RootViewModel.This.ActiveDocument != null;
+        }
+
         protected override void OnUploadCommand(object parameter)
         {
-            OnUploadCommand(RootViewModel.This.ActiveDocument);
+            base.OnUploadCommand(RootViewModel.This.ActiveDocument);
         }
 
         public string IP

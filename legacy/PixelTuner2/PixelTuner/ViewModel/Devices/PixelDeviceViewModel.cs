@@ -202,7 +202,7 @@ namespace PixelTuner.ViewModel
         
         protected override bool CanUploadCommand(object parameter)
         {
-            return Device != null && !BootMode;
+            return Device != null && !Device.Busy && !BootMode;
         }
 
         protected override void OnUploadCommand(object parameter)

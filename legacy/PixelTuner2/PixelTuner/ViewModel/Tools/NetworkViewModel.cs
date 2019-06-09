@@ -1,42 +1,21 @@
 ﻿using Common.Collections;
 using Communication.Service;
-using PixelTuner;
 using PixelTuner.Properties;
 using PixelTuner.ViewModel.Devices;
 using PixelTuner.ViewModel.Network;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
 
 namespace PixelTuner.ViewModel
 {
-    using Common.Collections;
-    using Communication.Service;
-    using PixelTuner;
-    using PixelTuner.Properties;
-    using PixelTuner.ViewModel.Devices;
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Collections.Specialized;
-    using System.ComponentModel;
-    using System.Net;
-    using System.Net.NetworkInformation;
-    using System.Net.Sockets;
-    using System.Runtime.CompilerServices;
-    using System.Text;
-    using System.Windows;
-    using System.Windows.Input;
-
     public class NetworkViewModel : ToolViewModel
     {
         private TcpListener _server;

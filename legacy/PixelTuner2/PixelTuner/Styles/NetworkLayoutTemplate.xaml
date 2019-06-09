@@ -15,7 +15,7 @@
                 <ColumnDefinition ColumnDefinition.Width="*" ColumnDefinition.MinWidth="80" />
                 <ColumnDefinition ColumnDefinition.Width="94" />
             </Grid.ColumnDefinitions>
-            <ProgressBar ProgressBar.Name="UploadProgressBar" FrameworkElement.Style="{StaticResource OperationProgressBarStyle}" Grid.ColumnSpan="3" UIElement.Opacity="0.25" FrameworkElement.Margin="0,4,4,4" RangeBase.Value="{Binding Progress}" RangeBase.Minimum="{Binding ProgressMin}" RangeBase.Maximum="{Binding ProgressMax}" />
+            <ProgressBar ProgressBar.Name="UploadProgressBar" FrameworkElement.Style="{StaticResource OperationProgressBarStyle}" Grid.ColumnSpan="3" UIElement.Opacity="0.36" FrameworkElement.Margin="0,4,4,4" RangeBase.Value="{Binding Progress}" RangeBase.Minimum="{Binding ProgressMin}" RangeBase.Maximum="{Binding ProgressMax}" />
             <TextBlock TextBlock.Text="IP:" TextBlock.Foreground="#FFFFFFFF" Grid.Column="0" FrameworkElement.Margin="2,0,0,0" FrameworkElement.VerticalAlignment="Center" />
             <TextBlock TextBlock.Foreground="#FFFFFFFF" Grid.Column="1" FrameworkElement.VerticalAlignment="Center" TextBlock.Text="{Binding IP}" FrameworkElement.ToolTip="{Binding ChannelID}" />
             <TextBlock TextBlock.Foreground="#FFFFFFFF" Grid.Column="2" FrameworkElement.VerticalAlignment="Center" TextBlock.Text="{Binding Name}" FrameworkElement.ToolTip="{Binding Tag}" />
