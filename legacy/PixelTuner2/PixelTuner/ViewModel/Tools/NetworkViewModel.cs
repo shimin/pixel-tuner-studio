@@ -49,14 +49,11 @@ namespace PixelTuner.ViewModel
             InitializeNetworkList();
         }
 
-        private bool CanConnect(object parameter) =>
-            ((ActiveInterface != null) && ((_udpSender == null) && !GoOn));
+        private bool CanConnect(object parameter) => ActiveInterface != null && _udpSender == null && !GoOn;
 
-        private bool CanDisconnect(object parameter) =>
-            (_udpSender != null);
+        private bool CanDisconnect(object parameter) => _udpSender != null;
 
-        private bool CanRefresh(object parameter) =>
-            ((_udpSender != null) && GoOn);
+        private bool CanRefresh(object parameter) => _udpSender != null && GoOn;
 
         private void CreateModel(SerialDeviceBase d, string ip, int port)
         {
@@ -72,23 +69,23 @@ namespace PixelTuner.ViewModel
             }
             else if (d.GetType() == typeof(PixelDevice))
             {
-                WifiPixelDeviceViewModel model1 = new WifiPixelDeviceViewModel(d as PixelDevice)
+                WifiPixelDeviceViewModel model = new WifiPixelDeviceViewModel(d as PixelDevice)
                 {
                     IP = ip,
                     Port = port
                 };
-                Devices.Add(model1);
-                d.Disconnected += e => Devices.Remove(model1);
+                Devices.Add(model);
+                d.Disconnected += e => Devices.Remove(model);
             }
             else if (d.GetType() == typeof(PixelHoop))
             {
-                WifiPixelHoopDeviceViewModel model3 = new WifiPixelHoopDeviceViewModel(d as PixelHoop)
+                WifiPixelHoopDeviceViewModel model = new WifiPixelHoopDeviceViewModel(d as PixelHoop)
                 {
                     IP = ip,
                     Port = port
                 };
-                Devices.Add(model3);
-                d.Disconnected += e => Devices.Remove(model3);
+                Devices.Add(model);
+                d.Disconnected += e => Devices.Remove(model);
             }
             else if (!(d.GetType() == typeof(VideoDevice)))
             {
@@ -96,13 +93,13 @@ namespace PixelTuner.ViewModel
             }
             else
             {
-                WifiVideoDeviceViewModel model5 = new WifiVideoDeviceViewModel(d as VideoDevice)
+                WifiVideoDeviceViewModel model = new WifiVideoDeviceViewModel(d as VideoDevice)
                 {
                     IP = ip,
                     Port = port
                 };
-                Devices.Add(model5);
-                d.Disconnected += e => Devices.Remove(model5);
+                Devices.Add(model);
+                d.Disconnected += e => Devices.Remove(model);
             }
         }
 
@@ -119,13 +116,10 @@ namespace PixelTuner.ViewModel
                         break;
                     }
                 }
-                List<byte> list = new List<byte> {
-                    0x4c,
-                    6
-                };
+                List<byte> list = new List<byte> { 0x4c, 0x06 };
                 list.AddRange(information.Address.GetAddressBytes());
-                list.AddRange(BitConverter.GetBytes((ushort)0xd03));
-                list.Add(13);
+                list.AddRange(BitConverter.GetBytes((ushort)3331));
+                list.Add(0x0d);
                 _udpSender.Send(list.ToArray(), 9, _broadcastEP);
             }
             catch (Exception)
@@ -164,16 +158,11 @@ namespace PixelTuner.ViewModel
                     string str = "0.0.0.0";
                     foreach (UnicastIPAddressInformation information in info.NetworkInterfaceInfo.GetIPProperties().UnicastAddresses)
                     {
-                        if (info.NetworkInterfaceInfo.OperationalStatus != OperationalStatus.Up)
-                        {
-                            continue;
-                        }
+                        if (info.NetworkInterfaceInfo.OperationalStatus != OperationalStatus.Up) continue;
                         if (information.Address.AddressFamily == AddressFamily.InterNetwork)
-                        {
                             str = information.Address.ToString();
-                        }
                     }
-                    return new IPEndPoint(IPAddress.Parse(str.Substring(0, str.LastIndexOf(".")) + ".255"), 0x14d);
+                    return new IPEndPoint(IPAddress.Parse(str.Substring(0, str.LastIndexOf(".")) + ".255"), Settings.Default.WifiPort);
                 }
             }
             catch
@@ -207,8 +196,8 @@ namespace PixelTuner.ViewModel
                 else
                 {
                     _broadcastEP = point;
-                    _udpSender = new UdpClient(0x14d);
-                    _server = new TcpListener(IPAddress.Any, 0xd03);
+                    _udpSender = new UdpClient(Settings.Default.WifiPort);
+                    _server = new TcpListener(IPAddress.Any, 3331);
                     _server.Start();
                     _server.BeginAcceptTcpClient(new AsyncCallback(IncomingConnectionHandler), null);
                     GoOn = true;
@@ -229,6 +218,7 @@ namespace PixelTuner.ViewModel
             _devicesDictionary.Clear();
             while (_devices.Count > 0)
             {
+                _devices?[0].Device?.Transport?.Write(new byte[] { 0x4d, 0x00, 0x0d }, 0, 3);
                 _devices[0].Device.Disconnect();
             }
             try
@@ -261,36 +251,23 @@ namespace PixelTuner.ViewModel
                     Application.Current.Dispatcher.Invoke(new Action(() => 
                     {
                         if (_devicesDictionary.ContainsKey(ipString))
-                        {
                             _devicesDictionary[ipString].RawData = received;
-                        }
-                        else if (received[0] == 0x49)
-                        {
-                            int length = received.Length;
-                        }
                     }));
 
-                    if (GoOn)
-                    {
-                        _udpSender.BeginReceive(new AsyncCallback(ReceivedCallback), state);
-                    }
+                    if (GoOn) _udpSender.BeginReceive(new AsyncCallback(ReceivedCallback), state);
                 }
             }
             catch
             {
-                if (((_udpSender != null) && (_udpSender.Client != null)) && GoOn)
-                {
+                if (_udpSender != null && _udpSender.Client != null && GoOn)
                     _udpSender.BeginReceive(new AsyncCallback(ReceivedCallback), state);
-                }
             }
         }
 
         private void WifiDevicesWindow_Closing(object sender, CancelEventArgs e)
         {
             if (DisconnectCommand.CanExecute(null))
-            {
                 DisconnectCommand.Execute(null);
-            }
         }
 
         public byte[] MasterMac { get; set; }
