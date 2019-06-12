@@ -128,9 +128,8 @@ namespace PixelTuner.ViewModel
             _firmwareBytesV5 = Common.Collections.StreamHelper.ReadFully(streamInfo.Stream);
             FirmwareFileVersionV5 = _firmwareBytesV5[52];
 
-            //streamInfo = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash_v6.bin"));
-            //_firmwareBytesV6 = Common.Collections.StreamHelper.ReadFully(streamInfo.Stream);
-            _firmwareBytesV6 = _firmwareBytesV5;
+            streamInfo = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash_v6.bin"));
+            _firmwareBytesV6 = Common.Collections.StreamHelper.ReadFully(streamInfo.Stream);
             FirmwareFileVersionV6 = _firmwareBytesV6[52];
         }
 

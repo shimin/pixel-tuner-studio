@@ -501,6 +501,7 @@
     <Resource Include="Files\Flash_Hoop.bin" />
     <Resource Include="Files\Flash_v5.bin" />
     <Resource Include="Files\Flash_LRv3.bin" />
+    <Resource Include="Files\Flash_v6.bin" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings1.Designer.cs</LastGenOutput>
