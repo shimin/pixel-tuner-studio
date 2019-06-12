@@ -11,7 +11,7 @@ namespace Communication.Pixelate
     public class ImagesCollectionItem
     {
         const int ParametersFieldSize = 1;
-        
+
         public enum ColorComponent
         {
             R,
@@ -76,7 +76,7 @@ namespace Communication.Pixelate
         protected List<byte> _binary = null;
 
         protected ColorDepth _depth = ColorDepth.Bit24;
-        
+
         #endregion
 
         #region Constructor
@@ -88,7 +88,7 @@ namespace Communication.Pixelate
             _depth = depth;
             LoadFile(targetHeight);
         }
-        
+
         protected virtual void LoadFile(UInt16 targetHeight)
         {
             if (File.Exists(_path))
@@ -317,8 +317,8 @@ namespace Communication.Pixelate
             float colorMult = Brightness / 100.0f;
             switch (cc)
             {
-                case ColorComponent.R: result = c.R; break;
-                case ColorComponent.G: result = (byte)(c.G * 0.6); break;
+                case ColorComponent.R: result = (byte)(c.R * 1.0); break;
+                case ColorComponent.G: result = (byte)(c.G * 0.5); break;
                 case ColorComponent.B: result = (byte)(c.B * 0.8); break;
             }
             return (byte)(result * colorMult);
@@ -343,7 +343,7 @@ namespace Communication.Pixelate
             byte r = (byte)(c.R * colorMult);
             byte g = (byte)(c.G * colorMult);
             byte b = (byte)(c.B * colorMult);
-            
+
             return Color.FromArgb(r, g, b);
         }
 
@@ -353,7 +353,7 @@ namespace Communication.Pixelate
             else if (depth == ColorDepth.Bit24) { binary.Add(8); }
             else if (depth == ColorDepth.Bit36) { binary.Add(12); }
         }
-        
+
         private class StringHelper
         {
             public static byte[] GetBytes(string str)
