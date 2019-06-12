@@ -42,6 +42,11 @@ namespace Communication.Service
             dictionary.Add("E-PIC_v5BOOT", "Pixel Poi 5 (Boot mode)");
             idClassPairs.Add("E-PIC_v5BOOT", "Communication.Service.PixelDevice");
 
+            dictionary.Add("E-PIC_v6FW", "Pixel Poi 6");
+            idClassPairs.Add("E-PIC_v6FW", "Communication.Service.PixelDevice");
+            dictionary.Add("E-PIC_v6BOOT", "Pixel Poi 6 (Boot mode)");
+            idClassPairs.Add("E-PIC_v6BOOT", "Communication.Service.PixelDevice");
+
             dictionary.Add("EPIC_PHOOP_v1FW", "Pixel Hoop");
             idClassPairs.Add("EPIC_PHOOP_v1FW", "Communication.Service.PixelHoop");
             dictionary.Add("EPIC_PHOOP_v1BOOT", "Pixel Hoop (Boot mode)");
