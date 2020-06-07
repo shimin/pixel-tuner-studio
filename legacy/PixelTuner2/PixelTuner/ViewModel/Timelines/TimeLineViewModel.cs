@@ -327,6 +327,7 @@ namespace PixelTuner.ViewModel
         }
 
         #endregion
+
         #region ChangeLineTag
         RelayCommand _changeLineTagCommand = null;
         public ICommand ChangeLineTag
@@ -473,7 +474,7 @@ namespace PixelTuner.ViewModel
 
         private bool CanCloneLine(object parameter)
         {
-            return Parent != null && Parent.TimeLines != null && this.Items != null && this.Items.Count > 0;
+            return this.Items != null && this.Items.Count > 0;
         }
 
         private void OnCloneLine(object parameter)
@@ -505,6 +506,38 @@ namespace PixelTuner.ViewModel
             foreach (var item in Items)
                 timelineCopy.Items.Add((ITimeLineDataItem)item.Clone());
             return timelineCopy;
+        }
+
+        #endregion
+
+        #region FlipLineCommand
+        RelayCommand _flipLineCommand = null;
+        public ICommand FlipLine
+        {
+            get
+            {
+                if (_flipLineCommand == null)
+                {
+                    _flipLineCommand = new RelayCommand((p) => OnFlipLine(p), (p) => CanFlipLine(p));
+                }
+
+                return _flipLineCommand;
+            }
+        }
+
+        private bool CanFlipLine(object parameter)
+        {
+            return this.Items != null && this.Items.Count > 0;
+        }
+
+        private void OnFlipLine(object parameter)
+        {
+            Flip();
+        }
+
+        void Flip()
+        {
+
         }
 
         #endregion

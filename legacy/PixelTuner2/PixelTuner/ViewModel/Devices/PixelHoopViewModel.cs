@@ -258,6 +258,36 @@ namespace PixelTuner.ViewModel
 
         #endregion
 
+        #region SetAsMasterCommand
+
+        protected override void OnSetAsMaster(object parameter)
+        {
+            if (Device.PlatformVersion == 1 || Device.PlatformVersion == 2)
+            {
+                var answer = MessageBox.Show("Make device control all others?", "PixelTuner 2", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                List<DeviceFeature> settings = new List<DeviceFeature>();
+                if (answer == MessageBoxResult.Yes)
+                {
+                    var mask = BitConverter.GetBytes((ushort)0x01);
+                    settings.Add(new DeviceFeature(0x0d, mask));
+                    Device.WriteSettings(settings);
+                }
+                else if (answer == MessageBoxResult.No)
+                {
+                    var mask = BitConverter.GetBytes((ushort)0x00);
+                    settings.Add(new DeviceFeature(0x0d, mask));
+                    Device.WriteSettings(settings);
+                }
+            }
+        }
+
+        protected override bool CanSetAsMaster(object parameter)
+        {
+            return Device.PlatformVersion == 1 || Device.PlatformVersion == 2;
+        }
+
+        #endregion
+
         #endregion
     }
 }

@@ -255,16 +255,17 @@
             <Border Background="#4a4a4a" Width="26" Height="100" Grid.Column="0" Grid.RowSpan="2"></Border>
 
                 <StackPanel IsHitTestVisible="True">
-                    <Button Height="14" Margin="4,3,2,0" Style="{StaticResource ButtonUpStyle}" Command="{Binding MoveUp}"></Button>
-                    <Button Height="14" Margin="4,0,2,1" Style="{StaticResource ButtonDownStyle}" Command="{Binding MoveDown}"></Button>
-                    <Button Height="16" Margin="4,1,2,1" Style="{StaticResource ButtonDeleteLineStyle}" Command="{Binding DeleteLine}"></Button>
-                    <Button Height="16" Margin="4,1,2,1" Style="{StaticResource ButtonCloneStyle}" Command="{Binding CloneLine}"></Button>
-                    <Rectangle Width="14" Height="14" Margin="4,1,2,1" Style="{StaticResource MonochromeSwitcherStyle}" Visibility="{Binding IsMonochrome, Converter={StaticResource ControlVisibilityConverter}, FallbackValue=Collapsed}">
+                    <Button Height="12" Margin="4,3,2,0" Style="{StaticResource ButtonUpStyle}" Command="{Binding MoveUp}"></Button>
+                    <Button Height="12" Margin="4,0,2,1" Style="{StaticResource ButtonDownStyle}" Command="{Binding MoveDown}"></Button>
+                    <Button Height="12" Margin="4,1,2,1" Style="{StaticResource ButtonDeleteLineStyle}" Command="{Binding DeleteLine}"></Button>
+                    <Button Height="14" Margin="4,1,2,1" Style="{StaticResource ButtonCloneStyle}" Command="{Binding CloneLine}"></Button>
+                    <Button Height="14" Margin="4,1,2,1" Style="{StaticResource ButtonFlipStyle}" Command="{Binding FlipLine}"></Button>
+                    <Rectangle Width="12" Height="14" Margin="4,1,2,1" Style="{StaticResource MonochromeSwitcherStyle}" Visibility="{Binding IsMonochrome, Converter={StaticResource ControlVisibilityConverter}, FallbackValue=Collapsed}">
                         <acb:CommandBehaviorCollection.Behaviors>
                             <acb:BehaviorBinding Event="MouseDown" Command="{Binding SwitchMonochromeMode}" />
                         </acb:CommandBehaviorCollection.Behaviors>
                     </Rectangle>
-                    <Rectangle Width="14" Height="14" Margin="4,1,2,1" ToolTip="Timeline color displayed in device menu." StrokeThickness="1" Stroke="#a0ffffff"
+                    <Rectangle Width="12" Height="9" Margin="5,1,2,1" ToolTip="Timeline color displayed in device menu." StrokeThickness="1" Stroke="#a0ffffff"
                                Visibility="{Binding LineColorTag, Converter={StaticResource ControlVisibilityConverter}, FallbackValue=Collapsed}" >
                         <Rectangle.Fill>
                             <SolidColorBrush Color="{Binding LineColorTag, FallbackValue=Transparent}"></SolidColorBrush>

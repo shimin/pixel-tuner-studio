@@ -665,6 +665,9 @@
     <Resource Include="Images\_grey_Arrow-UpLight.png" />
     <None Include="Images\DrawingTool\text_spacing.png" />
     <Resource Include="Images\infoicon.png" />
+    <Resource Include="Images\flipLine.png" />
+    <Resource Include="Images\flipLineDisabled.png" />
+    <Resource Include="Images\flipLineLight.png" />
     <Content Include="Schemas\human.svg" />
     <Content Include="Schemas\human_1.svg" />
   </ItemGroup>

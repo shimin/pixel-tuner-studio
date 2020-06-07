@@ -169,6 +169,26 @@
         </Setter>
     </Style>
 
+    <Style x:Key="ButtonFlipStyle" TargetType="{x:Type Button}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border MinWidth="6" MinHeight="4">
+                        <Image x:Name="FlipLine" Source="/PixelTuner;component/Images/flipLine.png"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Source" Value="/PixelTuner;component/Images/flipLineLight.png" TargetName="FlipLine"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Source" Value="/PixelTuner;component/Images/flipLineDisabled.png" TargetName="FlipLine"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="ButtonDownStyle" TargetType="{x:Type Button}">
         <Setter Property="Template">
             <Setter.Value>
