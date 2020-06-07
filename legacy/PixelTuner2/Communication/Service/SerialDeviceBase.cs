@@ -365,7 +365,7 @@ namespace Communication.Service
                     {
                         int end = Transport.ReadByte();
                     }
-                    catch { throw new TimeoutException("Packet 0x0D reading timeout."); }
+                    catch { }//throw new TimeoutException("Packet 0x0D reading timeout."); }
 
                     if (num == (byte)PixelDeviceCommand.WRITE_BLOCK && data[2] != 0xff)
                         throw new ArgumentException("Data block write error");

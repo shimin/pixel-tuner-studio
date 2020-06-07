@@ -78,7 +78,12 @@ namespace Communication.Service
             idClassPairs.Add("PLR_v1BOOT", "Communication.Service.VideoDevice");
             dictionary.Add("PLR_v1FW", "Video module");
             idClassPairs.Add("PLR_v1FW", "Communication.Service.VideoDevice");
-            
+
+            dictionary.Add("PLR_v2BOOT", "Video module (Boot mode)");
+            idClassPairs.Add("PLR_v2BOOT", "Communication.Service.VideoDevice");
+            dictionary.Add("PLR_v2FW", "Video module");
+            idClassPairs.Add("PLR_v2FW", "Communication.Service.VideoDevice");
+
             dictionary.Add("UDMXBOOT", "uDmx master (Boot mode)");  // unused
             dictionary.Add("UDMXFW", "uDmx master");                // unused
             dictionary.Add("PP2BOOT", "Pixel Poi 2 (Boot mode)");   // unused
