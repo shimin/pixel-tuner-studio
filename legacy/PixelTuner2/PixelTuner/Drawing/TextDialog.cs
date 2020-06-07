@@ -72,19 +72,33 @@ namespace PixelTuner.Drawing
 
         private void HideCursor()
         {
-            _cursorVisible = false;
-            if (_tempImage == null) return;
-            Graphics g = Graphics.FromImage(_tempImage);
-            g.FillRectangle(new SolidBrush(Color.Black), _cursorPosition);
-            boxCanvas.Invalidate(_cursorPosition);
-            g.Dispose();
+            try
+            {
+                _cursorVisible = false;
+                if (_tempImage == null) return;
+                Graphics g = Graphics.FromImage(_tempImage);
+                g.FillRectangle(new SolidBrush(Color.Black), _cursorPosition);
+                boxCanvas.Invalidate(_cursorPosition);
+                g.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private void DrawCursor()
         {
-            Graphics g = boxCanvas.CreateGraphics();
-            g.FillRectangle(new SolidBrush(GridColorLight), _cursorPosition);
-            _cursorVisible = true;
+            try
+            {
+                Graphics g = boxCanvas.CreateGraphics();
+                g.FillRectangle(new SolidBrush(GridColorLight), _cursorPosition);
+                _cursorVisible = true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private void InitControls()
@@ -117,10 +131,17 @@ namespace PixelTuner.Drawing
 
         private void MakeImage()
         {
-            _tempImage = new Bitmap(_item.PatternLength * _item.PointSize, _item.PatternLines * _item.PointSize);
-            Graphics g = Graphics.FromImage(_tempImage);
-            g.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, _tempImage.Width, _tempImage.Height));
-            g.Dispose();
+            try
+            {
+                _tempImage = new Bitmap(_item.PatternLength * _item.PointSize, _item.PatternLines * _item.PointSize);
+                Graphics g = Graphics.FromImage(_tempImage);
+                g.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, _tempImage.Width, _tempImage.Height));
+                g.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         /// <summary>
@@ -129,11 +150,18 @@ namespace PixelTuner.Drawing
         /// <param name="parameters">Graphics, Color</param>
         private void FillCanvas(Color color)
         {
-            if (_tempImage == null) return;
-            Graphics g = Graphics.FromImage(_tempImage);
-            g.FillRectangle(new SolidBrush(color), 0, 0, _item.PatternLength * _item.PointSize, _item.PatternLines * _item.PointSize);
-            boxCanvas.Invalidate();
-            g.Dispose();
+            try
+            {
+                if (_tempImage == null) return;
+                Graphics g = Graphics.FromImage(_tempImage);
+                g.FillRectangle(new SolidBrush(color), 0, 0, _item.PatternLength * _item.PointSize, _item.PatternLines * _item.PointSize);
+                boxCanvas.Invalidate();
+                g.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
         
         private void DrawGrid(Graphics graphics)
@@ -204,33 +232,40 @@ namespace PixelTuner.Drawing
 
         private void DrawText(Graphics g, string text)
         {
-            FillCanvas(Color.Black);
-            var letters = text.ToCharArray();
-            var lettersRendered = RenderSmallLetters(letters);
-            var columnsCount = 2;
-            var r = new Rectangle(0, 0, _item.PointSize, _item.PointSize);
-
-            foreach (var bmp in lettersRendered)
+            try
             {
-                for (var i = 0; i < bmp.Width; i++)
+                FillCanvas(Color.Black);
+                var letters = text.ToCharArray();
+                var lettersRendered = RenderSmallLetters(letters);
+                var columnsCount = 2;
+                var r = new Rectangle(0, 0, _item.PointSize, _item.PointSize);
+
+                foreach (var bmp in lettersRendered)
                 {
-                    if (!IsEmptyColumn(bmp, i))
+                    for (var i = 0; i < bmp.Width; i++)
                     {
-                        for (var j = 0; j < bmp.Height; j++)
+                        if (!IsEmptyColumn(bmp, i))
                         {
-                            var c = bmp.GetPixel(i, j);
-                            r.X = columnsCount*_item.PointSize;
-                            r.Y = j*_item.PointSize;
-                            if (c != Color.FromArgb(0, 0, 0, 0)) c = _drawColor;
-                            g.FillRectangle(new SolidBrush(c), r);
+                            for (var j = 0; j < bmp.Height; j++)
+                            {
+                                var c = bmp.GetPixel(i, j);
+                                r.X = columnsCount * _item.PointSize;
+                                r.Y = j * _item.PointSize;
+                                if (c != Color.FromArgb(0, 0, 0, 0)) c = _drawColor;
+                                g.FillRectangle(new SolidBrush(c), r);
+                            }
+                            columnsCount++;
                         }
-                        columnsCount++;
                     }
+                    columnsCount += (int)boxSpacing.Value;
                 }
-                columnsCount += (int) boxSpacing.Value;
+                _cursorPosition.X = _item.PointSize * columnsCount;
+                boxCanvas.Invalidate();
             }
-            _cursorPosition.X = _item.PointSize * columnsCount;
-            boxCanvas.Invalidate();
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private List<Bitmap> RenderSmallLetters(char[] letters)

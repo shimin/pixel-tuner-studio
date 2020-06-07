@@ -254,11 +254,18 @@ namespace PixelTuner.Drawing
         /// <param name="parameters">Graphics, Color</param>
         private void FillCanvas(Color color)
         {
-            if (_item == null || _item.Image == null) return;
-            //if (_tempImage == null) return;
-            Graphics g = Graphics.FromImage(_item.Image);            
-            g.FillRectangle(new SolidBrush(color), 0, 0, boxCanvas.Width, boxCanvas.Height);
-            boxCanvas.Refresh();
+            try
+            {
+                if (_item == null || _item.Image == null) return;
+                //if (_tempImage == null) return;
+                Graphics g = Graphics.FromImage(_item.Image);
+                g.FillRectangle(new SolidBrush(color), 0, 0, boxCanvas.Width, boxCanvas.Height);
+                boxCanvas.Refresh();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         /// <summary>
@@ -278,7 +285,14 @@ namespace PixelTuner.Drawing
         Rectangle FillPixel(Color c, Graphics g, int pointSize, int xCoordinate, int yCoordinate)
         {
             Rectangle fillArea = GetSquare(xCoordinate, yCoordinate, pointSize);
-            g.FillRectangle(new SolidBrush(c), fillArea);
+            try
+            {
+                g.FillRectangle(new SolidBrush(c), fillArea);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             return fillArea;
         }
 
@@ -518,19 +532,26 @@ namespace PixelTuner.Drawing
         
         void boxCanvas_Paint(object sender, PaintEventArgs e)
         {
-            if (_item == null || _item.Image == null) return;
-            e.Graphics.DrawImage(_item.Image, 0, 0);
-            if (_duplicatedFragment != null)
+            try
             {
-                e.Graphics.DrawImage(_duplicatedFragment, new Point(_mousePoint.X - ImageOffsetAboutMousePosition.DeltaX,
-                    _mousePoint.Y - ImageOffsetAboutMousePosition.DeltaY));
+                if (_item == null || _item.Image == null) return;
+                e.Graphics.DrawImage(_item.Image, 0, 0);
+                if (_duplicatedFragment != null)
+                {
+                    e.Graphics.DrawImage(_duplicatedFragment, new Point(_mousePoint.X - ImageOffsetAboutMousePosition.DeltaX,
+                        _mousePoint.Y - ImageOffsetAboutMousePosition.DeltaY));
+                }
+                DrawGrid(e.Graphics);
+                if (_mouseSelecting)
+                {
+                    Pen p = new Pen(new SolidBrush(Color.White), 2.2f);
+                    p.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
+                    e.Graphics.DrawRectangle(p, _selection);
+                }
             }
-            DrawGrid(e.Graphics);
-            if (_mouseSelecting)
+            catch(Exception ex)
             {
-                Pen p = new Pen(new SolidBrush(Color.White), 2.2f);
-                p.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
-                e.Graphics.DrawRectangle(p, _selection);
+                Console.WriteLine(ex.Message);
             }
         }
 
@@ -664,70 +685,90 @@ namespace PixelTuner.Drawing
 
         private void boxWidth_ValueChanged(object sender, EventArgs e)
         {
-            if (_item == null || _item.Image == null) return;
-            Push();
-            _item.PatternLength = (int)boxWidth.Value;
-            ResizeImage(_item.PatternLength, _item.PointSize, _item.PatternLines);
-            int newWidth = (int)boxWidth.Value * _item.PointSize;
-            if (newWidth > this.MinimumSize.Width) this.Width = newWidth;
+            try
+            {
+                if (_item == null || _item.Image == null) return;
+                Push();
+                _item.PatternLength = (int)boxWidth.Value;
+                ResizeImage(_item.PatternLength, _item.PointSize, _item.PatternLines);
+                int newWidth = (int)boxWidth.Value * _item.PointSize;
+                if (newWidth > this.MinimumSize.Width) this.Width = newWidth;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private void boxPointSize_ValueChanged(object sender, EventArgs e)
         {
-            if (_item == null || _item.Image == null) return;
-            _duplicatedFragment = null;
-            Push();
-
-            int destPointSize = (int)((NumericUpDown)sender).Value;
-
-            int newWidth = _item.PatternLength * destPointSize;
-            int newHeight = _item.PatternLines * destPointSize;
-
-            Bitmap resize = new Bitmap(newWidth, newHeight);
-
-            Graphics g = Graphics.FromImage(resize);
-            for (int column = 0; column < _item.PatternLength; column++)
+            try
             {
-                for (int row = 0; row < _item.PatternLines; row++)
+                if (_item == null || _item.Image == null) return;
+                _duplicatedFragment = null;
+                Push();
+
+                int destPointSize = (int)((NumericUpDown)sender).Value;
+
+                int newWidth = _item.PatternLength * destPointSize;
+                int newHeight = _item.PatternLines * destPointSize;
+
+                Bitmap resize = new Bitmap(newWidth, newHeight);
+
+                Graphics g = Graphics.FromImage(resize);
+                for (int column = 0; column < _item.PatternLength; column++)
                 {
+                    for (int row = 0; row < _item.PatternLines; row++)
+                    {
 
-                    Color pixColor = (_item.Image as Bitmap).GetPixel(
-                        column * _item.PointSize + 1,
-                        row * _item.PointSize + 1);
+                        Color pixColor = (_item.Image as Bitmap).GetPixel(
+                            column * _item.PointSize + 1,
+                            row * _item.PointSize + 1);
 
-                    g.FillRectangle(new SolidBrush(pixColor), new Rectangle(
-                        column * destPointSize,
-                        row * destPointSize,
-                        destPointSize,
-                        destPointSize));
+                        g.FillRectangle(new SolidBrush(pixColor), new Rectangle(
+                            column * destPointSize,
+                            row * destPointSize,
+                            destPointSize,
+                            destPointSize));
 
+                    }
                 }
-            }
-            _item.Image = resize;
-            g.Dispose();
+                _item.Image = resize;
+                g.Dispose();
 
-            _item.PointSize = destPointSize;
-            ResizeImage(_item.PatternLength, _item.PointSize, _item.PatternLines);
-            
-            if (PatternLinesChanged != null)
-                PatternLinesChanged(this, new EventArgs());
+                _item.PointSize = destPointSize;
+                ResizeImage(_item.PatternLength, _item.PointSize, _item.PatternLines);
+
+                if (PatternLinesChanged != null)
+                    PatternLinesChanged(this, new EventArgs());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private void ResizeImage(int patternLength, int pointSize, int patternLines)
         {
-            if (_item == null || _item.Image == null) return;
+            try {
+                if (_item == null || _item.Image == null) return;
 
-            Image _tempImageBuffer = _item.Image.Clone() as Image;
-            Bitmap b = new Bitmap(patternLength * pointSize, patternLines * pointSize);
-            var g = Graphics.FromImage(b);
-            g.FillRectangle(new SolidBrush(BrushBackColor), 0, 0, b.Width, b.Height);
-            g.DrawImage(_tempImageBuffer, 0, 0);
-            _item.Image = (Image)b.Clone();
-            g.Dispose();
-            Width = boxCanvas.Width = b.Width;
-            Height = b.Height + 35;
-            boxCanvas.Height = b.Height;
-            Invalidate();
+                Image _tempImageBuffer = _item.Image.Clone() as Image;
+                Bitmap b = new Bitmap(patternLength * pointSize, patternLines * pointSize);
+                var g = Graphics.FromImage(b);
+                g.FillRectangle(new SolidBrush(BrushBackColor), 0, 0, b.Width, b.Height);
+                g.DrawImage(_tempImageBuffer, 0, 0);
+                _item.Image = (Image)b.Clone();
+                g.Dispose();
+                Width = boxCanvas.Width = b.Width;
+                Height = b.Height + 35;
+                boxCanvas.Height = b.Height;
+                Invalidate();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         #endregion

@@ -124,45 +124,59 @@ namespace PixelTuner.Drawing
         /// иначе - по размеру заданному параметрами PatternLength и PatternLines</param>
         public void SetScaledImage(Image sourceImage, bool sourcePicturePrimary = false)
         {
-            if (_image == null) { this.Image = null; return; }
-
-            Bitmap source = (Bitmap)sourceImage;
-            if (sourcePicturePrimary)
+            try
             {
-                int w = sourceImage.Width;
-                int h = sourceImage.Height;
-                if (sourceImage.Width > ConfigurationItem.MaxPatternLength) w = ConfigurationItem.MaxPatternLength;
-                if (sourceImage.Height > ConfigurationItem.MaxPatternLines) h = ConfigurationItem.MaxPatternLines;
-                this.Image = new Bitmap(w * this.PointSize, h * this.PointSize);
-                this.PatternLength = w;
-                this.PatternLines = h;
-            }
-            else
-                this.Image = new Bitmap(this.PatternLength, this.PatternLines);
+                if (_image == null) { this.Image = null; return; }
 
-            int xPos = 0;
-            int yPos = 0;
-            var g = Graphics.FromImage(this.Image);
-            for (int x = 0; x < sourceImage.Width; x++)
-            {
-                for (int y = 0; y < sourceImage.Height; y++)
+                Bitmap source = (Bitmap)sourceImage;
+                if (sourcePicturePrimary)
                 {
-                    g.FillRectangle(new SolidBrush(source.GetPixel(x, y)), xPos, yPos, this.PointSize, this.PointSize);
-                    yPos += this.PointSize;
+                    int w = sourceImage.Width;
+                    int h = sourceImage.Height;
+                    if (sourceImage.Width > ConfigurationItem.MaxPatternLength) w = ConfigurationItem.MaxPatternLength;
+                    if (sourceImage.Height > ConfigurationItem.MaxPatternLines) h = ConfigurationItem.MaxPatternLines;
+                    this.Image = new Bitmap(w * this.PointSize, h * this.PointSize);
+                    this.PatternLength = w;
+                    this.PatternLines = h;
                 }
-                xPos += this.PointSize;
-                yPos = 0;
+                else
+                    this.Image = new Bitmap(this.PatternLength, this.PatternLines);
+
+                int xPos = 0;
+                int yPos = 0;
+                var g = Graphics.FromImage(this.Image);
+                for (int x = 0; x < sourceImage.Width; x++)
+                {
+                    for (int y = 0; y < sourceImage.Height; y++)
+                    {
+                        g.FillRectangle(new SolidBrush(source.GetPixel(x, y)), xPos, yPos, this.PointSize, this.PointSize);
+                        yPos += this.PointSize;
+                    }
+                    xPos += this.PointSize;
+                    yPos = 0;
+                }
+                g.Dispose();
+                sourceImage.Dispose();
             }
-            g.Dispose();
-            sourceImage.Dispose();
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private void MakeImage()
         {
-            _image = new Bitmap(PatternLength * PointSize, PatternLines * PointSize);
-            Graphics g = Graphics.FromImage(_image);
-            g.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, _image.Width, _image.Height));
-            g.Dispose();
+            try
+            {
+                _image = new Bitmap(PatternLength * PointSize, PatternLines * PointSize);
+                Graphics g = Graphics.FromImage(_image);
+                g.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, _image.Width, _image.Height));
+                g.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         public override ConfigurationItemBase Clone()

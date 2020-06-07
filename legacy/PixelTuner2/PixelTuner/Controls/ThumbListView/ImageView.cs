@@ -186,20 +186,27 @@ namespace PixelTuner.Controls.ThumbListView
 
         private void Create_Button_Click(object sender, RoutedEventArgs e)
         {
-            var c = new PixelTuner.Drawing.ConfigurationItem(Settings.Default.LineHeight, 84, 8);
-            PictureEditor pe = new PictureEditor(c);
-            pe.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
-            pe.Owner = Application.Current.MainWindow;
-            pe.ShowDialog();
-            var img = pe.Config.GetScaledImage();
-            var saveDialog = new System.Windows.Forms.SaveFileDialog();
-            saveDialog.InitialDirectory = _sourcePath;
-            saveDialog.Filter = "Bmp files|*.bmp";
-            if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            try
             {
-                img.Save(saveDialog.FileName);
+                var c = new PixelTuner.Drawing.ConfigurationItem(Settings.Default.LineHeight, 84, 8);
+                PictureEditor pe = new PictureEditor(c);
+                pe.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
+                pe.Owner = Application.Current.MainWindow;
+                pe.ShowDialog();
+                var img = pe.Config.GetScaledImage();
+                var saveDialog = new System.Windows.Forms.SaveFileDialog();
+                saveDialog.InitialDirectory = _sourcePath;
+                saveDialog.Filter = "Bmp files|*.bmp";
+                if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    img.Save(saveDialog.FileName);
+                }
+                RootViewModel.This.ImagesModel.RefreshImagesCollection(RootViewModel.This.ImagesModel.LineHeight);
             }
-            RootViewModel.This.ImagesModel.RefreshImagesCollection(RootViewModel.This.ImagesModel.LineHeight);
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private void Delete_Button_Click(object sender, RoutedEventArgs e)
