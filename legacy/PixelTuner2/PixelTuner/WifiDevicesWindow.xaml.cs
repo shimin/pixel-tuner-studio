@@ -52,10 +52,6 @@ namespace PixelTuner
             // Received data string.
             public StringBuilder sb = new StringBuilder();
 
-            public Dictionary<string, WifiInfoDevice> DevicesDictionary = new Dictionary<string, WifiInfoDevice>();
-
-            public ObservableCollection<WifiInfoDevice> Devices = new ObservableCollection<WifiInfoDevice>();
-
             public bool Continue = true;
         }
 

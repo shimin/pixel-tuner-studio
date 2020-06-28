@@ -100,6 +100,10 @@
     </Style>
 
     <DataTemplate x:Key="TimelineItemTemplate" DataType="{x:Type vm:TimeLineItemViewModel}">
+        <DataTemplate.Resources>
+            <cv:ThumbnailConverter x:Key="ThumbConverter"/>
+            <cv:FlipConverter x:Key="FlipConverter"/>
+        </DataTemplate.Resources>
         <Border x:Name="boxItemBorder"
                 BorderThickness="1"
                 BorderBrush="White"
@@ -126,9 +130,16 @@
                             </acb:CommandBehaviorCollection.Behaviors>
                             <Button.Template>
                                 <ControlTemplate>
-                                    <Border Height="44" MinWidth="200">
+                                    <Border Height="44">
                                         <Border.Background>
-                                            <ImageBrush ImageSource="{Binding ImageSource, UpdateSourceTrigger=PropertyChanged}" Stretch="Uniform" AlignmentX="Left" />
+                                            <ImageBrush ImageSource="{Binding ImageSource, UpdateSourceTrigger=PropertyChanged}"
+                                                        TileMode="Tile" 
+                                                        ViewportUnits="Absolute"
+                                                        Viewport="{Binding RelativeSource={RelativeSource Self}, Path=ImageSource, Converter={StaticResource ThumbConverter}}">
+                                                <ImageBrush.RelativeTransform>
+                                                    <ScaleTransform CenterY="0.5" ScaleX="1" ScaleY="{Binding ElementName=TimeLine, Path=DataContext.IsFlippedVertical, Converter={StaticResource FlipConverter}}"/>
+                                                </ImageBrush.RelativeTransform>
+                                            </ImageBrush>
                                         </Border.Background>
                                         <Border.ContextMenu>
                                             <ContextMenu>
@@ -331,7 +342,7 @@
         </StackPanel>
     </ControlTemplate>
     
-    <DataTemplate DataType="{x:Type vm:TimeLineViewModel}">
+    <DataTemplate x:Name="TimeLine" DataType="{x:Type vm:TimeLineViewModel}">
         <ItemsControl>
             <Border x:Name="boxTimelineBorder" BorderThickness="1" BorderBrush="{Binding Background}">
                 <Grid x:Name="grid" SizeChanged="grid_SizeChanged">

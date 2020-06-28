@@ -102,8 +102,10 @@
     <Compile Include="Controls\ThumbListView\VideoView.cs" />
     <Compile Include="Converters\ActiveDocumentConverter.cs" />
     <Compile Include="Converters\ActiveTimeLineConverter.cs" />
+    <Compile Include="Converters\FlipConverter.cs" />
     <Compile Include="Converters\LogConverter.cs" />
     <Compile Include="Converters\MathConverter.cs" />
+    <Compile Include="Converters\ThumbnailConverter.cs" />
     <Compile Include="DefaultsWindow.xaml.cs">
       <DependentUpon>DefaultsWindow.xaml</DependentUpon>
     </Compile>

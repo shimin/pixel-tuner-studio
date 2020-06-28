@@ -1365,8 +1365,8 @@ namespace PixelTuner.ViewModel
                     var duration = (item.EndTime.Value - item.StartTime.Value).TotalMilliseconds;       // duration = end time - start time
                     double startMilliseconds = (item.StartTime.Value - pixelLine.Start.Value).TotalMilliseconds;    // start ms = start time - timepixelLine start time
                     UInt16 mask = item.LaserOn ? (ushort)0xffff : (ushort)0;
-                    var imageFile = new PixelImageFile(path, (UInt16)item.Stretching, (UInt32)duration, (UInt32)startMilliseconds, mask);
-                    var image = new ImagesCollectionItem(path, targetHeight, depth, item.Brightness);
+                    var imageFile = new PixelImageFile(path, (UInt16)item.Stretching, (UInt32)duration, (UInt32)startMilliseconds, mask, line.IsFlippedVertical);
+                    var image = new ImagesCollectionItem(path, targetHeight, depth, item.Brightness, line.IsFlippedVertical);
                     imageFile.Brightness = item.Brightness;
                     imagesCollection.Add(image);
 
@@ -1464,7 +1464,14 @@ namespace PixelTuner.ViewModel
                 double startMilliseconds = (dItem.First.StartTime.Value - videoLine1.Start.Value).TotalMilliseconds;           // start ms = start time - timeline start time
                 UInt16 mask = dItem.First.LaserOn ? (ushort)1 : (ushort)0;
 
-                var imageFile = new VideoImageFile(path1, (ushort)dItem.First.Stretching, (UInt32)duration, (UInt32)startMilliseconds, mask);
+                var imageFile = new VideoImageFile(
+                    path1, 
+                    (ushort)dItem.First.Stretching, 
+                    (UInt32)duration, 
+                    (UInt32)startMilliseconds, 
+                    mask, 
+                    channel1.IsFlippedVertical ||
+                    channel2.IsFlippedVertical);
                 var image = new ImagesCollectionVideoDoubleItem(path1, path2, 
                     videoLine1.MetaData.OrderedLeds, videoLine2.MetaData.OrderedLeds, 
                     dItem.First.XOffset, dItem.First.YOffset,
@@ -1519,8 +1526,8 @@ namespace PixelTuner.ViewModel
                 var duration = (item.EndTime.Value - item.StartTime.Value).TotalMilliseconds;       // duration = end time - start time
                 double startMilliseconds = (item.StartTime.Value - line.Start.Value).TotalMilliseconds;    // start ms = start time - timeline start time
                 UInt16 mask = item.LaserOn ? (ushort)0xffff : (ushort)0;
-                var imageFile = new PixelImageFile(path, (UInt16)item.Stretching, (UInt32)duration, (UInt32)startMilliseconds, mask);
-                var image = new ImagesCollectionItem(path, targetHeight, depth, item.Brightness);
+                var imageFile = new PixelImageFile(path, (UInt16)item.Stretching, (UInt32)duration, (UInt32)startMilliseconds, mask, line.IsFlippedVertical);
+                var image = new ImagesCollectionItem(path, targetHeight, depth, item.Brightness, line.IsFlippedVertical);
                 imageFile.Brightness = image.Brightness = item.Brightness;
                 imagesCollection.Add(image);
 
@@ -1586,7 +1593,7 @@ namespace PixelTuner.ViewModel
                 var duration = (item.EndTime.Value - item.StartTime.Value).TotalMilliseconds;       // duration = end time - start time
                 double startMilliseconds = (item.StartTime.Value - line.Start.Value).TotalMilliseconds;    // start ms = start time - timeline start time
                 UInt16 mask = item.LaserOn ? (ushort)1 : (ushort)0;
-                var imageFile = new VideoImageFile(path, (ushort)item.Stretching, (UInt32)duration, (UInt32)startMilliseconds, mask);
+                var imageFile = new VideoImageFile(path, (ushort)item.Stretching, (UInt32)duration, (UInt32)startMilliseconds, mask, line.IsFlippedVertical);
                 var image = new ImagesCollectionVideoItem(path, videoLine.MetaData.OrderedLeds, depth, item.XOffset, item.YOffset, item.Brightness);
                 imageFile.Brightness = image.Brightness = item.Brightness;
                 imagesCollection.Add(image);

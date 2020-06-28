@@ -69,7 +69,7 @@ namespace ConnectionTester
         {
             _logger = new Common.Log.Logger(_logTarget);
             SetStatus("Открытие порта", Common.Log.MessageType.Info, 0);
-            SerialPort port = new SerialPort("COM" + boxPortNum.Value.ToString(), 19200, Parity.None, 8, StopBits.One);
+            SerialPort port = new SerialPort("COM" + boxPortNum.Value.ToString(), 115200, Parity.None, 8, StopBits.One);
             port.ReadTimeout = 20000;
             port.WriteTimeout = 20000;
             try

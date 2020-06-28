@@ -152,6 +152,14 @@ namespace PixelTuner.ViewModel
             set { _timelineHeightPx = value; RaisePropertyChanged("TimelineHeightPx"); }
         }
 
+        private bool _isFlippedVertical = false;
+        [XmlAttribute]
+        public bool IsFlippedVertical
+        {
+            get { return _isFlippedVertical; }
+            set { _isFlippedVertical = value; RaisePropertyChanged("IsFlippedVertical"); if (Parent != null) Parent.IsDirty = true; }
+        }
+
         int _timelinePreviewWidth = 120;
         [XmlIgnore]
         public int TimelinePreviewWidth
@@ -502,6 +510,7 @@ namespace PixelTuner.ViewModel
             timelineCopy.DefaultTimeInterval = DefaultTimeInterval;
             timelineCopy.MetaData = (CanvasElementViewModel)MetaData?.Clone();
             timelineCopy.ToolsetMargin = ToolsetMargin;
+            timelineCopy.IsFlippedVertical = IsFlippedVertical;
             timelineCopy.Start = Start;
             foreach (var item in Items)
                 timelineCopy.Items.Add((ITimeLineDataItem)item.Clone());
@@ -525,19 +534,14 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        private bool CanFlipLine(object parameter)
+        protected virtual bool CanFlipLine(object parameter)
         {
-            return this.Items != null && this.Items.Count > 0;
+            return false;
         }
 
         private void OnFlipLine(object parameter)
         {
-            Flip();
-        }
-
-        void Flip()
-        {
-
+            IsFlippedVertical = !_isFlippedVertical;
         }
 
         #endregion

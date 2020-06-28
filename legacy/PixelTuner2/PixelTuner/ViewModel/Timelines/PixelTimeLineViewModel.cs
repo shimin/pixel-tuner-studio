@@ -120,7 +120,10 @@ namespace PixelTuner.ViewModel
 
         #endregion
 
-
+        protected override bool CanFlipLine(object parameter)
+        {
+            return this.Items != null && this.Items.Count > 0;
+        }
 
         #region ITimeLineManager Members
 
