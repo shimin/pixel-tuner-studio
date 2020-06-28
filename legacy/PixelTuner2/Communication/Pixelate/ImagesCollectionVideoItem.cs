@@ -15,7 +15,7 @@ namespace Communication.Pixelate
         private int _yOffset = 0;
 
         public ImagesCollectionVideoItem(string imagePath, List<Point> points,  ColorDepth depth, int xOffset, int yOffset, byte brightness)
-            : base(imagePath, (UInt16)points.Count, depth, brightness)
+            : base(imagePath, (UInt16)points.Count, depth, brightness, false)
         {
             _xOffset = xOffset;
             _yOffset = yOffset;

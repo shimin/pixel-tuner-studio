@@ -29,7 +29,7 @@ namespace Communication.Pixelate
         public ImagesCollectionVideoDoubleItem(string imagePath1, string imagePath2,
             List<Point> points1, List<Point> points2, 
             int xOffset1, int yOffset1, int xOffset2, int yOffset2, ColorDepth depth, byte brightness1, byte brightness2)
-            : base(imagePath1, (UInt16)(points1.Count + points2.Count), depth, 100)
+            : base(imagePath1, (UInt16)(points1.Count + points2.Count), depth, 100, false)
         {
             _brightness1 = brightness1;
             _brightness2 = brightness2;

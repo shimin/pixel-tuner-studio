@@ -15,7 +15,7 @@ namespace Communication.Pixelate
         {
             get
             {
-                return string.IsNullOrEmpty(Path) ? null : Path + "_" + Brightness.ToString();
+                return string.IsNullOrEmpty(Path) ? null : string.Format("{0}_{1}_{2}", Path, Brightness, FlipVertical);
             }
         }
 
@@ -78,6 +78,19 @@ namespace Communication.Pixelate
             }
         }
 
+        bool _flipVertical = false;
+        public bool FlipVertical
+        {
+            get
+            {
+                return _flipVertical;
+            }
+            set
+            {
+                _flipVertical = value;
+            }
+        }
+
         #endregion
 
         #region Constructor
@@ -88,9 +101,10 @@ namespace Communication.Pixelate
         /// <param name="path">path to bitmap file</param>
         /// <param name="stretching">column repeat count</param>
         /// <param name="duration">duration in 100ms intervals</param>
-        public PixelImageFile(string path, UInt16 stretching, UInt32 duration, UInt32 startTime, UInt16 mask)
+        public PixelImageFile(string path, UInt16 stretching, UInt32 duration, UInt32 startTime, UInt16 mask, bool flipVertical)
         {
             _path = path;
+            _flipVertical = flipVertical;
             _stretching = stretching;
             _duration = duration;
             _startTime = startTime;

@@ -17,8 +17,8 @@ namespace Communication.Pixelate
         int _rays = 6;
         int _length = 32;
 
-        public ImagesCollectionFanItem(string imagePath, int rays, int length, ColorDepth depth, byte brightness)
-            : base(imagePath, (UInt16)(rays * length), depth, brightness)
+        public ImagesCollectionFanItem(string imagePath, int rays, int length, ColorDepth depth, byte brightness, bool flipVertical)
+            : base(imagePath, (UInt16)(rays * length), depth, brightness, flipVertical)
         {
             _rays = rays;
             _length = length;

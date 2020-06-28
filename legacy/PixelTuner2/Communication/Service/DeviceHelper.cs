@@ -58,7 +58,9 @@ namespace Communication.Service
                     {
                         var port = new SerialPort();
                         port.PortName = portName;
-                        port.BaudRate = 19200;
+                        port.BaudRate = 115200;
+                        port.ReadTimeout = 10000;
+                        port.WriteTimeout = 10000;
                         try
                         {
                             port.Open();

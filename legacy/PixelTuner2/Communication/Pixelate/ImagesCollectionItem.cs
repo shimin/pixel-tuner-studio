@@ -25,7 +25,7 @@ namespace Communication.Pixelate
         {
             get
             {
-                return string.IsNullOrEmpty(Path) ? null : Path + "_" + Brightness.ToString();
+                return string.IsNullOrEmpty(Path) ? null : String.Format("{0}_{1}_{2}", Path, Brightness, _flipVertical);
             }
         }
 
@@ -77,15 +77,18 @@ namespace Communication.Pixelate
 
         protected ColorDepth _depth = ColorDepth.Bit24;
 
+        protected bool _flipVertical = false;
+
         #endregion
 
         #region Constructor
 
-        public ImagesCollectionItem(string imagePath, UInt16 targetHeight, ColorDepth depth, byte brightness)
+        public ImagesCollectionItem(string imagePath, UInt16 targetHeight, ColorDepth depth, byte brightness, bool flipVertical)
         {
             Brightness = brightness;
             _path = imagePath;
             _depth = depth;
+            _flipVertical = flipVertical;
             LoadFile(targetHeight);
         }
 
@@ -99,6 +102,7 @@ namespace Communication.Pixelate
             {
                 _bitmap = new Bitmap(1, targetHeight);
             }
+            if (_flipVertical) _bitmap.RotateFlip(RotateFlipType.Rotate180FlipY);
             var size = GetSize(targetHeight);
             _binary = new List<byte>(new byte[size]);
         }

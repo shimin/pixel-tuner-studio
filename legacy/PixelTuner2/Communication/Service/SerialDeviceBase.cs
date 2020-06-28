@@ -351,7 +351,11 @@ namespace Communication.Service
                     int num3 = 0;
                     try
                     {
-                        num3 = Transport.Read(buffer, 0, count);
+                        var startTime = DateTime.Now;
+                        while (num3 < count && (DateTime.Now - startTime).TotalSeconds < 10)
+                        {
+                            num3 += Transport.Read(buffer, num3, count - num3);
+                        }
                     }
                     catch { throw new TimeoutException("Packet data reading timeout."); }
                     if (num3 != count)

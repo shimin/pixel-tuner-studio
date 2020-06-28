@@ -7,8 +7,8 @@ namespace Communication.Pixelate
 {
     public class PixelFanImageFile : PixelImageFile
     {
-        public PixelFanImageFile(string path, ushort stretching, uint duration, uint startTime, ushort mask)
-            : base(path, stretching, duration, startTime, mask)
+        public PixelFanImageFile(string path, ushort stretching, uint duration, uint startTime, ushort mask, bool flipVertical)
+            : base(path, stretching, duration, startTime, mask, flipVertical)
         {
         }
     }
