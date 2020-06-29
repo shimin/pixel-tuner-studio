@@ -17,7 +17,11 @@ namespace PixelTuner.ViewModel
 
         private static int FirmwareFileVersion { get; set; }
 
+        private static int FirmwareFileVersionV2 { get; set; }
+
         private static byte[] _firmwareBytes;
+
+        private static byte[] _firmwareBytesV2;
 
         private static string _firmwareFileName = "flashVideo.bin";
 
@@ -65,7 +69,11 @@ namespace PixelTuner.ViewModel
         {
             get
             {
-                return ((FirmwareVersion < FirmwareFileVersion) && !BootMode);
+                if (PlatformVersion == 1)
+                    return ((FirmwareVersion < FirmwareFileVersion) && !BootMode);
+                if (PlatformVersion == 2)
+                    return (FirmwareVersion < FirmwareFileVersionV2) && !BootMode;
+                return false;
             }
         }
 
@@ -76,6 +84,10 @@ namespace PixelTuner.ViewModel
             var streamInfo = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash_Video.bin"));
             _firmwareBytes = Common.Collections.StreamHelper.ReadFully(streamInfo.Stream);
             FirmwareFileVersion = _firmwareBytes[52];
+
+            var streamInfo2 = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash_Video_v2.bin"));
+            _firmwareBytesV2 = Common.Collections.StreamHelper.ReadFully(streamInfo2.Stream);
+            FirmwareFileVersionV2 = _firmwareBytes[52];
         }
 
         public VideoDeviceViewModel(VideoDevice device)
@@ -160,7 +172,10 @@ namespace PixelTuner.ViewModel
         protected override bool CanUploadFirmware(object parameter)
         {
             var fwPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _firmwareFileName);
-            return base.CanUploadFirmware(null) && (File.Exists(fwPath) || _firmwareBytes != null);
+            return base.CanUploadFirmware(null)
+                && (File.Exists(fwPath)
+                   || (_firmwareBytes != null
+                    && _firmwareBytesV2 != null));
         }
 
         /// <summary>
@@ -175,10 +190,14 @@ namespace PixelTuner.ViewModel
 
                 var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _firmwareFileName);
                 if (binaryData == null && File.Exists(path))
-                    binaryData = File.ReadAllBytes(path);
+                    try { binaryData = File.ReadAllBytes(path); }
+                    catch { }
 
                 if (binaryData == null)
-                    binaryData = _firmwareBytes;
+                {
+                    if (PlatformVersion == 1) binaryData = _firmwareBytes;
+                    else if (PlatformVersion == 2) binaryData = _firmwareBytesV2;
+                }
 
                 if (binaryData == null) return;
 
@@ -199,7 +218,8 @@ namespace PixelTuner.ViewModel
 
         protected override void OnUpdatePostponeCommand(object parameter)
         {
-            FirmwareFileVersion = FirmwareVersion;
+            if (PlatformVersion == 1) FirmwareFileVersion = FirmwareVersion;
+            else if (PlatformVersion == 2) FirmwareFileVersionV2 = FirmwareVersion;
             RaisePropertyChanged("UpdateNeeded");
         }
 

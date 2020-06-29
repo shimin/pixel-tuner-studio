@@ -166,12 +166,10 @@ namespace PixelTuner.ViewModel
             try
             {
                 byte[] binaryData = parameter as byte[];
-                
+
+                var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _firmwareFileName);
                 if (binaryData == null)
-                    try
-                    {
-                        binaryData = File.ReadAllBytes(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _firmwareFileName));
-                    }
+                    try { binaryData = File.ReadAllBytes(path); }
                     catch { }
                 
                 if (binaryData == null)
