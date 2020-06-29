@@ -268,29 +268,8 @@ namespace PixelTuner.ViewModel
             Items = new ObservableCollection<ITimeLineDataItem>();
             Items.CollectionChanged += (sender, args) =>
             {
-                /*if (Parent != null && Parent.SoundPlayer != null && Parent.SoundPlayer.ChannelLength > 0)
-                {
-                    if (args.NewItems != null && args.NewItems.Count > 0)
-                    {
-                        DateTime firstElementStart = (args.NewItems[0] as TimeLineItemViewModel).StartTime.Value;
-                        DateTime currentTime = new DateTime(2, 1, 1).Add(Parent.SoundPlayer.CurrentTime);
-                        var delta = currentTime - firstElementStart;
-                        foreach (TimeLineItemViewModel i in args.NewItems)
-                        {
-                            i.StartTime = i.StartTime + delta;
-                            i.EndTime = i.EndTime + delta;
-                        }
-                    }
-                }
-                for (int i = Items.Count - 1; i > 0 && args.NewItems != null; i--)
-                {
-                    if (Items[i].StartTime > Items[i - 1].EndTime)
-                    {
-                        var delta = Items[i - 1].EndTime - Items[i].StartTime;
-                        Items[i - 1].EndTime = Items[i].StartTime;
-                        Items[i - 1].StartTime = Items[i - 1].StartTime - delta;
-                    }
-                }*/
+                CanFlipLine(null);
+                CanCloneLine(null);
                 Parent?.RaiseFileChanged();
             };
             XmlItems = new DelegatedIList<TimeLineItemViewModel, TimeLineItem>(Items);
