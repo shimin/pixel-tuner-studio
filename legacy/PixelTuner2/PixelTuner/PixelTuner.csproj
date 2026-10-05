@@ -504,6 +504,7 @@
     <Resource Include="Files\Flash_v5.bin" />
     <Resource Include="Files\Flash_LRv3.bin" />
     <Resource Include="Files\Flash_v6.bin" />
+    <Resource Include="Files\Flash_v6_2812.bin" />
     <Resource Include="Files\Flash_Video_v2.bin" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
