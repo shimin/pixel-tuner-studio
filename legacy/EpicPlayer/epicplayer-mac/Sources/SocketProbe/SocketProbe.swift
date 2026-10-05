@@ -1,4 +1,5 @@
 import EpicCore
+import AVFoundation
 import Darwin
 import Foundation
 
@@ -53,6 +54,7 @@ final class SocketProbe {
         checkTcpRoundTrip()
         checkArtNetParsing()
         checkBroadcastBinding()
+        checkAudio()
 
         print("")
         var failures = 0
@@ -299,6 +301,116 @@ final class SocketProbe {
         } catch {
             add(.failed("привязка broadcast", "\(error)"))
         }
+    }
+// MARK: - Аудио
+
+    /// Генерирует короткий WAV-файл, чтобы проверить аудио без
+    /// внешних файлов.
+    private func makeTestWav(seconds: Double) -> URL? {
+        let sampleRate = 22_050.0
+        let frameCount = Int(sampleRate * seconds)
+        let channels: UInt16 = 1
+        let bitsPerSample: UInt16 = 16
+        let bytesPerSample = Int(bitsPerSample / 8)
+        let dataSize = frameCount * Int(channels) * bytesPerSample
+
+        var data = Data()
+        // Заголовок RIFF.
+        data.append(contentsOf: Array("RIFF".utf8))
+        data.append(contentsOf: littleEndian(UInt32(36 + dataSize)))
+        data.append(contentsOf: Array("WAVE".utf8))
+        // fmt: PCM, моно.
+        data.append(contentsOf: Array("fmt ".utf8))
+        data.append(contentsOf: littleEndian(UInt32(16)))
+        data.append(contentsOf: littleEndian(UInt16(1)))
+        data.append(contentsOf: littleEndian(channels))
+        data.append(contentsOf: littleEndian(UInt32(sampleRate)))
+        data.append(contentsOf: littleEndian(
+                    UInt32(sampleRate) * UInt32(channels) * UInt32(bytesPerSample)))
+        data.append(contentsOf: littleEndian(channels * UInt16(bytesPerSample)))
+        data.append(contentsOf: littleEndian(bitsPerSample))
+        // Тихий сигнал: синус малой амплитуды, чтобы не трещать в колонках.
+        data.append(contentsOf: Array("data".utf8))
+        data.append(contentsOf: littleEndian(UInt32(dataSize)))
+        for frame in 0..<frameCount {
+            let t = Double(frame) / sampleRate
+            let value = Int(sin(2 * .pi * 220 * t) * 2000)
+            data.append(contentsOf: littleEndian(Int16(value)))
+        }
+
+        let url = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent("epicprobe-\(UUID().uuidString).wav")
+        do {
+            try data.write(to: url)
+            return url
+        } catch {
+            return nil
+        }
+    }
+
+    private func littleEndian<T: FixedWidthInteger>(_ value: T) -> [UInt8] {
+        var v = value.littleEndian
+        return withUnsafeBytes(of: &v) { Array($0) }
+    }
+
+    /// Проверяет, что аудиофайл открывается и позиция идёт вперёд.
+    private func checkAudio() {
+        guard let url = makeTestWav(seconds: 3) else {
+            add(.failed("аудио", "не удалось создать тестовый WAV"))
+            return
+        }
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        let audio = AudioPlayer()
+        do {
+            try audio.open(url: url)
+        } catch {
+            add(.failed("аудио", "файл не открылся: \(error)"))
+            return
+        }
+
+        guard let duration = audio.duration else {
+            add(.failed("аудио", "длительность не определилась"))
+            return
+        }
+
+        guard duration > 2.5 else {
+            add(.failed("аудио", "длительность \(duration) вместо ~3 с"))
+            return
+        }
+
+        audio.volume = 0.25
+        audio.play()
+        Thread.sleep(forTimeInterval: 0.6)
+        let afterPlay = audio.position
+
+        audio.pause()
+        let atPause = audio.position
+        Thread.sleep(forTimeInterval: 0.3)
+        let afterPause = audio.position
+
+        guard afterPlay > 0 else {
+            add(.failed("аудио", "позиция не двигается при воспроизведении"))
+            return
+        }
+
+        // После паузы позиция не должна расти.
+        guard afterPause - atPause < 0.05 else {
+            add(.failed("аудио", "позиция двигается после паузы"))
+            return
+        }
+
+        // Перемотка.
+        audio.position = 1.5
+        guard abs(audio.position - 1.5) < 0.2 else {
+            add(.failed("аудио", "перемотка не сработала"))
+            return
+        }
+
+        audio.close()
+
+        add(.passed("аудио: длительность \(String(format: "%.1f", duration)) с, "
+                    + "позиция идёт, пауза и перемотка работают"))
     }
 }
 
