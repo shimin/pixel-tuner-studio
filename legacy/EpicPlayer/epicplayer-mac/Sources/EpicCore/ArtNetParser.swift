@@ -121,7 +121,7 @@ public enum ArtNetParser {
 
 /// Пороги срабатывания Art-Net: значения канала, при которых
 /// выполняется действие.
-public struct ArtNetThresholds: Equatable {
+public struct ArtNetThresholds: Equatable, Sendable {
     public var start: UInt8
     public var pause: UInt8
     public var stop: UInt8

@@ -1,17 +1,32 @@
-// swift-tools-version:5.7
+// swift-tools-version:6.0
 import PackageDescription
 
-// Временно Swift 5, не Swift 6: строгая проверка конкурентности
-// включается постепенно, начиная с фазы сетевого кода.
-// После обновления Xcode таргет поднимается до .macOS(.v15).
+// Язык Swift 5, не Swift 6: строгая проверка конкурентности включается
+// постепенно, начиная с сетевого кода.
 let package = Package(
     name: "EpicCore",
-    platforms: [.macOS(.v13)],
+    platforms: [.macOS(.v15)],
     products: [
-        .library(name: "EpicCore", targets: ["EpicCore"])
+        .library(name: "EpicCore", targets: ["EpicCore"]),
+        .executable(name: "EpicPlayerMac", targets: ["EpicPlayerMac"])
     ],
     targets: [
+        // Протокол, сокеты, Art-Net. Собирается и тестируется без UI.
         .target(name: "EpicCore"),
+
+        // Приложение. Зависит от EpicCore.
+        //
+        // Info.plint намеренно не включён в resources: SwiftPM запрещает
+        // Info.plist как ресурс бандла. Файл используется как
+        // INFOPLIST_FILE в Xcode-проекте (фаза 0).
+        .executableTarget(
+            name: "EpicPlayerMac",
+            dependencies: ["EpicCore"],
+            path: "Sources/EpicPlayerMac",
+            exclude: ["Resources/Info.plist"],
+            swiftSettings: [.swiftLanguageMode(.v5)]
+        ),
+
         .testTarget(name: "EpicCoreTests", dependencies: ["EpicCore"])
     ]
 )
