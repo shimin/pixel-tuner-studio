@@ -20,12 +20,13 @@ namespace Communication.Service
                 try
                 {
                     List<byte> data = base.DoSession(new PixelDevicePacket(PixelDeviceCommand.INFO, null)).Data;
-                    int num = (data[5] << 8) | data[6];
                     PlatformVersion = data[0];
-                    EnergyLevel = num;
                     BootVersion = data[1];
                     FirmwareVersion = data[2];
                     LedsTotal = (ushort)((data[3] << 8) | data[4]);
+                    EnergyLevel = (data[5] << 8) | data[6];
+                    byte[] memSizeArray = new byte[4] { data[10], data[9], data[8], data[7] };
+                    MaxMemory = BitConverter.ToUInt32(memSizeArray, 0);
                     Tag = Encoding.GetEncoding(1251).GetString(data.ToArray(), 45, 12).TrimEnd(new char[] {(char) 0});
                 }
                 catch (Exception exception)

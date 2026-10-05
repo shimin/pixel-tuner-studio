@@ -1,0 +1,19 @@
+# Normalize all text files to LF in the repository.
+# Working tree also uses LF so that git status stays clean across platforms.
+* text=auto eol=lf
+
+# Windows batch files must keep CRLF, cmd.exe misparses them with bare LF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary assets must never be line-ending normalized.
+*.png binary
+*.jpg binary
+*.gif binary
+*.bmp binary
+*.ico binary
+*.bin binary
+*.dll binary
+*.exe binary
+*.zip binary
+*.rtf -text

@@ -102,7 +102,7 @@ namespace Communication.Pixelate
             {
                 _bitmap = new Bitmap(1, targetHeight);
             }
-            if (_flipVertical) _bitmap.RotateFlip(RotateFlipType.Rotate180FlipY);
+            if (_flipVertical) _bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
             var size = GetSize(targetHeight);
             _binary = new List<byte>(new byte[size]);
         }
@@ -235,6 +235,12 @@ namespace Communication.Pixelate
                     foreach (var c in columnColors)
                         binary.Add(Map8To8(SetBrightness(targetHeight, c), ColorComponent.B));
                 }
+                else if (targetHeight > 150)
+                {
+                    foreach (var c in columnColors) binary.Add(Map8To8Apa102(c, ColorComponent.R));
+                    foreach (var c in columnColors) binary.Add(Map8To8Apa102(c, ColorComponent.G));
+                    foreach (var c in columnColors) binary.Add(Map8To8Apa102(c, ColorComponent.B));
+                }
                 else
                 {
                     foreach (var c in columnColors) binary.Add(Map8To8(c, ColorComponent.R));
@@ -324,6 +330,29 @@ namespace Communication.Pixelate
                 case ColorComponent.R: result = (byte)(c.R * 1.0); break;
                 case ColorComponent.G: result = (byte)(c.G * 0.5); break;
                 case ColorComponent.B: result = (byte)(c.B * 0.8); break;
+            }
+            return (byte)(result * colorMult);
+        }
+
+        float gamma = 2.8f; // Correction factor
+
+        byte GetGammaCorrectedValue(byte c, int maxOut)
+        {
+            return (byte)(Math.Pow((float)c / (float)255, gamma) * maxOut + 0.5f);
+        }
+
+        private byte Map8To8Apa102(Color c, ColorComponent cc)
+        {
+            byte result = 0;
+            float colorMult = Brightness / 100.0f;
+            switch (cc)
+            {
+                //case ColorComponent.R: result = (byte)(c.R * 0.6); break;
+                //case ColorComponent.G: result = (byte)(c.G * 0.75); break;
+                //case ColorComponent.B: result = (byte)(c.B * 1); break;
+                case ColorComponent.R: result = GetGammaCorrectedValue(c.R, 160); break;
+                case ColorComponent.G: result = GetGammaCorrectedValue(c.G, 200); break;
+                case ColorComponent.B: result = GetGammaCorrectedValue(c.B, 255); break;
             }
             return (byte)(result * colorMult);
         }

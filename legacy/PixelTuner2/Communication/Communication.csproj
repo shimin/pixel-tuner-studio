@@ -106,6 +106,8 @@
     <Compile Include="Service\LightMasterDevice.cs" />
     <Compile Include="Service\TcpTransport.cs" />
     <Compile Include="Service\VideoDevice.cs" />
+    <Compile Include="Service\VirtualDevice.cs" />
+    <Compile Include="Service\VirtualTransport.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
