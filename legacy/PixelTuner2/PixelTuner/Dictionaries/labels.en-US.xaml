@@ -159,4 +159,6 @@
     <system:String x:Key="FixMissingWindow_SetFileToIgnore">Ignore missing file and leave it offline</system:String>
     <system:String x:Key="FixMissingWindow_SetFileToIgnoreAll">Ignore all missing files and leave them offline</system:String>
     <system:String x:Key="FixMissingWindow_HeightMismatch">Image and timeline height mismatch.</system:String>
+    <system:String x:Key="StartMonitoring">Run monitoring</system:String>
+    <system:String x:Key="StopMonitoring">Stop monitoring</system:String>
 </ResourceDictionary>

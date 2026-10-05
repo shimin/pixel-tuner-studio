@@ -159,4 +159,6 @@
     <system:String x:Key="FixMissingWindow_SetFileToIgnore">Игнорировать пропущенный файл и оставить незагруженным</system:String>
     <system:String x:Key="FixMissingWindow_SetFileToIgnoreAll">Игнорировать все пропущенные файлы и оставить незагруженными</system:String>
     <system:String x:Key="FixMissingWindow_HeightMismatch">Не совпадает высота таймлайна и выбранного файла.</system:String>
+    <system:String x:Key="StartMonitoring">Запустить мониторинг</system:String>
+    <system:String x:Key="StopMonitoring">Остановить мониторинг</system:String>
 </ResourceDictionary>

@@ -32,8 +32,14 @@ namespace PixelTuner.ViewModel.Devices
         {
             return $@"Version: {base.PlatformVersion}.{base.BootVersion}.{base.FirmwareVersion}
 Leds: { base.LedsTotal }
-Battery: { base.EnergyLevel }
-Memory: { base.MaxMemory } ";
+Memory: { base.MaxMemory } 
+Battery: { base.EnergyLevel }%";
+        }
+
+        public string LastAnswer
+        {
+            get { return FormatInfo(); }
+            set { }
         }
 
         public string IP

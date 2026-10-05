@@ -130,7 +130,7 @@
                             </acb:CommandBehaviorCollection.Behaviors>
                             <Button.Template>
                                 <ControlTemplate>
-                                    <Border Height="44">
+                                    <Border x:Name="boxItemBorder" Height="44">
                                         <Border.Background>
                                             <ImageBrush ImageSource="{Binding ImageSource, UpdateSourceTrigger=PropertyChanged}"
                                                         TileMode="Tile" 
@@ -148,8 +148,8 @@
                                                 <MenuItem Header="{StaticResource Item_Menu_SetRepeatCount}" Visibility="{Binding CanRepeatProperty, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding RepeatCommand}"/>
                                             </ContextMenu>
                                         </Border.ContextMenu>
-                                        <Canvas HorizontalAlignment="Left" Width="130" Height="44" Visibility="{Binding UseColorLayer, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                            <Rectangle Width="130" Canvas.Top="1" Height="42" RadiusX="3" RadiusY="3" Opacity="{Binding ColorLayerOpacity}">
+                                        <Canvas HorizontalAlignment="Left" Width="{Binding ElementName=boxItemBorder, Path=ActualWidth}" Height="44" Visibility="{Binding UseColorLayer, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Rectangle Width="{Binding ElementName=boxItemBorder, Path=ActualWidth}" Height="44" Opacity="{Binding ColorLayerOpacity}">
                                                 <Rectangle.Fill>
                                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
                                                         <GradientStop Color="{Binding ColorFirst, Mode=OneWay}" Offset="0" />

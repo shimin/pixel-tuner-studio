@@ -64,7 +64,16 @@ namespace PixelTuner.ViewModel
             get { return Device == null ? 0 : Device.MaxMemory; }
             private set { RaisePropertyChanged("MaxMemory"); }
         }
-        
+
+        /// <summary>
+        /// Уровень заряда в процентах
+        /// </summary>
+        public float EnergyLevel
+        {
+            get { return Device == null ? 0 : Device.EnergyLevel; }
+            private set { RaisePropertyChanged("EnergyLevel"); }
+        }
+
         public override bool UpdateNeeded
         {
             get
@@ -87,7 +96,7 @@ namespace PixelTuner.ViewModel
 
             var streamInfo2 = Application.GetResourceStream(new Uri("pack://application:,,,/Files/Flash_Video_v2.bin"));
             _firmwareBytesV2 = Common.Collections.StreamHelper.ReadFully(streamInfo2.Stream);
-            FirmwareFileVersionV2 = _firmwareBytes[52];
+            FirmwareFileVersionV2 = _firmwareBytesV2[52];
         }
 
         public VideoDeviceViewModel(VideoDevice device)

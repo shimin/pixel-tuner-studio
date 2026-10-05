@@ -37,9 +37,15 @@ namespace PixelTuner.ViewModel.Devices
         private string FormatInfo()
         {
             return $@"Version: {PlatformVersion}.{BootVersion}.{FirmwareVersion}
-Leds: { LedsTotal }
-Battery: { EnergyLevel}
-Memory: { MaxMemory} ";
+Leds: { base.LedsTotal }
+Memory: { base.MaxMemory } 
+Battery: { base.EnergyLevel }%";
+        }
+
+        public string LastAnswer
+        {
+            get { return FormatInfo(); }
+            set { }
         }
 
         private void OnPause(object parameter)
@@ -90,13 +96,7 @@ Memory: { MaxMemory} ";
         }
 
         public string ChannelID => $"{_ip}:{Port}";
-
-        public string LastAnswer
-        {
-            get { return FormatInfo(); }
-            set { }
-        }
-
+        
         public string Tag => Device.Tag;
 
         public ICommand PlayCommand

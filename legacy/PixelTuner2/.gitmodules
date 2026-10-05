@@ -1,9 +1,9 @@
 [submodule "Common"]
 	path = Common
-	url = https://shimin@bitbucket.org/shimin/common.git
+	url = https://github.com/shimin/Common.git
 [submodule "Communication"]
 	path = Communication
-	url = https://shimin@bitbucket.org/shimin/communication.git
+	url = https://github.com/shimin/Communication.git
 [submodule "WpfTools"]
 	path = WpfTools
-	url = https://shimin@bitbucket.org/shimin/wpftools.git
+	url = https://github.com/shimin/WpfTools.git

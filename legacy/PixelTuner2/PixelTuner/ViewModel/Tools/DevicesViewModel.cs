@@ -6,6 +6,7 @@ using System.IO;
 using System.Windows;
 using Common.Collections;
 using Communication.Service;
+using System.Windows.Input;
 
 namespace PixelTuner.ViewModel
 {
@@ -29,6 +30,48 @@ namespace PixelTuner.ViewModel
             get { return _illuminators; }
         }
 
+        #endregion
+
+        #region Commands
+
+        #region StartMonitoringCommand
+        RelayCommand _startMonitoringCommand;
+        public ICommand StartMonitoringCommand => _startMonitoringCommand ?? (
+            _startMonitoringCommand = new RelayCommand(OnStartMonitoring, CanStartMonitoring));
+
+        protected virtual bool CanStartMonitoring(object parameter)
+        {
+            return !DeviceHelper.IsSeeking;
+        }
+
+        #endregion
+
+
+        #region StopMonitoringCommand
+        RelayCommand _stopMonitoringCommand;
+        public ICommand StopMonitoringCommand => _stopMonitoringCommand ?? (
+            _stopMonitoringCommand = new RelayCommand(OnStopMonitoring, CanStopMonitoring));
+
+        protected virtual bool CanStopMonitoring(object parameter)
+        {
+            return DeviceHelper.IsSeeking;
+        }
+
+        #endregion
+
+        public void OnStopMonitoring(object parameter)
+        {
+            foreach (var d in Devices)
+                d.Device.Disconnect();
+
+            Devices.Clear();
+            DeviceHelper.StopSeeking();
+        }
+
+        public void OnStartMonitoring(object parameter)
+        {
+            DeviceHelper.StartSeeking();
+        }
         #endregion
 
         public DevicesViewModel(string name)
@@ -94,6 +137,11 @@ namespace PixelTuner.ViewModel
             else if (e.Device is GenericSerialDevice)
             {
                 var model = new DeviceViewModel(e.Device as GenericSerialDevice);
+                Devices.Add(model);
+            }
+            else if (e.Device is VirtualDevice)
+            {
+                var model = new VideoDeviceViewModel(e.Device as VirtualDevice);
                 Devices.Add(model);
             }
         }

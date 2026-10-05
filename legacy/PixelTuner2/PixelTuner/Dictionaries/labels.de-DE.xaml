@@ -159,4 +159,6 @@
     <system:String x:Key="FixMissingWindow_SetFileToIgnore">Die fehlende Datei ignorieren und offline lassen</system:String>
     <system:String x:Key="FixMissingWindow_SetFileToIgnoreAll">Alle fehlenden Dateien ignorieren und offline lassen</system:String>
     <system:String x:Key="FixMissingWindow_HeightMismatch">Bild und Timeline Höhe stimmt nicht überein.</system:String>
+    <system:String x:Key="StartMonitoring">Überwachung starten</system:String>
+    <system:String x:Key="StopMonitoring">Beenden Sie die Überwachung</system:String>
 </ResourceDictionary>

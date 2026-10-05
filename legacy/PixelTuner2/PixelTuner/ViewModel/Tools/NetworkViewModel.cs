@@ -143,8 +143,9 @@ namespace PixelTuner.ViewModel
                     CreateModel(d, remoteEndPoint.Address.ToString(), remoteEndPoint.Port);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                MessageBox.Show(ex.Message);
             }
         }
 

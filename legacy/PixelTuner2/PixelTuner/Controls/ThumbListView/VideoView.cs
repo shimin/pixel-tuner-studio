@@ -173,13 +173,18 @@ namespace PixelTuner.Controls.ThumbListView
         {
             using (FolderBrowserDialog fbd = new FolderBrowserDialog())
             {
-                fbd.SelectedPath = Environment.SpecialFolder.MyPictures.ToString();
+                fbd.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+                if (Settings.Default.LastImportPath != "")
+                {
+                    fbd.SelectedPath = Settings.Default.LastImportPath;
+                }
+
                 if (fbd.ShowDialog() == DialogResult.OK)
                 {
                     using (SaveFileDialog sfd = new SaveFileDialog())
                     {
-                        sfd.InitialDirectory = Path.Combine(Environment.SpecialFolder.MyVideos.ToString(), "PixelTuner 2\\Clips");
-                        sfd.Filter = "Gif files (*.gif)|*.gif";
+                        sfd.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyVideos), "PixelTuner 2\\Clips");
+                        sfd.Filter = @"Gif files (*.gif)|*.gif";
                         if (sfd.ShowDialog() == DialogResult.OK)
                         {
                             string GifFile = sfd.FileName;
@@ -187,6 +192,8 @@ namespace PixelTuner.Controls.ThumbListView
                             SaveGif(GifFile, Files);
                         }
                     }
+
+                    Settings.Default.LastImportPath = fbd.SelectedPath;
                 }
             }
             RootViewModel.This.VideosModel.RefreshVideosCollection();

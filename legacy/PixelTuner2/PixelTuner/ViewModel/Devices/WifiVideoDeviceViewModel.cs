@@ -12,10 +12,15 @@ namespace PixelTuner.ViewModel.Devices
         private RelayCommand _playCommand;
         private RelayCommand _pauseCommand;
         private RelayCommand _stopCommand;
+        private System.Timers.Timer _infoUpdate;
 
         public WifiVideoDeviceViewModel(VideoDevice device) : base(device)
         {
             this._ip = "";
+            _infoUpdate = new System.Timers.Timer(5000);
+            _infoUpdate.AutoReset = true;
+            _infoUpdate.Elapsed += (s, e) => { RaisePropertyChanged("LastAnswer"); };
+            _infoUpdate.Start();
         }
 
         private string BytesToString(byte[] src)
@@ -32,7 +37,9 @@ namespace PixelTuner.ViewModel.Devices
         {
             return $@"Version: {base.PlatformVersion}.{base.BootVersion}.{base.FirmwareVersion}
 Leds: { base.LedsTotal }
-Memory: { base.MaxMemory }";
+Memory: { base.MaxMemory } Mb
+Charged: { base.EnergyLevel }%
+Tag: {base.Tag}";
         }
 
         public string IP
@@ -61,7 +68,7 @@ Memory: { base.MaxMemory }";
 
         public string LastAnswer
         {
-            get { return this.FormatInfo(); }
+            get { return FormatInfo(); }
             set { }
         }
 
