@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <!-- Совпадает с целевой версией основного проекта EpicPlayer,
+         чтобы собирать на той же машине и тем же инструментом. -->
+    <TargetFramework>net45</TargetFramework>
+    <LangVersion>5</LangVersion>
+    <AssemblyName>WindowsReference</AssemblyName>
+    <RootNamespace>WindowsReference</RootNamespace>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <!-- Выводим exe рядом с исходниками -->
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OutputPath>bin\</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- JavaScriptSerializer входит в сам .NET Framework: внешний пакет
+         не нужен. System.Text.Json не подошёл бы — он требует net461+. -->
+    <Reference Include="System.Web.Extensions" />
+  </ItemGroup>
+
+</Project>

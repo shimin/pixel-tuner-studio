@@ -1,0 +1,17 @@
+# Сборка SwiftPM
+.build/
+.swiftpm/
+Package.resolved
+
+# Кэш компилятора и временные файлы
+.tmp/
+*.o
+*.swiftmodule
+*.pcm
+
+# Сборка C#-проверки для Windows
+bin/
+obj/
+
+# macOS
+.DS_Store
