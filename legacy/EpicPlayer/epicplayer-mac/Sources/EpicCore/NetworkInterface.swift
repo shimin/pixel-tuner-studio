@@ -76,8 +76,8 @@ public struct NetworkInterface: Identifiable {
     /// Индекс для привязки сокета. На macOS без него broadcast уходит
     /// по маршруту по умолчанию и может уйти в utun.
     public let index: Int32
-    public let addresses: [IPv4Address]
-    public let netmask: SubnetMask?
+    public var addresses: [IPv4Address]
+    public var netmask: SubnetMask?
     public let kind: InterfaceKind
 
     public var id: String { name }

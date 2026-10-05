@@ -117,6 +117,34 @@ public enum ArtNetParser {
         }
         return decoded
     }
+
+    /// Отбрасывает пакеты, отправленные самим приложением.
+    ///
+    /// Windows-версия сравнивала адрес отправителя с локальным:
+    /// `LocalEndPoint != remoteEndPoint` в `ArtNetSocket.cs:122`.
+    /// Здесь сравнение по содержимому.
+    ///
+    /// - Important: ответ устройства начинается с тех же байтов `49 00`,
+    ///   что и собственный запрос обнаружения. Различает их длина: запрос
+    ///   — ровно 3 байта, ответ — длиннее. Без этой проверки приложение
+    ///   отбрасывало бы ответы устройств.
+    public static func isOwnEcho(_ packet: Data) -> Bool {
+        let bytes = [UInt8](packet)
+        guard bytes.count >= 2 else { return false }
+
+        // Собственный запрос обнаружения: 49 00 0D, ровно 3 байта.
+        // Ответ устройства начинается так же, но длиннее.
+        if bytes[0] == 0x49, bytes[1] == 0x00 {
+            return bytes.count <= 3
+        }
+
+        // Объявление TCP-обнаружения: 4C 06, ровно 9 байт.
+        if bytes[0] == 0x4C, bytes[1] == 0x06 {
+            return bytes.count <= DeviceDiscovery.tcpAnnouncementLength
+        }
+
+        return false
+    }
 }
 
 /// Пороги срабатывания Art-Net: значения канала, при которых

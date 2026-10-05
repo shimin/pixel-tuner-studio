@@ -8,7 +8,8 @@ let package = Package(
     platforms: [.macOS(.v15)],
     products: [
         .library(name: "EpicCore", targets: ["EpicCore"]),
-        .executable(name: "EpicPlayerMac", targets: ["EpicPlayerMac"])
+        .executable(name: "EpicPlayerMac", targets: ["EpicPlayerMac"]),
+                .executable(name: "SocketProbe", targets: ["SocketProbe"])
     ],
     targets: [
         // Протокол, сокеты, Art-Net. Собирается и тестируется без UI.
@@ -16,7 +17,7 @@ let package = Package(
 
         // Приложение. Зависит от EpicCore.
         //
-        // Info.plint намеренно не включён в resources: SwiftPM запрещает
+        // Info.plist намеренно не включён в resources: SwiftPM запрещает
         // Info.plist как ресурс бандла. Файл используется как
         // INFOPLIST_FILE в Xcode-проекте (фаза 0).
         .executableTarget(
@@ -24,6 +25,16 @@ let package = Package(
             dependencies: ["EpicCore"],
             path: "Sources/EpicPlayerMac",
             exclude: ["Resources/Info.plist"],
+            swiftSettings: [.swiftLanguageMode(.v5)]
+        ),
+
+        // Интеграционный зонд сетевого слоя. Собирается как .app с
+        // Info.plist — в отличие от swift test, реальные сокеты там
+        // работают. Запуск: ./Scripts/build-probe.sh
+        .executableTarget(
+            name: "SocketProbe",
+            dependencies: ["EpicCore"],
+            path: "Sources/SocketProbe",
             swiftSettings: [.swiftLanguageMode(.v5)]
         ),
 
