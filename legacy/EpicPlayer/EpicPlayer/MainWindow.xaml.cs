@@ -11,6 +11,8 @@ using System.Threading;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Windows.Controls;
+using EpicPlayer;
+using EpicPlayer.ViewModel;
 
 namespace SongReader
 {
@@ -107,6 +109,12 @@ namespace SongReader
             InitializeComponent();
             Closing += MainWindow_Closing;
             playbackPanel.IsEnabled = false;
+
+            //MediaOpened needed for TimeSpan
+            player.MediaOpened += new EventHandler(player_MediaOpened);
+
+            if (_mediaStatusTimer == null)
+                _mediaStatusTimer = new Timer(MediaStatusCallback, null, 500, 500);
 
             try
             {
@@ -251,9 +259,6 @@ namespace SongReader
                 if (_stopTimer == null)
                     _stopTimer = new Timer(StopTimerCallback, null, 1000, 1000);
 
-                //MediaOpened needed for TimeSpan
-                player.MediaOpened += new EventHandler(player_MediaOpened);
-
                 //shows songfile and opens in in the mediaplayer
                 songTitle.Content = openDialog.SafeFileName;
                 player.Open(new Uri(openDialog.FileName));
@@ -282,6 +287,16 @@ namespace SongReader
         {
             _suppressPlaybackCommands = true;
             WifiDevicesWindow w = new WifiDevicesWindow(_udpClient, ep);
+            w.Owner = this;
+            w.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            w.ShowDialog();
+            _suppressPlaybackCommands = false;
+        }
+        
+        private void deviceLookupTcp(object sender, RoutedEventArgs e)
+        {
+            _suppressPlaybackCommands = true;
+            WifiTcpDevicesWindow w = new WifiTcpDevicesWindow(_udpClient, ep);
             w.Owner = this;
             w.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             w.ShowDialog();
@@ -326,11 +341,112 @@ namespace SongReader
        
         private void player_MediaOpened(object sender, EventArgs e)
         {
+            lock(_syncPlayerObject)
             if (player.NaturalDuration.HasTimeSpan)
             {
                 _lastMsSent = 0;
-                //gets song's duration 
-               songEndTime.Content = TimeSpan.FromSeconds(player.NaturalDuration.TimeSpan.TotalSeconds).ToString(@"mm\:ss");
+                songEndTime.Content = TimeSpan.FromSeconds(player.NaturalDuration.TimeSpan.TotalSeconds).ToString(@"mm\:ss");
+                var v = player.Volume;
+                player.Volume = 0;
+
+                try
+                {
+                    if (player.HasAudio)
+                    {
+                        player.Play();
+                        player.Stop();
+                        playbackPanel.IsEnabled = true;
+                        noMediaLabel.Visibility = Visibility.Collapsed;
+                        ShowThreadInformation("Unlock branch");
+                    }
+                    else
+                    {
+                        playbackPanel.IsEnabled = false;
+                        noMediaLabel.Visibility = Visibility.Visible;
+                        ShowThreadInformation("Lock branch (else)");
+                    }
+                }
+                catch
+                {
+                    playbackPanel.IsEnabled = false;
+                    noMediaLabel.Visibility = Visibility.Visible;
+                    ShowThreadInformation("Unlock branch (catch)");
+                }
+                player.Volume = v;
+            }
+        }
+
+        private byte[] _playBytes = new byte[] { 0x50, 0x05, 0x02, 0, 0, 0, 0, 0x0d };
+
+        private byte[] _pauseBytes = new byte[] { 0x50, 0x05, 0x03, 0, 0, 0, 0, 0x0d };
+
+        private byte[] _stopBytes = new byte[] { 0x50, 0x05, 0x04, 0, 0, 0, 0, 0x0d };
+
+        private byte[] _nextTrackBytes = new byte[] { 0x50, 0x05, 0x05, 0, 0, 0, 0, 0x0d };
+
+        private byte[] _previousTrackBytes = new byte[] { 0x50, 0x05, 0x06, 0, 0, 0, 0, 0x0d };
+
+        private Timer _stopTimer = null;
+
+        private Timer _mediaStatusTimer = null;
+
+        private void Play(object sender, RoutedEventArgs e)
+        {
+            lock(_syncPlayerObject)
+            try
+            {
+                songStartTime.Content = TimeSpan.FromSeconds(player.Position.TotalSeconds).ToString(@"mm\:ss");
+                songEndTime.Content = TimeSpan.FromSeconds(player.NaturalDuration.TimeSpan.TotalSeconds).ToString(@"mm\:ss");
+                player.Play();
+                songTime.Start();
+                _playbackStatus = Status.play;
+                playStatus.Content = EnumHelper.GetDescription<Status>(_playbackStatus);
+
+                var cmd = _playBytes;
+                var timepoint = (UInt32)player.Position.TotalMilliseconds;
+                BitConverter.GetBytes(timepoint).CopyTo(cmd, 3);
+                if (_udpClient != null) _udpClient.Send(cmd, 8, ep);
+            }
+            catch (Exception ex)
+            {
+                playStatus.Content = ex.Message;
+            }
+        }
+
+        private void Back(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var cmd = _previousTrackBytes;
+                var timepoint = (UInt32)0;
+                BitConverter.GetBytes(timepoint).CopyTo(cmd, 3);
+                if (_udpClient != null) _udpClient.Send(cmd, 8, ep);
+            }
+            catch (Exception ex)
+            {
+                playStatus.Content = ex.Message;
+            }
+        }
+        
+        private void Forward(object sender, RoutedEventArgs e)
+        {
+            //songStartTime.Content = TimeSpan.FromSeconds(player.Position.TotalSeconds).ToString(@"mm\:ss");
+            //songEndTime.Content = TimeSpan.FromSeconds(player.NaturalDuration.TimeSpan.TotalSeconds).ToString(@"mm\:ss");
+            //player.Play();
+            //songTime.Start();
+            //_playbackStatus = Status.play;
+            //playStatus.Content = EnumHelper.GetDescription<Status>(_playbackStatus);
+
+            try
+            {
+                var cmd = _nextTrackBytes;
+                var timepoint = (UInt32)0;
+                BitConverter.GetBytes(timepoint).CopyTo(cmd, 3);
+                if (_udpClient != null) _udpClient.Send(cmd, 8, ep);
+            }
+            catch (Exception ex)
+            {
+                playStatus.Content = ex.Message;
             }
         }
 
@@ -375,55 +491,6 @@ namespace SongReader
             }
         }
 
-        private void Close(object sender, RoutedEventArgs e)
-        {
-            cleanClose();
-        }
-
-        public void cleanClose()
-        {
-            player.Close();
-            //set values back to zero
-            _playbackStatus = Status.stop;
-            playStatus.Content = EnumHelper.GetDescription<Status>(_playbackStatus);
-            songTitle.Content = null;
-            songProgress.Value = 0;
-            songStartTime.Content = "00:00";
-            songEndTime.Content = "00:00";
-            //stops timer from crashing program
-            songTime.Stop();
-        }
-
-        private byte[] _playBytes = new byte[] { 0x50, 0x05, 0x02, 0, 0, 0, 0, 0x0d };
-
-        private byte[]  _pauseBytes = new byte[] { 0x50, 0x05, 0x03, 0, 0, 0, 0, 0x0d };
-
-        private byte[] _stopBytes = new byte[] { 0x50, 0x05, 0x04, 0, 0, 0, 0, 0x0d };
-
-        private Timer _stopTimer = null;
-
-        private void Play(object sender, RoutedEventArgs e)
-        {
-            songStartTime.Content = TimeSpan.FromSeconds(player.Position.TotalSeconds).ToString(@"mm\:ss");
-            songEndTime.Content = TimeSpan.FromSeconds(player.NaturalDuration.TimeSpan.TotalSeconds).ToString(@"mm\:ss");
-            player.Play();
-            songTime.Start();
-            _playbackStatus = Status.play;
-            playStatus.Content = EnumHelper.GetDescription<Status>(_playbackStatus);
-
-            try
-            {
-                var cmd = _playBytes;
-                var timepoint = (UInt32)player.Position.TotalMilliseconds;
-                BitConverter.GetBytes(timepoint).CopyTo(cmd, 3);
-                if (_udpClient != null) _udpClient.Send(cmd, 8, ep);
-            }
-            catch (Exception ex)
-            {
-                playStatus.Content = ex.Message;
-            }
-        }
-
         private void StopTimerCallback(object arg)
         {
             try
@@ -436,10 +503,60 @@ namespace SongReader
                     _udpClient.Send(cmd, 8, ep);
                 }
             }
-            catch(Exception ex)
+            catch
             {
 
             }
+        }
+
+        static object _syncPlayerObject = new object();
+
+        private void MediaStatusCallback(object arg)
+        {
+            lock(_syncPlayerObject)
+            if (player != null)
+            {
+                player.Dispatcher.Invoke(() =>
+                {
+                    if (_playbackStatus != Status.stop || !player.NaturalDuration.HasTimeSpan) return;
+                    cleanClose();
+                    player = new MediaPlayer();
+                    player.Open(new Uri(songTitle.Content.ToString()));
+                });
+            }
+        }
+
+        private static void ShowThreadInformation(String taskName)
+        {
+            String msg = null;
+            Thread thread = Thread.CurrentThread;
+            //lock (_syncPlayerObject)
+            {
+                msg = String.Format("{0} thread information\n", taskName) +
+                      String.Format("   Background: {0}\n", thread.IsBackground) +
+                      String.Format("   Thread Pool: {0}\n", thread.IsThreadPoolThread) +
+                      String.Format("   Thread ID: {0}\n", thread.ManagedThreadId);
+            }
+            Console.WriteLine(msg);
+        }
+
+    private void Close(object sender, RoutedEventArgs e)
+        {
+            cleanClose();
+        }
+
+        public void cleanClose()
+        {
+            player.Close();
+            //set values back to zero
+            _playbackStatus = Status.stop;
+            playStatus.Content = EnumHelper.GetDescription<Status>(_playbackStatus);
+            //songTitle.Content = null;
+            songProgress.Value = 0;
+            songStartTime.Content = "00:00";
+            songEndTime.Content = "00:00";
+            //stops timer from crashing program
+            songTime.Stop();
         }
 
         private void volumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -447,6 +564,8 @@ namespace SongReader
             player.Volume = volumeSlider.Value;
             volumeLabel.Content = "Volume: " + (Math.Round(volumeSlider.Value * 100, 0)) + "%";
         }
+        
+        #region ArtNet code
 
         byte[] _dmxData = new byte[511];
 
@@ -520,5 +639,7 @@ namespace SongReader
                 }
             }
         }
+
+        #endregion
     }
 }

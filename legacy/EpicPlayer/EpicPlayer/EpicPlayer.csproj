@@ -57,9 +57,13 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ViewModel\RelayCommand.cs" />
+    <Compile Include="ViewModel\StateObject.cs" />
     <Compile Include="ViewModel\WifiInfoDevice.cs" />
     <Compile Include="WifiDevicesWindow.xaml.cs">
       <DependentUpon>WifiDevicesWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WifiTcpDevicesWindow.xaml.cs">
+      <DependentUpon>WifiTcpDevicesWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -80,6 +84,10 @@
     <Page Include="WifiDevicesWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="WifiTcpDevicesWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

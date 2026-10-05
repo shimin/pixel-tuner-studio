@@ -20,6 +20,7 @@
             <TextBox x:Name="boxMulticastAddress" ToolTip="Multicast Address" Margin="8,4" Visibility="Collapsed" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Height="22"/>
             <ComboBox x:Name="boxInterfaces" ToolTip="Network interface to communicate" HorizontalContentAlignment="Center" Margin="8,4" Height="24" SelectionChanged="BoxInterfaces_OnSelectionChanged"></ComboBox>
             <Button x:Name="DeviceLookup" Content="Device lookup" Height="32" Margin="8,3,8,2" Click="deviceLookup" />
+            <Button x:Name="DeviceLookupTcp" Content="Tcp Device lookup" Height="32" Margin="8,3,8,2" Click="deviceLookupTcp" />
             <Label x:Name="songTitle" Content="" Foreground="White" Margin="8"/>
             <ProgressBar x:Name="songProgress" BorderThickness="0" HorizontalAlignment="Stretch" Height="24" Margin="8,4" Background="#1aFFFFFF" Foreground="#FF29EE4D"/>
             <Grid Margin="8">
@@ -32,11 +33,16 @@
             </Grid>
         </StackPanel>
         <StackPanel x:Name="playbackPanel" Grid.Column="1" Orientation="Vertical" >
+            <Label x:Name="noMediaLabel" Content="No media available" Foreground="#cc0000" HorizontalAlignment="Center"/>
             <Button x:Name="playButton" Content="Play" Margin="8,8,8,4" Height="42" Click="Play"/>
             <Button x:Name="PauseButton" Content="Pause" Margin="8,4" Height="42" Click="Pause"/>
             <Button x:Name="stopButton" Content="Stop" Margin="8,4" Height="42" Click="Stop"/>
+            <StackPanel Orientation="Horizontal" Margin="4,4">
+                <Button x:Name="previousTrackButton" Content="previous" ToolTip="previous image" Width="85" Margin="4,4" Height="42" Click="Back"/>
+                <Button x:Name="nextTrackButton" Content="next" ToolTip="next image" Width="85" Margin="4,4" Height="42" Click="Forward"/>
+            </StackPanel>
             <Button x:Name="closeButton" Content="Close" Margin="8,4" Height="42" Click="Close" Visibility="Collapsed"/>
-            <Label x:Name="playStatus" Content="Status: Off" Margin="8,4" Foreground="White"/>
+            <Label x:Name="playStatus" Content="Status: Off" ToolTip="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}" Margin="8,4" Foreground="White"/>
             <Slider x:Name="volumeSlider" Maximum="1" TickFrequency="-1" Margin="8,4" ValueChanged="volumeSlider_ValueChanged"/>
             <Label x:Name="volumeLabel" Content="Volume: " Grid.Column="1" HorizontalAlignment="Left" Height="33" Margin="234.333,318,0,0" VerticalAlignment="Top" Width="162"/>
         </StackPanel>

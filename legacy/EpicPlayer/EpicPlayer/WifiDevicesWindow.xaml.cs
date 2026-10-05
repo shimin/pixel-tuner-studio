@@ -16,37 +16,6 @@ namespace SongReader
     /// </summary>
     public partial class WifiDevicesWindow : Window, INotifyPropertyChanged
     {
-        // State object for receiving data from remote device.
-        public class StateObject
-        {
-            // Client socket.
-            public Socket workSocket = null;
-            // Size of receive buffer.
-            public const int BufferSize = 256;
-            // Receive buffer.
-            public byte[] buffer = new byte[BufferSize];
-
-            public byte[] GetData()
-            {
-                if (buffer == null || buffer.Length < 29) return new byte[] {};
-                else
-                {
-                    var result = new byte[buffer.Length - 28];
-                    for (int i = 28; i < buffer.Length; i++)
-                        result[i - 28] = buffer[i];
-                    return result;
-                }
-            }
-            // Received data string.
-            public StringBuilder sb = new StringBuilder();
-
-            public Dictionary<string, WifiInfoDevice> DevicesDictionary = new Dictionary<string, WifiInfoDevice>();
-
-            public ObservableCollection<WifiInfoDevice> Devices = new ObservableCollection<WifiInfoDevice>();
-
-            public bool Continue = true;
-        }
-
         public ObservableCollection<WifiInfoDevice> _devices = new ObservableCollection<WifiInfoDevice>();
 
         public ObservableCollection<WifiInfoDevice> Devices
@@ -75,10 +44,16 @@ namespace SongReader
 
         public WifiDevicesWindow(UdpClient udpSender, IPEndPoint remoteEP)
         {
+            InitializeComponent();
+
+            if (remoteEP == null)
+            {
+                MessageBox.Show("No interface specified.");
+                return;
+            }
             _broadcastEP = remoteEP;
             _udpSender = udpSender;
             _goOn = true;
-            InitializeComponent();
             DataContext = this;
             Closing += WifiDevicesWindow_Closing;
             Devices.CollectionChanged += (sender, args) => { OnPropertyChanged("TotalDevices"); };
@@ -137,9 +112,10 @@ namespace SongReader
         {
             if (_udpSender != null)
             {
+                var infoPacket = new byte[] { 0x49, 00, 0x0d };
                 try
                 {
-                    _udpSender.Send(_packet, 3, _broadcastEP);
+                    _udpSender.Send(infoPacket, 3, _broadcastEP);
                 }
                 catch (Exception ex)
                 {
@@ -148,11 +124,15 @@ namespace SongReader
             }
         }
 
+        #region INotifyPropertyChanged
+
         public event PropertyChangedEventHandler PropertyChanged;
-        
+
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        } 
+
+        #endregion
     }
 }
