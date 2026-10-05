@@ -1,14 +1,110 @@
-# Song Player in Visual C# and WPF
-A nice sample of how to read, play, and analyze audio files in C# and WPF
+# EpicPlayer
 
-# Time to get rid of Window Media Player... maybe
-This is a simple audio player that allows you to load a file and then it plays and analyze the progression of the track
+Десктопное WPF-приложение, которое играет аудиодорожку локально и одновременно
+транслирует состояние воспроизведения на устройство по сети. Так один компьютер
+управляет и звуком, и шоу.
 
-This is a great example for anyone trying to get up and running with binary I/O as the code is all commented and allows for a jump start feel of WPF (Windows Presentation Foundation)
+Поддерживаются два независимых канала управления:
 
-#For people who are new to Visual Studios
-- Just clone, download, or even for this repository and open the SongReader.sln file
-- Once VS opens up find the "solution explorer" and open the MainWindow.xaml and the MainWindow.xaml.cs file inside it
-- this is the markup of the buttons and other UI and the code
-- press F5 or the run/start button in the top toolbar to enter debug mode
-- build the solution if you want this beautiful piece of software on your desktop
+- **собственный UDP-протокол** для прямой связи с устройством;
+- **Art-Net** (через вложенную библиотеку `eDmx.ArtNet`) для устройств в сети
+  света.
+
+> Разметка интерфейса выросла из туториала «Song Player» для WPF — поэтому
+> `MainWindow` до сих пор находится в пространстве имён `SongReader`.
+
+## Возможности
+
+- Загрузка и воспроизведение MP3/WAV через WPF `MediaPlayer`: play, pause, stop,
+  предыдущий/следующий трек, громкость, прошедшее и полное время, полоса прогресса.
+- Выбор сетевого интерфейса — без ручного ввода IP. В списке только поднятые
+  Ethernet- и Wi-Fi-интерфейсы, адрес назначения вычисляется по выбранному интерфейсу.
+- **Device lookup** (UDP) и **Tcp Device lookup** — просмотр устройств, отвечающих
+  на порту 333, по UDP и по TCP соответственно.
+- Отправка команд воспроизведения и текущей позиции на устройство.
+- Необязательный режим Art-Net: реакция на значения DMX из пульта для старта,
+  паузы или остановки.
+- Все настройки подключения сохраняются в пользовательские настройки и восстанавливаются
+  при следующем запуске.
+
+## Протокол
+
+Команды отправляются 8-байтовым UDP-пакетом на широковещательный адрес выбранного
+интерфейса (`x.x.x.255`) и порт **333**.
+
+| Смещение | Значение                                                              |
+| -------- | --------------------------------------------------------------------- |
+| 0–1      | Заголовок `0x50 0x05`                                                |
+| 2        | Команда: `02` play, `03` pause, `04` stop, `05` следующий, `06` предыдущий |
+| 3–6      | `UInt32` — позиция воспроизведения в миллисекундах (little endian)     |
+| 7        | Завершающий байт `0x0D`                                              |
+
+Во время воспроизведения текущая позиция дополнительно отправляется каждые 5 секунд,
+чтобы устройство, пропустившее команду, могло синхронизироваться по временной метке.
+
+```csharp
+byte[] play = { 0x50, 0x05, 0x02, 0, 0, 0, 0, 0x0d };
+BitConverter.GetBytes((UInt32)player.Position.TotalMilliseconds).CopyTo(play, 3);
+udpClient.Send(play, 8, ep);
+```
+
+## Требования
+
+- Windows
+- Visual Studio 2015 или новее
+- .NET Framework 4.5
+
+Внешние NuGet-пакеты и сервисы не требуются.
+
+## Сборка и запуск
+
+```sh
+git clone https://github.com/shimin/epicplayer.git
+cd epicplayer
+```
+
+Откройте `EpicPlayer.sln` в Visual Studio, соберите решение и нажмите **F5**.
+
+Сборка из командной строки:
+
+```sh
+msbuild EpicPlayer.sln /p:Configuration=Release
+```
+
+Исполняемый файл появится в `EpicPlayer/bin/Release/E-pic player.exe`.
+
+## Использование
+
+1. Выберите сетевой интерфейс в выпадающем списке в верхней части окна.
+2. При необходимости загрузите медиафайл — панель воспроизведения остаётся неактивной,
+   пока не будет открыт трек со звуковым потоком.
+3. Нажмите **Device lookup** или **Tcp Device lookup**, чтобы увидеть доступные устройства.
+4. Управляйте воспроизведением из приложения. Каждая команда дублируется в сеть, и
+   устройство следует за ней.
+
+### Режим Art-Net
+
+Включите **Use Art-Net**, чтобы открыть настройки Art-Net и подписаться на DMX-пакеты.
+Значения по умолчанию рассчитаны на сеть `192.168.88.0/24` и канал DMX, где значения
+`50`, `100` и `150` означают play, pause и stop. Действие выполняется только при
+*изменении* значения DMX, поэтому удержание кнопки не перезапускает трек многократно.
+
+## Структура проекта
+
+| Путь                    | Содержимое                                                |
+| ----------------------- | --------------------------------------------------------- |
+| `EpicPlayer.sln`        | Решение                                                    |
+| `EpicPlayer/`           | WPF-приложение: `MainWindow` и два окна поиска устройств   |
+| `EpicPlayer/ViewModel/` | `RelayCommand`, `WifiInfoDevice`, `StateObject`           |
+| `EpicPlayer/Styles/`    | Общие стили XAML                                          |
+| `eDmx.ArtNet/`          | Разбор Art-Net-пакетов и работа с сокетами                 |
+
+## Примечания
+
+- **«Предыдущий» и «следующий» работают только на устройстве.** Команда отправляется
+  на устройство, но локальный проигрыватель не переключает трек — что означает
+  «следующий» для шоу, решает само устройство.
+- Поле multicast-адреса сохраняется, но сейчас скрыто и не используется: адрес
+  назначения вычисляется по выбранному интерфейсу.
+- `eDmx.ArtNet/MyClass.cs` и закомментированный код транспорта `SerialDeviceBase`
+  в `WifiTcpDevicesWindow` — остатки прежней версии, их можно удалить.
