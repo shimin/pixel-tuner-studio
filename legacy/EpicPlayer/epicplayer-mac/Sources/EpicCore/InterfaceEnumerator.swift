@@ -2,7 +2,7 @@ import Darwin
 import Foundation
 
 /// Тип интерфейса по данным `Network.framework`.
-public enum InterfaceKind: String {
+public enum InterfaceKind: String, Sendable {
     case wiredEthernet
     case wifi
     case other
@@ -12,7 +12,7 @@ public enum InterfaceKind: String {
 
 /// IPv4-адрес на сетевом интерфейсе. Одна запись на адрес: если на
 /// интерфейсе их несколько, будет несколько записей.
-public struct NetworkInterface: Equatable, Identifiable {
+public struct NetworkInterface: Hashable, Identifiable, Sendable {
     /// Имя BSD: `en0`, `en7`.
     public let name: String
     /// Индекс для `IP_BOUND_IF`.

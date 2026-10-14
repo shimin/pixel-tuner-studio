@@ -2,7 +2,7 @@ import Foundation
 
 /// Пакет `ArtDmx` (OpCode `0x5000`). Остальные пакеты Art-Net
 /// приложение не обрабатывает — см. plans/porting-plan.md.
-public struct ArtDmxPacket: Equatable {
+public struct ArtDmxPacket: Equatable, Sendable {
     public static let headerID: [UInt8] = Array("Art-Net".utf8) + [0]
     public static let opCode: UInt16 = 0x5000
     public static let headerLength = 18
@@ -62,7 +62,7 @@ public struct ArtDmxPacket: Equatable {
 }
 
 /// Настройки реакции на DMX. Значения по умолчанию — как в Windows-версии.
-public struct DmxTriggerSettings: Equatable {
+public struct DmxTriggerSettings: Equatable, Sendable {
     /// Индекс в массиве DMX, с нуля — как `DmxData[ArtnetChannel]`
     /// в Windows-версии. 0 — первый канал.
     public var channel: Int

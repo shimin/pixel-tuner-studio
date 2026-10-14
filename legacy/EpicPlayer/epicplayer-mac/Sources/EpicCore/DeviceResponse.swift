@@ -5,7 +5,7 @@ import Foundation
 /// Формат известен частично (раздел 5 plans/protocol.md): маркер
 /// `0x49`, длина больше 3 байт, имя в байтах 47–58 в Windows-1251.
 /// Остальное хранится сырым для разбора на устройстве.
-public struct DeviceResponse: Equatable {
+public struct DeviceResponse: Equatable, Sendable {
     /// Байты имени, как `GetString(RawData, 47, 12)` в `WifiInfoDevice.cs:51`.
     public static let nameRange = 47..<59
 

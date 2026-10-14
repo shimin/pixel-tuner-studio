@@ -4,7 +4,7 @@ import Foundation
 ///
 /// Формат зафиксирован в plans/protocol.md и проверен тестами против
 /// Tests/Fixtures/protocol-vectors.json.
-public enum PlaybackCommand: UInt8, CaseIterable {
+public enum PlaybackCommand: UInt8, CaseIterable, Sendable {
     case play = 0x02
     case pause = 0x03
     case stop = 0x04

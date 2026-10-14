@@ -1,9 +1,9 @@
 # План портирования EpicPlayer на macOS (Swift / SwiftUI)
 
-Статус: фазы 1 и 2 — код написан, но не собирался и не запускался:
-в среде разработки нет Swift-тулчейна. Следующий шаг — сборка и
-`swift test` на Mac, затем проверка на устройстве через `epic-probe`
-(см. [Проверка фаз 1–2 на Mac](#проверка-фаз-12-на-mac)).
+Статус: фазы 1–5 — код написан, но не собирался и не запускался:
+в среде разработки нет Swift-тулчейна. Последний этап — сборка,
+исправление ошибок компиляции, `swift test`, затем проверка на
+устройстве (см. [Проверка на Mac](#проверка-на-mac)) и фаза 6.
 Дата составления: 2026-10-05. Обновлено: 2026-10-14.
 
 Обозначения в фазах: `[x]` — код написан, `[ ]` — не сделано.
@@ -226,8 +226,8 @@ epicplayer-mac/
 - [x] Создать SwiftPM-пакет `EpicCore`
 - [ ] ~~Создать Xcode-проект приложения~~ — заменено сборкой `.app`
       скриптом из SwiftPM, см. app-design.md, раздел 2
-- [ ] Добавить `NSLocalNetworkUsageDescription` в `Info.plist` (фаза 5)
-- [ ] Задать идентификатор бандла и номер версии (фаза 5)
+- [x] Добавить `NSLocalNetworkUsageDescription` в `Info.plist`
+- [x] Задать идентификатор бандла (`com.epicplayer.mac`) и версию (1.0.0)
 
 ### Фаза 1. Протокол, без UI и без сети
 
@@ -287,39 +287,40 @@ epicplayer-mac/
 
 Детали — [`app-design.md`](app-design.md), раздел 4.
 
-- [ ] Протокол `AudioEngine` и реализация на `AVAudioPlayer`: позиция,
+- [x] Протокол `AudioEngine` и реализация на `AVAudioPlayer`: позиция,
       длительность, play / pause / stop с явным сбросом позиции, громкость,
       окончание трека через делегат
-- [ ] `prepareToPlay()` вместо «разблокировки» play + stop
+- [x] `prepareToPlay()` вместо «разблокировки» play + stop
 - [ ] Проверка: аудио и позиция совпадают **(на Mac)**
 
 ### Фаза 4. Интерфейс
 
 Детали — [`app-design.md`](app-design.md), разделы 5–8 и 10.
 
-- [ ] `Package.swift`: таргеты `EpicPlayerKit` и `EpicPlayerMac`, macOS 15,
+- [x] `Package.swift`: таргеты `EpicPlayerKit` и `EpicPlayerMac`, macOS 15,
       tools 6.0, язык Swift 5
-- [ ] `AppSettings` + `SettingsStore` на `UserDefaults`, сохранение
+- [x] `AppSettings` + `SettingsStore` на `UserDefaults`, сохранение
       при изменении
-- [ ] `PlayerModel` — состояние и команды главного окна
-- [ ] `DeviceLookupModel` — UDP и TCP режимы
-- [ ] `MainView` — компоновка по `MainWindow.xaml`
-- [ ] `ArtNetSettingsView` — панель Art-Net
-- [ ] `DeviceLookupView` — список устройств, Play и Stop в строке
-- [ ] `PlaybackClock` — таймеры 0,25 с и 1 с в режиме `.common`
-- [ ] Тесты `EpicPlayerKitTests` на фейках (раздел 11 дизайна)
+- [x] `PlayerModel` — состояние и команды главного окна
+- [x] `DeviceLookupModel` — UDP и TCP режимы
+- [x] `MainView` — компоновка по `MainWindow.xaml`
+- [x] `ArtNetSettingsView` — панель Art-Net
+- [x] `DeviceLookupView` — список устройств, Play и Stop в строке
+- [x] `PlaybackClock` — таймеры 0,25 с и 1 с в режиме `.common`
+- [x] Тесты `EpicPlayerKitTests` на фейках (раздел 11 дизайна)
+- [ ] Сборка и `swift test` **(не собиралось)**
 
 ### Фаза 5. Сборка и интеграция
 
-- [ ] Адаптеры `ShowConnection` и `ArtNetReceiver` к протоколам модели,
+- [x] Адаптеры `ShowConnection` и `ArtNetReceiver` к протоколам модели,
       перенос колбэков на главный поток
-- [ ] Периодическая отправка позиции раз в секунду во время
+- [x] Периодическая отправка позиции раз в секунду во время
       воспроизведения (решение владельца, см. [`protocol.md`](protocol.md))
-- [ ] Повтор stop с позицией 0 раз в секунду, пока плеер остановлен —
+- [x] Повтор stop с позицией 0 раз в секунду, пока плеер остановлен —
       Windows-версия делает так (`StopTimerCallback`), см. protocol.md
-- [ ] Реакция на DMX через `DmxTrigger`
-- [ ] `Support/Info.plist` с `NSLocalNetworkUsageDescription`
-- [ ] `scripts/build-app.sh`: бандл, иконка из `icon.ico`, ad-hoc подпись
+- [x] Реакция на DMX через `DmxTrigger`
+- [x] `Support/Info.plist` с `NSLocalNetworkUsageDescription`
+- [x] `scripts/build-app.sh`: бандл, иконка из `icon.ico`, ad-hoc подпись
 - [ ] Проверка сборки и запуска вне Xcode **(на Mac)**
 
 ### Фаза 6. Проверка на устройстве
@@ -331,29 +332,31 @@ epicplayer-mac/
 - [ ] Art-Net: команда с пульта запускает трек
 - [ ] Разрешение на локальную сеть запрашивается корректно
 
-## Проверка фаз 1–2 на Mac
+## Проверка на Mac
 
-Код фаз 1 и 2 написан без компилятора. Порядок проверки:
+Код фаз 1–5 написан без компилятора. Порядок проверки:
 
 1. `cd epicplayer-mac && swift build` — исправить ошибки компиляции.
-2. `swift test` — эталоны протокола и сетевая логика.
-3. `swift run epic-probe interfaces --all` — правильный ли интерфейс
+2. `swift test` — эталоны протокола, сетевая логика, модели приложения.
+3. `scripts/build-app.sh`, `open build/EpicPlayer.app` — окно, выбор
+   файла, воспроизведение, позиция и громкость (фаза 3).
+4. `swift run epic-probe interfaces --all` — правильный ли интерфейс
    попадает в список и не пролезли ли виртуальные (подводный камень 2).
 
 На устройстве шоу (Mac и устройство в одной сети):
 
-4. `epic-probe lookup en0` — устройство находится, имя читается.
+5. `epic-probe lookup en0` — устройство находится, имя читается.
    Сырые байты ответа сохранить для разбора формата (открытый вопрос 3).
-5. `epic-probe send en0 play 0`, затем `pause 5000`, `stop` — устройство
+6. `epic-probe send en0 play 0`, затем `pause 5000`, `stop` — устройство
    реагирует. При наличии VPN проверить, что пакет не ушёл в `utun`
    (подводный камень 1).
-6. `epic-probe listen en0` — что устройство шлёт само.
-7. `epic-probe tcp en0`, затем `epic-probe tcp en0 --legacy-address` —
+7. `epic-probe listen en0` — что устройство шлёт само.
+8. `epic-probe tcp en0`, затем `epic-probe tcp en0 --legacy-address` —
    какой адрес в объявлении устройство принимает (расхождение 4
    в протоколе). Что идёт по соединению — записать.
-8. `epic-probe artnet en0` с пультом или софтом Art-Net — значения
+9. `epic-probe artnet en0` с пультом или софтом Art-Net — значения
    канала и срабатывания play/pause/stop.
-9. При первом запуске: запрос macOS на локальную сеть и firewall
+10. При первом запуске: запрос macOS на локальную сеть и firewall
    (подводные камни 3 и 7). У CLI из терминала разрешение берётся
    от терминала, у приложения будет своё.
 

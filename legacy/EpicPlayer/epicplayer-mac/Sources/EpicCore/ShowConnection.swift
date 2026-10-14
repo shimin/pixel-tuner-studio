@@ -70,11 +70,17 @@ public final class ShowConnection: @unchecked Sendable {
 
     /// Команда одному устройству. Windows-версия делает так из окна
     /// device lookup: unicast на `WifiPort` (333), позиция всегда 0.
-    public func send(_ command: PlaybackCommand, positionMilliseconds: UInt32 = 0, to device: IPv4Address) throws {
+    /// В TCP-режиме lookup — на порт, с которого устройство подключилось.
+    public func send(
+        _ command: PlaybackCommand,
+        positionMilliseconds: UInt32 = 0,
+        to device: IPv4Address,
+        port: UInt16 = ShowConnection.port
+    ) throws {
         try socket.send(
             PlaybackPacket.encode(command, positionMilliseconds: positionMilliseconds),
             to: device,
-            port: Self.port
+            port: port
         )
     }
 

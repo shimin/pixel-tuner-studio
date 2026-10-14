@@ -4,8 +4,11 @@
 Общий план и статусы — в [`porting-plan.md`](porting-plan.md), формат
 пакетов — в [`protocol.md`](protocol.md).
 
-Дата: 2026-10-14. Всё ниже пишется без компилятора; сборка, тесты
-и проверка в сети — последний этап (см. porting-plan.md).
+Дата: 2026-10-14. Статус: код по этому дизайну написан без компилятора;
+сборка, тесты и проверка в сети — последний этап (см. porting-plan.md).
+
+Горячих клавиш нет, как в Windows-версии: пробел как Play/Pause
+перехватывался бы в полях Art-Net.
 
 ## 1. Цели и границы
 
@@ -46,8 +49,7 @@ epicplayer-mac/
 │   ├── EpicPlayerMac/     SwiftUI: App и Views
 │   └── EpicProbe/         CLI для проверки на устройстве
 ├── Support/
-│   ├── Info.plist
-│   └── EpicPlayer.entitlements   пустой: без песочницы
+│   └── Info.plist
 ├── scripts/
 │   └── build-app.sh       swift build → EpicPlayer.app → ad-hoc подпись
 └── Tests/
@@ -72,8 +74,9 @@ epicplayer-mac/
 4. `Contents/Resources/AppIcon.icns` ← `EpicPlayer/icon.ico` через `sips`
    и `iconutil`; при ошибке конвертации — сборка без иконки, с
    предупреждением
-5. `codesign --force --sign - --entitlements …` — ad-hoc подпись.
-   Developer ID и нотаризация — отдельный шаг распространения.
+5. `codesign --force --sign -` — ad-hoc подпись. Entitlements не нужны:
+   без песочницы сеть доступна и так. Developer ID, hardened runtime и
+   нотаризация — отдельный шаг распространения.
 
 ## 3. Слои и потоки
 
@@ -304,8 +307,6 @@ Previous/Next в Windows тоже в этой панели — тоже недо
 └──────────────────────────────┴──────────────┴─────────────┘
 ```
 
-- Пробел — Play/Pause, как принято в macOS. В Windows горячих клавиш нет;
-  это дополнение не меняет протокол.
 - Device lookup — `.sheet` с `DeviceLookupView`.
 - Открытие файла — `.fileImporter`, типы `.audio` (mp3, wav, m4a, aiff).
 

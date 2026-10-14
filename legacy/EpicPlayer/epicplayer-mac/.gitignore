@@ -3,6 +3,9 @@
 .swiftpm/
 Package.resolved
 
+# Бандл из scripts/build-app.sh
+build/
+
 # Кэш компилятора и временные файлы
 .tmp/
 *.o
