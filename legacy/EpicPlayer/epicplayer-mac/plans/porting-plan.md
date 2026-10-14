@@ -185,6 +185,7 @@ epicplayer-mac/
 ├── plans/
 │   ├── porting-plan.md      этот файл
 │   ├── app-design.md        детальный дизайн фаз 3–5
+│   ├── final-session.md     план отладки на Mac и завершения
 │   └── protocol.md          контракт формата пакетов
 ├── Package.swift            библиотека протокола и сети
 ├── Sources/
@@ -206,7 +207,10 @@ epicplayer-mac/
 │   ├── EpicPlayerKit/       модели, аудио, настройки — без SwiftUI
 │   └── EpicPlayerMac/       SwiftUI: App и Views (исполняемый таргет)
 ├── Support/                 Info.plist, entitlements
-├── scripts/build-app.sh     сборка EpicPlayer.app
+├── scripts/
+│   ├── build-app.sh         сборка EpicPlayer.app
+│   ├── fake-device.py       имитатор устройства для проверки без железа
+│   └── send-artdmx.py       отправка ArtDmx без пульта
 └── Tests/
     ├── EpicCoreTests/       тесты протокола и сетевой логики: swift test
     ├── EpicPlayerKitTests/  тесты моделей на фейках
@@ -333,6 +337,10 @@ epicplayer-mac/
 - [ ] Разрешение на локальную сеть запрашивается корректно
 
 ## Проверка на Mac
+
+Подробный план финальной сессии — места риска при сборке, тесты,
+проверки в сети и на устройстве, релиз, журнал результатов — в
+[`final-session.md`](final-session.md). Ниже — краткая версия.
 
 Код фаз 1–5 написан без компилятора. Порядок проверки:
 
