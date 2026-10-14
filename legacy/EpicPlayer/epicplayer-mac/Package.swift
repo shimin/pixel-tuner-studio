@@ -8,10 +8,13 @@ let package = Package(
     name: "EpicCore",
     platforms: [.macOS(.v13)],
     products: [
-        .library(name: "EpicCore", targets: ["EpicCore"])
+        .library(name: "EpicCore", targets: ["EpicCore"]),
+        // Проверка сетевого слоя на устройстве без UI: swift run epic-probe
+        .executable(name: "epic-probe", targets: ["EpicProbe"])
     ],
     targets: [
         .target(name: "EpicCore"),
+        .executableTarget(name: "EpicProbe", dependencies: ["EpicCore"]),
         .testTarget(name: "EpicCoreTests", dependencies: ["EpicCore"])
     ]
 )

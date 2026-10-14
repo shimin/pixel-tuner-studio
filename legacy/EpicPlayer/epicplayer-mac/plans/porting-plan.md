@@ -1,7 +1,13 @@
 # План портирования EpicPlayer на macOS (Swift / SwiftUI)
 
-Статус: план согласован, реализация не начата.
-Дата составления: 2026-10-05.
+Статус: фазы 1 и 2 — код написан, но не собирался и не запускался:
+в среде разработки нет Swift-тулчейна. Следующий шаг — сборка и
+`swift test` на Mac, затем проверка на устройстве через `epic-probe`
+(см. [Проверка фаз 1–2 на Mac](#проверка-фаз-12-на-mac)).
+Дата составления: 2026-10-05. Обновлено: 2026-10-14.
+
+Обозначения в фазах: `[x]` — код написан, `[ ]` — не сделано.
+Пункты «проверка» закрываются только по результату на Mac или устройстве.
 
 ## Решение
 
@@ -182,11 +188,20 @@ epicplayer-mac/
 ├── Package.swift            библиотека протокола и сети
 ├── Sources/
 │   ├── EpicCore/            протокол, сокеты, Art-Net  (модуль SwiftPM)
-│   │   ├── PlaybackCommand.swift
-│   │   ├── DeviceDiscovery.swift
-│   │   ├── InterfaceEnumerator.swift
-│   │   ├── BroadcastSocket.swift
-│   │   └── ArtNetReceiver.swift
+│   │   ├── PlaybackCommand.swift      8-байтовый пакет команды
+│   │   ├── DeviceDiscovery.swift      запрос UDP, объявление TCP
+│   │   ├── DeviceResponse.swift       разбор ответа устройства
+│   │   ├── IPv4Address+Math.swift     broadcast по маске
+│   │   ├── InterfaceEnumerator.swift  getifaddrs + фильтр
+│   │   ├── InterfaceTypeProbe.swift   тип интерфейса через NWPathMonitor
+│   │   ├── SocketSupport.swift        setsockopt, sockaddr_in
+│   │   ├── BroadcastSocket.swift      UDP + SO_BROADCAST + IP_BOUND_IF
+│   │   ├── ShowConnection.swift       канал UDP 333: команды и lookup
+│   │   ├── TCPCallbackListener.swift  TCP 3331 для TCP-lookup
+│   │   ├── ArtDmx.swift               разбор ArtDmx, реакция на DMX
+│   │   ├── ArtNetReceiver.swift       приём на 6454
+│   │   ├── Locked.swift, Log.swift
+│   ├── EpicProbe/           CLI для проверки на устройстве: swift run epic-probe
 │   └── EpicPlayerMac/       приложение (Xcode project)
 │       ├── App/
 │       │   ├── EpicPlayerMacApp.swift
@@ -200,7 +215,9 @@ epicplayer-mac/
 │           ├── DeviceLookupView.swift
 │           └── ArtNetSettingsView.swift
 └── Tests/
-    └── EpicCoreTests/       тесты протокола, запуск: swift test
+    ├── EpicCoreTests/       тесты протокола и сетевой логики: swift test
+    ├── Fixtures/            эталонные байты, общие с Windows
+    └── WindowsReference/    проверка эталонов на C#, запуск на Windows
 ```
 
 Разделение осознанное: `EpicCore` собирается и тестируется через
@@ -211,7 +228,8 @@ epicplayer-mac/
 
 ### Фаза 0. Подготовка
 
-- [ ] Создать SwiftPM-пакет `EpicCore` и Xcode-проект приложения
+- [x] Создать SwiftPM-пакет `EpicCore`
+- [ ] Создать Xcode-проект приложения
 - [ ] Добавить `NSLocalNetworkUsageDescription` в `Info.plist`
 - [ ] Задать идентификатор бандла и номер версии
 - [ ] Проверить сборку пустого приложения
@@ -221,27 +239,54 @@ epicplayer-mac/
 Самая дешёвая фаза, дающая уверенность в основах. Ничего не зависит
 от устройства и от тулчейна.
 
-- [ ] `PlaybackCommand` — сборка 8-байтового пакета
-- [ ] `DeviceDiscovery` — 3-байтовый UDP и 9-байтовый TCP запрос
-- [ ] Явный little endian для `UInt32` позиции и `UInt16` порта
-- [ ] Тесты на побайтовое совпадение с эталоном из Windows-версии
-- [ ] `swift test` — зелёные
-- [ ] Выбрать язык Swift 5 в настройках сборки, не Swift 6
+- [x] `PlaybackCommand` — сборка 8-байтового пакета
+- [x] `DeviceDiscovery` — 3-байтовый UDP и 9-байтовый TCP запрос
+- [x] Явный little endian для `UInt32` позиции и `UInt16` порта
+- [x] Тесты на побайтовое совпадение с эталоном из Windows-версии
+      (`Tests/Fixtures/protocol-vectors.json`)
+- [ ] `swift test` — зелёные **(не запускались)**
+- [ ] `WindowsReference` на Windows — эталоны совпадают **(не запускался)**
+- [x] Язык Swift 5: `swift-tools-version:5.7` в `Package.swift`
 
 Здесь же снимается риск из пункта 5: тесты фиксируют формат байт
 до появления сетевого и UI-кода.
 
 ### Фаза 2. Сетевой слой
 
-- [ ] `InterfaceEnumerator` — список интерфейсов через
-      `NWPath.availableInterfaces`, адреса через `getifaddrs`
-- [ ] Фильтрация виртуальных интерфейсов
-- [ ] `BroadcastSocket` — `SO_BROADCAST` + `IP_BOUND_IF` + биндинг
-- [ ] Вычисление broadcast-адреса по маске (не только /24)
-- [ ] Приём UDP-ответов устройств, поиск по порту 333
-- [ ] TCP listener по поводу Open → 9-байтовый ответ
-- [ ] `ArtNetReceiver` — приём `ArtDmx` на 6454
+- [x] `InterfaceEnumerator` — адреса через `getifaddrs`, тип через
+      `NWPathMonitor` (`InterfaceTypeProbe`)
+- [x] Фильтрация виртуальных интерфейсов: флаги + префиксы имён
+      (`utun`, `awdl`, `llw`, `bridge`, `ap`, `anpi`, …)
+- [x] `BroadcastSocket` — `SO_BROADCAST` + `SO_REUSEPORT` + `IP_BOUND_IF`
+      + биндинг на `0.0.0.0` (см. отступления ниже)
+- [x] Вычисление broadcast-адреса по маске (не только /24)
+- [x] Приём UDP-ответов устройств на 333 (`ShowConnection`), разбор
+      имени в Windows-1251 (`DeviceResponse`), отсев своих пакетов
+- [x] TCP listener на 3331 и 9-байтовое объявление (`TCPCallbackListener`);
+      адрес в объявлении переключаемый — свой или broadcast, как в Windows
+- [x] `ArtNetReceiver` — приём `ArtDmx` на 6454; `DmxTrigger` —
+      реакция на изменение канала (нужна в фазе 5, логика чистая)
+- [x] Тесты чистой логики: broadcast, фильтр, ответ устройства,
+      ArtDmx, DMX-триггер (`NetworkLogicTests.swift`)
+- [x] `epic-probe` — CLI для проверки без UI
+- [ ] Сборка на Mac **(не собиралось)**
 - [ ] **Проверка на реальном устройстве**
+
+Отступления от плана, принятые при написании:
+
+- **Биндинг на `0.0.0.0`, а не на адрес интерфейса.** На macOS сокет,
+  привязанный к unicast-адресу, не получает broadcast-пакеты, а ответы
+  устройства могут прийти на broadcast. Интерфейс ограничивается через
+  `IP_BOUND_IF` — он действует и на отправку, и на приём.
+- **BSD-сокеты, а не `Network.framework`.** `NWConnection` не даёт
+  выставить `IP_BOUND_IF` и слушать broadcast на том же порту, с которого
+  идёт отправка. `Network` используется только для типа интерфейса.
+- **`Network` импортируется в одном файле** (`InterfaceTypeProbe.swift`):
+  в нём есть свой `IPv4Address`, пересекающийся с нашим. В приложении,
+  где нужны оба модуля, придётся писать `EpicCore.IPv4Address`.
+  Открыто: переименовать наш тип, пока на него мало ссылок.
+- **Art-Net слушает `0.0.0.0` + интерфейс**, а не IP из настроек, как
+  Windows-версия: по той же причине с broadcast.
 
 ### Фаза 3. Аудио
 
@@ -266,7 +311,10 @@ epicplayer-mac/
 - [ ] Связка: команда в UI → протокол → сокет
 - [ ] Периодическая отправка позиции раз в секунду, во время
       воспроизведения (решение владельца, см. [`protocol.md`](protocol.md))
+- [ ] Повтор stop с позицией 0 раз в секунду, пока плеер остановлен —
+      Windows-версия делает так (`StopTimerCallback`), см. protocol.md
 - [ ] Реакция на DMX с защитой от повторного срабатывания
+      (логика уже в `DmxTrigger`, осталось подключить к плееру)
 - [ ] Иконка приложения (`.icns`)
 - [ ] Проверка сборки и запуска вне Xcode
 
@@ -278,6 +326,34 @@ epicplayer-mac/
 - [ ] Device lookup по TCP устанавливает соединение
 - [ ] Art-Net: команда с пульта запускает трек
 - [ ] Разрешение на локальную сеть запрашивается корректно
+
+## Проверка фаз 1–2 на Mac
+
+Код фаз 1 и 2 написан без компилятора. Порядок проверки:
+
+1. `cd epicplayer-mac && swift build` — исправить ошибки компиляции.
+2. `swift test` — эталоны протокола и сетевая логика.
+3. `swift run epic-probe interfaces --all` — правильный ли интерфейс
+   попадает в список и не пролезли ли виртуальные (подводный камень 2).
+
+На устройстве шоу (Mac и устройство в одной сети):
+
+4. `epic-probe lookup en0` — устройство находится, имя читается.
+   Сырые байты ответа сохранить для разбора формата (открытый вопрос 3).
+5. `epic-probe send en0 play 0`, затем `pause 5000`, `stop` — устройство
+   реагирует. При наличии VPN проверить, что пакет не ушёл в `utun`
+   (подводный камень 1).
+6. `epic-probe listen en0` — что устройство шлёт само.
+7. `epic-probe tcp en0`, затем `epic-probe tcp en0 --legacy-address` —
+   какой адрес в объявлении устройство принимает (расхождение 4
+   в протоколе). Что идёт по соединению — записать.
+8. `epic-probe artnet en0` с пультом или софтом Art-Net — значения
+   канала и срабатывания play/pause/stop.
+9. При первом запуске: запрос macOS на локальную сеть и firewall
+   (подводные камни 3 и 7). У CLI из терминала разрешение берётся
+   от терминала, у приложения будет своё.
+
+Логи: `log stream --predicate 'subsystem == "com.epicplayer.mac"' --level debug`.
 
 ## Решения владельца проекта
 
