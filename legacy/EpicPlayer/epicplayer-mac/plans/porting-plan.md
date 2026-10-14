@@ -184,6 +184,7 @@ macOS 15+ требует разрешения на доступ к локаль�
 epicplayer-mac/
 ├── plans/
 │   ├── porting-plan.md      этот файл
+│   ├── app-design.md        детальный дизайн фаз 3–5
 │   └── protocol.md          контракт формата пакетов
 ├── Package.swift            библиотека протокола и сети
 ├── Sources/
@@ -202,26 +203,20 @@ epicplayer-mac/
 │   │   ├── ArtNetReceiver.swift       приём на 6454
 │   │   ├── Locked.swift, Log.swift
 │   ├── EpicProbe/           CLI для проверки на устройстве: swift run epic-probe
-│   └── EpicPlayerMac/       приложение (Xcode project)
-│       ├── App/
-│       │   ├── EpicPlayerMacApp.swift
-│       │   └── AppSettings.swift
-│       ├── Audio/
-│       │   └── AudioPlayer.swift
-│       ├── ViewModels/
-│       │   └── MainViewModel.swift
-│       └── Views/
-│           ├── MainView.swift
-│           ├── DeviceLookupView.swift
-│           └── ArtNetSettingsView.swift
+│   ├── EpicPlayerKit/       модели, аудио, настройки — без SwiftUI
+│   └── EpicPlayerMac/       SwiftUI: App и Views (исполняемый таргет)
+├── Support/                 Info.plist, entitlements
+├── scripts/build-app.sh     сборка EpicPlayer.app
 └── Tests/
     ├── EpicCoreTests/       тесты протокола и сетевой логики: swift test
+    ├── EpicPlayerKitTests/  тесты моделей на фейках
     ├── Fixtures/            эталонные байты, общие с Windows
     └── WindowsReference/    проверка эталонов на C#, запуск на Windows
 ```
 
-Разделение осознанное: `EpicCore` собирается и тестируется через
-`swift test` из командной строки, без Xcode и без UI. Это позволяет
+Разделение осознанное: `EpicCore` и `EpicPlayerKit` собираются и
+тестируются через `swift test` из командной строки, без Xcode и без UI.
+Подробности раскладки — app-design.md, раздел 2. Это позволяет
 проверить протокол на железе до написания интерфейса.
 
 ## Фазы работ
@@ -229,10 +224,10 @@ epicplayer-mac/
 ### Фаза 0. Подготовка
 
 - [x] Создать SwiftPM-пакет `EpicCore`
-- [ ] Создать Xcode-проект приложения
-- [ ] Добавить `NSLocalNetworkUsageDescription` в `Info.plist`
-- [ ] Задать идентификатор бандла и номер версии
-- [ ] Проверить сборку пустого приложения
+- [ ] ~~Создать Xcode-проект приложения~~ — заменено сборкой `.app`
+      скриптом из SwiftPM, см. app-design.md, раздел 2
+- [ ] Добавить `NSLocalNetworkUsageDescription` в `Info.plist` (фаза 5)
+- [ ] Задать идентификатор бандла и номер версии (фаза 5)
 
 ### Фаза 1. Протокол, без UI и без сети
 
@@ -290,33 +285,42 @@ epicplayer-mac/
 
 ### Фаза 3. Аудио
 
-- [ ] `AudioPlayer` на `AVAudioPlayer` — обёртка с теми же свойствами,
-      что использует текущий код: позиция, длительность, play / pause /
-      stop, громкость
-- [ ] Разблокировка аудиоустройства при старте
-- [ ] Проверка: аудио и позиция совпадают
+Детали — [`app-design.md`](app-design.md), раздел 4.
+
+- [ ] Протокол `AudioEngine` и реализация на `AVAudioPlayer`: позиция,
+      длительность, play / pause / stop с явным сбросом позиции, громкость,
+      окончание трека через делегат
+- [ ] `prepareToPlay()` вместо «разблокировки» play + stop
+- [ ] Проверка: аудио и позиция совпадают **(на Mac)**
 
 ### Фаза 4. Интерфейс
 
-- [ ] `MainView` — компоновка по `MainWindow.xaml`:
-      выбор интерфейса, кнопки device lookup, транспорт, громкость
-- [ ] `ArtNetSettingsView` — настройки Art-Net
-- [ ] `DeviceLookupView` — список устройств, IP, имя,
-      кнопки Play и Stop
-- [ ] `AppSettings` на `UserDefaults`, сохранение при выходе
-- [ ] Локальный таймер позиции, `in: .common`
+Детали — [`app-design.md`](app-design.md), разделы 5–8 и 10.
+
+- [ ] `Package.swift`: таргеты `EpicPlayerKit` и `EpicPlayerMac`, macOS 15,
+      tools 6.0, язык Swift 5
+- [ ] `AppSettings` + `SettingsStore` на `UserDefaults`, сохранение
+      при изменении
+- [ ] `PlayerModel` — состояние и команды главного окна
+- [ ] `DeviceLookupModel` — UDP и TCP режимы
+- [ ] `MainView` — компоновка по `MainWindow.xaml`
+- [ ] `ArtNetSettingsView` — панель Art-Net
+- [ ] `DeviceLookupView` — список устройств, Play и Stop в строке
+- [ ] `PlaybackClock` — таймеры 0,25 с и 1 с в режиме `.common`
+- [ ] Тесты `EpicPlayerKitTests` на фейках (раздел 11 дизайна)
 
 ### Фаза 5. Сборка и интеграция
 
-- [ ] Связка: команда в UI → протокол → сокет
-- [ ] Периодическая отправка позиции раз в секунду, во время
+- [ ] Адаптеры `ShowConnection` и `ArtNetReceiver` к протоколам модели,
+      перенос колбэков на главный поток
+- [ ] Периодическая отправка позиции раз в секунду во время
       воспроизведения (решение владельца, см. [`protocol.md`](protocol.md))
 - [ ] Повтор stop с позицией 0 раз в секунду, пока плеер остановлен —
       Windows-версия делает так (`StopTimerCallback`), см. protocol.md
-- [ ] Реакция на DMX с защитой от повторного срабатывания
-      (логика уже в `DmxTrigger`, осталось подключить к плееру)
-- [ ] Иконка приложения (`.icns`)
-- [ ] Проверка сборки и запуска вне Xcode
+- [ ] Реакция на DMX через `DmxTrigger`
+- [ ] `Support/Info.plist` с `NSLocalNetworkUsageDescription`
+- [ ] `scripts/build-app.sh`: бандл, иконка из `icon.ico`, ad-hoc подпись
+- [ ] Проверка сборки и запуска вне Xcode **(на Mac)**
 
 ### Фаза 6. Проверка на устройстве
 
