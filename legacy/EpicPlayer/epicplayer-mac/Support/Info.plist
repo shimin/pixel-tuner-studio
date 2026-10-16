@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleExecutable</key>
+	<string>EpicPlayer</string>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
+	<!-- Стабильный: иначе обновление будет считаться другим приложением,
+	     а разрешение на локальную сеть придётся выдавать заново. -->
+	<key>CFBundleIdentifier</key>
+	<string>com.epicplayer.mac</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>EpicPlayer</string>
+	<key>CFBundleDisplayName</key>
+	<string>E-pic player</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<!-- Синхронно с AssemblyVersion Windows-версии. -->
+	<key>CFBundleShortVersionString</key>
+	<string>1.0.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>15.0</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.music</string>
+	<!-- Без этого ключа macOS 15+ не даст доступа к устройствам в LAN
+	     (подводный камень 3 в plans/porting-plan.md). -->
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>E-pic player sends playback commands to show devices and listens for their replies and Art-Net on the local network.</string>
+	<key>NSHighResolutionCapable</key>
+	<true/>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+</dict>
+</plist>

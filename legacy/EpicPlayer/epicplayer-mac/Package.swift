@@ -1,43 +1,27 @@
 // swift-tools-version:6.0
 import PackageDescription
 
-// Язык Swift 5, не Swift 6: строгая проверка конкурентности включается
-// постепенно, начиная с сетевого кода.
+// Tools 6.0 нужен для .macOS(.v15). Язык — Swift 5: строгая проверка
+// конкурентности Swift 6 включается позже и постепенно.
+// Раскладка таргетов — plans/app-design.md, раздел 2.
 let package = Package(
-    name: "EpicCore",
+    name: "EpicPlayer",
     platforms: [.macOS(.v15)],
     products: [
         .library(name: "EpicCore", targets: ["EpicCore"]),
+        .library(name: "EpicPlayerKit", targets: ["EpicPlayerKit"]),
+        // Приложение. Бандл .app собирает scripts/build-app.sh.
         .executable(name: "EpicPlayerMac", targets: ["EpicPlayerMac"]),
-                .executable(name: "SocketProbe", targets: ["SocketProbe"])
+        // Проверка сетевого слоя на устройстве без UI: swift run epic-probe
+        .executable(name: "epic-probe", targets: ["EpicProbe"])
     ],
     targets: [
-        // Протокол, сокеты, Art-Net. Собирается и тестируется без UI.
         .target(name: "EpicCore"),
-
-        // Приложение. Зависит от EpicCore.
-        //
-        // Info.plist намеренно не включён в resources: SwiftPM запрещает
-        // Info.plist как ресурс бандла. Файл используется как
-        // INFOPLIST_FILE в Xcode-проекте (фаза 0).
-        .executableTarget(
-            name: "EpicPlayerMac",
-            dependencies: ["EpicCore"],
-            path: "Sources/EpicPlayerMac",
-            exclude: ["Resources/Info.plist"],
-            swiftSettings: [.swiftLanguageMode(.v5)]
-        ),
-
-        // Интеграционный зонд сетевого слоя. Собирается как .app с
-        // Info.plist — в отличие от swift test, реальные сокеты там
-        // работают. Запуск: ./Scripts/build-probe.sh
-        .executableTarget(
-            name: "SocketProbe",
-            dependencies: ["EpicCore"],
-            path: "Sources/SocketProbe",
-            swiftSettings: [.swiftLanguageMode(.v5)]
-        ),
-
-        .testTarget(name: "EpicCoreTests", dependencies: ["EpicCore"])
-    ]
+        .target(name: "EpicPlayerKit", dependencies: ["EpicCore"]),
+        .executableTarget(name: "EpicPlayerMac", dependencies: ["EpicPlayerKit", "EpicCore"]),
+        .executableTarget(name: "EpicProbe", dependencies: ["EpicCore"]),
+        .testTarget(name: "EpicCoreTests", dependencies: ["EpicCore"]),
+        .testTarget(name: "EpicPlayerKitTests", dependencies: ["EpicPlayerKit", "EpicCore"])
+    ],
+    swiftLanguageModes: [.v5]
 )

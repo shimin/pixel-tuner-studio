@@ -3,6 +3,9 @@
 .swiftpm/
 Package.resolved
 
+# Бандл из scripts/build-app.sh
+build/
+
 # Кэш компилятора и временные файлы
 .tmp/
 *.o
@@ -15,3 +18,6 @@ obj/
 
 # macOS
 .DS_Store
+
+# Кэш Python из scripts/
+__pycache__/

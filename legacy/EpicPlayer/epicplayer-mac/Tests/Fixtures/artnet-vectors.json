@@ -1,14 +1,16 @@
 {
   "_comment": [
-    "Эталонные байтовые векторы разбора Art-Net.",
+    "Эталонные байтовые векторы разбора Art-Net и ответа устройства.",
     "Приложение только принимает ArtDmx, остальные пакеты не используются.",
     "",
     "Порядок байтов в Art-Net смешанный, это соответствует спецификации:",
-    "  OpCode и Version — big endian (network order),",
-    "  Universe (SubUni/Net) — little endian,",
+    "  OpCode — little endian (0x5000 идёт как 00 50),",
+    "  Version — big endian (00 0E),",
+    "  Universe (SubUni, Net) — младший байт первым,",
     "  Length — big endian.",
     "",
-    "Значения выведены из ArtNetBinaryReader.cs и ArtNetDmxPacket.cs."
+    "Значения выведены из ArtNetBinaryReader.cs и ArtNetDmxPacket.cs.",
+    "Проверка: Tests/EpicCoreTests/ArtNetVectorTests.swift."
   ],
   "artDmx": [
     {
