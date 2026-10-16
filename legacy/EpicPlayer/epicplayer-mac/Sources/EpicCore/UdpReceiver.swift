@@ -6,7 +6,14 @@ import Foundation
 /// привязанном на `0.0.0.0:333`. Здесь то же самое, но приём идёт
 /// циклом в отдельном потоке, а сокет берётся из `SocketFactory` —
 /// поэтому логику можно проверить тестом без настоящих сокетов.
-public final class UdpReceiver {
+/// Приём UDP-пакетов от устройств шоу.
+///
+/// - Note: потокобезопасность объявлена условно. Фоновый поток читает
+///   сокет, главный — закрывает его в `stop`. Данные не делятся между
+///   потоками: разделяется только дескриптор, и закрывается он один раз.
+///   Строгая проверкаconcurrency не может это выразить, поэтому
+///   помечается вручную. Общий доступ появится в фазе 5.
+public final class UdpReceiver: @unchecked Sendable {
     private let socketFactory: SocketFactory
     private var socket: DatagramSocket?
     private var thread: Thread?

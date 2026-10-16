@@ -298,7 +298,7 @@ final class SocketLayerTests: XCTestCase {
             socketFactory: makeFactory(datagram: FakeDatagramSocket(),
                                        listener: listener))
 
-        try tcp.start()
+        try tcp.open()
         defer { tcp.stop() }
 
         XCTAssertTrue(tcp.isRunning)
@@ -325,7 +325,7 @@ final class SocketLayerTests: XCTestCase {
         let tcp = TcpListener(
             socketFactory: makeFactory(datagram: FakeDatagramSocket(),
                                        listener: listener))
-        try tcp.start()
+        try tcp.open()
         defer { tcp.stop() }
 
         let remote = FakeStreamConnection(
@@ -359,7 +359,7 @@ final class SocketLayerTests: XCTestCase {
         let tcp = TcpListener(
             socketFactory: makeFactory(datagram: FakeDatagramSocket(),
                                        listener: listener))
-        try tcp.start()
+        try tcp.open()
         defer { tcp.stop() }
 
         let localAddress = IPv4Address([192, 168, 88, 10])

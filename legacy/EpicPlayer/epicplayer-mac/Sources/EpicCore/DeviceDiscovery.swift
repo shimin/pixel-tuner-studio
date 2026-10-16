@@ -56,7 +56,7 @@ public enum DeviceDiscovery {
 }
 
 /// Адрес IPv4 в виде четырёх октетов.
-public struct IPv4Address: Equatable, CustomStringConvertible {
+public struct IPv4Address: Equatable, Hashable, CustomStringConvertible, Sendable {
     public let octets: [UInt8]
 
     public init(_ octets: [UInt8]) {

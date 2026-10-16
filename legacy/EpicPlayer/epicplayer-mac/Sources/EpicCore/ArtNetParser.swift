@@ -183,6 +183,16 @@ public struct DmxCommandTracker {
     private var lastValue: UInt8 = 0
     private var hasLastValue = false
 
+    /// Последнее значение канала: передаётся обратно в `update`,
+    /// чтобы реакция сработала только на изменении.
+    public var lastKnownValue: UInt8 { lastValue }
+
+    /// Запоминает значение, чтобы следующий `update` знал предыдущее.
+    public mutating func remember(_ value: UInt8) {
+        lastValue = value
+        hasLastValue = true
+    }
+
     public init() {}
 
     public mutating func update(value: UInt8, last: UInt8,

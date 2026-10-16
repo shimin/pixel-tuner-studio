@@ -159,14 +159,21 @@ final class FakeStreamConnection: StreamConnection {
     func close() { isClosed = true }
 }
 
+/// Соединения, которые вернёт `accept`. Потокобезопасно: фоновый поток
+/// и тест могут обращаться одновременно.
 final class FakeStreamListener: StreamListener {
-    /// Соединения, которые вернёт `accept`.
-    var pending: [StreamConnection] = []
+    private let lock = NSLock()
+    private var queued: [StreamConnection] = []
 
     private(set) var boundPort: UInt16 = 0
     private(set) var isClosed = false
 
     var localPort: UInt16 { boundPort }
+
+    var pending: [StreamConnection] {
+        get { lock.lock(); defer { lock.unlock() }; return queued }
+        set { lock.lock(); queued = newValue; lock.unlock() }
+    }
 
     func listen(on port: UInt16) throws {
         boundPort = 45_001
@@ -174,11 +181,17 @@ final class FakeStreamListener: StreamListener {
     }
 
     func accept(timeoutMilliseconds: Int32) throws -> StreamConnection? {
-        guard !isClosed, !pending.isEmpty else { return nil }
-        return pending.removeFirst()
+        lock.lock()
+        defer { lock.unlock() }
+        guard !isClosed, !queued.isEmpty else { return nil }
+        return queued.removeFirst()
     }
 
-    func close() { isClosed = true }
+    func close() {
+        lock.lock()
+        isClosed = true
+        lock.unlock()
+    }
 }
 
 /// Фабрика, отдающая заранее заданные сокеты.

@@ -7,7 +7,15 @@ import Foundation
 /// на **тот порт, с которого пришло соединение**, а не на объявленный
 /// `3331` — так же, как в Windows-версии, см.
 /// `WifiTcpDevicesWindow.xaml.cs:111-133`.
-public final class TcpListener {
+/// Принимает TCP-соединение от устройства шоу.
+///
+/// - Note: потокобезопасность объявлена условно. Фоновый поток читает
+///   и закрывает сокет, главный поток вызывает `stop`. Гонки на данных
+///   нет: единственное разделяемое состояние — дескриптор сокета, а он
+///   закрывается один раз и после этого читается как есть. Строгая
+///   проверка не может это выразить, поэтому помечается вручную.
+///   Общий доступ к нему появится в фазе 5, при связке UI и сети.
+public final class TcpListener: @unchecked Sendable {
     private let socketFactory: SocketFactory
     private var listener: StreamListener?
     private var thread: Thread?
@@ -31,8 +39,11 @@ public final class TcpListener {
 
     public var isRunning: Bool { listener != nil }
 
-    /// Начинает слушать. Порт 0 — выбрать системой.
-    public func start() throws {
+    /// Привязывает сокет, но не запускает приём соединений.
+    ///
+    /// Тесты используют её вместе с `pollOnce`: фоновый поток и тест
+    /// принимали бы соединения одновременно.
+    public func open() throws {
         stop()
 
         let listener = socketFactory.makeListener()
@@ -40,7 +51,16 @@ public final class TcpListener {
 
         self.listener = listener
         listeningPort = listener.localPort
+    }
 
+    /// Привязывает сокет и запускает приём в отдельном потоке.
+    public func start() throws {
+        try open()
+        startAccepting()
+    }
+
+    /// Запускает цикл приёма на уже привязанном сокете.
+    public func startAccepting() {
         let thread = Thread { [weak self] in
             self?.acceptLoop()
         }
@@ -56,7 +76,7 @@ public final class TcpListener {
         thread = nil
     }
 
-    /// Принимает одно соединение. Используется в тестах.
+    /// Принимает одно соединение. Предполагается вызов после `open()`.
     public func pollOnce() -> TcpConnection? {
         guard let listener = listener,
               let connection = try? listener.accept(
