@@ -25,7 +25,8 @@ C, D и F пройдены на Mac без устройства (журнал �
    запустить **до** приложения.
 3. Устройство шоу — этап E целиком, начиная с `epic-probe lookup en0`.
 4. Пульт — F12; разрешения и устойчивость — D22–D24, G1–G7.
-5. Релиз — H2–H5 (подпись Developer ID — по решению владельца).
+5. Релиз — H2, H3, H5: `scripts/make-dmg.sh`, образ на другой Mac
+   (подпись Developer ID — по решению владельца).
 
 ## 0. Критерии готовности
 
@@ -363,7 +364,7 @@ swift run epic-probe artnet en0 --channel 0   # CLI: индекс с нуля
 | H1 | `scripts/build-app.sh` — release-сборка |
 | H2 | Скопировать `build/EpicPlayer.app` на **другой** Mac, запустить: Gatekeeper предупредит; «Открыть всё равно» в Системных настройках → Конфиденциальность и безопасность |
 | H3 | Проверить на этом Mac C2–C5 и D21 |
-| H4 | DMG (по желанию): `hdiutil create -volname "E-pic player" -srcfolder build/EpicPlayer.app -ov -format UDZO build/EpicPlayer.dmg` |
+| H4 | DMG: `scripts/make-dmg.sh` → `build/EpicPlayer-<версия>.dmg` (приложение и ссылка на /Applications) |
 | H5 | Developer ID и нотаризация — по разделу «Распространение» в porting-plan.md, если решено покупать аккаунт ($99/год). Добавит в `build-app.sh`: `codesign --options runtime --sign "Developer ID Application: …"`, `xcrun notarytool submit … --wait`, `xcrun stapler staple` |
 | H6 | Версия в `Support/Info.plist` синхронна с Windows (сейчас 1.0.0) |
 | H7 | README: раздел про macOS-версию — сборка, запуск, отличия от Windows (app-design.md, раздел 9) |
@@ -418,7 +419,8 @@ swift run epic-probe artnet en0 --channel 0   # CLI: индекс с нуля
 | G1–G7 | | ⏳ | |
 | H1 | 2026-10-17 | ✅ | `scripts/build-app.sh` — release, иконка из `icon.ico`, ad-hoc подпись |
 | H6–H8 | 2026-10-17 | ✅ | версия 1.0.0; README — раздел «macOS-версия»; статусы в porting-plan.md |
-| H2–H5 | | ⏳ | другой Mac, DMG, Developer ID |
+| H4 | 2026-10-17 | ✅ | `scripts/make-dmg.sh`: 581 КБ, `hdiutil verify` VALID, внутри `codesign --verify --deep --strict` OK |
+| H2, H3, H5 | | ⏳ | другой Mac, Developer ID |
 
 Замечания 2026-10-17:
 

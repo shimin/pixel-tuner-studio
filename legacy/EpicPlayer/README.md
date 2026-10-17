@@ -102,6 +102,7 @@ cd epicplayer-mac
 swift test                       # протокол, сеть, модели приложения
 scripts/build-app.sh             # build/EpicPlayer.app, ad-hoc подпись
 open build/EpicPlayer.app
+scripts/make-dmg.sh              # build/EpicPlayer-1.0.0.dmg для другого Mac
 swift run epic-probe interfaces  # CLI для проверки сети без UI
 ```
 

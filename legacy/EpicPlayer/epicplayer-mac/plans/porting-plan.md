@@ -214,6 +214,7 @@ epicplayer-mac/
 ├── Support/                 Info.plist, entitlements
 ├── scripts/
 │   ├── build-app.sh         сборка EpicPlayer.app
+│   ├── make-dmg.sh          DMG для переноса на другой Mac
 │   ├── fake-device.py       имитатор устройства для проверки без железа
 │   └── send-artdmx.py       отправка ArtDmx без пульта
 └── Tests/
