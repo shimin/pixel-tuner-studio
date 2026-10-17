@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """Имитатор устройства шоу для проверки приложения без железа.
 
-Запускать на ДРУГОМ компьютере в той же сети: приложение отбрасывает
-пакеты со своего же адреса как эхо собственного broadcast.
+Лучше всего запускать на другом компьютере в той же сети. На том же Mac,
+что и приложение, — с --same-host и до запуска приложения: unicast на
+свой адрес:333 ядро отдаёт только одному сокету из открытых на 333 (тому,
+что открыт раньше), поэтому ответ уходит на broadcast — его получают все.
 
     python3 fake-device.py --name "Шоу 1"
     python3 fake-device.py --tcp          # подключаться по TCP-объявлению
+    python3 fake-device.py --same-host    # на том же Mac, что и приложение
 
 Что делает (формат — plans/protocol.md):
   * на запрос 49 00 0D отвечает 64-байтовым пакетом 0x49 с именем в
@@ -49,6 +52,8 @@ def main() -> int:
     parser.add_argument("--port", type=int, default=PORT)
     parser.add_argument("--tcp", action="store_true", help="подключаться по TCP-объявлению")
     parser.add_argument("--silent", action="store_true", help="не отвечать на запрос обнаружения")
+    parser.add_argument("--same-host", action="store_true",
+                        help="отвечать на broadcast x.x.x.255 (/24): для запуска на том же Mac, что и приложение")
     args = parser.parse_args()
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -77,8 +82,11 @@ def main() -> int:
         elif data == b"\x49\x00\x0D":
             print(f"[{stamp}] {host}:{port}  запрос обнаружения", flush=True)
             if not args.silent:
-                sock.sendto(response, (host, port))
-                print(f"           → ответ {len(response)} байт на {host}:{port}", flush=True)
+                target = host
+                if args.same_host:
+                    target = ".".join(host.split(".")[:3] + ["255"])
+                sock.sendto(response, (target, port))
+                print(f"           → ответ {len(response)} байт на {target}:{port}", flush=True)
         elif data[:2] == b"\x4C\x06" and len(data) >= 9:
             address = ".".join(str(b) for b in data[2:6])
             tcp_port = struct.unpack_from("<H", data, 6)[0]

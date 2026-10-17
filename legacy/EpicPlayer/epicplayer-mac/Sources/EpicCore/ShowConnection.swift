@@ -105,13 +105,17 @@ public final class ShowConnection: @unchecked Sendable {
     }
 
     private func handle(_ datagram: Datagram) {
-        // Свои broadcast-пакеты возвращаются на 333 — пропускаем.
-        if datagram.sender == interface.address { return }
-
+        // Ответ устройства принимается и с собственного адреса: свои
+        // пакеты (запрос 49 00 0D, команды 50 05, объявление 4C 06) под
+        // формат ответа не подходят, а имитатор устройства
+        // (scripts/fake-device.py) можно запускать на этом же Mac.
         if let response = DeviceResponse(data: datagram.data, sender: datagram.sender) {
             deviceHandler.get()?(response)
-        } else {
-            otherHandler.get()?(datagram)
+            return
         }
+
+        // Свои broadcast-пакеты возвращаются на 333 — пропускаем.
+        if datagram.sender == interface.address { return }
+        otherHandler.get()?(datagram)
     }
 }
