@@ -9,6 +9,8 @@ struct MainView: View {
     let model: PlayerModel
 
     @State private var isImporting = false
+    /// Панель Art-Net при запуске свёрнута: раскрытая отдала бы фокус полю
+    /// Channel, и случайное нажатие клавиши поменяло бы канал DMX.
     @State private var showArtNet = false
 
     var body: some View {
@@ -141,13 +143,26 @@ struct MainView: View {
         } else {
             Button { showArtNet = true } label: {
                 Text("◂ Art-Net settings")
+                    .foregroundStyle(artNetTabColor)
                     .fixedSize()
                     .rotationEffect(.degrees(-90))
                     .frame(width: 24, height: 140)
             }
             .buttonStyle(.plain)
-            .help(model.isArtNetRunning ? "Art-Net: listening" : "Art-Net: off")
+            .help(artNetTabHelp)
         }
+    }
+
+    /// Состояние Art-Net видно и на свёрнутой панели: зелёный — слушает,
+    /// красный — ошибка (порт занят, интерфейса нет).
+    private var artNetTabColor: Color {
+        if model.artNetError != nil { return Theme.error }
+        return model.isArtNetRunning ? Theme.progress : .primary
+    }
+
+    private var artNetTabHelp: String {
+        if let error = model.artNetError { return error }
+        return model.isArtNetRunning ? "Art-Net: listening on UDP 6454" : "Art-Net: off"
     }
 
     // MARK: - Привязки
