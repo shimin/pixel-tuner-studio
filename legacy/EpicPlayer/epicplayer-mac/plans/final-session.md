@@ -8,8 +8,24 @@
 решения, [`app-design.md`](app-design.md) — поведение приложения,
 [`protocol.md`](protocol.md) — формат пакетов.
 
-Составлено: 2026-10-14. Ветка: `claude/awesome-goodall-q2l9x4`,
-PR [shimin/epicplayer#1](https://github.com/shimin/epicplayer/pull/1).
+Составлено: 2026-10-14. Обновлено: 2026-10-17 — этапы A и B закрыты,
+C, D и F пройдены на Mac без устройства (журнал — раздел 11). Ветка: `master`
+(ветка `claude/awesome-goodall-q2l9x4` в неё влита).
+
+### Утром: что осталось и в каком порядке
+
+Всё, что можно проверить на одном Mac без устройства, проверено. Осталось
+то, для чего нужны руки, звук или железо:
+
+1. `scripts/build-app.sh && open build/EpicPlayer.app` — разрешить доступ
+   к локальной сети (D21), затем руками C2–C8, C12, C15, C16: клики,
+   громкость на слух, меню во время воспроизведения, окно Device lookup.
+2. Окно Device lookup с имитатором на этом же Mac (D14–D18):
+   `python3 scripts/fake-device.py --name "Шоу 1" --same-host --tcp`
+   запустить **до** приложения.
+3. Устройство шоу — этап E целиком, начиная с `epic-probe lookup en0`.
+4. Пульт — F12; разрешения и устойчивость — D22–D24, G1–G7.
+5. Релиз — H2–H5 (подпись Developer ID — по решению владельца).
 
 ## 0. Критерии готовности
 
@@ -52,7 +68,7 @@ xcode-select -p              # должен указывать на Xcode 16+, �
 swift --version              # Swift 6.x
 sw_vers                      # macOS 15+
 git clone https://github.com/shimin/epicplayer.git
-cd epicplayer && git checkout claude/awesome-goodall-q2l9x4
+cd epicplayer && git checkout master
 cd epicplayer-mac
 ```
 
@@ -239,11 +255,14 @@ sudo tcpdump -i en0 -n -X 'udp port 333 or udp port 6454 or tcp port 3331'
 
 ### D.3. Имитатор устройства
 
-На втором компьютере в той же сети (не на Mac: приложение отбрасывает
-пакеты со своего адреса как эхо):
+На втором компьютере в той же сети или на этом же Mac. На том же Mac —
+с `--same-host` и **до** запуска приложения: unicast на свой адрес:333
+ядро отдаёт только сокету, открытому первым, поэтому имитатор отвечает
+на broadcast, а команды из строки lookup получает сам.
 
 ```bash
-python3 scripts/fake-device.py --name "Шоу 1" --tcp
+python3 scripts/fake-device.py --name "Шоу 1" --tcp               # другой компьютер
+python3 scripts/fake-device.py --name "Шоу 1" --tcp --same-host   # этот же Mac
 ```
 
 | # | Действие | Ожидается |
@@ -370,18 +389,45 @@ swift run epic-probe artnet en0 --channel 0   # CLI: индекс с нуля
 
 | Пункт | Дата | Результат | Заметки, байты, ошибки |
 | --- | --- | --- | --- |
-| A EpicCore | | | |
-| A EpicPlayerKit | | | |
-| A EpicPlayerMac | | | |
-| B swift test | | | |
-| C1–C16 | | | |
-| D1–D24 | | | |
-| E1 ответ устройства | | | сырые байты: |
-| E6 TCP-объявление | | | рабочий адрес: |
-| E2–E12 | | | |
-| F1–F12 | | | |
-| G1–G7 | | | |
-| H1–H8 | | | |
+| A EpicCore | 2026-10-17 | ✅ | Xcode 27.0, Swift 6.4, macOS 26.6: собирается без ошибок и предупреждений; места риска из 2.1 правок не потребовали |
+| A EpicPlayerKit | 2026-10-17 | ✅ | без ошибок и предупреждений |
+| A EpicPlayerMac | 2026-10-17 | ✅ | без ошибок и предупреждений, debug и release |
+| B swift test | 2026-10-17 | ✅ | 92 теста, 0 падений: EpicCore 36 (с эталонами Art-Net из второй ветки), EpicPlayerKit 56 (с загрузкой файла настоящим AVAudioPlayer) |
+| B WindowsReference | до 2026-10-17 | ✅ | на Windows: 15 проверок, 0 расхождений |
+| C1 | 2026-10-17 | ✅ | 800×348, тёмное, «No media available», транспорт неактивен, `en0` выбран |
+| C3–C5, C9 | 2026-10-17 | ✅ | через Art-Net (кнопки — утром): Play/Pause/Stop, время и прогресс идут; конец трека → «Status: Stop», 00:00, stop @ 0 |
+| C10 | 2026-10-17 | ✅ | m4a с кириллицей в имени открывается, длительность 00:12 |
+| C11 | 2026-10-17 | ✅ | «Cannot open: unsupported or damaged audio file», приложение работает |
+| C13 | 2026-10-17 | ✅ | трек, громкость и интерфейс восстанавливаются из `settings.v1` |
+| C14 | 2026-10-17 | ✅ | «File not found», путь сохраняется |
+| C2, C6–C8, C12, C15, C16 | | ⏳ утром | нужны клики и звук: у агента не было Accessibility |
+| D1, D3, D4 | 2026-10-17 | ✅ | `epic-probe interfaces --all`: в выборе только `en0 · Wi-Fi · 192.168.1.102/24`; `utun26` (VPN 198.18.0.1/16), `bridge100`, `lo0` отфильтрованы |
+| D6, D7 | 2026-10-17 | ✅ | `send en0 play 1000` → `50 05 02 E8 03 00 00 0D` с порта 333 на 192.168.1.255:333 при включённом VPN (приём локальным сокетом, tcpdump без sudo недоступен) |
+| D9–D11 | 2026-10-17 | ✅ | приложение: play @ 0, затем play с позицией раз в секунду (221, 1219, 2222, 3220 мс); pause — тишина; stop @ 0 раз в секунду |
+| D12, D13 | | ⏳ утром | нужны клики |
+| D14, D18, D20 | 2026-10-17 | ✅ | CLI с имитатором на этом же Mac (`--same-host`): найдено `192.168.1.102`, имя «Шоу 1» из CP1251; TCP: объявление `4C 06 C0 A8 01 66 03 0D 0D`, имитатор подключился |
+| D15–D17, D19 | | ⏳ утром | окно Device lookup — нужны клики |
+| D21–D24 | | ⏳ утром | диалоги разрешений |
+| E1 ответ устройства | | ⏳ | сырые байты: |
+| E6 TCP-объявление | | ⏳ | рабочий адрес: |
+| E2–E12 | | ⏳ | устройство шоу |
+| F1–F4 | 2026-10-17 | ✅ | приложение с Art-Net из настроек, `send-artdmx.py` на broadcast: 50 → Play, 100 → Pause, 150 → Stop; в сеть ушли play/pause/stop |
+| F5–F11 | | ⏳ утром | логика F5–F8 покрыта тестами `DmxTrigger` |
+| F12 | | ⏳ | настоящий пульт |
+| G1–G7 | | ⏳ | |
+| H1 | 2026-10-17 | ✅ | `scripts/build-app.sh` — release, иконка из `icon.ico`, ad-hoc подпись |
+| H6–H8 | 2026-10-17 | ✅ | версия 1.0.0; README — раздел «macOS-версия»; статусы в porting-plan.md |
+| H2–H5 | | ⏳ | другой Mac, DMG, Developer ID |
+
+Замечания 2026-10-17:
+
+- При самом первом открытии нового бандла поверх окна один раз появилась
+  панель Open. Ни при повторных запусках, ни после
+  `defaults delete com.epicplayer.mac` не повторилась. Если повторится
+  утром — записать, после какого действия.
+- Таймер сети идёт независимо от команд, поэтому сразу после Play может
+  уйти второй play @ 0, а после конца трека — два stop @ 0 в одну секунду.
+  Так же работает Windows-версия; для устройства это безвредно.
 
 ## 12. Как работать с Claude в финальной сессии
 
@@ -390,8 +436,7 @@ swift run epic-probe artnet en0 --channel 0   # CLI: индекс с нуля
 
 > Финальная сессия EpicPlayer для macOS. Прочитай
 > `epicplayer-mac/plans/final-session.md`, `porting-plan.md`,
-> `app-design.md`, `protocol.md`. Ветка `claude/awesome-goodall-q2l9x4`,
-> PR shimin/epicplayer#1. Ниже вывод сборки.
+> `app-design.md`, `protocol.md`. Ветка `master`. Ниже вывод сборки.
 
 Что присылать:
 

@@ -29,7 +29,12 @@ public final class SystemAudioPlayer: AudioEngine {
         player?.stop()
         player = nil
 
-        let loaded = try AVAudioPlayer(contentsOf: url)
+        let loaded: AVAudioPlayer
+        do {
+            loaded = try AVAudioPlayer(contentsOf: url)
+        } catch let error as NSError where error.domain == NSOSStatusErrorDomain {
+            throw AudioFileError(underlying: error)
+        }
         loaded.delegate = delegate
         loaded.volume = volume
         loaded.prepareToPlay()
@@ -61,5 +66,15 @@ private final class FinishDelegate: NSObject, AVAudioPlayerDelegate {
         DispatchQueue.main.async {
             MainActor.assumeIsolated { callback?() }
         }
+    }
+}
+
+/// Битый или неподдерживаемый файл. AVFoundation сообщает голый OSStatus
+/// (`1685348671`, 'dta?'), оператору он ничего не говорит.
+public struct AudioFileError: LocalizedError {
+    public let underlying: NSError
+
+    public var errorDescription: String? {
+        "unsupported or damaged audio file"
     }
 }

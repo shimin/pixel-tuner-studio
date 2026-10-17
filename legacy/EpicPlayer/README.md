@@ -89,6 +89,39 @@ msbuild EpicPlayer.sln /p:Configuration=Release
 `50`, `100` и `150` означают play, pause и stop. Действие выполняется только при
 *изменении* значения DMX, поэтому удержание кнопки не перезапускает трек многократно.
 
+## macOS-версия
+
+Нативный порт на Swift и SwiftUI лежит в `epicplayer-mac/`. Это отдельная
+реализация без общего кода с WPF-версией, общий у них только формат пакетов —
+[`epicplayer-mac/plans/protocol.md`](epicplayer-mac/plans/protocol.md).
+
+Требования: macOS 15+, Xcode 16+ (проверено на Xcode 27, Swift 6.4).
+
+```bash
+cd epicplayer-mac
+swift test                       # протокол, сеть, модели приложения
+scripts/build-app.sh             # build/EpicPlayer.app, ad-hoc подпись
+open build/EpicPlayer.app
+swift run epic-probe interfaces  # CLI для проверки сети без UI
+```
+
+Проверка без устройства шоу: `scripts/fake-device.py` (имитатор устройства,
+на этом же Mac — с `--same-host`) и `scripts/send-artdmx.py` (ArtDmx без пульта).
+
+Отличия от Windows-версии (подробно — `epicplayer-mac/plans/app-design.md`,
+раздел 9):
+
+- позиция уходит раз в секунду с первой секунды воспроизведения;
+- broadcast считается по маске подсети, а не заменой последнего октета;
+- конец трека переводит плеер в stop и отправляет stop @ 0;
+- канал DMX нумеруется с 1, как на пульте: настройку Windows N вводить как N + 1;
+- интерфейс запоминается по имени (`en0`), настройки сохраняются сразу;
+- при первом запуске macOS спрашивает доступ к локальной сети — без него
+  команды не дойдут до устройства.
+
+План работ, журнал проверок и порядок финальной проверки на устройстве —
+[`epicplayer-mac/plans/final-session.md`](epicplayer-mac/plans/final-session.md).
+
 ## Структура проекта
 
 | Путь                    | Содержимое                                                |
@@ -98,6 +131,7 @@ msbuild EpicPlayer.sln /p:Configuration=Release
 | `EpicPlayer/ViewModel/` | `RelayCommand`, `WifiInfoDevice`, `StateObject`           |
 | `EpicPlayer/Styles/`    | Общие стили XAML                                          |
 | `eDmx.ArtNet/`          | Разбор Art-Net-пакетов и работа с сокетами                 |
+| `epicplayer-mac/`       | macOS-версия на Swift/SwiftUI, см. раздел выше             |
 
 ## Примечания
 
