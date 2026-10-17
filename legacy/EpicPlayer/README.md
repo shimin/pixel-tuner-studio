@@ -120,7 +120,9 @@ swift run epic-probe interfaces  # CLI для проверки сети без U
 - при первом запуске macOS спрашивает доступ к локальной сети — без него
   команды не дойдут до устройства.
 
-План работ, журнал проверок и порядок финальной проверки на устройстве —
+Итоги и порядок проверки —
+[`epicplayer-mac/plans/final-report.md`](epicplayer-mac/plans/final-report.md);
+журнал проверок по пунктам —
 [`epicplayer-mac/plans/final-session.md`](epicplayer-mac/plans/final-session.md).
 
 ## Структура проекта

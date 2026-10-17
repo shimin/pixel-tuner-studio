@@ -191,6 +191,8 @@ epicplayer-mac/
 │   ├── porting-plan.md      этот файл
 │   ├── app-design.md        детальный дизайн фаз 3–5
 │   ├── final-session.md     план отладки на Mac и завершения
+│   ├── final-report.md      итоги 2026-10-17 и порядок проверки
+│   ├── branch-comparison.md расхождения двух веток порта
 │   └── protocol.md          контракт формата пакетов
 ├── Package.swift            библиотека протокола и сети
 ├── Sources/
