@@ -62,6 +62,8 @@
               <Shortcut Id="desktopPixelTuner" Directory="DesktopFolder" Name="PixelTuner 2"
                 WorkingDirectory='INSTALLLOCATION' Icon="PixelTuner.exe" IconIndex="0" Advertise="yes" />
             </File>
+            <!-- Ships legacyUnhandledExceptionPolicy: a crash on a background thread (e.g. inside System.IO.Ports) must not kill the app. -->
+            <File Id="PixelTuner.exe.config" Name="PixelTuner.exe.config" Source="..\PixelTuner\bin\$(var.Configuration)\PixelTuner.exe.config" />
             <File Id="InteractivityLib" Source="..\PixelTuner\bin\$(var.Configuration)\System.Windows.Interactivity.dll"/>
             <File Id="GlmNetLib" Source="..\PixelTuner\bin\$(var.Configuration)\GlmNet.dll"/>
             <File Id="SharpGLLib" Source="..\PixelTuner\bin\$(var.Configuration)\SharpGL.dll"/>
