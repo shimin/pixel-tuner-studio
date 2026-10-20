@@ -18,11 +18,11 @@ namespace Communication.Service
         }
         //static Dictionary<string, SerialPort> PortList = new Dictionary<string, SerialPort>();
 
-        // Ports that were opened but did not answer as a supported device. They stay open
-        // (and are not probed again) until the port disappears or stops being open, the
-        // same way such ports used to stay held by the abandoned SerialPort object.
-        private static readonly object _rejectedPortsSync = new object();
-        private static readonly Dictionary<string, Win32SerialPort> _rejectedPorts = new Dictionary<string, Win32SerialPort>();
+        // Ports that did not answer as a supported device. They are closed right away and
+        // not probed again while the program runs, until the port disappears from the
+        // system (device unplugged): if it comes back it is probed once more.
+        private static readonly object _blacklistSync = new object();
+        private static readonly HashSet<string> _blacklistedPorts = new HashSet<string>();
 
         private static List<SerialDeviceBase> _devices = new List<SerialDeviceBase>();
         public static List<SerialDeviceBase> Devices
@@ -56,7 +56,6 @@ namespace Communication.Service
             if (DeviceSeekerThread != null && DeviceSeekerThread.IsAlive)
                 DeviceSeekerThread.Join();
             Devices.ForEach((d) => { d.Disconnect(); });
-            ReleaseRejectedPorts(null);
         }
 
         /// <summary>
@@ -68,12 +67,12 @@ namespace Communication.Service
             {
                 List<string> portNames = new List<string> (SerialPort.GetPortNames());
                 //List<string> portNames = GetVcpList();
-                ReleaseRejectedPorts(portNames);
+                ForgetRemovedPorts(portNames);
                 portNames.ForEach(portName =>
                 {
                     if (!DeviceExists(portName))
                     {
-                        if (IsRejectedPort(portName))
+                        if (IsBlacklisted(portName))
                             return;
 
                         var port = new Win32SerialPort(portName, 115200);
@@ -155,8 +154,8 @@ namespace Communication.Service
             if (d == null)
             {
                 // Not one of our devices (another COM port, a device that did not answer
-                // in time, etc.).
-                HoldRejectedPort(p);
+                // in time, etc.): release it and stop probing it.
+                BlacklistPort(p);
                 return;
             }
 
@@ -192,53 +191,34 @@ namespace Communication.Service
             }
         }
 
-        private static bool IsRejectedPort(string portName)
+        private static bool IsBlacklisted(string portName)
         {
-            lock (_rejectedPortsSync)
+            lock (_blacklistSync)
             {
-                return _rejectedPorts.ContainsKey(portName);
+                return _blacklistedPorts.Contains(portName);
             }
         }
 
-        private static void HoldRejectedPort(Win32SerialPort port)
+        private static void BlacklistPort(Win32SerialPort port)
         {
-            Win32SerialPort toClose = null;
-            lock (_rejectedPortsSync)
+            // Blacklist first, then close: the seeker must not reopen it in between.
+            lock (_blacklistSync)
             {
-                if (_keepSeeking)
-                {
-                    _rejectedPorts.TryGetValue(port.PortName, out toClose);
-                    _rejectedPorts[port.PortName] = port;
-                }
-                else
-                {
-                    // Seeking was stopped meanwhile: nothing will release it later.
-                    toClose = port;
-                }
+                _blacklistedPorts.Add(port.PortName);
             }
-            if (toClose != null) toClose.Close();
+            port.Close();
         }
 
         /// <summary>
-        /// Closes held ports whose COM port is no longer listed or no longer open
-        /// (device unplugged), so the port is probed again when it comes back.
-        /// Pass null to release all of them.
+        /// Drops blacklisted ports that are no longer present in the system, so a device
+        /// plugged in later under the same COM name gets probed.
         /// </summary>
-        private static void ReleaseRejectedPorts(List<string> currentPortNames)
+        private static void ForgetRemovedPorts(List<string> currentPortNames)
         {
-            var toClose = new List<Win32SerialPort>();
-            lock (_rejectedPortsSync)
+            lock (_blacklistSync)
             {
-                foreach (var pair in _rejectedPorts.ToList())
-                {
-                    if (currentPortNames == null || !currentPortNames.Contains(pair.Key) || !pair.Value.IsOpen)
-                    {
-                        _rejectedPorts.Remove(pair.Key);
-                        toClose.Add(pair.Value);
-                    }
-                }
+                _blacklistedPorts.RemoveWhere(name => !currentPortNames.Contains(name));
             }
-            toClose.ForEach(port => port.Close());
         }
 
         private static bool DeviceExists(string portName)
