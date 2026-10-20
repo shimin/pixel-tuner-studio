@@ -76,52 +76,6 @@ namespace Communication.Service
             if (_port != null) _port.Close();
         }
 
-        /// <summary>
-        /// Stops the GC from ever finalizing the port's internal SerialStream.
-        /// </summary>
-        /// <remarks>
-        /// The SerialStream finalizer closes the port handle without waiting for the
-        /// internal event loop thread (SerialStream.EventLoopRunner) to stop. That thread
-        /// then calls GetOverlappedResult on a closed handle and throws
-        /// ObjectDisposedException ("SafeHandle has been closed") on a background thread,
-        /// which kills the process. Call this right after a successful Open().
-        /// </remarks>
-        public static void SuppressStreamFinalizer(SerialPort port)
-        {
-            try
-            {
-                if (port != null && port.IsOpen)
-                    GC.SuppressFinalize(port.BaseStream);
-            }
-            catch
-            {
-            }
-        }
-
-        /// <summary>
-        /// Closes and disposes a port without throwing. Used for ports that turned out not
-        /// to be our devices, so they are released explicitly instead of by the GC.
-        /// </summary>
-        public static void CloseSafely(SerialPort port)
-        {
-            if (port == null) return;
-            SuppressStreamFinalizer(port);
-            try
-            {
-                port.Close();
-            }
-            catch
-            {
-            }
-            try
-            {
-                port.Dispose();
-            }
-            catch
-            {
-            }
-        }
-
         public void DiscardInBuffer()
         {
             if (_port != null) _port.DiscardInBuffer();

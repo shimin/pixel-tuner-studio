@@ -18,6 +18,12 @@ namespace Communication.Service
         }
         //static Dictionary<string, SerialPort> PortList = new Dictionary<string, SerialPort>();
 
+        // Ports that were opened but did not answer as a supported device. They stay open
+        // (and are not probed again) until the port disappears or stops being open, the
+        // same way such ports used to stay held by the abandoned SerialPort object.
+        private static readonly object _rejectedPortsSync = new object();
+        private static readonly Dictionary<string, Win32SerialPort> _rejectedPorts = new Dictionary<string, Win32SerialPort>();
+
         private static List<SerialDeviceBase> _devices = new List<SerialDeviceBase>();
         public static List<SerialDeviceBase> Devices
         {
@@ -50,6 +56,7 @@ namespace Communication.Service
             if (DeviceSeekerThread != null && DeviceSeekerThread.IsAlive)
                 DeviceSeekerThread.Join();
             Devices.ForEach((d) => { d.Disconnect(); });
+            ReleaseRejectedPorts(null);
         }
 
         /// <summary>
@@ -61,25 +68,26 @@ namespace Communication.Service
             {
                 List<string> portNames = new List<string> (SerialPort.GetPortNames());
                 //List<string> portNames = GetVcpList();
+                ReleaseRejectedPorts(portNames);
                 portNames.ForEach(portName =>
                 {
                     if (!DeviceExists(portName))
                     {
-                        var port = new SerialPort();
-                        port.PortName = portName;
-                        port.BaudRate = 115200;
+                        if (IsRejectedPort(portName))
+                            return;
+
+                        var port = new Win32SerialPort(portName, 115200);
                         port.ReadTimeout = 10000;
                         port.WriteTimeout = 10000;
                         try
                         {
                             port.Open();
-                            SerialTransport.SuppressStreamFinalizer(port);
                             var tryCreateDeviceOperation = AsyncOperationManager.CreateOperation(portName);
                             tryCreateDeviceOperation.Post(TryCreateDevice, port);
                         }
                         catch (Exception ex)
                         {
-                            SerialTransport.CloseSafely(port);
+                            port.Close();
                             port = null;
                         }
                     }
@@ -131,7 +139,7 @@ namespace Communication.Service
 
         private static void TryCreateDevice(object arg)
         {
-            var p = arg as SerialPort;
+            var p = arg as Win32SerialPort;
             if (p == null) return;
 
             SerialDeviceBase d = null;
@@ -139,8 +147,7 @@ namespace Communication.Service
             {
                 try
                 {
-                    SerialTransport t = new SerialTransport(p);
-                    d = SerialDeviceBase.Create(t);
+                    d = SerialDeviceBase.Create(p);
                 }
                 catch (Exception ex) { d = null; }
             }
@@ -148,9 +155,8 @@ namespace Communication.Service
             if (d == null)
             {
                 // Not one of our devices (another COM port, a device that did not answer
-                // in time, etc.). Close it explicitly: an abandoned open SerialPort is later
-                // finalized by the GC, and that finalizer crashes the process.
-                SerialTransport.CloseSafely(p);
+                // in time, etc.).
+                HoldRejectedPort(p);
                 return;
             }
 
@@ -184,6 +190,55 @@ namespace Communication.Service
                     OnDeviceLost(device);
                 }
             }
+        }
+
+        private static bool IsRejectedPort(string portName)
+        {
+            lock (_rejectedPortsSync)
+            {
+                return _rejectedPorts.ContainsKey(portName);
+            }
+        }
+
+        private static void HoldRejectedPort(Win32SerialPort port)
+        {
+            Win32SerialPort toClose = null;
+            lock (_rejectedPortsSync)
+            {
+                if (_keepSeeking)
+                {
+                    _rejectedPorts.TryGetValue(port.PortName, out toClose);
+                    _rejectedPorts[port.PortName] = port;
+                }
+                else
+                {
+                    // Seeking was stopped meanwhile: nothing will release it later.
+                    toClose = port;
+                }
+            }
+            if (toClose != null) toClose.Close();
+        }
+
+        /// <summary>
+        /// Closes held ports whose COM port is no longer listed or no longer open
+        /// (device unplugged), so the port is probed again when it comes back.
+        /// Pass null to release all of them.
+        /// </summary>
+        private static void ReleaseRejectedPorts(List<string> currentPortNames)
+        {
+            var toClose = new List<Win32SerialPort>();
+            lock (_rejectedPortsSync)
+            {
+                foreach (var pair in _rejectedPorts.ToList())
+                {
+                    if (currentPortNames == null || !currentPortNames.Contains(pair.Key) || !pair.Value.IsOpen)
+                    {
+                        _rejectedPorts.Remove(pair.Key);
+                        toClose.Add(pair.Value);
+                    }
+                }
+            }
+            toClose.ForEach(port => port.Close());
         }
 
         private static bool DeviceExists(string portName)
