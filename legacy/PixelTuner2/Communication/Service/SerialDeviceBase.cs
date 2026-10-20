@@ -284,10 +284,17 @@ namespace Communication.Service
         {
             _portMonitor = new Thread(() =>
             {
-                while (Transport != null && Transport.IsOpen)
+                // Nothing may escape this thread: an unhandled exception here kills the
+                // whole process. The loop condition is checked inside the try because
+                // another thread can close the transport at any moment (e.g. TcpClient
+                // throws from Connected once it has been closed).
+                while (true)
                 {
                     try
                     {
+                        var transport = Transport;
+                        if (transport == null || !transport.IsOpen) break;
+
                         if (!Busy) GetInfo();
                         Thread.Sleep(1000);
                     }
@@ -298,10 +305,30 @@ namespace Communication.Service
                     }
                 }
             });
+            // Must not keep the process alive after the main window is closed.
+            _portMonitor.IsBackground = true;
             _portMonitor.Start();
         }
 
         public abstract void GetInfo();
+
+        /// <summary>
+        /// Used in finally blocks: the device may have been disconnected (Transport set to
+        /// null by another thread) while a long operation was running.
+        /// </summary>
+        private void RestoreDefaultTimeouts()
+        {
+            var transport = Transport;
+            if (transport == null) return;
+            try
+            {
+                transport.ReadTimeout = DefaultReadTimeout;
+                transport.WriteTimeout = DefaultWriteTimeout;
+            }
+            catch
+            {
+            }
+        }
 
         protected void SetStatus(ConnectionStatus status)
         {
@@ -500,8 +527,7 @@ namespace Communication.Service
                 {
                     Busy = false;
                     SetStatus(ConnectionStatus.Online);
-                    Transport.ReadTimeout = DefaultReadTimeout;
-                    Transport.WriteTimeout = DefaultWriteTimeout;
+                    RestoreDefaultTimeouts();
                 }
             }
         }
@@ -552,8 +578,7 @@ namespace Communication.Service
                     Busy = false;
                     if (noExceptions)
                         SetStatus(ConnectionStatus.Online);
-                    Transport.ReadTimeout = DefaultReadTimeout;
-                    Transport.WriteTimeout = DefaultWriteTimeout;
+                    RestoreDefaultTimeouts();
                 }
             }
         }
@@ -595,8 +620,7 @@ namespace Communication.Service
                 {
                     Busy = false;
                     SetStatus(ConnectionStatus.Online);
-                    Transport.ReadTimeout = DefaultReadTimeout;
-                    Transport.WriteTimeout = DefaultWriteTimeout;
+                    RestoreDefaultTimeouts();
                 }
             }
         }
