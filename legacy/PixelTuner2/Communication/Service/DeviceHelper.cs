@@ -73,12 +73,13 @@ namespace Communication.Service
                         try
                         {
                             port.Open();
+                            SerialTransport.SuppressStreamFinalizer(port);
                             var tryCreateDeviceOperation = AsyncOperationManager.CreateOperation(portName);
                             tryCreateDeviceOperation.Post(TryCreateDevice, port);
                         }
                         catch (Exception ex)
                         {
-                            port.Dispose();
+                            SerialTransport.CloseSafely(port);
                             port = null;
                         }
                     }
@@ -131,17 +132,34 @@ namespace Communication.Service
         private static void TryCreateDevice(object arg)
         {
             var p = arg as SerialPort;
-            if (p != null && p.IsOpen)
+            if (p == null) return;
+
+            SerialDeviceBase d = null;
+            if (p.IsOpen)
             {
                 try
                 {
                     SerialTransport t = new SerialTransport(p);
-                    var d = SerialDeviceBase.Create(t);
-                    Devices.Add(d);
-                    OnDeviceFound(d);
+                    d = SerialDeviceBase.Create(t);
                 }
-                catch (Exception ex) { }
+                catch (Exception ex) { d = null; }
             }
+
+            if (d == null)
+            {
+                // Not one of our devices (another COM port, a device that did not answer
+                // in time, etc.). Close it explicitly: an abandoned open SerialPort is later
+                // finalized by the GC, and that finalizer crashes the process.
+                SerialTransport.CloseSafely(p);
+                return;
+            }
+
+            try
+            {
+                Devices.Add(d);
+                OnDeviceFound(d);
+            }
+            catch (Exception ex) { }
         }
 
         private static void CheckConnection(string portName)
