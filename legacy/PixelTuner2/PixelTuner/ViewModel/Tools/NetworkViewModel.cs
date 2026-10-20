@@ -129,23 +129,40 @@ namespace PixelTuner.ViewModel
 
         private void IncomingConnectionHandler(IAsyncResult result)
         {
+            TcpClient client = null;
             try
             {
-                if (_server != null)
+                var server = _server;
+                if (server != null)
                 {
                     if (_goOn)
                     {
-                        _server.BeginAcceptTcpClient(new AsyncCallback(IncomingConnectionHandler), null);
+                        server.BeginAcceptTcpClient(new AsyncCallback(IncomingConnectionHandler), null);
                     }
-                    TcpClient client = _server.EndAcceptTcpClient(result);
+                    client = server.EndAcceptTcpClient(result);
                     IPEndPoint remoteEndPoint = client.Client.RemoteEndPoint as IPEndPoint;
                     SerialDeviceBase d = SerialDeviceBase.Create(new TcpTransport(client));
                     CreateModel(d, remoteEndPoint.Address.ToString(), remoteEndPoint.Port);
+                    client = null;
                 }
+            }
+            catch (ObjectDisposedException)
+            {
+                // The listener was stopped (Disconnect): the pending accept completes
+                // with this exception. Nothing to report.
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                if (_goOn) MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                // The connection did not become a device: don't leak the socket.
+                if (client != null)
+                {
+                    try { client.Close(); }
+                    catch { }
+                }
             }
         }
 
@@ -217,10 +234,22 @@ namespace PixelTuner.ViewModel
         {
             GoOn = false;
             _devicesDictionary.Clear();
-            while (_devices.Count > 0)
+            // Walk a snapshot and remove each model explicitly. The old loop
+            // "while (_devices.Count > 0)" relied on the Disconnected event to remove the
+            // model; when the device was already disconnected (e.g. the network went down
+            // and its monitor thread closed it) nothing was removed and the UI thread
+            // spun forever. A failed Write (network down) also aborted the disconnect.
+            foreach (var model in new List<DeviceViewModel>(_devices))
             {
-                _devices?[0].Device?.Transport?.Write(new byte[] { 0x4d, 0x00, 0x0d }, 0, 3);
-                _devices[0].Device.Disconnect();
+                var device = model.Device;
+                if (device != null)
+                {
+                    try { device.Transport?.Write(new byte[] { 0x4d, 0x00, 0x0d }, 0, 3); }
+                    catch { }
+                    try { device.Disconnect(); }
+                    catch { }
+                }
+                _devices.Remove(model);
             }
             try
             {
@@ -249,7 +278,9 @@ namespace PixelTuner.ViewModel
                     byte[] received = _udpSender.EndReceive(result, ref remoteEP);
                     string ipString = remoteEP.ToString();
                     
-                    Application.Current.Dispatcher.Invoke(new Action(() => 
+                    var app = Application.Current;
+                    if (app == null) return;
+                    app.Dispatcher.Invoke(new Action(() => 
                     {
                         if (_devicesDictionary.ContainsKey(ipString))
                             _devicesDictionary[ipString].RawData = received;
@@ -260,8 +291,15 @@ namespace PixelTuner.ViewModel
             }
             catch
             {
-                if (_udpSender != null && _udpSender.Client != null && GoOn)
-                    _udpSender.BeginReceive(new AsyncCallback(ReceivedCallback), state);
+                // Runs on an I/O thread: nothing may be thrown from here.
+                try
+                {
+                    if (_udpSender != null && _udpSender.Client != null && GoOn)
+                        _udpSender.BeginReceive(new AsyncCallback(ReceivedCallback), state);
+                }
+                catch
+                {
+                }
             }
         }
 

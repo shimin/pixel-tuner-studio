@@ -26,15 +26,26 @@ namespace PixelTuner.ViewModel.Network
             string name = "Unknown";
             if (_nIface != null)
             {
-                var ipProps = _nIface.GetIPProperties();
-
-                foreach (var ip in ipProps.UnicastAddresses)
+                // Called by WPF while rendering the interface list. If the adapter was
+                // disabled or removed after the list was built, GetIPProperties() throws
+                // NetworkInformationException, which must not escape into layout.
+                try
                 {
-                    if ((_nIface.OperationalStatus == OperationalStatus.Up)
-                        && (ip.Address.AddressFamily == AddressFamily.InterNetwork))
+                    var ipProps = _nIface.GetIPProperties();
+
+                    foreach (var ip in ipProps.UnicastAddresses)
                     {
-                        name = _nIface.Description + " | " + ip.Address.ToString();
+                        if ((_nIface.OperationalStatus == OperationalStatus.Up)
+                            && (ip.Address.AddressFamily == AddressFamily.InterNetwork))
+                        {
+                            name = _nIface.Description + " | " + ip.Address.ToString();
+                        }
                     }
+                }
+                catch (Exception)
+                {
+                    try { name = _nIface.Description; }
+                    catch (Exception) { }
                 }
             }
             return name;

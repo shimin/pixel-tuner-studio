@@ -104,6 +104,18 @@ namespace PixelTuner
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            Settings.Default.Save();
+            var filesToClose = new List<FileViewModel>(RootViewModel.This.Files);
+            foreach (var f in filesToClose)
+            {
+                if (!RootViewModel.This.Close(f)) e.Cancel = true;
+                else f.Dispose();
+            }
+
+            // Only shut communication down if the window really closes: before, cancelling
+            // the "save changes?" prompt left the app running with device search stopped.
+            if (e.Cancel) return;
+
             if (RootViewModel.This.UdpСlient != null)
             {
                 try
@@ -114,13 +126,6 @@ namespace PixelTuner
                 catch { }
             }
             DeviceHelper.StopSeeking();
-            Settings.Default.Save();
-            var filesToClose = new List<FileViewModel>(RootViewModel.This.Files);
-            foreach (var f in filesToClose)
-            {
-                if (!RootViewModel.This.Close(f)) e.Cancel = true;
-                else f.Dispose();
-            }
         }
 
         private void boxSwitchInsertMode_Click(object sender, RoutedEventArgs e)

@@ -86,9 +86,16 @@ namespace PixelTuner.ViewModel
             //Bitmap = (Bitmap)Bitmap.FromFile(DisplayModel.FullName);
             ThreadPool.QueueUserWorkItem((o) =>
             {
-                BitmapSource frozen = FormatImage(bmp);
-                frozen.Freeze();
-                Image = frozen;
+                // An exception on a thread-pool thread terminates the process.
+                try
+                {
+                    BitmapSource frozen = FormatImage(bmp);
+                    frozen.Freeze();
+                    Image = frozen;
+                }
+                catch
+                {
+                }
             });
         }
 

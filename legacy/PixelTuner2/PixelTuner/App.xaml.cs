@@ -22,7 +22,8 @@ namespace PixelTuner
             }
             catch
             {
-                MessageBox.Show(e.Exception.Message + "\n" + e.Exception.InnerException.Message, Application.Current.MainWindow.Title);
+                var inner = e.Exception.InnerException != null ? "\n" + e.Exception.InnerException.Message : "";
+                MessageBox.Show(e.Exception.Message + inner, "PixelTuner");
             }
         }
         
