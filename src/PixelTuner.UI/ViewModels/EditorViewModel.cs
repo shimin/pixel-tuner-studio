@@ -575,7 +575,8 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     {
         if (Item is not { } i || Timelines.TimelineOf(i) is not { } timeline) return;
         if (!TimeFormat.TryParse(text, out var time)) { Reject(text); return; }
-        if (time == current) return;
+        time = Edits.WholeMs(time);   // the .bin counts whole milliseconds: 1.2344 s is 1.234 s
+        if (time == current) { Refresh(); return; }
         try
         {
             Document.Execute(edit(timeline, i, time));
