@@ -19,3 +19,6 @@
 *.dll binary
 *.exe binary
 *.pxpkg binary
+
+# PixelTuner 2 projects are reference data: keep them byte for byte.
+*.ptp -text

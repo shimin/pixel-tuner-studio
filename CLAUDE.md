@@ -13,6 +13,10 @@
   from `legacy/PixelTuner2` exactly as before (root props are blocked by `legacy/Directory.Build.props`).
 - Device protocol changes must update the JSON vectors in
   `legacy/EpicPlayer/epicplayer-mac/Tests/Fixtures/` and pass `tests/PixelTuner.Sync.Tests`.
+- Device .bin export (`src/PixelTuner.Core/Export`) must stay byte for byte what PixelTuner 2 wrote:
+  `tests/PixelTuner.Core.Tests` checks it against real shows in `Fixtures/LegacyProjects`, and the
+  CI job "Export against the reference set" checks the whole set from the draft release `samples-v1`
+  (locally: unpack it and set `PIXELTUNER_SAMPLES`). Only JPEG sources may differ, by one level.
 - Merge PRs with a normal merge commit only.
 - The cloud sandbox can build and test Core, Package, Sync, UI and Desktop on Linux
   (`apt install dotnet-sdk-10.0`, `SSL_CERT_FILE=/root/.ccr/ca-bundle.crt` for NuGet).

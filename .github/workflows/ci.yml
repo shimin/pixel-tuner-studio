@@ -28,8 +28,40 @@ jobs:
         run: |
           dotnet test tests/PixelTuner.Sync.Tests -c Release
           dotnet test tests/PixelTuner.Package.Tests -c Release
+          dotnet test tests/PixelTuner.Core.Tests -c Release
       - name: Build desktop on Linux
         run: dotnet build src/Heads/PixelTuner.Desktop -c Release
+
+  samples:
+    # The whole PixelTuner 2 reference set (about 540 MB) from the draft release "samples-v1".
+    # Every pixel-device .bin in it must come out byte for byte the same.
+    name: Export against the reference set
+    runs-on: ubuntu-latest
+    permissions:
+      # GitHub lists draft releases only to tokens that can push.
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Download the reference set
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          api="repos/${{ github.repository }}/releases"
+          asset=$(gh api "$api" --paginate --jq '.[] | select(.name == "samples-v1") | .assets[] | select(.name == "samples_with_bin.zip")' | head -n 1)
+          if [ -z "$asset" ]; then echo "::error::Release samples-v1 with samples_with_bin.zip not found"; exit 1; fi
+          id=$(echo "$asset" | jq -r .id)
+          digest=$(echo "$asset" | jq -r '.digest // empty' | sed 's/^sha256://')
+          gh api -H "Accept: application/octet-stream" "repos/${{ github.repository }}/releases/assets/$id" > "$RUNNER_TEMP/samples.zip"
+          if [ -n "$digest" ]; then echo "$digest  $RUNNER_TEMP/samples.zip" | sha256sum -c -; fi
+          mkdir -p "$RUNNER_TEMP/samples"
+          unzip -q "$RUNNER_TEMP/samples.zip" -d "$RUNNER_TEMP/samples" -x '*.zip'
+          echo "PIXELTUNER_SAMPLES=$RUNNER_TEMP/samples" >> "$GITHUB_ENV"
+      - name: Test
+        run: dotnet test tests/PixelTuner.Core.Tests -c Release --filter FullSampleExportTests --logger "console;verbosity=detailed"
 
   windows:
     name: Desktop (Windows)
@@ -43,6 +75,7 @@ jobs:
         run: |
           dotnet test tests/PixelTuner.Sync.Tests -c Release
           dotnet test tests/PixelTuner.Package.Tests -c Release
+          dotnet test tests/PixelTuner.Core.Tests -c Release
       - name: Publish
         run: dotnet publish src/Heads/PixelTuner.Desktop -c Release -r win-x64 --self-contained -o out/win-x64
       - uses: actions/upload-artifact@v4
@@ -63,6 +96,7 @@ jobs:
         run: |
           dotnet test tests/PixelTuner.Sync.Tests -c Release
           dotnet test tests/PixelTuner.Package.Tests -c Release
+          dotnet test tests/PixelTuner.Core.Tests -c Release
       - name: Publish and bundle
         run: |
           dotnet publish src/Heads/PixelTuner.Desktop -c Release -r osx-arm64 --self-contained -o out/osx-arm64

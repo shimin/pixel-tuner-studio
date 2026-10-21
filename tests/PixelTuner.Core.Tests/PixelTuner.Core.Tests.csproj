@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\PixelTuner.Core\PixelTuner.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Native Skia for the OS the tests run on (the app heads get it from Avalonia). -->
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Condition="$([MSBuild]::IsOSPlatform('Linux'))" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Win32" Condition="$([MSBuild]::IsOSPlatform('Windows'))" />
+    <PackageReference Include="SkiaSharp.NativeAssets.macOS" Condition="$([MSBuild]::IsOSPlatform('OSX'))" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Reference projects and the .bin files PixelTuner 2 exported from them. -->
+    <None Include="Fixtures\**\*" CopyToOutputDirectory="PreserveNewest" LinkBase="Fixtures" />
+  </ItemGroup>
+</Project>

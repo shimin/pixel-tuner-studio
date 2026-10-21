@@ -6,4 +6,12 @@
     <RootNamespace>PixelTuner.Core</RootNamespace>
     <IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
+  <ItemGroup>
+    <!-- Image decoding. The native library comes with Avalonia in every app head;
+         tests add the native assets for their OS. -->
+    <PackageReference Include="SkiaSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="PixelTuner.Core.Tests" />
+  </ItemGroup>
 </Project>
