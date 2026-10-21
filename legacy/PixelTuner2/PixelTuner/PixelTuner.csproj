@@ -96,6 +96,7 @@
     <Compile Include="CanvasElementWindow.xaml.cs">
       <DependentUpon>CanvasElementWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\LedMarkupCanvas.cs" />
     <Compile Include="Controls\ThumbListView\EffectView.cs" />
     <Compile Include="Controls\ThumbListView\GradientView.cs" />
     <Compile Include="Controls\ThumbListView\ImageView.cs" />
@@ -277,6 +278,8 @@
     <Compile Include="ViewModel\Timelines\PixelTimeLineViewModel.cs" />
     <Compile Include="ViewModel\Timelines\TimeLineViewModel.cs" />
     <Compile Include="ViewModel\Tools\CanvasElementViewModel.cs" />
+    <Compile Include="ViewModel\Tools\LedMarkup.cs" />
+    <Compile Include="ViewModel\Tools\LedMarkupEditor.cs" />
     <Compile Include="ViewModel\Tools\CanvasViewModel.cs" />
     <Compile Include="ViewModel\Tools\DevicesViewModel.cs" />
     <Compile Include="ViewModel\Tools\EffectsViewModel.cs" />

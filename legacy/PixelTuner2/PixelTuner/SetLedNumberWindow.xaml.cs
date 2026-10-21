@@ -1,71 +1,48 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using PixelTuner.ViewModel;
 
 namespace PixelTuner
 {
     /// <summary>
-    /// Interaction logic for SetLedNumberWindow.xaml
+    /// Asks for a new LED number. The LED moves to that place in the chain,
+    /// the LEDs between shift by one, so numbers stay unique and continuous.
     /// </summary>
     public partial class SetLedNumberWindow : Window
     {
-        public LedTile Tile { get; set; }
+        private readonly int _max;
 
-        public SetLedNumberWindow()
+        public SetLedNumberWindow(int value, int max)
         {
-            DataContext = this;
             InitializeComponent();
-            Loaded += SetLedNumberWindow_Loaded;
+            _max = Math.Max(1, max);
+            Value = value;
+            boxValue.Maximum = _max;
+            boxValue.Value = value;
+            boxHint.Text = string.Format(LedMarkupEditor.L("Markup_SetNumberHint", "1–{0}. Other LEDs shift to make room."), _max);
+            Loaded += (s, e) => boxValue.Focus();
         }
 
-        private void SetLedNumberWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            boxValue.Value = Tile.LedNumber;
-        }
+        public int Value { get; private set; }
 
-        public SetLedNumberWindow(LedTile tile)
-            : this()
+        private void Accept()
         {
-            Tile = tile;
+            object raw = boxValue.Value;
+            var v = raw == null ? Value : Convert.ToInt32(raw);
+            Value = Math.Max(1, Math.Min(_max, v));
+            DialogResult = true;
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Escape)
-            {
-                DialogResult = false;
-                Close();
-            }
-            else if (e.Key == Key.Enter)
-            {
-                DialogResult = true;
-                Close();
-            }
-        }
-
-        private void Window_OnClosing(object sender, CancelEventArgs e)
-        {
-            if (DialogResult == true)
-            {
-                Tile.Selected = true;
-                Tile.LedNumber = (int) boxValue.Value;
-            }
+            if (e.Key == Key.Escape) DialogResult = false;
+            else if (e.Key == Key.Enter) Accept();
         }
 
         private void Button_OnClick(object sender, RoutedEventArgs e)
         {
-            Close();
+            Accept();
         }
     }
 }
