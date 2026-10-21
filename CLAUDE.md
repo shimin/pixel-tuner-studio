@@ -32,6 +32,11 @@
   `PtpConverter` first, so the reference tests also cover the .ptp import. A field that the export
   needs must survive `PtpConverter` and the package JSON: `tests/PixelTuner.Package.Tests` checks
   that a package exports the same .bin as its .ptp (CI does this for the whole `samples-v1` set too).
+- Cable and Wi-Fi device protocol (`src/PixelTuner.Devices`, PixelTuner 2's `Communication/Service`):
+  packets `[command, length, data, 0x0D]`, block sizes and info layouts as PixelTuner 2 had them.
+  `tests/PixelTuner.Devices.Tests` drives it with an in-memory device and a real TCP connection.
+- `src/PixelTuner.Audio` holds the player and decoder contracts only; implementations go per
+  platform (LibVLC on desktop, system players on phones).
 - Merge PRs with a normal merge commit only.
 - The cloud sandbox can build and test Core, Package, Sync, UI and Desktop on Linux
   (`apt install dotnet-sdk-10.0`, `SSL_CERT_FILE=/root/.ccr/ca-bundle.crt` for NuGet).

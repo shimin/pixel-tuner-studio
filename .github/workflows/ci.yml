@@ -27,6 +27,8 @@ jobs:
       - name: Test
         run: |
           dotnet test tests/PixelTuner.Sync.Tests -c Release
+          dotnet test tests/PixelTuner.Devices.Tests -c Release
+          dotnet test tests/PixelTuner.Audio.Tests -c Release
           dotnet test tests/PixelTuner.Package.Tests -c Release
           dotnet test tests/PixelTuner.Core.Tests -c Release
           dotnet test tests/PixelTuner.Legacy.OracleTests -c Release
@@ -67,6 +69,8 @@ jobs:
       - name: Test
         run: |
           dotnet test tests/PixelTuner.Sync.Tests -c Release
+          dotnet test tests/PixelTuner.Devices.Tests -c Release
+          dotnet test tests/PixelTuner.Audio.Tests -c Release
           dotnet test tests/PixelTuner.Package.Tests -c Release
           dotnet test tests/PixelTuner.Core.Tests -c Release
           dotnet test tests/PixelTuner.Legacy.OracleTests -c Release
@@ -89,6 +93,8 @@ jobs:
       - name: Test
         run: |
           dotnet test tests/PixelTuner.Sync.Tests -c Release
+          dotnet test tests/PixelTuner.Devices.Tests -c Release
+          dotnet test tests/PixelTuner.Audio.Tests -c Release
           dotnet test tests/PixelTuner.Package.Tests -c Release
           dotnet test tests/PixelTuner.Core.Tests -c Release
           dotnet test tests/PixelTuner.Legacy.OracleTests -c Release

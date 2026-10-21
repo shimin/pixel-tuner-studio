@@ -20,7 +20,10 @@ PixelTuner 2: Windows, macOS, Android и iOS из одного кода. Два 
 src/
   PixelTuner.Core/        модель проекта (ShowProject) и сборка .bin, без UI и платформенного кода
   PixelTuner.Package/     формат .pxpkg: чтение, запись, проверка целостности, импорт .ptp
-  PixelTuner.Sync/        протокол устройств (UDP 333), поиск устройств, Art-Net
+  PixelTuner.Sync/        протокол синхронизации (UDP 333), поиск устройств в сети, Art-Net
+  PixelTuner.Devices/     устройства по кабелю (COM) и Wi-Fi (TCP 3331): опрос, заливка .bin,
+                          прошивка, настройки (только Studio)
+  PixelTuner.Audio/       контракты плеера и декодера, волна звука, плеер-часы без звука
   PixelTuner.UI/          общий интерфейс Avalonia: экраны, тема, строки ru/en/de
   PixelTuner.UI/Product.cs  какое приложение запущено: Studio или Stage
   Heads/
@@ -43,6 +46,8 @@ legacy/                   PixelTuner 2, Common, Communication, WpfTools, EpicPla
 
 ```bash
 dotnet test tests/PixelTuner.Sync.Tests
+dotnet test tests/PixelTuner.Devices.Tests
+dotnet test tests/PixelTuner.Audio.Tests
 dotnet test tests/PixelTuner.Package.Tests
 dotnet run --project src/Heads/PixelTuner.Studio.Desktop
 ```
@@ -100,7 +105,24 @@ export/<device>.bin скомпилированные файлы устройст
 через импорт, поэтому сверка с эталонами PixelTuner 2 проверяет и импорт.
 `PixelTuner.Package.Tests` сравнивает .bin из пакета с .bin из исходного .ptp.
 
-## Протокол устройств
+## Устройства по кабелю и Wi-Fi
+
+`PixelTuner.Devices` переносит `Communication/Service` из PixelTuner 2:
+
+- `DeviceManager` раз в полсекунды опрашивает COM-порты. Порт, который не ответил
+  как устройство, больше не опрашивается, пока не пропадёт из системы. На macOS
+  смотрятся только `/dev/cu.*`.
+- Устройства по Wi-Fi сами подключаются к TCP 3331 после объявления из `PixelTuner.Sync`.
+- Каждое устройство раз в секунду спрашивается о состоянии, если не занято. Устройство,
+  которое перестало отвечать, убирается из списка.
+- `ShowDevice` заливает шоу (блоки по 250 байт для пикселей, обручей и видео, по 60
+  для E-pic и LightMaster), прошивку (по 60) и настройки, а Illuminator передаёт команды
+  воспроизведения.
+
+Модели устройств определяются по имени без рефлексии (AOT). Тесты используют
+имитатор устройства в памяти и настоящее TCP-подключение.
+
+## Протокол синхронизации
 
 Спецификация: `legacy/EpicPlayer/epicplayer-mac/plans/protocol.md`.
 Эталонные байты: `legacy/EpicPlayer/epicplayer-mac/Tests/Fixtures/*.json` — их

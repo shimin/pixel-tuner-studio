@@ -1,6 +1,8 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/PixelTuner.Audio/PixelTuner.Audio.csproj" />
     <Project Path="src/PixelTuner.Core/PixelTuner.Core.csproj" />
+    <Project Path="src/PixelTuner.Devices/PixelTuner.Devices.csproj" />
     <Project Path="src/PixelTuner.Package/PixelTuner.Package.csproj" />
     <Project Path="src/PixelTuner.Sync/PixelTuner.Sync.csproj" />
     <Project Path="src/PixelTuner.UI/PixelTuner.UI.csproj" />
@@ -11,7 +13,9 @@
     <Project Path="src/Heads/PixelTuner.Studio.Desktop/PixelTuner.Studio.Desktop.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/PixelTuner.Audio.Tests/PixelTuner.Audio.Tests.csproj" />
     <Project Path="tests/PixelTuner.Core.Tests/PixelTuner.Core.Tests.csproj" />
+    <Project Path="tests/PixelTuner.Devices.Tests/PixelTuner.Devices.Tests.csproj" />
     <Project Path="tests/PixelTuner.Legacy.OracleTests/PixelTuner.Legacy.OracleTests.csproj" />
     <Project Path="tests/PixelTuner.Package.Tests/PixelTuner.Package.Tests.csproj" />
     <Project Path="tests/PixelTuner.Sync.Tests/PixelTuner.Sync.Tests.csproj" />
