@@ -16,7 +16,10 @@
 - Device .bin export (`src/PixelTuner.Core/Export`) must stay byte for byte what PixelTuner 2 wrote:
   `tests/PixelTuner.Core.Tests` checks it against real shows in `Fixtures/LegacyProjects`, and the
   CI job "Export against the reference set" checks the whole set from the draft release `samples-v1`
-  (locally: unpack it and set `PIXELTUNER_SAMPLES`). Only JPEG sources may differ, by one level.
+  (locally: unpack it and set `PIXELTUNER_SAMPLES`). Only JPEG sources may differ, by one level,
+  and video images from the GIFs listed in `FullSampleVideoExportTests.WindowsDecodedDifferently`:
+  WPF changed some pixels of small-palette frames, and Studio keeps the exact palette colours
+  (Ivan: where Windows and the cleaner result differ, prefer quality over parity).
 - Merge PRs with a normal merge commit only.
 - The cloud sandbox can build and test Core, Package, Sync, UI and Desktop on Linux
   (`apt install dotnet-sdk-10.0`, `SSL_CERT_FILE=/root/.ccr/ca-bundle.crt` for NuGet).

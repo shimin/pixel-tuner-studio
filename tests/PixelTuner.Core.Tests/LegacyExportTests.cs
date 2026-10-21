@@ -35,6 +35,25 @@ public class LegacyExportTests
         LegacyBinaryAssert.Equal(expected, actual, JpegImages(expected, selected.Where(l => export.TimelineHeight(l) == height).ToList()));
     }
 
+    [Theory]
+    [InlineData("glasses", "glasses.ptp", "0.bin", new[] { 0 })]
+    [InlineData("glasses", "glasses.ptp", "1.bin", new[] { 1 })]
+    public void Video_export_matches_PixelTuner_2(string folder, string project, string bin, int[] timelines)
+    {
+        string dir = Fixture(folder);
+        var document = PtpDocument.Load(Path.Combine(dir, project));
+        var resolver = new PtpMediaResolver(dir);
+        var export = new PtpVideoExport(document, resolver.Resolve);
+        var lines = PtpVideoExport.VideoTimelines(document);
+        var selected = timelines.Select(i => lines[i]).ToList();
+
+        byte[] actual = export.Export(selected);
+        byte[] expected = File.ReadAllBytes(Path.Combine(dir, "bin", bin));
+
+        LegacyBinaryAssert.Equal(expected, actual, decodedDifferently:
+            FullSampleVideoExportTests.ImagesFrom(expected, selected, FullSampleVideoExportTests.WindowsDecodedDifferently));
+    }
+
     /// <summary>Addresses of image blocks decoded from JPEG files (gaps shift item indexes).</summary>
     internal static HashSet<uint> JpegImages(byte[] bin, IReadOnlyList<PtpTimeline> lines)
     {

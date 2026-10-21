@@ -9,16 +9,25 @@ internal static class LegacyBinaryAssert
     /// Byte for byte, except inside image blocks listed in <paramref name="jpegImages"/>:
     /// there each byte may differ by one level, because JPEG decoders round differently.
     /// </summary>
-    public static void Equal(byte[] expected, byte[] actual, IReadOnlySet<uint>? jpegImages = null)
+    /// <remarks>
+    /// Inside blocks listed in <paramref name="decodedDifferently"/> any pixel value may differ:
+    /// their source was decoded differently on purpose (GIF frames, see
+    /// <see cref="FullSampleVideoExportTests"/>). Headers and addresses must still match.
+    /// </remarks>
+    public static void Equal(byte[] expected, byte[] actual, IReadOnlySet<uint>? jpegImages = null,
+        IReadOnlySet<uint>? decodedDifferently = null)
     {
         Assert.Equal(expected.Length, actual.Length);
         if (expected.AsSpan().SequenceEqual(actual)) return;
 
-        var ranges = ImageRanges(expected).Where(r => jpegImages?.Contains(r.Start) == true).ToList();
+        var ranges = ImageRanges(expected).ToList();
+        var jpeg = ranges.Where(r => jpegImages?.Contains(r.Start) == true).ToList();
+        var free = ranges.Where(r => decodedDifferently?.Contains(r.Start) == true).ToList();
         for (int i = 0; i < expected.Length; i++)
         {
             if (expected[i] == actual[i]) continue;
-            bool inJpeg = ranges.Any(r => i > r.Start + 4 && i < r.End);
+            if (free.Any(r => i > r.Start + 4 && i <= r.End)) continue;
+            bool inJpeg = jpeg.Any(r => i > r.Start + 4 && i <= r.End);
             Assert.True(inJpeg && Math.Abs(expected[i] - actual[i]) <= 1,
                 $"Byte {i} (0x{i:X}) differs: PixelTuner 2 wrote {expected[i]}, got {actual[i]}.");
         }

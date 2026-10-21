@@ -62,7 +62,8 @@ public class FullSampleVideoExportTests(ITestOutputHelper output)
                         byte[] actual = export.Export(selected);
                         if (Environment.GetEnvironmentVariable("PIXELTUNER_DUMP") is { Length: > 0 } dump)
                             File.WriteAllBytes(Path.Combine(dump, $"{Path.GetFileName(dir)}__{name}.bin"), actual);
-                        LegacyBinaryAssert.Equal(expected, actual);
+                        LegacyBinaryAssert.Equal(expected, actual,
+                            decodedDifferently: ImagesFrom(expected, selected, WindowsDecodedDifferently));
                         result = null;
                         break;
                     }
@@ -85,6 +86,44 @@ public class FullSampleVideoExportTests(ITestOutputHelper output)
 
         output.WriteLine($"{checkedFiles} video .bin files checked, {failures.Count} failed.");
         Assert.True(failures.Count == 0, string.Join(Environment.NewLine, failures));
+    }
+
+    /// <summary>
+    /// GIFs that PixelTuner 2 read with slightly different colours. WPF + GDI+ change some pixels
+    /// of frames with 16 colours or fewer (checked on Windows against every GIF of the reference
+    /// set, 2026-10-21). Studio reads the colours exactly as the palette stores them, which Ivan
+    /// chose over parity with Windows; images made from these files may differ in pixel values only.
+    /// </summary>
+    internal static readonly HashSet<string> WindowsDecodedDifferently = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "31.gif", "gif-003.gif", "gif-004.gif", "gif-006.gif", "gif-012.gif", "yoLogo.gif",
+        "003_fromLeft.gif", "003_steamFromRight.gif", "004_fadeInGreenLights.gif", "transNeft_3shields.gif",
+        "002-fadeLeft.gif", "002-fadeRigth.gif", "010 lightning 3.gif", "014 upload_reverse.gif",
+        "041l2.gif", "041r2.gif", "042l2.gif", "042r2.gif", "046.gif", "blue fade.gif",
+        "glassesHearts5.gif", "0006-hex.gif", "0007-hex.gif", "0008-hex.gif", "e-pic logo.gif",
+    };
+
+    /// <summary>
+    /// Start addresses of the images whose item (on either channel of a pair) uses one of
+    /// <paramref name="files"/>, found by the item's start time.
+    /// </summary>
+    internal static HashSet<uint> ImagesFrom(byte[] bin, IReadOnlyList<PtpTimeline> selected, HashSet<string> files)
+    {
+        var result = new HashSet<uint>();
+        if (bin.Length < 12) return result;
+        int line = (int)BinaryPrimitives.ReadUInt32LittleEndian(bin.AsSpan(12));
+        int count = BinaryPrimitives.ReadUInt16LittleEndian(bin.AsSpan(line));
+        for (int i = 0; i < count; i++)
+        {
+            var entry = bin.AsSpan(line + 12 + 12 * i);
+            uint address = BinaryPrimitives.ReadUInt32LittleEndian(entry);
+            var start = TimeSpan.FromMilliseconds(BinaryPrimitives.ReadUInt32LittleEndian(entry[8..]));
+            bool uses = selected.Take(2).SelectMany(t => t.Items)
+                .Any(item => item.Start <= start && start < item.End
+                    && files.Contains(Path.GetFileName(item.FullName.Replace('\\', '/'))));
+            if (uses) result.Add(address);
+        }
+        return result;
     }
 
     /// <summary>True when the project also has pixel timelines and the .bin is not of a video height.</summary>
