@@ -137,6 +137,15 @@
   <data name="Inspector_OffsetX" xml:space="preserve"><value>Offset X</value></data>
   <data name="Inspector_OffsetY" xml:space="preserve"><value>Offset Y</value></data>
   <data name="Inspector_BadValue" xml:space="preserve"><value>That value cannot be used: {0}.</value></data>
+  <data name="Import_Trim" xml:space="preserve"><value>Trim what the squeeze left</value></data>
+  <data name="Import_WarpBottom" xml:space="preserve"><value>Bottom</value></data>
+  <data name="Import_WarpMiddle" xml:space="preserve"><value>Middle</value></data>
+  <data name="Import_WarpTop" xml:space="preserve"><value>Top</value></data>
+  <data name="Import_WarpHint" xml:space="preserve"><value>Squeezes the picture towards its middle line, more at the top, so that what the poi draws in the air looks right. Leave it off to skip the step.</value></data>
+  <data name="Import_Warp" xml:space="preserve"><value>Squeeze in perspective</value></data>
+  <data name="Import_StepFinish" xml:space="preserve"><value>3  Size and colour</value></data>
+  <data name="Import_StepPerspective" xml:space="preserve"><value>2  Perspective</value></data>
+  <data name="Import_StepCut" xml:space="preserve"><value>1  Cut</value></data>
   <data name="Import_Cancel" xml:space="preserve"><value>Cancel</value></data>
   <data name="Import_Apply" xml:space="preserve"><value>Add to library</value></data>
   <data name="Import_WrongHeight" xml:space="preserve"><value>The picture must be as high as the timeline plays: scale it, or cut it to that height.</value></data>

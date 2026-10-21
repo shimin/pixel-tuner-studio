@@ -12,8 +12,11 @@ namespace PixelTuner.UI.LibraryPanel;
 /// </summary>
 public sealed class CropControl : Control
 {
-    public static readonly StyledProperty<ImportViewModel?> ImportProperty =
-        AvaloniaProperty.Register<CropControl, ImportViewModel?>(nameof(Import));
+    public static readonly StyledProperty<Avalonia.Media.Imaging.Bitmap?> SourceProperty =
+        AvaloniaProperty.Register<CropControl, Avalonia.Media.Imaging.Bitmap?>(nameof(Source));
+
+    public static readonly StyledProperty<CropRect?> CropProperty =
+        AvaloniaProperty.Register<CropControl, CropRect?>(nameof(Crop));
 
     private const double GrabScreenPixels = 9;
 
@@ -21,20 +24,31 @@ public sealed class CropControl : Control
     private PixelRect _start;
     private (double X, double Y) _down;
 
-    static CropControl() => AffectsRender<CropControl>(ImportProperty);
-
-    public ImportViewModel? Import
+    static CropControl()
     {
-        get => GetValue(ImportProperty);
-        set => SetValue(ImportProperty, value);
+        AffectsRender<CropControl>(SourceProperty, CropProperty);
+        AffectsMeasure<CropControl>(SourceProperty);
+    }
+
+    /// <summary>The picture to cut.</summary>
+    public Avalonia.Media.Imaging.Bitmap? Source
+    {
+        get => GetValue(SourceProperty);
+        set => SetValue(SourceProperty, value);
+    }
+
+    public CropRect? Crop
+    {
+        get => GetValue(CropProperty);
+        set => SetValue(CropProperty, value);
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
-        if (change.Property != ImportProperty) return;
-        if (change.OldValue is ImportViewModel old) old.PropertyChanged -= Changed;
-        if (change.NewValue is ImportViewModel import) import.PropertyChanged += Changed;
+        if (change.Property != CropProperty) return;
+        if (change.OldValue is CropRect old) old.PropertyChanged -= Changed;
+        if (change.NewValue is CropRect crop) crop.PropertyChanged += Changed;
     }
 
     private void Changed(object? sender, System.ComponentModel.PropertyChangedEventArgs e) => InvalidateVisual();
@@ -42,30 +56,30 @@ public sealed class CropControl : Control
     // The picture is drawn as large as fits, in its own proportions, centred.
     private (Rect Area, double Scale) Layout()
     {
-        if (Import is not { } import || import.SourceWidth == 0) return (default, 1);
-        double scale = Math.Min(Bounds.Width / import.SourceWidth, Bounds.Height / import.SourceHeight);
-        var size = new Size(import.SourceWidth * scale, import.SourceHeight * scale);
+        if (Source is not { } source || source.PixelSize.Width == 0) return (default, 1);
+        double scale = Math.Min(Bounds.Width / source.PixelSize.Width, Bounds.Height / source.PixelSize.Height);
+        var size = new Size(source.PixelSize.Width * scale, source.PixelSize.Height * scale);
         return (new Rect((Bounds.Width - size.Width) / 2, (Bounds.Height - size.Height) / 2, size.Width, size.Height), scale);
     }
 
     protected override Size MeasureOverride(Size availableSize)
     {
-        if (Import is not { } import) return default;
-        double width = double.IsInfinity(availableSize.Width) ? import.SourceWidth : availableSize.Width;
-        double height = double.IsInfinity(availableSize.Height) ? import.SourceHeight : availableSize.Height;
-        double scale = Math.Min(width / import.SourceWidth, height / import.SourceHeight);
-        return new Size(import.SourceWidth * scale, import.SourceHeight * scale);
+        if (Source is not { } source) return default;
+        var picture = source.PixelSize;
+        double width = double.IsInfinity(availableSize.Width) ? picture.Width : availableSize.Width;
+        double height = double.IsInfinity(availableSize.Height) ? picture.Height : availableSize.Height;
+        double scale = Math.Min(width / picture.Width, height / picture.Height);
+        return new Size(picture.Width * scale, picture.Height * scale);
     }
 
     public override void Render(DrawingContext context)
     {
         base.Render(context);
-        if (Import is not { SourceBitmap: { } bitmap } import) return;
+        if (Source is not { } bitmap || Crop is not { } crop) return;
         var (area, scale) = Layout();
         using (context.PushRenderOptions(new RenderOptions { BitmapInterpolationMode = scale >= 2 ? Avalonia.Media.Imaging.BitmapInterpolationMode.None : Avalonia.Media.Imaging.BitmapInterpolationMode.MediumQuality }))
             context.DrawImage(bitmap, new Rect(0, 0, bitmap.PixelSize.Width, bitmap.PixelSize.Height), area);
 
-        var crop = import.Crop;
         var rect = new Rect(area.X + crop.X * scale, area.Y + crop.Y * scale, crop.Width * scale, crop.Height * scale);
         // Dim what is cut away: four rectangles around the crop.
         var dim = new SolidColorBrush(Colors.Black, 0.55);
@@ -87,9 +101,9 @@ public sealed class CropControl : Control
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
-        if (Import is not { } import || !e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
+        if (Crop is not { } crop || !e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
         _down = ToPicture(e.GetPosition(this));
-        _start = import.Crop;
+        _start = crop.Value;
         _handle = CropGeometry.HitTest(_start, _down.X, _down.Y, GrabScreenPixels / Layout().Scale);
         e.Pointer.Capture(this);
         e.Handled = true;
@@ -98,11 +112,11 @@ public sealed class CropControl : Control
     protected override void OnPointerMoved(PointerEventArgs e)
     {
         base.OnPointerMoved(e);
-        if (Import is not { } import) return;
+        if (Crop is not { } crop || Source is not { } source) return;
         var p = ToPicture(e.GetPosition(this));
         if (_handle == CropHandle.None)
         {
-            Cursor = CropGeometry.HitTest(import.Crop, p.X, p.Y, GrabScreenPixels / Layout().Scale) switch
+            Cursor = CropGeometry.HitTest(crop.Value, p.X, p.Y, GrabScreenPixels / Layout().Scale) switch
             {
                 CropHandle.TopLeft or CropHandle.BottomRight => new Cursor(StandardCursorType.TopLeftCorner),
                 CropHandle.TopRight or CropHandle.BottomLeft => new Cursor(StandardCursorType.TopRightCorner),
@@ -111,8 +125,8 @@ public sealed class CropControl : Control
             };
             return;
         }
-        var rect = CropGeometry.Drag(_handle, _start, _down.X, _down.Y, p.X, p.Y, import.SourceWidth, import.SourceHeight);
-        (import.CropX, import.CropY, import.CropWidth, import.CropHeight) = (rect.X, rect.Y, rect.Width, rect.Height);
+        var rect = CropGeometry.Drag(_handle, _start, _down.X, _down.Y, p.X, p.Y, source.PixelSize.Width, source.PixelSize.Height);
+        crop.Set(rect.X, rect.Y, rect.Width, rect.Height);
     }
 
     protected override void OnPointerReleased(PointerReleasedEventArgs e)

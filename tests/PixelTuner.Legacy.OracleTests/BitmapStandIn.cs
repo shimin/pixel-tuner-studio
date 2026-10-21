@@ -125,7 +125,7 @@ namespace System.Windows.Media.Imaging
 
 namespace Common.Imaging
 {
-    public static class ImageHelper
+    public static partial class ImageHelper
     {
         public static System.Drawing.Bitmap BitmapImageToBitmap<TEncoder>(System.Windows.Media.Imaging.BitmapFrame frame) =>
             new(frame.Image);

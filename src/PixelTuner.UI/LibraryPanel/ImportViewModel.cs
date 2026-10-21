@@ -9,9 +9,23 @@ using PixelTuner.UI.ViewModels;
 
 namespace PixelTuner.UI.LibraryPanel;
 
+/// <summary>The steps of the import, as PixelTuner 2's window had them.</summary>
+public enum ImportStep
+{
+    /// <summary>Cut the part of the picture that is wanted.</summary>
+    Cut = 1,
+
+    /// <summary>Squeeze the picture in perspective (optional).</summary>
+    Perspective = 2,
+
+    /// <summary>Trim what the squeeze left, scale to the height of the device, correct the colour.</summary>
+    Finish = 3,
+}
+
 /// <summary>
-/// Bringing a picture into the library the way PixelTuner 2's import window did: cut a part, scale it to the height of the
-/// device, correct the colour. A picture that is already right goes in as the file it is.
+/// Bringing a picture into the library the way PixelTuner 2's import window did: cut a part, squeeze it in perspective
+/// (optional), trim it and scale it to the height of the device, correct the colour. A picture that is already right goes
+/// in as the file it is.
 /// </summary>
 public sealed partial class ImportViewModel : ObservableObject
 {
@@ -19,9 +33,12 @@ public sealed partial class ImportViewModel : ObservableObject
     private readonly string _sourcePath;
     private readonly PixelImage _source;
     private readonly Action<LibraryEntry?> _done;
-    private bool _dirty = true;
+
+    // The stages of the pipeline are kept until something before them changes.
+    private PixelImage? _cut;
+    private PixelImage? _warped;
     private PixelImage? _result;
-    private Bitmap? _bitmap;
+    private Bitmap? _sourceBitmap, _warpedBitmap, _resultBitmap;
 
     /// <param name="targetHeight">The LEDs of the timeline or device the picture is for; 0 when it can have any height.</param>
     /// <param name="heightIsFixed">The height belongs to a timeline that already plays pictures: it cannot be changed here.</param>
@@ -32,8 +49,8 @@ public sealed partial class ImportViewModel : ObservableObject
         _sourcePath = sourcePath;
         _source = source;
         _done = done;
-        CropWidth = source.Width;
-        CropHeight = source.Height;
+        Cut = new CropRect(CutChanged, source.Width, source.Height);
+        Trim = new CropRect(TrimChanged, source.Width, source.Height);
         ScaleToHeight = targetHeight > 0;
         TargetHeight = targetHeight > 0 ? targetHeight : source.Height;
         HeightIsFixed = heightIsFixed && targetHeight > 0;
@@ -44,58 +61,96 @@ public sealed partial class ImportViewModel : ObservableObject
     public int SourceHeight => _source.Height;
     public bool HeightIsFixed { get; }
 
-    /// <summary>The picture as it is, for the crop to be drawn over.</summary>
-    public Bitmap? SourceBitmap => _sourceBitmap ??= PixelBitmap.From(_source);
-    private Bitmap? _sourceBitmap;
+    // ---- steps
 
-    // ---- crop
+    [ObservableProperty] private ImportStep _step = ImportStep.Cut;
 
-    [ObservableProperty] private int _cropX;
-    [ObservableProperty] private int _cropY;
-    [ObservableProperty] private int _cropWidth;
-    [ObservableProperty] private int _cropHeight;
-
-    partial void OnCropXChanged(int value) => CropChanged(nameof(CropX));
-    partial void OnCropYChanged(int value) => CropChanged(nameof(CropY));
-    partial void OnCropWidthChanged(int value) => CropChanged(nameof(CropWidth));
-    partial void OnCropHeightChanged(int value) => CropChanged(nameof(CropHeight));
-
-    private bool _clamping;
-
-    // The rectangle always lies inside the picture and is at least one pixel; typing too much pulls it back.
-    private void CropChanged(string changed)
+    partial void OnStepChanged(ImportStep value)
     {
-        if (!_clamping)
-        {
-            _clamping = true;
-            try
-            {
-                int w = Math.Clamp(CropWidth, 1, _source.Width), h = Math.Clamp(CropHeight, 1, _source.Height);
-                int x = Math.Clamp(CropX, 0, _source.Width - w), y = Math.Clamp(CropY, 0, _source.Height - h);
-                if (w != CropWidth) CropWidth = w;
-                if (h != CropHeight) CropHeight = h;
-                if (x != CropX) CropX = x;
-                if (y != CropY) CropY = y;
-            }
-            finally
-            {
-                _clamping = false;
-            }
-        }
+        OnPropertyChanged(nameof(IsCutStep));
+        OnPropertyChanged(nameof(IsPerspectiveStep));
+        OnPropertyChanged(nameof(IsFinishStep));
+        OnPropertyChanged(nameof(IsTrimStep));
+        OnPropertyChanged(nameof(IsResultStep));
+        OnPropertyChanged(nameof(WarpedBitmap));
+    }
+
+    public bool IsCutStep => Step == ImportStep.Cut;
+    public bool IsPerspectiveStep => Step == ImportStep.Perspective;
+    public bool IsFinishStep => Step == ImportStep.Finish;
+
+    /// <summary>The trim rectangle is drawn on the squeezed picture, in the last step.</summary>
+    public bool IsTrimStep => Step == ImportStep.Finish && WarpEnabled;
+
+    /// <summary>The last step without a perspective squeeze shows the result itself, as there is nothing to trim.</summary>
+    public bool IsResultStep => Step == ImportStep.Finish && !WarpEnabled;
+
+    [RelayCommand] private void ShowCut() => Step = ImportStep.Cut;
+    [RelayCommand] private void ShowPerspective() => Step = ImportStep.Perspective;
+    [RelayCommand] private void ShowFinish() => Step = ImportStep.Finish;
+
+    // ---- cut
+
+    /// <summary>The first crop, on the picture as it is.</summary>
+    public CropRect Cut { get; }
+
+    /// <summary>The picture as it is, for the cut to be drawn over.</summary>
+    public Bitmap? SourceBitmap => _sourceBitmap ??= PixelBitmap.From(_source);
+
+    public bool IsCropped => !Cut.IsWhole;
+
+    private void CutChanged()
+    {
+        _cut = _warped = _result = null;
+        _warpedBitmap = _resultBitmap = null;
+        // What the squeeze makes of a new cut is another picture: the trim starts over on it.
+        if (WarpEnabled) Trim.Reset(Warped.Width, Warped.Height);
         Changed();
     }
 
-    public PixelRect Crop => new(CropX, CropY, CropWidth, CropHeight);
+    // ---- perspective
 
-    public bool IsCropped => Crop != PixelRect.Whole(_source);
+    [ObservableProperty] private bool _warpEnabled;
+    [ObservableProperty] private double _warpTop = PerspectiveWarp.DefaultTop;
+    [ObservableProperty] private double _warpMiddle = PerspectiveWarp.DefaultMiddle;
+    [ObservableProperty] private double _warpBottom = PerspectiveWarp.DefaultBottom;
 
-    [RelayCommand]
-    private void ResetCrop()
+    public double WarpMin => PerspectiveWarp.MinOffset;
+    public double WarpMax => PerspectiveWarp.MaxOffset;
+
+    partial void OnWarpEnabledChanged(bool value) => WarpSettingsChanged();
+    partial void OnWarpTopChanged(double value) => WarpSettingsChanged();
+    partial void OnWarpMiddleChanged(double value) => WarpSettingsChanged();
+    partial void OnWarpBottomChanged(double value) => WarpSettingsChanged();
+
+    private void WarpSettingsChanged()
     {
-        CropX = 0;
-        CropY = 0;
-        CropWidth = _source.Width;
-        CropHeight = _source.Height;
+        _warped = _result = null;
+        _warpedBitmap = _resultBitmap = null;
+        if (WarpEnabled) Trim.Reset(Warped.Width, Warped.Height);
+        OnPropertyChanged(nameof(IsTrimStep));
+        OnPropertyChanged(nameof(IsResultStep));
+        OnPropertyChanged(nameof(WarpedBitmap));
+        Changed();
+    }
+
+    /// <summary>After the cut, the part of the picture that goes on.</summary>
+    private PixelImage CutImage => _cut ??= Cut.IsWhole ? _source : ImageImport.Crop(_source, Cut.Value);
+
+    /// <summary>The cut picture, squeezed in perspective when that is on.</summary>
+    public PixelImage Warped => _warped ??= WarpEnabled ? PerspectiveWarp.Apply(CutImage, WarpTop, WarpMiddle, WarpBottom) : CutImage;
+
+    public Bitmap? WarpedBitmap => _warpedBitmap ??= PixelBitmap.From(Warped);
+
+    // ---- trim (the second crop, on the squeezed picture)
+
+    public CropRect Trim { get; }
+
+    private void TrimChanged()
+    {
+        _result = null;
+        _resultBitmap = null;
+        Changed();
     }
 
     // ---- scale
@@ -114,6 +169,8 @@ public sealed partial class ImportViewModel : ObservableObject
         }
         Changed();
     }
+
+    public decimal? TargetHeightBox { get => TargetHeight; set { if (value is { } v) TargetHeight = (int)v; } }
 
     // ---- colour
 
@@ -135,6 +192,10 @@ public sealed partial class ImportViewModel : ObservableObject
 
     public ImportAdjustments Adjustments => new(Brightness, MidtonesOnly, Contrast, Hue, Saturation, Value, Sharpen);
 
+    // The sliders work with double.
+    public double BrightnessSlider { get => Brightness; set => Brightness = (int)Math.Round(value); }
+    public double HueSlider { get => Hue; set => Hue = (int)Math.Round(value); }
+
     [RelayCommand]
     private void ResetColour()
     {
@@ -149,31 +210,20 @@ public sealed partial class ImportViewModel : ObservableObject
 
     // ---- result
 
-    // The number boxes and sliders of the panel work with decimal and double; these are the same values.
-    public decimal? CropXBox { get => CropX; set { if (value is { } v) CropX = (int)v; } }
-    public decimal? CropYBox { get => CropY; set { if (value is { } v) CropY = (int)v; } }
-    public decimal? CropWidthBox { get => CropWidth; set { if (value is { } v) CropWidth = (int)v; } }
-    public decimal? CropHeightBox { get => CropHeight; set { if (value is { } v) CropHeight = (int)v; } }
-    public decimal? TargetHeightBox { get => TargetHeight; set { if (value is { } v) TargetHeight = (int)v; } }
-    public double BrightnessSlider { get => Brightness; set => Brightness = (int)Math.Round(value); }
-    public double HueSlider { get => Hue; set => Hue = (int)Math.Round(value); }
-
     private void Changed()
     {
-        OnPropertyChanged(nameof(CropXBox));
-        OnPropertyChanged(nameof(CropYBox));
-        OnPropertyChanged(nameof(CropWidthBox));
-        OnPropertyChanged(nameof(CropHeightBox));
+        _result = null;
+        _resultBitmap = null;
         OnPropertyChanged(nameof(TargetHeightBox));
         OnPropertyChanged(nameof(BrightnessSlider));
         OnPropertyChanged(nameof(HueSlider));
-        _dirty = true;
         OnPropertyChanged(nameof(ResultSize));
         OnPropertyChanged(nameof(ResultWidth));
         OnPropertyChanged(nameof(ResultHeight));
         OnPropertyChanged(nameof(ResultBitmap));
         OnPropertyChanged(nameof(IsCropped));
         OnPropertyChanged(nameof(IsUntouched));
+        OnPropertyChanged(nameof(FitsTarget));
     }
 
     /// <summary>The picture as it will be stored.</summary>
@@ -181,15 +231,10 @@ public sealed partial class ImportViewModel : ObservableObject
     {
         get
         {
-            if (_dirty || _result is null)
-            {
-                var cut = Crop == PixelRect.Whole(_source) ? _source : ImageImport.Crop(_source, Crop);
-                var scaled = ScaleToHeight ? ImageImport.Scale(cut, ImageImport.ScaledWidth(cut.Width, cut.Height, TargetHeight), TargetHeight) : cut;
-                _result = ImageImport.Adjust(scaled, Adjustments);
-                _dirty = false;
-                _bitmap = null;
-            }
-            return _result;
+            if (_result is not null) return _result;
+            var trimmed = WarpEnabled && !Trim.IsWhole ? ImageImport.Crop(Warped, Trim.Value) : Warped;
+            var scaled = ScaleToHeight ? ImageImport.Scale(trimmed, ImageImport.ScaledWidth(trimmed.Width, trimmed.Height, TargetHeight), TargetHeight) : trimmed;
+            return _result = ImageImport.Adjust(scaled, Adjustments);
         }
     }
 
@@ -199,13 +244,19 @@ public sealed partial class ImportViewModel : ObservableObject
     public int ResultWidth => Result.Width;
     public int ResultHeight => Result.Height;
 
-    public Bitmap? ResultBitmap => _bitmap ??= PixelBitmap.From(Result);
+    public Bitmap? ResultBitmap => _resultBitmap ??= PixelBitmap.From(Result);
 
-    /// <summary>Nothing is cut, scaled or corrected: the file goes in as it is.</summary>
-    public bool IsUntouched => !IsCropped && !ScaleToHeight && Adjustments.IsNone;
+    /// <summary>Nothing is cut, squeezed, scaled or corrected: the file goes in as it is.</summary>
+    public bool IsUntouched => !IsCropped && !WarpEnabled && !ScaleToHeight && Adjustments.IsNone;
 
     /// <summary>Whether the result has the height the timeline asks for (always when no height is asked).</summary>
     public bool FitsTarget => !HeightIsFixed || Result.Height == TargetHeight;
+
+    [RelayCommand]
+    private void ResetCut() => Cut.Reset();
+
+    [RelayCommand]
+    private void ResetTrim() => Trim.Reset();
 
     [RelayCommand]
     private void Apply()

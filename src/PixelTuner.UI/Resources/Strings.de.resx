@@ -137,6 +137,15 @@
   <data name="Inspector_OffsetX" xml:space="preserve"><value>Versatz X</value></data>
   <data name="Inspector_OffsetY" xml:space="preserve"><value>Versatz Y</value></data>
   <data name="Inspector_BadValue" xml:space="preserve"><value>Dieser Wert ist nicht möglich: {0}.</value></data>
+  <data name="Import_Trim" xml:space="preserve"><value>Beschneiden, was die Stauchung übrig ließ</value></data>
+  <data name="Import_WarpBottom" xml:space="preserve"><value>Unten</value></data>
+  <data name="Import_WarpMiddle" xml:space="preserve"><value>Mitte</value></data>
+  <data name="Import_WarpTop" xml:space="preserve"><value>Oben</value></data>
+  <data name="Import_WarpHint" xml:space="preserve"><value>Staucht das Bild zur Mittellinie, oben stärker, damit das, was der Poi in die Luft zeichnet, richtig aussieht. Aus lassen, um den Schritt zu überspringen.</value></data>
+  <data name="Import_Warp" xml:space="preserve"><value>In Perspektive stauchen</value></data>
+  <data name="Import_StepFinish" xml:space="preserve"><value>3  Größe und Farbe</value></data>
+  <data name="Import_StepPerspective" xml:space="preserve"><value>2  Perspektive</value></data>
+  <data name="Import_StepCut" xml:space="preserve"><value>1  Zuschnitt</value></data>
   <data name="Import_Cancel" xml:space="preserve"><value>Abbrechen</value></data>
   <data name="Import_Apply" xml:space="preserve"><value>Zur Bibliothek</value></data>
   <data name="Import_WrongHeight" xml:space="preserve"><value>Das Bild muss so hoch sein, wie die Spur es spielt: skaliere oder beschneide es.</value></data>

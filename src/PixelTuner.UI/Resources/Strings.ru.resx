@@ -137,6 +137,15 @@
   <data name="Inspector_OffsetX" xml:space="preserve"><value>Сдвиг по X</value></data>
   <data name="Inspector_OffsetY" xml:space="preserve"><value>Сдвиг по Y</value></data>
   <data name="Inspector_BadValue" xml:space="preserve"><value>Это значение не подходит: {0}.</value></data>
+  <data name="Import_Trim" xml:space="preserve"><value>Обрезать то, что осталось после сжатия</value></data>
+  <data name="Import_WarpBottom" xml:space="preserve"><value>Низ</value></data>
+  <data name="Import_WarpMiddle" xml:space="preserve"><value>Середина</value></data>
+  <data name="Import_WarpTop" xml:space="preserve"><value>Верх</value></data>
+  <data name="Import_WarpHint" xml:space="preserve"><value>Сжимает картинку к средней линии, сверху сильнее, чтобы то, что пои рисует в воздухе, выглядело правильно. Выключите, чтобы пропустить шаг.</value></data>
+  <data name="Import_Warp" xml:space="preserve"><value>Сжать в перспективе</value></data>
+  <data name="Import_StepFinish" xml:space="preserve"><value>3  Размер и цвет</value></data>
+  <data name="Import_StepPerspective" xml:space="preserve"><value>2  Перспектива</value></data>
+  <data name="Import_StepCut" xml:space="preserve"><value>1  Обрезка</value></data>
   <data name="Import_Cancel" xml:space="preserve"><value>Отмена</value></data>
   <data name="Import_Apply" xml:space="preserve"><value>В библиотеку</value></data>
   <data name="Import_WrongHeight" xml:space="preserve"><value>Картинка должна быть такой высоты, какую играет дорожка: приведите её к ней или обрежьте.</value></data>
