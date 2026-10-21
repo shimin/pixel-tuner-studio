@@ -18,6 +18,7 @@
     <Project Path="tests/PixelTuner.Devices.Tests/PixelTuner.Devices.Tests.csproj" />
     <Project Path="tests/PixelTuner.Legacy.OracleTests/PixelTuner.Legacy.OracleTests.csproj" />
     <Project Path="tests/PixelTuner.Package.Tests/PixelTuner.Package.Tests.csproj" />
+    <Project Path="tests/PixelTuner.UI.Tests/PixelTuner.UI.Tests.csproj" />
     <Project Path="tests/PixelTuner.Sync.Tests/PixelTuner.Sync.Tests.csproj" />
   </Folder>
 </Solution>

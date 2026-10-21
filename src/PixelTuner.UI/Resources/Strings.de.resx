@@ -13,4 +13,9 @@
   <data name="Project_Media" xml:space="preserve"><value>Mediendateien</value></data>
   <data name="FileType_Package" xml:space="preserve"><value>Pixel Tuner-Projekt</value></data>
   <data name="Error_OpenFailed" xml:space="preserve"><value>Projekt konnte nicht geöffnet werden: {0}</value></data>
+  <data name="Command_ImportLegacy" xml:space="preserve"><value>Aus PixelTuner 2 importieren…</value></data>
+  <data name="FileType_LegacyProject" xml:space="preserve"><value>PixelTuner-2-Projekt</value></data>
+  <data name="Import_Done" xml:space="preserve"><value>Importiert. Das Projekt ist als Paket gespeichert.</value></data>
+  <data name="Import_DoneMissing" xml:space="preserve"><value>Importiert, aber {0} Mediendatei(en) fehlen: {1}</value></data>
+  <data name="Error_ImportFailed" xml:space="preserve"><value>Das Projekt konnte nicht importiert werden: {0}</value></data>
 </root>

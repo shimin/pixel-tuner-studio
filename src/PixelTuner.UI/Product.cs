@@ -9,12 +9,22 @@ namespace PixelTuner.UI;
 /// </summary>
 public sealed class Product
 {
-    public static Product Studio { get; } = new("Pixel Tuner Studio");
-    public static Product Stage { get; } = new("Pixel Tuner Stage");
+    public static Product Studio { get; } = new("Pixel Tuner Studio", canImportLegacy: true);
+    public static Product Stage { get; } = new("Pixel Tuner Stage", canImportLegacy: false);
 
     public static Product Current { get; set; } = Studio;
 
-    private Product(string name) => Name = name;
+    private Product(string name, bool canImportLegacy)
+    {
+        Name = name;
+        CanImportLegacy = canImportLegacy;
+    }
+
+    /// <summary>
+    /// Importing a PixelTuner 2 project needs its media folders next to the file, so only the
+    /// desktop app offers it; phones open the resulting .pxpkg.
+    /// </summary>
+    public bool CanImportLegacy { get; }
 
     public string Name { get; }
 

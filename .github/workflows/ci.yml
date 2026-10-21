@@ -30,6 +30,7 @@ jobs:
           dotnet test tests/PixelTuner.Devices.Tests -c Release
           dotnet test tests/PixelTuner.Audio.Tests -c Release
           dotnet test tests/PixelTuner.Package.Tests -c Release
+          dotnet test tests/PixelTuner.UI.Tests -c Release
           dotnet test tests/PixelTuner.Core.Tests -c Release
           dotnet test tests/PixelTuner.Legacy.OracleTests -c Release
       - name: Build Studio on Linux
@@ -72,6 +73,7 @@ jobs:
           dotnet test tests/PixelTuner.Devices.Tests -c Release
           dotnet test tests/PixelTuner.Audio.Tests -c Release
           dotnet test tests/PixelTuner.Package.Tests -c Release
+          dotnet test tests/PixelTuner.UI.Tests -c Release
           dotnet test tests/PixelTuner.Core.Tests -c Release
           dotnet test tests/PixelTuner.Legacy.OracleTests -c Release
       - name: Publish
@@ -96,6 +98,7 @@ jobs:
           dotnet test tests/PixelTuner.Devices.Tests -c Release
           dotnet test tests/PixelTuner.Audio.Tests -c Release
           dotnet test tests/PixelTuner.Package.Tests -c Release
+          dotnet test tests/PixelTuner.UI.Tests -c Release
           dotnet test tests/PixelTuner.Core.Tests -c Release
           dotnet test tests/PixelTuner.Legacy.OracleTests -c Release
       - name: Publish and bundle
