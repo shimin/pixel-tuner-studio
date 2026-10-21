@@ -46,6 +46,17 @@ public sealed class PtpImportTests : IDisposable
     }
 
     [Fact]
+    public void Imported_project_builds_with_the_defaults_of_PixelTuner_2()
+    {
+        // A .ptp does not carry the program settings; the project gets PixelTuner 2's defaults,
+        // which are what the reference .bin files were built with.
+        string package = Path.Combine(_dir, "defaults.pxpkg");
+        var result = PtpImporter.Import(Path.Combine(Fixture("80_sample"), "80_sample.ptp"), package);
+
+        Assert.Equal((ColorDepth.Bit24, 4, 5), (result.Project.Build.Depth, result.Project.Build.GapStretching, result.Project.Build.LightRate));
+    }
+
+    [Fact]
     public void Import_keeps_timelines_markup_canvas_and_shares_media()
     {
         string ptp = Path.Combine(Fixture("glasses"), "glasses.ptp");

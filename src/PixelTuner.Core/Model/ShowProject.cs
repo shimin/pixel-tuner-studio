@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using PixelTuner.Core.Export;
 
 namespace PixelTuner.Core.Model;
 
@@ -25,6 +26,9 @@ public sealed class ShowProject
     /// <summary>Drawing of the props (SVG) that LED layouts are marked up on.</summary>
     public string? CanvasResourceId { get; set; }
 
+    /// <summary>How the .bin is built from this project; saved with it, so every computer builds the same file.</summary>
+    public BuildSettings Build { get; set; } = new();
+
     public List<Timeline> Timelines { get; set; } = [];
 
     /// <summary>LED markup of the props on the canvas; video timelines refer to one each.</summary>
@@ -34,6 +38,27 @@ public sealed class ShowProject
 
     /// <summary>Named points on the soundtrack for quick jumps on stage.</summary>
     public List<Marker> Markers { get; set; } = [];
+}
+
+/// <summary>
+/// The parameters of the .bin that are not on the timelines. PixelTuner 2 kept them in the program's settings,
+/// so the same .ptp could give different files on two computers; here they belong to the project, with PixelTuner 2's
+/// defaults.
+/// </summary>
+public sealed class BuildSettings
+{
+    public const int DefaultGapStretching = 4;
+    public const int DefaultLightRate = 5;
+
+    /// <summary>Bits per colour in the picture blocks: 12, 24 (what current devices play) or 36.</summary>
+    [JsonConverter(typeof(JsonStringEnumConverter<ColorDepth>))]
+    public ColorDepth Depth { get; set; } = ColorDepth.Bit24;
+
+    /// <summary>Stretching of the black entries that fill the pauses between items (PixelTuner 2's "default stretching").</summary>
+    public int GapStretching { get; set; } = DefaultGapStretching;
+
+    /// <summary>LightMaster: milliseconds between samples (PixelTuner 2's "discreteness").</summary>
+    public int LightRate { get; set; } = DefaultLightRate;
 }
 
 /// <summary>What a timeline drives. The value decides which .bin it compiles to.</summary>

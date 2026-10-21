@@ -125,6 +125,49 @@ public sealed class PxPackageTests : IDisposable
     }
 
     [Fact]
+    public void Build_settings_timeline_height_and_picture_sizes_survive_a_round_trip()
+    {
+        var project = new ShowProject
+        {
+            Build = new BuildSettings { Depth = PixelTuner.Core.Export.ColorDepth.Bit36, GapStretching = 9, LightRate = 20 },
+            Timelines = [new Timeline { Height = 125, Items = [new TimelineItem { MediaWidth = 40, MediaHeight = 125 }] }],
+        };
+        var path = Path.Combine(_dir, "settings.pxpkg");
+        new PxPackageWriter().Save(path, project);
+
+        using var pkg = PxPackage.Open(path);
+        Assert.Equal((PixelTuner.Core.Export.ColorDepth.Bit36, 9, 20), (pkg.Project.Build.Depth, pkg.Project.Build.GapStretching, pkg.Project.Build.LightRate));
+        Assert.Equal(125, pkg.Project.Timelines[0].Height);
+        Assert.Equal((40, 125), (pkg.Project.Timelines[0].Items[0].MediaWidth, pkg.Project.Timelines[0].Items[0].MediaHeight));
+    }
+
+    [Fact]
+    public void A_package_from_before_the_settings_reads_with_the_defaults_of_PixelTuner_2()
+    {
+        var path = Path.Combine(_dir, "old.pxpkg");
+        new PxPackageWriter().Save(path, new ShowProject { Timelines = [new Timeline { Items = [new TimelineItem()] }] });
+
+        using (var zip = ZipFile.Open(path, ZipArchiveMode.Update))
+        {
+            var entry = zip.GetEntry("project.json")!;
+            string json;
+            using (var r = new StreamReader(entry.Open()))
+                json = r.ReadToEnd();
+            entry.Delete();
+            // Cut out what older versions did not write.
+            json = System.Text.RegularExpressions.Regex.Replace(json, "\"(build|height|mediaWidth|mediaHeight)\": (\\{[^}]*\\}|\\d+),?", "");
+            Assert.DoesNotContain("\"build\"", json);
+            using var w = new StreamWriter(zip.CreateEntry("project.json").Open());
+            w.Write(json);
+        }
+
+        using var pkg = PxPackage.Open(path);
+        Assert.Equal((PixelTuner.Core.Export.ColorDepth.Bit24, 4, 5), (pkg.Project.Build.Depth, pkg.Project.Build.GapStretching, pkg.Project.Build.LightRate));
+        Assert.Equal(0, pkg.Project.Timelines[0].Height);
+        Assert.Equal(0, pkg.Project.Timelines[0].Items[0].MediaHeight);
+    }
+
+    [Fact]
     public void Rejects_a_package_from_a_newer_version()
     {
         var path = Path.Combine(_dir, "new.pxpkg");

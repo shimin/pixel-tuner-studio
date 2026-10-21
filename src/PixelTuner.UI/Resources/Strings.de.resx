@@ -101,6 +101,9 @@
   <data name="Edit_SetAudio" xml:space="preserve"><value>Tonspur festlegen</value></data>
   <data name="Edit_RemoveAudio" xml:space="preserve"><value>Tonspur entfernen</value></data>
   <data name="Edit_SetTimelineHeight" xml:space="preserve"><value>Höhe der Spur ändern</value></data>
+  <data name="Edit_SetColorDepth" xml:space="preserve"><value>Farbtiefe ändern</value></data>
+  <data name="Edit_SetGapStretching" xml:space="preserve"><value>Dehnung der Pausen ändern</value></data>
+  <data name="Edit_SetLightRate" xml:space="preserve"><value>Abtastschritt des Lichts ändern</value></data>
   <data name="Command_AddItem" xml:space="preserve"><value>Datei hinzufügen…</value></data>
   <data name="FileType_Image" xml:space="preserve"><value>Bilder</value></data>
   <data name="Item_AddFailed" xml:space="preserve"><value>{0} kann nicht hinzugefügt werden: {1}</value></data>

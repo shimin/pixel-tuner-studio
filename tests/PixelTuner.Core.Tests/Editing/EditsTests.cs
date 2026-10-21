@@ -167,6 +167,32 @@ public class EditsTests
     }
 
     [Fact]
+    public void Build_settings_start_as_in_PixelTuner_2_and_change_with_undo()
+    {
+        Assert.Equal((Export.ColorDepth.Bit24, 4, 5), (_project.Build.Depth, _project.Build.GapStretching, _project.Build.LightRate));
+
+        _history.Do(Edits.SetColorDepth(_project, Export.ColorDepth.Bit36));
+        _history.Do(Edits.SetGapStretching(_project, 8));
+        _history.Do(Edits.SetLightRate(_project, 10));
+        Assert.Equal((Export.ColorDepth.Bit36, 8, 10), (_project.Build.Depth, _project.Build.GapStretching, _project.Build.LightRate));
+
+        while (_history.Undo()) { }
+        Assert.Equal((Export.ColorDepth.Bit24, 4, 5), (_project.Build.Depth, _project.Build.GapStretching, _project.Build.LightRate));
+    }
+
+    [Theory]
+    [InlineData(3)]
+    [InlineData(0)]
+    [InlineData(Edits.MaxEpicStretching + 1)]
+    public void Pauses_cannot_be_stretched_below_what_a_poi_plays_or_above_what_E_Pic_stores(int stretching)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => Edits.SetGapStretching(_project, stretching));
+        Assert.Throws<ArgumentOutOfRangeException>(() => Edits.SetLightRate(_project, 0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => Edits.SetLightRate(_project, Edits.MaxLightRate + 1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => Edits.SetColorDepth(_project, (Export.ColorDepth)7));
+    }
+
+    [Fact]
     public void A_timeline_of_an_unknown_kind_is_refused()
     {
         Assert.Throws<ArgumentException>(() => Edits.AddTimeline(_project, new Timeline { Kind = "hologram" }));

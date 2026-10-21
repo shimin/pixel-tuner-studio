@@ -101,6 +101,9 @@
   <data name="Edit_SetAudio" xml:space="preserve"><value>Выбор звуковой дорожки</value></data>
   <data name="Edit_RemoveAudio" xml:space="preserve"><value>Удаление звуковой дорожки</value></data>
   <data name="Edit_SetTimelineHeight" xml:space="preserve"><value>Изменение высоты дорожки</value></data>
+  <data name="Edit_SetColorDepth" xml:space="preserve"><value>Изменение глубины цвета</value></data>
+  <data name="Edit_SetGapStretching" xml:space="preserve"><value>Изменение растяжения пауз</value></data>
+  <data name="Edit_SetLightRate" xml:space="preserve"><value>Изменение шага отсчётов света</value></data>
   <data name="Command_AddItem" xml:space="preserve"><value>Добавить файл…</value></data>
   <data name="FileType_Image" xml:space="preserve"><value>Картинки</value></data>
   <data name="Item_AddFailed" xml:space="preserve"><value>Не удалось добавить {0}: {1}</value></data>

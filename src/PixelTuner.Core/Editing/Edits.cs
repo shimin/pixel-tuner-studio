@@ -30,6 +30,39 @@ public static class Edits
             new SetValueEdit<string?>("RemoveAudio", project, nameof(project.AudioSourcePath), () => project.AudioSourcePath, v => project.AudioSourcePath = v, null, mergeable: false),
         ]);
 
+    // ---- build settings
+
+    public static Edit SetColorDepth(ShowProject project, Export.ColorDepth depth)
+    {
+        if (!Enum.IsDefined(depth)) throw new ArgumentOutOfRangeException(nameof(depth));
+        var settings = project.Build;
+        return new SetValueEdit<Export.ColorDepth>("SetColorDepth", settings, nameof(settings.Depth), () => settings.Depth, v => settings.Depth = v, depth, mergeable: false);
+    }
+
+    /// <summary>Stretching of the pauses. At least 4, the least a poi plays; at most what E-Pic can store (it multiplies by 5).</summary>
+    public static Edit SetGapStretching(ShowProject project, int stretching)
+    {
+        if (stretching < MinPixelStretching || stretching > MaxEpicStretching) throw new ArgumentOutOfRangeException(nameof(stretching));
+        var settings = project.Build;
+        return new SetValueEdit<int>("SetGapStretching", settings, nameof(settings.GapStretching), () => settings.GapStretching, v => settings.GapStretching = v, stretching, mergeable: true);
+    }
+
+    /// <summary>LightMaster sampling step in milliseconds.</summary>
+    public static Edit SetLightRate(ShowProject project, int rate)
+    {
+        if (rate < 1 || rate > MaxLightRate) throw new ArgumentOutOfRangeException(nameof(rate));
+        var settings = project.Build;
+        return new SetValueEdit<int>("SetLightRate", settings, nameof(settings.LightRate), () => settings.LightRate, v => settings.LightRate = v, rate, mergeable: true);
+    }
+
+    /// <summary>The least stretching a pixel device plays: 4 × 50 µs per column.</summary>
+    public const int MinPixelStretching = 4;
+
+    /// <summary>The most E-Pic can store: the file keeps the stretching × 5 in 16 bits.</summary>
+    public const int MaxEpicStretching = ushort.MaxValue / 5;
+
+    public const int MaxLightRate = 1000;
+
     // ---- timelines
 
     public static Edit AddTimeline(ShowProject project, Timeline timeline, int? index = null)
