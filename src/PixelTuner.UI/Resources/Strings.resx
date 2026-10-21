@@ -83,4 +83,19 @@
   <data name="Inspector_Timeline" xml:space="preserve"><value>Timeline</value></data>
   <data name="Inspector_Item" xml:space="preserve"><value>Item</value></data>
   <data name="Inspector_Marker" xml:space="preserve"><value>Marker</value></data>
+  <data name="FileType_Audio" xml:space="preserve"><value>Sound</value></data>
+  <data name="Command_SetSoundtrack" xml:space="preserve"><value>Set soundtrack…</value></data>
+  <data name="Command_RemoveSoundtrack" xml:space="preserve"><value>Remove soundtrack</value></data>
+  <data name="Menu_Playback" xml:space="preserve"><value>Playback</value></data>
+  <data name="Command_PlayPause" xml:space="preserve"><value>Play or pause</value></data>
+  <data name="Command_Stop" xml:space="preserve"><value>Stop</value></data>
+  <data name="Command_ToStart" xml:space="preserve"><value>Go to start</value></data>
+  <data name="Soundtrack_Label" xml:space="preserve"><value>Soundtrack</value></data>
+  <data name="Soundtrack_None" xml:space="preserve"><value>None: Timeline ▸ Set soundtrack…</value></data>
+  <data name="Audio_Missing" xml:space="preserve"><value>The soundtrack “{0}” is not in the project.</value></data>
+  <data name="Audio_CannotPlay" xml:space="preserve"><value>The soundtrack cannot be played: {0}</value></data>
+  <data name="Audio_NoEngine" xml:space="preserve"><value>This computer has no sound engine (LibVLC), so the soundtrack cannot be played.</value></data>
+  <data name="Audio_AddFailed" xml:space="preserve"><value>Could not add the sound: {0}</value></data>
+  <data name="Edit_SetAudio" xml:space="preserve"><value>Set soundtrack</value></data>
+  <data name="Edit_RemoveAudio" xml:space="preserve"><value>Remove soundtrack</value></data>
 </root>

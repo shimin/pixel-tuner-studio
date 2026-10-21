@@ -49,7 +49,17 @@
           <NativeMenuItem Header="{x:Static res:Strings.Command_AddEpicTimeline}" Command="{Binding Editor.AddEpicTimelineCommand}" />
           <NativeMenuItem Header="{x:Static res:Strings.Command_AddLightTimeline}" Command="{Binding Editor.AddLightTimelineCommand}" />
           <NativeMenuItemSeparator />
+          <NativeMenuItem Header="{x:Static res:Strings.Command_SetSoundtrack}" Command="{Binding Editor.SetSoundtrackCommand}" />
+          <NativeMenuItem Header="{x:Static res:Strings.Command_RemoveSoundtrack}" Command="{Binding Editor.RemoveSoundtrackCommand}" />
+          <NativeMenuItemSeparator />
           <NativeMenuItem Header="{x:Static res:Strings.Command_AddMarker}" Command="{Binding Editor.AddMarkerCommand}" Gesture="{x:Static views:Shortcuts.AddMarker}" />
+        </NativeMenu>
+      </NativeMenuItem>
+      <NativeMenuItem Header="{x:Static res:Strings.Menu_Playback}">
+        <NativeMenu>
+          <NativeMenuItem Header="{x:Static res:Strings.Command_PlayPause}" Command="{Binding Editor.PlayPauseCommand}" />
+          <NativeMenuItem Header="{x:Static res:Strings.Command_Stop}" Command="{Binding Editor.StopCommand}" />
+          <NativeMenuItem Header="{x:Static res:Strings.Command_ToStart}" Command="{Binding Editor.ToStartCommand}" />
         </NativeMenu>
       </NativeMenuItem>
       <NativeMenuItem Header="{x:Static res:Strings.Menu_View}">

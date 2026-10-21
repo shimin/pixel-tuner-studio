@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using PixelTuner.Core.Model;
 using PixelTuner.UI.Resources;
 
@@ -20,6 +21,7 @@ public sealed class TimelineControl : Control
         AvaloniaProperty.Register<TimelineControl, TimelineEditor?>(nameof(Editor));
 
     private int _rows = -1;
+    private DispatcherTimer? _timer;
 
     static TimelineControl()
     {
@@ -53,6 +55,39 @@ public sealed class TimelineControl : Control
         }
         if (Editor is { } editor && editor.Project.Timelines.Count != _rows) InvalidateMeasure();
         InvalidateVisual();
+    }
+
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        // The playhead follows the sound about thirty times a second; the editor redraws only on a real change.
+        _timer = new DispatcherTimer(TimeSpan.FromMilliseconds(33), DispatcherPriority.Render, (_, _) => Editor?.Tick());
+        _timer.Start();
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        _timer?.Stop();
+        _timer = null;
+        base.OnDetachedFromVisualTree(e);
+    }
+
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+        base.OnKeyDown(e);
+        if (Editor is not { } editor || e.KeyModifiers != KeyModifiers.None) return;
+        switch (e.Key)
+        {
+            case Key.Space:
+                editor.PlayPause();
+                e.Handled = true;
+                break;
+            case Key.Home:
+                editor.SetPlayhead(TimeSpan.Zero);
+                editor.ScrollTo(TimeSpan.Zero);
+                e.Handled = true;
+                break;
+        }
     }
 
     protected override Size MeasureOverride(Size availableSize)
@@ -96,7 +131,7 @@ public sealed class TimelineControl : Control
             HitKind.ItemStart or HitKind.ItemEnd => new Cursor(StandardCursorType.SizeWestEast),
             HitKind.Marker => new Cursor(StandardCursorType.SizeWestEast),
             HitKind.Item => new Cursor(StandardCursorType.Hand),
-            HitKind.Ruler => new Cursor(StandardCursorType.Ibeam),
+            HitKind.Ruler or HitKind.Wave => new Cursor(StandardCursorType.Ibeam),
             _ => Cursor.Default,
         };
     }
@@ -160,6 +195,8 @@ public sealed class TimelineControl : Control
 
         context.FillRectangle(surface, new Rect(0, 0, width, Bounds.Height));
 
+        DrawWaveHeader(context, editor, card, muted, text, faint);
+
         // Rows: a header with the name, and a lane for the items.
         for (int i = 0; i < editor.Project.Timelines.Count; i++)
         {
@@ -186,6 +223,8 @@ public sealed class TimelineControl : Control
         {
             DrawRulerAndGrid(context, editor, timeArea, card, muted, text, line, faint);
 
+            DrawWave(context, editor, timeArea, card, accent, faint);
+
             for (int i = 0; i < editor.Project.Timelines.Count; i++)
                 foreach (var item in editor.Project.Timelines[i].Items)
                     DrawItem(context, editor, editor.Project.Timelines[i], item, editor.TrackTop(i), text, accent);
@@ -196,6 +235,40 @@ public sealed class TimelineControl : Control
 
         context.DrawLine(new Pen(muted, 1), new Point(0, TimelineEditor.RulerHeight), new Point(width, TimelineEditor.RulerHeight));
         context.DrawLine(faint, new Point(TimelineEditor.HeaderWidth, 0), new Point(TimelineEditor.HeaderWidth, Bounds.Height));
+    }
+
+    private void DrawWaveHeader(DrawingContext context, TimelineEditor editor, IBrush card, IBrush muted, IBrush text, Pen faint)
+    {
+        double top = TimelineEditor.RulerHeight;
+        context.FillRectangle(card, new Rect(0, top, Bounds.Width, TimelineEditor.WaveHeight));
+        context.DrawLine(faint, new Point(0, top + TimelineEditor.WaveHeight), new Point(Bounds.Width, top + TimelineEditor.WaveHeight));
+        DrawClipped(context, new Rect(12, top, TimelineEditor.HeaderWidth - 18, TimelineEditor.WaveHeight), () =>
+        {
+            context.DrawText(Text("♪ " + Strings.Soundtrack_Label, 14, text, FontWeight.SemiBold), new Point(12, top + 10));
+            string sub = editor.Project.AudioResourceId is null
+                ? Strings.Soundtrack_None
+                : System.IO.Path.GetFileName((editor.Project.AudioSourcePath ?? "").Replace('\\', '/'));
+            context.DrawText(Text(sub, 12, muted), new Point(12, top + 32));
+        });
+    }
+
+    private void DrawWave(DrawingContext context, TimelineEditor editor, Rect timeArea, IBrush card, IBrush accent, Pen faint)
+    {
+        double top = TimelineEditor.RulerHeight, height = TimelineEditor.WaveHeight;
+        context.FillRectangle(card, new Rect(timeArea.X, top, timeArea.Width, height));
+        double middle = top + height / 2, amplitude = height / 2 - 6;
+        context.DrawLine(faint, new Point(timeArea.X, middle), new Point(timeArea.Right, middle));
+        if (editor.Wave is not { } wave) return;
+
+        var pen = new Pen(new SolidColorBrush(((ISolidColorBrush)accent).Color, 0.75), 1);
+        double endX = editor.TimeToX(wave.Duration);
+        // One column of pixels at a time: the lowest and highest sample under it, at any zoom.
+        for (double x = Math.Max(timeArea.X, editor.TimeToX(TimeSpan.Zero)); x < Math.Min(timeArea.Right, endX); x++)
+        {
+            var (min, max) = wave.Range(editor.XToTime(x), editor.XToTime(x + 1));
+            double y1 = middle - Math.Clamp(max, -1, 1) * amplitude, y2 = middle - Math.Clamp(min, -1, 1) * amplitude;
+            context.DrawLine(pen, new Point(x + 0.5, y1), new Point(x + 0.5, Math.Max(y2, y1 + 1)));
+        }
     }
 
     private static void DrawClipped(DrawingContext context, Rect clip, Action draw)

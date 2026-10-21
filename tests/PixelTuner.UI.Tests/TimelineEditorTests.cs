@@ -26,7 +26,7 @@ public class TimelineEditorTests
         Assert.InRange(actual.TotalSeconds, expectedSeconds - 0.02, expectedSeconds + 0.02);
 
     private double X(double seconds) => _editor.TimeToX(S(seconds));
-    private static double RowY(int row) => TimelineEditor.RulerHeight + row * TimelineEditor.TrackHeight + 10;
+    private static double RowY(int row) => TimelineEditor.TracksTop + row * TimelineEditor.TrackHeight + 10;
 
     [Fact]
     public void Time_and_x_are_inverse_and_follow_zoom_and_scroll()

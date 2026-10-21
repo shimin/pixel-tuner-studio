@@ -83,4 +83,19 @@
   <data name="Inspector_Timeline" xml:space="preserve"><value>Дорожка</value></data>
   <data name="Inspector_Item" xml:space="preserve"><value>Элемент</value></data>
   <data name="Inspector_Marker" xml:space="preserve"><value>Маркер</value></data>
+  <data name="FileType_Audio" xml:space="preserve"><value>Звук</value></data>
+  <data name="Command_SetSoundtrack" xml:space="preserve"><value>Выбрать звуковую дорожку…</value></data>
+  <data name="Command_RemoveSoundtrack" xml:space="preserve"><value>Убрать звуковую дорожку</value></data>
+  <data name="Menu_Playback" xml:space="preserve"><value>Воспроизведение</value></data>
+  <data name="Command_PlayPause" xml:space="preserve"><value>Играть или пауза</value></data>
+  <data name="Command_Stop" xml:space="preserve"><value>Стоп</value></data>
+  <data name="Command_ToStart" xml:space="preserve"><value>В начало</value></data>
+  <data name="Soundtrack_Label" xml:space="preserve"><value>Звук</value></data>
+  <data name="Soundtrack_None" xml:space="preserve"><value>Нет: Дорожка ▸ Выбрать звуковую дорожку…</value></data>
+  <data name="Audio_Missing" xml:space="preserve"><value>Звука «{0}» нет в проекте.</value></data>
+  <data name="Audio_CannotPlay" xml:space="preserve"><value>Не удаётся проиграть звук: {0}</value></data>
+  <data name="Audio_NoEngine" xml:space="preserve"><value>На этом компьютере нет звукового движка (LibVLC), поэтому звук проиграть нельзя.</value></data>
+  <data name="Audio_AddFailed" xml:space="preserve"><value>Не удалось добавить звук: {0}</value></data>
+  <data name="Edit_SetAudio" xml:space="preserve"><value>Выбор звуковой дорожки</value></data>
+  <data name="Edit_RemoveAudio" xml:space="preserve"><value>Удаление звуковой дорожки</value></data>
 </root>

@@ -96,7 +96,9 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     partial void OnDocumentChanged(ProjectDocument? value)
     {
         if (value is not null) value.Changed += DocumentEdited;
-        Editor = value is not null && CanEdit ? new EditorViewModel(value) : null;
+        var old = Editor;
+        Editor = value is not null && CanEdit ? new EditorViewModel(value, AudioEngine.Current, () => FilePicker) : null;
+        old?.Dispose();
     }
 
     // Saving runs on a pool thread and reports from there; bindings may only be touched on the UI thread.

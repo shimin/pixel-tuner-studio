@@ -1,3 +1,4 @@
+using PixelTuner.Audio;
 using PixelTuner.Core.Editing;
 using PixelTuner.Core.Model;
 using PixelTuner.Package;
@@ -17,6 +18,8 @@ public enum HitKind
     ItemStart,
     ItemEnd,
     Marker,
+    /// <summary>The soundtrack's waveform: a click moves the playhead, as on the ruler.</summary>
+    Wave,
 }
 
 public readonly record struct Hit(HitKind Kind, Timeline? Timeline = null, TimelineItem? Item = null, Marker? Marker = null);
@@ -31,6 +34,8 @@ public sealed class TimelineEditor
 {
     public const double HeaderWidth = 170;
     public const double RulerHeight = 34;
+    /// <summary>The soundtrack lane under the ruler; always there, so loading a sound does not shift the rows.</summary>
+    public const double WaveHeight = 84;
     public const double TrackHeight = 64;
     public const double MinZoom = 4;
     public const double MaxZoom = 2000;
@@ -91,14 +96,91 @@ public sealed class TimelineEditor
         }
     }
 
-    public double TotalHeight => RulerHeight + Project.Timelines.Count * TrackHeight;
+    /// <summary>Where the first timeline starts.</summary>
+    public const double TracksTop = RulerHeight + WaveHeight;
 
-    public double TrackTop(int index) => RulerHeight + index * TrackHeight;
+    public double TotalHeight => TracksTop + Project.Timelines.Count * TrackHeight;
 
+    public double TrackTop(int index) => TracksTop + index * TrackHeight;
+
+    /// <summary>The waveform drawn in the sound lane; null until a soundtrack is read.</summary>
+    public Waveform? Wave { get; set; }
+
+    /// <summary>The soundtrack's player, if the platform has one. The playhead follows it while it plays.</summary>
+    public IAudioPlayer? Player { get; set; }
+
+    /// <summary>For the owner that changed <see cref="Wave"/> or <see cref="AudioDuration"/>: redraw.</summary>
+    public void RaiseChanged() => Changed?.Invoke(this, EventArgs.Empty);
+
+    public bool IsPlaying => Player?.State == AudioPlayerState.Playing;
+
+    /// <summary>Puts the playhead somewhere (and the sound with it, when there is one).</summary>
     public void SetPlayhead(TimeSpan time)
     {
-        Playhead = time < TimeSpan.Zero ? TimeSpan.Zero : time;
+        Playhead = Clamp(time, TimeSpan.Zero, AudioDuration > TimeSpan.Zero ? AudioDuration : TimeSpan.MaxValue);
+        Player?.Seek(Playhead);
         Changed?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void PlayPause()
+    {
+        if (Player is not { } player) return;
+        if (player.State == AudioPlayerState.Playing)
+        {
+            player.Pause();
+            return;
+        }
+        // At the end a second Play starts over; otherwise play from where the playhead stands.
+        if (AudioDuration > TimeSpan.Zero && Playhead >= AudioDuration) Playhead = TimeSpan.Zero;
+        player.Seek(Playhead);
+        player.Play();
+    }
+
+    /// <summary>Stops the sound and goes back to the start, as PixelTuner 2 did.</summary>
+    public void Stop()
+    {
+        _following = false;
+        Player?.Stop();
+        Playhead = TimeSpan.Zero;
+        ScrollTo(TimeSpan.Zero);
+        Changed?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Called regularly by the view while the sound plays: the playhead takes the player's position and the
+    /// view pages along when the playhead leaves it. A track that ended leaves the playhead at its end.
+    /// </summary>
+    public void Tick()
+    {
+        if (Player is not { } player) return;
+        var state = player.State;
+        if (state == AudioPlayerState.Playing)
+        {
+            _following = true;
+            Playhead = player.Position;
+            FollowPlayhead();
+        }
+        else if (_following)
+        {
+            // It stopped on its own: paused (by the user or the system), or played to the end.
+            _following = false;
+            Playhead = state == AudioPlayerState.Paused ? player.Position : AudioDuration;
+        }
+        // The view calls this many times a second; only a real change is worth a redraw. Compared with what the
+        // last call saw, not with the start of this one: the sound can change state between two calls.
+        var now = (Playhead, Scroll, state);
+        if (now == _lastTick) return;
+        _lastTick = now;
+        Changed?.Invoke(this, EventArgs.Empty);
+    }
+
+    private bool _following;
+    private (TimeSpan Playhead, TimeSpan Scroll, AudioPlayerState State) _lastTick;
+
+    private void FollowPlayhead()
+    {
+        var right = Scroll + VisibleDuration;
+        if (Playhead < Scroll || Playhead > right) ScrollTo(Playhead - VisibleDuration * 0.1);
     }
 
     public void ScrollBy(double pixels) => ScrollTo(Scroll + TimeSpan.FromSeconds(pixels / PixelsPerSecond));
@@ -170,7 +252,9 @@ public sealed class TimelineEditor
             return new Hit(HitKind.Ruler);
         }
 
-        int row = (int)((y - RulerHeight) / TrackHeight);
+        if (y < TracksTop) return x >= HeaderWidth ? new Hit(HitKind.Wave) : default;
+
+        int row = (int)((y - TracksTop) / TrackHeight);
         if (row < 0 || row >= Project.Timelines.Count) return default;
         var timeline = Project.Timelines[row];
         if (x < HeaderWidth) return new Hit(HitKind.Header, timeline);
@@ -216,7 +300,7 @@ public sealed class TimelineEditor
             case HitKind.Header or HitKind.Track:
                 Select(hit.Timeline);
                 break;
-            case HitKind.Ruler:
+            case HitKind.Ruler or HitKind.Wave:
                 Select(null);
                 SetPlayhead(XToTime(x));
                 _drag = new DragState(hit, x, default, default, default);
@@ -232,7 +316,7 @@ public sealed class TimelineEditor
         if (_drag is not { } drag) return;
         switch (drag.Hit.Kind)
         {
-            case HitKind.Ruler:
+            case HitKind.Ruler or HitKind.Wave:
                 SetPlayhead(XToTime(Math.Max(x, HeaderWidth)));
                 break;
             case HitKind.Marker:

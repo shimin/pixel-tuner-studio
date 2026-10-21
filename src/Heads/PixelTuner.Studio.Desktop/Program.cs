@@ -1,5 +1,6 @@
 using Avalonia;
 using PixelTuner.UI;
+using PixelTuner.UI.Services;
 
 namespace PixelTuner.Studio.Desktop;
 
@@ -15,5 +16,6 @@ static class Program
         AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()
-            .LogToTrace();
+            .LogToTrace()
+            .AfterSetup(_ => AudioEngine.Current = VlcAudioEngine.TryCreate());
 }

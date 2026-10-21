@@ -27,7 +27,9 @@ public sealed class VlcLibrary : IDisposable
     {
         get
         {
-            lock (Gate) return _shared ??= TryCreate();
+            // PIXELTUNER_VLC_ARGS adds LibVLC options (for example "--aout=dummy" on a machine without a sound card).
+            lock (Gate) return _shared ??= TryCreate(
+                (Environment.GetEnvironmentVariable("PIXELTUNER_VLC_ARGS") ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries));
         }
     }
 

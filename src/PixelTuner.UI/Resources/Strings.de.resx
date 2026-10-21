@@ -83,4 +83,19 @@
   <data name="Inspector_Timeline" xml:space="preserve"><value>Zeitleiste</value></data>
   <data name="Inspector_Item" xml:space="preserve"><value>Element</value></data>
   <data name="Inspector_Marker" xml:space="preserve"><value>Marker</value></data>
+  <data name="FileType_Audio" xml:space="preserve"><value>Audio</value></data>
+  <data name="Command_SetSoundtrack" xml:space="preserve"><value>Tonspur festlegen…</value></data>
+  <data name="Command_RemoveSoundtrack" xml:space="preserve"><value>Tonspur entfernen</value></data>
+  <data name="Menu_Playback" xml:space="preserve"><value>Wiedergabe</value></data>
+  <data name="Command_PlayPause" xml:space="preserve"><value>Wiedergabe oder Pause</value></data>
+  <data name="Command_Stop" xml:space="preserve"><value>Stopp</value></data>
+  <data name="Command_ToStart" xml:space="preserve"><value>Zum Anfang</value></data>
+  <data name="Soundtrack_Label" xml:space="preserve"><value>Tonspur</value></data>
+  <data name="Soundtrack_None" xml:space="preserve"><value>Keine: Zeitleiste ▸ Tonspur festlegen…</value></data>
+  <data name="Audio_Missing" xml:space="preserve"><value>Die Tonspur „{0}“ ist nicht im Projekt.</value></data>
+  <data name="Audio_CannotPlay" xml:space="preserve"><value>Die Tonspur kann nicht abgespielt werden: {0}</value></data>
+  <data name="Audio_NoEngine" xml:space="preserve"><value>Auf diesem Computer gibt es keine Audio-Engine (LibVLC), die Tonspur kann nicht abgespielt werden.</value></data>
+  <data name="Audio_AddFailed" xml:space="preserve"><value>Der Ton konnte nicht hinzugefügt werden: {0}</value></data>
+  <data name="Edit_SetAudio" xml:space="preserve"><value>Tonspur festlegen</value></data>
+  <data name="Edit_RemoveAudio" xml:space="preserve"><value>Tonspur entfernen</value></data>
 </root>

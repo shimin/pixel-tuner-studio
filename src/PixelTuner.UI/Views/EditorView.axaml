@@ -7,7 +7,7 @@
              x:DataType="vm:EditorViewModel"
              Background="{DynamicResource PtSurfaceBrush}">
   <!-- Studio's editor: a toolbar, the timelines, and an inspector for the selection. -->
-  <Grid RowDefinitions="Auto,*" ColumnDefinitions="*,280">
+  <Grid RowDefinitions="Auto,Auto,*" ColumnDefinitions="*,280">
     <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="8" Margin="12,8">
       <Button Content="{x:Static res:Strings.Menu_Timeline}">
         <Button.Flyout>
@@ -25,13 +25,21 @@
       <Button Content="−" Command="{Binding ZoomOutCommand}" ToolTip.Tip="{x:Static res:Strings.Command_ZoomOut}" />
       <Button Content="+" Command="{Binding ZoomInCommand}" ToolTip.Tip="{x:Static res:Strings.Command_ZoomIn}" />
       <Button Content="↔" Command="{Binding ZoomFitCommand}" ToolTip.Tip="{x:Static res:Strings.Command_ZoomFit}" />
+      <Rectangle Width="1" Fill="{DynamicResource PtMutedTextBrush}" Opacity="0.4" Margin="4,2" />
+      <Button Content="{Binding PlayPauseGlyph}" Command="{Binding PlayPauseCommand}" ToolTip.Tip="{x:Static res:Strings.Command_PlayPause}" MinWidth="40" />
+      <Button Content="■" Command="{Binding StopCommand}" ToolTip.Tip="{x:Static res:Strings.Command_Stop}" />
+      <TextBlock Text="{Binding TimeText}" VerticalAlignment="Center" FontFamily="Consolas,Menlo,monospace" Margin="4,0,0,0" />
     </StackPanel>
 
-    <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+    <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Margin="14,0,12,6" TextWrapping="Wrap"
+               Foreground="{DynamicResource SystemFillColorCautionBrush}"
+               Text="{Binding Message}" IsVisible="{Binding HasMessage}" />
+
+    <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
       <tl:TimelineControl Editor="{Binding Timelines}" />
     </ScrollViewer>
 
-    <Border Grid.Row="1" Grid.Column="1" Classes="card" Margin="8,0,12,12" VerticalAlignment="Top">
+    <Border Grid.Row="2" Grid.Column="1" Classes="card" Margin="8,0,12,12" VerticalAlignment="Top">
       <StackPanel Spacing="8">
         <TextBlock Classes="muted" TextWrapping="Wrap" Text="{x:Static res:Strings.Inspector_Nothing}"
                    IsVisible="{Binding !HasSelection}" />

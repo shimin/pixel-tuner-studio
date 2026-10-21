@@ -49,7 +49,13 @@
   `TimelineControl` only draws it and forwards the pointer. Do not put model rules into the control. To try the
   window with the mouse in the sandbox: `xvfb-run`, then `python-xlib` (`pip install python-xlib`) with XTest.
 - `src/PixelTuner.Audio` holds the player and decoder contracts only; implementations go per
-  platform (LibVLC on desktop, system players on phones).
+  platform. `src/PixelTuner.Audio.Vlc` (LibVLC, LGPL, dynamic) serves Windows and macOS: the VideoLAN NuGet
+  packages carry LibVLC under `libvlc/<rid>`, Linux uses the system one (`apt install libvlc5 vlc-plugin-base`).
+  The shared UI sees only `IAudioEngine` (`AudioEngine.Current`, set by the head); phones get system players later.
+  LibVLC rules learned the hard way: never call it from its own event threads (deadlock or crash), raise our
+  events from a worker, and release a `Media` that failed to parse late (releasing it at once crashes the process).
+  `PIXELTUNER_VLC_ARGS="--aout=dummy"` runs the app without a sound card; `PIXELTUNER_REQUIRE_VLC=1` makes the
+  LibVLC tests fail instead of passing quietly when LibVLC is missing (CI sets it).
 - Merge PRs with a normal merge commit only.
 - The cloud sandbox can build and test Core, Package, Sync, UI and Desktop on Linux
   (`apt install dotnet-sdk-10.0`, `SSL_CERT_FILE=/root/.ccr/ca-bundle.crt` for NuGet).
