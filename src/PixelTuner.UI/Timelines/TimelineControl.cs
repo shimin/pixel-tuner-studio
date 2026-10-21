@@ -232,10 +232,28 @@ public sealed class TimelineControl : Control
 
             DrawMarkers(context, editor, accent, text);
             DrawPlayhead(context, editor, accent);
+            DrawDenial(context, editor, timeArea);
         }
 
         context.DrawLine(new Pen(muted, 1), new Point(0, TimelineEditor.RulerHeight), new Point(width, TimelineEditor.RulerHeight));
         context.DrawLine(faint, new Point(TimelineEditor.HeaderWidth, 0), new Point(TimelineEditor.HeaderWidth, Bounds.Height));
+    }
+
+    /// <summary>A timeline that will not take the dragged item is tinted red and says why.</summary>
+    private void DrawDenial(DrawingContext context, TimelineEditor editor, Rect timeArea)
+    {
+        if (editor.Preview?.Denial is not { } denial) return;
+        int row = editor.Project.Timelines.IndexOf(denial.Target);
+        if (row < 0) return;
+        double top = editor.TrackTop(row);
+        var red = Color.FromRgb(209, 73, 91);
+        context.FillRectangle(new SolidColorBrush(red, 0.18), new Rect(timeArea.X, top, timeArea.Width, TimelineEditor.TrackHeight));
+        context.DrawRectangle(null, new Pen(new SolidColorBrush(red), 2), new Rect(timeArea.X + 1, top + 1, timeArea.Width - 2, TimelineEditor.TrackHeight - 2));
+
+        var label = Text(denial.Text(), 12, Brushes.White, FontWeight.SemiBold);
+        double x = timeArea.X + 10, y = top + (TimelineEditor.TrackHeight - label.Height) / 2;
+        context.DrawRectangle(new SolidColorBrush(red), null, new Rect(x - 6, y - 3, label.Width + 12, label.Height + 6), 4, 4);
+        context.DrawText(label, new Point(x, y));
     }
 
     private void DrawWaveHeader(DrawingContext context, TimelineEditor editor, IBrush card, IBrush muted, IBrush text, Pen faint)

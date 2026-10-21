@@ -133,6 +133,9 @@
   <data name="Inspector_OffsetX" xml:space="preserve"><value>Сдвиг по X</value></data>
   <data name="Inspector_OffsetY" xml:space="preserve"><value>Сдвиг по Y</value></data>
   <data name="Inspector_BadValue" xml:space="preserve"><value>Это значение не подходит: {0}.</value></data>
+  <data name="Drop_NoRoom" xml:space="preserve"><value>Здесь в это время нет места для элемента.</value></data>
+  <data name="Drop_WrongHeight" xml:space="preserve"><value>Эта дорожка играет картинки высотой {0} светодиодов, а эта — {1}.</value></data>
+  <data name="Drop_WrongKind" xml:space="preserve"><value>Дорожка «{0}» не принимает такой элемент.</value></data>
   <data name="Command_MoveDown" xml:space="preserve"><value>Опустить дорожку</value></data>
   <data name="Command_MoveUp" xml:space="preserve"><value>Поднять дорожку</value></data>
   <data name="Inspector_LayoutN" xml:space="preserve"><value>Разметка {0}</value></data>

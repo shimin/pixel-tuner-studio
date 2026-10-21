@@ -133,6 +133,9 @@
   <data name="Inspector_OffsetX" xml:space="preserve"><value>Versatz X</value></data>
   <data name="Inspector_OffsetY" xml:space="preserve"><value>Versatz Y</value></data>
   <data name="Inspector_BadValue" xml:space="preserve"><value>Dieser Wert ist nicht möglich: {0}.</value></data>
+  <data name="Drop_NoRoom" xml:space="preserve"><value>Hier ist zu dieser Zeit kein Platz für das Element.</value></data>
+  <data name="Drop_WrongHeight" xml:space="preserve"><value>Diese Spur spielt Bilder mit {0} LEDs; dieses hat {1}.</value></data>
+  <data name="Drop_WrongKind" xml:space="preserve"><value>Eine Spur „{0}“ nimmt dieses Element nicht an.</value></data>
   <data name="Command_MoveDown" xml:space="preserve"><value>Spur nach unten</value></data>
   <data name="Command_MoveUp" xml:space="preserve"><value>Spur nach oben</value></data>
   <data name="Inspector_LayoutN" xml:space="preserve"><value>Layout {0}</value></data>

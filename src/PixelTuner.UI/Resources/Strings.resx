@@ -133,6 +133,9 @@
   <data name="Inspector_OffsetX" xml:space="preserve"><value>Offset X</value></data>
   <data name="Inspector_OffsetY" xml:space="preserve"><value>Offset Y</value></data>
   <data name="Inspector_BadValue" xml:space="preserve"><value>That value cannot be used: {0}.</value></data>
+  <data name="Drop_NoRoom" xml:space="preserve"><value>There is no room for the item here at that time.</value></data>
+  <data name="Drop_WrongHeight" xml:space="preserve"><value>This timeline plays pictures {0} LEDs high; this one is {1}.</value></data>
+  <data name="Drop_WrongKind" xml:space="preserve"><value>A {0} timeline does not take this item.</value></data>
   <data name="Command_MoveDown" xml:space="preserve"><value>Move timeline down</value></data>
   <data name="Command_MoveUp" xml:space="preserve"><value>Move timeline up</value></data>
   <data name="Inspector_LayoutN" xml:space="preserve"><value>Layout {0}</value></data>

@@ -1,6 +1,7 @@
 using PixelTuner.Audio;
 using PixelTuner.Core.Editing;
 using PixelTuner.Core.Model;
+using PixelTuner.UI.Resources;
 using PixelTuner.Package;
 
 namespace PixelTuner.UI.Timelines;
@@ -386,6 +387,7 @@ public sealed class TimelineEditor
         var snapPoints = SnapPoints(item);
 
         TimeSpan start = drag.OriginalStart, duration = drag.OriginalDuration;
+        DropDenial? denial = null;
         switch (drag.Hit.Kind)
         {
             case HitKind.ItemStart:
@@ -420,18 +422,26 @@ public sealed class TimelineEditor
                 start = OnGrid(Clamp(start, floor, latest), floor, latest);
 
                 // Over another timeline that takes this item and has room at the wanted time, it goes there.
-                if (y is { } py && TimelineAt(py) is { } target && !ReferenceEquals(target, timeline) && Edits.Accepts(target, item) && Edits.FitsHeight(target, item.MediaHeight))
+                // Over one that cannot take it, the item stays and the drag says why.
+                if (y is { } py && TimelineAt(py) is { } target && !ReferenceEquals(target, timeline))
                 {
-                    var there = OnGrid(Max0(Snap(wanted, snapPoints)), TimeSpan.Zero, TimeSpan.MaxValue);
-                    there = Edits.WholeMs(there);
-                    if (Edits.Fits(target, there, duration)) return DragPreview.ForItem(item, target, there, duration);
+                    if (!Edits.Accepts(target, item))
+                        denial = new DropDenial(target, DropDenialReason.WrongKind, 0, 0);
+                    else if (!Edits.FitsHeight(target, item.MediaHeight))
+                        denial = new DropDenial(target, DropDenialReason.WrongHeight, Edits.PixelHeight(target), item.MediaHeight);
+                    else
+                    {
+                        var there = Edits.WholeMs(OnGrid(Max0(Snap(wanted, snapPoints)), TimeSpan.Zero, TimeSpan.MaxValue));
+                        if (Edits.Fits(target, there, duration)) return DragPreview.ForItem(item, target, there, duration);
+                        denial = new DropDenial(target, DropDenialReason.NoRoom, 0, 0);
+                    }
                 }
                 break;
             }
         }
         // The .bin counts whole milliseconds. Both edges are rounded, so neither crosses a neighbour's whole edge.
         var wholeStart = Edits.WholeMs(start);
-        return DragPreview.ForItem(item, timeline, wholeStart, Edits.WholeMs(start + duration) - wholeStart);
+        return DragPreview.ForItem(item, timeline, wholeStart, Edits.WholeMs(start + duration) - wholeStart) with { Denial = denial };
     }
 
     /// <summary>
@@ -577,9 +587,46 @@ public sealed class TimelineEditor
     }
 }
 
+public enum DropDenialReason
+{
+    /// <summary>The timeline plays another kind of item.</summary>
+    WrongKind,
+
+    /// <summary>A pixel timeline plays pictures of another height.</summary>
+    WrongHeight,
+
+    /// <summary>The item does not fit between the neighbours at that time.</summary>
+    NoRoom,
+}
+
+/// <summary>Why an item dragged over a timeline will not go there.</summary>
+/// <param name="RequiredHeight">WrongHeight: what the timeline plays.</param>
+/// <param name="ItemHeight">WrongHeight: what the item is.</param>
+public sealed record DropDenial(Timeline Target, DropDenialReason Reason, int RequiredHeight, int ItemHeight)
+{
+    /// <summary>The words shown over the timeline.</summary>
+    public string Text() => Reason switch
+    {
+        DropDenialReason.WrongKind => string.Format(Strings.Drop_WrongKind, KindName(Target.Kind)),
+        DropDenialReason.WrongHeight => string.Format(Strings.Drop_WrongHeight, RequiredHeight, ItemHeight),
+        _ => Strings.Drop_NoRoom,
+    };
+
+    internal static string KindName(string kind) => kind switch
+    {
+        TimelineKind.Video => Strings.Kind_Video,
+        TimelineKind.EpicPoi => Strings.Kind_EpicPoi,
+        TimelineKind.Light => Strings.Kind_Light,
+        _ => Strings.Kind_Pixel,
+    };
+}
+
 /// <summary>An item or marker as it would be if the drag ended now.</summary>
 public sealed record DragPreview(TimelineItem? Item, Timeline? Timeline, Marker? Marker, TimeSpan Start, TimeSpan Duration)
 {
+    /// <summary>Set while the pointer is over a timeline that will not take the item.</summary>
+    public DropDenial? Denial { get; init; }
+
     public static DragPreview ForItem(TimelineItem item, Timeline timeline, TimeSpan start, TimeSpan duration) =>
         new(item, timeline, null, start, duration);
 

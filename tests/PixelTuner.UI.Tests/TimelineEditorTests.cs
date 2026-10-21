@@ -490,6 +490,58 @@ public class TimelineEditorTests
         Assert.Contains(item, a.Items);
     }
 
+    [Fact]
+    public void Dragging_over_a_timeline_of_another_kind_says_why_it_will_not_go_there()
+    {
+        var a = Track((1, 2));
+        var video = Track();
+        video.Kind = TimelineKind.Video;
+
+        _editor.PointerDown(X(2), RowY(0));
+        _editor.PointerMove(X(2), RowY(1));
+
+        var denial = _editor.Preview!.Denial!;
+        Assert.Same(video, denial.Target);
+        Assert.Equal(DropDenialReason.WrongKind, denial.Reason);
+        Assert.Same(a, _editor.Preview.Timeline);
+        Assert.Contains("Video", denial.Text(), StringComparison.OrdinalIgnoreCase);
+
+        _editor.PointerMove(X(2), RowY(0));   // back over its own timeline: no complaint
+        Assert.Null(_editor.Preview!.Denial);
+    }
+
+    [Fact]
+    public void Dragging_a_picture_over_a_pixel_timeline_of_another_height_says_both_heights()
+    {
+        var a = Track((1, 2));
+        var tall = Track();
+        a.Items[0].MediaHeight = 36;
+        tall.Items.Add(new TimelineItem { Start = S(10), Duration = S(1), MediaHeight = 80 });
+
+        _editor.PointerDown(X(2), RowY(0));
+        _editor.PointerMove(X(2), RowY(1));
+
+        var denial = _editor.Preview!.Denial!;
+        Assert.Equal((DropDenialReason.WrongHeight, 80, 36), (denial.Reason, denial.RequiredHeight, denial.ItemHeight));
+        var text = denial.Text();
+        Assert.Contains("80", text);
+        Assert.Contains("36", text);
+        _editor.PointerUp(X(2), RowY(1));
+        Assert.Contains(a.Items[0], a.Items);   // it stayed
+    }
+
+    [Fact]
+    public void Dragging_over_a_timeline_with_no_room_at_that_time_says_so()
+    {
+        var a = Track((1, 2));
+        Track((0, 10));
+
+        _editor.PointerDown(X(2), RowY(0));
+        _editor.PointerMove(X(2), RowY(1));
+
+        Assert.Equal(DropDenialReason.NoRoom, _editor.Preview!.Denial!.Reason);
+    }
+
     [Theory]
     [InlineData("1:05.250", 65.25)]
     [InlineData("65.25", 65.25)]
