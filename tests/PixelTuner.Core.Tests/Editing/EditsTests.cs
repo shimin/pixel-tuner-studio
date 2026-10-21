@@ -141,6 +141,32 @@ public class EditsTests
     }
 
     [Fact]
+    public void Times_of_items_are_whole_milliseconds()
+    {
+        var timeline = new Timeline();
+        var half = TimeSpan.FromTicks(TimeSpan.TicksPerMillisecond / 2);
+        Assert.Throws<ArgumentException>(() => Edits.AddItem(timeline, new TimelineItem { Start = S(1) + half, Duration = S(1) }));
+        Assert.Throws<ArgumentException>(() => Edits.AddItem(timeline, new TimelineItem { Start = S(1), Duration = S(1) + half }));
+
+        var item = new TimelineItem { Start = S(1), Duration = S(1) };
+        _history.Do(Edits.AddItem(timeline, item));
+        Assert.Throws<ArgumentException>(() => Edits.MoveItem(timeline, item, S(3) + half));
+        Assert.Throws<ArgumentException>(() => Edits.ResizeItem(timeline, item, S(2) + half));
+        Assert.Throws<ArgumentException>(() => Edits.TrimItemStart(timeline, item, S(1) + half));
+        Assert.Throws<ArgumentException>(() => Edits.MoveItemToTimeline(timeline, new Timeline(), item, S(3) + half));
+        Assert.Equal((S(1), S(1)), (item.Start, item.Duration));
+    }
+
+    [Theory]
+    [InlineData(10_004_000, 10_000_000)]
+    [InlineData(10_005_000, 10_010_000)]
+    [InlineData(10_016_000, 10_020_000)]
+    public void WholeMs_rounds_to_the_nearest_millisecond(long ticks, long expected)
+    {
+        Assert.Equal(TimeSpan.FromTicks(expected), Edits.WholeMs(TimeSpan.FromTicks(ticks)));
+    }
+
+    [Fact]
     public void A_timeline_of_an_unknown_kind_is_refused()
     {
         Assert.Throws<ArgumentException>(() => Edits.AddTimeline(_project, new Timeline { Kind = "hologram" }));

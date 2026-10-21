@@ -418,12 +418,15 @@ public sealed class TimelineEditor
                 if (y is { } py && TimelineAt(py) is { } target && !ReferenceEquals(target, timeline) && Edits.Accepts(target, item) && Edits.FitsHeight(target, item.MediaHeight))
                 {
                     var there = Max0(Snap(wanted, snapPoints));
+                    there = Edits.WholeMs(there);
                     if (Edits.Fits(target, there, duration)) return DragPreview.ForItem(item, target, there, duration);
                 }
                 break;
             }
         }
-        return DragPreview.ForItem(item, timeline, start, duration);
+        // The .bin counts whole milliseconds. Both edges are rounded, so neither crosses a neighbour's whole edge.
+        var wholeStart = Edits.WholeMs(start);
+        return DragPreview.ForItem(item, timeline, wholeStart, Edits.WholeMs(start + duration) - wholeStart);
     }
 
     private static TimeSpan Clamp(TimeSpan value, TimeSpan min, TimeSpan max) => value < min ? min : value > max ? max : value;
@@ -512,8 +515,8 @@ public sealed class TimelineEditor
     public TimelineItem? AddItem(Timeline timeline, TimelineItem item, TimeSpan wanted)
     {
         if (!Edits.Accepts(timeline, item) || !Edits.FitsHeight(timeline, item.MediaHeight) || FindRoom(timeline, Playhead, wanted) is not var (start, duration)) return null;
-        item.Start = start;
-        item.Duration = duration;
+        item.Start = Edits.WholeMs(start);
+        item.Duration = Edits.WholeMs(start + duration) - item.Start;
         _document.Execute(Edits.AddItem(timeline, item));
         Select(item);
         return item;

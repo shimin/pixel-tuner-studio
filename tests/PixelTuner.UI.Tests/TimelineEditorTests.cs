@@ -1,3 +1,4 @@
+using PixelTuner.Core.Editing;
 using PixelTuner.Core.Model;
 using PixelTuner.Package;
 using PixelTuner.UI.Timelines;
@@ -183,6 +184,29 @@ public class TimelineEditorTests
         _editor.PointerDown(X(2.5), RowY(0));
         _editor.PointerUp(X(2.5) + 2.5 * 100 - 4 + 0.0);
         Assert.Equal(S(4.5), second.Start);
+    }
+
+    [Fact]
+    public void A_drag_ends_on_whole_milliseconds_whatever_the_zoom_and_the_pixel()
+    {
+        var timeline = Track((1, 2), (6, 1));
+        var item = timeline.Items[0];
+        _editor.ZoomAt(1.37, TimelineEditor.HeaderWidth);
+
+        double x = X(2);
+        _editor.PointerDown(x, RowY(0));
+        _editor.PointerMove(x + 123.4567);
+        _editor.PointerUp(x + 123.4567);
+        Assert.True(Edits.IsWholeMs(item.Start) && Edits.IsWholeMs(item.Duration));
+        Assert.NotEqual(S(1), item.Start);
+
+        // The right edge too, against the neighbour at 6 s.
+        x = X(item.End.TotalSeconds) - 1;
+        _editor.PointerDown(x, RowY(0));
+        _editor.PointerMove(x + 77.7777);
+        _editor.PointerUp(x + 77.7777);
+        Assert.True(Edits.IsWholeMs(item.Start) && Edits.IsWholeMs(item.Duration));
+        Assert.True(item.End <= S(6));
     }
 
     [Fact]

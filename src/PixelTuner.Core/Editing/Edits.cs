@@ -68,6 +68,21 @@ public static class Edits
 
     // ---- items
 
+    /// <summary>
+    /// The .bin stores times as whole milliseconds, so the editor keeps them whole: what the user sees
+    /// on the timeline is exactly what the device plays.
+    /// </summary>
+    public static bool IsWholeMs(TimeSpan time) => time.Ticks % TimeSpan.TicksPerMillisecond == 0;
+
+    /// <summary>The whole millisecond nearest to a time.</summary>
+    public static TimeSpan WholeMs(TimeSpan time) =>
+        TimeSpan.FromTicks((long)Math.Round((double)time.Ticks / TimeSpan.TicksPerMillisecond, MidpointRounding.AwayFromZero) * TimeSpan.TicksPerMillisecond);
+
+    private static void RequireWholeMs(TimeSpan time, string name)
+    {
+        if (!IsWholeMs(time)) throw new ArgumentException($"{name} is not a whole number of milliseconds: {time}.", name);
+    }
+
     /// <summary>Whether an item of this length fits at this start without touching its neighbours' time.</summary>
     /// <param name="ignore">The item being moved or resized, which does not block itself.</param>
     public static bool Fits(Timeline timeline, TimeSpan start, TimeSpan duration, TimelineItem? ignore = null)
@@ -86,6 +101,8 @@ public static class Edits
         if (!Accepts(timeline, item))
             throw new InvalidOperationException($"A '{timeline.Kind}' timeline does not take '{item.Kind}' items.");
         RequireHeight(timeline, item);
+        RequireWholeMs(item.Start, "Start");
+        RequireWholeMs(item.Duration, "Duration");
         if (!Fits(timeline, item.Start, item.Duration))
             throw new InvalidOperationException("The item overlaps another item or lies outside the timeline.");
         return new InsertEdit<TimelineItem>("AddItem", timeline.Items, SortedIndex(timeline, item.Start, item), item);
@@ -98,6 +115,7 @@ public static class Edits
     public static Edit MoveItem(Timeline timeline, TimelineItem item, TimeSpan newStart)
     {
         int from = RequireIndex(timeline, item);
+        RequireWholeMs(newStart, nameof(newStart));
         if (!Fits(timeline, newStart, item.Duration, item))
             throw new InvalidOperationException("The item would overlap another item or leave the timeline.");
 
@@ -114,6 +132,7 @@ public static class Edits
     public static Edit ResizeItem(Timeline timeline, TimelineItem item, TimeSpan newDuration)
     {
         RequireIndex(timeline, item);
+        RequireWholeMs(newDuration, nameof(newDuration));
         if (!Fits(timeline, item.Start, newDuration, item))
             throw new InvalidOperationException("The item would overlap the next item.");
         return new SetValueEdit<TimeSpan>("ResizeItem", item, nameof(item.Duration), () => item.Duration, v => item.Duration = v, newDuration, mergeable: false);
@@ -123,6 +142,7 @@ public static class Edits
     public static Edit TrimItemStart(Timeline timeline, TimelineItem item, TimeSpan newStart)
     {
         RequireIndex(timeline, item);
+        RequireWholeMs(newStart, nameof(newStart));
         var newDuration = item.End - newStart;
         if (!Fits(timeline, newStart, newDuration, item))
             throw new InvalidOperationException("The item would overlap the previous item or have no length.");
@@ -247,6 +267,7 @@ public static class Edits
         RequireIndex(from, item);
         if (!Accepts(to, item)) throw new InvalidOperationException("The timeline does not take this kind of item.");
         RequireHeight(to, item);
+        RequireWholeMs(newStart, nameof(newStart));
         if (!Fits(to, newStart, item.Duration)) throw new InvalidOperationException("The item would overlap another item or leave the timeline.");
         return new GroupEdit("MoveItem",
         [
