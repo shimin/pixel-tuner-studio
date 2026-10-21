@@ -123,7 +123,7 @@ public sealed class TimelineControl : Control
         var p = e.GetPosition(this);
         if (editor.IsDragging)
         {
-            editor.PointerMove(p.X);
+            editor.PointerMove(p.X, p.Y);
             return;
         }
         Cursor = editor.HitTest(p.X, p.Y).Kind switch
@@ -140,7 +140,8 @@ public sealed class TimelineControl : Control
     {
         base.OnPointerReleased(e);
         if (Editor is not { } editor || !editor.IsDragging) return;
-        editor.PointerUp(e.GetPosition(this).X);
+        var up = e.GetPosition(this);
+        editor.PointerUp(up.X, up.Y);
         e.Pointer.Capture(null);
         e.Handled = true;
     }
@@ -314,7 +315,7 @@ public sealed class TimelineControl : Control
         var fill = item.Kind == ItemKind.Solid ? ParseColor(item.Color, timelineColor) : timelineColor;
         bool beingDragged = editor.Preview is { Item: { } dragged } && ReferenceEquals(dragged, item);
 
-        void Draw(TimeSpan start, TimeSpan duration, double opacity, bool outline)
+        void Draw(TimeSpan start, TimeSpan duration, double opacity, bool outline, double top)
         {
             double left = editor.TimeToX(start), right = editor.TimeToX(start + duration);
             if (right < editor.ViewWidth * -1 || left > editor.ViewWidth) return;
@@ -326,8 +327,13 @@ public sealed class TimelineControl : Control
                     context.DrawText(Text(ItemLabel(item), 12, new SolidColorBrush(Contrast(fill), opacity)), new Point(rect.X + 5, rect.Y + 6)));
         }
 
-        Draw(item.Start, item.Duration, beingDragged ? 0.35 : 1, outline: false);
-        if (beingDragged) Draw(editor.Preview!.Start, editor.Preview.Duration, 1, outline: true);
+        Draw(item.Start, item.Duration, beingDragged ? 0.35 : 1, outline: false, top);
+        if (beingDragged)
+        {
+            // The outline sits on the track the item would land on.
+            int row = editor.Project.Timelines.IndexOf(editor.Preview!.Timeline!);
+            Draw(editor.Preview.Start, editor.Preview.Duration, 1, outline: true, row < 0 ? top : editor.TrackTop(row));
+        }
     }
 
     private static Color Contrast(Color background) =>

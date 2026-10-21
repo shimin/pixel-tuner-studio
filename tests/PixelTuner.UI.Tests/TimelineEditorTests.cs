@@ -283,4 +283,45 @@ public class TimelineEditorTests
 
         Assert.True(raised >= 4);
     }
+
+    [Fact]
+    public void Item_dragged_down_lands_on_the_next_timeline_of_its_kind_and_undo_returns_it()
+    {
+        var a = Track((1, 2));
+        var b = Track((6, 1));
+        var other = Track();
+        other.Kind = TimelineKind.Video;
+        var item = a.Items[0];
+
+        _editor.PointerDown(X(2), RowY(0));
+        _editor.PointerMove(X(2), RowY(1));
+        Assert.Same(b, _editor.Preview!.Timeline);
+        _editor.PointerUp(X(2), RowY(1));
+
+        Assert.Empty(a.Items);
+        Assert.Equal([item.Start, S(6)], b.Items.Select(i => i.Start).Order());
+        Assert.Contains(item, b.Items);
+
+        _doc.Undo();
+        Assert.Contains(item, a.Items);
+        Assert.DoesNotContain(item, b.Items);
+    }
+
+    [Fact]
+    public void Item_stays_when_dragged_over_another_kind_or_over_an_item()
+    {
+        var a = Track((1, 2));
+        var busy = Track((0, 10));
+        var video = Track();
+        video.Kind = TimelineKind.Video;
+        var item = a.Items[0];
+
+        _editor.PointerDown(X(2), RowY(0));
+        _editor.PointerMove(X(2), RowY(1));
+        Assert.Same(a, _editor.Preview!.Timeline);
+        _editor.PointerMove(X(2), RowY(2));
+        Assert.Same(a, _editor.Preview!.Timeline);
+        _editor.PointerUp(X(2), RowY(2));
+        Assert.Contains(item, a.Items);
+    }
 }

@@ -54,6 +54,8 @@
   <data name="Edit_ResizeItem" xml:space="preserve"><value>Resize item</value></data>
   <data name="Edit_SetBrightness" xml:space="preserve"><value>Change brightness</value></data>
   <data name="Edit_SetStretching" xml:space="preserve"><value>Change stretching</value></data>
+  <data name="Edit_SetLaser" xml:space="preserve"><value>Change laser</value></data>
+  <data name="Edit_SetOffset" xml:space="preserve"><value>Move video on the frame</value></data>
   <data name="Edit_AddMarker" xml:space="preserve"><value>Add marker</value></data>
   <data name="Edit_RemoveMarker" xml:space="preserve"><value>Delete marker</value></data>
   <data name="Edit_RenameMarker" xml:space="preserve"><value>Rename marker</value></data>
