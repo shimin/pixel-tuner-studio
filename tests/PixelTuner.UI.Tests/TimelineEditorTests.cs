@@ -1,3 +1,4 @@
+using PixelTuner.Core.Export;
 using PixelTuner.Core.Editing;
 using PixelTuner.Core.Model;
 using PixelTuner.Package;
@@ -561,4 +562,96 @@ public class TimelineEditorTests
     [InlineData("-5")]
     [InlineData("1:-5")]
     public void Bad_time_text_is_refused(string text) => Assert.False(TimeFormat.TryParse(text, out _));
+}
+
+public class LaneContentTests
+{
+    private static TimeSpan S(double seconds) => TimeSpan.FromSeconds(seconds);
+
+    private readonly PixelTuner.Package.ProjectDocument _doc = PixelTuner.Package.ProjectDocument.CreateNew("Show");
+    private readonly TimelineEditor _editor;
+
+    public LaneContentTests() => _editor = new TimelineEditor(_doc) { ViewWidth = 1170 };   // 100 px per second
+
+    [Fact]
+    public void A_picture_is_repeated_along_the_item_and_the_last_pass_is_cut_off()
+    {
+        // 100 columns at k = 100: one pass is 100 x 100 x 50 us = 500 ms = 50 px; the item is 2.2 s = 220 px.
+        var pass = ItemPreviewPass(100, 100);
+        var run = _editor.TileLayout(left: 200, right: 420, pass, clipLeft: 0, clipRight: 2000);
+
+        Assert.Equal(50, run.PassWidth, 6);
+        Assert.False(run.Averaged);
+        Assert.Equal((0, 4), (run.FirstPass, run.LastPass));   // five passes: four whole and a 20 px piece
+    }
+
+    [Fact]
+    public void Only_the_passes_in_view_are_listed_so_a_long_item_does_not_cost_a_pass_per_column()
+    {
+        var pass = ItemPreviewPass(100, 100);   // 50 px
+        var run = _editor.TileLayout(left: 0, right: 1_000_000, pass, clipLeft: 10_000, clipRight: 10_400);
+
+        Assert.Equal((200, 208), (run.FirstPass, run.LastPass));
+    }
+
+    [Fact]
+    public void Passes_too_narrow_to_tell_apart_are_drawn_as_the_average_colour()
+    {
+        var pass = ItemPreviewPass(100, 4);   // 100 x 4 x 50 us = 20 ms = 2 px
+        Assert.True(_editor.TileLayout(0, 500, pass, 0, 1000).Averaged);
+        Assert.True(_editor.TileLayout(0, 500, TimeSpan.Zero, 0, 1000).Averaged);
+    }
+
+    [Fact]
+    public void Zooming_in_moves_the_pass_boundaries_to_where_the_device_starts_over_in_real_time()
+    {
+        var pass = ItemPreviewPass(100, 100);   // 500 ms
+        _editor.ZoomAt(4, TimelineEditor.HeaderWidth);
+
+        var run = _editor.TileLayout(0, 4000, pass, 0, 4000);
+        Assert.Equal(0.5 * _editor.PixelsPerSecond, run.PassWidth, 6);
+        Assert.Equal(400, _editor.PixelsPerSecond, 6);
+    }
+
+    private static TimeSpan ItemPreviewPass(int columns, int stretching) =>
+        PixelTuner.Core.Imaging.ItemPreview.PassDuration(columns, stretching);
+
+    [Fact]
+    public void Pauses_are_the_gaps_before_and_between_items_and_nothing_after_the_last()
+    {
+        var timeline = new Timeline();
+        timeline.Items.Add(new TimelineItem { Start = S(1), Duration = S(2) });
+        timeline.Items.Add(new TimelineItem { Start = S(3), Duration = S(1) });   // touches the first: no gap
+        timeline.Items.Add(new TimelineItem { Start = S(6), Duration = S(1) });
+
+        Assert.Equal([(S(0), S(1)), (S(4), S(6))], TimelineEditor.Pauses(timeline));
+        Assert.Empty(TimelineEditor.Pauses(new Timeline()));
+    }
+
+    [Fact]
+    public void The_lane_draws_exactly_the_pauses_the_bin_stores()
+    {
+        var timeline = new Timeline();
+        var image = new PixelTuner.Core.Imaging.PixelImage(2, 4);
+        foreach (var (start, length) in new[] { (0.5, 1.0), (2.0, 1.0), (3.0, 0.5), (5.0, 1.0) })
+            timeline.Items.Add(new TimelineItem { Start = S(start), Duration = S(length), ResourceId = "a", SourcePath = "a", Stretching = 4 });
+        var media = new ShowMedia(_ => new MemoryStream(PngBytes()));
+
+        var bin = BinReader.ReadPpoi(new PixelExport(media).Export([timeline], 4));
+
+        // Entries are the items and the pauses, in time order; a pause entry is the black block.
+        int pauses = bin.Timelines[0].Entries.Count - timeline.Items.Count;
+        Assert.Equal(pauses, TimelineEditor.Pauses(timeline).Count);
+        var starts = bin.Timelines[0].Entries.Select(e => (double)e.StartMs).ToList();
+        foreach (var (start, _) in TimelineEditor.Pauses(timeline))
+            Assert.Contains(start.TotalMilliseconds, starts);
+    }
+
+    private static byte[] PngBytes()
+    {
+        using var bitmap = new SkiaSharp.SKBitmap(2, 4);
+        bitmap.Erase(new SkiaSharp.SKColor(10, 20, 30));
+        using var image = SkiaSharp.SKImage.FromBitmap(bitmap);
+        return image.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).ToArray();
+    }
 }

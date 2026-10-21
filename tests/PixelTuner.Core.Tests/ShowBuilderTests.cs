@@ -393,3 +393,38 @@ public class ShowBuilderTests
         Assert.Equal(BuildIssueCode.TimelineKindMismatch, Assert.Single(result.Errors).Code);
     }
 }
+
+public class LightColorAtTests
+{
+    private static TimelineItem Effect(string effect, int t1, int t2, double seconds) => new()
+    {
+        Kind = ItemKind.Effect, Effect = effect, Color = "#102030", ColorLast = "#F0A060", T1 = t1, T2 = t2,
+        Start = TimeSpan.Zero, Duration = TimeSpan.FromSeconds(seconds),
+    };
+
+    [Theory]
+    [InlineData(LightEffectKind.LinearTransition, 0, 0)]
+    [InlineData(LightEffectKind.SineWave, 400, 0)]
+    [InlineData(LightEffectKind.SquareWave, 120, 80)]
+    [InlineData(LightEffectKind.SawToothWave, 150, 250)]
+    public void The_colour_the_timeline_shows_is_the_sample_the_bin_stores(string effect, int t1, int t2)
+    {
+        var item = Effect(effect, t1, t2, 2);
+        var timeline = new Timeline { Kind = TimelineKind.Light, Items = [item] };
+        var file = BinReader.ReadLght(LightExport.Export([timeline], rate: 5));
+
+        for (int ms = 0; ms < 2000; ms += 35)
+        {
+            var sample = file.At((uint)(ms / 5 * 5)).Slot(0);
+            Assert.Equal(sample, LightExport.ColorAt(item, TimeSpan.FromMilliseconds(ms / 5 * 5)));
+        }
+    }
+
+    [Fact]
+    public void Only_colours_and_effects_have_a_colour()
+    {
+        Assert.Throws<InvalidOperationException>(() => LightExport.ColorAt(new TimelineItem { Kind = ItemKind.Image }, TimeSpan.Zero));
+        Assert.Equal(new PixelTuner.Core.Imaging.Rgb(1, 2, 3),
+            LightExport.ColorAt(new TimelineItem { Kind = ItemKind.Solid, Color = "#010203", Duration = TimeSpan.FromSeconds(1) }, TimeSpan.FromMilliseconds(300)));
+    }
+}

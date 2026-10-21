@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PixelTuner.Core.Model;
@@ -227,6 +228,9 @@ public sealed class TimelineControl : Control
             DrawWave(context, editor, timeArea, card, accent, faint);
 
             for (int i = 0; i < editor.Project.Timelines.Count; i++)
+                DrawPauses(context, editor, editor.Project.Timelines[i], editor.TrackTop(i), faint);
+
+            for (int i = 0; i < editor.Project.Timelines.Count; i++)
                 foreach (var item in editor.Project.Timelines[i].Items)
                     DrawItem(context, editor, editor.Project.Timelines[i], item, editor.TrackTop(i), text, accent);
 
@@ -327,11 +331,25 @@ public sealed class TimelineControl : Control
         }
     }
 
+    /// <summary>The gaps between items are black entries in the .bin; the lane shows them as black stretches.</summary>
+    private static void DrawPauses(DrawingContext context, TimelineEditor editor, Timeline timeline, double top, Pen outline)
+    {
+        foreach (var (start, end) in TimelineEditor.Pauses(timeline))
+        {
+            double left = editor.TimeToX(start), right = editor.TimeToX(end);
+            if (right < 0 || left > editor.ViewWidth) continue;
+            var rect = new Rect(left, top + 6, Math.Max(1, right - left), TimelineEditor.TrackHeight - 12);
+            context.DrawRectangle(new SolidColorBrush(Color.FromRgb(8, 8, 10), 0.9), outline, rect, 4, 4);
+        }
+    }
+
     private void DrawItem(DrawingContext context, TimelineEditor editor, Timeline timeline, TimelineItem item, double top, IBrush text, IBrush accent)
     {
         var timelineColor = ParseColor(timeline.Color, Colors.DodgerBlue);
         var fill = item.Kind == ItemKind.Solid ? ParseColor(item.Color, timelineColor) : timelineColor;
         bool beingDragged = editor.Preview is { Item: { } dragged } && ReferenceEquals(dragged, item);
+
+        var thumb = editor.Thumbnails.Get(item, timeline);
 
         void Draw(TimeSpan start, TimeSpan duration, double opacity, bool outline, double top)
         {
@@ -340,9 +358,23 @@ public sealed class TimelineControl : Control
             var rect = new Rect(left, top + 6, Math.Max(2, right - left), TimelineEditor.TrackHeight - 12);
             bool selected = ReferenceEquals(editor.Selected, item);
             context.DrawRectangle(new SolidColorBrush(fill, opacity * 0.85), selected || outline ? new Pen(accent, 2) : new Pen(new SolidColorBrush(fill), 1), rect, 4, 4);
+
+            // The content is clipped to the item: the last pass is cut off where the item ends.
+            var inner = rect.Deflate(1);
+            using (context.PushClip(inner))
+            using (context.PushOpacity(opacity))
+            {
+                if (item.Kind == ItemKind.Effect) DrawEffect(context, editor, item, inner, left);
+                else if (thumb is not null) DrawTiles(context, editor, item, thumb, inner, left, right);
+            }
+
             if (rect.Width > 24)
-                DrawClipped(context, rect.Deflate(new Thickness(5, 0)), () =>
-                    context.DrawText(Text(ItemLabel(item), 12, new SolidColorBrush(Contrast(fill), opacity)), new Point(rect.X + 5, rect.Y + 6)));
+            {
+                var label = Text(ItemLabel(item), 12, new SolidColorBrush(thumb is null ? Contrast(fill) : Colors.White, opacity));
+                if (thumb is not null)
+                    context.FillRectangle(new SolidColorBrush(Colors.Black, 0.55 * opacity), new Rect(rect.X + 3, rect.Y + 3, Math.Min(label.Width + 8, rect.Width - 6), label.Height + 4), 3);
+                DrawClipped(context, rect.Deflate(new Thickness(5, 0)), () => context.DrawText(label, new Point(rect.X + 5, rect.Y + 5)));
+            }
         }
 
         Draw(item.Start, item.Duration, beingDragged ? 0.35 : 1, outline: false, top);
@@ -351,6 +383,58 @@ public sealed class TimelineControl : Control
             // The outline sits on the track the item would land on.
             int row = editor.Project.Timelines.IndexOf(editor.Preview!.Timeline!);
             Draw(editor.Preview.Start, editor.Preview.Duration, 1, outline: true, row < 0 ? top : editor.TrackTop(row));
+        }
+    }
+
+    /// <summary>
+    /// The picture repeated along the item, as the device repeats it from the item's start to its end. A pass is as wide as it
+    /// takes to play at the item's speed; when passes are too narrow to tell apart, the average colour is drawn.
+    /// </summary>
+    private static void DrawTiles(DrawingContext context, TimelineEditor editor, TimelineItem item, Thumbnail thumb, Rect inner, double left, double right)
+    {
+        var run = editor.TileLayout(left, right, thumb.Pass(item), TimelineEditor.HeaderWidth, editor.ViewWidth);
+        if (run.Averaged)
+        {
+            context.FillRectangle(new SolidColorBrush(Color.FromRgb(thumb.Average.R, thumb.Average.G, thumb.Average.B)), inner);
+            return;
+        }
+
+        if (thumb.Bitmap is not { } bitmap) return;
+        var source = new Rect(0, 0, bitmap.PixelSize.Width, bitmap.PixelSize.Height);
+        // Sharp columns when a pass is wider than its picture, smooth when it is squeezed.
+        var mode = run.PassWidth >= thumb.Columns ? BitmapInterpolationMode.None : BitmapInterpolationMode.MediumQuality;
+        using (context.PushRenderOptions(new RenderOptions { BitmapInterpolationMode = mode }))
+        {
+            for (int n = run.FirstPass; n <= run.LastPass; n++)
+                context.DrawImage(bitmap, source, new Rect(left + n * run.PassWidth, inner.Y, run.PassWidth, inner.Height));
+        }
+
+        if (run.PassWidth < TimelineEditor.PassLineWidth) return;
+        var line = new Pen(new SolidColorBrush(Colors.White, 0.7), 1);
+        for (int n = Math.Max(1, run.FirstPass); n <= run.LastPass; n++)
+        {
+            double x = left + n * run.PassWidth;
+            if (x < right) context.DrawLine(line, new Point(x, inner.Y), new Point(x, inner.Bottom));
+        }
+    }
+
+    /// <summary>A light effect as the colours the device will show across it.</summary>
+    private static void DrawEffect(DrawingContext context, TimelineEditor editor, TimelineItem item, Rect inner, double left)
+    {
+        const double Step = 3;
+        double from = Math.Max(inner.X, TimelineEditor.HeaderWidth), to = Math.Min(inner.Right, editor.ViewWidth);
+        for (double x = from; x < to; x += Step)
+        {
+            var t = TimeSpan.FromSeconds(Math.Max(0, x - left) / editor.PixelsPerSecond);
+            try
+            {
+                var c = PixelTuner.Core.Export.LightExport.ColorAt(item, t);
+                context.FillRectangle(new SolidColorBrush(Color.FromRgb(c.R, c.G, c.B)), new Rect(x, inner.Y, Step + 0.5, inner.Height));
+            }
+            catch (Exception ex) when (ex is InvalidDataException or ArgumentOutOfRangeException)
+            {
+                return;   // an effect the export does not know: the plain block stays
+            }
         }
     }
 

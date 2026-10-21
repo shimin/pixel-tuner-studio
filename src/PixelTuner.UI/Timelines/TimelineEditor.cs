@@ -55,6 +55,7 @@ public sealed class TimelineEditor
 
     public TimelineEditor(ProjectDocument document)
     {
+        Thumbnails = new ItemThumbnails(id => document.OpenMedia(id));
         _document = document;
         document.Changed += (_, _) => Changed?.Invoke(this, EventArgs.Empty);
     }
@@ -503,6 +504,52 @@ public sealed class TimelineEditor
             }
         }
         return (best, snapped);
+    }
+
+    // ---- what a lane shows of an item
+
+    /// <summary>Thumbnails of the pictures on the lanes.</summary>
+    public ItemThumbnails Thumbnails { get; }
+
+    /// <summary>A pass narrower than this many pixels is not drawn as a picture but as its average colour.</summary>
+    public const double MinTileWidth = 3;
+
+    /// <summary>A pass at least this wide gets a line at its end, so the user can see where the device starts over.</summary>
+    public const double PassLineWidth = 14;
+
+    /// <summary>
+    /// Where one picture is repeated across an item. The device repeats the item from its start to its end at the speed
+    /// the stretching sets, so pass <c>n</c> begins at <c>left + n * PassWidth</c>; the last pass is cut off by the item's end.
+    /// </summary>
+    /// <param name="Averaged">The passes are too narrow to tell apart: draw the average colour.</param>
+    public readonly record struct TileRun(double PassWidth, int FirstPass, int LastPass, bool Averaged);
+
+    /// <param name="left">Where the item starts, in pixels.</param>
+    /// <param name="right">Where the item ends.</param>
+    /// <param name="pass">How long one pass takes.</param>
+    /// <param name="clipLeft">Passes wholly outside [clipLeft, clipRight] are left out.</param>
+    public TileRun TileLayout(double left, double right, TimeSpan pass, double clipLeft, double clipRight)
+    {
+        double width = pass.TotalSeconds * PixelsPerSecond;
+        if (pass <= TimeSpan.Zero || width < MinTileWidth || right <= left) return new TileRun(width, 0, -1, Averaged: true);
+        int first = (int)Math.Max(0, Math.Floor((clipLeft - left) / width));
+        int last = (int)Math.Min(Math.Ceiling((right - left) / width) - 1, Math.Floor((clipRight - left) / width));
+        return new TileRun(width, first, last, Averaged: false);
+    }
+
+    /// <summary>
+    /// The pauses of a timeline: the stretch before the first item and the gaps between items. The device plays each as a black
+    /// entry (the .bin has one for it), so the lane draws it black.
+    /// </summary>
+    public static IReadOnlyList<(TimeSpan Start, TimeSpan End)> Pauses(Timeline timeline)
+    {
+        var result = new List<(TimeSpan, TimeSpan)>();
+        var items = timeline.Items;
+        if (items.Count == 0) return result;
+        if (items[0].Start > TimeSpan.Zero) result.Add((TimeSpan.Zero, items[0].Start));
+        for (int i = 0; i + 1 < items.Count; i++)
+            if (items[i].End < items[i + 1].Start) result.Add((items[i].End, items[i + 1].Start));
+        return result;
     }
 
     // ---- commands on the selection
