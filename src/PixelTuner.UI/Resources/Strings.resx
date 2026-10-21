@@ -137,6 +137,22 @@
   <data name="Inspector_OffsetX" xml:space="preserve"><value>Offset X</value></data>
   <data name="Inspector_OffsetY" xml:space="preserve"><value>Offset Y</value></data>
   <data name="Inspector_BadValue" xml:space="preserve"><value>That value cannot be used: {0}.</value></data>
+  <data name="Library_MissingTitle" xml:space="preserve"><value>Missing files</value></data>
+  <data name="Library_Replace" xml:space="preserve"><value>Find file…</value></data>
+  <data name="Library_ReplaceHeight" xml:space="preserve"><value>{0} would make the pictures of a timeline different heights.</value></data>
+  <data name="Library_InUse" xml:space="preserve"><value>An item plays it: take the item off first.</value></data>
+  <data name="Library_Missing" xml:space="preserve"><value>The file is missing.</value></data>
+  <data name="Library_WrongHeight" xml:space="preserve"><value>{0} LEDs high: the timeline plays another height.</value></data>
+  <data name="Library_WrongKind" xml:space="preserve"><value>This timeline does not play it.</value></data>
+  <data name="Library_VideoDetail" xml:space="preserve"><value>{0} × {1}, {2} frames</value></data>
+  <data name="Library_Empty" xml:space="preserve"><value>Nothing here for this timeline yet. Import a file.</value></data>
+  <data name="Library_SaveItem" xml:space="preserve"><value>Keep in library</value></data>
+  <data name="Library_AddColor" xml:space="preserve"><value>Add colour</value></data>
+  <data name="Library_ShowAll" xml:space="preserve"><value>Show everything</value></data>
+  <data name="Library_Remove" xml:space="preserve"><value>Remove</value></data>
+  <data name="Library_Place" xml:space="preserve"><value>Put on timeline</value></data>
+  <data name="Library_Import" xml:space="preserve"><value>Import…</value></data>
+  <data name="Library_Title" xml:space="preserve"><value>Library</value></data>
   <data name="Effect_LinearTransition" xml:space="preserve"><value>Linear transition</value></data>
   <data name="Effect_SineWave" xml:space="preserve"><value>Sine wave</value></data>
   <data name="Effect_SquareWave" xml:space="preserve"><value>Square wave</value></data>

@@ -1,7 +1,7 @@
 using PixelTuner.Core.Imaging;
 using PixelTuner.Core.Model;
 using PixelTuner.Package;
-using PixelTuner.UI.Library;
+using PixelTuner.UI.LibraryPanel;
 using SkiaSharp;
 
 namespace PixelTuner.UI.Tests;

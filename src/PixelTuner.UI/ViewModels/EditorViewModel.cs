@@ -9,6 +9,7 @@ using PixelTuner.Core.Model;
 using PixelTuner.Package;
 using PixelTuner.UI.Resources;
 using PixelTuner.UI.Services;
+using PixelTuner.UI.LibraryPanel;
 using PixelTuner.UI.Timelines;
 
 namespace PixelTuner.UI.ViewModels;
@@ -34,6 +35,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         _engine = engine;
         _picker = picker;
         Timelines = new TimelineEditor(document);
+        Gallery = new LibraryViewModel(this, () => _picker?.Invoke());
         if (engine is not null)
         {
             _player = engine.CreatePlayer();
@@ -49,6 +51,9 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     public ProjectDocument Document { get; }
 
     public TimelineEditor Timelines { get; }
+
+    /// <summary>The library of the project: what can be put on the timelines.</summary>
+    public LibraryViewModel Gallery { get; }
 
     private void DocumentChanged(object? sender, EventArgs e) =>
         OnUi(() =>
@@ -204,10 +209,10 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
                 Message = string.Format(Strings.Item_WrongHeight, Path.GetFileName(path), height, Edits.PixelHeight(timeline));
                 return;
             }
-            string id = Document.AddMedia(path);
-            // PixelTuner 2's defaults: 4 intervals of 50 us for a picture, 40 ms (25 frames a second) for a video.
-            var item = new TimelineItem { Kind = kind, ResourceId = id, SourcePath = path, MediaWidth = width, MediaHeight = height, Stretching = kind == ItemKind.Video ? 40 : 4 };
-            Message = Timelines.AddItem(timeline, item, DefaultItemLength) is null ? Strings.Item_NoRoom : null;
+            // The file goes into the library, and from there on the timeline with the defaults of its kind
+            // (PixelTuner 2's: 4 intervals of 50 us for a picture, 40 ms, 25 frames a second, for a video).
+            var entry = Gallery.AddFile(path, kind switch { ItemKind.Video => LibraryKind.Video, ItemKind.Gradient => LibraryKind.Gradient, _ => LibraryKind.Image });
+            Message = Gallery.Place(entry, timeline) is null ? Strings.Item_NoRoom : null;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
         {

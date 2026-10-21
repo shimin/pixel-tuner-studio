@@ -9,5 +9,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\PixelTuner.Core.Tests\Fixtures\LegacyProjects\80_sample\**\*" CopyToOutputDirectory="PreserveNewest" LinkBase="Fixtures\80_sample" />
+    <None Include="..\PixelTuner.Core.Tests\Fixtures\LegacyProjects\glasses\glasses.gif" CopyToOutputDirectory="PreserveNewest" Link="Fixtures\glasses\glasses.gif" />
   </ItemGroup>
 </Project>

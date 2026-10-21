@@ -7,7 +7,7 @@ using PixelTuner.Core.Model;
 using PixelTuner.Package;
 using PixelTuner.UI.ViewModels;
 
-namespace PixelTuner.UI.Library;
+namespace PixelTuner.UI.LibraryPanel;
 
 /// <summary>
 /// Bringing a picture into the library the way PixelTuner 2's import window did: cut a part, scale it to the height of the

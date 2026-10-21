@@ -137,6 +137,22 @@
   <data name="Inspector_OffsetX" xml:space="preserve"><value>Versatz X</value></data>
   <data name="Inspector_OffsetY" xml:space="preserve"><value>Versatz Y</value></data>
   <data name="Inspector_BadValue" xml:space="preserve"><value>Dieser Wert ist nicht möglich: {0}.</value></data>
+  <data name="Library_MissingTitle" xml:space="preserve"><value>Fehlende Dateien</value></data>
+  <data name="Library_Replace" xml:space="preserve"><value>Datei suchen…</value></data>
+  <data name="Library_ReplaceHeight" xml:space="preserve"><value>„{0}“ würde die Bilder einer Spur verschieden hoch machen.</value></data>
+  <data name="Library_InUse" xml:space="preserve"><value>Ein Element spielt es: nimm zuerst das Element weg.</value></data>
+  <data name="Library_Missing" xml:space="preserve"><value>Die Datei fehlt.</value></data>
+  <data name="Library_WrongHeight" xml:space="preserve"><value>{0} LEDs hoch: die Spur spielt eine andere Höhe.</value></data>
+  <data name="Library_WrongKind" xml:space="preserve"><value>Diese Spur spielt das nicht.</value></data>
+  <data name="Library_VideoDetail" xml:space="preserve"><value>{0} × {1}, {2} Bilder</value></data>
+  <data name="Library_Empty" xml:space="preserve"><value>Für diese Spur gibt es noch nichts. Importiere eine Datei.</value></data>
+  <data name="Library_SaveItem" xml:space="preserve"><value>In die Bibliothek</value></data>
+  <data name="Library_AddColor" xml:space="preserve"><value>Farbe hinzufügen</value></data>
+  <data name="Library_ShowAll" xml:space="preserve"><value>Alles zeigen</value></data>
+  <data name="Library_Remove" xml:space="preserve"><value>Entfernen</value></data>
+  <data name="Library_Place" xml:space="preserve"><value>Auf die Spur legen</value></data>
+  <data name="Library_Import" xml:space="preserve"><value>Importieren…</value></data>
+  <data name="Library_Title" xml:space="preserve"><value>Bibliothek</value></data>
   <data name="Effect_LinearTransition" xml:space="preserve"><value>Linearer Übergang</value></data>
   <data name="Effect_SineWave" xml:space="preserve"><value>Sinuswelle</value></data>
   <data name="Effect_SquareWave" xml:space="preserve"><value>Rechteckwelle</value></data>

@@ -137,6 +137,22 @@
   <data name="Inspector_OffsetX" xml:space="preserve"><value>Сдвиг по X</value></data>
   <data name="Inspector_OffsetY" xml:space="preserve"><value>Сдвиг по Y</value></data>
   <data name="Inspector_BadValue" xml:space="preserve"><value>Это значение не подходит: {0}.</value></data>
+  <data name="Library_MissingTitle" xml:space="preserve"><value>Пропавшие файлы</value></data>
+  <data name="Library_Replace" xml:space="preserve"><value>Найти файл…</value></data>
+  <data name="Library_ReplaceHeight" xml:space="preserve"><value>«{0}» сделал бы картинки на дорожке разной высоты.</value></data>
+  <data name="Library_InUse" xml:space="preserve"><value>Его играет элемент: сначала уберите элемент.</value></data>
+  <data name="Library_Missing" xml:space="preserve"><value>Файла нет.</value></data>
+  <data name="Library_WrongHeight" xml:space="preserve"><value>Высота {0} светодиодов: дорожка играет другую высоту.</value></data>
+  <data name="Library_WrongKind" xml:space="preserve"><value>Эта дорожка это не играет.</value></data>
+  <data name="Library_VideoDetail" xml:space="preserve"><value>{0} × {1}, кадров: {2}</value></data>
+  <data name="Library_Empty" xml:space="preserve"><value>Для этой дорожки пока ничего нет. Импортируйте файл.</value></data>
+  <data name="Library_SaveItem" xml:space="preserve"><value>В библиотеку</value></data>
+  <data name="Library_AddColor" xml:space="preserve"><value>Добавить цвет</value></data>
+  <data name="Library_ShowAll" xml:space="preserve"><value>Показать всё</value></data>
+  <data name="Library_Remove" xml:space="preserve"><value>Удалить</value></data>
+  <data name="Library_Place" xml:space="preserve"><value>Положить на дорожку</value></data>
+  <data name="Library_Import" xml:space="preserve"><value>Импорт…</value></data>
+  <data name="Library_Title" xml:space="preserve"><value>Библиотека</value></data>
   <data name="Effect_LinearTransition" xml:space="preserve"><value>Плавный переход</value></data>
   <data name="Effect_SineWave" xml:space="preserve"><value>Синусоида</value></data>
   <data name="Effect_SquareWave" xml:space="preserve"><value>Меандр</value></data>
