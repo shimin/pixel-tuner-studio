@@ -150,6 +150,68 @@
     <system:String x:Key="ElementMarkup_Set">set</system:String>
     <system:String x:Key="ElementMarkup_Spacing">Spacing:</system:String>
     <system:String x:Key="ElementMarkup_Import">Load sketch</system:String>
+    <system:String x:Key="Markup_NextNumber">Next #:</system:String>
+    <system:String x:Key="Markup_NextNumberHint">Number the next LED gets. Below the last one, LEDs are inserted in the middle and the rest shift.</system:String>
+    <system:String x:Key="Markup_ToEnd">to end</system:String>
+    <system:String x:Key="Markup_Snake">Snake</system:String>
+    <system:String x:Key="Markup_SnakeHint">Every other line runs backwards (Ctrl+rectangle and whole matrix).</system:String>
+    <system:String x:Key="Markup_ByColumns">By columns</system:String>
+    <system:String x:Key="Markup_Overwrite">Overwrite</system:String>
+    <system:String x:Key="Markup_OverwriteHint">Group operations renumber already numbered cells instead of skipping them.</system:String>
+    <system:String x:Key="Markup_Undo">Undo</system:String>
+    <system:String x:Key="Markup_Redo">Redo</system:String>
+    <system:String x:Key="Markup_Zoom">Zoom:</system:String>
+    <system:String x:Key="Markup_HighlightIssues">highlight</system:String>
+    <system:String x:Key="Markup_Cancel">Cancel</system:String>
+    <system:String x:Key="Markup_Grid">Grid</system:String>
+    <system:String x:Key="Markup_ApplySize">Apply size</system:String>
+    <system:String x:Key="Markup_WholeMatrix">Whole matrix</system:String>
+    <system:String x:Key="Markup_StartCorner">Start:</system:String>
+    <system:String x:Key="Markup_CornerTopLeft">↖ top left</system:String>
+    <system:String x:Key="Markup_CornerTopRight">↗ top right</system:String>
+    <system:String x:Key="Markup_CornerBottomLeft">↙ bottom left</system:String>
+    <system:String x:Key="Markup_CornerBottomRight">↘ bottom right</system:String>
+    <system:String x:Key="Markup_FillAll">Number whole matrix</system:String>
+    <system:String x:Key="Markup_FillAllHint">Replaces the markup: from the chosen corner, snake or progressive, by rows or columns.</system:String>
+    <system:String x:Key="Markup_ReverseAll">Reverse whole chain</system:String>
+    <system:String x:Key="Markup_MirrorH">Mirror horizontally</system:String>
+    <system:String x:Key="Markup_MirrorV">Mirror vertically</system:String>
+    <system:String x:Key="Markup_Rotate">Rotate 90° (square grid only)</system:String>
+    <system:String x:Key="Markup_ClearAll">Clear all</system:String>
+    <system:String x:Key="Markup_Range">Number range</system:String>
+    <system:String x:Key="Markup_RangeHint">Ctrl+Shift+rectangle picks the range from cells.</system:String>
+    <system:String x:Key="Markup_From">from</system:String>
+    <system:String x:Key="Markup_To">to</system:String>
+    <system:String x:Key="Markup_Reverse">Reverse</system:String>
+    <system:String x:Key="Markup_Delete">Delete</system:String>
+    <system:String x:Key="Markup_MoveTo">Move to #</system:String>
+    <system:String x:Key="Markup_ResetRange">Clear selection</system:String>
+    <system:String x:Key="Markup_View">View</system:String>
+    <system:String x:Key="Markup_ShowNumbers">Numbers</system:String>
+    <system:String x:Key="Markup_ShowPath">Strip path</system:String>
+    <system:String x:Key="Markup_ShowGradient">Color by number</system:String>
+    <system:String x:Key="Markup_SetNumberTitle">LED number</system:String>
+    <system:String x:Key="Markup_SetNumberHint">1–{0}. Other LEDs shift to make room.</system:String>
+    <system:String x:Key="Markup_StatusEmpty">No LEDs numbered</system:String>
+    <system:String x:Key="Markup_Status">LEDs: {0} (1–{0}), no gaps or repeats · next: {1}</system:String>
+    <system:String x:Key="Markup_SourceGaps">gaps: {0}</system:String>
+    <system:String x:Key="Markup_SourceRepeats">repeats: {0}</system:String>
+    <system:String x:Key="Markup_SourceIssues">Saved numbering had {0}. The strip already received LEDs in number order, so on OK numbers are compacted to 1–N in the same order. Problem cells are highlighted.</system:String>
+    <system:String x:Key="Markup_ResizeDropped">{0} LEDs outside the new size were removed, numbering closed up (Ctrl+Z to undo).</system:String>
+    <system:String x:Key="Markup_SaveChanges">Save markup changes?</system:String>
+    <system:String x:Key="Markup_HelpTitle">Strip markup: help</system:String>
+    <system:String x:Key="Markup_HelpMouseHeader">Numbering with the mouse</system:String>
+    <system:String x:Key="Markup_HelpMouseText" xml:space="preserve">• Click / drag — number empty cells in order, starting at "Next #".&#10;• Shift+click — line from the last placed LED to the cell (row, column or diagonal).&#10;• Shift+drag — line from the press point to the release point.&#10;• Ctrl+drag — rectangle, snake or progressive, by rows or columns (checkboxes at the top). The strip starts at the corner you pressed.&#10;• Green cells with italic numbers are a preview: numbers are set when you release the button, Esc cancels.&#10;• Alt+click on an LED — continue numbering right after it.&#10;• Double click on an LED — set its number: the LED moves there, the others shift.</system:String>
+    <system:String x:Key="Markup_HelpInsertHeader">Inserting and closing up</system:String>
+    <system:String x:Key="Markup_HelpInsertText" xml:space="preserve">• Numbers always run 1…N without gaps or repeats.&#10;• "Next #" below the last number inserts new LEDs in the middle and shifts the tail forward. "to end" moves the cursor back to the end of the strip.&#10;• Right click / right drag — remove LEDs; numbers after them close up.&#10;• "Overwrite" — group operations renumber already numbered cells; without it such cells are skipped.</system:String>
+    <system:String x:Key="Markup_HelpRangeHeader">Range and whole matrix</system:String>
+    <system:String x:Key="Markup_HelpRangeText" xml:space="preserve">• Ctrl+Shift+rectangle or the "from … to" fields pick a number range (cyan frame).&#10;• Reverse (R) — reverse order on the same cells. Delete (Del) — remove and close up. "Move to #" — move the block as a whole.&#10;• "Number whole matrix" — from the chosen corner, with the snake / by columns checkboxes. Also: reverse the whole chain, mirror ↔ ↕, rotate 90° (square grid), clear.&#10;• "Apply size" keeps LEDs at their X, Y; LEDs beyond the new edge are removed and numbers close up.</system:String>
+    <system:String x:Key="Markup_HelpCopyHeader">Copying markup</system:String>
+    <system:String x:Key="Markup_HelpCopyText" xml:space="preserve">• On the project canvas: right click an element → Copy, then right click another element → Paste. Grid, spacing and all numbering are copied; the copies are independent.&#10;• Inside this window, move a block of numbers with "Move to #".</system:String>
+    <system:String x:Key="Markup_HelpViewHeader">What you see</system:String>
+    <system:String x:Key="Markup_HelpViewText" xml:space="preserve">• Cell color by number: blue at the strip start, yellow-green at the end.&#10;• Strip path: solid between neighbouring cells, dashed at a break, when the next LED is not adjacent (e.g. a new row in progressive layout, or a mistake). Arrows show direction, the green circle is LED #1, the red square the last one.&#10;• Frames: red — repeated number, orange — cell after a gap (in markup saved earlier), cyan — selected range, white — under the cursor.&#10;• Bottom line: LED count, next number and X, Y → # of the cell under the cursor.</system:String>
+    <system:String x:Key="Markup_HelpKeysHeader">Keys and saving</system:String>
+    <system:String x:Key="Markup_HelpKeysText" xml:space="preserve">Ctrl+Z / Ctrl+Y — undo / redo (each gesture is one step)&#10;Del / R — delete / reverse range&#10;Esc — cancel gesture, close help, otherwise close the window&#10;Ctrl+wheel — zoom&#10;OK writes the markup to the element. Cancel / Esc discards changes; closing with × asks. Opening the window is one project undo step.</system:String>
     <system:String x:Key="VideoOffsetWindow_Title">Video offset</system:String>
     <system:String x:Key="FixMissingWindow_CantFind">The following file couldn't be found at specified location:</system:String>
     <system:String x:Key="FixMissingWindow_WhatToDo">What would you like to do?</system:String>

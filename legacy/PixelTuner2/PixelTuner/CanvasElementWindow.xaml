@@ -4,154 +4,220 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:controls="clr-namespace:PixelTuner.Controls"
         mc:Ignorable="d"
-        Title="{StaticResource ElementMarkup_Header}" 
-        Width="600" Height="400"
+        Title="{StaticResource ElementMarkup_Header}"
+        Width="1000" Height="700"
+        MinWidth="640" MinHeight="420"
         Background="DarkGray"
-        WindowStyle="ToolWindow" 
-        WindowStartupLocation="CenterOwner" 
-        PreviewKeyDown="Window_KeyDown"
-        ResizeMode="CanResize" 
+        WindowStyle="ToolWindow"
+        WindowStartupLocation="CenterOwner"
+        PreviewKeyDown="Window_PreviewKeyDown"
+        Closing="Window_Closing"
+        ResizeMode="CanResize"
         Focusable="True"
-        ShowInTaskbar="False" 
+        ShowInTaskbar="False"
         Topmost="False">
     <Window.Resources>
         <ResourceDictionary>
-            <Style TargetType="Button" x:Key="TransparentButton">
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="Button">
-                            <Border Background="Transparent">
-                                <ContentPresenter/>
-                            </Border>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/PixelTuner;component/Styles/SharedStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+
+            <!-- Help: shown as the "?" button tooltip and, when pinned, in a popup. -->
+            <Style TargetType="TextBlock" x:Key="HelpHeader">
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="Margin" Value="0,8,0,2"/>
+            </Style>
+            <Style TargetType="TextBlock" x:Key="HelpText">
+                <Setter Property="TextWrapping" Value="Wrap"/>
+                <Setter Property="FontSize" Value="11.5"/>
+            </Style>
+            <Border x:Key="HelpContent" x:Shared="False" Background="#FFFDFDF6" BorderBrush="Gray" BorderThickness="1" Padding="10" MaxWidth="900">
+                <StackPanel>
+                    <TextBlock Text="{StaticResource Markup_HelpTitle}" FontSize="14" FontWeight="Bold"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="420"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="420"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Style="{StaticResource HelpHeader}" Text="{StaticResource Markup_HelpMouseHeader}"/>
+                            <TextBlock Style="{StaticResource HelpText}" Text="{StaticResource Markup_HelpMouseText}"/>
+                            <TextBlock Style="{StaticResource HelpHeader}" Text="{StaticResource Markup_HelpInsertHeader}"/>
+                            <TextBlock Style="{StaticResource HelpText}" Text="{StaticResource Markup_HelpInsertText}"/>
+                            <TextBlock Style="{StaticResource HelpHeader}" Text="{StaticResource Markup_HelpCopyHeader}"/>
+                            <TextBlock Style="{StaticResource HelpText}" Text="{StaticResource Markup_HelpCopyText}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Style="{StaticResource HelpHeader}" Text="{StaticResource Markup_HelpRangeHeader}"/>
+                            <TextBlock Style="{StaticResource HelpText}" Text="{StaticResource Markup_HelpRangeText}"/>
+                            <TextBlock Style="{StaticResource HelpHeader}" Text="{StaticResource Markup_HelpViewHeader}"/>
+                            <TextBlock Style="{StaticResource HelpText}" Text="{StaticResource Markup_HelpViewText}"/>
+                            <TextBlock Style="{StaticResource HelpHeader}" Text="{StaticResource Markup_HelpKeysHeader}"/>
+                            <TextBlock Style="{StaticResource HelpText}" Text="{StaticResource Markup_HelpKeysText}"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+            <Style TargetType="GroupBox">
+                <Setter Property="Margin" Value="0,0,0,6"/>
+                <Setter Property="Padding" Value="4"/>
+            </Style>
+            <Style TargetType="Button" x:Key="PanelButton">
+                <Setter Property="Margin" Value="0,2"/>
+                <Setter Property="Padding" Value="6,2"/>
+            </Style>
+            <Style TargetType="CheckBox">
+                <Setter Property="Margin" Value="0,2,10,2"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
         </ResourceDictionary>
     </Window.Resources>
 
-    <Grid Margin="8">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="120"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="24"/>
-        </Grid.RowDefinitions>
+    <DockPanel Margin="8">
+        <!-- Numbering settings -->
+        <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,6" VerticalAlignment="Center">
+            <TextBlock Text="{StaticResource Markup_NextNumber}" VerticalAlignment="Center" Margin="0,0,4,0"/>
+            <xctk:DecimalUpDown Value="{Binding NextNumber, UpdateSourceTrigger=PropertyChanged}" Minimum="1" Width="70" Background="White"
+                                ToolTip="{StaticResource Markup_NextNumberHint}"/>
+            <Button Content="{StaticResource Markup_ToEnd}" Command="{Binding NextAtEndCommand}" Margin="4,0,12,0" Padding="6,0"/>
+            <CheckBox Content="{StaticResource Markup_Snake}" IsChecked="{Binding Snake}" ToolTip="{StaticResource Markup_SnakeHint}"/>
+            <CheckBox Content="{StaticResource Markup_ByColumns}" IsChecked="{Binding ByColumns}"/>
+            <CheckBox Content="{StaticResource Markup_Overwrite}" IsChecked="{Binding Overwrite}" ToolTip="{StaticResource Markup_OverwriteHint}"/>
+            <Button Content="{StaticResource Markup_Undo}" Command="{Binding UndoCommand}" Margin="12,0,4,0" Padding="6,0" ToolTip="Ctrl+Z"/>
+            <Button Content="{StaticResource Markup_Redo}" Command="{Binding RedoCommand}" Margin="0,0,12,0" Padding="6,0" ToolTip="Ctrl+Y"/>
+            <TextBlock Text="{StaticResource Markup_Zoom}" VerticalAlignment="Center" Margin="0,0,4,0"/>
+            <Slider x:Name="ZoomSlider" Width="120" Minimum="0.5" Maximum="12" Value="{Binding ElementName=MarkupCanvas, Path=Zoom}"
+                    VerticalAlignment="Center" ToolTip="Ctrl+wheel"/>
+        </WrapPanel>
 
-        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-
-        <Grid>
-            <Grid.LayoutTransform>
-                <!-- This ScaleTransform implements the zooming and is bound the Value of the ZoomSlider -->
-                <ScaleTransform ScaleX="{Binding ElementName=ZoomSlider, Path=Value}" ScaleY="{Binding ElementName=ZoomSlider, Path=Value}" />
-            </Grid.LayoutTransform>
+        <!-- Problems of the numbering saved in the project -->
+        <Border DockPanel.Dock="Top" Background="#FFFFE6B0" BorderBrush="Orange" BorderThickness="1" Padding="6" Margin="0,0,0,6"
+                Visibility="{Binding HasSourceIssues, Converter={StaticResource BoolToVisibility}}">
             <DockPanel>
-                <Path Name="boxFigure"
-                        Grid.Row="0"
-                        Stroke="{Binding Stroke}" 
-                        StrokeThickness="1" 
-                        Stretch="Uniform"
-                        Data="{Binding Geometry}">
-                </Path>
+                <CheckBox DockPanel.Dock="Right" Content="{StaticResource Markup_HighlightIssues}" IsChecked="{Binding ShowSourceIssues}" Margin="8,0,0,0"/>
+                <TextBlock Text="{Binding SourceIssuesText}" TextWrapping="Wrap"/>
             </DockPanel>
+        </Border>
 
-            <ItemsControl 
-                ItemsSource="{Binding LedTiles}"
-                Width="{Binding ElementName=boxFigure, Path=ActualWidth}" 
-                Height="{Binding ElementName=boxFigure, Path=ActualHeight}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Button 
-                                Background="Transparent" 
-                                Command="{Binding TurnOnCommand}" 
-                                Opacity="{Binding OpacityVal}" 
-                                MouseLeftButtonDown="Button_MouseDown"
-                                MouseDown="Button_MouseDown"
-                                MouseEnter="Button_MouseEnter"
-                                MouseDoubleClick="Button_OnMouseDoubleClick"
-                                Margin="{Binding ElementName=boxTailGrid, Path=DataContext.TilesMargin}">
-                                <Button.ToolTip>
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="{Binding LedNumber}"/>
-                                    </StackPanel>
-                                </Button.ToolTip>
-                                <Button.Content>
-                                    <Viewbox Stretch="Uniform">
-                                        <TextBlock Text="{Binding LedNumber}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    </Viewbox>
-                                </Button.Content>
-                                <Button.Template>
-                                    <ControlTemplate TargetType="{x:Type Button}">
-                                        <Border 
-                                            Name="Border"
-                                            CornerRadius="8"
-                                            BorderBrush="{TemplateBinding BorderBrush}" 
-                                            BorderThickness="{TemplateBinding BorderThickness}" 
-                                            Background="{TemplateBinding Background}">
-                                            <ContentPresenter Content="{TemplateBinding Content}" 
-                                                      ContentTemplate="{TemplateBinding ContentTemplate}" 
-                                                      Margin="{TemplateBinding Padding}" />
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="Button.IsFocused" Value="True">
-                                                <Setter TargetName="Border" Property="Background" Value="Transparent" />
-                                            </Trigger>
+        <!-- Status and dialog buttons -->
+        <DockPanel DockPanel.Dock="Bottom" Margin="0,6,0,0">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <ToggleButton x:Name="HelpToggle" Content="?" Width="28" FontWeight="Bold" Margin="0,0,8,0"
+                              ToolTipService.ShowDuration="600000" ToolTipService.InitialShowDelay="200" ToolTipService.Placement="Top"
+                              Checked="HelpToggle_Changed" Unchecked="HelpToggle_Changed">
+                    <ToggleButton.ToolTip>
+                        <ToolTip Padding="0" BorderThickness="0">
+                            <ContentControl Content="{StaticResource HelpContent}"/>
+                        </ToolTip>
+                    </ToggleButton.ToolTip>
+                </ToggleButton>
+                <Popup x:Name="HelpPopup" PlacementTarget="{Binding ElementName=HelpToggle}" Placement="Top"
+                       IsOpen="{Binding ElementName=HelpToggle, Path=IsChecked, Mode=OneWay}" StaysOpen="True" AllowsTransparency="True">
+                    <ContentControl Content="{StaticResource HelpContent}" MouseLeftButtonDown="HelpPopup_MouseDown"/>
+                </Popup>
+                <Button Content="OK" Width="80" Margin="4,0" Click="OkButton_Click" IsDefault="False"/>
+                <Button Content="{StaticResource Markup_Cancel}" Width="80" Click="CancelButton_Click"/>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="{Binding StatusText}" FontWeight="SemiBold"/>
+                <TextBlock>
+                    <Run Text="{Binding HoverText, Mode=OneWay}"/>
+                    <Run Text="  "/>
+                    <Run Text="{Binding Message, Mode=OneWay}" Foreground="DarkRed"/>
+                </TextBlock>
+            </StackPanel>
+        </DockPanel>
 
-                                            <Trigger Property="IsMouseOver" Value="False">
-                                                <Setter TargetName="Border" Property="Background" Value="Transparent" />
-                                                <Setter TargetName="Border" Property="Opacity" Value="1.0" />
-                                            </Trigger>
-                                            <EventTrigger RoutedEvent="MouseLeave">
-                                                <BeginStoryboard>
-                                                    <Storyboard>
-                                                        <DoubleAnimation Storyboard.TargetName="Border" Storyboard.TargetProperty="Opacity" From="0.2" To="1"></DoubleAnimation>
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </EventTrigger>
-                                            <EventTrigger RoutedEvent="MouseEnter">
-                                                <BeginStoryboard>
-                                                    <Storyboard>
-                                                        <DoubleAnimation Storyboard.TargetName="Border" Storyboard.TargetProperty="Opacity" From="0.2" To="0.2"></DoubleAnimation>
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </EventTrigger>
-                                            <DataTrigger Binding="{Binding Selected}" Value="true">
-                                                <Setter TargetName="Border" Property="Background" Value="#a0ff0000"/>
-                                            </DataTrigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Button.Template>
-                            </Button>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <UniformGrid Name="boxTailGrid" Columns="{Binding ColumnsCount}" Rows="{Binding RowsCount}" Background="Transparent" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                </ItemsControl>
-            </Grid>
+        <!-- Operations -->
+        <ScrollViewer DockPanel.Dock="Right" Width="230" Margin="6,0,0,0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+                <GroupBox Header="{StaticResource Markup_Grid}">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="80"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="{StaticResource ElementMarkup_Columns}" VerticalAlignment="Center"/>
+                            <xctk:DecimalUpDown Grid.Column="1" Value="{Binding ColumnsInput}" Minimum="0" Background="White" Margin="0,2"/>
+                            <TextBlock Grid.Row="1" Text="{StaticResource ElementMarkup_Rows}" VerticalAlignment="Center"/>
+                            <xctk:DecimalUpDown Grid.Row="1" Grid.Column="1" Value="{Binding RowsInput}" Minimum="0" Background="White" Margin="0,2"/>
+                            <TextBlock Grid.Row="2" Text="{StaticResource ElementMarkup_Spacing}" VerticalAlignment="Center"/>
+                            <xctk:DecimalUpDown Grid.Row="2" Grid.Column="1" Value="{Binding Spacing}" Minimum="0" Maximum="100" Background="White" Margin="0,2"/>
+                        </Grid>
+                        <Button Style="{StaticResource PanelButton}" Content="{StaticResource Markup_ApplySize}" Command="{Binding ApplySizeCommand}"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="{StaticResource Markup_WholeMatrix}">
+                    <StackPanel>
+                        <DockPanel Margin="0,2">
+                            <TextBlock Text="{StaticResource Markup_StartCorner}" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                            <ComboBox SelectedIndex="{Binding StartCorner}">
+                                <ComboBoxItem Content="{StaticResource Markup_CornerTopLeft}"/>
+                                <ComboBoxItem Content="{StaticResource Markup_CornerTopRight}"/>
+                                <ComboBoxItem Content="{StaticResource Markup_CornerBottomLeft}"/>
+                                <ComboBoxItem Content="{StaticResource Markup_CornerBottomRight}"/>
+                            </ComboBox>
+                        </DockPanel>
+                        <Button Style="{StaticResource PanelButton}" Content="{StaticResource Markup_FillAll}" Command="{Binding FillAllCommand}"
+                                ToolTip="{StaticResource Markup_FillAllHint}"/>
+                        <Button Style="{StaticResource PanelButton}" Content="{StaticResource Markup_ReverseAll}" Command="{Binding ReverseAllCommand}"/>
+                        <UniformGrid Columns="3">
+                            <Button Style="{StaticResource PanelButton}" Margin="0,2,2,2" Content="↔" Command="{Binding MirrorHorizontalCommand}" ToolTip="{StaticResource Markup_MirrorH}"/>
+                            <Button Style="{StaticResource PanelButton}" Margin="1,2" Content="↕" Command="{Binding MirrorVerticalCommand}" ToolTip="{StaticResource Markup_MirrorV}"/>
+                            <Button Style="{StaticResource PanelButton}" Margin="2,2,0,2" Content="↻ 90°" Command="{Binding RotateCommand}" ToolTip="{StaticResource Markup_Rotate}"/>
+                        </UniformGrid>
+                        <Button Style="{StaticResource PanelButton}" Content="{StaticResource Markup_ClearAll}" Command="{Binding ClearAllCommand}"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="{StaticResource Markup_Range}">
+                    <StackPanel>
+                        <TextBlock Text="{StaticResource Markup_RangeHint}" TextWrapping="Wrap" FontSize="11" Foreground="#FF303030" Margin="0,0,0,4"/>
+                        <DockPanel Margin="0,2">
+                            <TextBlock Text="{StaticResource Markup_From}" VerticalAlignment="Center" Width="24"/>
+                            <xctk:DecimalUpDown Value="{Binding RangeFrom}" Minimum="0" Width="65" Background="White"/>
+                            <TextBlock Text="{StaticResource Markup_To}" VerticalAlignment="Center" Margin="6,0,4,0"/>
+                            <xctk:DecimalUpDown Value="{Binding RangeTo}" Minimum="0" Background="White"/>
+                        </DockPanel>
+                        <UniformGrid Columns="2">
+                            <Button Style="{StaticResource PanelButton}" Margin="0,2,2,2" Content="{StaticResource Markup_Reverse}" Command="{Binding ReverseRangeCommand}" ToolTip="R"/>
+                            <Button Style="{StaticResource PanelButton}" Margin="2,2,0,2" Content="{StaticResource Markup_Delete}" Command="{Binding DeleteRangeCommand}" ToolTip="Del"/>
+                        </UniformGrid>
+                        <DockPanel Margin="0,2">
+                            <Button DockPanel.Dock="Left" Style="{StaticResource PanelButton}" Content="{StaticResource Markup_MoveTo}" Command="{Binding MoveRangeCommand}" Margin="0,0,4,0"/>
+                            <xctk:DecimalUpDown Value="{Binding MoveTarget}" Minimum="1" Background="White"/>
+                        </DockPanel>
+                        <Button Style="{StaticResource PanelButton}" Content="{StaticResource Markup_ResetRange}" Command="{Binding ClearRangeSelectionCommand}"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="{StaticResource Markup_View}">
+                    <StackPanel>
+                        <CheckBox Content="{StaticResource Markup_ShowNumbers}" IsChecked="{Binding ShowNumbers}"/>
+                        <CheckBox Content="{StaticResource Markup_ShowPath}" IsChecked="{Binding ShowPath}"/>
+                        <CheckBox Content="{StaticResource Markup_ShowGradient}" IsChecked="{Binding ShowGradient}"/>
+                    </StackPanel>
+                </GroupBox>
+
+            </StackPanel>
         </ScrollViewer>
 
-        <StackPanel Grid.Column="1">
-            <TextBlock Text="{StaticResource ElementMarkup_Rows}"/>
-            <xctk:DecimalUpDown Name="boxRows" Value="{Binding RowsCount}" Background="White" Margin="6" Minimum="0"/>
-            <TextBlock Text="{StaticResource ElementMarkup_Columns}"/>
-            <xctk:DecimalUpDown Name="boxColumns" Value="{Binding ColumnsCount}" Background="White" Margin="6" Minimum="0"/>
-            <Button Content="{StaticResource ElementMarkup_Set}" Command="{Binding SetSizeCommand}"/>
-            <TextBlock Text="Spacing: "/>
-            <xctk:DecimalUpDown Name="boxTilesMargin" Value="{Binding TilesMargin}" Background="White" Margin="6" Minimum="0" Maximum="100"/>
-            <TextBlock Text="Zoom:"></TextBlock>
-            <Slider x:Name="ZoomSlider" Orientation="Horizontal" Minimum="1.0" Maximum="8.0" LargeChange="0.25" SmallChange="0.01"  Value="1.0" />
-        </StackPanel>
-
-        <Button Grid.Column="1" Name="boxCloseBtn" Content="OK" Grid.Row="1" Width="80" HorizontalAlignment="Right" Click="boxCloseBtn_Click" Margin="2"/>
-    </Grid>
+        <!-- The grid -->
+        <ScrollViewer x:Name="Scroller" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Background="#FF2A2A2A"
+                      SizeChanged="Scroller_SizeChanged">
+            <controls:LedMarkupCanvas x:Name="MarkupCanvas" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="8"
+                                      CellNumberRequested="MarkupCanvas_CellNumberRequested"/>
+        </ScrollViewer>
+    </DockPanel>
 </Window>

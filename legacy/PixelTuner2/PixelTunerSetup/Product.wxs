@@ -2,18 +2,20 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
   xmlns:utils="http://schemas.microsoft.com/wix/UtilExtension">
 
-  <?define ProductVersion="2.0.8.4" ?>
-  <?define RTMProductVersion="1.0.0" ?>
+  <?define ProductVersion="2.0.8.8" ?>
   <?define UpgradeCode="{df1086f7-6803-4697-b66c-74dd2733c092}"?>
   <?define Manufacturer="e-pic.ru"?>
-  <?define ProductCode="{1A4F3353-497F-4F4D-9191-1E0E21B800F9}"?>
   <?define PackageCode="*"?>
 
-  <Product Id="$(var.ProductCode)" Name="PixelTuner" Language="1033" Codepage="1252" Version="$(var.ProductVersion)" Manufacturer="$(var.Manufacturer)" UpgradeCode="$(var.UpgradeCode)">
+  <!-- Id="*": a new ProductCode on every build, so every release is a major upgrade of the installed one. -->
+  <Product Id="*" Name="PixelTuner" Language="1033" Codepage="1252" Version="$(var.ProductVersion)" Manufacturer="$(var.Manufacturer)" UpgradeCode="$(var.UpgradeCode)">
 
     <Package Id='$(var.PackageCode)' InstallPrivileges='elevated' InstallScope='perMachine' Manufacturer='$(var.Manufacturer)' InstallerVersion="200" Compressed="yes" ReadOnly='yes' ShortNames='no' Keywords='Installer,MSI,Database'/>
 
     <Media Id="1" Cabinet="media.cab" EmbedCab="yes" />
+    <!-- Removes any installed PixelTuner with the same UpgradeCode before installing this one.
+         AllowDowngrades also covers versions that differ only in the 4th field,
+         which Windows Installer ignores when comparing versions. -->
     <MajorUpgrade AllowDowngrades="yes" IgnoreRemoveFailure="no" />
 
     <WixVariable Id="WixUILicenseRtf" Value=".\License.rtf" />
@@ -26,19 +28,7 @@
     <PropertyRef Id="WIX_DIR_COMMON_PICTURES" />
     <PropertyRef Id="WIX_DIR_RESOURCES"/>
     <PropertyRef Id="WIX_DIR_COMMON_VIDEO" />
-    <Property Id="PREVIOUSVERSIONSINSTALLED" Secure="yes" />
-    <Property Id="NEWPRODUCTFOUND" Secure="yes" />
 
-    <Upgrade Id="$(var.UpgradeCode)">
-      <UpgradeVersion Minimum="$(var.ProductVersion)"
-                  IncludeMinimum="no"
-                  OnlyDetect="yes"
-                  Property="NEWPRODUCTFOUND" />
-      <UpgradeVersion
-         Minimum="$(var.RTMProductVersion)" Maximum="$(var.ProductVersion)"
-         Property="PREVIOUSVERSIONSINSTALLED"
-         IncludeMinimum="yes" IncludeMaximum="no" />
-    </Upgrade>
     <Property Id='ARPNOREPAIR'>1</Property>
     <Component Id="InstallPathRegWriter" Guid="{AA45D72D-911A-429A-BD1A-5E2858D76C27}" Directory="INSTALLLOCATION">
       <RegistryValue Id="WriteInstallPathRegValue" Type="string" Root="HKLM" Key="SOFTWARE\e-pic\PixelTuner 2" Name="InstallLocation" Action="write" Value="[INSTALLLOCATION]" />

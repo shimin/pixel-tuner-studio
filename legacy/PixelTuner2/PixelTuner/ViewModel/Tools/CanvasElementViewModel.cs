@@ -104,25 +104,6 @@ namespace PixelTuner.ViewModel
 
         public LedTile()
         {
-            TurnOnCommand = new DelegateCommand(OnTurnedOn);
-        }
-
-        [XmlIgnore]
-        public ICommand TurnOnCommand { get; private set; }
-
-        private void OnTurnedOn(object arg)
-        {
-            if (Selected)
-            {
-                Selected = false;
-                LedNumber = 0;
-            }
-            else
-            {
-                var e = RootViewModel.This.CanvasModel.GetHostElement(this);
-                LedNumber = e.GetLastNumber();
-                Selected = true;
-            }
         }
 
         public override object Clone()
@@ -344,11 +325,11 @@ namespace PixelTuner.ViewModel
             var doc = RootViewModel.This.ActiveDocument;
             doc.PushUndo(true);
 
-            var wnd = new CanvasElementWindow();
-            wnd.CanvasElement = this;
+            var wnd = new CanvasElementWindow(this);
             wnd.Owner = Application.Current.MainWindow;
-            
-            if (wnd.ShowDialog() == true)
+            wnd.ShowDialog();
+
+            if (wnd.Applied)
             {
                 doc.IsDirty = true;
             }
@@ -395,27 +376,49 @@ namespace PixelTuner.ViewModel
             }
         }
 
-        public int GetLastNumber()
+        /// <summary>
+        /// Builds an editable markup chain from the stored tiles. The chain keeps the order
+        /// the export uses (OrderedLeds); gaps and repeats of stored numbers go to <paramref name="issues"/>.
+        /// </summary>
+        public LedMarkup CreateMarkup(out LedMarkupIssues issues)
         {
-            int idx = 0;
-            SortedList<int, LedTile> sorted = new SortedList<int, LedTile>();
-            foreach (var tile in LedTiles)
+            var pairs = LedTiles
+                .Where(t => t.Selected)
+                .Select(t => new KeyValuePair<int, int>(t.Index, t.LedNumber));
+            return LedMarkup.FromNumbers(ColumnsCount, RowsCount, pairs, out issues);
+        }
+
+        /// <summary>Writes the markup back: one tile per grid cell, numbers 1..N.</summary>
+        public void ApplyMarkup(LedMarkup markup)
+        {
+            ColumnsCount = markup.Columns;
+            RowsCount = markup.Rows;
+            var count = markup.CellCount;
+            while (LedTiles.Count > count) LedTiles.RemoveAt(LedTiles.Count - 1);
+            while (LedTiles.Count < count) LedTiles.Add(new LedTile() { Parent = this, Index = LedTiles.Count });
+            for (var i = 0; i < count; i++)
             {
-                if (tile.Selected)
-                {
-                    if (sorted.ContainsKey(tile.LedNumber))
-                    {
-                        tile.Selected = false;
-                        tile.LedNumber = 0;
-                    }
-                    else
-                    {
-                        sorted.Add(tile.LedNumber, tile);
-                    }
-                }
+                var tile = LedTiles[i];
+                var number = markup.GetNumber(i);
+                tile.Parent = this;
+                tile.Index = i;
+                tile.LedNumber = number;
+                tile.Selected = number > 0;
             }
-            if (sorted.Count != 0) idx = sorted.Last().Key;
-            return ++idx;
+            RaisePropertyChanged("OrderedLeds");
+        }
+
+        /// <summary>Deep copy of the tiles, so undo snapshots and pasted markup don't share them.</summary>
+        public static ObservableCollection<LedTile> CloneTiles(IEnumerable<LedTile> tiles, CanvasElementViewModel parent)
+        {
+            var result = new ObservableCollection<LedTile>();
+            foreach (var t in tiles)
+            {
+                var copy = (LedTile)t.Clone();
+                copy.Parent = parent;
+                result.Add(copy);
+            }
+            return result;
         }
 
         public void SetFill(Brush fill)
@@ -508,7 +511,7 @@ namespace PixelTuner.ViewModel
             newObj._columnsCount = _columnsCount;
             newObj._rowsCount = _rowsCount;
             newObj._tilesMargin = _tilesMargin;
-            newObj.LedTiles = new ObservableCollection<LedTile>(LedTiles);
+            newObj.LedTiles = CloneTiles(LedTiles, newObj);
             return newObj;
         }
     }

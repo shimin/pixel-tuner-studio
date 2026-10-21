@@ -256,7 +256,7 @@ namespace PixelTuner.ViewModel
         public static void CopyMarkup(CanvasElementViewModel elementToCopyFrom)
         {
             _markupHostElement = new CanvasElementViewModel();
-            _markupHostElement.LedTiles = new ObservableCollection<LedTile>(elementToCopyFrom.LedTiles);
+            _markupHostElement.LedTiles = CanvasElementViewModel.CloneTiles(elementToCopyFrom.LedTiles, _markupHostElement);
             _markupHostElement.ColumnsCount = elementToCopyFrom.ColumnsCount;
             _markupHostElement.RowsCount = elementToCopyFrom.RowsCount;
             _markupHostElement.TilesMargin = elementToCopyFrom.TilesMargin;
@@ -271,11 +271,8 @@ namespace PixelTuner.ViewModel
         {
             if (CanPasteMarkup())
             {
-                elementToPasteTo.LedTiles = new ObservableCollection<LedTile>(_markupHostElement.LedTiles);
-                foreach (var ledTile in elementToPasteTo.LedTiles)
-                {
-                    ledTile.Parent = elementToPasteTo;
-                }
+                // Fresh copies on every paste: pasted elements must not share tiles with each other.
+                elementToPasteTo.LedTiles = CanvasElementViewModel.CloneTiles(_markupHostElement.LedTiles, elementToPasteTo);
                 elementToPasteTo.ColumnsCount = _markupHostElement.ColumnsCount;
                 elementToPasteTo.RowsCount = _markupHostElement.RowsCount;
                 elementToPasteTo.TilesMargin = _markupHostElement.TilesMargin;

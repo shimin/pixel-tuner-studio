@@ -2,7 +2,7 @@
      xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
   <Bundle
       Name="PixelTuner"
-      Version="$(var.PackageVersion)"
+      Version="!(bind.packageVersion.PixelTunerPackage)"
       IconSourceFile="PixelTuner.ico"
       AboutUrl="http://e-pic.ru/pixel-poi-2/pixel-poi-2-guide/"
       UpdateUrl="http://e-pic.ru/downloads/"
