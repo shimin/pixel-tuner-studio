@@ -127,8 +127,15 @@ public sealed class EditorItemTests : IDisposable
         Assert.Equal(40, _editor.Brightness);
 
         _editor.Stretching = 0;   // out of range: ignored
+        _editor.Stretching = 1;   // the least is 2, for every device
         Assert.Equal(3, item.Stretching);
+        _editor.Stretching = 2;
+        Assert.Equal(2, item.Stretching);
+        _doc.Undo();
+        Assert.Equal(3, item.Stretching);
+        _doc.Redo();
 
+        _doc.Undo();
         _doc.Undo();
         _doc.Undo();
         _doc.Undo();

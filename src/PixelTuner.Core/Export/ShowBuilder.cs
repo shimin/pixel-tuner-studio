@@ -30,9 +30,6 @@ public enum BuildIssueCode
     /// <summary>The timeline's pictures are not as high as the device is. <see cref="BuildIssue.Detail"/> is the height.</summary>
     WrongHeight,
 
-    /// <summary>A poi or a hoop plays no stretching below 4.</summary>
-    StretchingTooSmall,
-
     /// <summary>E-Pic stores the stretching times 5 in 16 bits.</summary>
     StretchingTooLarge,
 
@@ -180,8 +177,6 @@ public sealed class ShowBuilder(ShowProject project, ShowMedia? media)
                 if (item.Kind is ItemKind.Image or ItemKind.Video or ItemKind.Gradient
                     && (item.ResourceId is null || media is null || !HasMedia(item.ResourceId)))
                     Error(BuildIssueCode.MissingMedia, timeline, item);
-                if (deviceKind is DeviceKind.Poi or DeviceKind.Hoop && item.Stretching < Edits.MinPixelStretching)
-                    Error(BuildIssueCode.StretchingTooSmall, timeline, item);
                 if (item.Kind == ItemKind.Gradient && item.Stretching > Edits.MaxEpicStretching)
                     Error(BuildIssueCode.StretchingTooLarge, timeline, item);
                 if (item.Kind == ItemKind.Effect && item.Effect is not (LightEffectKind.LinearTransition or LightEffectKind.SineWave

@@ -112,21 +112,7 @@ public class ShowBuilderTests
         var file = BinReader.ReadPpoi(result.Bin!);
         Assert.Equal(7, file.Height);
         Assert.Equal(new Rgb(0, 0, 20), file.Timelines[0].Color);
-        // A fan counts milliseconds between columns: 2 is fine, a poi would refuse it.
         Assert.True(result.Succeeded);
-        Assert.False(Build(Bind(DeviceKind.Poi, 7, timeline)).Succeeded);
-    }
-
-    [Fact]
-    public void A_poi_does_not_play_a_stretching_below_four()
-    {
-        var timeline = Add(TimelineKind.Pixel, Picture("a", 4, 4, 0, 1, stretching: 3));
-        var result = Build(Bind(DeviceKind.Poi, 4, timeline));
-
-        Assert.False(result.Succeeded);
-        var issue = Assert.Single(result.Errors);
-        Assert.Equal(BuildIssueCode.StretchingTooSmall, issue.Code);
-        Assert.Equal(timeline.Items[0].Id, issue.ItemId);
     }
 
     [Fact]

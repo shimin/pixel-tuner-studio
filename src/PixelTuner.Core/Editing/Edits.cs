@@ -39,10 +39,10 @@ public static class Edits
         return new SetValueEdit<Export.ColorDepth>("SetColorDepth", settings, nameof(settings.Depth), () => settings.Depth, v => settings.Depth = v, depth, mergeable: false);
     }
 
-    /// <summary>Stretching of the pauses. At least 4, the least a poi plays; at most what E-Pic can store (it multiplies by 5).</summary>
+    /// <summary>Stretching of the pauses. At least <see cref="MinStretching"/>; at most what E-Pic can store (it multiplies by 5).</summary>
     public static Edit SetGapStretching(ShowProject project, int stretching)
     {
-        if (stretching < MinPixelStretching || stretching > MaxEpicStretching) throw new ArgumentOutOfRangeException(nameof(stretching));
+        if (stretching < MinStretching || stretching > MaxEpicStretching) throw new ArgumentOutOfRangeException(nameof(stretching));
         var settings = project.Build;
         return new SetValueEdit<int>("SetGapStretching", settings, nameof(settings.GapStretching), () => settings.GapStretching, v => settings.GapStretching = v, stretching, mergeable: true);
     }
@@ -55,8 +55,11 @@ public static class Edits
         return new SetValueEdit<int>("SetLightRate", settings, nameof(settings.LightRate), () => settings.LightRate, v => settings.LightRate = v, rate, mergeable: true);
     }
 
-    /// <summary>The least stretching a pixel device plays: 4 × 50 µs per column.</summary>
-    public const int MinPixelStretching = 4;
+    /// <summary>
+    /// The least stretching of any item: 2 (100 µs per column on a poi, 2 ms between frames on a video module).
+    /// The editor holds to it for every kind of device, so the build has nothing to refuse.
+    /// </summary>
+    public const int MinStretching = 2;
 
     /// <summary>The most E-Pic can store: the file keeps the stretching × 5 in 16 bits.</summary>
     public const int MaxEpicStretching = ushort.MaxValue / 5;
@@ -248,10 +251,9 @@ public static class Edits
     public static Edit SetStretching(TimelineItem item, int stretching)
     {
         RequireKind(item, "stretching", ItemKind.Image, ItemKind.Video, ItemKind.Gradient);
-        // E-Pic writes the stretching times 5 in 16 bits. Poi and hoops play nothing below 4: the build checks that,
-        // because the same pixel timeline can be played by a fan, which counts milliseconds.
+        // E-Pic writes the stretching times 5 in 16 bits.
         int max = item.Kind == ItemKind.Gradient ? MaxEpicStretching : ushort.MaxValue;
-        if (stretching < 1 || stretching > max) throw new ArgumentOutOfRangeException(nameof(stretching));
+        if (stretching < MinStretching || stretching > max) throw new ArgumentOutOfRangeException(nameof(stretching));
         return new SetValueEdit<int>("SetStretching", item, nameof(item.Stretching), () => item.Stretching, v => item.Stretching = v, stretching, mergeable: true);
     }
 

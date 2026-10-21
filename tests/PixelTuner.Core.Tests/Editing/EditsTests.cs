@@ -181,10 +181,10 @@ public class EditsTests
     }
 
     [Theory]
-    [InlineData(3)]
+    [InlineData(1)]
     [InlineData(0)]
     [InlineData(Edits.MaxEpicStretching + 1)]
-    public void Pauses_cannot_be_stretched_below_what_a_poi_plays_or_above_what_E_Pic_stores(int stretching)
+    public void Pauses_cannot_be_stretched_below_the_least_or_above_what_E_Pic_stores(int stretching)
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => Edits.SetGapStretching(_project, stretching));
         Assert.Throws<ArgumentOutOfRangeException>(() => Edits.SetLightRate(_project, 0));
@@ -216,6 +216,12 @@ public class EditsTests
     [InlineData(ItemKind.Gradient, Edits.MaxEpicStretching, true)]
     [InlineData(ItemKind.Gradient, Edits.MaxEpicStretching + 1, false)]   // the file keeps it times 5 in 16 bits
     [InlineData(ItemKind.Image, 0, false)]
+    [InlineData(ItemKind.Image, 1, false)]   // 2 is the least, for every kind of device
+    [InlineData(ItemKind.Image, 2, true)]
+    [InlineData(ItemKind.Video, 1, false)]
+    [InlineData(ItemKind.Video, 2, true)]
+    [InlineData(ItemKind.Gradient, 1, false)]
+    [InlineData(ItemKind.Gradient, 2, true)]
     public void Stretching_stays_inside_what_the_bin_can_store(string kind, int stretching, bool allowed)
     {
         var item = new TimelineItem { Kind = kind };

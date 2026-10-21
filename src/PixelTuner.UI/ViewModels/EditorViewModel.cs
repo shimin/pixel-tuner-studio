@@ -363,7 +363,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         get => Item?.Stretching;
         set
         {
-            if (Item is { } i && value is { } v && (int)v >= 1 && (int)v != i.Stretching)
+            if (Item is { } i && value is { } v && (int)v >= Edits.MinStretching && (int)v != i.Stretching)
                 Document.Execute(Edits.SetStretching(i, (int)v));
         }
     }
