@@ -12,3 +12,15 @@ namespace Communication.Gradient
         public static byte[] GetBytes(uint value) => System.BitConverter.GetBytes(value);
     }
 }
+
+namespace Communication.Pixelate
+{
+    internal static class BitConverter
+    {
+        public static byte[] GetBytes(byte value) => System.BitConverter.GetBytes((short)value);
+        public static byte[] GetBytes(short value) => System.BitConverter.GetBytes(value);
+        public static byte[] GetBytes(ushort value) => System.BitConverter.GetBytes(value);
+        public static byte[] GetBytes(int value) => System.BitConverter.GetBytes(value);
+        public static byte[] GetBytes(uint value) => System.BitConverter.GetBytes(value);
+    }
+}

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <!-- Runs PixelTuner 2's own export code (compiled from legacy/) next to the port and
-       compares the bytes. Only code that needs no Windows API is compiled here; the one
-       System.Drawing.Bitmap use of the gradient code is served by a small stand-in. -->
+       compares the bytes. Only code that needs no Windows API beyond images is compiled here; the
+       System.Drawing.Bitmap and WPF GIF decoder uses are served by small stand-ins. -->
   <PropertyGroup>
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
@@ -14,6 +14,9 @@
     <Compile Include="..\..\legacy\PixelTuner2\Communication\ColorDepth.cs" Link="Legacy\ColorDepth.cs" />
     <Compile Include="..\..\legacy\PixelTuner2\Communication\Binarize\*.cs" LinkBase="Legacy\Binarize" />
     <Compile Include="..\..\legacy\PixelTuner2\Communication\Gradient\*.cs" LinkBase="Legacy\Gradient" />
+    <!-- Pixel, fan and video export. The fan item class is left out: GetFanBinaryPresentation
+         never used it, and it saved a debug bitmap to c:\test.bmp. -->
+    <Compile Include="..\..\legacy\PixelTuner2\Communication\Pixelate\*.cs" Exclude="..\..\legacy\PixelTuner2\Communication\Pixelate\ImagesCollectionFanItem.cs" LinkBase="Legacy\Pixelate" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="SkiaSharp.NativeAssets.Linux" Condition="$([MSBuild]::IsOSPlatform('Linux'))" />

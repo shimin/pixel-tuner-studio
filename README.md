@@ -31,6 +31,7 @@ src/
     PixelTuner.Stage.Android/   Stage на Android
     PixelTuner.Stage.iOS/       Stage на iPhone и iPad
 tests/                    тесты ядра; протокол сверяется с эталонными векторами
+docs/                     binary-format.md: формат .bin устройств по полям и смещениям
 scripts/                  сборка .app для macOS, иконки (icons/make-icons.py), эталоны для CI
 legacy/                   PixelTuner 2, Common, Communication, WpfTools, EpicPlayer с историей
 ```
@@ -104,6 +105,11 @@ export/<device>.bin скомпилированные файлы устройст
 Сборка .bin работает с моделью. Прямой экспорт из .ptp (`Ptp*Export`) тоже идёт
 через импорт, поэтому сверка с эталонами PixelTuner 2 проверяет и импорт.
 `PixelTuner.Package.Tests` сравнивает .bin из пакета с .bin из исходного .ptp.
+
+Формат .bin каждого устройства (пиксели, веер, видео, E-Pic, LightMaster) описан по полям
+в [docs/binary-format.md](docs/binary-format.md). `PixelTuner.Legacy.OracleTests` компилирует
+код сборки PixelTuner 2 (`Communication/Pixelate`, `Gradient`, `Binarize`) и сравнивает его
+байты с экспортом Studio на случайных шоу.
 
 ## Устройства по кабелю и Wi-Fi
 
