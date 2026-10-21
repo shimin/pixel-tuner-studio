@@ -42,7 +42,12 @@ public sealed class TimelineEditor
 
     private const double EdgeGrab = 6;
     private const double SnapDistance = 8;
-    private static readonly TimeSpan MinItemLength = TimeSpan.FromMilliseconds(20);
+
+    /// <summary>Item edges are dragged in steps of this many milliseconds.</summary>
+    public const int GridMilliseconds = 50;
+
+    private static readonly TimeSpan Grid = TimeSpan.FromMilliseconds(GridMilliseconds);
+    private static readonly TimeSpan MinItemLength = Grid;
 
     private readonly ProjectDocument _document;
     private DragState? _drag;
@@ -386,14 +391,14 @@ public sealed class TimelineEditor
             case HitKind.ItemStart:
             {
                 start = Snap(drag.OriginalStart + delta, snapPoints);
-                start = Clamp(start, floor, originalEnd - MinItemLength);
+                start = OnGrid(Clamp(start, floor, originalEnd - MinItemLength), floor, originalEnd - MinItemLength);
                 duration = originalEnd - start;
                 break;
             }
             case HitKind.ItemEnd:
             {
                 var end = Snap(originalEnd + delta, snapPoints);
-                end = Clamp(end, drag.OriginalStart + MinItemLength, ceiling);
+                end = OnGrid(Clamp(end, drag.OriginalStart + MinItemLength, ceiling), drag.OriginalStart + MinItemLength, ceiling);
                 duration = end - start;
                 break;
             }
@@ -412,12 +417,12 @@ public sealed class TimelineEditor
                     _ => wanted,
                 };
                 var latest = ceiling == TimeSpan.MaxValue ? TimeSpan.MaxValue : ceiling - duration;
-                start = Clamp(start, floor, latest);
+                start = OnGrid(Clamp(start, floor, latest), floor, latest);
 
                 // Over another timeline that takes this item and has room at the wanted time, it goes there.
                 if (y is { } py && TimelineAt(py) is { } target && !ReferenceEquals(target, timeline) && Edits.Accepts(target, item) && Edits.FitsHeight(target, item.MediaHeight))
                 {
-                    var there = Max0(Snap(wanted, snapPoints));
+                    var there = OnGrid(Max0(Snap(wanted, snapPoints)), TimeSpan.Zero, TimeSpan.MaxValue);
                     there = Edits.WholeMs(there);
                     if (Edits.Fits(target, there, duration)) return DragPreview.ForItem(item, target, there, duration);
                 }
@@ -427,6 +432,27 @@ public sealed class TimelineEditor
         // The .bin counts whole milliseconds. Both edges are rounded, so neither crosses a neighbour's whole edge.
         var wholeStart = Edits.WholeMs(start);
         return DragPreview.ForItem(item, timeline, wholeStart, Edits.WholeMs(start + duration) - wholeStart);
+    }
+
+    /// <summary>
+    /// The nearest multiple of the grid step inside [<paramref name="min"/>, <paramref name="max"/>]. When no multiple
+    /// fits (a neighbour's edge is off the grid, as in an imported project), the limit itself: items never overlap.
+    /// </summary>
+    internal static TimeSpan OnGrid(TimeSpan time, TimeSpan min, TimeSpan max)
+    {
+        long step = Grid.Ticks;
+        long ticks = (long)Math.Round((double)time.Ticks / step, MidpointRounding.AwayFromZero) * step;
+        if (ticks < min.Ticks)
+        {
+            long up = (min.Ticks + step - 1) / step * step;
+            return up <= max.Ticks ? TimeSpan.FromTicks(up) : min;
+        }
+        if (ticks > max.Ticks)
+        {
+            long down = max.Ticks / step * step;
+            return down >= min.Ticks ? TimeSpan.FromTicks(down) : max;
+        }
+        return TimeSpan.FromTicks(ticks);
     }
 
     private static TimeSpan Clamp(TimeSpan value, TimeSpan min, TimeSpan max) => value < min ? min : value > max ? max : value;
@@ -515,8 +541,18 @@ public sealed class TimelineEditor
     public TimelineItem? AddItem(Timeline timeline, TimelineItem item, TimeSpan wanted)
     {
         if (!Edits.Accepts(timeline, item) || !Edits.FitsHeight(timeline, item.MediaHeight) || FindRoom(timeline, Playhead, wanted) is not var (start, duration)) return null;
+        // Start on the grid when the gap has room for it; the length stays as asked unless the gap cuts it.
+        long step = Grid.Ticks;
+        var gridStart = TimeSpan.FromTicks((start.Ticks + step - 1) / step * step);
+        var end = start + duration;
+        var gridEnd = duration < wanted ? TimeSpan.FromTicks(end.Ticks / step * step) : gridStart + wanted;
+        if (gridEnd - gridStart >= MinItemLength && (duration < wanted || FindRoom(timeline, gridStart, wanted) is { } room && room.Start == gridStart && room.Duration == wanted))
+        {
+            start = gridStart;
+            end = gridEnd;
+        }
         item.Start = Edits.WholeMs(start);
-        item.Duration = Edits.WholeMs(start + duration) - item.Start;
+        item.Duration = Edits.WholeMs(end) - item.Start;
         _document.Execute(Edits.AddItem(timeline, item));
         Select(item);
         return item;
