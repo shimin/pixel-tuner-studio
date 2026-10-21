@@ -963,7 +963,7 @@ namespace PixelTuner.ViewModel
                     var w = new WifiDevicesWindow(RootViewModel.This.UdpСlient, RootViewModel.This.BroadcastEp);
                     w.Owner = Application.Current.MainWindow;
                     w.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                    if (w.ShowDialog() == true && RootViewModel.This.StopTimer != null)
+                    if (w.ShowDialog() == true && RootViewModel.This.StopTimer == null)
                     {
                         RootViewModel.This.StopTimer = new Timer(StopTimerCallback, null, 1000, 1000);
                     }

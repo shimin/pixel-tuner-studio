@@ -104,7 +104,9 @@ namespace PixelTuner
                     byte[] received = _udpSender.EndReceive(result, ref remoteEnd);
                     var ipString = remoteEnd.ToString();
 
-                    Application.Current.Dispatcher.Invoke(new Action(() =>
+                    var app = Application.Current;
+                    if (app == null) return;
+                    app.Dispatcher.Invoke(new Action(() =>
                     {
                         if (_devicesDictionary.ContainsKey(ipString))
                         {
@@ -126,8 +128,17 @@ namespace PixelTuner
             }
             catch
             {
-                if (_udpSender != null && _udpSender.Client != null && _goOn)
-                    _udpSender.BeginReceive(ReceivedCallback, state);
+                // This runs on an I/O thread: an exception thrown from here (e.g. the
+                // socket was closed or the network adapter went away between the check
+                // and BeginReceive) would terminate the process.
+                try
+                {
+                    if (_udpSender != null && _udpSender.Client != null && _goOn)
+                        _udpSender.BeginReceive(ReceivedCallback, state);
+                }
+                catch
+                {
+                }
             }
         }
 
