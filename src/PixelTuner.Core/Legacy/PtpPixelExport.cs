@@ -1,32 +1,30 @@
 using PixelTuner.Core.Export;
-using PixelTuner.Core.Imaging;
+using PixelTuner.Core.Model;
 
 namespace PixelTuner.Core.Legacy;
 
 /// <summary>
-/// Builds the pixel-device .bin from a PixelTuner 2 project the way PixelTuner 2's
-/// "Export bin" did: gaps filled with black, timeline height taken from its first image.
+/// The pixel-device .bin of a PixelTuner 2 project, straight from its files: the project is
+/// converted with <see cref="PtpConverter"/> and exported with <see cref="PixelExport"/>,
+/// the same code that exports an imported package.
 /// </summary>
 public sealed class PtpPixelExport
 {
-    /// <summary>Width of the black filler PixelTuner 2 put into gaps between items.</summary>
-    private const int GapWidth = 10;
+    private readonly ShowMedia _media = ShowMedia.FromFiles();
+    private readonly LegacyTimelines _timelines;
 
-    private readonly Func<string, PixelImage> _loadImage;
-    private readonly Dictionary<string, PixelImage> _cache = new(StringComparer.OrdinalIgnoreCase);
+    /// <param name="resolveMedia">
+    /// Turns an item's stored path into a readable file path; throws <see cref="FileNotFoundException"/>
+    /// when the file is missing. The export throws it too, but only for files it needs.
+    /// </param>
+    public PtpPixelExport(Func<string, string> resolveMedia) =>
+        _timelines = new LegacyTimelines(path =>
+        {
+            try { return resolveMedia(path); }
+            catch (FileNotFoundException) { return null; }
+        });
 
-    /// <param name="resolveMedia">Turns an item's stored path into a readable file path.</param>
-    public PtpPixelExport(Func<string, string> resolveMedia)
-        : this(name => ImageDecoder.DecodeFile(resolveMedia(name)))
-    {
-    }
-
-    public PtpPixelExport(Func<string, PixelImage> loadImage) => _loadImage = loadImage;
-
-    /// <summary>
-    /// Stretching of the gap fillers. PixelTuner 2 took it from its "default stretching"
-    /// setting (4 unless the user changed it).
-    /// </summary>
+    /// <inheritdoc cref="PixelExport.GapStretching"/>
     public ushort GapStretching { get; init; } = 4;
 
     public ColorDepth Depth { get; init; } = ColorDepth.Bit24;
@@ -35,89 +33,39 @@ public sealed class PtpPixelExport
     public static IReadOnlyList<PtpTimeline> PixelTimelines(PtpDocument document) =>
         document.Timelines.Where(t => t.Type == PtpTimeline.PixelType).ToList();
 
-    /// <summary>Height in LEDs of a timeline: the height of its first image.</summary>
-    public int TimelineHeight(PtpTimeline timeline) =>
-        timeline.Items.Count == 0 ? 0 : Load(timeline.Items[0].FullName).Height;
+    /// <inheritdoc cref="PixelExport.TimelineHeight"/>
+    public int TimelineHeight(PtpTimeline timeline) => Exporter().TimelineHeight(_timelines[timeline]);
 
-    /// <summary>
-    /// The .bin for the given pixel timelines. Timelines whose height differs from
-    /// <paramref name="height"/> are left out, as PixelTuner 2 offered only matching ones.
-    /// </summary>
-    public byte[] Export(IEnumerable<PtpTimeline> timelines, ushort height)
-    {
-        var lines = new List<PixelExportTimeline>();
-        foreach (var timeline in timelines)
-        {
-            if (timeline.Type != PtpTimeline.PixelType || timeline.Items.Count == 0) continue;
-            int lineHeight = TimelineHeight(timeline);
-            if (lineHeight != height) continue;
-            lines.Add(BuildTimeline(timeline, lineHeight));
-        }
-        return PixelBinaryWriter.Write(lines, height, Depth);
-    }
+    /// <inheritdoc cref="PixelExport.Export"/>
+    public byte[] Export(IEnumerable<PtpTimeline> timelines, ushort height) =>
+        Exporter().Export(timelines.Select(t => _timelines[t]), height);
 
-    /// <summary>
-    /// The .bin PixelTuner 2 uploaded to a fan (FileViewModel.GetFanBinaryPresentation):
-    /// one pixel timeline at the height of its first image. Unlike the pixel export, the
-    /// timeline keeps the default menu colour (0, 0, 20) instead of its own colour tag.
-    /// </summary>
+    /// <inheritdoc cref="PixelExport.ExportFan"/>
     public byte[] ExportFan(PtpTimeline timeline)
     {
         if (timeline.Type != PtpTimeline.PixelType)
             throw new ArgumentException("A fan plays a pixel timeline.", nameof(timeline));
-        if (timeline.Items.Count == 0)
-            throw new ArgumentException("The timeline has no items.", nameof(timeline));
-        int height = TimelineHeight(timeline);
-        var line = BuildTimeline(timeline, height, new PixelExportTimeline().Color);
-        return PixelBinaryWriter.Write([line], checked((ushort)height), Depth);
+        return Exporter().ExportFan(_timelines[timeline]);
     }
 
-    private PixelExportTimeline BuildTimeline(PtpTimeline timeline, int lineHeight, Rgb? color = null)
-    {
-        var (_, r, g, b) = timeline.Color;
-        var result = new PixelExportTimeline { Color = color ?? new Rgb((byte)(r / 10), (byte)(g / 10), (byte)(b / 10)) };
+    private PixelExport Exporter() => new(_media) { GapStretching = GapStretching, Depth = Depth };
+}
 
-        var items = timeline.Items;
-        if (items[0].Start != TimeSpan.Zero)
-            result.Items.Add(Gap(TimeSpan.Zero, items[0].Start, lineHeight, timeline.IsFlippedVertical));
-        for (int i = 0; i < items.Count; i++)
+/// <summary>Converted timelines of PixelTuner 2 projects, each converted once.</summary>
+internal sealed class LegacyTimelines(Func<string, string?> media, PtpDocument? document = null)
+{
+    private readonly Dictionary<PtpTimeline, Timeline> _converted = new(ReferenceEqualityComparer.Instance);
+    private PtpConverter? _converter = document is null ? null : new PtpConverter(document, media);
+
+    public PtpConverter Converter => _converter ??= new PtpConverter(new PtpDocument(), media);
+
+    public Timeline this[PtpTimeline line]
+    {
+        get
         {
-            result.Items.Add(Item(items[i], timeline.IsFlippedVertical));
-            if (i + 1 < items.Count && items[i].End != items[i + 1].Start)
-                result.Items.Add(Gap(items[i].End, items[i + 1].Start, lineHeight, timeline.IsFlippedVertical));
+            if (!_converted.TryGetValue(line, out var timeline))
+                _converted[line] = timeline = Converter.Convert(line);
+            return timeline;
         }
-        return result;
     }
-
-    private PixelExportItem Item(PtpItem item, bool flip) => new()
-    {
-        // PixelTuner 2 matched images by lower-cased path.
-        ImageKey = item.FullName.ToLowerInvariant(),
-        Image = Load(item.FullName),
-        StartMs = Milliseconds(item.Start),
-        DurationMs = Milliseconds(item.End - item.Start),
-        Stretching = (ushort)item.Stretching,
-        Brightness = item.Brightness,
-        LaserOn = item.LaserOn,
-        FlipVertical = flip,
-    };
-
-    private PixelExportItem Gap(TimeSpan start, TimeSpan end, int height, bool flip) => new()
-    {
-        ImageKey = null,
-        Image = PixelImage.Black(GapWidth, height),
-        StartMs = Milliseconds(start),
-        DurationMs = Milliseconds(end - start),
-        Stretching = GapStretching,
-        FlipVertical = flip,
-    };
-
-    private PixelImage Load(string fullName)
-    {
-        if (!_cache.TryGetValue(fullName, out var image))
-            _cache[fullName] = image = _loadImage(fullName);
-        return image;
-    }
-
-    private static uint Milliseconds(TimeSpan t) => checked((uint)Math.Round(t.TotalMilliseconds));
 }

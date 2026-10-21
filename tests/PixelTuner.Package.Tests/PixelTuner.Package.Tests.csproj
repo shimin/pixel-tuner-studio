@@ -2,4 +2,14 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\PixelTuner.Package\PixelTuner.Package.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <!-- Native Skia for the OS the tests run on: the import tests export .bin from the package. -->
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Condition="$([MSBuild]::IsOSPlatform('Linux'))" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Win32" Condition="$([MSBuild]::IsOSPlatform('Windows'))" />
+    <PackageReference Include="SkiaSharp.NativeAssets.macOS" Condition="$([MSBuild]::IsOSPlatform('OSX'))" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- The PixelTuner 2 shows the export tests use; here they are imported into packages. -->
+    <None Include="..\PixelTuner.Core.Tests\Fixtures\LegacyProjects\**\*" CopyToOutputDirectory="PreserveNewest" LinkBase="Fixtures\LegacyProjects" />
+  </ItemGroup>
 </Project>

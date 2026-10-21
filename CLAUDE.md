@@ -22,6 +22,10 @@
   (Ivan: where Windows and the cleaner result differ, prefer quality over parity).
   E-Pic poi and LightMaster have no reference shows: `tests/PixelTuner.Legacy.OracleTests` compiles
   PixelTuner 2's own `Communication/Gradient` and `Communication/Binarize` and compares on random shows.
+- The .bin export runs on the model (`ShowProject`). The `Ptp*Export` classes convert the .ptp with
+  `PtpConverter` first, so the reference tests also cover the .ptp import. A field that the export
+  needs must survive `PtpConverter` and the package JSON: `tests/PixelTuner.Package.Tests` checks
+  that a package exports the same .bin as its .ptp (CI does this for the whole `samples-v1` set too).
 - Merge PRs with a normal merge commit only.
 - The cloud sandbox can build and test Core, Package, Sync, UI and Desktop on Linux
   (`apt install dotnet-sdk-10.0`, `SSL_CERT_FILE=/root/.ccr/ca-bundle.crt` for NuGet).

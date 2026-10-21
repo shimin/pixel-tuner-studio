@@ -2,6 +2,7 @@ using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using PixelTuner.Core.Export;
 using PixelTuner.Core.Model;
 
 namespace PixelTuner.Package;
@@ -64,6 +65,9 @@ public sealed class PxPackage : IDisposable
             ?? throw new InvalidDataException($"Resource {id} is listed in the manifest but missing from the archive.");
         return entry.Open();
     }
+
+    /// <summary>The package's media for the .bin export; decodes each file once.</summary>
+    public ShowMedia CreateMedia() => new(OpenResource);
 
     public byte[] ReadResource(string id)
     {
