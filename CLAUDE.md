@@ -62,7 +62,8 @@
 - The library (`ShowProject.Library`, `PixelTuner.Core/Model/Library.cs`): what can be put on timelines (pictures, GIFs, gradients,
   colours, effects). `Library.CanPlace` / `NewItem` are the rules and the defaults (4 for pictures, 40 ms for video); an entry that an
   item plays cannot be removed; old projects get entries from their items on open (`AddMissingEntries`). Pictures come in through
-  `ImportViewModel` (`ImageImport`: crop, scale to the device height, colour, as PixelTuner 2's import window), the panel's logic is
+  `ImportViewModel` (the steps of PixelTuner 2's import window: cut, `PerspectiveWarp` (its mesh warp, ported and checked against the legacy
+  `WarpGrid` in `WarpOracleTests`), trim, `ImageImport` scale to the device height and colour), the panel's logic is
   `LibraryViewModel` (`EditorViewModel.Gallery`; namespace `PixelTuner.UI.LibraryPanel`, because `Library` is the Core class).
 - `src/PixelTuner.Audio` holds the player and decoder contracts only; implementations go per
   platform. `src/PixelTuner.Audio.Vlc` (LibVLC, LGPL, dynamic) serves Windows and macOS: the VideoLAN NuGet
