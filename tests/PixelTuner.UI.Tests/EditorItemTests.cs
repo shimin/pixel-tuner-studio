@@ -115,7 +115,7 @@ public sealed class EditorItemTests : IDisposable
         _doc.Undo();
         _doc.Undo();
         _doc.Undo();
-        Assert.Equal((100, 1, false), (item.Brightness, item.Stretching, item.LaserOn));
+        Assert.Equal((100, 4, false), (item.Brightness, item.Stretching, item.LaserOn));   // 4 is PixelTuner 2's default
     }
 
     private string WriteGif()
@@ -138,6 +138,8 @@ public sealed class EditorItemTests : IDisposable
         await _editor.AddItemCommand.ExecuteAsync(null);
         var video = Assert.Single(_doc.Project.Timelines[0].Items);
         Assert.Equal(ItemKind.Video, video.Kind);
+        Assert.Equal(40, video.Stretching);   // 25 frames a second
+        Assert.Equal("Frame time, ms", _editor.StretchingLabel);
         Assert.True(_editor.IsVideoSelected);
         _editor.OffsetX = 12;
         _editor.OffsetY = -3;

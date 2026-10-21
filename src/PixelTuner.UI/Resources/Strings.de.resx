@@ -126,4 +126,6 @@
   <data name="Effect_SawToothWave" xml:space="preserve"><value>Sägezahnwelle</value></data>
   <data name="Item_BadMedia" xml:space="preserve"><value>{0} enthält kein Bild.</value></data>
   <data name="Inspector_Playback" xml:space="preserve"><value>Ein Durchlauf des Bildes dauert {0}; im Element läuft es {1}-mal. Weniger Dehnung spielt schneller.</value></data>
+  <data name="Inspector_FrameTime" xml:space="preserve"><value>Bildzeit, ms</value></data>
+  <data name="Inspector_PlaybackVideo" xml:space="preserve"><value>Ein Durchlauf der Animation dauert {0}; im Element läuft sie {1}-mal. Die Bildzeit ist in Millisekunden: 40 sind 25 Bilder pro Sekunde.</value></data>
 </root>

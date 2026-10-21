@@ -3,7 +3,7 @@ namespace PixelTuner.Core.Imaging;
 /// <summary>
 /// How an image looks on a device, for the editor's preview: brightness as PixelTuner 2 applied it
 /// (a float factor, truncated), each column repeated by <c>stretching</c> pixels wide, flipped when the timeline is.
-/// On the device the stretching is not a width but a speed (see <see cref="PassDuration"/>); the preview in the
+/// On the device the stretching is not a width but a speed (see <see cref="PassDuration"/> and <see cref="VideoPassDuration"/>); the preview in the
 /// inspector draws the picture itself, one pixel per column.
 /// An illustration of the picture, not the exact bytes the device receives.
 /// </summary>
@@ -16,12 +16,17 @@ public static class ItemPreview
     public static TimeSpan PassDuration(int width, int stretching) =>
         TimeSpan.FromTicks(StretchingUnit.Ticks * Math.Max(0, width) * Math.Max(1, stretching));
 
+    /// <summary>
+    /// How long an animation takes to play once on a video device: its stretching is the time of one frame
+    /// (one column of the device image) in milliseconds, so 25 frames a second is 40.
+    /// </summary>
+    public static TimeSpan VideoPassDuration(int frames, int frameMilliseconds) =>
+        TimeSpan.FromMilliseconds((double)Math.Max(0, frames) * Math.Max(1, frameMilliseconds));
+
     /// <summary>How many times the picture plays in an item of this length (a fraction when the last pass is cut off).</summary>
-    public static double Repeats(TimeSpan itemDuration, int width, int stretching)
-    {
-        var pass = PassDuration(width, stretching);
-        return pass <= TimeSpan.Zero ? 0 : itemDuration / pass;
-    }
+    public static double Repeats(TimeSpan itemDuration, int width, int stretching) => Repeats(itemDuration, PassDuration(width, stretching));
+
+    public static double Repeats(TimeSpan itemDuration, TimeSpan pass) => pass <= TimeSpan.Zero ? 0 : itemDuration / pass;
 
     public static PixelImage Render(PixelImage source, byte brightness, int stretching, bool flipVertical)
     {

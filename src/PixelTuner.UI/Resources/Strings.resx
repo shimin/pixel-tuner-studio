@@ -126,4 +126,6 @@
   <data name="Effect_SawToothWave" xml:space="preserve"><value>Saw-tooth wave</value></data>
   <data name="Item_BadMedia" xml:space="preserve"><value>{0} has no picture in it.</value></data>
   <data name="Inspector_Playback" xml:space="preserve"><value>One pass of the picture takes {0}; it plays {1} times in this item. A lower stretching plays it faster.</value></data>
+  <data name="Inspector_FrameTime" xml:space="preserve"><value>Frame time, ms</value></data>
+  <data name="Inspector_PlaybackVideo" xml:space="preserve"><value>One pass of the animation takes {0}; it plays {1} times in this item. The frame time is in milliseconds: 40 is 25 frames a second.</value></data>
 </root>

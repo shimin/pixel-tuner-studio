@@ -51,4 +51,13 @@ public class ItemPreviewTests
         Assert.Equal(repeats, ItemPreview.Repeats(second, width, stretching), 9);
         Assert.Equal(TimeSpan.FromMilliseconds(width * stretching * 0.05), ItemPreview.PassDuration(width, stretching));
     }
+
+    [Fact]
+    public void Video_stretching_is_milliseconds_per_frame()
+    {
+        var pass = ItemPreview.VideoPassDuration(25, 40);   // 25 frames at 40 ms: one second
+        Assert.Equal(TimeSpan.FromSeconds(1), pass);
+        Assert.Equal(12.0, ItemPreview.Repeats(TimeSpan.FromSeconds(12), pass), 9);
+        Assert.Equal(0.45, ItemPreview.Repeats(TimeSpan.FromSeconds(10), ItemPreview.VideoPassDuration(556, 40)), 2);
+    }
 }

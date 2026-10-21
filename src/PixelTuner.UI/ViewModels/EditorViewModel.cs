@@ -118,7 +118,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     private static readonly string[] InspectorProperties =
     [
-        nameof(ShowBrightness), nameof(ShowStretching), nameof(ShowLaser), nameof(IsVideoSelected), nameof(IsLightItem), nameof(IsEffectSelected),
+        nameof(ShowBrightness), nameof(ShowStretching), nameof(StretchingLabel), nameof(ShowLaser), nameof(IsVideoSelected), nameof(IsLightItem), nameof(IsEffectSelected),
         nameof(OffsetX), nameof(OffsetY), nameof(T1), nameof(T2), nameof(ItemColor), nameof(ItemColorTo), nameof(ItemColorBrush), nameof(ItemColorToBrush),
         nameof(EffectIndex), nameof(HasImage), nameof(ItemPreviewBitmap), nameof(HasPreview), nameof(PlaybackText),
     ];
@@ -195,7 +195,8 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
                 ImageDecoder.DecodeFile(path);
             }
             string id = Document.AddMedia(path);
-            var item = new TimelineItem { Kind = kind, ResourceId = id, SourcePath = path };
+            // PixelTuner 2's defaults: 4 intervals of 50 us for a picture, 40 ms (25 frames a second) for a video.
+            var item = new TimelineItem { Kind = kind, ResourceId = id, SourcePath = path, Stretching = kind == ItemKind.Video ? 40 : 4 };
             Message = Timelines.AddItem(timeline, item, DefaultItemLength) is null ? Strings.Item_NoRoom : null;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
@@ -328,7 +329,10 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     private TimelineItem? Item => Timelines.Selected as TimelineItem;
 
     public bool ShowBrightness => Item is { Kind: ItemKind.Image or ItemKind.Video or ItemKind.Gradient };
-    public bool ShowStretching => Item is { Kind: ItemKind.Image or ItemKind.Gradient };
+    public bool ShowStretching => Item is { Kind: ItemKind.Image or ItemKind.Gradient or ItemKind.Video };
+
+    /// <summary>Video devices take milliseconds per frame; the others take the speed of a column.</summary>
+    public string StretchingLabel => Item is { Kind: ItemKind.Video } ? Strings.Inspector_FrameTime : Strings.Inspector_Stretching;
     public bool ShowLaser => Item is { Kind: ItemKind.Image };
     public bool IsVideoSelected => Item is { Kind: ItemKind.Video };
     public bool IsLightItem => Item is { Kind: ItemKind.Solid or ItemKind.Effect };
@@ -460,18 +464,26 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     public bool HasImage => Item is { Kind: ItemKind.Image };
 
-    /// <summary>Pixel items: how long one pass of the picture takes at this stretching, and how often it plays in the item.</summary>
+    /// <summary>
+    /// How long one pass of the picture (pixel items) or of the animation (video items) takes at this stretching, and
+    /// how often it plays in the item. E-Pic poi are left out: their time unit is not known.
+    /// </summary>
     public string PlaybackText
     {
         get
         {
-            if (Item is not { Kind: ItemKind.Image } i || ItemPreviewBitmap is not { } bitmap) return "";
-            int width = bitmap.PixelSize.Width;
-            var pass = ItemPreview.PassDuration(width, i.Stretching);
-            double repeats = ItemPreview.Repeats(i.Duration, width, i.Stretching);
-            return string.Format(Strings.Inspector_Playback, $"{pass.TotalMilliseconds:0.##} ms", repeats.ToString("0.##", System.Globalization.CultureInfo.CurrentCulture));
+            if (Item is not { Kind: ItemKind.Image or ItemKind.Video } i || ItemPreviewBitmap is null) return "";
+            var pass = i.Kind == ItemKind.Video
+                ? ItemPreview.VideoPassDuration(_previewColumns, i.Stretching)
+                : ItemPreview.PassDuration(_previewColumns, i.Stretching);
+            double repeats = ItemPreview.Repeats(i.Duration, pass);
+            return string.Format(i.Kind == ItemKind.Video ? Strings.Inspector_PlaybackVideo : Strings.Inspector_Playback,
+                $"{pass.TotalMilliseconds:0.##} ms", repeats.ToString("0.##", System.Globalization.CultureInfo.CurrentCulture));
         }
     }
+
+    // Columns of the device image: the width of a picture, the number of frames of a video.
+    private int _previewColumns;
 
     public bool HasPreview => ItemPreviewBitmap is not null;
 
@@ -498,7 +510,18 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
                 using (stream)
                 {
                     // A video shows its first frame; the animation itself is the device's business.
-                    var source = i.Kind == ItemKind.Video ? GifFrames.Decode(((MemoryStream)stream).ToArray())[0] : ImageDecoder.Decode(stream);
+                    PixelImage source;
+                    if (i.Kind == ItemKind.Video)
+                    {
+                        var frames = GifFrames.Decode(((MemoryStream)stream).ToArray());
+                        source = frames[0];
+                        _previewColumns = frames.Count;
+                    }
+                    else
+                    {
+                        source = ImageDecoder.Decode(stream);
+                        _previewColumns = source.Width;
+                    }
                     _preview = PixelBitmap.From(ItemPreview.Render(source, key.Brightness, 1, key.Flip));
                 }
             }

@@ -126,4 +126,6 @@
   <data name="Effect_SawToothWave" xml:space="preserve"><value>Пила</value></data>
   <data name="Item_BadMedia" xml:space="preserve"><value>В {0} нет картинки.</value></data>
   <data name="Inspector_Playback" xml:space="preserve"><value>Один проход картинки занимает {0}; в этом элементе она играет {1} раз(а). Чем меньше растяжение, тем быстрее.</value></data>
+  <data name="Inspector_FrameTime" xml:space="preserve"><value>Время кадра, мс</value></data>
+  <data name="Inspector_PlaybackVideo" xml:space="preserve"><value>Один проход анимации занимает {0}; в этом элементе она играет {1} раз(а). Время кадра в миллисекундах: 40 — это 25 кадров в секунду.</value></data>
 </root>

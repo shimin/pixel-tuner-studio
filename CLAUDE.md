@@ -49,9 +49,12 @@
   `TimelineControl` only draws it and forwards the pointer. Do not put model rules into the control. An item dragged over another timeline moves there only if
   `Edits.Accepts` (same kind of item) and `Edits.Fits` say so; items are added by `EditorViewModel.AddItemCommand` (files), `AddColorCommand` and `AddEffectCommand`. To try the
   window with the mouse in the sandbox: `xvfb-run`, then `python-xlib` (`pip install python-xlib`) with XTest.
-- Stretching of a pixel item (PixelPoi) is a speed, not a position: each image column is held for k x 50 us, so one pass
-  of a W-column picture takes W x k x 50 us and the item's time span only says how long it plays (`ItemPreview.PassDuration`,
-  `Repeats`; Ivan: 100 columns, k=100, 1000 ms gives 2 passes). Lower k is faster.
+- Stretching of an item is a speed, not a position; the item's time span only says how long it plays. Pixel devices
+  and hoops (same .bin, PixelTuner 2 has no separate hoop semantics) hold each image column for k x 50 us, so one pass of a
+  W-column picture takes W x k x 50 us (`ItemPreview.PassDuration`; Ivan: 100 columns, k=100, 1000 ms gives 2 passes).
+  Video devices take milliseconds per frame (`VideoPassDuration`; 40 is 25 frames a second). The E-Pic unit is unknown (its
+  .bin stores k x 5), so the inspector shows no pass time for it. PixelTuner 2 defaults: 4 for pictures, 40 for video;
+  its item windows allowed 1-400 and 20-800.
 - `src/PixelTuner.Audio` holds the player and decoder contracts only; implementations go per
   platform. `src/PixelTuner.Audio.Vlc` (LibVLC, LGPL, dynamic) serves Windows and macOS: the VideoLAN NuGet
   packages carry LibVLC under `libvlc/<rid>`, Linux uses the system one (`apt install libvlc5 vlc-plugin-base`).
