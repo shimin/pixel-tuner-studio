@@ -51,7 +51,9 @@
 - The timelines (`src/PixelTuner.UI/Timelines`): `TimelineEditor` holds everything that is not drawing (coordinates,
   zoom, hit testing, selection, drags that end in one `Edit`, snapping) and is tested without a window;
   `TimelineControl` only draws it and forwards the pointer. Do not put model rules into the control. An item dragged over another timeline moves there only if
-  `Edits.Accepts` (same kind of item) and `Edits.Fits` say so; items are added by `EditorViewModel.AddItemCommand` (files), `AddColorCommand` and `AddEffectCommand`. To try the
+  `Edits.Accepts` (same kind of item), `Edits.FitsHeight` and `Edits.Fits` say so (else the drag shows a `DropDenial`); item edges and the
+  playhead/marker pull points land on a 50 ms grid (`TimelineEditor.OnGrid`); a lane draws the item's `ItemThumbnails` picture repeated by
+  `TileLayout` (one pass = the device's time for the picture) and the pauses between items as black stretches; items are added by `EditorViewModel.AddItemCommand` (files), `AddColorCommand` and `AddEffectCommand`. To try the
   window with the mouse in the sandbox: `xvfb-run`, then `python-xlib` (`pip install python-xlib`) with XTest.
 - Stretching of an item is a speed, not a position; the item's time span only says how long it plays. Pixel devices
   and hoops (same .bin, PixelTuner 2 has no separate hoop semantics) hold each image column for k x 50 us, so one pass of a

@@ -32,6 +32,16 @@ public static class LightExport
         return LightBinaryWriter.Write(lines, rate);
     }
 
+    /// <summary>
+    /// The colour of a solid or effect item at a time after its start, by the formulas the .bin is built with
+    /// (so the timeline and the preview show what the device will).
+    /// </summary>
+    /// <exception cref="InvalidOperationException">The item is not a colour or an effect.</exception>
+    public static Rgb ColorAt(TimelineItem item, TimeSpan sinceStart) =>
+        Item(item) is { } export
+            ? LightBinaryWriter.Sample(export, sinceStart.TotalMilliseconds)
+            : throw new InvalidOperationException("Only a solid colour or an effect has a colour.");
+
     /// <summary>PixelTuner 2 skipped items that were neither a solid colour nor an effect.</summary>
     private static LightExportItem? Item(TimelineItem item)
     {

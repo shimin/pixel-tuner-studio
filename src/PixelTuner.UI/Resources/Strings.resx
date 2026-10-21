@@ -174,6 +174,23 @@
   <data name="Library_Place" xml:space="preserve"><value>Put on timeline</value></data>
   <data name="Library_Import" xml:space="preserve"><value>Import…</value></data>
   <data name="Library_Title" xml:space="preserve"><value>Library</value></data>
+  <data name="Drop_NoRoom" xml:space="preserve"><value>There is no room for the item here at that time.</value></data>
+  <data name="Drop_WrongHeight" xml:space="preserve"><value>This timeline plays pictures {0} LEDs high; this one is {1}.</value></data>
+  <data name="Drop_WrongKind" xml:space="preserve"><value>A {0} timeline does not take this item.</value></data>
+  <data name="Command_MoveDown" xml:space="preserve"><value>Move timeline down</value></data>
+  <data name="Command_MoveUp" xml:space="preserve"><value>Move timeline up</value></data>
+  <data name="Inspector_LayoutN" xml:space="preserve"><value>Layout {0}</value></data>
+  <data name="Inspector_NoLayout" xml:space="preserve"><value>(none)</value></data>
+  <data name="Inspector_Layout" xml:space="preserve"><value>LED layout of the prop</value></data>
+  <data name="Inspector_HeightRefused" xml:space="preserve"><value>The height cannot change: the timeline holds pictures of another height. Take them off first.</value></data>
+  <data name="Inspector_HeightFromPicture" xml:space="preserve"><value>Pictures on this timeline are {0} LEDs high, as the first one.</value></data>
+  <data name="Inspector_HeightSet" xml:space="preserve"><value>Pictures on this timeline are {0} LEDs high.</value></data>
+  <data name="Inspector_HeightFree" xml:space="preserve"><value>Any height: the first picture sets it.</value></data>
+  <data name="Inspector_Height" xml:space="preserve"><value>LEDs of the device (0: from the first picture)</value></data>
+  <data name="Inspector_Monochrome" xml:space="preserve"><value>Monochrome channel (three share one RGB output)</value></data>
+  <data name="Inspector_Flip" xml:space="preserve"><value>Flip vertically (the device is mounted upside down)</value></data>
+  <data name="Inspector_ColorNotWritten" xml:space="preserve"><value>This device does not store the timeline colour; it only helps you tell timelines apart.</value></data>
+  <data name="Inspector_TimelineColor" xml:space="preserve"><value>Timeline colour</value></data>
   <data name="Effect_LinearTransition" xml:space="preserve"><value>Linear transition</value></data>
   <data name="Effect_SineWave" xml:space="preserve"><value>Sine wave</value></data>
   <data name="Effect_SquareWave" xml:space="preserve"><value>Square wave</value></data>
