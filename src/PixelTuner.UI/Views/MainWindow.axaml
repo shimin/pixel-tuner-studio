@@ -1,0 +1,27 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:PixelTuner.UI.ViewModels"
+        xmlns:views="using:PixelTuner.UI.Views"
+        xmlns:res="using:PixelTuner.UI.Resources"
+        x:Class="PixelTuner.UI.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Title="{x:Static res:Strings.AppTitle}"
+        Icon="/Assets/app-icon.png"
+        Width="1280" Height="800" MinWidth="960" MinHeight="600"
+        WindowStartupLocation="CenterScreen">
+  <!-- Desktop window for Windows and macOS. The native menu goes to the macOS
+       menu bar and stays hidden on Windows, where the app has its own commands. -->
+  <NativeMenu.Menu>
+    <NativeMenu>
+      <NativeMenuItem Header="{x:Static res:Strings.Command_OpenProject}"
+                      Command="{Binding OpenProjectCommand}"
+                      Gesture="Meta+O" />
+    </NativeMenu>
+  </NativeMenu.Menu>
+  <Window.KeyBindings>
+    <!-- Ctrl+O on Windows, Cmd+O on macOS. -->
+    <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenProjectCommand}" />
+    <KeyBinding Gesture="Meta+O" Command="{Binding OpenProjectCommand}" />
+  </Window.KeyBindings>
+  <views:MainView />
+</Window>
