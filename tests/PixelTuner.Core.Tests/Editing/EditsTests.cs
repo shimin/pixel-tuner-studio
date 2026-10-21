@@ -193,6 +193,88 @@ public class EditsTests
     }
 
     [Fact]
+    public void A_property_the_bin_has_no_field_for_is_refused()
+    {
+        var picture = new TimelineItem { Kind = ItemKind.Image };
+        var colour = new TimelineItem { Kind = ItemKind.Solid, Color = "#FFFFFF" };
+        var effect = new TimelineItem { Kind = ItemKind.Effect };
+
+        Assert.Throws<InvalidOperationException>(() => Edits.SetOffset(picture, 1, 1));          // video only
+        Assert.Throws<InvalidOperationException>(() => Edits.SetLaser(colour, true));            // light has no laser
+        Assert.Throws<InvalidOperationException>(() => Edits.SetBrightness(effect, 50));
+        Assert.Throws<InvalidOperationException>(() => Edits.SetStretching(colour, 4));
+        Assert.Throws<InvalidOperationException>(() => Edits.SetItemColor(picture, "#FFFFFF"));
+        Assert.Throws<InvalidOperationException>(() => Edits.SetItemColorLast(colour, "#FFFFFF"));   // a solid has one colour
+        Assert.Throws<InvalidOperationException>(() => Edits.SetEffect(colour, LightEffectKind.SineWave));
+        Assert.Throws<InvalidOperationException>(() => Edits.SetEffectTimes(picture, 1, 1));
+    }
+
+    [Theory]
+    [InlineData(ItemKind.Image, 65535, true)]
+    [InlineData(ItemKind.Image, 65536, false)]
+    [InlineData(ItemKind.Video, 40, true)]
+    [InlineData(ItemKind.Gradient, Edits.MaxEpicStretching, true)]
+    [InlineData(ItemKind.Gradient, Edits.MaxEpicStretching + 1, false)]   // the file keeps it times 5 in 16 bits
+    [InlineData(ItemKind.Image, 0, false)]
+    public void Stretching_stays_inside_what_the_bin_can_store(string kind, int stretching, bool allowed)
+    {
+        var item = new TimelineItem { Kind = kind };
+        if (allowed) _history.Do(Edits.SetStretching(item, stretching));
+        else Assert.Throws<ArgumentOutOfRangeException>(() => Edits.SetStretching(item, stretching));
+    }
+
+    [Fact]
+    public void Flip_monochrome_and_layout_belong_to_their_kind_of_timeline()
+    {
+        var pixel = new Timeline { Kind = TimelineKind.Pixel };
+        var light = new Timeline { Kind = TimelineKind.Light };
+        var video = new Timeline { Kind = TimelineKind.Video };
+        var layout = new LedLayout { Columns = 2, Rows = 2, Leds = [0, 1] };
+        _project.LedLayouts.Add(layout);
+
+        _history.Do(Edits.SetFlipVertical(pixel, true));
+        _history.Do(Edits.SetMonochrome(light, true));
+        _history.Do(Edits.SetLedLayout(_project, video, layout.Id));
+        Assert.True(pixel.FlipVertical);
+        Assert.True(light.Monochrome);
+        Assert.Equal(layout.Id, video.LedLayoutId);
+
+        Assert.Throws<InvalidOperationException>(() => Edits.SetFlipVertical(video, true));
+        Assert.Throws<InvalidOperationException>(() => Edits.SetMonochrome(pixel, true));
+        Assert.Throws<InvalidOperationException>(() => Edits.SetLedLayout(_project, pixel, layout.Id));
+        Assert.Throws<ArgumentException>(() => Edits.SetLedLayout(_project, video, Guid.NewGuid()));
+
+        _history.Do(Edits.SetLedLayout(_project, video, null));
+        Assert.Null(video.LedLayoutId);
+        while (_history.Undo()) { }
+        Assert.False(pixel.FlipVertical);
+        Assert.False(light.Monochrome);
+    }
+
+    [Fact]
+    public void Replacing_a_picture_keeps_the_timeline_height_and_undoes()
+    {
+        var timeline = new Timeline();
+        var first = Picture(36);
+        var second = Picture(36, start: 2);
+        _history.Do(Edits.AddItem(timeline, first));
+        _history.Do(Edits.AddItem(timeline, second));
+
+        Assert.Throws<InvalidOperationException>(() => Edits.ReplaceMedia(timeline, second, "b", "b.png", 10, 80));
+        // The only picture of a timeline may change height, as nothing else is held to it.
+        var lone = new Timeline();
+        var only = Picture(36);
+        _history.Do(Edits.AddItem(lone, only));
+        _history.Do(Edits.ReplaceMedia(lone, only, "c", "c.png", 7, 80));
+        Assert.Equal((80, "c"), (only.MediaHeight, only.ResourceId));
+
+        _history.Do(Edits.ReplaceMedia(timeline, second, "b", "b.png", 12, 36));
+        Assert.Equal(("b", "b.png", 12), (second.ResourceId, second.SourcePath, second.MediaWidth));
+        _history.Undo();
+        Assert.Equal(10, second.MediaWidth);
+    }
+
+    [Fact]
     public void A_timeline_of_an_unknown_kind_is_refused()
     {
         Assert.Throws<ArgumentException>(() => Edits.AddTimeline(_project, new Timeline { Kind = "hologram" }));
@@ -412,6 +494,7 @@ public class EditsTests
     public void Laser_and_offset_change_with_undo()
     {
         var item = TimelineWith((0, 1)).Items[0];
+        item.Kind = ItemKind.Video;
         _history.Do(Edits.SetLaser(item, true));
         _history.Do(Edits.SetOffset(item, 3, 4));
         Assert.True(item.LaserOn);

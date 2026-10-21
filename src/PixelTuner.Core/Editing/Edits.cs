@@ -63,6 +63,9 @@ public static class Edits
 
     public const int MaxLightRate = 1000;
 
+    /// <summary>Items and the pauses between them make at most 65535 entries of a timeline in the .bin.</summary>
+    public const int MaxItemsPerTimeline = ushort.MaxValue / 2;
+
     // ---- timelines
 
     public static Edit AddTimeline(ShowProject project, Timeline timeline, int? index = null)
@@ -99,7 +102,53 @@ public static class Edits
     public static Edit SetTimelineColor(Timeline timeline, string color) =>
         new SetValueEdit<string>("SetTimelineColor", timeline, nameof(timeline.Color), () => timeline.Color, v => timeline.Color = v, color, mergeable: true);
 
+    /// <summary>Plays the pictures of a pixel timeline upside down (the device is mounted the other way up).</summary>
+    public static Edit SetFlipVertical(Timeline timeline, bool flip)
+    {
+        if (timeline.Kind != TimelineKind.Pixel) throw new InvalidOperationException("Only a pixel timeline can be flipped.");
+        return new SetValueEdit<bool>("SetFlipVertical", timeline, nameof(timeline.FlipVertical), () => timeline.FlipVertical, v => timeline.FlipVertical = v, flip, mergeable: false);
+    }
+
+    /// <summary>A light timeline of a monochrome channel: three of them share one RGB output.</summary>
+    public static Edit SetMonochrome(Timeline timeline, bool monochrome)
+    {
+        if (timeline.Kind != TimelineKind.Light) throw new InvalidOperationException("Only a light timeline can be monochrome.");
+        return new SetValueEdit<bool>("SetMonochrome", timeline, nameof(timeline.Monochrome), () => timeline.Monochrome, v => timeline.Monochrome = v, monochrome, mergeable: false);
+    }
+
+    /// <summary>The markup of the props a video timeline samples its frames at; null takes it away.</summary>
+    public static Edit SetLedLayout(ShowProject project, Timeline timeline, Guid? layoutId)
+    {
+        if (timeline.Kind != TimelineKind.Video) throw new InvalidOperationException("Only a video timeline has an LED layout.");
+        if (layoutId is { } id && project.LedLayouts.All(l => l.Id != id)) throw new ArgumentException("The project has no such layout.", nameof(layoutId));
+        return new SetValueEdit<Guid?>("SetLedLayout", timeline, nameof(timeline.LedLayoutId), () => timeline.LedLayoutId, v => timeline.LedLayoutId = v, layoutId, mergeable: false);
+    }
+
     // ---- items
+
+    /// <summary>
+    /// Another file in place of the picture of an item, for a missing file or a better version. The new file must
+    /// suit the timeline as a new item would: the same height on a pixel timeline.
+    /// </summary>
+    public static Edit ReplaceMedia(Timeline timeline, TimelineItem item, string resourceId, string sourcePath, int width, int height)
+    {
+        RequireIndex(timeline, item);
+        RequireKind(item, "picture", ItemKind.Image, ItemKind.Video, ItemKind.Gradient);
+        if (width <= 0 || height <= 0) throw new ArgumentOutOfRangeException(nameof(width));
+        // The item being replaced does not decide the height: it is the one that changes.
+        int required = timeline.Kind != TimelineKind.Pixel ? 0
+            : timeline.Height > 0 ? timeline.Height
+            : timeline.Items.FirstOrDefault(i => !ReferenceEquals(i, item) && i.MediaHeight > 0)?.MediaHeight ?? 0;
+        if (required != 0 && required != height)
+            throw new InvalidOperationException($"The picture is {height} LEDs high, the timeline plays {required}.");
+        return new GroupEdit("ReplaceMedia",
+        [
+            new SetValueEdit<string?>("ReplaceMedia", item, nameof(item.ResourceId), () => item.ResourceId, v => item.ResourceId = v, resourceId, mergeable: false),
+            new SetValueEdit<string?>("ReplaceMedia", item, nameof(item.SourcePath), () => item.SourcePath, v => item.SourcePath = v, sourcePath, mergeable: false),
+            new SetValueEdit<int>("ReplaceMedia", item, nameof(item.MediaWidth), () => item.MediaWidth, v => item.MediaWidth = v, width, mergeable: false),
+            new SetValueEdit<int>("ReplaceMedia", item, nameof(item.MediaHeight), () => item.MediaHeight, v => item.MediaHeight = v, height, mergeable: false),
+        ]);
+    }
 
     /// <summary>
     /// The .bin stores times as whole milliseconds, so the editor keeps them whole: what the user sees
@@ -134,6 +183,9 @@ public static class Edits
         if (!Accepts(timeline, item))
             throw new InvalidOperationException($"A '{timeline.Kind}' timeline does not take '{item.Kind}' items.");
         RequireHeight(timeline, item);
+        // A pause is an entry too, and the file counts entries in 16 bits.
+        if (timeline.Items.Count + 1 > MaxItemsPerTimeline)
+            throw new InvalidOperationException($"A timeline holds at most {MaxItemsPerTimeline} items.");
         RequireWholeMs(item.Start, "Start");
         RequireWholeMs(item.Duration, "Duration");
         if (!Fits(timeline, item.Start, item.Duration))
@@ -190,21 +242,30 @@ public static class Edits
     public static Edit SetBrightness(TimelineItem item, byte percent)
     {
         if (percent > 100) throw new ArgumentOutOfRangeException(nameof(percent));
+        RequireKind(item, "brightness", ItemKind.Image, ItemKind.Video, ItemKind.Gradient);
         return new SetValueEdit<byte>("SetBrightness", item, nameof(item.Brightness), () => item.Brightness, v => item.Brightness = v, percent, mergeable: true);
     }
 
     public static Edit SetStretching(TimelineItem item, int stretching)
     {
-        if (stretching < 1) throw new ArgumentOutOfRangeException(nameof(stretching));
+        RequireKind(item, "stretching", ItemKind.Image, ItemKind.Video, ItemKind.Gradient);
+        // E-Pic writes the stretching times 5 in 16 bits. Poi and hoops play nothing below 4: the build checks that,
+        // because the same pixel timeline can be played by a fan, which counts milliseconds.
+        int max = item.Kind == ItemKind.Gradient ? MaxEpicStretching : ushort.MaxValue;
+        if (stretching < 1 || stretching > max) throw new ArgumentOutOfRangeException(nameof(stretching));
         return new SetValueEdit<int>("SetStretching", item, nameof(item.Stretching), () => item.Stretching, v => item.Stretching = v, stretching, mergeable: true);
     }
 
-    public static Edit SetLaser(TimelineItem item, bool on) =>
-        new SetValueEdit<bool>("SetLaser", item, nameof(item.LaserOn), () => item.LaserOn, v => item.LaserOn = v, on, mergeable: false);
+    public static Edit SetLaser(TimelineItem item, bool on)
+    {
+        RequireKind(item, "laser", ItemKind.Image, ItemKind.Video, ItemKind.Gradient);
+        return new SetValueEdit<bool>("SetLaser", item, nameof(item.LaserOn), () => item.LaserOn, v => item.LaserOn = v, on, mergeable: false);
+    }
 
     /// <param name="color">#RRGGBB or #AARRGGBB; solid items and the first colour of effects.</param>
     public static Edit SetItemColor(TimelineItem item, string color)
     {
+        RequireKind(item, "colour", ItemKind.Solid, ItemKind.Effect);
         Imaging.ColorText.ParseRgb(color);   // throws on a bad colour
         return new SetValueEdit<string?>("SetItemColor", item, nameof(item.Color), () => item.Color, v => item.Color = v, color, mergeable: true);
     }
@@ -212,6 +273,7 @@ public static class Edits
     /// <param name="color">#RRGGBB or #AARRGGBB; the colour an effect goes to.</param>
     public static Edit SetItemColorLast(TimelineItem item, string color)
     {
+        RequireKind(item, "second colour", ItemKind.Effect);
         Imaging.ColorText.ParseRgb(color);
         return new SetValueEdit<string?>("SetItemColor", item, nameof(item.ColorLast), () => item.ColorLast, v => item.ColorLast = v, color, mergeable: true);
     }
@@ -219,6 +281,7 @@ public static class Edits
     /// <param name="effect">One of <see cref="LightEffectKind"/>.</param>
     public static Edit SetEffect(TimelineItem item, string effect)
     {
+        RequireKind(item, "effect", ItemKind.Effect);
         if (effect is not (LightEffectKind.LinearTransition or LightEffectKind.SineWave or LightEffectKind.SquareWave or LightEffectKind.SawToothWave))
             throw new ArgumentOutOfRangeException(nameof(effect));
         return new SetValueEdit<string?>("SetEffect", item, nameof(item.Effect), () => item.Effect, v => item.Effect = v, effect, mergeable: false);
@@ -227,6 +290,7 @@ public static class Edits
     /// <summary>The time parameters of an effect, in milliseconds.</summary>
     public static Edit SetEffectTimes(TimelineItem item, int t1, int t2)
     {
+        RequireKind(item, "effect times", ItemKind.Effect);
         if (t1 < 0 || t2 < 0) throw new ArgumentOutOfRangeException(nameof(t1));
         return new GroupEdit("SetEffectTimes",
         [
@@ -236,12 +300,15 @@ public static class Edits
     }
 
     /// <summary>Where the LED layout sits on a video frame.</summary>
-    public static Edit SetOffset(TimelineItem item, int x, int y) =>
-        new GroupEdit("SetOffset",
+    public static Edit SetOffset(TimelineItem item, int x, int y)
+    {
+        RequireKind(item, "offset", ItemKind.Video);
+        return new GroupEdit("SetOffset",
         [
             new SetValueEdit<int>("SetOffset", item, nameof(item.OffsetX), () => item.OffsetX, v => item.OffsetX = v, x, mergeable: true),
             new SetValueEdit<int>("SetOffset", item, nameof(item.OffsetY), () => item.OffsetY, v => item.OffsetY = v, y, mergeable: true),
         ]);
+    }
 
     /// <summary>
     /// Whether an item can be played by this timeline. Timelines only take their own kind of item,
@@ -255,6 +322,13 @@ public static class Edits
         TimelineKind.Light => item.Kind is ItemKind.Solid or ItemKind.Effect,
         _ => false,
     };
+
+    /// <summary>A property that only some kinds of item have: the .bin has no field for it on the others.</summary>
+    private static void RequireKind(TimelineItem item, string what, params string[] kinds)
+    {
+        if (!kinds.Contains(item.Kind))
+            throw new InvalidOperationException($"A '{item.Kind}' item has no {what}.");
+    }
 
     /// <summary>
     /// The height in LEDs that the pictures of a pixel timeline must have: the timeline's own, else the one of its
