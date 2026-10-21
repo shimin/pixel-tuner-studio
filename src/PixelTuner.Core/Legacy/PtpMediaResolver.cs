@@ -29,14 +29,22 @@ public sealed class PtpMediaResolver(string projectDirectory)
         throw new FileNotFoundException($"Media file '{fullName}' of the project was not found.", fullName);
     }
 
-    /// <summary>Windows paths are case-insensitive; macOS and Linux file systems may not be.</summary>
+    /// <summary>
+    /// Windows paths are case-insensitive; macOS and Linux file systems may not be.
+    /// Returns the name as it is on disk, also where the file system ignores case (macOS).
+    /// </summary>
     private static string? FindIgnoringCase(string path)
     {
-        if (File.Exists(path)) return path;
         string? directory = Path.GetDirectoryName(path);
         if (directory is null || !Directory.Exists(directory)) return null;
         string name = Path.GetFileName(path);
-        return Directory.EnumerateFiles(directory)
-            .FirstOrDefault(f => string.Equals(Path.GetFileName(f), name, StringComparison.OrdinalIgnoreCase));
+        string? match = null;
+        foreach (string file in Directory.EnumerateFiles(directory))
+        {
+            string candidate = Path.GetFileName(file);
+            if (string.Equals(candidate, name, StringComparison.Ordinal)) return file;
+            if (match is null && string.Equals(candidate, name, StringComparison.OrdinalIgnoreCase)) match = file;
+        }
+        return match;
     }
 }
