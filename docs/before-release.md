@@ -58,3 +58,26 @@ they aborted in most runs.
 (for example 30), once with the stopgap removed to confirm the crash comes back, then with the fix. Also run the
 same loop on Windows and macOS, where the natives come from the NuGet packages and have never been run here.
 Add a test that opens a few dozen non-sounds in a row.
+
+## Stretching units: check them on real devices
+
+**Where:** `src/PixelTuner.Core/Imaging/ItemPreview.cs` (`PassDuration`, `EpicPassDuration`, `VideoPassDuration`), shown in the
+editor's inspector (`EditorViewModel.PlaybackText`). Marked `TODO(release)` in the code. Only the preview text depends on
+these units; the .bin export writes the number as PixelTuner 2 did and is checked byte for byte.
+
+**What we assume.**
+
+- Pixel devices and hoops (the same .bin): each column is held for k x 50 us (Ivan; 100 columns, k=100, 1000 ms is two passes).
+- Video devices: k is milliseconds per frame (40 is 25 frames a second). PixelTuner 2's own sample shows use 40 (one 50).
+- E-Pic poi: copied from PixelTuner 2's "Repeat" window (`RepeatItemWindow`, `K = milliseconds per column * 5`): a column is
+  held for k / 5 ms. The E-Pic .bin stores k * 5.
+
+**The open discrepancy.** The same "Repeat" window is shared by pixel items, and by that formula a pixel column would be held
+for k / 5 ms = 200 us per step, four times what we assume (50 us). A commented-out older version in the same file talks of
+"50-ок" and a minimum column time of 0.1 ms, which fits 50 us. Nothing in PixelTuner 2's source states the device's real unit.
+
+**To do before release.** Measure on a Pixel Poi, a hoop, a video module and an E-Pic poi: upload a known picture, time one
+pass against the inspector's number, and fix the unit (and this note) where it is off. Hoops have no semantics of their own
+in PixelTuner 2's code (only the preview of its player maps stretching to a tiling by LED count), so confirm they match the
+pixel poi.
+

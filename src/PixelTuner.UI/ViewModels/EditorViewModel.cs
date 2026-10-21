@@ -466,16 +466,19 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     /// <summary>
     /// How long one pass of the picture (pixel items) or of the animation (video items) takes at this stretching, and
-    /// how often it plays in the item. E-Pic poi are left out: their time unit is not known.
+    /// how often it plays in the item. E-Pic poi use PixelTuner 2's formula from its Repeat window.
     /// </summary>
     public string PlaybackText
     {
         get
         {
-            if (Item is not { Kind: ItemKind.Image or ItemKind.Video } i || ItemPreviewBitmap is null) return "";
-            var pass = i.Kind == ItemKind.Video
-                ? ItemPreview.VideoPassDuration(_previewColumns, i.Stretching)
-                : ItemPreview.PassDuration(_previewColumns, i.Stretching);
+            if (Item is not { Kind: ItemKind.Image or ItemKind.Video or ItemKind.Gradient } i || ItemPreviewBitmap is null) return "";
+            var pass = i.Kind switch
+            {
+                ItemKind.Video => ItemPreview.VideoPassDuration(_previewColumns, i.Stretching),
+                ItemKind.Gradient => ItemPreview.EpicPassDuration(_previewColumns, i.Stretching),
+                _ => ItemPreview.PassDuration(_previewColumns, i.Stretching),
+            };
             double repeats = ItemPreview.Repeats(i.Duration, pass);
             return string.Format(i.Kind == ItemKind.Video ? Strings.Inspector_PlaybackVideo : Strings.Inspector_Playback,
                 $"{pass.TotalMilliseconds:0.##} ms", repeats.ToString("0.##", System.Globalization.CultureInfo.CurrentCulture));

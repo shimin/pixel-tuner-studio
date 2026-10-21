@@ -9,12 +9,22 @@ namespace PixelTuner.Core.Imaging;
 /// </summary>
 public static class ItemPreview
 {
+    // TODO(release): the units of the three stretching formulas below are not checked on real devices, see docs/before-release.md.
+
     /// <summary>What one step of the stretching is on a pixel device: it holds a column for this many 50 µs intervals.</summary>
     public static readonly TimeSpan StretchingUnit = TimeSpan.FromTicks(500);
 
     /// <summary>How long a picture takes to play once: every column is held for <paramref name="stretching"/> intervals.</summary>
     public static TimeSpan PassDuration(int width, int stretching) =>
         TimeSpan.FromTicks(StretchingUnit.Ticks * Math.Max(0, width) * Math.Max(1, stretching));
+
+    /// <summary>
+    /// How long a gradient picture takes to play once on an E-Pic poi. Copied from PixelTuner 2's "Repeat" window
+    /// (<c>RepeatItemWindow</c>): <c>K = milliseconds per column * 5</c>, so a column is held for k / 5 ms.
+    /// (PixelTuner 2 writes k * 5 into the .bin for E-Pic, and that is what the device receives.)
+    /// </summary>
+    public static TimeSpan EpicPassDuration(int width, int stretching) =>
+        TimeSpan.FromTicks(TimeSpan.TicksPerMillisecond * Math.Max(0, width) * Math.Max(1, stretching) / 5);
 
     /// <summary>
     /// How long an animation takes to play once on a video device: its stretching is the time of one frame

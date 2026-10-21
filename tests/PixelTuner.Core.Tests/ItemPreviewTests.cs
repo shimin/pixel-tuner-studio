@@ -60,4 +60,11 @@ public class ItemPreviewTests
         Assert.Equal(12.0, ItemPreview.Repeats(TimeSpan.FromSeconds(12), pass), 9);
         Assert.Equal(0.45, ItemPreview.Repeats(TimeSpan.FromSeconds(10), ItemPreview.VideoPassDuration(556, 40)), 2);
     }
+
+    [Fact]
+    public void Epic_column_is_a_fifth_of_a_millisecond_per_step_as_in_the_repeat_window()
+    {
+        Assert.Equal(TimeSpan.FromMilliseconds(100), ItemPreview.EpicPassDuration(50, 10));   // 50 columns, 2 ms each
+        Assert.Equal(4.0, ItemPreview.Repeats(TimeSpan.FromMilliseconds(400), ItemPreview.EpicPassDuration(50, 10)), 9);
+    }
 }
