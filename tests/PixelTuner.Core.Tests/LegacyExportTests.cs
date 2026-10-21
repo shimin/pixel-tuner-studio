@@ -54,6 +54,27 @@ public class LegacyExportTests
             FullSampleVideoExportTests.ImagesFrom(expected, selected, FullSampleVideoExportTests.WindowsDecodedDifferently));
     }
 
+    /// <summary>
+    /// A fan upload is the pixel export of one timeline except for the menu colour: the fan
+    /// gets the default (0, 0, 20), the menu "Export bin" that wrote 0.bin the colour tag / 10.
+    /// </summary>
+    [Fact]
+    public void Fan_export_is_the_pixel_export_with_the_default_timeline_colour()
+    {
+        string dir = Fixture("36_fan");
+        var document = PtpDocument.Load(Path.Combine(dir, "36_fans.ptp"));
+        var export = new PtpPixelExport(new PtpMediaResolver(dir).Resolve);
+        var line = PtpPixelExport.PixelTimelines(document)[0];
+
+        byte[] actual = export.ExportFan(line);
+        byte[] expected = File.ReadAllBytes(Path.Combine(dir, "bin", "0.bin"));
+        // Header 12 bytes, one timeline address, then the image count and the colour.
+        Assert.Equal(new byte[] { 0, 0, 25 }, expected[18..21]);
+        expected[20] = 20;
+
+        LegacyBinaryAssert.Equal(expected, actual, JpegImages(expected, [line]));
+    }
+
     /// <summary>Addresses of image blocks decoded from JPEG files (gaps shift item indexes).</summary>
     internal static HashSet<uint> JpegImages(byte[] bin, IReadOnlyList<PtpTimeline> lines)
     {

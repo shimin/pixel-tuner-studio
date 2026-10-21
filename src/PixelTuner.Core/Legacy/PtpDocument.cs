@@ -67,6 +67,7 @@ public sealed partial class PtpDocument
             {
                 timeline.Items.Add(new PtpItem
                 {
+                    Type = (string?)item.Attribute(Xsi + "type") ?? "",
                     Start = ParseTime((string?)item.Attribute("Start")),
                     End = ParseTime((string?)item.Attribute("End")),
                     FullName = (string?)item.Attribute("FullName") ?? "",
@@ -75,6 +76,8 @@ public sealed partial class PtpDocument
                     LaserOn = ParseBool((string?)item.Attribute("LaserOn")),
                     Attributes = item.Attributes().Where(a => !a.IsNamespaceDeclaration)
                         .ToDictionary(a => a.Name.LocalName, a => a.Value),
+                    Data = item.Element("Data")?.Attributes().Where(a => !a.IsNamespaceDeclaration)
+                        .ToDictionary(a => a.Name.LocalName, a => a.Value) ?? [],
                 });
             }
             document.Timelines.Add(timeline);
@@ -117,6 +120,8 @@ public sealed class PtpTimeline
 {
     public const string PixelType = "PixelTimeLineViewModel";
     public const string VideoType = "VideoTimeLineViewModel";
+    public const string EpicType = "EpicPoiTimeLineViewModel";
+    public const string LightType = "LightTimeLineViewModel";
 
     /// <summary>The view model type PixelTuner 2 stored, for example PixelTimeLineViewModel.</summary>
     public string Type { get; init; } = "";
@@ -159,6 +164,12 @@ public readonly record struct PtpLedTile(int Index, int LedNumber, bool Selected
 
 public sealed class PtpItem
 {
+    public const string SolidType = "TimeLineItemSolid";
+    public const string EffectType = "TimeLineItemEffect";
+
+    /// <summary>The serialization type PixelTuner 2 stored, for example TimeLineItemVideo.</summary>
+    public string Type { get; init; } = "";
+
     public TimeSpan Start { get; init; }
     public TimeSpan End { get; init; }
 
@@ -170,4 +181,7 @@ public sealed class PtpItem
     public bool LaserOn { get; init; }
 
     public IReadOnlyDictionary<string, string> Attributes { get; init; } = new Dictionary<string, string>();
+
+    /// <summary>Attributes of the item's Data element (effect parameters of light items).</summary>
+    public IReadOnlyDictionary<string, string> Data { get; init; } = new Dictionary<string, string>();
 }

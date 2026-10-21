@@ -12,6 +12,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/PixelTuner.Core.Tests/PixelTuner.Core.Tests.csproj" />
+    <Project Path="tests/PixelTuner.Legacy.OracleTests/PixelTuner.Legacy.OracleTests.csproj" />
     <Project Path="tests/PixelTuner.Package.Tests/PixelTuner.Package.Tests.csproj" />
     <Project Path="tests/PixelTuner.Sync.Tests/PixelTuner.Sync.Tests.csproj" />
   </Folder>

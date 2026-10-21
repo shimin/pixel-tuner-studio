@@ -56,10 +56,26 @@ public sealed class PtpPixelExport
         return PixelBinaryWriter.Write(lines, height, Depth);
     }
 
-    private PixelExportTimeline BuildTimeline(PtpTimeline timeline, int lineHeight)
+    /// <summary>
+    /// The .bin PixelTuner 2 uploaded to a fan (FileViewModel.GetFanBinaryPresentation):
+    /// one pixel timeline at the height of its first image. Unlike the pixel export, the
+    /// timeline keeps the default menu colour (0, 0, 20) instead of its own colour tag.
+    /// </summary>
+    public byte[] ExportFan(PtpTimeline timeline)
+    {
+        if (timeline.Type != PtpTimeline.PixelType)
+            throw new ArgumentException("A fan plays a pixel timeline.", nameof(timeline));
+        if (timeline.Items.Count == 0)
+            throw new ArgumentException("The timeline has no items.", nameof(timeline));
+        int height = TimelineHeight(timeline);
+        var line = BuildTimeline(timeline, height, new PixelExportTimeline().Color);
+        return PixelBinaryWriter.Write([line], checked((ushort)height), Depth);
+    }
+
+    private PixelExportTimeline BuildTimeline(PtpTimeline timeline, int lineHeight, Rgb? color = null)
     {
         var (_, r, g, b) = timeline.Color;
-        var result = new PixelExportTimeline { Color = new Rgb((byte)(r / 10), (byte)(g / 10), (byte)(b / 10)) };
+        var result = new PixelExportTimeline { Color = color ?? new Rgb((byte)(r / 10), (byte)(g / 10), (byte)(b / 10)) };
 
         var items = timeline.Items;
         if (items[0].Start != TimeSpan.Zero)

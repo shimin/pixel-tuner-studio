@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Runs PixelTuner 2's own export code (compiled from legacy/) next to the port and
+       compares the bytes. Only code that needs no Windows API is compiled here; the one
+       System.Drawing.Bitmap use of the gradient code is served by a small stand-in. -->
+  <PropertyGroup>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <NoWarn>$(NoWarn);CS0168;CS0219;CS0414;CS8981</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\PixelTuner.Core\PixelTuner.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\legacy\PixelTuner2\Communication\ColorDepth.cs" Link="Legacy\ColorDepth.cs" />
+    <Compile Include="..\..\legacy\PixelTuner2\Communication\Binarize\*.cs" LinkBase="Legacy\Binarize" />
+    <Compile Include="..\..\legacy\PixelTuner2\Communication\Gradient\*.cs" LinkBase="Legacy\Gradient" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Condition="$([MSBuild]::IsOSPlatform('Linux'))" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Win32" Condition="$([MSBuild]::IsOSPlatform('Windows'))" />
+    <PackageReference Include="SkiaSharp.NativeAssets.macOS" Condition="$([MSBuild]::IsOSPlatform('OSX'))" />
+  </ItemGroup>
+</Project>
