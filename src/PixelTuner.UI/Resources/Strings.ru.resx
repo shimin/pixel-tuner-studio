@@ -133,6 +133,20 @@
   <data name="Inspector_OffsetX" xml:space="preserve"><value>Сдвиг по X</value></data>
   <data name="Inspector_OffsetY" xml:space="preserve"><value>Сдвиг по Y</value></data>
   <data name="Inspector_BadValue" xml:space="preserve"><value>Это значение не подходит: {0}.</value></data>
+  <data name="Command_MoveDown" xml:space="preserve"><value>Опустить дорожку</value></data>
+  <data name="Command_MoveUp" xml:space="preserve"><value>Поднять дорожку</value></data>
+  <data name="Inspector_LayoutN" xml:space="preserve"><value>Разметка {0}</value></data>
+  <data name="Inspector_NoLayout" xml:space="preserve"><value>(нет)</value></data>
+  <data name="Inspector_Layout" xml:space="preserve"><value>Разметка светодиодов реквизита</value></data>
+  <data name="Inspector_HeightRefused" xml:space="preserve"><value>Высоту нельзя изменить: на дорожке есть картинки другой высоты. Сначала уберите их.</value></data>
+  <data name="Inspector_HeightFromPicture" xml:space="preserve"><value>Картинки на этой дорожке высотой {0} светодиодов, как первая.</value></data>
+  <data name="Inspector_HeightSet" xml:space="preserve"><value>Картинки на этой дорожке высотой {0} светодиодов.</value></data>
+  <data name="Inspector_HeightFree" xml:space="preserve"><value>Любая высота: её задаст первая картинка.</value></data>
+  <data name="Inspector_Height" xml:space="preserve"><value>Светодиоды устройства (0: по первой картинке)</value></data>
+  <data name="Inspector_Monochrome" xml:space="preserve"><value>Монохромный канал (три делят один выход RGB)</value></data>
+  <data name="Inspector_Flip" xml:space="preserve"><value>Отразить по вертикали (устройство стоит вверх ногами)</value></data>
+  <data name="Inspector_ColorNotWritten" xml:space="preserve"><value>Это устройство не хранит цвет дорожки; он нужен только чтобы отличать дорожки.</value></data>
+  <data name="Inspector_TimelineColor" xml:space="preserve"><value>Цвет дорожки</value></data>
   <data name="Effect_LinearTransition" xml:space="preserve"><value>Плавный переход</value></data>
   <data name="Effect_SineWave" xml:space="preserve"><value>Синусоида</value></data>
   <data name="Effect_SquareWave" xml:space="preserve"><value>Меандр</value></data>
