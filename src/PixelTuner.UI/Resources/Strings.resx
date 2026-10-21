@@ -18,4 +18,44 @@
   <data name="Import_Done" xml:space="preserve"><value>Imported. The project is saved as a package.</value></data>
   <data name="Import_DoneMissing" xml:space="preserve"><value>Imported, but {0} media file(s) were not found: {1}</value></data>
   <data name="Error_ImportFailed" xml:space="preserve"><value>Could not import the project: {0}</value></data>
+  <data name="Menu_File" xml:space="preserve"><value>File</value></data>
+  <data name="Menu_Help" xml:space="preserve"><value>Help</value></data>
+  <data name="Command_NewProject" xml:space="preserve"><value>New project</value></data>
+  <data name="Command_Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Command_SaveAs" xml:space="preserve"><value>Save as…</value></data>
+  <data name="Command_CloseProject" xml:space="preserve"><value>Close project</value></data>
+  <data name="Command_Exit" xml:space="preserve"><value>Exit</value></data>
+  <data name="Command_About" xml:space="preserve"><value>About {0}</value></data>
+  <data name="Document_Untitled" xml:space="preserve"><value>Untitled</value></data>
+  <data name="Document_Edited" xml:space="preserve"><value>Edited</value></data>
+  <data name="Dialog_SaveChanges" xml:space="preserve"><value>Do you want to save the changes to “{0}”?</value></data>
+  <data name="Dialog_SaveChangesDetail" xml:space="preserve"><value>Your changes will be lost if you don't save them.</value></data>
+  <data name="Dialog_Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Dialog_DontSave" xml:space="preserve"><value>Don't save</value></data>
+  <data name="Dialog_Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Dialog_Close" xml:space="preserve"><value>Close</value></data>
+  <data name="About_Version" xml:space="preserve"><value>Version {0}</value></data>
+  <data name="Project_Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Error_SaveFailed" xml:space="preserve"><value>Could not save the project: {0}</value></data>
+  <data name="Menu_Edit" xml:space="preserve"><value>Edit</value></data>
+  <data name="Command_Undo" xml:space="preserve"><value>Undo</value></data>
+  <data name="Command_UndoNamed" xml:space="preserve"><value>Undo {0}</value></data>
+  <data name="Command_Redo" xml:space="preserve"><value>Redo</value></data>
+  <data name="Command_RedoNamed" xml:space="preserve"><value>Redo {0}</value></data>
+  <data name="Edit_RenameProject" xml:space="preserve"><value>Rename project</value></data>
+  <data name="Edit_AddTimeline" xml:space="preserve"><value>Add timeline</value></data>
+  <data name="Edit_RemoveTimeline" xml:space="preserve"><value>Delete timeline</value></data>
+  <data name="Edit_RenameTimeline" xml:space="preserve"><value>Rename timeline</value></data>
+  <data name="Edit_MoveTimeline" xml:space="preserve"><value>Move timeline</value></data>
+  <data name="Edit_SetTimelineColor" xml:space="preserve"><value>Change timeline colour</value></data>
+  <data name="Edit_AddItem" xml:space="preserve"><value>Add item</value></data>
+  <data name="Edit_RemoveItem" xml:space="preserve"><value>Delete item</value></data>
+  <data name="Edit_MoveItem" xml:space="preserve"><value>Move item</value></data>
+  <data name="Edit_ResizeItem" xml:space="preserve"><value>Resize item</value></data>
+  <data name="Edit_SetBrightness" xml:space="preserve"><value>Change brightness</value></data>
+  <data name="Edit_SetStretching" xml:space="preserve"><value>Change stretching</value></data>
+  <data name="Edit_AddMarker" xml:space="preserve"><value>Add marker</value></data>
+  <data name="Edit_RemoveMarker" xml:space="preserve"><value>Delete marker</value></data>
+  <data name="Edit_RenameMarker" xml:space="preserve"><value>Rename marker</value></data>
+  <data name="Edit_MoveMarker" xml:space="preserve"><value>Move marker</value></data>
 </root>

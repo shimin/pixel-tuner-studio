@@ -1,8 +1,17 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PixelTuner.UI.ViewModels"
+             xmlns:res="using:PixelTuner.UI.Resources"
              x:Class="PixelTuner.UI.App"
+             x:DataType="vm:MainViewModel"
              RequestedThemeVariant="Default">
   <!-- "Default" follows the system light or dark theme on every platform. -->
+  <!-- macOS app menu: About goes next to the system items (Hide, Quit). Windows has it under Help. -->
+  <NativeMenu.Menu>
+    <NativeMenu>
+      <NativeMenuItem Header="{Binding AboutHeader}" Command="{Binding AboutCommand}" />
+    </NativeMenu>
+  </NativeMenu.Menu>
   <Application.Styles>
     <FluentTheme />
     <StyleInclude Source="avares://PixelTuner.UI/Styles/Theme.axaml" />

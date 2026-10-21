@@ -18,4 +18,44 @@
   <data name="Import_Done" xml:space="preserve"><value>Importiert. Das Projekt ist als Paket gespeichert.</value></data>
   <data name="Import_DoneMissing" xml:space="preserve"><value>Importiert, aber {0} Mediendatei(en) fehlen: {1}</value></data>
   <data name="Error_ImportFailed" xml:space="preserve"><value>Das Projekt konnte nicht importiert werden: {0}</value></data>
+  <data name="Menu_File" xml:space="preserve"><value>Datei</value></data>
+  <data name="Menu_Help" xml:space="preserve"><value>Hilfe</value></data>
+  <data name="Command_NewProject" xml:space="preserve"><value>Neues Projekt</value></data>
+  <data name="Command_Save" xml:space="preserve"><value>Sichern</value></data>
+  <data name="Command_SaveAs" xml:space="preserve"><value>Sichern unter…</value></data>
+  <data name="Command_CloseProject" xml:space="preserve"><value>Projekt schließen</value></data>
+  <data name="Command_Exit" xml:space="preserve"><value>Beenden</value></data>
+  <data name="Command_About" xml:space="preserve"><value>Über {0}</value></data>
+  <data name="Document_Untitled" xml:space="preserve"><value>Ohne Titel</value></data>
+  <data name="Document_Edited" xml:space="preserve"><value>Bearbeitet</value></data>
+  <data name="Dialog_SaveChanges" xml:space="preserve"><value>Möchten Sie die Änderungen an „{0}“ sichern?</value></data>
+  <data name="Dialog_SaveChangesDetail" xml:space="preserve"><value>Ohne Sichern gehen die Änderungen verloren.</value></data>
+  <data name="Dialog_Save" xml:space="preserve"><value>Sichern</value></data>
+  <data name="Dialog_DontSave" xml:space="preserve"><value>Nicht sichern</value></data>
+  <data name="Dialog_Cancel" xml:space="preserve"><value>Abbrechen</value></data>
+  <data name="Dialog_Close" xml:space="preserve"><value>Schließen</value></data>
+  <data name="About_Version" xml:space="preserve"><value>Version {0}</value></data>
+  <data name="Project_Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Error_SaveFailed" xml:space="preserve"><value>Das Projekt konnte nicht gesichert werden: {0}</value></data>
+  <data name="Menu_Edit" xml:space="preserve"><value>Bearbeiten</value></data>
+  <data name="Command_Undo" xml:space="preserve"><value>Widerrufen</value></data>
+  <data name="Command_UndoNamed" xml:space="preserve"><value>{0} widerrufen</value></data>
+  <data name="Command_Redo" xml:space="preserve"><value>Wiederholen</value></data>
+  <data name="Command_RedoNamed" xml:space="preserve"><value>{0} wiederholen</value></data>
+  <data name="Edit_RenameProject" xml:space="preserve"><value>Projekt umbenennen</value></data>
+  <data name="Edit_AddTimeline" xml:space="preserve"><value>Zeitleiste hinzufügen</value></data>
+  <data name="Edit_RemoveTimeline" xml:space="preserve"><value>Zeitleiste löschen</value></data>
+  <data name="Edit_RenameTimeline" xml:space="preserve"><value>Zeitleiste umbenennen</value></data>
+  <data name="Edit_MoveTimeline" xml:space="preserve"><value>Zeitleiste verschieben</value></data>
+  <data name="Edit_SetTimelineColor" xml:space="preserve"><value>Zeitleistenfarbe ändern</value></data>
+  <data name="Edit_AddItem" xml:space="preserve"><value>Element hinzufügen</value></data>
+  <data name="Edit_RemoveItem" xml:space="preserve"><value>Element löschen</value></data>
+  <data name="Edit_MoveItem" xml:space="preserve"><value>Element verschieben</value></data>
+  <data name="Edit_ResizeItem" xml:space="preserve"><value>Elementlänge ändern</value></data>
+  <data name="Edit_SetBrightness" xml:space="preserve"><value>Helligkeit ändern</value></data>
+  <data name="Edit_SetStretching" xml:space="preserve"><value>Dehnung ändern</value></data>
+  <data name="Edit_AddMarker" xml:space="preserve"><value>Marker hinzufügen</value></data>
+  <data name="Edit_RemoveMarker" xml:space="preserve"><value>Marker löschen</value></data>
+  <data name="Edit_RenameMarker" xml:space="preserve"><value>Marker umbenennen</value></data>
+  <data name="Edit_MoveMarker" xml:space="preserve"><value>Marker verschieben</value></data>
 </root>

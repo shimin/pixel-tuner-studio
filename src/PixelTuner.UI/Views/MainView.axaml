@@ -9,14 +9,19 @@
        platform safe area on phones (notch, home indicator). -->
   <ScrollViewer>
     <StackPanel Margin="{StaticResource PtPagePadding}" Spacing="{StaticResource PtSpacing}" MaxWidth="720">
-      <TextBlock Classes="h1" Text="{Binding Title}" />
+      <TextBlock Classes="h1" Text="{Binding AppName}" />
       <TextBlock Classes="muted" TextWrapping="Wrap" Text="{x:Static res:Strings.Start_Subheading}" />
-      <Button Classes="accent" HorizontalAlignment="Left"
-              Content="{x:Static res:Strings.Command_OpenProject}"
-              Command="{Binding OpenProjectCommand}" />
-      <Button HorizontalAlignment="Left" IsVisible="{Binding CanImportLegacy}"
-              Content="{x:Static res:Strings.Command_ImportLegacy}"
-              Command="{Binding ImportLegacyProjectCommand}" />
+      <WrapPanel>
+        <Button Classes="accent" Margin="0,0,8,8"
+                Content="{x:Static res:Strings.Command_OpenProject}"
+                Command="{Binding OpenProjectCommand}" />
+        <Button IsVisible="{Binding CanEdit}" Margin="0,0,8,8"
+                Content="{x:Static res:Strings.Command_NewProject}"
+                Command="{Binding NewProjectCommand}" />
+        <Button IsVisible="{Binding CanEdit}" Margin="0,0,8,8"
+                Content="{x:Static res:Strings.Command_ImportLegacy}"
+                Command="{Binding ImportLegacyProjectCommand}" />
+      </WrapPanel>
       <TextBlock Classes="muted" TextWrapping="Wrap" Text="{Binding Status}"
                  IsVisible="{Binding Status, Converter={x:Static ObjectConverters.IsNotNull}}" />
 
@@ -25,7 +30,9 @@
 
       <Border Classes="card" IsVisible="{Binding HasProject}">
         <StackPanel Spacing="8">
-          <TextBlock FontSize="20" FontWeight="SemiBold" Text="{Binding Project.Name}" />
+          <TextBlock Classes="muted" Text="{x:Static res:Strings.Project_Name}" />
+          <!-- The document keeps the undo history, so the box must not keep its own. -->
+          <TextBox Text="{Binding ProjectName}" IsReadOnly="{Binding !CanEdit}" IsUndoEnabled="False" />
           <UniformGrid Columns="2">
             <TextBlock Classes="muted" Text="{x:Static res:Strings.Project_Timelines}" />
             <TextBlock Text="{Binding Project.Timelines}" />

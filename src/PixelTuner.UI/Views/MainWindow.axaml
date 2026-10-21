@@ -8,20 +8,58 @@
         Title="{Binding Title}"
         Icon="/Assets/studio_icon.png"
         Width="1280" Height="800" MinWidth="960" MinHeight="600"
-        WindowStartupLocation="CenterScreen">
-  <!-- Desktop window for Windows and macOS. The native menu goes to the macOS
-       menu bar and stays hidden on Windows, where the app has its own commands. -->
+        WindowStartupLocation="CenterScreen"
+        DragDrop.AllowDrop="True">
+  <!-- Desktop window for Windows and macOS. One menu definition: macOS shows it in the menu
+       bar at the top of the screen, Windows shows it as a menu bar inside the window. -->
   <NativeMenu.Menu>
     <NativeMenu>
-      <NativeMenuItem Header="{x:Static res:Strings.Command_OpenProject}"
-                      Command="{Binding OpenProjectCommand}"
-                      Gesture="Meta+O" />
+      <NativeMenuItem Header="{x:Static res:Strings.Menu_File}">
+        <NativeMenu>
+          <NativeMenuItem Header="{x:Static res:Strings.Command_NewProject}"
+                          Command="{Binding NewProjectCommand}" Gesture="{x:Static views:Shortcuts.New}" />
+          <NativeMenuItem Header="{x:Static res:Strings.Command_OpenProject}"
+                          Command="{Binding OpenProjectCommand}" Gesture="{x:Static views:Shortcuts.Open}" />
+          <NativeMenuItem Header="{x:Static res:Strings.Command_ImportLegacy}"
+                          Command="{Binding ImportLegacyProjectCommand}" Gesture="{x:Static views:Shortcuts.Import}" />
+          <NativeMenuItemSeparator />
+          <NativeMenuItem Header="{x:Static res:Strings.Command_Save}"
+                          Command="{Binding SaveCommand}" Gesture="{x:Static views:Shortcuts.Save}" />
+          <NativeMenuItem Header="{x:Static res:Strings.Command_SaveAs}"
+                          Command="{Binding SaveAsCommand}" Gesture="{x:Static views:Shortcuts.SaveAs}" />
+          <NativeMenuItemSeparator />
+          <NativeMenuItem Header="{x:Static res:Strings.Command_CloseProject}"
+                          Command="{Binding CloseProjectCommand}" Gesture="{x:Static views:Shortcuts.Close}" />
+          <NativeMenuItem Header="{x:Static res:Strings.Command_Exit}" IsVisible="{Binding ShowWindowsMenus}"
+                          Command="{Binding ExitCommand}" />
+        </NativeMenu>
+      </NativeMenuItem>
+      <NativeMenuItem Header="{x:Static res:Strings.Menu_Edit}">
+        <NativeMenu>
+          <NativeMenuItem Header="{Binding UndoHeader}" Command="{Binding UndoCommand}" Gesture="{x:Static views:Shortcuts.Undo}" />
+          <NativeMenuItem Header="{Binding RedoHeader}" Command="{Binding RedoCommand}" Gesture="{x:Static views:Shortcuts.Redo}" />
+        </NativeMenu>
+      </NativeMenuItem>
+      <NativeMenuItem Header="{x:Static res:Strings.Menu_Help}" IsVisible="{Binding ShowWindowsMenus}">
+        <NativeMenu>
+          <NativeMenuItem Header="{Binding AboutHeader}" Command="{Binding AboutCommand}" />
+        </NativeMenu>
+      </NativeMenuItem>
     </NativeMenu>
   </NativeMenu.Menu>
   <Window.KeyBindings>
-    <!-- Ctrl+O on Windows, Cmd+O on macOS. -->
-    <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenProjectCommand}" />
-    <KeyBinding Gesture="Meta+O" Command="{Binding OpenProjectCommand}" />
+    <KeyBinding Gesture="{x:Static views:Shortcuts.New}" Command="{Binding NewProjectCommand}" />
+    <KeyBinding Gesture="{x:Static views:Shortcuts.Open}" Command="{Binding OpenProjectCommand}" />
+    <KeyBinding Gesture="{x:Static views:Shortcuts.Import}" Command="{Binding ImportLegacyProjectCommand}" />
+    <KeyBinding Gesture="{x:Static views:Shortcuts.Save}" Command="{Binding SaveCommand}" />
+    <KeyBinding Gesture="{x:Static views:Shortcuts.SaveAs}" Command="{Binding SaveAsCommand}" />
+    <KeyBinding Gesture="{x:Static views:Shortcuts.Undo}" Command="{Binding UndoCommand}" />
+    <KeyBinding Gesture="{x:Static views:Shortcuts.Redo}" Command="{Binding RedoCommand}" />
+    <KeyBinding Gesture="{x:Static views:Shortcuts.RedoAlternate}" Command="{Binding RedoCommand}" />
+    <KeyBinding Gesture="{x:Static views:Shortcuts.Close}" Command="{Binding CloseProjectCommand}" />
   </Window.KeyBindings>
-  <views:MainView />
+  <DockPanel>
+    <NativeMenuBar DockPanel.Dock="Top" />
+    <views:MainView />
+  </DockPanel>
 </Window>
