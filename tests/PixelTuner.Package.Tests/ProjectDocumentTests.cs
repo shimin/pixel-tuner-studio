@@ -310,4 +310,54 @@ public class ProjectDocumentTests : IDisposable
         Assert.All(document.Project.Timelines.Where(t => t.Kind == TimelineKind.Pixel), t => Assert.Equal(80, Edits.PixelHeight(t)));
         Assert.False(document.IsDirty);
     }
+
+    [Fact]
+    public void Opening_an_imported_project_fills_the_library_from_what_its_items_play()
+    {
+        string dir = Path.Combine(AppContext.BaseDirectory, "Fixtures", "LegacyProjects", "80_sample");
+        string package = Path.Combine(_dir, "lib.pxpkg");
+        PtpImporter.Import(Path.Combine(dir, "80_sample.ptp"), package);
+
+        using var document = ProjectDocument.Open(package);
+
+        var files = document.Project.Timelines.SelectMany(t => t.Items).Select(i => i.ResourceId).Distinct().ToList();
+        Assert.NotEmpty(document.Project.Library);
+        Assert.Equal(files.Count, document.Project.Library.Count);
+        Assert.All(document.Project.Library, e => Assert.Equal((LibraryKind.Image, 80), (e.Kind, e.Height)));
+        Assert.False(document.IsDirty);
+    }
+
+    [Fact]
+    public void A_library_entry_keeps_its_file_in_the_package_even_when_no_item_plays_it()
+    {
+        string source = Path.Combine(_dir, "pic.png");
+        using (var bitmap = new SkiaSharp.SKBitmap(3, 5))
+        using (var image = SkiaSharp.SKImage.FromBitmap(bitmap))
+            File.WriteAllBytes(source, image.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).ToArray());
+
+        string path = Path.Combine(_dir, "kept.pxpkg");
+        string id;
+        using (var document = ProjectDocument.CreateNew("Show"))
+        {
+            id = document.AddMedia(source);
+            document.Execute(Edits.AddLibraryEntry(document.Project,
+                new LibraryEntry { Name = "pic", Kind = LibraryKind.Image, ResourceId = id, SourcePath = source, Width = 3, Height = 5 }));
+            document.SaveAs(path);
+        }
+
+        using var reopened = ProjectDocument.Open(path);
+        Assert.True(reopened.HasMedia(id));
+        Assert.Equal("pic", Assert.Single(reopened.Project.Library).Name);
+    }
+
+    [Fact]
+    public void Media_made_in_memory_is_stored_by_its_hash_once()
+    {
+        using var document = ProjectDocument.CreateNew("Show");
+        string one = document.AddMedia([9, 9, 9], "a.png");
+        string two = document.AddMedia([9, 9, 9], "b.png");
+
+        Assert.Equal(one, two);
+        Assert.Equal(1, document.MediaCount);
+    }
 }

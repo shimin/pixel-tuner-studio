@@ -112,12 +112,16 @@
   <data name="Edit_RemoveDevice" xml:space="preserve"><value>Gerät entfernen</value></data>
   <data name="Edit_SetDeviceTimelines" xml:space="preserve"><value>Spuren des Geräts ändern</value></data>
   <data name="Edit_SetDeviceLedCount" xml:space="preserve"><value>LED-Anzahl des Geräts ändern</value></data>
+  <data name="Edit_AddLibraryEntry" xml:space="preserve"><value>Zur Bibliothek hinzufügen</value></data>
+  <data name="Edit_RemoveLibraryEntry" xml:space="preserve"><value>Aus der Bibliothek entfernen</value></data>
+  <data name="Edit_RenameLibraryEntry" xml:space="preserve"><value>Bibliothekseintrag umbenennen</value></data>
+  <data name="Edit_ReplaceLibraryMedia" xml:space="preserve"><value>Datei in der Bibliothek ersetzen</value></data>
   <data name="Command_AddItem" xml:space="preserve"><value>Datei hinzufügen…</value></data>
   <data name="FileType_Image" xml:space="preserve"><value>Bilder</value></data>
   <data name="Item_AddFailed" xml:space="preserve"><value>{0} kann nicht hinzugefügt werden: {1}</value></data>
   <data name="Item_NoTimeline" xml:space="preserve"><value>Wähle zuerst eine Spur: Pixel-, Video- und E-Pic-Spuren nehmen Dateien, die LightMaster-Spur nimmt Farben und Effekte.</value></data>
   <data name="Item_NoRoom" xml:space="preserve"><value>Auf dieser Spur ist ab dem Abspielkopf keine Zeit frei.</value></data>
-  <data name="Item_WrongHeight" xml:space="preserve"><value>{0} ist {1} LEDs hoch, diese Spur spielt aber Bilder mit {2} LEDs. Wähle eine Spur dieser Höhe oder passe das Bild an.</value></data>
+  <data name="Item_WrongHeight" xml:space="preserve"><value>{0} ist {1} LEDs hoch, diese Spur spielt aber Bilder mit {2} LEDs. Wähle eine Spur dieser Höhe oder importiere das Bild mit Skalierung (Importieren… in der Bibliothek).</value></data>
   <data name="Inspector_Brightness" xml:space="preserve"><value>Helligkeit</value></data>
   <data name="Inspector_Stretching" xml:space="preserve"><value>Dehnung</value></data>
   <data name="Inspector_Laser" xml:space="preserve"><value>Laser</value></data>
@@ -133,6 +137,43 @@
   <data name="Inspector_OffsetX" xml:space="preserve"><value>Versatz X</value></data>
   <data name="Inspector_OffsetY" xml:space="preserve"><value>Versatz Y</value></data>
   <data name="Inspector_BadValue" xml:space="preserve"><value>Dieser Wert ist nicht möglich: {0}.</value></data>
+  <data name="Import_Trim" xml:space="preserve"><value>Beschneiden, was die Stauchung übrig ließ</value></data>
+  <data name="Import_WarpBottom" xml:space="preserve"><value>Unten</value></data>
+  <data name="Import_WarpMiddle" xml:space="preserve"><value>Mitte</value></data>
+  <data name="Import_WarpTop" xml:space="preserve"><value>Oben</value></data>
+  <data name="Import_WarpHint" xml:space="preserve"><value>Staucht das Bild zur Mittellinie, oben stärker, damit das, was der Poi in die Luft zeichnet, richtig aussieht. Aus lassen, um den Schritt zu überspringen.</value></data>
+  <data name="Import_Warp" xml:space="preserve"><value>In Perspektive stauchen</value></data>
+  <data name="Import_StepFinish" xml:space="preserve"><value>3  Größe und Farbe</value></data>
+  <data name="Import_StepPerspective" xml:space="preserve"><value>2  Perspektive</value></data>
+  <data name="Import_StepCut" xml:space="preserve"><value>1  Zuschnitt</value></data>
+  <data name="Import_Cancel" xml:space="preserve"><value>Abbrechen</value></data>
+  <data name="Import_Apply" xml:space="preserve"><value>Zur Bibliothek</value></data>
+  <data name="Import_WrongHeight" xml:space="preserve"><value>Das Bild muss so hoch sein, wie die Spur es spielt: skaliere oder beschneide es.</value></data>
+  <data name="Import_Result" xml:space="preserve"><value>Ergebnis (Breite und Höhe in Pixeln)</value></data>
+  <data name="Import_Sharpen" xml:space="preserve"><value>Schärfe</value></data>
+  <data name="Import_Value" xml:space="preserve"><value>Helligkeit (HSL)</value></data>
+  <data name="Import_Saturation" xml:space="preserve"><value>Sättigung</value></data>
+  <data name="Import_Hue" xml:space="preserve"><value>Farbton</value></data>
+  <data name="Import_Contrast" xml:space="preserve"><value>Kontrast</value></data>
+  <data name="Import_Midtones" xml:space="preserve"><value>Nur Mitteltöne</value></data>
+  <data name="Import_Brightness" xml:space="preserve"><value>Helligkeit</value></data>
+  <data name="Import_Scale" xml:space="preserve"><value>Auf die Höhe des Geräts skalieren (LEDs)</value></data>
+  <data name="Library_MissingTitle" xml:space="preserve"><value>Fehlende Dateien</value></data>
+  <data name="Library_Replace" xml:space="preserve"><value>Datei suchen…</value></data>
+  <data name="Library_ReplaceHeight" xml:space="preserve"><value>„{0}“ würde die Bilder einer Spur verschieden hoch machen.</value></data>
+  <data name="Library_InUse" xml:space="preserve"><value>Ein Element spielt es: nimm zuerst das Element weg.</value></data>
+  <data name="Library_Missing" xml:space="preserve"><value>Die Datei fehlt.</value></data>
+  <data name="Library_WrongHeight" xml:space="preserve"><value>{0} LEDs hoch: die Spur spielt eine andere Höhe.</value></data>
+  <data name="Library_WrongKind" xml:space="preserve"><value>Diese Spur spielt das nicht.</value></data>
+  <data name="Library_VideoDetail" xml:space="preserve"><value>{0} × {1}, {2} Bilder</value></data>
+  <data name="Library_Empty" xml:space="preserve"><value>Für diese Spur gibt es noch nichts. Importiere eine Datei.</value></data>
+  <data name="Library_SaveItem" xml:space="preserve"><value>In die Bibliothek</value></data>
+  <data name="Library_AddColor" xml:space="preserve"><value>Farbe hinzufügen</value></data>
+  <data name="Library_ShowAll" xml:space="preserve"><value>Alles zeigen</value></data>
+  <data name="Library_Remove" xml:space="preserve"><value>Entfernen</value></data>
+  <data name="Library_Place" xml:space="preserve"><value>Auf die Spur legen</value></data>
+  <data name="Library_Import" xml:space="preserve"><value>Importieren…</value></data>
+  <data name="Library_Title" xml:space="preserve"><value>Bibliothek</value></data>
   <data name="Drop_NoRoom" xml:space="preserve"><value>Hier ist zu dieser Zeit kein Platz für das Element.</value></data>
   <data name="Drop_WrongHeight" xml:space="preserve"><value>Diese Spur spielt Bilder mit {0} LEDs; dieses hat {1}.</value></data>
   <data name="Drop_WrongKind" xml:space="preserve"><value>Eine Spur „{0}“ nimmt dieses Element nicht an.</value></data>

@@ -112,12 +112,16 @@
   <data name="Edit_RemoveDevice" xml:space="preserve"><value>Удаление устройства</value></data>
   <data name="Edit_SetDeviceTimelines" xml:space="preserve"><value>Изменение дорожек устройства</value></data>
   <data name="Edit_SetDeviceLedCount" xml:space="preserve"><value>Изменение числа светодиодов устройства</value></data>
+  <data name="Edit_AddLibraryEntry" xml:space="preserve"><value>Добавление в библиотеку</value></data>
+  <data name="Edit_RemoveLibraryEntry" xml:space="preserve"><value>Удаление из библиотеки</value></data>
+  <data name="Edit_RenameLibraryEntry" xml:space="preserve"><value>Переименование в библиотеке</value></data>
+  <data name="Edit_ReplaceLibraryMedia" xml:space="preserve"><value>Замена файла в библиотеке</value></data>
   <data name="Command_AddItem" xml:space="preserve"><value>Добавить файл…</value></data>
   <data name="FileType_Image" xml:space="preserve"><value>Картинки</value></data>
   <data name="Item_AddFailed" xml:space="preserve"><value>Не удалось добавить {0}: {1}</value></data>
   <data name="Item_NoTimeline" xml:space="preserve"><value>Сначала выберите дорожку: файлы принимают дорожки пикселей, видео и E-Pic, а цвета и эффекты — дорожка LightMaster.</value></data>
   <data name="Item_NoRoom" xml:space="preserve"><value>На этой дорожке нет свободного времени с курсора и дальше.</value></data>
-  <data name="Item_WrongHeight" xml:space="preserve"><value>Высота «{0}» — {1} светодиодов, а эта дорожка играет картинки высотой {2}. Выберите дорожку такой высоты или приведите картинку к нужной.</value></data>
+  <data name="Item_WrongHeight" xml:space="preserve"><value>Высота «{0}» — {1} светодиодов, а эта дорожка играет картинки высотой {2}. Выберите дорожку такой высоты или импортируйте картинку с приведением к высоте (Импорт… в библиотеке).</value></data>
   <data name="Inspector_Brightness" xml:space="preserve"><value>Яркость</value></data>
   <data name="Inspector_Stretching" xml:space="preserve"><value>Растяжение</value></data>
   <data name="Inspector_Laser" xml:space="preserve"><value>Лазер</value></data>
@@ -133,6 +137,43 @@
   <data name="Inspector_OffsetX" xml:space="preserve"><value>Сдвиг по X</value></data>
   <data name="Inspector_OffsetY" xml:space="preserve"><value>Сдвиг по Y</value></data>
   <data name="Inspector_BadValue" xml:space="preserve"><value>Это значение не подходит: {0}.</value></data>
+  <data name="Import_Trim" xml:space="preserve"><value>Обрезать то, что осталось после сжатия</value></data>
+  <data name="Import_WarpBottom" xml:space="preserve"><value>Низ</value></data>
+  <data name="Import_WarpMiddle" xml:space="preserve"><value>Середина</value></data>
+  <data name="Import_WarpTop" xml:space="preserve"><value>Верх</value></data>
+  <data name="Import_WarpHint" xml:space="preserve"><value>Сжимает картинку к средней линии, сверху сильнее, чтобы то, что пои рисует в воздухе, выглядело правильно. Выключите, чтобы пропустить шаг.</value></data>
+  <data name="Import_Warp" xml:space="preserve"><value>Сжать в перспективе</value></data>
+  <data name="Import_StepFinish" xml:space="preserve"><value>3  Размер и цвет</value></data>
+  <data name="Import_StepPerspective" xml:space="preserve"><value>2  Перспектива</value></data>
+  <data name="Import_StepCut" xml:space="preserve"><value>1  Обрезка</value></data>
+  <data name="Import_Cancel" xml:space="preserve"><value>Отмена</value></data>
+  <data name="Import_Apply" xml:space="preserve"><value>В библиотеку</value></data>
+  <data name="Import_WrongHeight" xml:space="preserve"><value>Картинка должна быть такой высоты, какую играет дорожка: приведите её к ней или обрежьте.</value></data>
+  <data name="Import_Result" xml:space="preserve"><value>Результат (ширина и высота в пикселях)</value></data>
+  <data name="Import_Sharpen" xml:space="preserve"><value>Резкость</value></data>
+  <data name="Import_Value" xml:space="preserve"><value>Светлота</value></data>
+  <data name="Import_Saturation" xml:space="preserve"><value>Насыщенность</value></data>
+  <data name="Import_Hue" xml:space="preserve"><value>Тон</value></data>
+  <data name="Import_Contrast" xml:space="preserve"><value>Контраст</value></data>
+  <data name="Import_Midtones" xml:space="preserve"><value>Только средние тона</value></data>
+  <data name="Import_Brightness" xml:space="preserve"><value>Яркость</value></data>
+  <data name="Import_Scale" xml:space="preserve"><value>Привести к высоте устройства (светодиоды)</value></data>
+  <data name="Library_MissingTitle" xml:space="preserve"><value>Пропавшие файлы</value></data>
+  <data name="Library_Replace" xml:space="preserve"><value>Найти файл…</value></data>
+  <data name="Library_ReplaceHeight" xml:space="preserve"><value>«{0}» сделал бы картинки на дорожке разной высоты.</value></data>
+  <data name="Library_InUse" xml:space="preserve"><value>Его играет элемент: сначала уберите элемент.</value></data>
+  <data name="Library_Missing" xml:space="preserve"><value>Файла нет.</value></data>
+  <data name="Library_WrongHeight" xml:space="preserve"><value>Высота {0} светодиодов: дорожка играет другую высоту.</value></data>
+  <data name="Library_WrongKind" xml:space="preserve"><value>Эта дорожка это не играет.</value></data>
+  <data name="Library_VideoDetail" xml:space="preserve"><value>{0} × {1}, кадров: {2}</value></data>
+  <data name="Library_Empty" xml:space="preserve"><value>Для этой дорожки пока ничего нет. Импортируйте файл.</value></data>
+  <data name="Library_SaveItem" xml:space="preserve"><value>В библиотеку</value></data>
+  <data name="Library_AddColor" xml:space="preserve"><value>Добавить цвет</value></data>
+  <data name="Library_ShowAll" xml:space="preserve"><value>Показать всё</value></data>
+  <data name="Library_Remove" xml:space="preserve"><value>Удалить</value></data>
+  <data name="Library_Place" xml:space="preserve"><value>Положить на дорожку</value></data>
+  <data name="Library_Import" xml:space="preserve"><value>Импорт…</value></data>
+  <data name="Library_Title" xml:space="preserve"><value>Библиотека</value></data>
   <data name="Drop_NoRoom" xml:space="preserve"><value>Здесь в это время нет места для элемента.</value></data>
   <data name="Drop_WrongHeight" xml:space="preserve"><value>Эта дорожка играет картинки высотой {0} светодиодов, а эта — {1}.</value></data>
   <data name="Drop_WrongKind" xml:space="preserve"><value>Дорожка «{0}» не принимает такой элемент.</value></data>

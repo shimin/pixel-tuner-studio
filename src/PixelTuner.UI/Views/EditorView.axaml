@@ -3,11 +3,13 @@
              xmlns:vm="using:PixelTuner.UI.ViewModels"
              xmlns:res="using:PixelTuner.UI.Resources"
              xmlns:tl="using:PixelTuner.UI.Timelines"
+             xmlns:lib="using:PixelTuner.UI.LibraryPanel"
+             xmlns:core="using:PixelTuner.Core.Model"
              x:Class="PixelTuner.UI.Views.EditorView"
              x:DataType="vm:EditorViewModel"
              Background="{DynamicResource PtSurfaceBrush}">
   <!-- Studio's editor: a toolbar, the timelines, and an inspector for the selection. -->
-  <Grid RowDefinitions="Auto,Auto,*" ColumnDefinitions="*,280">
+  <Grid RowDefinitions="Auto,Auto,*,Auto" ColumnDefinitions="*,280">
     <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="8" Margin="12,8">
       <Button Content="{x:Static res:Strings.Menu_Timeline}">
         <Button.Flyout>
@@ -141,6 +143,154 @@
           </StackPanel>
         </StackPanel>
       </StackPanel>
+    </Border>
+
+    <!-- The library: what the project has to put on timelines, narrowed to what the selected timeline can play.
+         While a picture is imported, the import panel takes its place. -->
+    <Border Grid.Row="3" Grid.ColumnSpan="2" Classes="card" Margin="12,0,12,12" MaxHeight="440">
+      <Grid RowDefinitions="Auto,*" RowSpacing="8">
+        <WrapPanel Orientation="Horizontal">
+          <TextBlock Text="{x:Static res:Strings.Library_Title}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,12,0" />
+          <Button Content="{x:Static res:Strings.Library_Import}" Command="{Binding Gallery.ImportCommand}" Margin="0,0,8,0" />
+          <Button Content="{x:Static res:Strings.Library_Place}" Command="{Binding Gallery.PlaceCommand}" Margin="0,0,8,0" />
+          <Button Content="{x:Static res:Strings.Library_Remove}" Command="{Binding Gallery.RemoveCommand}" Margin="0,0,8,0" />
+          <CheckBox Content="{x:Static res:Strings.Library_ShowAll}" IsChecked="{Binding Gallery.ShowAll}" Margin="0,0,12,0" />
+          <TextBox Text="{Binding Gallery.NewColor}" Width="90" IsUndoEnabled="False" Margin="0,0,4,0" />
+          <Button Content="{x:Static res:Strings.Library_AddColor}" Command="{Binding Gallery.AddColorCommand}" Margin="0,0,8,0" />
+          <Button Content="{x:Static res:Strings.Library_SaveItem}" Command="{Binding Gallery.SaveSelectedItemCommand}" Margin="0,0,8,0" />
+          <TextBox Text="{Binding Gallery.SelectedName}" IsVisible="{Binding Gallery.HasSelected}" Width="140" IsUndoEnabled="False" Margin="0,0,8,0" />
+          <TextBlock Text="{Binding Gallery.Message}" IsVisible="{Binding Gallery.Message, Converter={x:Static ObjectConverters.IsNotNull}}"
+                     Foreground="{DynamicResource SystemFillColorCautionBrush}" VerticalAlignment="Center" TextWrapping="Wrap" />
+        </WrapPanel>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" IsVisible="{Binding !Gallery.IsImporting}">
+          <StackPanel Spacing="8">
+            <ListBox ItemsSource="{Binding Gallery.Entries}" SelectedItem="{Binding Gallery.Selected}" Background="Transparent" DoubleTapped="OnEntryDoubleTapped">
+              <ListBox.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ListBox.ItemsPanel>
+              <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="lib:LibraryEntryViewModel">
+                  <StackPanel Width="104" Spacing="2" Opacity="{Binding Dim}" ToolTip.Tip="{Binding Reason}">
+                    <Border Height="64" CornerRadius="4" ClipToBounds="True" Background="{Binding Swatch}">
+                      <Image Source="{Binding Thumbnail}" Stretch="Uniform" RenderOptions.BitmapInterpolationMode="MediumQuality" />
+                    </Border>
+                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                    <TextBlock Text="{Binding Detail}" Classes="muted" FontSize="11" TextTrimming="CharacterEllipsis" />
+                  </StackPanel>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+            <TextBlock Classes="muted" Text="{x:Static res:Strings.Library_Empty}" IsVisible="{Binding Gallery.IsEmpty}" />
+            <StackPanel Spacing="4" IsVisible="{Binding Gallery.Missing.Count}">
+              <TextBlock Text="{x:Static res:Strings.Library_MissingTitle}" FontWeight="SemiBold" />
+              <ItemsControl ItemsSource="{Binding Gallery.Missing}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="lib:LibraryEntryViewModel">
+                    <DockPanel Margin="0,0,0,4">
+                      <Button DockPanel.Dock="Right" Content="{x:Static res:Strings.Library_Replace}"
+                              Command="{Binding $parent[ItemsControl].((vm:EditorViewModel)DataContext).Gallery.ReplaceCommand}" CommandParameter="{Binding}" />
+                      <TextBlock Text="{Binding Entry.SourcePath}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,8,0" />
+                    </DockPanel>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </StackPanel>
+        </ScrollViewer>
+
+        <!-- Import, in the steps of PixelTuner 2's window: cut, squeeze in perspective (optional), trim and scale to the
+             height of the device and correct the colour. -->
+        <Panel Grid.Row="1" IsVisible="{Binding Gallery.IsImporting}">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid x:DataType="lib:ImportViewModel" DataContext="{Binding Gallery.Import}" RowDefinitions="Auto,*" RowSpacing="8">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Button Content="{x:Static res:Strings.Import_StepCut}" Command="{Binding ShowCutCommand}" Classes.accent="{Binding IsCutStep}" />
+            <Button Content="{x:Static res:Strings.Import_StepPerspective}" Command="{Binding ShowPerspectiveCommand}" Classes.accent="{Binding IsPerspectiveStep}" />
+            <Button Content="{x:Static res:Strings.Import_StepFinish}" Command="{Binding ShowFinishCommand}" Classes.accent="{Binding IsFinishStep}" />
+            <TextBlock Text="{Binding SourceName}" Classes="muted" VerticalAlignment="Center" Margin="8,0,0,0" />
+          </StackPanel>
+          <Grid Grid.Row="1" ColumnDefinitions="2*,*,*,*" ColumnSpacing="12">
+            <Panel MinHeight="150">
+              <lib:CropControl Source="{Binding SourceBitmap}" Crop="{Binding Cut}" IsVisible="{Binding IsCutStep}" />
+              <Image Source="{Binding WarpedBitmap}" Stretch="Uniform" IsVisible="{Binding IsPerspectiveStep}" RenderOptions.BitmapInterpolationMode="MediumQuality" />
+              <lib:CropControl Source="{Binding WarpedBitmap}" Crop="{Binding Trim}" IsVisible="{Binding IsTrimStep}" />
+              <Image Source="{Binding ResultBitmap}" Stretch="Uniform" IsVisible="{Binding IsResultStep}" RenderOptions.BitmapInterpolationMode="None" />
+            </Panel>
+
+            <StackPanel Grid.Column="1" Spacing="4">
+              <!-- Cut -->
+              <StackPanel IsVisible="{Binding IsCutStep}"><StackPanel Spacing="4" DataContext="{Binding Cut}" x:DataType="lib:CropRect">
+                <UniformGrid Columns="2">
+                  <StackPanel Margin="0,0,4,4"><TextBlock Classes="muted" Text="X" /><NumericUpDown Minimum="0" Maximum="100000" FormatString="0" Value="{Binding XBox}" /></StackPanel>
+                  <StackPanel Margin="0,0,0,4"><TextBlock Classes="muted" Text="Y" /><NumericUpDown Minimum="0" Maximum="100000" FormatString="0" Value="{Binding YBox}" /></StackPanel>
+                  <StackPanel Margin="0,0,4,4"><TextBlock Classes="muted" Text="W" /><NumericUpDown Minimum="1" Maximum="100000" FormatString="0" Value="{Binding WidthBox}" /></StackPanel>
+                  <StackPanel Margin="0,0,0,4"><TextBlock Classes="muted" Text="H" /><NumericUpDown Minimum="1" Maximum="100000" FormatString="0" Value="{Binding HeightBox}" /></StackPanel>
+                </UniformGrid>
+              </StackPanel></StackPanel>
+              <Button Content="↺" Command="{Binding ResetCutCommand}" HorizontalAlignment="Left" IsVisible="{Binding IsCutStep}" />
+
+              <!-- Perspective -->
+              <StackPanel Spacing="2" IsVisible="{Binding IsPerspectiveStep}">
+                <CheckBox Content="{x:Static res:Strings.Import_Warp}" IsChecked="{Binding WarpEnabled}" />
+                <TextBlock Classes="muted" TextWrapping="Wrap" Text="{x:Static res:Strings.Import_WarpHint}" />
+                <TextBlock Classes="muted" Text="{x:Static res:Strings.Import_WarpTop}" />
+                <Slider Minimum="{Binding WarpMin}" Maximum="{Binding WarpMax}" Value="{Binding WarpTop}" IsEnabled="{Binding WarpEnabled}" />
+                <TextBlock Classes="muted" Text="{x:Static res:Strings.Import_WarpMiddle}" />
+                <Slider Minimum="{Binding WarpMin}" Maximum="{Binding WarpMax}" Value="{Binding WarpMiddle}" IsEnabled="{Binding WarpEnabled}" />
+                <TextBlock Classes="muted" Text="{x:Static res:Strings.Import_WarpBottom}" />
+                <Slider Minimum="{Binding WarpMin}" Maximum="{Binding WarpMax}" Value="{Binding WarpBottom}" IsEnabled="{Binding WarpEnabled}" />
+              </StackPanel>
+
+              <!-- Trim, scale -->
+              <StackPanel Spacing="4" IsVisible="{Binding IsFinishStep}">
+                <StackPanel IsVisible="{Binding IsTrimStep}"><StackPanel Spacing="4" DataContext="{Binding Trim}" x:DataType="lib:CropRect">
+                  <TextBlock Classes="muted" Text="{x:Static res:Strings.Import_Trim}" />
+                  <UniformGrid Columns="2">
+                    <StackPanel Margin="0,0,4,4"><TextBlock Classes="muted" Text="X" /><NumericUpDown Minimum="0" Maximum="100000" FormatString="0" Value="{Binding XBox}" /></StackPanel>
+                    <StackPanel Margin="0,0,0,4"><TextBlock Classes="muted" Text="Y" /><NumericUpDown Minimum="0" Maximum="100000" FormatString="0" Value="{Binding YBox}" /></StackPanel>
+                    <StackPanel Margin="0,0,4,4"><TextBlock Classes="muted" Text="W" /><NumericUpDown Minimum="1" Maximum="100000" FormatString="0" Value="{Binding WidthBox}" /></StackPanel>
+                    <StackPanel Margin="0,0,0,4"><TextBlock Classes="muted" Text="H" /><NumericUpDown Minimum="1" Maximum="100000" FormatString="0" Value="{Binding HeightBox}" /></StackPanel>
+                  </UniformGrid>
+                </StackPanel></StackPanel>
+                <Button Content="↺" Command="{Binding ResetTrimCommand}" HorizontalAlignment="Left" IsVisible="{Binding IsTrimStep}" />
+                <CheckBox Content="{x:Static res:Strings.Import_Scale}" IsChecked="{Binding ScaleToHeight}" IsEnabled="{Binding !HeightIsFixed}" />
+                <NumericUpDown Minimum="1" Maximum="65535" FormatString="0" Value="{Binding TargetHeightBox}" IsEnabled="{Binding !HeightIsFixed}" />
+              </StackPanel>
+            </StackPanel>
+
+            <StackPanel Grid.Column="2" Spacing="2" IsVisible="{Binding IsFinishStep}">
+              <TextBlock Classes="muted" Text="{x:Static res:Strings.Import_Brightness}" />
+              <Slider Minimum="-255" Maximum="255" Value="{Binding BrightnessSlider}" />
+              <CheckBox Content="{x:Static res:Strings.Import_Midtones}" IsChecked="{Binding MidtonesOnly}" />
+              <TextBlock Classes="muted" Text="{x:Static res:Strings.Import_Contrast}" />
+              <Slider Minimum="-100" Maximum="100" Value="{Binding Contrast}" />
+              <TextBlock Classes="muted" Text="{x:Static res:Strings.Import_Hue}" />
+              <Slider Minimum="-180" Maximum="180" Value="{Binding HueSlider}" />
+              <TextBlock Classes="muted" Text="{x:Static res:Strings.Import_Saturation}" />
+              <Slider Minimum="-100" Maximum="100" Value="{Binding Saturation}" />
+              <TextBlock Classes="muted" Text="{x:Static res:Strings.Import_Value}" />
+              <Slider Minimum="-100" Maximum="100" Value="{Binding Value}" />
+              <TextBlock Classes="muted" Text="{x:Static res:Strings.Import_Sharpen}" />
+              <Slider Minimum="0" Maximum="10" Value="{Binding Sharpen}" />
+              <Button Content="↺" Command="{Binding ResetColourCommand}" HorizontalAlignment="Left" />
+            </StackPanel>
+
+            <StackPanel Grid.Column="3" Spacing="6">
+              <TextBlock Classes="muted" Text="{x:Static res:Strings.Import_Result}" />
+              <Border MaxHeight="120" ClipToBounds="True" Background="Black" CornerRadius="4">
+                <Image Source="{Binding ResultBitmap}" Stretch="Uniform" RenderOptions.BitmapInterpolationMode="None" />
+              </Border>
+              <TextBlock Text="{Binding ResultSize}" FontWeight="SemiBold" />
+              <TextBlock Classes="muted" TextWrapping="Wrap" Text="{x:Static res:Strings.Import_WrongHeight}" IsVisible="{Binding !FitsTarget}" />
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <Button Classes="accent" Content="{x:Static res:Strings.Import_Apply}" Command="{Binding ApplyCommand}" />
+                <Button Content="{x:Static res:Strings.Import_Cancel}" Command="{Binding CancelCommand}" />
+              </StackPanel>
+            </StackPanel>
+          </Grid>
+        </Grid>
+        </ScrollViewer>
+        </Panel>
+      </Grid>
     </Border>
   </Grid>
 </UserControl>
