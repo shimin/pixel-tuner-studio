@@ -1,9 +1,0 @@
-[submodule "Common"]
-	path = Common
-	url = https://github.com/shimin/Common.git
-[submodule "Communication"]
-	path = Communication
-	url = https://github.com/shimin/Communication.git
-[submodule "WpfTools"]
-	path = WpfTools
-	url = https://github.com/shimin/WpfTools.git
