@@ -1,0 +1,663 @@
+﻿using Common.Log;
+using System;
+using System.Collections.Generic;
+using System.IO.Ports;
+using System.Management;
+using System.Net.Mime;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
+
+namespace Communication.Service
+{
+    public abstract class SerialDeviceBase : DeviceBase, IDisposable
+    {
+        private Thread _portMonitor = null;
+
+        public delegate void NotifyPropertyChanged(string propertyName);
+
+        public NotifyPropertyChanged PropertyChanged = null;
+
+        public static SerialDeviceBase Create(ITransport p)
+        {
+            SerialDeviceBase dev = null;
+
+            if (p != null && p.IsOpen)
+            {
+                byte[] buffer = GetNameBytes(p);
+                string deviceName = Encoding.ASCII.GetString(buffer);
+
+                var devName = SupportedDevices.TryGetType(deviceName);
+                var devType = Type.GetType(devName);
+                dev = Activator.CreateInstance(devType, p, true) as SerialDeviceBase;
+                dev.Initialize(null);
+            }
+
+            return dev;
+        }
+
+        public static int EstimateRequestsCount(int transmissionDataSize, int packetSize)
+        {
+            return ((transmissionDataSize / packetSize) + (((transmissionDataSize % packetSize) == 0) ? 2 : 3));
+        }
+        
+        private static byte[] GetNameBytes(ITransport p)
+        {
+            p.DiscardInBuffer();
+            p.DiscardOutBuffer();
+            p.Write(new byte[] { 0x53, 0, 0x0d }, 0, 3);
+            // reading of packet ID
+            int num = -1;
+            try
+            {
+                num = p.ReadByte();
+                if (num != 0x53) throw new Exception();
+            }
+            catch { throw new TimeoutException("Device name request error."); }
+            // reading of packet length
+            int count = -1;
+            try
+            {
+                count = p.ReadByte();
+            }
+            catch { throw new TimeoutException("Packet length reading timeout."); }
+            // data reading
+            byte[] buffer = new byte[count];
+            int num3 = 0;
+            try
+            {
+                num3 = p.Read(buffer, 0, count);
+                if (num3 != count) throw new Exception();
+            }
+            catch { throw new TimeoutException("Device name reading timeout."); }
+            try
+            {
+                int end = p.ReadByte();
+            }
+            catch { throw new TimeoutException("Packet 0x0D reading timeout."); }
+
+            return buffer;
+        }
+
+        #region Properties
+
+        protected object _longOperation = new object();
+        private object _syncSession = new object();        
+        private ManagementEventWatcher w = null;
+
+        protected ITransport _transport = null;
+        public ITransport Transport
+        {
+            get
+            {
+                return _transport;
+            }
+            set
+            {
+                _transport = value;
+            }
+        }
+
+        protected string _channelID = null;
+        public string ChannelID
+        {
+            get
+            {
+                return _channelID;
+            }
+            set
+            {
+                _channelID = value;
+            }
+        }
+
+        private ConnectionStatus _status = ConnectionStatus.Offline;
+        public ConnectionStatus Status
+        {
+            get
+            {
+                return _status;
+            }
+        }
+
+        public int WriteReadDelay
+        {
+            get;
+            set;
+        }
+
+        public bool BootMode { get; protected set; }
+
+        private bool _busy = false;
+        public virtual bool Busy
+        {
+            get { return _busy; }
+            protected set
+            {
+                _busy = value;
+                PropertyChanged?.Invoke("Busy");
+            }
+        }
+
+        public string Name { get; set; }
+
+        public static int UsualPacketSize
+        {
+            get
+            {
+                return 60;
+            }
+        }
+
+        public static int ProjectPacketSize
+        {
+            get
+            {
+                return 250;
+            }
+        }
+
+        protected int _firmwareVersion = 0;
+        /// <summary>
+        /// Версия прошивки
+        /// </summary>
+        public int FirmwareVersion
+        {
+            get { return _firmwareVersion; }
+            set { _firmwareVersion = value; }
+        }
+
+        protected int _bootVersion = 0;
+        /// <summary>
+        /// Версия загрузчика
+        /// </summary>
+        public int BootVersion
+        {
+            get { return _bootVersion; }
+            set { _bootVersion = value; }
+        }
+
+        protected int _platformVersion = 0;
+        /// <summary>
+        /// Версия платформы
+        /// </summary>
+        public int PlatformVersion
+        {
+            get { return _platformVersion; }
+            set { _platformVersion = value; }
+        }
+        
+        protected static int DefaultReadTimeout = 2000;
+
+        protected static int DefaultWriteTimeout = 2000;
+
+        #endregion
+
+        #region Events
+
+        public event DisconnectedDelegate Disconnected;
+
+        public event SessionDelegate SessionFinished;
+
+        public event SessionDelegate SessionStarted;
+
+        public event StatusDelegate StatusChanged;
+
+        private void OnDisconnected()
+        {
+            if (Disconnected != null)
+            {
+                Disconnected(new EventArgs());
+            }
+        }
+
+        private void OnSessionFinished(DeviceBase d, List<byte> data)
+        {
+            if (SessionFinished != null)
+            {
+                SessionFinished(new DeviceSessionEventArgs(d, data));
+            }
+        }
+
+        private void OnSessionStarted(DeviceBase d, List<byte> data)
+        {
+            if (SessionStarted != null)
+            {
+                SessionStarted(new DeviceSessionEventArgs(d, data));
+            }
+        }
+
+        private void OnStatusChanged()
+        {
+            if (StatusChanged != null)
+            {
+                StatusChanged(new EventArgs());
+            }
+        }
+
+        public delegate void DisconnectedDelegate(EventArgs e);
+
+        public delegate void SessionDelegate(DeviceSessionEventArgs e);
+
+        public delegate void StatusDelegate(EventArgs e);
+
+        #endregion
+
+        #region Enumeration
+
+        public override bool Equals(object obj)
+        {
+            if (obj is SerialDeviceBase)
+            {
+                return ((obj as SerialDeviceBase).ChannelID == ChannelID);
+            }
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return this.Name;
+        }
+
+        #endregion
+
+        public SerialDeviceBase(ITransport t, bool runMonitoring = true)
+        {
+            Transport = t;
+            if (Transport != null && Transport.IsOpen)
+            {
+                _channelID = _transport.ChannelID;
+                _transport.ReadTimeout = DefaultReadTimeout;
+                _transport.WriteTimeout = DefaultWriteTimeout;
+                GC.SuppressFinalize(_transport.BaseStream);
+            }
+            if (runMonitoring) RunMonitoring();
+        }
+
+        private void RunMonitoring()
+        {
+            _portMonitor = new Thread(() =>
+            {
+                // Nothing may escape this thread: an unhandled exception here kills the
+                // whole process. The loop condition is checked inside the try because
+                // another thread can close the transport at any moment (e.g. TcpClient
+                // throws from Connected once it has been closed).
+                while (true)
+                {
+                    try
+                    {
+                        var transport = Transport;
+                        if (transport == null || !transport.IsOpen) break;
+
+                        if (!Busy) GetInfo();
+                        Thread.Sleep(1000);
+                    }
+                    catch
+                    {
+                        try { Dispose(); OnDisconnected(); }
+                        catch { }
+                    }
+                }
+            });
+            // Must not keep the process alive after the main window is closed.
+            _portMonitor.IsBackground = true;
+            _portMonitor.Start();
+        }
+
+        public abstract void GetInfo();
+
+        /// <summary>
+        /// Used in finally blocks: the device may have been disconnected (Transport set to
+        /// null by another thread) while a long operation was running.
+        /// </summary>
+        private void RestoreDefaultTimeouts()
+        {
+            var transport = Transport;
+            if (transport == null) return;
+            try
+            {
+                transport.ReadTimeout = DefaultReadTimeout;
+                transport.WriteTimeout = DefaultWriteTimeout;
+            }
+            catch
+            {
+            }
+        }
+
+        protected void SetStatus(ConnectionStatus status)
+        {
+            _status = status;
+            OnStatusChanged();
+        }
+
+        #region Core
+
+        protected virtual byte[] DoSession(byte[] query)
+        {
+            OnSessionStarted(this, new List<byte>(query));
+            LogMessage($"Request R({Transport.ReadTimeout}) W{Transport.WriteTimeout}: {Logger.BytesToString(query)}", MessageType.Debug);
+            List<byte> data = new List<byte>();
+            try
+            {
+                lock (this._syncSession)
+                {
+                    if (Transport == null) return data.ToArray();
+                    Transport.DiscardInBuffer();
+                    Transport.DiscardOutBuffer();
+                    Transport.Write(query, 0, query.Length);
+
+                    Thread.Sleep(WriteReadDelay);
+                    // reading of packet ID
+                    int num = -1;
+                    try
+                    {
+                        num = Transport.ReadByte();
+                        data.Add((byte)num);
+                    }
+                    catch { throw new TimeoutException("Packet ID reading timeout."); }
+                    if (num != query[0])
+                    {
+                        throw new ArgumentException($"Wrong answer {num:X2} on request {query[0]:X2}.");
+                    }
+                    // reading of packet length
+                    int count = -1;
+                    try
+                    {
+                        count = Transport.ReadByte();
+                        data.Add((byte)count);
+                    }
+                    catch { throw new TimeoutException("Packet length reading timeout."); }
+                    // data reading
+                    byte[] buffer = new byte[count];
+                    int num3 = 0;
+                    try
+                    {
+                        var startTime = DateTime.Now;
+                        while (num3 < count && (DateTime.Now - startTime).TotalSeconds < 10)
+                        {
+                            num3 += Transport.Read(buffer, num3, count - num3);
+                        }
+                    }
+                    catch { throw new TimeoutException("Packet data reading timeout."); }
+                    if (num3 != count)
+                    {
+                        throw new TimeoutException("Incorrect packet length " + num3.ToString() + " (expected " + count.ToString() + ")");
+                    }
+                    
+                    data.AddRange(buffer);
+
+                    try
+                    {
+                        int end = Transport.ReadByte();
+                    }
+                    catch { }//throw new TimeoutException("Packet 0x0D reading timeout."); }
+
+                    if (num == (byte)PixelDeviceCommand.WRITE_BLOCK && data[2] != 0xff)
+                        throw new ArgumentException("Data block write error");
+                    LogMessage("Result:  " + Logger.BytesToString(buffer), MessageType.Debug);
+                }
+            }
+            catch (Exception exception)
+            {
+                throw exception;
+            }
+            finally
+            {
+                OnSessionFinished(this, data);
+            }
+            return data.ToArray();
+        }
+
+        protected virtual PixelDevicePacket DoSession(PixelDevicePacket request)
+        {
+            byte[] answer = null;
+            PixelDevicePacket result = null;
+            try
+            {
+                answer = DoSession(request.RawData.ToArray());
+            }
+            catch (Exception ex)
+            {
+                Logger?.WriteException(ex);
+                throw ex;
+            }
+            if (answer != null)
+            {
+                result = new PixelDevicePacket(answer);
+            }
+            return result;
+        }
+
+        #endregion
+
+        #region Communication
+
+        public override void Initialize(object parameter)
+        {
+            bool isBootMode;
+            Name = GetName(out isBootMode);
+            BootMode = isBootMode;
+            GetInfo();
+            SetStatus(ConnectionStatus.Online);
+        }
+
+        public virtual string GetName(out bool bootMode)
+        {
+            SetStatus(ConnectionStatus.Downloading);
+            string str = "";
+            bootMode = false;
+            try
+            {
+                lock (this._longOperation)
+                {
+                    PixelDevicePacket request = new PixelDevicePacket(PixelDeviceCommand.WHO_IS_IT, null);
+                    PixelDevicePacket packet2 = DoSession(request);
+                    str = Encoding.ASCII.GetString(packet2.Data.ToArray());
+                    if (str.ToLower().Contains("boot"))
+                    {
+                        bootMode = true;
+                    }
+                    LogMessage("Device name: " + str, MessageType.Info);
+                }
+            }
+            catch (Exception exception)
+            {
+                LogException(exception);
+            }
+            finally
+            {
+                SetStatus(ConnectionStatus.Online);
+            }
+            return str;
+        }
+
+        public virtual void SwitchToBoot()
+        {
+            lock (this._longOperation)
+            {
+                if (Transport != null)
+                {
+                    try
+                    {
+                        Transport.ReadTimeout = 5000;
+                        DoSession(new PixelDevicePacket(PixelDeviceCommand.SWITCH_TO_BOOT, null));
+                        Transport.ReadTimeout = DefaultReadTimeout;
+                    }
+                    catch (Exception exception)
+                    {
+                        LogException(exception);
+                    }
+                }
+            }
+        }
+
+        public virtual void WriteSettings(List<DeviceFeature> settings)
+        {
+            lock (this._longOperation)
+            {
+                Busy = true;
+                SetStatus(ConnectionStatus.Uploading);
+                try
+                {
+                    Transport.WriteTimeout = 5000;
+                    Transport.ReadTimeout = 5000;
+                    var data = new List<byte>();
+                    foreach (var feature in settings)
+                    {
+                        data.AddRange(feature.GetBytes());
+                        if (data.Count < PixelDevice.UsualPacketSize) continue;
+                        DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_SETTINGS, data));
+                        data.Clear();
+                    }
+                    if (data.Count <= 0) return;
+                    DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_SETTINGS, data));
+                    data.Clear();
+                }
+                catch (Exception exception)
+                {
+                    Logger?.WriteException(exception);
+                }
+                finally
+                {
+                    Busy = false;
+                    SetStatus(ConnectionStatus.Online);
+                    RestoreDefaultTimeouts();
+                }
+            }
+        }
+
+        public virtual void WriteFile(List<byte> binaryData, int packetSize)
+        {
+            lock (this._longOperation)
+            {
+                Busy = true;
+                SetStatus(ConnectionStatus.Uploading);
+                bool noExceptions = false;
+                try
+                {
+                    Transport.WriteTimeout = 30000;
+                    Transport.ReadTimeout = 30000;
+                    List<byte> data = new List<byte>();
+                    var answer = DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_IDATA_MODE, BitConverter.GetBytes(binaryData.Count)));
+                    if (answer.Data[0] == 0x00)
+                    {
+                        SetStatus(ConnectionStatus.UploadError);
+                        Busy = false;
+                        throw new Exception("Upload file error.");
+                    }
+                    foreach (byte num in binaryData)
+                    {
+                        data.Add(num);
+                        if (data.Count == packetSize)
+                        {
+                            DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_BLOCK, data));
+                            data.Clear();
+                        }
+                    }
+                    if (data.Count > 0)
+                    {
+                        DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_BLOCK, data));
+                        data.Clear();
+                    }
+                    DoSession(new PixelDevicePacket(PixelDeviceCommand.END_WRITE_DATA, null));
+                    noExceptions = true;
+                }
+                catch (Exception exception)
+                {
+                    LogException(exception);
+                    SetStatus(ConnectionStatus.UploadError);
+                }
+                finally
+                {
+                    Busy = false;
+                    if (noExceptions)
+                        SetStatus(ConnectionStatus.Online);
+                    RestoreDefaultTimeouts();
+                }
+            }
+        }
+
+        public virtual void WriteFirmware(List<byte> binaryData)
+        {
+            lock (this._longOperation)
+            {
+                Busy = true;
+                SetStatus(ConnectionStatus.Uploading);
+                try
+                {
+                    Transport.WriteTimeout = 30000;
+                    Transport.ReadTimeout = 30000;
+                    List<byte> data = new List<byte>();
+                    DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_IFLASH_MODE, null));
+                    foreach (byte num in binaryData)
+                    {
+                        data.Add(num);
+                        if (data.Count == UsualPacketSize)
+                        {
+                            DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_BLOCK, data));
+                            data.Clear();
+                        }
+                    }
+                    if (data.Count > 0)
+                    {
+                        DoSession(new PixelDevicePacket(PixelDeviceCommand.WRITE_BLOCK, data));
+                        data.Clear();
+                    }
+                    List<byte> rawData = new PixelDevicePacket(PixelDeviceCommand.END_WRITE_FLASH, null).RawData;
+                    Transport.Write(rawData.ToArray(), 0, rawData.Count);
+                }
+                catch (Exception exception)
+                {
+                    LogException(exception);
+                }
+                finally
+                {
+                    Busy = false;
+                    SetStatus(ConnectionStatus.Online);
+                    RestoreDefaultTimeouts();
+                }
+            }
+        }
+
+        #endregion
+        
+        public virtual void Disconnect()
+        {
+            lock (this._syncSession)
+            {
+                if (Transport != null)
+                {
+                    try
+                    {
+                        if (Transport.IsOpen)
+                            try
+                            {
+                                Transport.Close();
+                            }
+                            catch
+                            {
+                            }
+                        GC.ReRegisterForFinalize(_transport);
+                        Transport = null;
+                        SetStatus(ConnectionStatus.Offline);
+                        OnDisconnected();
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                }
+            }
+        }
+
+        public void Dispose()
+        {
+            Disconnect();
+        }
+    }
+}

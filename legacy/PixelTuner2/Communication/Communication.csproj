@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{DA6AD361-E034-4A14-BA94-8605A21D2E70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Communication</RootNamespace>
+    <AssemblyName>Communication</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Binarize\LightBinaryParser.cs" />
+    <Compile Include="Binarize\LightEffectFile.cs" />
+    <Compile Include="Binarize\LightFileBase.cs" />
+    <Compile Include="Binarize\LightColorFile.cs" />
+    <Compile Include="Binarize\LightProjectFile.cs" />
+    <Compile Include="Binarize\LightTimeLineFile.cs" />
+    <Compile Include="Binarize\LightTransitionFile.cs" />
+    <Compile Include="ColorDepth.cs" />
+    <Compile Include="Gradient\ColorProfile.cs" />
+    <Compile Include="Gradient\GradientImageFile.cs" />
+    <Compile Include="Gradient\GradientProjectFile.cs" />
+    <Compile Include="Gradient\GradientsCollection.cs" />
+    <Compile Include="Gradient\GradientsCollectionItem.cs" />
+    <Compile Include="Gradient\GradientTimeLineFile.cs" />
+    <Compile Include="Pixelate\ColorProfileWS2812_2.cs" />
+    <Compile Include="Pixelate\ColorProfileWS2812.cs" />
+    <Compile Include="Pixelate\ColorProfile.cs" />
+    <Compile Include="Pixelate\ColorProfile3528.cs" />
+    <Compile Include="Pixelate\ImagesCollectionFanItem.cs" />
+    <Compile Include="Pixelate\ImagesCollectionVideoDoubleItem.cs" />
+    <Compile Include="Pixelate\ImagesCollectionVideoItem.cs" />
+    <Compile Include="Pixelate\PixelFanImageFile.cs" />
+    <Compile Include="Pixelate\VideoImageFile.cs" />
+    <Compile Include="Pixelate\VideoTimelineFile.cs" />
+    <Compile Include="Service\ITransport.cs" />
+    <Compile Include="Service\PixelHoop.cs" />
+    <Compile Include="Service\DeviceEventArgs.cs" />
+    <Compile Include="Service\DeviceSessionEventArgs.cs" />
+    <Compile Include="Service\DeviceStatus.cs" />
+    <Compile Include="Pixelate\ImagesCollection.cs" />
+    <Compile Include="Pixelate\ImagesCollectionItem.cs" />
+    <Compile Include="Pixelate\PixelImageFile.cs" />
+    <Compile Include="Pixelate\PixelProjectFile.cs" />
+    <Compile Include="Pixelate\PixelTimeLineFile.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service\DeviceBase.cs" />
+    <Compile Include="Service\DeviceFeature.cs" />
+    <Compile Include="Service\DeviceHelper.cs" />
+    <Compile Include="Service\GenericSerialDevice.cs" />
+    <Compile Include="Service\IlluminatorDevice.cs" />
+    <Compile Include="Service\PixelDevicePacket.cs" />
+    <Compile Include="Service\PixelDevice.cs" />
+    <Compile Include="Service\PixelDeviceCommand.cs" />
+    <Compile Include="Service\PlaybackState.cs" />
+    <Compile Include="Service\SerialTransport.cs" />
+    <Compile Include="Service\Win32SerialNativeMethods.cs" />
+    <Compile Include="Service\Win32SerialPort.cs" />
+    <Compile Include="Service\SimplePoiDevice.cs" />
+    <Compile Include="Service\SupportedDevices.cs" />
+    <Compile Include="Service\PixelDeviceTimeout.cs" />
+    <Compile Include="Service\SerialDeviceBase.cs" />
+    <Compile Include="Service\LightMasterDevice.cs" />
+    <Compile Include="Service\TcpTransport.cs" />
+    <Compile Include="Service\VideoDevice.cs" />
+    <Compile Include="Service\VirtualDevice.cs" />
+    <Compile Include="Service\VirtualTransport.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{3c6806b7-698d-45cd-b131-eb84845cc938}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
