@@ -67,6 +67,7 @@ public sealed class PixelOracleTests : IDisposable
 
         byte[] expected = LegacyPixel(lines, (ushort)height, Legacy(depth));
         Assert.Equal(expected, actual);
+        BinReader.ReadPpoi(actual);
     }
 
     [Theory]
@@ -86,6 +87,7 @@ public sealed class PixelOracleTests : IDisposable
 
         byte[] expected = LegacyFan(line, (ushort)height, Legacy(depth));
         Assert.Equal(expected, actual);
+        BinReader.ReadPpoi(actual);
     }
 
     [Theory]
@@ -105,6 +107,7 @@ public sealed class PixelOracleTests : IDisposable
         byte[] actual = Studio([(line, layout)], depth);
         byte[] expected = LegacyVideo(line, Points(layout), Legacy(depth));
         Assert.Equal(expected, actual);
+        BinReader.ReadPpoi(actual);
     }
 
     [Theory]
@@ -133,6 +136,7 @@ public sealed class PixelOracleTests : IDisposable
         byte[] actual = Studio([(line1, layout1), (line2, layout2)], depth);
         byte[] expected = LegacyVideoPair(line1, line2, Points(layout1), Points(layout2), Legacy(depth));
         Assert.Equal(expected, actual);
+        BinReader.ReadPpoi(actual);
     }
 
     /// <summary>
@@ -152,6 +156,7 @@ public sealed class PixelOracleTests : IDisposable
         byte[] actual = Studio([(line1, layout1), (line2, layout2)], StudioDepth.Bit24);
         byte[] expected = LegacyVideoPair(line1, line2, Points(layout1), Points(layout2), LegacyDepth.Bit24);
         Assert.Equal(expected, actual);
+        BinReader.ReadPpoi(actual);
     }
 
     private sealed record LineSpec((byte R, byte G, byte B) Color, bool Flip, List<ItemSpec> Items);

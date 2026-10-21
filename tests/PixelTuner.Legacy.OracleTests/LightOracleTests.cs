@@ -41,6 +41,7 @@ public class LightOracleTests
 
         byte[] expected = Legacy(lines, rate);
         Assert.Equal(expected, actual);
+        BinReader.ReadLght(actual);
     }
 
     [Fact]

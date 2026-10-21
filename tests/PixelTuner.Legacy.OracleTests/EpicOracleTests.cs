@@ -51,6 +51,8 @@ public sealed class EpicOracleTests : IDisposable
 
         byte[] expected = Legacy(lines, (LegacyDepth)Enum.Parse(typeof(LegacyDepth), depth.ToString()));
         Assert.Equal(expected, actual);
+        // The 12-bit E-Pic block was written broken by PixelTuner 2 and cannot be read back.
+        if (depth != StudioDepth.Bit12) PixelTuner.Core.Export.BinReader.ReadPpoi(actual);
     }
 
     private sealed record LineSpec((byte R, byte G, byte B) Color, List<ItemSpec> Items);
