@@ -11,6 +11,8 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+        // The app menu title on macOS.
+        Name = Product.Current.Name;
 #if DEBUG
         this.AttachDeveloperTools();
 #endif

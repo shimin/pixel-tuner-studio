@@ -27,11 +27,14 @@ jobs:
       - name: Test
         run: |
           dotnet test tests/PixelTuner.Sync.Tests -c Release
+          dotnet test tests/PixelTuner.Devices.Tests -c Release
+          dotnet test tests/PixelTuner.Audio.Tests -c Release
           dotnet test tests/PixelTuner.Package.Tests -c Release
+          dotnet test tests/PixelTuner.UI.Tests -c Release
           dotnet test tests/PixelTuner.Core.Tests -c Release
           dotnet test tests/PixelTuner.Legacy.OracleTests -c Release
-      - name: Build desktop on Linux
-        run: dotnet build src/Heads/PixelTuner.Desktop -c Release
+      - name: Build Studio on Linux
+        run: dotnet build src/Heads/PixelTuner.Studio.Desktop -c Release
 
   samples:
     # The whole PixelTuner 2 reference set (about 540 MB) from the draft release "samples-v1".
@@ -57,7 +60,7 @@ jobs:
         run: dotnet test tests/PixelTuner.Package.Tests -c Release --filter "FullyQualifiedName~FullSample" --logger "console;verbosity=detailed"
 
   windows:
-    name: Desktop (Windows)
+    name: Studio (Windows)
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -67,11 +70,14 @@ jobs:
       - name: Test
         run: |
           dotnet test tests/PixelTuner.Sync.Tests -c Release
+          dotnet test tests/PixelTuner.Devices.Tests -c Release
+          dotnet test tests/PixelTuner.Audio.Tests -c Release
           dotnet test tests/PixelTuner.Package.Tests -c Release
+          dotnet test tests/PixelTuner.UI.Tests -c Release
           dotnet test tests/PixelTuner.Core.Tests -c Release
           dotnet test tests/PixelTuner.Legacy.OracleTests -c Release
       - name: Publish
-        run: dotnet publish src/Heads/PixelTuner.Desktop -c Release -r win-x64 --self-contained -o out/win-x64
+        run: dotnet publish src/Heads/PixelTuner.Studio.Desktop -c Release -r win-x64 --self-contained -o out/win-x64
       - uses: actions/upload-artifact@v4
         with:
           name: PixelTunerStudio-win-x64
@@ -79,7 +85,7 @@ jobs:
           retention-days: 14
 
   macos:
-    name: Desktop (macOS)
+    name: Studio (macOS)
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -89,12 +95,15 @@ jobs:
       - name: Test
         run: |
           dotnet test tests/PixelTuner.Sync.Tests -c Release
+          dotnet test tests/PixelTuner.Devices.Tests -c Release
+          dotnet test tests/PixelTuner.Audio.Tests -c Release
           dotnet test tests/PixelTuner.Package.Tests -c Release
+          dotnet test tests/PixelTuner.UI.Tests -c Release
           dotnet test tests/PixelTuner.Core.Tests -c Release
           dotnet test tests/PixelTuner.Legacy.OracleTests -c Release
       - name: Publish and bundle
         run: |
-          dotnet publish src/Heads/PixelTuner.Desktop -c Release -r osx-arm64 --self-contained -o out/osx-arm64
+          dotnet publish src/Heads/PixelTuner.Studio.Desktop -c Release -r osx-arm64 --self-contained -o out/osx-arm64
           scripts/macos/make-app.sh out/osx-arm64 out/app
       - uses: actions/upload-artifact@v4
         with:
@@ -103,7 +112,7 @@ jobs:
           retention-days: 14
 
   android:
-    name: Mobile (Android)
+    name: Stage (Android)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -118,32 +127,36 @@ jobs:
         run: dotnet workload install android
       - name: Build APK
         run: >
-          dotnet publish src/Heads/PixelTuner.Android -c Release
+          dotnet publish src/Heads/PixelTuner.Stage.Android -c Release
           -p:AndroidSdkDirectory="$ANDROID_SDK_ROOT"
           -o out/android
       - uses: actions/upload-artifact@v4
         with:
-          name: PixelTunerStudio-android
+          name: PixelTunerStage-android
           path: out/android/*.apk
           retention-days: 14
 
   ios:
-    name: Mobile (iOS, simulator build)
+    name: Stage (iOS, simulator build)
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - name: List installed Xcode versions
         run: ls -d /Applications/Xcode*.app
-      # Each .NET for iOS SDK needs one exact Xcode major.minor. The workload ships
-      # several SDKs; build against iOS 26.0 with Xcode 26.0, both present on the runner.
-      # Move both forward together when the runner image gets a newer Xcode.
+      # The workload's iOS SDKs are 26.0 and 27.1; the runner has no Xcode 27, so build
+      # against iOS 26.0. The asset catalog (app icon) is compiled by actool, which needs
+      # an installed simulator runtime for its Xcode: the runner has none for Xcode 26.0,
+      # but has iOS 26.2 for Xcode 26.2. So use Xcode 26.2 and skip the SDK's exact-Xcode
+      # check. Move to SDK 27.x with a matching Xcode once the runner image has one.
       - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '26.0'
+          xcode-version: '26.2'
+      - name: List installed simulator runtimes
+        run: xcrun simctl list runtimes
       - uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
       - name: Install iOS workload
         run: dotnet workload install ios
       - name: Build for the simulator (no signing)
-        run: dotnet build src/Heads/PixelTuner.iOS -c Debug -r iossimulator-arm64 -p:IosSdkVersion=26.0
+        run: dotnet build src/Heads/PixelTuner.Stage.iOS -c Debug -r iossimulator-arm64 -p:IosSdkVersion=26.0 -p:ValidateXcodeVersion=false

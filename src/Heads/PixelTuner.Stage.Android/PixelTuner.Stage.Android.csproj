@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Pixel Tuner Stage for Android: plays a show and keeps the devices in sync. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-android</TargetFramework>
+    <SupportedOSPlatformVersion>26</SupportedOSPlatformVersion>
+    <RootNamespace>PixelTuner.Stage.Android</RootNamespace>
+    <AssemblyName>PixelTunerStage</AssemblyName>
+    <Product>Pixel Tuner Stage</Product>
+    <Version>$(StageVersion)</Version>
+    <ApplicationId>com.pixeltuner.stage</ApplicationId>
+    <ApplicationTitle>Pixel Tuner Stage</ApplicationTitle>
+    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Android" />
+    <PackageReference Include="Xamarin.AndroidX.Core.SplashScreen" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\PixelTuner.UI\PixelTuner.UI.csproj" />
+  </ItemGroup>
+</Project>

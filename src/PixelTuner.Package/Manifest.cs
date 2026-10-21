@@ -8,7 +8,7 @@ public sealed class Manifest
     /// <summary>Oldest reader version that can open this package.</summary>
     public int MinReaderVersion { get; set; } = 1;
 
-    public string Generator { get; set; } = "Pixel Tuner Studio";
+    public string Generator { get; set; } = "Pixel Tuner";
     public string? GeneratorVersion { get; set; }
 
     public Guid ProjectId { get; set; }

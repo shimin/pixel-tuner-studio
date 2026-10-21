@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\PixelTuner.UI\PixelTuner.UI.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\PixelTuner.Core.Tests\Fixtures\LegacyProjects\80_sample\**\*" CopyToOutputDirectory="PreserveNewest" LinkBase="Fixtures\80_sample" />
+  </ItemGroup>
+</Project>

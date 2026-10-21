@@ -4,7 +4,6 @@
   <resheader name="version"><value>2.0</value></resheader>
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
-  <data name="AppTitle" xml:space="preserve"><value>Pixel Tuner Studio</value></data>
   <data name="Start_Heading" xml:space="preserve"><value>Шоу и реквизит в одном месте</value></data>
   <data name="Start_Subheading" xml:space="preserve"><value>Откройте пакет проекта (.pxpkg), чтобы посмотреть его и синхронизировать устройства по звуку.</value></data>
   <data name="Command_OpenProject" xml:space="preserve"><value>Открыть проект…</value></data>
@@ -12,6 +11,11 @@
   <data name="Project_Devices" xml:space="preserve"><value>Устройства</value></data>
   <data name="Project_Markers" xml:space="preserve"><value>Метки</value></data>
   <data name="Project_Media" xml:space="preserve"><value>Медиафайлы</value></data>
-  <data name="FileType_Package" xml:space="preserve"><value>Проект Pixel Tuner Studio</value></data>
+  <data name="FileType_Package" xml:space="preserve"><value>Проект Pixel Tuner</value></data>
   <data name="Error_OpenFailed" xml:space="preserve"><value>Не удалось открыть проект: {0}</value></data>
+  <data name="Command_ImportLegacy" xml:space="preserve"><value>Импорт из PixelTuner 2…</value></data>
+  <data name="FileType_LegacyProject" xml:space="preserve"><value>Проект PixelTuner 2</value></data>
+  <data name="Import_Done" xml:space="preserve"><value>Импортировано. Проект сохранён как пакет.</value></data>
+  <data name="Import_DoneMissing" xml:space="preserve"><value>Импортировано, но не найдено медиафайлов: {0} ({1})</value></data>
+  <data name="Error_ImportFailed" xml:space="preserve"><value>Не удалось импортировать проект: {0}</value></data>
 </root>

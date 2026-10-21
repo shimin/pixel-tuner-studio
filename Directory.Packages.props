@@ -19,6 +19,8 @@
     <PackageVersion Include="SkiaSharp.NativeAssets.Linux" Version="3.119.4" />
     <PackageVersion Include="SkiaSharp.NativeAssets.Win32" Version="3.119.4" />
     <PackageVersion Include="SkiaSharp.NativeAssets.macOS" Version="3.119.4" />
+    <!-- Serial ports on Windows, macOS and Linux (PixelTuner.Devices). -->
+    <PackageVersion Include="System.IO.Ports" Version="10.0.0" />
 
     <!-- Tests -->
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.10.0" />

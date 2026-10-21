@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!-- Name, bundle id and version come from PixelTuner.Stage.iOS.csproj. -->
+  <key>LSRequiresIPhoneOS</key>
+  <true/>
+  <key>MinimumOSVersion</key>
+  <string>16.0</string>
+  <key>UIDeviceFamily</key>
+  <array>
+    <integer>1</integer>
+    <integer>2</integer>
+  </array>
+  <!-- Info.plist launch screen (iOS 14+): no storyboard to compile, plain system background. -->
+  <key>UILaunchScreen</key>
+  <dict/>
+  <key>UIRequiredDeviceCapabilities</key>
+  <array>
+    <string>arm64</string>
+  </array>
+  <key>UISupportedInterfaceOrientations</key>
+  <array>
+    <string>UIInterfaceOrientationPortrait</string>
+    <string>UIInterfaceOrientationLandscapeLeft</string>
+    <string>UIInterfaceOrientationLandscapeRight</string>
+  </array>
+  <key>UISupportedInterfaceOrientations~ipad</key>
+  <array>
+    <string>UIInterfaceOrientationPortrait</string>
+    <string>UIInterfaceOrientationPortraitUpsideDown</string>
+    <string>UIInterfaceOrientationLandscapeLeft</string>
+    <string>UIInterfaceOrientationLandscapeRight</string>
+  </array>
+  <!-- Keep the soundtrack and device sync running with the screen locked. -->
+  <key>UIBackgroundModes</key>
+  <array>
+    <string>audio</string>
+  </array>
+  <!-- Shown in the system prompt for local network access. -->
+  <key>NSLocalNetworkUsageDescription</key>
+  <string>Pixel Tuner Stage finds show devices on your Wi-Fi network and keeps them in sync with the soundtrack.</string>
+  <!-- Open .pxpkg from Files, AirDrop and messengers. -->
+  <key>LSSupportsOpeningDocumentsInPlace</key>
+  <false/>
+  <key>UIFileSharingEnabled</key>
+  <true/>
+  <key>CFBundleDocumentTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleTypeName</key>
+      <string>Pixel Tuner project</string>
+      <key>CFBundleTypeRole</key>
+      <string>Viewer</string>
+      <key>LSHandlerRank</key>
+      <string>Owner</string>
+      <key>LSItemContentTypes</key>
+      <array>
+        <string>com.pixeltuner.pxpkg</string>
+      </array>
+    </dict>
+  </array>
+  <key>UTExportedTypeDeclarations</key>
+  <array>
+    <dict>
+      <key>UTTypeIdentifier</key>
+      <string>com.pixeltuner.pxpkg</string>
+      <key>UTTypeDescription</key>
+      <string>Pixel Tuner project</string>
+      <key>UTTypeConformsTo</key>
+      <array>
+        <string>public.data</string>
+        <string>public.zip-archive</string>
+      </array>
+      <key>UTTypeTagSpecification</key>
+      <dict>
+        <key>public.filename-extension</key>
+        <array>
+          <string>pxpkg</string>
+        </array>
+        <key>public.mime-type</key>
+        <string>application/vnd.pixeltuner.package+zip</string>
+      </dict>
+    </dict>
+  </array>
+</dict>
+</plist>

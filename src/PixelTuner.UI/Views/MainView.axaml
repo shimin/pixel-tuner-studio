@@ -9,11 +9,16 @@
        platform safe area on phones (notch, home indicator). -->
   <ScrollViewer>
     <StackPanel Margin="{StaticResource PtPagePadding}" Spacing="{StaticResource PtSpacing}" MaxWidth="720">
-      <TextBlock Classes="h1" Text="{x:Static res:Strings.AppTitle}" />
+      <TextBlock Classes="h1" Text="{Binding Title}" />
       <TextBlock Classes="muted" TextWrapping="Wrap" Text="{x:Static res:Strings.Start_Subheading}" />
       <Button Classes="accent" HorizontalAlignment="Left"
               Content="{x:Static res:Strings.Command_OpenProject}"
               Command="{Binding OpenProjectCommand}" />
+      <Button HorizontalAlignment="Left" IsVisible="{Binding CanImportLegacy}"
+              Content="{x:Static res:Strings.Command_ImportLegacy}"
+              Command="{Binding ImportLegacyProjectCommand}" />
+      <TextBlock Classes="muted" TextWrapping="Wrap" Text="{Binding Status}"
+                 IsVisible="{Binding Status, Converter={x:Static ObjectConverters.IsNotNull}}" />
 
       <TextBlock Foreground="{DynamicResource SystemFillColorCriticalBrush}" TextWrapping="Wrap"
                  Text="{Binding Error}" IsVisible="{Binding Error, Converter={x:Static ObjectConverters.IsNotNull}}" />

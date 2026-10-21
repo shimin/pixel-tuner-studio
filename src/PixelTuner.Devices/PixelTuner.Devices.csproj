@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Show devices over USB (serial port) and Wi-Fi (TCP): identify, read their state, upload
+       shows, firmware and settings. A port of PixelTuner 2's Communication/Service.
+       Studio only: phones have no serial ports, and Stage does not upload. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>PixelTuner.Devices</RootNamespace>
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.IO.Ports" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="PixelTuner.Devices.Tests" />
+  </ItemGroup>
+</Project>

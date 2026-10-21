@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Pixel Tuner Studio for Windows and macOS (Linux builds too, for CI). -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>PixelTuner.Studio.Desktop</RootNamespace>
+    <Product>Pixel Tuner Studio</Product>
+    <AssemblyName>PixelTunerStudio</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>app-icon.ico</ApplicationIcon>
+    <!-- macOS bundle identity, used by the .app packaging script. -->
+    <CFBundleName>Pixel Tuner Studio</CFBundleName>
+    <CFBundleIdentifier>com.pixeltuner.studio</CFBundleIdentifier>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Desktop" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\PixelTuner.UI\PixelTuner.UI.csproj" />
+  </ItemGroup>
+</Project>

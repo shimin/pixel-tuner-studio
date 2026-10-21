@@ -1,7 +1,6 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="PixelTuner.UI.App"
-             Name="Pixel Tuner Studio"
              RequestedThemeVariant="Default">
   <!-- "Default" follows the system light or dark theme on every platform. -->
   <Application.Styles>
