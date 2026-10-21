@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\PixelTuner.Audio\PixelTuner.Audio.csproj" />
+  </ItemGroup>
+</Project>

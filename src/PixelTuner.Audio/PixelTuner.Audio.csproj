@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Sound of the show: the player the devices follow, and the waveform under the timelines.
+       Only the contracts and platform-free parts live here. Implementations come per platform:
+       LibVLC (LibVLCSharp) on Windows and macOS, the system players on iOS and Android. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>PixelTuner.Audio</RootNamespace>
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+</Project>
