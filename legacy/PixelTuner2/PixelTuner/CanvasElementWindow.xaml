@@ -24,6 +24,44 @@
                 <ResourceDictionary Source="/PixelTuner;component/Styles/SharedStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+
+            <!-- Help: shown as the "?" button tooltip and, when pinned, in a popup. -->
+            <Style TargetType="TextBlock" x:Key="HelpHeader">
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="Margin" Value="0,8,0,2"/>
+            </Style>
+            <Style TargetType="TextBlock" x:Key="HelpText">
+                <Setter Property="TextWrapping" Value="Wrap"/>
+                <Setter Property="FontSize" Value="11.5"/>
+            </Style>
+            <Border x:Key="HelpContent" x:Shared="False" Background="#FFFDFDF6" BorderBrush="Gray" BorderThickness="1" Padding="10" MaxWidth="900">
+                <StackPanel>
+                    <TextBlock Text="{StaticResource Markup_HelpTitle}" FontSize="14" FontWeight="Bold"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="420"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="420"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Style="{StaticResource HelpHeader}" Text="{StaticResource Markup_HelpMouseHeader}"/>
+                            <TextBlock Style="{StaticResource HelpText}" Text="{StaticResource Markup_HelpMouseText}"/>
+                            <TextBlock Style="{StaticResource HelpHeader}" Text="{StaticResource Markup_HelpInsertHeader}"/>
+                            <TextBlock Style="{StaticResource HelpText}" Text="{StaticResource Markup_HelpInsertText}"/>
+                            <TextBlock Style="{StaticResource HelpHeader}" Text="{StaticResource Markup_HelpCopyHeader}"/>
+                            <TextBlock Style="{StaticResource HelpText}" Text="{StaticResource Markup_HelpCopyText}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Style="{StaticResource HelpHeader}" Text="{StaticResource Markup_HelpRangeHeader}"/>
+                            <TextBlock Style="{StaticResource HelpText}" Text="{StaticResource Markup_HelpRangeText}"/>
+                            <TextBlock Style="{StaticResource HelpHeader}" Text="{StaticResource Markup_HelpViewHeader}"/>
+                            <TextBlock Style="{StaticResource HelpText}" Text="{StaticResource Markup_HelpViewText}"/>
+                            <TextBlock Style="{StaticResource HelpHeader}" Text="{StaticResource Markup_HelpKeysHeader}"/>
+                            <TextBlock Style="{StaticResource HelpText}" Text="{StaticResource Markup_HelpKeysText}"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
             <Style TargetType="GroupBox">
                 <Setter Property="Margin" Value="0,0,0,6"/>
                 <Setter Property="Padding" Value="4"/>
@@ -68,6 +106,19 @@
         <!-- Status and dialog buttons -->
         <DockPanel DockPanel.Dock="Bottom" Margin="0,6,0,0">
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <ToggleButton x:Name="HelpToggle" Content="?" Width="28" FontWeight="Bold" Margin="0,0,8,0"
+                              ToolTipService.ShowDuration="600000" ToolTipService.InitialShowDelay="200" ToolTipService.Placement="Top"
+                              Checked="HelpToggle_Changed" Unchecked="HelpToggle_Changed">
+                    <ToggleButton.ToolTip>
+                        <ToolTip Padding="0" BorderThickness="0">
+                            <ContentControl Content="{StaticResource HelpContent}"/>
+                        </ToolTip>
+                    </ToggleButton.ToolTip>
+                </ToggleButton>
+                <Popup x:Name="HelpPopup" PlacementTarget="{Binding ElementName=HelpToggle}" Placement="Top"
+                       IsOpen="{Binding ElementName=HelpToggle, Path=IsChecked, Mode=OneWay}" StaysOpen="True" AllowsTransparency="True">
+                    <ContentControl Content="{StaticResource HelpContent}" MouseLeftButtonDown="HelpPopup_MouseDown"/>
+                </Popup>
                 <Button Content="OK" Width="80" Margin="4,0" Click="OkButton_Click" IsDefault="False"/>
                 <Button Content="{StaticResource Markup_Cancel}" Width="80" Click="CancelButton_Click"/>
             </StackPanel>
@@ -159,9 +210,6 @@
                     </StackPanel>
                 </GroupBox>
 
-                <Expander Header="{StaticResource Markup_Help}">
-                    <TextBlock Text="{StaticResource Markup_HelpText}" TextWrapping="Wrap" FontSize="11" Margin="0,4"/>
-                </Expander>
             </StackPanel>
         </ScrollViewer>
 

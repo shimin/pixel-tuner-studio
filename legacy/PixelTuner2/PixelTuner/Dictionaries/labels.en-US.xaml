@@ -190,8 +190,6 @@
     <system:String x:Key="Markup_ShowNumbers">Numbers</system:String>
     <system:String x:Key="Markup_ShowPath">Strip path</system:String>
     <system:String x:Key="Markup_ShowGradient">Color by number</system:String>
-    <system:String x:Key="Markup_Help">Mouse controls</system:String>
-    <system:String x:Key="Markup_HelpText" xml:space="preserve">Click, drag — number empty cells&#10;Shift+click — line from the last LED to the cell&#10;Shift+drag — line from the press point&#10;Ctrl+drag — rectangle, snake or progressive&#10;Ctrl+Shift+drag — pick a range&#10;Alt+click — continue numbering after this LED&#10;Right click / drag — remove LEDs (numbers close up)&#10;Double click — set LED number&#10;Ctrl+wheel — zoom&#10;Ctrl+Z / Ctrl+Y — undo / redo&#10;Del / R — delete / reverse range&#10;Esc — cancel gesture or close</system:String>
     <system:String x:Key="Markup_SetNumberTitle">LED number</system:String>
     <system:String x:Key="Markup_SetNumberHint">1–{0}. Other LEDs shift to make room.</system:String>
     <system:String x:Key="Markup_StatusEmpty">No LEDs numbered</system:String>
@@ -201,6 +199,19 @@
     <system:String x:Key="Markup_SourceIssues">Saved numbering had {0}. The strip already received LEDs in number order, so on OK numbers are compacted to 1–N in the same order. Problem cells are highlighted.</system:String>
     <system:String x:Key="Markup_ResizeDropped">{0} LEDs outside the new size were removed, numbering closed up (Ctrl+Z to undo).</system:String>
     <system:String x:Key="Markup_SaveChanges">Save markup changes?</system:String>
+    <system:String x:Key="Markup_HelpTitle">Strip markup: help</system:String>
+    <system:String x:Key="Markup_HelpMouseHeader">Numbering with the mouse</system:String>
+    <system:String x:Key="Markup_HelpMouseText" xml:space="preserve">• Click / drag — number empty cells in order, starting at "Next #".&#10;• Shift+click — line from the last placed LED to the cell (row, column or diagonal).&#10;• Shift+drag — line from the press point to the release point.&#10;• Ctrl+drag — rectangle, snake or progressive, by rows or columns (checkboxes at the top). The strip starts at the corner you pressed.&#10;• Green cells with italic numbers are a preview: numbers are set when you release the button, Esc cancels.&#10;• Alt+click on an LED — continue numbering right after it.&#10;• Double click on an LED — set its number: the LED moves there, the others shift.</system:String>
+    <system:String x:Key="Markup_HelpInsertHeader">Inserting and closing up</system:String>
+    <system:String x:Key="Markup_HelpInsertText" xml:space="preserve">• Numbers always run 1…N without gaps or repeats.&#10;• "Next #" below the last number inserts new LEDs in the middle and shifts the tail forward. "to end" moves the cursor back to the end of the strip.&#10;• Right click / right drag — remove LEDs; numbers after them close up.&#10;• "Overwrite" — group operations renumber already numbered cells; without it such cells are skipped.</system:String>
+    <system:String x:Key="Markup_HelpRangeHeader">Range and whole matrix</system:String>
+    <system:String x:Key="Markup_HelpRangeText" xml:space="preserve">• Ctrl+Shift+rectangle or the "from … to" fields pick a number range (cyan frame).&#10;• Reverse (R) — reverse order on the same cells. Delete (Del) — remove and close up. "Move to #" — move the block as a whole.&#10;• "Number whole matrix" — from the chosen corner, with the snake / by columns checkboxes. Also: reverse the whole chain, mirror ↔ ↕, rotate 90° (square grid), clear.&#10;• "Apply size" keeps LEDs at their X, Y; LEDs beyond the new edge are removed and numbers close up.</system:String>
+    <system:String x:Key="Markup_HelpCopyHeader">Copying markup</system:String>
+    <system:String x:Key="Markup_HelpCopyText" xml:space="preserve">• On the project canvas: right click an element → Copy, then right click another element → Paste. Grid, spacing and all numbering are copied; the copies are independent.&#10;• Inside this window, move a block of numbers with "Move to #".</system:String>
+    <system:String x:Key="Markup_HelpViewHeader">What you see</system:String>
+    <system:String x:Key="Markup_HelpViewText" xml:space="preserve">• Cell color by number: blue at the strip start, yellow-green at the end.&#10;• Strip path: solid between neighbouring cells, dashed at a break, when the next LED is not adjacent (e.g. a new row in progressive layout, or a mistake). Arrows show direction, the green circle is LED #1, the red square the last one.&#10;• Frames: red — repeated number, orange — cell after a gap (in markup saved earlier), cyan — selected range, white — under the cursor.&#10;• Bottom line: LED count, next number and X, Y → # of the cell under the cursor.</system:String>
+    <system:String x:Key="Markup_HelpKeysHeader">Keys and saving</system:String>
+    <system:String x:Key="Markup_HelpKeysText" xml:space="preserve">Ctrl+Z / Ctrl+Y — undo / redo (each gesture is one step)&#10;Del / R — delete / reverse range&#10;Esc — cancel gesture, close help, otherwise close the window&#10;Ctrl+wheel — zoom&#10;OK writes the markup to the element. Cancel / Esc discards changes; closing with × asks. Opening the window is one project undo step.</system:String>
     <system:String x:Key="VideoOffsetWindow_Title">Video offset</system:String>
     <system:String x:Key="FixMissingWindow_CantFind">The following file couldn't be found at specified location:</system:String>
     <system:String x:Key="FixMissingWindow_WhatToDo">What would you like to do?</system:String>

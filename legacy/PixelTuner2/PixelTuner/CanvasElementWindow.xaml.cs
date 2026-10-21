@@ -79,7 +79,11 @@ namespace PixelTuner
 
             if (e.Key == Key.Escape)
             {
-                if (!MarkupCanvas.CancelGesture())
+                if (HelpToggle.IsChecked == true)
+                {
+                    HelpToggle.IsChecked = false;
+                }
+                else if (!MarkupCanvas.CancelGesture())
                 {
                     _closingHandled = !Editor.IsChanged;
                     Close();
@@ -106,6 +110,17 @@ namespace PixelTuner
             // At zoom 1 the grid fits the visible area; leave room for margins and scroll bars.
             MarkupCanvas.FitWidth = System.Math.Max(50, Scroller.ActualWidth - 40);
             MarkupCanvas.FitHeight = System.Math.Max(50, Scroller.ActualHeight - 40);
+        }
+
+        private void HelpToggle_Changed(object sender, RoutedEventArgs e)
+        {
+            // Pinned help is already on screen, so the hover tooltip would only duplicate it.
+            ToolTipService.SetIsEnabled(HelpToggle, HelpToggle.IsChecked != true);
+        }
+
+        private void HelpPopup_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            HelpToggle.IsChecked = false;
         }
 
         private void MarkupCanvas_CellNumberRequested(object sender, CellEventArgs e)
