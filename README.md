@@ -14,8 +14,8 @@ PixelTuner 2: Windows, macOS, Android и iOS из одного кода.
 
 ```text
 src/
-  PixelTuner.Core/        модель проекта (ShowProject), без UI и платформенного кода
-  PixelTuner.Package/     формат .pxpkg: чтение, запись, проверка целостности
+  PixelTuner.Core/        модель проекта (ShowProject) и сборка .bin, без UI и платформенного кода
+  PixelTuner.Package/     формат .pxpkg: чтение, запись, проверка целостности, импорт .ptp
   PixelTuner.Sync/        протокол устройств (UDP 333), поиск устройств, Art-Net
   PixelTuner.UI/          общий интерфейс Avalonia: экраны, тема, строки ru/en/de
   Heads/
@@ -80,6 +80,20 @@ export/<device>.bin скомпилированные файлы устройст
   и скажет об этом, новое мигрирует старый.
 - Тип файла зарегистрирован в Info.plist (`com.pixeltuner.pxpkg`) и в Android
   intent-filter, чтобы файл открывался сразу в приложении.
+
+## Импорт проектов PixelTuner 2
+
+`PtpImporter.Import("show.ptp", "show.pxpkg")` переносит проект .ptp в пакет:
+
+- таймлайны, элементы, разметку светодиодов и рисунок холста — в `ShowProject`;
+- звук, картинки и GIF — в `media/` по хэшу. Файл ищется по сохранённому пути,
+  затем рядом с проектом. Если файла нигде нет, вызывается `FindMissing`, один
+  раз на каждый путь. Если файл так и не нашёлся, он попадает в `MissingMedia`,
+  а элемент остаётся без медиа, но со старым путём в `SourcePath`.
+
+Сборка .bin работает с моделью. Прямой экспорт из .ptp (`Ptp*Export`) тоже идёт
+через импорт, поэтому сверка с эталонами PixelTuner 2 проверяет и импорт.
+`PixelTuner.Package.Tests` сравнивает .bin из пакета с .bin из исходного .ptp.
 
 ## Протокол устройств
 

@@ -35,7 +35,8 @@ jobs:
 
   samples:
     # The whole PixelTuner 2 reference set (about 540 MB) from the draft release "samples-v1".
-    # Every pixel- and video-device .bin in it must come out byte for byte the same.
+    # Every pixel- and video-device .bin in it must come out byte for byte the same,
+    # and every project imported into a .pxpkg must export the same .bin as the project.
     name: Export against the reference set
     runs-on: ubuntu-latest
     permissions:
@@ -50,8 +51,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: scripts/ci/download-samples.sh
-      - name: Test
+      - name: Test export
         run: dotnet test tests/PixelTuner.Core.Tests -c Release --filter "FullyQualifiedName~FullSample" --logger "console;verbosity=detailed"
+      - name: Test import into .pxpkg
+        run: dotnet test tests/PixelTuner.Package.Tests -c Release --filter "FullyQualifiedName~FullSample" --logger "console;verbosity=detailed"
 
   windows:
     name: Desktop (Windows)

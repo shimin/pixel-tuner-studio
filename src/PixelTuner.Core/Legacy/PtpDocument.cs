@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
+using PixelTuner.Core.Imaging;
 
 namespace PixelTuner.Core.Legacy;
 
@@ -15,6 +16,12 @@ public sealed partial class PtpDocument
     private static readonly XNamespace Xsi = "http://www.w3.org/2001/XMLSchema-instance";
 
     public List<PtpTimeline> Timelines { get; } = [];
+
+    /// <summary>The soundtrack as stored: relative or an absolute Windows path. Null without sound.</summary>
+    public string? AudioPath { get; private set; }
+
+    /// <summary>The canvas drawing (SVG source) the LED markup was made on; empty when there is none.</summary>
+    public string CanvasContent { get; private set; } = "";
 
     /// <summary>Canvas elements (device outlines with their LED markup), by their Path id.</summary>
     public Dictionary<string, PtpCanvasElement> CanvasElements { get; } = new(StringComparer.Ordinal);
@@ -34,7 +41,11 @@ public sealed partial class PtpDocument
         if (root.Name.LocalName != "FileViewModel")
             throw new InvalidDataException("This is not a PixelTuner 2 project.");
 
-        var document = new PtpDocument();
+        var document = new PtpDocument
+        {
+            AudioPath = (string?)root.Attribute("AudioPath") is { Length: > 0 } audio ? audio : null,
+            CanvasContent = (string?)root.Element("Canvas")?.Element("Content") ?? "",
+        };
         foreach (var element in root.Element("Canvas")?.Element("Elements")?.Elements("CanvasElementViewModel") ?? [])
         {
             var canvasElement = new PtpCanvasElement
@@ -58,7 +69,7 @@ public sealed partial class PtpDocument
             var timeline = new PtpTimeline
             {
                 Type = (string?)line.Attribute(Xsi + "type") ?? "",
-                Color = ParseArgb((string?)line.Attribute("LineColorTagXml")),
+                Color = ColorText.ParseArgb((string?)line.Attribute("LineColorTagXml")),
                 IsFlippedVertical = ParseBool((string?)line.Attribute("IsFlippedVertical")),
                 Attributes = line.Attributes().Where(a => !a.IsNamespaceDeclaration)
                     .ToDictionary(a => a.Name.LocalName, a => a.Value),
@@ -95,15 +106,6 @@ public sealed partial class PtpDocument
             int.Parse(m.Groups[2].Value, CultureInfo.InvariantCulture),
             int.Parse(m.Groups[3].Value, CultureInfo.InvariantCulture),
             int.Parse(m.Groups[4].Value, CultureInfo.InvariantCulture));
-    }
-
-    /// <summary>"#AARRGGBB" as WPF wrote colours. PixelTuner 2 defaulted to blue.</summary>
-    internal static (byte A, byte R, byte G, byte B) ParseArgb(string? value)
-    {
-        if (value is { Length: 9 } && value[0] == '#'
-            && uint.TryParse(value.AsSpan(1), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint argb))
-            return ((byte)(argb >> 24), (byte)(argb >> 16), (byte)(argb >> 8), (byte)argb);
-        return (255, 0, 0, 255);
     }
 
     private static bool ParseBool(string? value) =>
