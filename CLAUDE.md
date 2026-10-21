@@ -46,8 +46,27 @@
   (menu bar on macOS, `NativeMenuBar` on Windows); shortcuts come from `Views/Shortcuts` (Ctrl or Cmd).
   Unsaved changes are asked about before open, new, import, close and window close (`MainViewModel.ConfirmDiscardAsync`).
   `tests/PixelTuner.UI.Tests` drives all of it with fake dialogs.
+- The timelines (`src/PixelTuner.UI/Timelines`): `TimelineEditor` holds everything that is not drawing (coordinates,
+  zoom, hit testing, selection, drags that end in one `Edit`, snapping) and is tested without a window;
+  `TimelineControl` only draws it and forwards the pointer. Do not put model rules into the control. An item dragged over another timeline moves there only if
+  `Edits.Accepts` (same kind of item) and `Edits.Fits` say so; items are added by `EditorViewModel.AddItemCommand` (files), `AddColorCommand` and `AddEffectCommand`. To try the
+  window with the mouse in the sandbox: `xvfb-run`, then `python-xlib` (`pip install python-xlib`) with XTest.
+- Stretching of an item is a speed, not a position; the item's time span only says how long it plays. Pixel devices
+  and hoops (same .bin, PixelTuner 2 has no separate hoop semantics) hold each image column for k x 50 us, so one pass of a
+  W-column picture takes W x k x 50 us (`ItemPreview.PassDuration`; Ivan: 100 columns, k=100, 1000 ms gives 2 passes).
+  Video devices take milliseconds per frame (`VideoPassDuration`; 40 is 25 frames a second). E-Pic is copied from
+  PixelTuner 2's Repeat window: k / 5 ms per column (`EpicPassDuration`). The units are unchecked on devices: see
+  `docs/before-release.md`. PixelTuner 2 defaults: 4 for pictures, 40 for video; its item windows allowed 1-400 and 20-800.
 - `src/PixelTuner.Audio` holds the player and decoder contracts only; implementations go per
-  platform (LibVLC on desktop, system players on phones).
+  platform. `src/PixelTuner.Audio.Vlc` (LibVLC, LGPL, dynamic) serves Windows and macOS: the VideoLAN NuGet
+  packages carry LibVLC under `libvlc/<rid>`, Linux uses the system one (`apt install libvlc5 vlc-plugin-base`).
+  The shared UI sees only `IAudioEngine` (`AudioEngine.Current`, set by the head); phones get system players later.
+  LibVLC rules learned the hard way: never call it from its own event threads (deadlock or crash), raise our
+  events from a worker, and release a `Media` that failed to parse late (releasing it at once crashes the process).
+  `PIXELTUNER_VLC_ARGS="--aout=dummy"` runs the app without a sound card; `PIXELTUNER_REQUIRE_VLC=1` makes the
+  LibVLC tests fail instead of passing quietly when LibVLC is missing (CI sets it).
+- `docs/before-release.md` lists what works today but must be redone before a release (start there when preparing
+  one). Add to it whenever a stopgap goes in, and mark the code with `TODO(release)`.
 - Merge PRs with a normal merge commit only.
 - The cloud sandbox can build and test Core, Package, Sync, UI and Desktop on Linux
   (`apt install dotnet-sdk-10.0`, `SSL_CERT_FILE=/root/.ccr/ca-bundle.crt` for NuGet).

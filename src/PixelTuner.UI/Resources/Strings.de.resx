@@ -54,8 +54,78 @@
   <data name="Edit_ResizeItem" xml:space="preserve"><value>Elementlänge ändern</value></data>
   <data name="Edit_SetBrightness" xml:space="preserve"><value>Helligkeit ändern</value></data>
   <data name="Edit_SetStretching" xml:space="preserve"><value>Dehnung ändern</value></data>
+  <data name="Edit_SetLaser" xml:space="preserve"><value>Laser ändern</value></data>
+  <data name="Edit_SetOffset" xml:space="preserve"><value>Video im Bild verschieben</value></data>
   <data name="Edit_AddMarker" xml:space="preserve"><value>Marker hinzufügen</value></data>
   <data name="Edit_RemoveMarker" xml:space="preserve"><value>Marker löschen</value></data>
   <data name="Edit_RenameMarker" xml:space="preserve"><value>Marker umbenennen</value></data>
   <data name="Edit_MoveMarker" xml:space="preserve"><value>Marker verschieben</value></data>
+  <data name="Menu_View" xml:space="preserve"><value>Ansicht</value></data>
+  <data name="Menu_Timeline" xml:space="preserve"><value>Zeitleiste</value></data>
+  <data name="Command_AddPixelTimeline" xml:space="preserve"><value>Pixel-Zeitleiste hinzufügen</value></data>
+  <data name="Command_AddVideoTimeline" xml:space="preserve"><value>Video-Zeitleiste hinzufügen</value></data>
+  <data name="Command_AddEpicTimeline" xml:space="preserve"><value>E-Pic-poi-Zeitleiste hinzufügen</value></data>
+  <data name="Command_AddLightTimeline" xml:space="preserve"><value>LightMaster-Zeitleiste hinzufügen</value></data>
+  <data name="Command_AddMarker" xml:space="preserve"><value>Marker an der Abspielposition setzen</value></data>
+  <data name="Command_Delete" xml:space="preserve"><value>Löschen</value></data>
+  <data name="Command_ZoomIn" xml:space="preserve"><value>Vergrößern</value></data>
+  <data name="Command_ZoomOut" xml:space="preserve"><value>Verkleinern</value></data>
+  <data name="Command_ZoomFit" xml:space="preserve"><value>Ganze Show anzeigen</value></data>
+  <data name="Kind_Pixel" xml:space="preserve"><value>Pixel: Poi, Staff, Hoop</value></data>
+  <data name="Kind_Video" xml:space="preserve"><value>Video: Matrix, Shield</value></data>
+  <data name="Kind_EpicPoi" xml:space="preserve"><value>E-Pic poi</value></data>
+  <data name="Kind_Light" xml:space="preserve"><value>LightMaster</value></data>
+  <data name="Timeline_DefaultName" xml:space="preserve"><value>Zeitleiste {0}</value></data>
+  <data name="Marker_DefaultName" xml:space="preserve"><value>Marker {0}</value></data>
+  <data name="Inspector_Nothing" xml:space="preserve"><value>Wählen Sie eine Zeitleiste, ein Element oder einen Marker.</value></data>
+  <data name="Inspector_Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Inspector_Start" xml:space="preserve"><value>Beginn</value></data>
+  <data name="Inspector_Length" xml:space="preserve"><value>Länge</value></data>
+  <data name="Inspector_Position" xml:space="preserve"><value>Position</value></data>
+  <data name="Inspector_Timeline" xml:space="preserve"><value>Zeitleiste</value></data>
+  <data name="Inspector_Item" xml:space="preserve"><value>Element</value></data>
+  <data name="Inspector_Marker" xml:space="preserve"><value>Marker</value></data>
+  <data name="FileType_Audio" xml:space="preserve"><value>Audio</value></data>
+  <data name="Command_SetSoundtrack" xml:space="preserve"><value>Tonspur festlegen…</value></data>
+  <data name="Command_RemoveSoundtrack" xml:space="preserve"><value>Tonspur entfernen</value></data>
+  <data name="Menu_Playback" xml:space="preserve"><value>Wiedergabe</value></data>
+  <data name="Command_PlayPause" xml:space="preserve"><value>Wiedergabe oder Pause</value></data>
+  <data name="Command_Stop" xml:space="preserve"><value>Stopp</value></data>
+  <data name="Command_ToStart" xml:space="preserve"><value>Zum Anfang</value></data>
+  <data name="Soundtrack_Label" xml:space="preserve"><value>Tonspur</value></data>
+  <data name="Soundtrack_None" xml:space="preserve"><value>Keine: Zeitleiste ▸ Tonspur festlegen…</value></data>
+  <data name="Audio_Missing" xml:space="preserve"><value>Die Tonspur „{0}“ ist nicht im Projekt.</value></data>
+  <data name="Audio_CannotPlay" xml:space="preserve"><value>Die Tonspur kann nicht abgespielt werden: {0}</value></data>
+  <data name="Audio_NoEngine" xml:space="preserve"><value>Auf diesem Computer gibt es keine Audio-Engine (LibVLC), die Tonspur kann nicht abgespielt werden.</value></data>
+  <data name="Audio_AddFailed" xml:space="preserve"><value>Der Ton konnte nicht hinzugefügt werden: {0}</value></data>
+  <data name="Edit_SetAudio" xml:space="preserve"><value>Tonspur festlegen</value></data>
+  <data name="Edit_RemoveAudio" xml:space="preserve"><value>Tonspur entfernen</value></data>
+  <data name="Command_AddItem" xml:space="preserve"><value>Datei hinzufügen…</value></data>
+  <data name="FileType_Image" xml:space="preserve"><value>Bilder</value></data>
+  <data name="Item_AddFailed" xml:space="preserve"><value>{0} kann nicht hinzugefügt werden: {1}</value></data>
+  <data name="Item_NoTimeline" xml:space="preserve"><value>Wähle zuerst eine Spur: Pixel-, Video- und E-Pic-Spuren nehmen Dateien, die LightMaster-Spur nimmt Farben und Effekte.</value></data>
+  <data name="Item_NoRoom" xml:space="preserve"><value>Auf dieser Spur ist ab dem Abspielkopf keine Zeit frei.</value></data>
+  <data name="Inspector_Brightness" xml:space="preserve"><value>Helligkeit</value></data>
+  <data name="Inspector_Stretching" xml:space="preserve"><value>Dehnung</value></data>
+  <data name="Inspector_Laser" xml:space="preserve"><value>Laser</value></data>
+  <data name="Inspector_Preview" xml:space="preserve"><value>Bild</value></data>
+  <data name="Command_AddColor" xml:space="preserve"><value>Farbe hinzufügen</value></data>
+  <data name="Command_AddEffect" xml:space="preserve"><value>Effekt hinzufügen</value></data>
+  <data name="FileType_Gif" xml:space="preserve"><value>Animationen (GIF)</value></data>
+  <data name="Inspector_Color" xml:space="preserve"><value>Farbe</value></data>
+  <data name="Inspector_ColorTo" xml:space="preserve"><value>Geht über zu</value></data>
+  <data name="Inspector_Effect" xml:space="preserve"><value>Effekt</value></data>
+  <data name="Inspector_T1" xml:space="preserve"><value>Zeit 1, ms</value></data>
+  <data name="Inspector_T2" xml:space="preserve"><value>Zeit 2, ms</value></data>
+  <data name="Inspector_OffsetX" xml:space="preserve"><value>Versatz X</value></data>
+  <data name="Inspector_OffsetY" xml:space="preserve"><value>Versatz Y</value></data>
+  <data name="Inspector_BadValue" xml:space="preserve"><value>Dieser Wert ist nicht möglich: {0}.</value></data>
+  <data name="Effect_LinearTransition" xml:space="preserve"><value>Linearer Übergang</value></data>
+  <data name="Effect_SineWave" xml:space="preserve"><value>Sinuswelle</value></data>
+  <data name="Effect_SquareWave" xml:space="preserve"><value>Rechteckwelle</value></data>
+  <data name="Effect_SawToothWave" xml:space="preserve"><value>Sägezahnwelle</value></data>
+  <data name="Item_BadMedia" xml:space="preserve"><value>{0} enthält kein Bild.</value></data>
+  <data name="Inspector_Playback" xml:space="preserve"><value>Ein Durchlauf des Bildes dauert {0}; im Element läuft es {1}-mal. Weniger Dehnung spielt schneller.</value></data>
+  <data name="Inspector_FrameTime" xml:space="preserve"><value>Bildzeit, ms</value></data>
+  <data name="Inspector_PlaybackVideo" xml:space="preserve"><value>Ein Durchlauf der Animation dauert {0}; im Element läuft sie {1}-mal. Die Bildzeit ist in Millisekunden: 40 sind 25 Bilder pro Sekunde.</value></data>
 </root>

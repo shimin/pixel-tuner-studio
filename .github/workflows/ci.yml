@@ -24,11 +24,17 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
+      - name: Install LibVLC
+        # The sound tests need the system LibVLC here; Windows and macOS get theirs from NuGet.
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libvlc5 vlc-plugin-base
       - name: Test
+        env:
+          PIXELTUNER_REQUIRE_VLC: "1"   # a missing LibVLC is a failure here, not a silent pass
         run: |
           dotnet test tests/PixelTuner.Sync.Tests -c Release
           dotnet test tests/PixelTuner.Devices.Tests -c Release
           dotnet test tests/PixelTuner.Audio.Tests -c Release
+          dotnet test tests/PixelTuner.Audio.Vlc.Tests -c Release
           dotnet test tests/PixelTuner.Package.Tests -c Release
           dotnet test tests/PixelTuner.UI.Tests -c Release
           dotnet test tests/PixelTuner.Core.Tests -c Release
@@ -68,10 +74,13 @@ jobs:
         with:
           global-json-file: global.json
       - name: Test
+        env:
+          PIXELTUNER_REQUIRE_VLC: "1"
         run: |
           dotnet test tests/PixelTuner.Sync.Tests -c Release
           dotnet test tests/PixelTuner.Devices.Tests -c Release
           dotnet test tests/PixelTuner.Audio.Tests -c Release
+          dotnet test tests/PixelTuner.Audio.Vlc.Tests -c Release
           dotnet test tests/PixelTuner.Package.Tests -c Release
           dotnet test tests/PixelTuner.UI.Tests -c Release
           dotnet test tests/PixelTuner.Core.Tests -c Release
@@ -93,10 +102,13 @@ jobs:
         with:
           global-json-file: global.json
       - name: Test
+        env:
+          PIXELTUNER_REQUIRE_VLC: "1"
         run: |
           dotnet test tests/PixelTuner.Sync.Tests -c Release
           dotnet test tests/PixelTuner.Devices.Tests -c Release
           dotnet test tests/PixelTuner.Audio.Tests -c Release
+          dotnet test tests/PixelTuner.Audio.Vlc.Tests -c Release
           dotnet test tests/PixelTuner.Package.Tests -c Release
           dotnet test tests/PixelTuner.UI.Tests -c Release
           dotnet test tests/PixelTuner.Core.Tests -c Release

@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PixelTuner.Audio\PixelTuner.Audio.csproj" />
     <ProjectReference Include="..\PixelTuner.Core\PixelTuner.Core.csproj" />
     <ProjectReference Include="..\PixelTuner.Package\PixelTuner.Package.csproj" />
     <ProjectReference Include="..\PixelTuner.Sync\PixelTuner.Sync.csproj" />

@@ -135,6 +135,22 @@ public class EditsTests
     }
 
     [Fact]
+    public void Trimming_the_start_keeps_the_end_and_stops_at_the_previous_item()
+    {
+        var timeline = TimelineWith((0, 1), (2, 3));
+        var second = timeline.Items[1];
+
+        _history.Do(Edits.TrimItemStart(timeline, second, S(1.5)));
+        Assert.Equal((S(1.5), S(5)), (second.Start, second.End));
+
+        Assert.Throws<InvalidOperationException>(() => Edits.TrimItemStart(timeline, second, S(0.5)));   // into the first item
+        Assert.Throws<InvalidOperationException>(() => Edits.TrimItemStart(timeline, second, S(5)));     // no length left
+
+        _history.Undo();
+        Assert.Equal((S(2), S(5)), (second.Start, second.End));
+    }
+
+    [Fact]
     public void Item_properties_are_validated_and_undone()
     {
         var item = new TimelineItem();
@@ -200,5 +216,75 @@ public class EditsTests
         Assert.Empty(timeline.Items);
         Assert.Empty(_project.Markers);
         Assert.False(_history.CanUndo);
+    }
+
+    [Fact]
+    public void Item_moves_to_another_timeline_of_its_kind_in_one_undo_step()
+    {
+        var a = TimelineWith((0, 2));
+        var b = TimelineWith((1, 1), (5, 1));
+        var item = a.Items[0];
+        item.Kind = ItemKind.Image;
+
+        _history.Do(Edits.MoveItemToTimeline(a, b, item, S(2)));
+        Assert.Empty(a.Items);
+        Assert.Equal([1d, 2d, 5d], Starts(b));
+
+        _history.Undo();
+        Assert.Same(item, Assert.Single(a.Items));
+        Assert.Equal(S(0), item.Start);
+        Assert.Equal([1d, 5d], Starts(b));
+    }
+
+    [Fact]
+    public void Item_does_not_move_to_a_timeline_of_another_kind_or_onto_an_item()
+    {
+        var pixel = TimelineWith((0, 2));
+        var video = TimelineWith();
+        video.Kind = TimelineKind.Video;
+        var full = TimelineWith((0, 10));
+        var item = pixel.Items[0];
+        item.Kind = ItemKind.Image;
+
+        Assert.False(Edits.Accepts(video, item));
+        Assert.Throws<InvalidOperationException>(() => Edits.MoveItemToTimeline(pixel, video, item, S(0)));
+        Assert.Throws<InvalidOperationException>(() => Edits.MoveItemToTimeline(pixel, full, item, S(1)));
+    }
+
+    [Fact]
+    public void Laser_and_offset_change_with_undo()
+    {
+        var item = TimelineWith((0, 1)).Items[0];
+        _history.Do(Edits.SetLaser(item, true));
+        _history.Do(Edits.SetOffset(item, 3, 4));
+        Assert.True(item.LaserOn);
+        Assert.Equal((3, 4), (item.OffsetX, item.OffsetY));
+
+        _history.Undo();
+        _history.Undo();
+        Assert.False(item.LaserOn);
+        Assert.Equal((0, 0), (item.OffsetX, item.OffsetY));
+    }
+
+    [Fact]
+    public void Light_item_colours_effect_and_times_change_with_undo_and_refuse_bad_values()
+    {
+        var item = TimelineWith((0, 1)).Items[0];
+        item.Kind = ItemKind.Effect;
+        item.Color = "#FF0000";
+        item.Effect = LightEffectKind.SineWave;
+
+        _history.Do(Edits.SetItemColor(item, "#00FF00"));
+        _history.Do(Edits.SetItemColorLast(item, "#0000FF"));
+        _history.Do(Edits.SetEffect(item, LightEffectKind.SquareWave));
+        _history.Do(Edits.SetEffectTimes(item, 250, 500));
+        Assert.Equal(("#00FF00", "#0000FF", LightEffectKind.SquareWave, 250, 500), (item.Color, item.ColorLast, item.Effect, item.T1, item.T2));
+
+        Assert.Throws<InvalidDataException>(() => Edits.SetItemColor(item, "green"));
+        Assert.Throws<ArgumentOutOfRangeException>(() => Edits.SetEffect(item, "explosion"));
+        Assert.Throws<ArgumentOutOfRangeException>(() => Edits.SetEffectTimes(item, -1, 0));
+
+        while (_history.Undo()) { }
+        Assert.Equal(("#FF0000", null, LightEffectKind.SineWave, 0, 0), (item.Color, item.ColorLast, item.Effect, item.T1, item.T2));
     }
 }

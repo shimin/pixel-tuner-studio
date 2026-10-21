@@ -38,6 +38,35 @@
         <NativeMenu>
           <NativeMenuItem Header="{Binding UndoHeader}" Command="{Binding UndoCommand}" Gesture="{x:Static views:Shortcuts.Undo}" />
           <NativeMenuItem Header="{Binding RedoHeader}" Command="{Binding RedoCommand}" Gesture="{x:Static views:Shortcuts.Redo}" />
+          <NativeMenuItemSeparator />
+          <NativeMenuItem Header="{x:Static res:Strings.Command_Delete}" Command="{Binding Editor.DeleteSelectedCommand}" Gesture="{x:Static views:Shortcuts.Delete}" />
+        </NativeMenu>
+      </NativeMenuItem>
+      <NativeMenuItem Header="{x:Static res:Strings.Menu_Timeline}">
+        <NativeMenu>
+          <NativeMenuItem Header="{x:Static res:Strings.Command_AddPixelTimeline}" Command="{Binding Editor.AddPixelTimelineCommand}" />
+          <NativeMenuItem Header="{x:Static res:Strings.Command_AddVideoTimeline}" Command="{Binding Editor.AddVideoTimelineCommand}" />
+          <NativeMenuItem Header="{x:Static res:Strings.Command_AddEpicTimeline}" Command="{Binding Editor.AddEpicTimelineCommand}" />
+          <NativeMenuItem Header="{x:Static res:Strings.Command_AddLightTimeline}" Command="{Binding Editor.AddLightTimelineCommand}" />
+          <NativeMenuItemSeparator />
+          <NativeMenuItem Header="{x:Static res:Strings.Command_SetSoundtrack}" Command="{Binding Editor.SetSoundtrackCommand}" />
+          <NativeMenuItem Header="{x:Static res:Strings.Command_RemoveSoundtrack}" Command="{Binding Editor.RemoveSoundtrackCommand}" />
+          <NativeMenuItemSeparator />
+          <NativeMenuItem Header="{x:Static res:Strings.Command_AddMarker}" Command="{Binding Editor.AddMarkerCommand}" Gesture="{x:Static views:Shortcuts.AddMarker}" />
+        </NativeMenu>
+      </NativeMenuItem>
+      <NativeMenuItem Header="{x:Static res:Strings.Menu_Playback}">
+        <NativeMenu>
+          <NativeMenuItem Header="{x:Static res:Strings.Command_PlayPause}" Command="{Binding Editor.PlayPauseCommand}" />
+          <NativeMenuItem Header="{x:Static res:Strings.Command_Stop}" Command="{Binding Editor.StopCommand}" />
+          <NativeMenuItem Header="{x:Static res:Strings.Command_ToStart}" Command="{Binding Editor.ToStartCommand}" />
+        </NativeMenu>
+      </NativeMenuItem>
+      <NativeMenuItem Header="{x:Static res:Strings.Menu_View}">
+        <NativeMenu>
+          <NativeMenuItem Header="{x:Static res:Strings.Command_ZoomIn}" Command="{Binding Editor.ZoomInCommand}" Gesture="{x:Static views:Shortcuts.ZoomIn}" />
+          <NativeMenuItem Header="{x:Static res:Strings.Command_ZoomOut}" Command="{Binding Editor.ZoomOutCommand}" Gesture="{x:Static views:Shortcuts.ZoomOut}" />
+          <NativeMenuItem Header="{x:Static res:Strings.Command_ZoomFit}" Command="{Binding Editor.ZoomFitCommand}" Gesture="{x:Static views:Shortcuts.ZoomFit}" />
         </NativeMenu>
       </NativeMenuItem>
       <NativeMenuItem Header="{x:Static res:Strings.Menu_Help}" IsVisible="{Binding ShowWindowsMenus}">
@@ -56,6 +85,12 @@
     <KeyBinding Gesture="{x:Static views:Shortcuts.Undo}" Command="{Binding UndoCommand}" />
     <KeyBinding Gesture="{x:Static views:Shortcuts.Redo}" Command="{Binding RedoCommand}" />
     <KeyBinding Gesture="{x:Static views:Shortcuts.RedoAlternate}" Command="{Binding RedoCommand}" />
+    <KeyBinding Gesture="{x:Static views:Shortcuts.Delete}" Command="{Binding Editor.DeleteSelectedCommand}" />
+    <KeyBinding Gesture="{x:Static views:Shortcuts.Backspace}" Command="{Binding Editor.DeleteSelectedCommand}" />
+    <KeyBinding Gesture="{x:Static views:Shortcuts.AddMarker}" Command="{Binding Editor.AddMarkerCommand}" />
+    <KeyBinding Gesture="{x:Static views:Shortcuts.ZoomIn}" Command="{Binding Editor.ZoomInCommand}" />
+    <KeyBinding Gesture="{x:Static views:Shortcuts.ZoomOut}" Command="{Binding Editor.ZoomOutCommand}" />
+    <KeyBinding Gesture="{x:Static views:Shortcuts.ZoomFit}" Command="{Binding Editor.ZoomFitCommand}" />
     <KeyBinding Gesture="{x:Static views:Shortcuts.Close}" Command="{Binding CloseProjectCommand}" />
   </Window.KeyBindings>
   <DockPanel>

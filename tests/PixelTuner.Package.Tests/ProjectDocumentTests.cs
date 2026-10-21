@@ -192,4 +192,104 @@ public class ProjectDocumentTests : IDisposable
         Assert.False(doc.CanRedo);
         Assert.Null(doc.UndoKey);
     }
+
+    // ---- soundtrack
+
+    private string SoundFile(byte[] content, string name = "song.mp3")
+    {
+        string path = Path.Combine(_dir, name);
+        File.WriteAllBytes(path, content);
+        return path;
+    }
+
+    [Fact]
+    public void Setting_the_audio_adds_the_media_and_saving_writes_it_into_the_package()
+    {
+        using var doc = ProjectDocument.CreateNew("Show");
+        string sound = SoundFile([9, 8, 7, 6]);
+
+        doc.SetAudio(sound);
+        File.Delete(sound);                                  // the project no longer needs the original
+
+        Assert.NotNull(doc.Project.AudioResourceId);
+        Assert.Equal(sound, doc.Project.AudioSourcePath);
+        Assert.Equal("song.mp3", doc.MediaName(doc.Project.AudioResourceId));
+        Assert.Equal(1, doc.MediaCount);
+        Assert.True(doc.IsDirty);
+        Assert.Equal("SetAudio", doc.UndoKey);
+        using (var stream = doc.OpenMedia(doc.Project.AudioResourceId))
+            Assert.Equal(new byte[] { 9, 8, 7, 6 }, ReadAll(stream!));
+
+        string path = Path.Combine(_dir, "with-sound.pxpkg");
+        doc.SaveAs(path);
+
+        using var again = PxPackage.Open(path);
+        Assert.Equal(doc.Project.AudioResourceId, again.Project.AudioResourceId);
+        Assert.Equal(new byte[] { 9, 8, 7, 6 }, again.ReadResource(again.Project.AudioResourceId!));
+        Assert.Empty(again.VerifyResources());
+        Assert.Equal(1, doc.MediaCount);                     // now it is the package's, still counted once
+    }
+
+    [Fact]
+    public void Undoing_the_audio_leaves_it_out_of_the_package_and_redo_still_has_it()
+    {
+        string path = PackageWithMedia();
+        using var doc = ProjectDocument.Open(path);
+        string sound = SoundFile([1, 1, 2, 3, 5]);
+        doc.SetAudio(sound);
+        string id = doc.Project.AudioResourceId!;
+        Assert.NotEqual(PxPackage.Open(path).Project.AudioResourceId, id);   // not the package's own audio
+
+        doc.Undo();
+        doc.Save();
+        using (var saved = PxPackage.Open(path))
+            Assert.False(saved.HasResource(id));            // not referenced, not written
+
+        doc.Redo();                                          // the media must still be there
+        Assert.Equal(id, doc.Project.AudioResourceId);
+        Assert.NotNull(doc.OpenMedia(id));
+        doc.Save();
+        using var again = PxPackage.Open(path);
+        Assert.Equal(new byte[] { 1, 1, 2, 3, 5 }, again.ReadResource(id));
+    }
+
+    [Fact]
+    public void The_same_sound_added_twice_is_one_media_file_and_the_package_media_is_readable()
+    {
+        string path = PackageWithMedia();
+        using var doc = ProjectDocument.Open(path);
+        string existing = doc.Project.AudioResourceId!;
+        int before = doc.MediaCount;
+
+        doc.SetAudio(SoundFile([1, 2, 3, 4, 5], "same.wav"));   // the same bytes the package already has
+
+        Assert.Equal(existing, doc.Project.AudioResourceId);
+        Assert.Equal(before, doc.MediaCount);
+        Assert.Equal(new byte[] { 1, 2, 3, 4, 5 }, ReadAll(doc.OpenMedia(existing)!));
+        Assert.Equal("tone.wav", doc.MediaName(existing));
+        Assert.Null(doc.OpenMedia("0000"));
+        Assert.Null(doc.OpenMedia(null));
+    }
+
+    [Fact]
+    public void Removing_the_audio_is_undoable()
+    {
+        string path = PackageWithMedia();
+        using var doc = ProjectDocument.Open(path);
+        string id = doc.Project.AudioResourceId!;
+
+        doc.RemoveAudio();
+        Assert.Null(doc.Project.AudioResourceId);
+
+        doc.Undo();
+        Assert.Equal(id, doc.Project.AudioResourceId);
+        Assert.False(doc.IsDirty);
+    }
+
+    private static byte[] ReadAll(Stream stream)
+    {
+        using var copy = new MemoryStream();
+        stream.CopyTo(copy);
+        return copy.ToArray();
+    }
 }

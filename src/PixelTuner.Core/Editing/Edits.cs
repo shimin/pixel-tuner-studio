@@ -15,6 +15,21 @@ public static class Edits
     public static Edit RenameProject(ShowProject project, string name) =>
         new SetValueEdit<string>("RenameProject", project, nameof(project.Name), () => project.Name, v => project.Name = v, name, mergeable: true);
 
+    /// <summary>Sets the soundtrack. The media itself is the document's business; this is the reference to it.</summary>
+    public static Edit SetAudio(ShowProject project, string resourceId, string sourcePath) =>
+        new GroupEdit("SetAudio",
+        [
+            new SetValueEdit<string?>("SetAudio", project, nameof(project.AudioResourceId), () => project.AudioResourceId, v => project.AudioResourceId = v, resourceId, mergeable: false),
+            new SetValueEdit<string?>("SetAudio", project, nameof(project.AudioSourcePath), () => project.AudioSourcePath, v => project.AudioSourcePath = v, sourcePath, mergeable: false),
+        ]);
+
+    public static Edit RemoveAudio(ShowProject project) =>
+        new GroupEdit("RemoveAudio",
+        [
+            new SetValueEdit<string?>("RemoveAudio", project, nameof(project.AudioResourceId), () => project.AudioResourceId, v => project.AudioResourceId = v, null, mergeable: false),
+            new SetValueEdit<string?>("RemoveAudio", project, nameof(project.AudioSourcePath), () => project.AudioSourcePath, v => project.AudioSourcePath = v, null, mergeable: false),
+        ]);
+
     // ---- timelines
 
     public static Edit AddTimeline(ShowProject project, Timeline timeline, int? index = null)
@@ -96,6 +111,20 @@ public static class Edits
         return new SetValueEdit<TimeSpan>("ResizeItem", item, nameof(item.Duration), () => item.Duration, v => item.Duration = v, newDuration, mergeable: false);
     }
 
+    /// <summary>Moves the start of an item and keeps its end where it is (dragging the left edge).</summary>
+    public static Edit TrimItemStart(Timeline timeline, TimelineItem item, TimeSpan newStart)
+    {
+        RequireIndex(timeline, item);
+        var newDuration = item.End - newStart;
+        if (!Fits(timeline, newStart, newDuration, item))
+            throw new InvalidOperationException("The item would overlap the previous item or have no length.");
+        return new GroupEdit("ResizeItem",
+        [
+            new SetValueEdit<TimeSpan>("ResizeItem", item, nameof(item.Start), () => item.Start, v => item.Start = v, newStart, mergeable: false),
+            new SetValueEdit<TimeSpan>("ResizeItem", item, nameof(item.Duration), () => item.Duration, v => item.Duration = v, newDuration, mergeable: false),
+        ]);
+    }
+
     /// <param name="percent">0 to 100.</param>
     public static Edit SetBrightness(TimelineItem item, byte percent)
     {
@@ -107,6 +136,78 @@ public static class Edits
     {
         if (stretching < 1) throw new ArgumentOutOfRangeException(nameof(stretching));
         return new SetValueEdit<int>("SetStretching", item, nameof(item.Stretching), () => item.Stretching, v => item.Stretching = v, stretching, mergeable: true);
+    }
+
+    public static Edit SetLaser(TimelineItem item, bool on) =>
+        new SetValueEdit<bool>("SetLaser", item, nameof(item.LaserOn), () => item.LaserOn, v => item.LaserOn = v, on, mergeable: false);
+
+    /// <param name="color">#RRGGBB or #AARRGGBB; solid items and the first colour of effects.</param>
+    public static Edit SetItemColor(TimelineItem item, string color)
+    {
+        Imaging.ColorText.ParseRgb(color);   // throws on a bad colour
+        return new SetValueEdit<string?>("SetItemColor", item, nameof(item.Color), () => item.Color, v => item.Color = v, color, mergeable: true);
+    }
+
+    /// <param name="color">#RRGGBB or #AARRGGBB; the colour an effect goes to.</param>
+    public static Edit SetItemColorLast(TimelineItem item, string color)
+    {
+        Imaging.ColorText.ParseRgb(color);
+        return new SetValueEdit<string?>("SetItemColor", item, nameof(item.ColorLast), () => item.ColorLast, v => item.ColorLast = v, color, mergeable: true);
+    }
+
+    /// <param name="effect">One of <see cref="LightEffectKind"/>.</param>
+    public static Edit SetEffect(TimelineItem item, string effect)
+    {
+        if (effect is not (LightEffectKind.LinearTransition or LightEffectKind.SineWave or LightEffectKind.SquareWave or LightEffectKind.SawToothWave))
+            throw new ArgumentOutOfRangeException(nameof(effect));
+        return new SetValueEdit<string?>("SetEffect", item, nameof(item.Effect), () => item.Effect, v => item.Effect = v, effect, mergeable: false);
+    }
+
+    /// <summary>The time parameters of an effect, in milliseconds.</summary>
+    public static Edit SetEffectTimes(TimelineItem item, int t1, int t2)
+    {
+        if (t1 < 0 || t2 < 0) throw new ArgumentOutOfRangeException(nameof(t1));
+        return new GroupEdit("SetEffectTimes",
+        [
+            new SetValueEdit<int>("SetEffectTimes", item, nameof(item.T1), () => item.T1, v => item.T1 = v, t1, mergeable: true),
+            new SetValueEdit<int>("SetEffectTimes", item, nameof(item.T2), () => item.T2, v => item.T2 = v, t2, mergeable: true),
+        ]);
+    }
+
+    /// <summary>Where the LED layout sits on a video frame.</summary>
+    public static Edit SetOffset(TimelineItem item, int x, int y) =>
+        new GroupEdit("SetOffset",
+        [
+            new SetValueEdit<int>("SetOffset", item, nameof(item.OffsetX), () => item.OffsetX, v => item.OffsetX = v, x, mergeable: true),
+            new SetValueEdit<int>("SetOffset", item, nameof(item.OffsetY), () => item.OffsetY, v => item.OffsetY = v, y, mergeable: true),
+        ]);
+
+    /// <summary>
+    /// Whether an item can be played by this timeline. Timelines only take their own kind of item,
+    /// because each kind of device compiles its items differently.
+    /// </summary>
+    public static bool Accepts(Timeline timeline, TimelineItem item) => timeline.Kind switch
+    {
+        TimelineKind.Pixel => item.Kind == ItemKind.Image,
+        TimelineKind.Video => item.Kind == ItemKind.Video,
+        TimelineKind.EpicPoi => item.Kind == ItemKind.Gradient,
+        TimelineKind.Light => item.Kind is ItemKind.Solid or ItemKind.Effect,
+        _ => false,
+    };
+
+    /// <summary>Takes an item off one timeline and puts it on another, at a new start. One undo step.</summary>
+    public static Edit MoveItemToTimeline(Timeline from, Timeline to, TimelineItem item, TimeSpan newStart)
+    {
+        if (ReferenceEquals(from, to)) return MoveItem(from, item, newStart);
+        RequireIndex(from, item);
+        if (!Accepts(to, item)) throw new InvalidOperationException("The timeline does not take this kind of item.");
+        if (!Fits(to, newStart, item.Duration)) throw new InvalidOperationException("The item would overlap another item or leave the timeline.");
+        return new GroupEdit("MoveItem",
+        [
+            new RemoveEdit<TimelineItem>("MoveItem", from.Items, item),
+            new SetValueEdit<TimeSpan>("MoveItem", item, nameof(item.Start), () => item.Start, v => item.Start = v, newStart, mergeable: false),
+            new InsertEdit<TimelineItem>("MoveItem", to.Items, SortedIndex(to, newStart, null), item),
+        ]);
     }
 
     // ---- markers

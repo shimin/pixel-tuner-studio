@@ -19,5 +19,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\PixelTuner.UI\PixelTuner.UI.csproj" />
+    <ProjectReference Include="..\..\PixelTuner.Audio.Vlc\PixelTuner.Audio.Vlc.csproj" />
   </ItemGroup>
 </Project>
