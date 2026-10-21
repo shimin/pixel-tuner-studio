@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <AndroidResource Include="..\..\PixelTuner.UI\Assets\app-icon.png">
+    <AndroidResource Include="..\..\PixelTuner.UI\Assets\app_icon.png">
       <Link>Resources\drawable\icon.png</Link>
     </AndroidResource>
   </ItemGroup>

@@ -6,7 +6,7 @@
         x:Class="PixelTuner.UI.Views.MainWindow"
         x:DataType="vm:MainViewModel"
         Title="{x:Static res:Strings.AppTitle}"
-        Icon="/Assets/app-icon.png"
+        Icon="/Assets/app_icon.png"
         Width="1280" Height="800" MinWidth="960" MinHeight="600"
         WindowStartupLocation="CenterScreen">
   <!-- Desktop window for Windows and macOS. The native menu goes to the macOS
