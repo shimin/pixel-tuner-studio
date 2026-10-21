@@ -1,6 +1,7 @@
 using PixelTuner.Audio;
 using PixelTuner.Core.Editing;
 using PixelTuner.Core.Model;
+using PixelTuner.UI.Resources;
 using PixelTuner.Package;
 
 namespace PixelTuner.UI.Timelines;
@@ -54,6 +55,7 @@ public sealed class TimelineEditor
 
     public TimelineEditor(ProjectDocument document)
     {
+        Thumbnails = new ItemThumbnails(id => document.OpenMedia(id));
         _document = document;
         document.Changed += (_, _) => Changed?.Invoke(this, EventArgs.Empty);
     }
@@ -386,6 +388,7 @@ public sealed class TimelineEditor
         var snapPoints = SnapPoints(item);
 
         TimeSpan start = drag.OriginalStart, duration = drag.OriginalDuration;
+        DropDenial? denial = null;
         switch (drag.Hit.Kind)
         {
             case HitKind.ItemStart:
@@ -420,18 +423,26 @@ public sealed class TimelineEditor
                 start = OnGrid(Clamp(start, floor, latest), floor, latest);
 
                 // Over another timeline that takes this item and has room at the wanted time, it goes there.
-                if (y is { } py && TimelineAt(py) is { } target && !ReferenceEquals(target, timeline) && Edits.Accepts(target, item) && Edits.FitsHeight(target, item.MediaHeight))
+                // Over one that cannot take it, the item stays and the drag says why.
+                if (y is { } py && TimelineAt(py) is { } target && !ReferenceEquals(target, timeline))
                 {
-                    var there = OnGrid(Max0(Snap(wanted, snapPoints)), TimeSpan.Zero, TimeSpan.MaxValue);
-                    there = Edits.WholeMs(there);
-                    if (Edits.Fits(target, there, duration)) return DragPreview.ForItem(item, target, there, duration);
+                    if (!Edits.Accepts(target, item))
+                        denial = new DropDenial(target, DropDenialReason.WrongKind, 0, 0);
+                    else if (!Edits.FitsHeight(target, item.MediaHeight))
+                        denial = new DropDenial(target, DropDenialReason.WrongHeight, Edits.PixelHeight(target), item.MediaHeight);
+                    else
+                    {
+                        var there = Edits.WholeMs(OnGrid(Max0(Snap(wanted, snapPoints)), TimeSpan.Zero, TimeSpan.MaxValue));
+                        if (Edits.Fits(target, there, duration)) return DragPreview.ForItem(item, target, there, duration);
+                        denial = new DropDenial(target, DropDenialReason.NoRoom, 0, 0);
+                    }
                 }
                 break;
             }
         }
         // The .bin counts whole milliseconds. Both edges are rounded, so neither crosses a neighbour's whole edge.
         var wholeStart = Edits.WholeMs(start);
-        return DragPreview.ForItem(item, timeline, wholeStart, Edits.WholeMs(start + duration) - wholeStart);
+        return DragPreview.ForItem(item, timeline, wholeStart, Edits.WholeMs(start + duration) - wholeStart) with { Denial = denial };
     }
 
     /// <summary>
@@ -493,6 +504,52 @@ public sealed class TimelineEditor
             }
         }
         return (best, snapped);
+    }
+
+    // ---- what a lane shows of an item
+
+    /// <summary>Thumbnails of the pictures on the lanes.</summary>
+    public ItemThumbnails Thumbnails { get; }
+
+    /// <summary>A pass narrower than this many pixels is not drawn as a picture but as its average colour.</summary>
+    public const double MinTileWidth = 3;
+
+    /// <summary>A pass at least this wide gets a line at its end, so the user can see where the device starts over.</summary>
+    public const double PassLineWidth = 14;
+
+    /// <summary>
+    /// Where one picture is repeated across an item. The device repeats the item from its start to its end at the speed
+    /// the stretching sets, so pass <c>n</c> begins at <c>left + n * PassWidth</c>; the last pass is cut off by the item's end.
+    /// </summary>
+    /// <param name="Averaged">The passes are too narrow to tell apart: draw the average colour.</param>
+    public readonly record struct TileRun(double PassWidth, int FirstPass, int LastPass, bool Averaged);
+
+    /// <param name="left">Where the item starts, in pixels.</param>
+    /// <param name="right">Where the item ends.</param>
+    /// <param name="pass">How long one pass takes.</param>
+    /// <param name="clipLeft">Passes wholly outside [clipLeft, clipRight] are left out.</param>
+    public TileRun TileLayout(double left, double right, TimeSpan pass, double clipLeft, double clipRight)
+    {
+        double width = pass.TotalSeconds * PixelsPerSecond;
+        if (pass <= TimeSpan.Zero || width < MinTileWidth || right <= left) return new TileRun(width, 0, -1, Averaged: true);
+        int first = (int)Math.Max(0, Math.Floor((clipLeft - left) / width));
+        int last = (int)Math.Min(Math.Ceiling((right - left) / width) - 1, Math.Floor((clipRight - left) / width));
+        return new TileRun(width, first, last, Averaged: false);
+    }
+
+    /// <summary>
+    /// The pauses of a timeline: the stretch before the first item and the gaps between items. The device plays each as a black
+    /// entry (the .bin has one for it), so the lane draws it black.
+    /// </summary>
+    public static IReadOnlyList<(TimeSpan Start, TimeSpan End)> Pauses(Timeline timeline)
+    {
+        var result = new List<(TimeSpan, TimeSpan)>();
+        var items = timeline.Items;
+        if (items.Count == 0) return result;
+        if (items[0].Start > TimeSpan.Zero) result.Add((TimeSpan.Zero, items[0].Start));
+        for (int i = 0; i + 1 < items.Count; i++)
+            if (items[i].End < items[i + 1].Start) result.Add((items[i].End, items[i + 1].Start));
+        return result;
     }
 
     // ---- commands on the selection
@@ -577,9 +634,46 @@ public sealed class TimelineEditor
     }
 }
 
+public enum DropDenialReason
+{
+    /// <summary>The timeline plays another kind of item.</summary>
+    WrongKind,
+
+    /// <summary>A pixel timeline plays pictures of another height.</summary>
+    WrongHeight,
+
+    /// <summary>The item does not fit between the neighbours at that time.</summary>
+    NoRoom,
+}
+
+/// <summary>Why an item dragged over a timeline will not go there.</summary>
+/// <param name="RequiredHeight">WrongHeight: what the timeline plays.</param>
+/// <param name="ItemHeight">WrongHeight: what the item is.</param>
+public sealed record DropDenial(Timeline Target, DropDenialReason Reason, int RequiredHeight, int ItemHeight)
+{
+    /// <summary>The words shown over the timeline.</summary>
+    public string Text() => Reason switch
+    {
+        DropDenialReason.WrongKind => string.Format(Strings.Drop_WrongKind, KindName(Target.Kind)),
+        DropDenialReason.WrongHeight => string.Format(Strings.Drop_WrongHeight, RequiredHeight, ItemHeight),
+        _ => Strings.Drop_NoRoom,
+    };
+
+    internal static string KindName(string kind) => kind switch
+    {
+        TimelineKind.Video => Strings.Kind_Video,
+        TimelineKind.EpicPoi => Strings.Kind_EpicPoi,
+        TimelineKind.Light => Strings.Kind_Light,
+        _ => Strings.Kind_Pixel,
+    };
+}
+
 /// <summary>An item or marker as it would be if the drag ended now.</summary>
 public sealed record DragPreview(TimelineItem? Item, Timeline? Timeline, Marker? Marker, TimeSpan Start, TimeSpan Duration)
 {
+    /// <summary>Set while the pointer is over a timeline that will not take the item.</summary>
+    public DropDenial? Denial { get; init; }
+
     public static DragPreview ForItem(TimelineItem item, Timeline timeline, TimeSpan start, TimeSpan duration) =>
         new(item, timeline, null, start, duration);
 

@@ -133,6 +133,23 @@
   <data name="Inspector_OffsetX" xml:space="preserve"><value>Versatz X</value></data>
   <data name="Inspector_OffsetY" xml:space="preserve"><value>Versatz Y</value></data>
   <data name="Inspector_BadValue" xml:space="preserve"><value>Dieser Wert ist nicht möglich: {0}.</value></data>
+  <data name="Drop_NoRoom" xml:space="preserve"><value>Hier ist zu dieser Zeit kein Platz für das Element.</value></data>
+  <data name="Drop_WrongHeight" xml:space="preserve"><value>Diese Spur spielt Bilder mit {0} LEDs; dieses hat {1}.</value></data>
+  <data name="Drop_WrongKind" xml:space="preserve"><value>Eine Spur „{0}“ nimmt dieses Element nicht an.</value></data>
+  <data name="Command_MoveDown" xml:space="preserve"><value>Spur nach unten</value></data>
+  <data name="Command_MoveUp" xml:space="preserve"><value>Spur nach oben</value></data>
+  <data name="Inspector_LayoutN" xml:space="preserve"><value>Layout {0}</value></data>
+  <data name="Inspector_NoLayout" xml:space="preserve"><value>(keins)</value></data>
+  <data name="Inspector_Layout" xml:space="preserve"><value>LED-Layout des Requisits</value></data>
+  <data name="Inspector_HeightRefused" xml:space="preserve"><value>Die Höhe lässt sich nicht ändern: die Spur enthält Bilder anderer Höhe. Entferne sie zuerst.</value></data>
+  <data name="Inspector_HeightFromPicture" xml:space="preserve"><value>Bilder auf dieser Spur sind {0} LEDs hoch, wie das erste.</value></data>
+  <data name="Inspector_HeightSet" xml:space="preserve"><value>Bilder auf dieser Spur sind {0} LEDs hoch.</value></data>
+  <data name="Inspector_HeightFree" xml:space="preserve"><value>Beliebige Höhe: das erste Bild legt sie fest.</value></data>
+  <data name="Inspector_Height" xml:space="preserve"><value>LEDs des Geräts (0: nach dem ersten Bild)</value></data>
+  <data name="Inspector_Monochrome" xml:space="preserve"><value>Monochromer Kanal (drei teilen einen RGB-Ausgang)</value></data>
+  <data name="Inspector_Flip" xml:space="preserve"><value>Vertikal spiegeln (das Gerät sitzt umgekehrt)</value></data>
+  <data name="Inspector_ColorNotWritten" xml:space="preserve"><value>Dieses Gerät speichert die Spurfarbe nicht; sie hilft nur beim Unterscheiden der Spuren.</value></data>
+  <data name="Inspector_TimelineColor" xml:space="preserve"><value>Farbe der Spur</value></data>
   <data name="Effect_LinearTransition" xml:space="preserve"><value>Linearer Übergang</value></data>
   <data name="Effect_SineWave" xml:space="preserve"><value>Sinuswelle</value></data>
   <data name="Effect_SquareWave" xml:space="preserve"><value>Rechteckwelle</value></data>

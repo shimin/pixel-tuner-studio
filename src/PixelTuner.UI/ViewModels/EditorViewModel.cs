@@ -34,6 +34,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         _engine = engine;
         _picker = picker;
         Timelines = new TimelineEditor(document);
+        BuildPalette();
         if (engine is not null)
         {
             _player = engine.CreatePlayer();
@@ -121,6 +122,8 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         nameof(ShowBrightness), nameof(ShowStretching), nameof(StretchingLabel), nameof(ShowLaser), nameof(IsVideoSelected), nameof(IsLightItem), nameof(IsEffectSelected),
         nameof(OffsetX), nameof(OffsetY), nameof(T1), nameof(T2), nameof(ItemColor), nameof(ItemColorTo), nameof(ItemColorBrush), nameof(ItemColorToBrush),
         nameof(EffectIndex), nameof(HasImage), nameof(ItemPreviewBitmap), nameof(HasPreview), nameof(PlaybackText),
+        nameof(IsTimelineSelected), nameof(TimelineColorText), nameof(TimelineColorBrush), nameof(ColorIsOnlyALabel), nameof(ShowFlip), nameof(FlipVertical),
+        nameof(ShowMonochrome), nameof(Monochrome), nameof(ShowHeight), nameof(TimelineHeight), nameof(HeightText), nameof(ShowLayout), nameof(LayoutNames), nameof(LayoutIndex),
     ];
 
     private void Refresh()
@@ -146,6 +149,8 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(TimeText));
         OnPropertyChanged(nameof(CanPlay));
         DeleteSelectedCommand.NotifyCanExecuteChanged();
+        MoveTimelineUpCommand.NotifyCanExecuteChanged();
+        MoveTimelineDownCommand.NotifyCanExecuteChanged();
         PlayPauseCommand.NotifyCanExecuteChanged();
         StopCommand.NotifyCanExecuteChanged();
         RemoveSoundtrackCommand.NotifyCanExecuteChanged();
@@ -575,7 +580,8 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     {
         if (Item is not { } i || Timelines.TimelineOf(i) is not { } timeline) return;
         if (!TimeFormat.TryParse(text, out var time)) { Reject(text); return; }
-        if (time == current) return;
+        time = Edits.WholeMs(time);   // the .bin counts whole milliseconds: 1.2344 s is 1.234 s
+        if (time == current) { Refresh(); return; }
         try
         {
             Document.Execute(edit(timeline, i, time));

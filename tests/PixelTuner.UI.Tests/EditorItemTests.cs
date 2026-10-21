@@ -142,6 +142,22 @@ public sealed class EditorItemTests : IDisposable
         Assert.Equal((100, 4, false), (item.Brightness, item.Stretching, item.LaserOn));   // 4 is PixelTuner 2's default
     }
 
+    [Fact]
+    public async Task A_typed_time_with_a_fraction_of_a_millisecond_is_rounded_to_whole_milliseconds()
+    {
+        _editor.AddPixelTimelineCommand.Execute(null);
+        _picker.ImagePath = WriteBmp();
+        await _editor.AddItemCommand.ExecuteAsync(null);
+        var item = _doc.Project.Timelines[0].Items[0];
+
+        _editor.StartText = "1.23449";
+        _editor.LengthText = "2.0006";
+
+        Assert.Equal(TimeSpan.FromMilliseconds(1234), item.Start);
+        Assert.Equal(TimeSpan.FromMilliseconds(2001), item.Duration);
+        Assert.Null(_editor.Message);
+    }
+
     private string WriteGif()
     {
         byte[] gif =
