@@ -104,7 +104,7 @@ public static class PixelBinaryWriter
             {
                 BinaryPrimitives.WriteUInt32LittleEndian(span[pos..], imageAddress[itemImage[item]]);
                 BinaryPrimitives.WriteUInt16LittleEndian(span[(pos + 4)..], item.Stretching);
-                BinaryPrimitives.WriteUInt16LittleEndian(span[(pos + 6)..], item.LaserOn ? (ushort)0xffff : (ushort)0);
+                BinaryPrimitives.WriteUInt16LittleEndian(span[(pos + 6)..], item.LaserOn ? item.LaserMask : (ushort)0);
                 BinaryPrimitives.WriteUInt32LittleEndian(span[(pos + 8)..], item.StartMs);
                 pos += ImageEntrySize;
             }

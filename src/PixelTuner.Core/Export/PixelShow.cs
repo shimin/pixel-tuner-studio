@@ -42,5 +42,8 @@ public sealed class PixelExportItem
 
     public bool LaserOn { get; init; }
 
+    /// <summary>Mask written when the laser is on: 0xffff on pixel devices, 1 on video devices.</summary>
+    public ushort LaserMask { get; init; } = 0xffff;
+
     public bool FlipVertical { get; init; }
 }

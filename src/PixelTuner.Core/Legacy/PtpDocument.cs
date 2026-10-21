@@ -16,6 +16,9 @@ public sealed partial class PtpDocument
 
     public List<PtpTimeline> Timelines { get; } = [];
 
+    /// <summary>Canvas elements (device outlines with their LED markup), by their Path id.</summary>
+    public Dictionary<string, PtpCanvasElement> CanvasElements { get; } = new(StringComparer.Ordinal);
+
     public static PtpDocument Load(string path)
     {
         using var stream = File.OpenRead(path);
@@ -32,6 +35,24 @@ public sealed partial class PtpDocument
             throw new InvalidDataException("This is not a PixelTuner 2 project.");
 
         var document = new PtpDocument();
+        foreach (var element in root.Element("Canvas")?.Element("Elements")?.Elements("CanvasElementViewModel") ?? [])
+        {
+            var canvasElement = new PtpCanvasElement
+            {
+                Path = (string?)element.Attribute("Path") ?? "",
+                Columns = ParseInt((string?)element.Attribute("ColumnsCount"), 0),
+                Rows = ParseInt((string?)element.Attribute("RowsCount"), 0),
+            };
+            foreach (var tile in element.Element("LedTiles")?.Elements("LedTile") ?? [])
+            {
+                canvasElement.Tiles.Add(new PtpLedTile(
+                    ParseInt((string?)tile.Attribute("Index"), 0),
+                    ParseInt((string?)tile.Attribute("LedNumber"), 0),
+                    ParseBool((string?)tile.Attribute("Selected"))));
+            }
+            // XmlSerializer kept the last one when a path repeated; so do we.
+            document.CanvasElements[canvasElement.Path] = canvasElement;
+        }
         foreach (var line in root.Elements("Line"))
         {
             var timeline = new PtpTimeline
@@ -108,6 +129,33 @@ public sealed class PtpTimeline
 
     public List<PtpItem> Items { get; } = [];
 }
+
+/// <summary>
+/// A device outline on the PixelTuner 2 canvas with its LED markup: a grid of tiles,
+/// some of them LEDs with a number in the order the device wires them.
+/// </summary>
+public sealed class PtpCanvasElement
+{
+    public string Path { get; init; } = "";
+    public int Columns { get; init; }
+    public int Rows { get; init; }
+    public List<PtpLedTile> Tiles { get; } = [];
+
+    /// <summary>
+    /// Grid positions (column, row) of the LEDs in device order, as PixelTuner 2's
+    /// OrderedLeds: selected tiles sorted by number, ties kept in tile order.
+    /// </summary>
+    public IReadOnlyList<(int X, int Y)> OrderedLeds()
+    {
+        if (Columns <= 0) return [];
+        return Tiles.OrderBy(t => t.LedNumber)            // OrderBy is stable, like LINQ in PixelTuner 2
+            .Where(t => t.Selected)
+            .Select(t => (t.Index % Columns, t.Index / Columns))
+            .ToList();
+    }
+}
+
+public readonly record struct PtpLedTile(int Index, int LedNumber, bool Selected);
 
 public sealed class PtpItem
 {

@@ -48,20 +48,41 @@ jobs:
       - name: Download the reference set
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          api="repos/${{ github.repository }}/releases"
-          asset=$(gh api "$api" --paginate --jq '.[] | select(.name == "samples-v1") | .assets[] | select(.name == "samples_with_bin.zip")' | head -n 1)
-          if [ -z "$asset" ]; then echo "::error::Release samples-v1 with samples_with_bin.zip not found"; exit 1; fi
-          id=$(echo "$asset" | jq -r .id)
-          digest=$(echo "$asset" | jq -r '.digest // empty' | sed 's/^sha256://')
-          gh api -H "Accept: application/octet-stream" "repos/${{ github.repository }}/releases/assets/$id" > "$RUNNER_TEMP/samples.zip"
-          if [ -n "$digest" ]; then echo "$digest  $RUNNER_TEMP/samples.zip" | sha256sum -c -; fi
-          mkdir -p "$RUNNER_TEMP/samples"
-          unzip -q "$RUNNER_TEMP/samples.zip" -d "$RUNNER_TEMP/samples" -x '*.zip'
-          echo "PIXELTUNER_SAMPLES=$RUNNER_TEMP/samples" >> "$GITHUB_ENV"
+        run: scripts/ci/download-samples.sh
       - name: Test
         run: dotnet test tests/PixelTuner.Core.Tests -c Release --filter FullSampleExportTests --logger "console;verbosity=detailed"
+
+  legacy-decoders:
+    # PixelTuner 2 decoded video GIFs with WPF and GDI+. Compare our decoder with them on
+    # every GIF of the reference set. Informational while the differences are being ported:
+    # the report goes to the artifact "legacy-gif-report".
+    name: Legacy decoders (Windows)
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Download the reference set
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: scripts/ci/download-samples.sh
+      - name: Test
+        continue-on-error: true
+        shell: bash
+        env:
+          PIXELTUNER_REPORT: ${{ runner.temp }}/gif-report
+        run: dotnet test tests/PixelTuner.Legacy.WindowsTests -c Release --logger "console;verbosity=detailed"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: legacy-gif-report
+          path: ${{ runner.temp }}/gif-report
+          if-no-files-found: ignore
+          retention-days: 14
 
   windows:
     name: Desktop (Windows)
