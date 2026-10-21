@@ -1,5 +1,7 @@
 # Build output
 bin/
+# Reference .bin files PixelTuner 2 exported (test fixtures), not build output.
+!tests/**/Fixtures/**/bin/
 obj/
 artifacts/
 *.user

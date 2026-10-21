@@ -13,6 +13,15 @@
   from `legacy/PixelTuner2` exactly as before (root props are blocked by `legacy/Directory.Build.props`).
 - Device protocol changes must update the JSON vectors in
   `legacy/EpicPlayer/epicplayer-mac/Tests/Fixtures/` and pass `tests/PixelTuner.Sync.Tests`.
+- Device .bin export (`src/PixelTuner.Core/Export`) must stay byte for byte what PixelTuner 2 wrote:
+  `tests/PixelTuner.Core.Tests` checks it against real shows in `Fixtures/LegacyProjects`, and the
+  CI job "Export against the reference set" checks the whole set from the draft release `samples-v1`
+  (locally: unpack it and set `PIXELTUNER_SAMPLES`). Only JPEG sources may differ, by one level,
+  and video images from the GIFs listed in `FullSampleVideoExportTests.WindowsDecodedDifferently`:
+  WPF changed some pixels of small-palette frames, and Studio keeps the exact palette colours
+  (Ivan: where Windows and the cleaner result differ, prefer quality over parity).
+  E-Pic poi and LightMaster have no reference shows: `tests/PixelTuner.Legacy.OracleTests` compiles
+  PixelTuner 2's own `Communication/Gradient` and `Communication/Binarize` and compares on random shows.
 - Merge PRs with a normal merge commit only.
 - The cloud sandbox can build and test Core, Package, Sync, UI and Desktop on Linux
   (`apt install dotnet-sdk-10.0`, `SSL_CERT_FILE=/root/.ccr/ca-bundle.crt` for NuGet).
