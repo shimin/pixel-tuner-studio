@@ -1,0 +1,645 @@
+﻿using System;
+using System.Windows;
+using System.Windows.Media;
+using Microsoft.Win32;
+using System.Windows.Threading;
+using EpicPlayer.Properties;
+using System.Net.Sockets;
+using System.ComponentModel;
+using System.Reflection;
+using System.Threading;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Windows.Controls;
+using EpicPlayer;
+using EpicPlayer.ViewModel;
+
+namespace SongReader
+{
+    public static class EnumHelper
+    {
+        public static string GetDescription<T>(this T enumerationValue)
+            where T : struct
+        {
+            Type type = enumerationValue.GetType();
+            if (!type.IsEnum)
+            {
+                throw new ArgumentException("EnumerationValue must be of Enum type", "enumerationValue");
+            }
+
+            //Tries to find a DescriptionAttribute for a potential friendly name
+            //for the enum
+            MemberInfo[] memberInfo = type.GetMember(enumerationValue.ToString());
+            if (memberInfo != null && memberInfo.Length > 0)
+            {
+                object[] attrs = memberInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
+
+                if (attrs != null && attrs.Length > 0)
+                {
+                    //Pull out the description value
+                    return ((DescriptionAttribute)attrs[0]).Description;
+                }
+            }
+            //If we have no description attribute, just return the ToString of the enum
+            return enumerationValue.ToString();
+        }
+    }
+
+    internal class InterfaceInfo
+    {
+        private NetworkInterface _nIface;
+
+        public NetworkInterface NetworkInterfaceInfo
+        {
+            get { return _nIface; }
+        }
+
+        public InterfaceInfo(NetworkInterface niface)
+        {
+            _nIface = niface;
+        }
+
+        public override string ToString()
+        {
+            string name = "Unknown";
+            if (_nIface != null)
+            {
+                var ipProps = _nIface.GetIPProperties();
+
+                foreach (var ip in ipProps.UnicastAddresses)
+                {
+                    if ((_nIface.OperationalStatus == OperationalStatus.Up)
+                        && (ip.Address.AddressFamily == AddressFamily.InterNetwork))
+                    {
+                        name = _nIface.Description + " | " + ip.Address.ToString();
+                    }
+                }
+            }
+            return name;
+        }
+    }
+
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+        private UdpClient _udpClient = null; 
+        private enum Status
+        {
+            [Description("Status: Play")]
+            play,
+            [Description("Status: Pause")]
+            pause,
+            [Description("Status: Stop")]
+            stop
+        }
+
+
+        private Status _playbackStatus = Status.stop;
+
+        IPEndPoint ep = null;
+        
+        ArtNet.Sockets.ArtNetSocket artnet = new ArtNet.Sockets.ArtNetSocket();
+
+        private bool _suppressPlaybackCommands = false;
+
+        public MainWindow()
+        {
+            InitializeComponent();
+            Closing += MainWindow_Closing;
+            playbackPanel.IsEnabled = false;
+
+            //MediaOpened needed for TimeSpan
+            player.MediaOpened += new EventHandler(player_MediaOpened);
+
+            if (_mediaStatusTimer == null)
+                _mediaStatusTimer = new Timer(MediaStatusCallback, null, 500, 500);
+
+            try
+            {
+                Settings.Default.Reload();
+                _udpClient = new UdpClient(333);
+                boxMulticastAddress.Text = Settings.Default.Multicast;
+
+                boxArtnetIP.Text = Settings.Default.IP;
+                boxArtnetMask.Text = Settings.Default.Mask;
+                boxArtnetPort.Text = Settings.Default.Port;
+                boxArtnetUni.Text = Settings.Default.Universe;
+                boxArtnetChannel.Text = Settings.Default.Channel;
+                boxArtnetStart.Text = Settings.Default.StartCmd;
+                boxArtnetStop.Text = Settings.Default.StopCmd;
+                boxArtnetPause.Text = Settings.Default.PauseCmd;
+                
+                _lastMsSent = 0;
+                if (_stopTimer == null)
+                    _stopTimer = new Timer(StopTimerCallback, null, 1000, 1000);
+
+                var path = Settings.Default.FilePath;
+                if (!string.IsNullOrEmpty(path))
+                {
+                    player.Open(new Uri(Settings.Default.FilePath));
+                    songTitle.Content = path;
+                    //sets default items
+                    _playbackStatus = Status.stop;
+                    playStatus.Content = EnumHelper.GetDescription<Status>(_playbackStatus);
+
+                    if (firstTime == 0)
+                    {
+                        volumeLabel.Content = "Volume: 50%";
+                        volumeSlider.Value = .5;
+
+                        //sets up timer to track song progress
+                        songTime.Tick += songTime_Tick;
+                        songTime.Interval = new TimeSpan(0, 0, 1);
+                    }
+                    firstTime = 1;
+                    playbackPanel.IsEnabled = true;
+                }
+                InitializeNetworkList();
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void InitializeNetworkList()
+        {
+            var interfaces = NetworkInterface.GetAllNetworkInterfaces();
+            for (int i = 0; i < interfaces.Length; i++)
+            {
+                if (interfaces[i].OperationalStatus == OperationalStatus.Up &&
+                    (interfaces[i].NetworkInterfaceType == NetworkInterfaceType.Ethernet ||
+                     interfaces[i].NetworkInterfaceType == NetworkInterfaceType.Wireless80211))
+                {
+                    boxInterfaces.Items.Add(new InterfaceInfo(interfaces[i]));
+                }
+            }
+            if (boxInterfaces.Items.Count > 0) boxInterfaces.SelectedIndex = Settings.Default.InterfaceIdx;
+        }
+
+        private void InitializeInterface()
+        {
+            try
+            {
+                if (boxInterfaces.SelectedIndex != -1)
+                {
+                    var ni = boxInterfaces.SelectedItem as InterfaceInfo;
+                    var ipProps = ni.NetworkInterfaceInfo.GetIPProperties();
+                    string ipstr = "0.0.0.0";
+
+                    foreach (var ip in ipProps.UnicastAddresses)
+                    {
+                        if ((ni.NetworkInterfaceInfo.OperationalStatus == OperationalStatus.Up)
+                            && (ip.Address.AddressFamily == AddressFamily.InterNetwork))
+                        {
+                            ipstr = ip.Address.ToString();
+                        }
+                    }
+                    ipstr = ipstr.Substring(0, ipstr.LastIndexOf(".")) + ".255";
+                    ep = new IPEndPoint(IPAddress.Parse(ipstr), 333);
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (_stopTimer != null)
+            {
+                _stopTimer.Change(Timeout.Infinite, Timeout.Infinite);
+                _stopTimer.Dispose();
+                _stopTimer = null;
+            }
+            Settings.Default.Multicast = boxMulticastAddress.Text;
+            Settings.Default.FilePath = player.Source?.ToString();
+
+            Settings.Default.IP = boxArtnetIP.Text;
+            Settings.Default.Mask = boxArtnetMask.Text;
+            Settings.Default.Port = boxArtnetPort.Text;
+            Settings.Default.Universe = boxArtnetUni.Text;
+            Settings.Default.Channel = boxArtnetChannel.Text;
+            Settings.Default.StartCmd = boxArtnetStart.Text;
+            Settings.Default.StopCmd = boxArtnetStop.Text;
+            Settings.Default.PauseCmd = boxArtnetPause.Text;
+            Settings.Default.InterfaceIdx = boxInterfaces.SelectedIndex;
+
+            Settings.Default.Save();
+        }
+
+        private MediaPlayer player = new MediaPlayer();
+
+        private DispatcherTimer songTime = new DispatcherTimer();
+
+        //used to tell if first song loaded
+        private int firstTime = 0;
+
+        private void loadFile(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openDialog = new OpenFileDialog();
+            //uncomment for a starting path
+            //openDialog.InitialDirectory = "C:";
+            
+            //options for types of files allowed
+            openDialog.Filter = "MP3 files (*.mp3)|*.mp3|WAV Files|*wav|All Files|*.*";
+            
+
+            if (openDialog.ShowDialog() == true)
+            {
+                if (firstTime == 1)
+                {
+                    playbackPanel.IsEnabled = false;
+                    //stops song to add new one
+                    cleanClose();
+                }
+
+                if (_stopTimer == null)
+                    _stopTimer = new Timer(StopTimerCallback, null, 1000, 1000);
+
+                //shows songfile and opens in in the mediaplayer
+                songTitle.Content = openDialog.SafeFileName;
+                player.Open(new Uri(openDialog.FileName));
+
+                //sets default items
+                _playbackStatus = Status.play;
+                playStatus.Content = EnumHelper.GetDescription<Status>(_playbackStatus);
+
+                if (firstTime == 0)
+                {
+                    volumeLabel.Content = "Volume: 50%";
+                    volumeSlider.Value = .5;
+
+                    //sets up timer to track song progress
+                    songTime.Tick += songTime_Tick;
+                    songTime.Interval = new TimeSpan(0, 0, 1);
+                }
+
+                //marks first time loaded a song
+                firstTime = 1;
+                playbackPanel.IsEnabled = true;
+            }
+        }
+
+        private void deviceLookup(object sender, RoutedEventArgs e)
+        {
+            _suppressPlaybackCommands = true;
+            WifiDevicesWindow w = new WifiDevicesWindow(_udpClient, ep);
+            w.Owner = this;
+            w.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            w.ShowDialog();
+            _suppressPlaybackCommands = false;
+        }
+        
+        private void deviceLookupTcp(object sender, RoutedEventArgs e)
+        {
+            _suppressPlaybackCommands = true;
+            WifiTcpDevicesWindow w = new WifiTcpDevicesWindow(_udpClient, ep);
+            w.Owner = this;
+            w.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            w.ShowDialog();
+            _suppressPlaybackCommands = false;
+        }
+
+        private void BoxInterfaces_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            InitializeInterface();
+        }
+
+        UInt32 _lastMsSent = 0;
+
+        void songTime_Tick(object sender, EventArgs e)
+        {
+            //shows time where song is
+            songStartTime.Content = TimeSpan.FromSeconds(player.Position.TotalSeconds).ToString(@"mm\:ss");
+
+            //shows percent of song done on progress bar
+            try
+            {
+                var percentDone = player.Position.TotalSeconds / player.NaturalDuration.TimeSpan.TotalSeconds * 100;
+                songProgress.Value = percentDone;
+            }
+            catch { }
+
+            var timepoint = (UInt32)player.Position.TotalMilliseconds;
+            if (_playbackStatus == Status.play && timepoint - _lastMsSent > 5000)
+            {
+                try
+                {
+                    var cmd = _playBytes;
+                    BitConverter.GetBytes(timepoint).CopyTo(cmd, 3);
+                    if (_udpClient != null && !_suppressPlaybackCommands) _udpClient.Send(cmd, 8, ep);
+                }
+                catch (Exception ex)
+                {
+                    playStatus.Content = ex.Message;
+                }
+            }
+        }
+       
+        private void player_MediaOpened(object sender, EventArgs e)
+        {
+            lock(_syncPlayerObject)
+            if (player.NaturalDuration.HasTimeSpan)
+            {
+                _lastMsSent = 0;
+                songEndTime.Content = TimeSpan.FromSeconds(player.NaturalDuration.TimeSpan.TotalSeconds).ToString(@"mm\:ss");
+                var v = player.Volume;
+                player.Volume = 0;
+
+                try
+                {
+                    if (player.HasAudio)
+                    {
+                        player.Play();
+                        player.Stop();
+                        playbackPanel.IsEnabled = true;
+                        noMediaLabel.Visibility = Visibility.Collapsed;
+                        ShowThreadInformation("Unlock branch");
+                    }
+                    else
+                    {
+                        playbackPanel.IsEnabled = false;
+                        noMediaLabel.Visibility = Visibility.Visible;
+                        ShowThreadInformation("Lock branch (else)");
+                    }
+                }
+                catch
+                {
+                    playbackPanel.IsEnabled = false;
+                    noMediaLabel.Visibility = Visibility.Visible;
+                    ShowThreadInformation("Unlock branch (catch)");
+                }
+                player.Volume = v;
+            }
+        }
+
+        private byte[] _playBytes = new byte[] { 0x50, 0x05, 0x02, 0, 0, 0, 0, 0x0d };
+
+        private byte[] _pauseBytes = new byte[] { 0x50, 0x05, 0x03, 0, 0, 0, 0, 0x0d };
+
+        private byte[] _stopBytes = new byte[] { 0x50, 0x05, 0x04, 0, 0, 0, 0, 0x0d };
+
+        private byte[] _nextTrackBytes = new byte[] { 0x50, 0x05, 0x05, 0, 0, 0, 0, 0x0d };
+
+        private byte[] _previousTrackBytes = new byte[] { 0x50, 0x05, 0x06, 0, 0, 0, 0, 0x0d };
+
+        private Timer _stopTimer = null;
+
+        private Timer _mediaStatusTimer = null;
+
+        private void Play(object sender, RoutedEventArgs e)
+        {
+            lock(_syncPlayerObject)
+            try
+            {
+                songStartTime.Content = TimeSpan.FromSeconds(player.Position.TotalSeconds).ToString(@"mm\:ss");
+                songEndTime.Content = TimeSpan.FromSeconds(player.NaturalDuration.TimeSpan.TotalSeconds).ToString(@"mm\:ss");
+                player.Play();
+                songTime.Start();
+                _playbackStatus = Status.play;
+                playStatus.Content = EnumHelper.GetDescription<Status>(_playbackStatus);
+
+                var cmd = _playBytes;
+                var timepoint = (UInt32)player.Position.TotalMilliseconds;
+                BitConverter.GetBytes(timepoint).CopyTo(cmd, 3);
+                if (_udpClient != null) _udpClient.Send(cmd, 8, ep);
+            }
+            catch (Exception ex)
+            {
+                playStatus.Content = ex.Message;
+            }
+        }
+
+        private void Back(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var cmd = _previousTrackBytes;
+                var timepoint = (UInt32)0;
+                BitConverter.GetBytes(timepoint).CopyTo(cmd, 3);
+                if (_udpClient != null) _udpClient.Send(cmd, 8, ep);
+            }
+            catch (Exception ex)
+            {
+                playStatus.Content = ex.Message;
+            }
+        }
+        
+        private void Forward(object sender, RoutedEventArgs e)
+        {
+            //songStartTime.Content = TimeSpan.FromSeconds(player.Position.TotalSeconds).ToString(@"mm\:ss");
+            //songEndTime.Content = TimeSpan.FromSeconds(player.NaturalDuration.TimeSpan.TotalSeconds).ToString(@"mm\:ss");
+            //player.Play();
+            //songTime.Start();
+            //_playbackStatus = Status.play;
+            //playStatus.Content = EnumHelper.GetDescription<Status>(_playbackStatus);
+
+            try
+            {
+                var cmd = _nextTrackBytes;
+                var timepoint = (UInt32)0;
+                BitConverter.GetBytes(timepoint).CopyTo(cmd, 3);
+                if (_udpClient != null) _udpClient.Send(cmd, 8, ep);
+            }
+            catch (Exception ex)
+            {
+                playStatus.Content = ex.Message;
+            }
+        }
+
+        private void Pause(object sender, RoutedEventArgs e)
+        {
+            if (_playbackStatus == Status.stop) return;
+
+            player.Pause();
+            _playbackStatus = Status.pause;
+            playStatus.Content = EnumHelper.GetDescription<Status>(_playbackStatus);
+
+            try
+            {
+                var cmd = _pauseBytes;
+                var timepoint = (UInt32)player.Position.TotalMilliseconds;
+                BitConverter.GetBytes(timepoint).CopyTo(cmd, 3);
+                if (_udpClient != null) _udpClient.Send(cmd, 8, ep);
+            }
+            catch (Exception ex)
+            {
+                playStatus.Content = ex.Message;
+            }
+        }
+
+        private void Stop(object sender, RoutedEventArgs e)
+        {
+            _lastMsSent = 0;
+            player.Stop();
+            _playbackStatus = Status.stop;
+            playStatus.Content = EnumHelper.GetDescription<Status>(_playbackStatus);
+
+            try
+            {
+                var cmd = _stopBytes;
+                var timepoint = (UInt32)player.Position.TotalMilliseconds;
+                BitConverter.GetBytes(timepoint).CopyTo(cmd, 3);
+                if (_udpClient != null) _udpClient.Send(cmd, 8, ep);
+            }
+            catch (Exception ex)
+            {
+                playStatus.Content = ex.Message;
+            }
+        }
+
+        private void StopTimerCallback(object arg)
+        {
+            try
+            {
+                if (_udpClient != null && !_suppressPlaybackCommands && _playbackStatus == Status.stop)
+                {
+                    var cmd = _stopBytes;
+                    UInt32 timepoint = 0;
+                    BitConverter.GetBytes(timepoint).CopyTo(cmd, 3);
+                    _udpClient.Send(cmd, 8, ep);
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        static object _syncPlayerObject = new object();
+
+        private void MediaStatusCallback(object arg)
+        {
+            lock(_syncPlayerObject)
+            if (player != null)
+            {
+                player.Dispatcher.Invoke(() =>
+                {
+                    if (_playbackStatus != Status.stop || !player.NaturalDuration.HasTimeSpan) return;
+                    cleanClose();
+                    player = new MediaPlayer();
+                    player.Open(new Uri(songTitle.Content.ToString()));
+                });
+            }
+        }
+
+        private static void ShowThreadInformation(String taskName)
+        {
+            String msg = null;
+            Thread thread = Thread.CurrentThread;
+            //lock (_syncPlayerObject)
+            {
+                msg = String.Format("{0} thread information\n", taskName) +
+                      String.Format("   Background: {0}\n", thread.IsBackground) +
+                      String.Format("   Thread Pool: {0}\n", thread.IsThreadPoolThread) +
+                      String.Format("   Thread ID: {0}\n", thread.ManagedThreadId);
+            }
+            Console.WriteLine(msg);
+        }
+
+    private void Close(object sender, RoutedEventArgs e)
+        {
+            cleanClose();
+        }
+
+        public void cleanClose()
+        {
+            player.Close();
+            //set values back to zero
+            _playbackStatus = Status.stop;
+            playStatus.Content = EnumHelper.GetDescription<Status>(_playbackStatus);
+            //songTitle.Content = null;
+            songProgress.Value = 0;
+            songStartTime.Content = "00:00";
+            songEndTime.Content = "00:00";
+            //stops timer from crashing program
+            songTime.Stop();
+        }
+
+        private void volumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            player.Volume = volumeSlider.Value;
+            volumeLabel.Content = "Volume: " + (Math.Round(volumeSlider.Value * 100, 0)) + "%";
+        }
+        
+        #region ArtNet code
+
+        byte[] _dmxData = new byte[511];
+
+        byte _lastCmd = 0;
+
+        private void boxUseArtnet_Checked(object sender, RoutedEventArgs e)
+        {
+            artnet.EnableBroadcast = true;
+            try
+            {
+                artnet.Open(IPAddress.Parse(boxArtnetIP.Text), IPAddress.Parse(boxArtnetMask.Text));
+                artnet.NewPacket += new EventHandler<ArtNet.Sockets.NewPacketEventArgs<ArtNet.Packets.ArtNetPacket>>(artnet_NewPacket);
+                //Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
+        }
+
+        private void boxUseArtnet_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (artnet != null)
+            {
+                try
+                {
+                    artnet.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    return;
+                }
+            }
+        }
+
+        void artnet_NewPacket(object sender, ArtNet.Sockets.NewPacketEventArgs<ArtNet.Packets.ArtNetPacket> e)
+        {
+            if (e.Packet.OpCode == ArtNet.Enums.ArtNetOpCodes.Dmx)
+            {
+                var packet = e.Packet as ArtNet.Packets.ArtNetDmxPacket;
+                if (packet.DmxData != _dmxData)
+                {
+                    if (player.HasAudio && packet.DmxData.Length > 0)
+                    {
+                        int ArtnetChannel = int.Parse(boxArtnetChannel.Text);
+                        byte ArtnetStartValue = byte.Parse(boxArtnetStart.Text);
+                        byte ArtnetStopValue = byte.Parse(boxArtnetStop.Text);
+                        byte ArtnetPauseValue = byte.Parse(boxArtnetPause.Text);
+
+                        byte cmd = packet.DmxData[ArtnetChannel];
+                        if (cmd != _lastCmd)
+                        {
+                            if (cmd == ArtnetStartValue)
+                            {
+                                Play(playButton, null);
+                            }
+                            else if (cmd == ArtnetStopValue)
+                            {
+                                Stop(stopButton, null);
+                            }
+                            else if (cmd == ArtnetPauseValue)
+                            {
+                                Pause(PauseButton, null);
+                            }
+                        };
+                        _lastCmd = cmd;
+                    }
+                    _dmxData = packet.DmxData;
+                }
+            }
+        }
+
+        #endregion
+    }
+}

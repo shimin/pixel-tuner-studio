@@ -1,0 +1,112 @@
+{
+  "_comment": [
+    "Эталонные байтовые векторы разбора Art-Net и ответа устройства.",
+    "Приложение только принимает ArtDmx, остальные пакеты не используются.",
+    "",
+    "Порядок байтов в Art-Net смешанный, это соответствует спецификации:",
+    "  OpCode — little endian (0x5000 идёт как 00 50),",
+    "  Version — big endian (00 0E),",
+    "  Universe (SubUni, Net) — младший байт первым,",
+    "  Length — big endian.",
+    "",
+    "Значения выведены из ArtNetBinaryReader.cs и ArtNetDmxPacket.cs.",
+    "Проверка: Tests/EpicCoreTests/ArtNetVectorTests.swift."
+  ],
+  "artDmx": [
+    {
+      "name": "universe 1, four channels",
+      "universe": 1,
+      "sequence": 1,
+      "physical": 0,
+      "dmxValues": [
+        80,
+        100,
+        200,
+        150
+      ],
+      "expectedHex": "41 72 74 2D 4E 65 74 00 00 50 00 0E 01 00 01 00 00 04 50 64 C8 96",
+      "_source": "ArtNetPacket.cs:67-76 + ArtNetDmxPacket.cs:71-80"
+    },
+    {
+      "name": "universe 0, single channel",
+      "universe": 0,
+      "sequence": 0,
+      "physical": 0,
+      "dmxValues": [
+        0
+      ],
+      "expectedHex": "41 72 74 2D 4E 65 74 00 00 50 00 0E 00 00 00 00 00 01 00",
+      "_note": "Проверяет little endian для Universe: 0 не отличает порядок байт"
+    },
+    {
+      "name": "universe 256, distinguishes byte order",
+      "universe": 256,
+      "sequence": 255,
+      "physical": 1,
+      "dmxValues": [
+        1,
+        2
+      ],
+      "expectedHex": "41 72 74 2D 4E 65 74 00 00 50 00 0E FF 01 00 01 00 02 01 02",
+      "_note": "Universe 256 = 0x0100. Little endian даёт 00 01, big endian дал бы 01 00. Разница видна. Length = 2 -> 00 02."
+    },
+    {
+      "name": "universe 1, length above 255",
+      "universe": 1,
+      "sequence": 7,
+      "physical": 0,
+      "dmxLong": true,
+      "dmxCount": 512,
+      "expectedPrefix": "41 72 74 2D 4E 65 74 00 00 50 00 0E 07 00 01 00 02 00",
+      "_note": "Length 512 = 0x0200. Big endian даёт 02 00, little endian дал бы 00 02."
+    },
+    {
+      "name": "universe 1, max channel value",
+      "universe": 1,
+      "sequence": 0,
+      "physical": 0,
+      "dmxValues": [
+        255
+      ],
+      "expectedHex": "41 72 74 2D 4E 65 74 00 00 50 00 0E 00 00 01 00 00 01 FF"
+    }
+  ],
+  "channelThresholds": [
+    {
+      "_comment": "Значения по умолчанию для режима Art-Net. Приложение реагирует на изменение значения канала.",
+      "start": 50,
+      "pause": 100,
+      "stop": 150
+    }
+  ],
+  "deviceResponse": [
+    {
+      "name": "short response, no tag",
+      "hex": "49 00 0D 11",
+      "isDevice": true,
+      "tag": null,
+      "_note": "Windows-код принимает ответ по первому байту 0x49 и длине больше 3 байт."
+    },
+    {
+      "name": "response with tag",
+      "hex": "49 00 0D 11 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 45 50 49 43 50 4C 41 59 45 52 30 31",
+      "isDevice": true,
+      "tag": "EPICPLAYER01",
+      "_note": "Ровно 59 байт: 47 заполненных + 12 байт имени со смещения 47. Байты печатные."
+    },
+    {
+      "name": "wrong marker, not a device",
+      "hex": "48 00 0D 11 22",
+      "isDevice": false,
+      "tag": null,
+      "_note": "Первый байт не 0x49 — пакет отбрасывается."
+    },
+    {
+      "name": "too short, not a device",
+      "hex": "49 00 0D",
+      "isDevice": false,
+      "tag": null,
+      "_note": "Ровно 3 байта — короче, чем требует проверка в Windows-коде."
+    }
+  ]
+}

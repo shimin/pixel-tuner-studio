@@ -1,0 +1,45 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="EpicPlayer.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="FilePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="Multicast" Type="System.String" Scope="User">
+      <Value Profile="(Default)">192.168.88.255</Value>
+    </Setting>
+    <Setting Name="IP" Type="System.String" Scope="User">
+      <Value Profile="(Default)">192.168.88.253</Value>
+    </Setting>
+    <Setting Name="Mask" Type="System.String" Scope="User">
+      <Value Profile="(Default)">255.255.255.0</Value>
+    </Setting>
+    <Setting Name="Port" Type="System.String" Scope="User">
+      <Value Profile="(Default)">3333</Value>
+    </Setting>
+    <Setting Name="Universe" Type="System.String" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="Channel" Type="System.String" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="StartCmd" Type="System.String" Scope="User">
+      <Value Profile="(Default)">50</Value>
+    </Setting>
+    <Setting Name="PauseCmd" Type="System.String" Scope="User">
+      <Value Profile="(Default)">100</Value>
+    </Setting>
+    <Setting Name="StopCmd" Type="System.String" Scope="User">
+      <Value Profile="(Default)">150</Value>
+    </Setting>
+    <Setting Name="MulticastIP" Type="System.String" Scope="User">
+      <Value Profile="(Default)">192.168.0.255</Value>
+    </Setting>
+    <Setting Name="WifiPort" Type="System.UInt16" Scope="User">
+      <Value Profile="(Default)">333</Value>
+    </Setting>
+    <Setting Name="InterfaceIdx" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

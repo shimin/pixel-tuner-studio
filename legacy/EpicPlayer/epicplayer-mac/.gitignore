@@ -1,0 +1,23 @@
+# Сборка SwiftPM
+.build/
+.swiftpm/
+Package.resolved
+
+# Бандл из scripts/build-app.sh
+build/
+
+# Кэш компилятора и временные файлы
+.tmp/
+*.o
+*.swiftmodule
+*.pcm
+
+# Сборка C#-проверки для Windows
+bin/
+obj/
+
+# macOS
+.DS_Store
+
+# Кэш Python из scripts/
+__pycache__/

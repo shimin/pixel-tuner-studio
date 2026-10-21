@@ -1,0 +1,121 @@
+{
+  "_comment": [
+    "Эталонные байтовые векторы протокола EpicPlayer.",
+    "Единый источник истины для обеих реализаций.",
+    "",
+    "Swift-тесты читают этот файл: Tests/EpicCoreTests/ProtocolVectorTests.swift",
+    "C#-тесты читают этот же файл: Tests/WindowsReference/Program.cs",
+    "",
+    "При изменении протокола правится здесь и проверяется обеими реализациями.",
+    "Значения выведены из Windows-кода и должны воспроизводиться им побайтово.",
+    "",
+    "Формат позиции — UInt32 little endian по смещению 3."
+  ],
+
+  "playbackCommand": [
+    {
+      "name": "play at zero",
+      "command": "play",
+      "positionMilliseconds": 0,
+      "expected": "50 05 02 00 00 00 00 0D",
+      "_source": "MainWindow.xaml.cs:379 _playBytes = { 0x50, 0x05, 0x02, 0, 0, 0, 0, 0x0d }"
+    },
+    {
+      "name": "play at 1000ms",
+      "command": "play",
+      "positionMilliseconds": 1000,
+      "expected": "50 05 02 E8 03 00 00 0D",
+      "_note": "Проверяет младший байт первым: 1000 = 0x03E8"
+    },
+    {
+      "name": "play at 1234ms",
+      "command": "play",
+      "positionMilliseconds": 1234,
+      "expected": "50 05 02 D2 04 00 00 0D",
+      "_note": "Два младших байта: 1234 = 0x04D2"
+    },
+    {
+      "name": "play at 16777216ms",
+      "command": "play",
+      "positionMilliseconds": 16777216,
+      "expected": "50 05 02 00 00 00 01 0D",
+      "_note": "Старший байт = 1. Проверяет, что порядок именно little endian, а не big endian"
+    },
+    {
+      "name": "play at UInt32.max",
+      "command": "play",
+      "positionMilliseconds": 4294967295,
+      "expected": "50 05 02 FF FF FF FF 0D"
+    },
+    {
+      "name": "pause at 45000ms",
+      "command": "pause",
+      "positionMilliseconds": 45000,
+      "expected": "50 05 03 C8 AF 00 00 0D",
+      "_note": "45000 = 0xAFC8, little endian даёт C8 AF"
+    },
+    {
+      "name": "stop at 300000ms",
+      "command": "stop",
+      "positionMilliseconds": 300000,
+      "expected": "50 05 04 E0 93 04 00 0D",
+      "_note": "300000 = 0x0493E0"
+    },
+    {
+      "name": "stop at zero",
+      "command": "stop",
+      "positionMilliseconds": 0,
+      "expected": "50 05 04 00 00 00 00 0D"
+    },
+    {
+      "name": "next track at zero",
+      "command": "nextTrack",
+      "positionMilliseconds": 0,
+      "expected": "50 05 05 00 00 00 00 0D",
+      "_source": "MainWindow.xaml.cs:385 _nextTrackBytes",
+      "_note": "Для next и previous позиция всегда 0: устройство само решает, что значит следующий трек"
+    },
+    {
+      "name": "previous track at zero",
+      "command": "previousTrack",
+      "positionMilliseconds": 0,
+      "expected": "50 05 06 00 00 00 00 0D",
+      "_source": "MainWindow.xaml.cs:387 _previousTrackBytes"
+    }
+  ],
+
+  "udpQuery": [
+    {
+      "name": "device lookup request",
+      "expected": "49 00 0D",
+      "_source": "WifiDevicesWindow.xaml.cs:37 byte[] _packet = new byte[] { 0x49, 0x00, 0x0d }"
+    }
+  ],
+
+  "tcpAnnouncement": [
+    {
+      "name": "announce 192.168.88.253",
+      "address": "192.168.88.253",
+      "expected": "4C 06 C0 A8 58 FD 03 0D 0D",
+      "_source": "WifiTcpDevicesWindow.xaml.cs:66-70",
+      "_note": "Порт 3331 = 0x0D03, little endian даёт 03 0D, затем терминатор 0D. Старший байт порта и терминатор совпадают."
+    },
+    {
+      "name": "announce 192.168.88.1",
+      "address": "192.168.88.1",
+      "expected": "4C 06 C0 A8 58 01 03 0D 0D"
+    },
+    {
+      "name": "announce 10.0.0.5",
+      "address": "10.0.0.5",
+      "expected": "4C 06 0A 00 00 05 03 0D 0D",
+      "_note": "Проверяет октет с ведущими нулями"
+    },
+    {
+      "name": "announce 255.255.255.255",
+      "address": "255.255.255.255",
+      "expected": "4C 06 FF FF FF FF 03 0D 0D",
+      "_note": "Повторяет баг Windows-версии: туда кладётся адрес из IPEndPoint. Валидность проверить на устройстве."
+    }
+  ]
+}
