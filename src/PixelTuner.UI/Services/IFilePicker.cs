@@ -7,14 +7,17 @@ namespace PixelTuner.UI.Services;
 
 public interface IFilePicker
 {
-    /// <summary>Asks the user for a .pxpkg and returns it as a seekable stream, or null if cancelled.</summary>
+    /// <summary>Phones: asks for a .pxpkg and returns a copy as a seekable stream, or null if cancelled.</summary>
     Task<Stream?> PickPackageAsync();
 
-    /// <summary>Asks the user for a PixelTuner 2 project (.ptp). Returns its path on disk, or null if cancelled.</summary>
-    Task<string?> PickLegacyProjectAsync();
+    /// <summary>Desktop: asks for a .pxpkg and returns its path, or null if cancelled (or the file has no path).</summary>
+    Task<string?> PickPackagePathAsync();
 
-    /// <summary>Asks where to save the imported package. Returns a stream to write it to, or null if cancelled.</summary>
-    Task<Stream?> PickPackageSaveAsync(string suggestedName);
+    /// <summary>Desktop: asks where to save a .pxpkg. Returns the path, or null if cancelled.</summary>
+    Task<string?> PickPackageSavePathAsync(string suggestedName);
+
+    /// <summary>Desktop: asks for a PixelTuner 2 project (.ptp). Returns its path, or null if cancelled.</summary>
+    Task<string?> PickLegacyProjectAsync();
 }
 
 /// <summary>
@@ -47,7 +50,17 @@ public sealed class StorageFilePicker(TopLevel topLevel) : IFilePicker
         return files.Count == 0 ? null : files[0].TryGetLocalPath();
     }
 
-    public async Task<Stream?> PickPackageSaveAsync(string suggestedName)
+    public async Task<string?> PickPackagePathAsync()
+    {
+        var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            AllowMultiple = false,
+            FileTypeFilter = [PackageType, FilePickerFileTypes.All],
+        });
+        return files.Count == 0 ? null : files[0].TryGetLocalPath();
+    }
+
+    public async Task<string?> PickPackageSavePathAsync(string suggestedName)
     {
         var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
@@ -56,7 +69,7 @@ public sealed class StorageFilePicker(TopLevel topLevel) : IFilePicker
             FileTypeChoices = [PackageType],
             ShowOverwritePrompt = true,
         });
-        return file is null ? null : await file.OpenWriteAsync();
+        return file?.TryGetLocalPath();
     }
 
     public async Task<Stream?> PickPackageAsync()

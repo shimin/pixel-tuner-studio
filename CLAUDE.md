@@ -35,8 +35,12 @@
 - Cable and Wi-Fi device protocol (`src/PixelTuner.Devices`, PixelTuner 2's `Communication/Service`):
   packets `[command, length, data, 0x0D]`, block sizes and info layouts as PixelTuner 2 had them.
   `tests/PixelTuner.Devices.Tests` drives it with an in-memory device and a real TCP connection.
-- Studio (not Stage) has "Import from PixelTuner 2…" (`MainViewModel.ImportLegacyProjectCommand`, `Product.CanImportLegacy`):
-  .ptp in, .pxpkg out, missing media listed. `tests/PixelTuner.UI.Tests` drives it with a fake picker.
+- Studio (not Stage; `Product.CanEdit`) creates, opens, saves and imports projects. The open project is a
+  `ProjectDocument` (`PixelTuner.Package`: path, dirty flag, atomic Save/SaveAs that keeps the media);
+  every edit of the model must end in `MarkChanged()`. Desktop menus are one `NativeMenu` in `MainWindow.axaml`
+  (menu bar on macOS, `NativeMenuBar` on Windows); shortcuts come from `Views/Shortcuts` (Ctrl or Cmd).
+  Unsaved changes are asked about before open, new, import, close and window close (`MainViewModel.ConfirmDiscardAsync`).
+  `tests/PixelTuner.UI.Tests` drives all of it with fake dialogs.
 - `src/PixelTuner.Audio` holds the player and decoder contracts only; implementations go per
   platform (LibVLC on desktop, system players on phones).
 - Merge PRs with a normal merge commit only.

@@ -42,6 +42,17 @@ public sealed class PxPackageWriter
         return id;
     }
 
+    /// <summary>
+    /// Copies a media file from another package under the same id and name, reading it
+    /// from that package when the new one is written (so it never sits in memory whole).
+    /// </summary>
+    public void AddResourceFrom(PxPackage source, string resourceId)
+    {
+        var entry = source.GetResource(resourceId);
+        if (!_resources.ContainsKey(entry.Id))
+            _resources[entry.Id] = new PendingResource(entry.Id, entry.Path, entry.OriginalName, null, null, () => source.OpenResource(entry.Id), entry.Size);
+    }
+
     /// <summary>Adds a regenerable cache entry or a compiled export under cache/ or export/.</summary>
     public void AddEntry(string path, byte[] content)
     {
@@ -51,7 +62,12 @@ public sealed class PxPackageWriter
         _extraEntries[path] = content;
     }
 
-    public void Save(string targetPath, ShowProject project, DateTimeOffset? createdUtc = null)
+    /// <param name="beforeReplace">
+    /// Called once the new package is complete and before it replaces the target. A document
+    /// that is saved over the file it was opened from closes its reader here: Windows will not
+    /// replace a file that is still open.
+    /// </param>
+    public void Save(string targetPath, ShowProject project, DateTimeOffset? createdUtc = null, Action? beforeReplace = null)
     {
         var dir = Path.GetDirectoryName(Path.GetFullPath(targetPath))!;
         Directory.CreateDirectory(dir);
@@ -61,6 +77,7 @@ public sealed class PxPackageWriter
         {
             using (var stream = new FileStream(tempPath, FileMode.CreateNew, FileAccess.Write))
                 Write(stream, project, createdUtc);
+            beforeReplace?.Invoke();
             File.Move(tempPath, targetPath, overwrite: true);
         }
         finally
@@ -95,7 +112,13 @@ public sealed class PxPackageWriter
             long size;
             using (var target = entry.Open())
             {
-                if (r.Content is { } bytes)
+                if (r.OpenSource is { } open)
+                {
+                    using var source = open();
+                    source.CopyTo(target);
+                    size = r.KnownSize;
+                }
+                else if (r.Content is { } bytes)
                 {
                     target.Write(bytes);
                     size = bytes.Length;
@@ -130,5 +153,5 @@ public sealed class PxPackageWriter
         return Convert.ToHexStringLower(SHA256.HashData(s));
     }
 
-    sealed record PendingResource(string Id, string EntryPath, string OriginalName, string? SourcePath, byte[]? Content);
+    sealed record PendingResource(string Id, string EntryPath, string OriginalName, string? SourcePath, byte[]? Content, Func<Stream>? OpenSource = null, long KnownSize = 0);
 }

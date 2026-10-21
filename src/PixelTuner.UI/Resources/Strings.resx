@@ -18,4 +18,23 @@
   <data name="Import_Done" xml:space="preserve"><value>Imported. The project is saved as a package.</value></data>
   <data name="Import_DoneMissing" xml:space="preserve"><value>Imported, but {0} media file(s) were not found: {1}</value></data>
   <data name="Error_ImportFailed" xml:space="preserve"><value>Could not import the project: {0}</value></data>
+  <data name="Menu_File" xml:space="preserve"><value>File</value></data>
+  <data name="Menu_Help" xml:space="preserve"><value>Help</value></data>
+  <data name="Command_NewProject" xml:space="preserve"><value>New project</value></data>
+  <data name="Command_Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Command_SaveAs" xml:space="preserve"><value>Save as…</value></data>
+  <data name="Command_CloseProject" xml:space="preserve"><value>Close project</value></data>
+  <data name="Command_Exit" xml:space="preserve"><value>Exit</value></data>
+  <data name="Command_About" xml:space="preserve"><value>About {0}</value></data>
+  <data name="Document_Untitled" xml:space="preserve"><value>Untitled</value></data>
+  <data name="Document_Edited" xml:space="preserve"><value>Edited</value></data>
+  <data name="Dialog_SaveChanges" xml:space="preserve"><value>Do you want to save the changes to “{0}”?</value></data>
+  <data name="Dialog_SaveChangesDetail" xml:space="preserve"><value>Your changes will be lost if you don't save them.</value></data>
+  <data name="Dialog_Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Dialog_DontSave" xml:space="preserve"><value>Don't save</value></data>
+  <data name="Dialog_Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Dialog_Close" xml:space="preserve"><value>Close</value></data>
+  <data name="About_Version" xml:space="preserve"><value>Version {0}</value></data>
+  <data name="Project_Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Error_SaveFailed" xml:space="preserve"><value>Could not save the project: {0}</value></data>
 </root>

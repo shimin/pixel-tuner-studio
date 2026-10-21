@@ -18,4 +18,23 @@
   <data name="Import_Done" xml:space="preserve"><value>Importiert. Das Projekt ist als Paket gespeichert.</value></data>
   <data name="Import_DoneMissing" xml:space="preserve"><value>Importiert, aber {0} Mediendatei(en) fehlen: {1}</value></data>
   <data name="Error_ImportFailed" xml:space="preserve"><value>Das Projekt konnte nicht importiert werden: {0}</value></data>
+  <data name="Menu_File" xml:space="preserve"><value>Datei</value></data>
+  <data name="Menu_Help" xml:space="preserve"><value>Hilfe</value></data>
+  <data name="Command_NewProject" xml:space="preserve"><value>Neues Projekt</value></data>
+  <data name="Command_Save" xml:space="preserve"><value>Sichern</value></data>
+  <data name="Command_SaveAs" xml:space="preserve"><value>Sichern unter…</value></data>
+  <data name="Command_CloseProject" xml:space="preserve"><value>Projekt schließen</value></data>
+  <data name="Command_Exit" xml:space="preserve"><value>Beenden</value></data>
+  <data name="Command_About" xml:space="preserve"><value>Über {0}</value></data>
+  <data name="Document_Untitled" xml:space="preserve"><value>Ohne Titel</value></data>
+  <data name="Document_Edited" xml:space="preserve"><value>Bearbeitet</value></data>
+  <data name="Dialog_SaveChanges" xml:space="preserve"><value>Möchten Sie die Änderungen an „{0}“ sichern?</value></data>
+  <data name="Dialog_SaveChangesDetail" xml:space="preserve"><value>Ohne Sichern gehen die Änderungen verloren.</value></data>
+  <data name="Dialog_Save" xml:space="preserve"><value>Sichern</value></data>
+  <data name="Dialog_DontSave" xml:space="preserve"><value>Nicht sichern</value></data>
+  <data name="Dialog_Cancel" xml:space="preserve"><value>Abbrechen</value></data>
+  <data name="Dialog_Close" xml:space="preserve"><value>Schließen</value></data>
+  <data name="About_Version" xml:space="preserve"><value>Version {0}</value></data>
+  <data name="Project_Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Error_SaveFailed" xml:space="preserve"><value>Das Projekt konnte nicht gesichert werden: {0}</value></data>
 </root>

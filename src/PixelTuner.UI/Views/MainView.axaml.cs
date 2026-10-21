@@ -13,6 +13,9 @@ public partial class MainView : UserControl
     {
         base.OnAttachedToVisualTree(e);
         if (DataContext is MainViewModel vm && TopLevel.GetTopLevel(this) is { } top)
+        {
             vm.FilePicker = new StorageFilePicker(top);
+            if (top is Window window) vm.Dialogs = new WindowDialogService(window);
+        }
     }
 }

@@ -18,4 +18,23 @@
   <data name="Import_Done" xml:space="preserve"><value>Импортировано. Проект сохранён как пакет.</value></data>
   <data name="Import_DoneMissing" xml:space="preserve"><value>Импортировано, но не найдено медиафайлов: {0} ({1})</value></data>
   <data name="Error_ImportFailed" xml:space="preserve"><value>Не удалось импортировать проект: {0}</value></data>
+  <data name="Menu_File" xml:space="preserve"><value>Файл</value></data>
+  <data name="Menu_Help" xml:space="preserve"><value>Справка</value></data>
+  <data name="Command_NewProject" xml:space="preserve"><value>Новый проект</value></data>
+  <data name="Command_Save" xml:space="preserve"><value>Сохранить</value></data>
+  <data name="Command_SaveAs" xml:space="preserve"><value>Сохранить как…</value></data>
+  <data name="Command_CloseProject" xml:space="preserve"><value>Закрыть проект</value></data>
+  <data name="Command_Exit" xml:space="preserve"><value>Выход</value></data>
+  <data name="Command_About" xml:space="preserve"><value>О программе {0}</value></data>
+  <data name="Document_Untitled" xml:space="preserve"><value>Без названия</value></data>
+  <data name="Document_Edited" xml:space="preserve"><value>изменён</value></data>
+  <data name="Dialog_SaveChanges" xml:space="preserve"><value>Сохранить изменения в «{0}»?</value></data>
+  <data name="Dialog_SaveChangesDetail" xml:space="preserve"><value>Если не сохранить, изменения будут потеряны.</value></data>
+  <data name="Dialog_Save" xml:space="preserve"><value>Сохранить</value></data>
+  <data name="Dialog_DontSave" xml:space="preserve"><value>Не сохранять</value></data>
+  <data name="Dialog_Cancel" xml:space="preserve"><value>Отмена</value></data>
+  <data name="Dialog_Close" xml:space="preserve"><value>Закрыть</value></data>
+  <data name="About_Version" xml:space="preserve"><value>Версия {0}</value></data>
+  <data name="Project_Name" xml:space="preserve"><value>Название</value></data>
+  <data name="Error_SaveFailed" xml:space="preserve"><value>Не удалось сохранить проект: {0}</value></data>
 </root>

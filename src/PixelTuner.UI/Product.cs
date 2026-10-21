@@ -9,22 +9,26 @@ namespace PixelTuner.UI;
 /// </summary>
 public sealed class Product
 {
-    public static Product Studio { get; } = new("Pixel Tuner Studio", canImportLegacy: true);
-    public static Product Stage { get; } = new("Pixel Tuner Stage", canImportLegacy: false);
+    public static Product Studio { get; } = new("Pixel Tuner Studio", canEdit: true);
+    public static Product Stage { get; } = new("Pixel Tuner Stage", canEdit: false);
 
     public static Product Current { get; set; } = Studio;
 
-    private Product(string name, bool canImportLegacy)
+    private Product(string name, bool canEdit)
     {
         Name = name;
-        CanImportLegacy = canImportLegacy;
+        CanEdit = canEdit;
     }
 
     /// <summary>
-    /// Importing a PixelTuner 2 project needs its media folders next to the file, so only the
-    /// desktop app offers it; phones open the resulting .pxpkg.
+    /// Studio creates, edits, saves and imports projects; Stage only opens them. Importing a
+    /// PixelTuner 2 project needs its media folders next to the file, so it is a desktop job.
     /// </summary>
-    public bool CanImportLegacy { get; }
+    public bool CanEdit { get; }
+
+    /// <summary>Major.minor.patch of the running app.</summary>
+    public static string Version =>
+        System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version is { } v ? $"{v.Major}.{v.Minor}.{Math.Max(v.Build, 0)}" : "";
 
     public string Name { get; }
 
