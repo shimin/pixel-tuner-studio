@@ -401,6 +401,11 @@ public sealed class TimelineControl : Control
 
         if (thumb.Bitmap is not { } bitmap) return;
         var source = new Rect(0, 0, bitmap.PixelSize.Width, bitmap.PixelSize.Height);
+        if (item.Kind == ItemKind.Video)
+        {
+            DrawStills(context, bitmap, source, run, inner, left, right);
+            return;
+        }
         // Sharp columns when a pass is wider than its picture, smooth when it is squeezed.
         var mode = run.PassWidth >= thumb.Columns ? BitmapInterpolationMode.None : BitmapInterpolationMode.MediumQuality;
         using (context.PushRenderOptions(new RenderOptions { BitmapInterpolationMode = mode }))
@@ -409,6 +414,33 @@ public sealed class TimelineControl : Control
                 context.DrawImage(bitmap, source, new Rect(left + n * run.PassWidth, inner.Y, run.PassWidth, inner.Height));
         }
 
+        if (run.PassWidth < TimelineEditor.PassLineWidth) return;
+        var line = new Pen(new SolidColorBrush(Colors.White, 0.7), 1);
+        for (int n = Math.Max(1, run.FirstPass); n <= run.LastPass; n++)
+        {
+            double x = left + n * run.PassWidth;
+            if (x < right) context.DrawLine(line, new Point(x, inner.Y), new Point(x, inner.Bottom));
+        }
+    }
+
+    /// <summary>
+    /// A video is a still frame, not the animation: the first frame in its own proportions at the start of each pass, the
+    /// rest of the pass left to the item's colour. Passes are told apart by a line when they are wide enough.
+    /// </summary>
+    private static void DrawStills(DrawingContext context, Bitmap bitmap, Rect source, TimelineEditor.TileRun run, Rect inner, double left, double right)
+    {
+        context.FillRectangle(Brushes.Black, inner);   // behind the stills, like film around its frames
+        double stillWidth = Math.Min(run.PassWidth, inner.Height * source.Width / source.Height);
+        using (context.PushRenderOptions(new RenderOptions { BitmapInterpolationMode = BitmapInterpolationMode.MediumQuality }))
+        {
+            for (int n = run.FirstPass; n <= run.LastPass; n++)
+            {
+                double x = left + n * run.PassWidth;
+                // The still is cut to the pass, so a narrow pass shows the left part of the frame, not a squeezed one.
+                var part = new Rect(0, 0, source.Width * stillWidth / (inner.Height * source.Width / source.Height), source.Height);
+                context.DrawImage(bitmap, part, new Rect(x, inner.Y, stillWidth, inner.Height));
+            }
+        }
         if (run.PassWidth < TimelineEditor.PassLineWidth) return;
         var line = new Pen(new SolidColorBrush(Colors.White, 0.7), 1);
         for (int n = Math.Max(1, run.FirstPass); n <= run.LastPass; n++)

@@ -51,7 +51,7 @@ public sealed class ItemThumbnailsTests
     }
 
     [Fact]
-    public void A_video_thumbnail_has_a_column_per_frame_and_a_pass_of_frames_times_the_frame_time()
+    public void A_video_thumbnail_is_the_first_frame_and_a_pass_is_frames_times_the_frame_time()
     {
         var gif = File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "Fixtures", "glasses", "glasses.gif"));
         _files["gif"] = gif;
@@ -60,6 +60,9 @@ public sealed class ItemThumbnailsTests
 
         var thumb = Thumbnails().Get(item, new Timeline { Kind = TimelineKind.Video })!;
 
+        var first = GifFrames.Decode(gif)[0];
+        Assert.Equal((first.Width, first.Height), (thumb.Image.Width, thumb.Image.Height));   // a still, not a strip of frames
+        Assert.Equal(first[0, 0], thumb.Image[0, 0]);
         Assert.Equal(frames, thumb.Columns);
         Assert.Equal(S(frames * 0.040), thumb.Pass(item));
     }

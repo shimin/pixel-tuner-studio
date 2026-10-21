@@ -6,8 +6,8 @@ using PixelTuner.UI.ViewModels;
 namespace PixelTuner.UI.Timelines;
 
 /// <summary>What a timeline item looks like when it is drawn on its lane.</summary>
-/// <param name="Image">One pass of the item as the device shows it: a column per image column (frame, colour) and a row per LED band.</param>
-/// <param name="Columns">Columns of the device image; with the stretching it sets how long one pass takes.</param>
+/// <param name="Image">The picture as the device shows it (brightness, flip); for a video its first frame, a still.</param>
+/// <param name="Columns">Columns of the device image, or the frames of a video; with the stretching it sets how long one pass takes.</param>
 /// <param name="Average">The colour of the item seen from far away.</param>
 public sealed record Thumbnail(PixelImage Image, int Columns, Rgb Average)
 {
@@ -31,9 +31,6 @@ public sealed record Thumbnail(PixelImage Image, int Columns, Rgb Average)
 /// </summary>
 public sealed class ItemThumbnails(Func<string, Stream?> open)
 {
-    /// <summary>A video frame becomes this many rows of average colour; a lane is not taller.</summary>
-    private const int VideoRows = 16;
-
     private readonly Dictionary<(string Id, string Kind, byte Brightness, bool Flip), Thumbnail?> _cache = [];
 
     public Thumbnail? Get(TimelineItem item, Timeline timeline)
@@ -54,14 +51,22 @@ public sealed class ItemThumbnails(Func<string, Stream?> open)
             stream.CopyTo(copy);
             var bytes = copy.ToArray();
 
-            PixelImage source = kind switch
+            // A video shows a still, its first frame, as PixelTuner 2 did; the frame count only sets how long a pass takes.
+            int columns = 0;
+            PixelImage source;
+            if (kind == ItemKind.Video)
             {
-                ItemKind.Video => FrameProfiles(GifFrames.Decode(bytes)),
-                ItemKind.Gradient => TopRow(ImageDecoder.Decode(bytes)),
-                _ => ImageDecoder.Decode(bytes),
-            };
+                var frames = GifFrames.Decode(bytes);
+                source = frames[0];
+                columns = frames.Count;
+            }
+            else
+            {
+                source = kind == ItemKind.Gradient ? TopRow(ImageDecoder.Decode(bytes)) : ImageDecoder.Decode(bytes);
+                columns = source.Width;
+            }
             var shown = ItemPreview.Render(source, brightness, 1, flip);
-            return shown.Width == 0 || shown.Height == 0 ? null : new Thumbnail(shown, shown.Width, Average(shown));
+            return shown.Width == 0 || shown.Height == 0 ? null : new Thumbnail(shown, columns, Average(shown));
         }
         catch (Exception ex) when (ex is InvalidDataException or IOException or KeyNotFoundException or ArgumentOutOfRangeException or IndexOutOfRangeException)
         {
@@ -75,30 +80,6 @@ public sealed class ItemThumbnails(Func<string, Stream?> open)
         var row = new PixelImage(image.Width, 1);
         for (int x = 0; x < image.Width; x++) row[x, 0] = image[x, 0];
         return row;
-    }
-
-    /// <summary>A column per frame; each column is the frame squeezed to a few rows of average colour.</summary>
-    internal static PixelImage FrameProfiles(IReadOnlyList<PixelImage> frames)
-    {
-        int rows = Math.Min(VideoRows, frames[0].Height);
-        var result = new PixelImage(frames.Count, rows);
-        for (int f = 0; f < frames.Count; f++)
-        {
-            var frame = frames[f];
-            for (int r = 0; r < rows; r++)
-            {
-                int y0 = r * frame.Height / rows, y1 = Math.Max(y0 + 1, (r + 1) * frame.Height / rows);
-                long sr = 0, sg = 0, sb = 0, n = 0;
-                for (int y = y0; y < y1; y++)
-                    for (int x = 0; x < frame.Width; x++)
-                    {
-                        var c = frame[x, y];
-                        sr += c.R; sg += c.G; sb += c.B; n++;
-                    }
-                result[f, r] = n == 0 ? Rgb.Black : new Rgb((byte)(sr / n), (byte)(sg / n), (byte)(sb / n));
-            }
-        }
-        return result;
     }
 
     internal static Rgb Average(PixelImage image)
