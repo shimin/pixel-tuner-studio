@@ -26,6 +26,9 @@ public sealed class ProjectDocument : IDisposable
 
     private readonly UndoHistory _history;
 
+    // Media added since the package was opened or saved (the soundtrack), by id. They are written on save.
+    private readonly Dictionary<string, (byte[] Content, string Name)> _added = new(StringComparer.Ordinal);
+
     public ShowProject Project { get; }
 
     /// <summary>Where the project is saved; null for a new project or one opened from a stream.</summary>
@@ -43,7 +46,7 @@ public sealed class ProjectDocument : IDisposable
     public string? RedoKey => _history.RedoKey;
 
     /// <summary>Media files in the package (the ones the project can refer to).</summary>
-    public int MediaCount => _source?.Manifest.Resources.Count ?? 0;
+    public int MediaCount => (_source?.Manifest.Resources.Count ?? 0) + _added.Count(a => !(_source?.HasResource(a.Key) ?? false));
 
     /// <summary>Raised after any edit, undo, redo or save, and when the path changes.</summary>
     public event EventHandler? Changed;
@@ -71,6 +74,43 @@ public sealed class ProjectDocument : IDisposable
 
     /// <summary>Media for the .bin export of this project.</summary>
     public ShowMedia? CreateMedia() => _source?.CreateMedia();
+
+    /// <summary>
+    /// Takes a file into the project and returns its resource id (its SHA-256). The file is read now, so it
+    /// may be moved or deleted afterwards; it is written into the package on the next save.
+    /// </summary>
+    public string AddMedia(string filePath)
+    {
+        byte[] content = File.ReadAllBytes(filePath);
+        string id = Convert.ToHexStringLower(System.Security.Cryptography.SHA256.HashData(content));
+        if (!(_source?.HasResource(id) ?? false)) _added[id] = (content, System.IO.Path.GetFileName(filePath));
+        return id;
+    }
+
+    /// <summary>Makes a sound file the soundtrack (an undoable change).</summary>
+    public void SetAudio(string filePath) => Execute(Edits.SetAudio(Project, AddMedia(filePath), filePath));
+
+    public void RemoveAudio() => Execute(Edits.RemoveAudio(Project));
+
+    public bool HasMedia(string? id) => id is not null && (_added.ContainsKey(id) || (_source?.HasResource(id) ?? false));
+
+    /// <summary>File name of a media file as the user added it ("song.mp3"), or null when unknown.</summary>
+    public string? MediaName(string? id)
+    {
+        if (id is null) return null;
+        if (_added.TryGetValue(id, out var added)) return added.Name;
+        return _source?.HasResource(id) == true ? _source.GetResource(id).OriginalName : null;
+    }
+
+    /// <summary>Opens a media file for reading; the caller disposes the stream. Null when the project has no such media.</summary>
+    public Stream? OpenMedia(string? id)
+    {
+        if (id is null) return null;
+        if (_added.TryGetValue(id, out var added)) return new MemoryStream(added.Content, writable: false);
+        if (_source?.HasResource(id) != true) return null;
+        // Package entries cannot seek and are read one at a time: hand out a copy.
+        return new MemoryStream(_source.ReadResource(id), writable: false);
+    }
 
     /// <summary>The project name, edited by the user (an undoable edit).</summary>
     public string Name
@@ -106,6 +146,14 @@ public sealed class ProjectDocument : IDisposable
         if (_source is not null)
             foreach (var resource in _source.Manifest.Resources)
                 writer.AddResourceFrom(_source, resource.Id);
+        // New media is written only if the project still refers to it (undo may have taken it back).
+        var written = new List<string>();
+        foreach (var (id, media) in _added)
+            if (IsReferenced(id))
+            {
+                writer.AddMedia(media.Content, media.Name);
+                written.Add(id);
+            }
 
         // The target may be the file the media is read from: its reader closes just before the
         // new package replaces it, and the new package is opened again afterwards.
@@ -124,12 +172,18 @@ public sealed class ProjectDocument : IDisposable
         }
 
         var saved = PxPackage.Open(target);
+        // Written media is in the package now. Media that undo took back stays here, so redo can bring it back.
+        foreach (var id in written) _added.Remove(id);
         if (!sameFile) old?.Dispose();
         _source = saved;
         _createdUtc = saved.Manifest.CreatedUtc;
         Path = target;
         _history.MarkSaved();   // raises Changed
     }
+
+    private bool IsReferenced(string id) =>
+        Project.AudioResourceId == id || Project.CanvasResourceId == id
+        || Project.Timelines.Any(t => t.Items.Any(i => i.ResourceId == id));
 
     private static bool SamePath(string a, string b) =>
         string.Equals(a, b, OperatingSystem.IsWindows() || OperatingSystem.IsMacOS() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);

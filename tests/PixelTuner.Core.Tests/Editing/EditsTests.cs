@@ -135,6 +135,22 @@ public class EditsTests
     }
 
     [Fact]
+    public void Trimming_the_start_keeps_the_end_and_stops_at_the_previous_item()
+    {
+        var timeline = TimelineWith((0, 1), (2, 3));
+        var second = timeline.Items[1];
+
+        _history.Do(Edits.TrimItemStart(timeline, second, S(1.5)));
+        Assert.Equal((S(1.5), S(5)), (second.Start, second.End));
+
+        Assert.Throws<InvalidOperationException>(() => Edits.TrimItemStart(timeline, second, S(0.5)));   // into the first item
+        Assert.Throws<InvalidOperationException>(() => Edits.TrimItemStart(timeline, second, S(5)));     // no length left
+
+        _history.Undo();
+        Assert.Equal((S(2), S(5)), (second.Start, second.End));
+    }
+
+    [Fact]
     public void Item_properties_are_validated_and_undone()
     {
         var item = new TimelineItem();

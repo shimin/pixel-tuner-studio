@@ -15,6 +15,21 @@ public static class Edits
     public static Edit RenameProject(ShowProject project, string name) =>
         new SetValueEdit<string>("RenameProject", project, nameof(project.Name), () => project.Name, v => project.Name = v, name, mergeable: true);
 
+    /// <summary>Sets the soundtrack. The media itself is the document's business; this is the reference to it.</summary>
+    public static Edit SetAudio(ShowProject project, string resourceId, string sourcePath) =>
+        new GroupEdit("SetAudio",
+        [
+            new SetValueEdit<string?>("SetAudio", project, nameof(project.AudioResourceId), () => project.AudioResourceId, v => project.AudioResourceId = v, resourceId, mergeable: false),
+            new SetValueEdit<string?>("SetAudio", project, nameof(project.AudioSourcePath), () => project.AudioSourcePath, v => project.AudioSourcePath = v, sourcePath, mergeable: false),
+        ]);
+
+    public static Edit RemoveAudio(ShowProject project) =>
+        new GroupEdit("RemoveAudio",
+        [
+            new SetValueEdit<string?>("RemoveAudio", project, nameof(project.AudioResourceId), () => project.AudioResourceId, v => project.AudioResourceId = v, null, mergeable: false),
+            new SetValueEdit<string?>("RemoveAudio", project, nameof(project.AudioSourcePath), () => project.AudioSourcePath, v => project.AudioSourcePath = v, null, mergeable: false),
+        ]);
+
     // ---- timelines
 
     public static Edit AddTimeline(ShowProject project, Timeline timeline, int? index = null)
@@ -94,6 +109,20 @@ public static class Edits
         if (!Fits(timeline, item.Start, newDuration, item))
             throw new InvalidOperationException("The item would overlap the next item.");
         return new SetValueEdit<TimeSpan>("ResizeItem", item, nameof(item.Duration), () => item.Duration, v => item.Duration = v, newDuration, mergeable: false);
+    }
+
+    /// <summary>Moves the start of an item and keeps its end where it is (dragging the left edge).</summary>
+    public static Edit TrimItemStart(Timeline timeline, TimelineItem item, TimeSpan newStart)
+    {
+        RequireIndex(timeline, item);
+        var newDuration = item.End - newStart;
+        if (!Fits(timeline, newStart, newDuration, item))
+            throw new InvalidOperationException("The item would overlap the previous item or have no length.");
+        return new GroupEdit("ResizeItem",
+        [
+            new SetValueEdit<TimeSpan>("ResizeItem", item, nameof(item.Start), () => item.Start, v => item.Start = v, newStart, mergeable: false),
+            new SetValueEdit<TimeSpan>("ResizeItem", item, nameof(item.Duration), () => item.Duration, v => item.Duration = v, newDuration, mergeable: false),
+        ]);
     }
 
     /// <param name="percent">0 to 100.</param>

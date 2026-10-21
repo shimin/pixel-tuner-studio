@@ -1,13 +1,18 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:PixelTuner.UI.ViewModels"
+             xmlns:views="using:PixelTuner.UI.Views"
              xmlns:res="using:PixelTuner.UI.Resources"
              x:Class="PixelTuner.UI.Views.MainView"
              x:DataType="vm:MainViewModel"
              Background="{DynamicResource PtSurfaceBrush}">
   <!-- Start screen, shared by desktop and mobile. Margins come from the
        platform safe area on phones (notch, home indicator). -->
-  <ScrollViewer>
+  <Panel>
+  <Panel IsVisible="{Binding ShowEditor}">
+    <views:EditorView DataContext="{Binding Editor}" />
+  </Panel>
+  <ScrollViewer IsVisible="{Binding ShowStart}">
     <StackPanel Margin="{StaticResource PtPagePadding}" Spacing="{StaticResource PtSpacing}" MaxWidth="720">
       <TextBlock Classes="h1" Text="{Binding AppName}" />
       <TextBlock Classes="muted" TextWrapping="Wrap" Text="{x:Static res:Strings.Start_Subheading}" />
@@ -48,4 +53,5 @@
       </Border>
     </StackPanel>
   </ScrollViewer>
+  </Panel>
 </UserControl>

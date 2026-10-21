@@ -16,6 +16,9 @@ public interface IFilePicker
     /// <summary>Desktop: asks where to save a .pxpkg. Returns the path, or null if cancelled.</summary>
     Task<string?> PickPackageSavePathAsync(string suggestedName);
 
+    /// <summary>Desktop: asks for the show's soundtrack. Returns its path, or null if cancelled.</summary>
+    Task<string?> PickAudioPathAsync();
+
     /// <summary>Desktop: asks for a PixelTuner 2 project (.ptp). Returns its path, or null if cancelled.</summary>
     Task<string?> PickLegacyProjectAsync();
 }
@@ -38,6 +41,23 @@ public sealed class StorageFilePicker(TopLevel topLevel) : IFilePicker
     {
         Patterns = ["*.ptp"],
     };
+
+    static readonly FilePickerFileType AudioType = new(Strings.FileType_Audio)
+    {
+        Patterns = ["*.mp3", "*.wav", "*.ogg", "*.flac", "*.m4a", "*.aac", "*.wma", "*.opus"],
+        MimeTypes = ["audio/*"],
+        AppleUniformTypeIdentifiers = ["public.audio"],
+    };
+
+    public async Task<string?> PickAudioPathAsync()
+    {
+        var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            AllowMultiple = false,
+            FileTypeFilter = [AudioType, FilePickerFileTypes.All],
+        });
+        return files.Count == 0 ? null : files[0].TryGetLocalPath();
+    }
 
     public async Task<string?> PickLegacyProjectAsync()
     {
