@@ -1,3 +1,4 @@
+using PixelTuner.Core.Editing;
 using PixelTuner.Core.Model;
 
 namespace PixelTuner.Package.Tests;
@@ -125,5 +126,70 @@ public class ProjectDocumentTests : IDisposable
         Assert.NotNull(doc.CreateMedia());
         doc.Save();
         Assert.False(doc.IsDirty);
+    }
+
+    [Fact]
+    public void Undo_brings_back_the_saved_state_and_clears_the_flag()
+    {
+        string path = PackageWithMedia();
+        using var doc = ProjectDocument.Open(path);
+
+        doc.Name = "Edited";
+        Assert.True(doc.IsDirty);
+        Assert.True(doc.CanUndo);
+        Assert.Equal("RenameProject", doc.UndoKey);
+
+        doc.Undo();
+
+        Assert.Equal("Show", doc.Name);
+        Assert.False(doc.IsDirty);
+        Assert.True(doc.CanRedo);
+        doc.Redo();
+        Assert.Equal("Edited", doc.Name);
+        Assert.True(doc.IsDirty);
+    }
+
+    [Fact]
+    public void Saving_keeps_the_history_and_undo_after_it_is_a_change_again()
+    {
+        string path = PackageWithMedia();
+        using var doc = ProjectDocument.Open(path);
+        doc.Execute(Edits.AddMarker(doc.Project, new Marker { Name = "drop", Position = TimeSpan.FromSeconds(3) }));
+
+        doc.Save();
+        Assert.False(doc.IsDirty);
+        Assert.True(doc.CanUndo);            // the history survives the save
+
+        doc.Undo();
+        Assert.True(doc.IsDirty);            // the file still has the marker
+        doc.Save();
+
+        using var again = PxPackage.Open(path);
+        Assert.Empty(again.Project.Markers);
+    }
+
+    [Fact]
+    public void Changed_is_raised_for_edits_undo_redo_and_save()
+    {
+        string path = PackageWithMedia();
+        using var doc = ProjectDocument.Open(path);
+        int raised = 0;
+        doc.Changed += (_, _) => raised++;
+
+        doc.Name = "X";
+        doc.Undo();
+        doc.Redo();
+        doc.Save();
+
+        Assert.Equal(4, raised);
+    }
+
+    [Fact]
+    public void A_fresh_document_has_nothing_to_undo()
+    {
+        using var doc = ProjectDocument.Open(PackageWithMedia());
+        Assert.False(doc.CanUndo);
+        Assert.False(doc.CanRedo);
+        Assert.Null(doc.UndoKey);
     }
 }

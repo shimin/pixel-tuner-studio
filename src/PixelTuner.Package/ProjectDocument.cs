@@ -1,3 +1,4 @@
+using PixelTuner.Core.Editing;
 using PixelTuner.Core.Export;
 using PixelTuner.Core.Model;
 
@@ -13,68 +14,82 @@ public sealed class ProjectDocument : IDisposable
     private PxPackage? _source;
     private DateTimeOffset? _createdUtc;
 
-    private ProjectDocument(ShowProject project, string? path, PxPackage? source)
+    private ProjectDocument(ShowProject project, string? path, PxPackage? source, TimeProvider? time)
     {
         Project = project;
         Path = path;
         _source = source;
         _createdUtc = source?.Manifest.CreatedUtc;
+        _history = new UndoHistory(time);
+        _history.Changed += (_, _) => Changed?.Invoke(this, EventArgs.Empty);
     }
+
+    private readonly UndoHistory _history;
 
     public ShowProject Project { get; }
 
     /// <summary>Where the project is saved; null for a new project or one opened from a stream.</summary>
     public string? Path { get; private set; }
 
-    public bool IsDirty { get; private set; }
+    /// <summary>True when the project differs from what was last saved. Undoing back to the saved state clears it.</summary>
+    public bool IsDirty => _history.IsDirty;
+
+    public bool CanUndo => _history.CanUndo;
+    public bool CanRedo => _history.CanRedo;
+
+    /// <summary>Kind of change that undo would revert ("RenameProject"), for the menu label.</summary>
+    public string? UndoKey => _history.UndoKey;
+
+    public string? RedoKey => _history.RedoKey;
 
     /// <summary>Media files in the package (the ones the project can refer to).</summary>
     public int MediaCount => _source?.Manifest.Resources.Count ?? 0;
 
-    /// <summary>Raised after the name, the path or the dirty flag changed.</summary>
+    /// <summary>Raised after any edit, undo, redo or save, and when the path changes.</summary>
     public event EventHandler? Changed;
 
     /// <summary>An empty project that is not on disk yet.</summary>
-    public static ProjectDocument CreateNew(string name = "") => new(new ShowProject { Name = name }, null, null);
+    public static ProjectDocument CreateNew(string name = "", TimeProvider? time = null) =>
+        new(new ShowProject { Name = name }, null, null, time);
 
-    public static ProjectDocument Open(string path)
+    public static ProjectDocument Open(string path, TimeProvider? time = null)
     {
         string full = System.IO.Path.GetFullPath(path);
         var package = PxPackage.Open(full);
-        return new ProjectDocument(package.Project, full, package);
+        return new ProjectDocument(package.Project, full, package, time);
     }
 
     /// <summary>Opens from a stream (phones hand over a copy, not a path). The document cannot be saved in place.</summary>
-    public static ProjectDocument Open(Stream stream)
+    public static ProjectDocument Open(Stream stream, TimeProvider? time = null)
     {
         var package = PxPackage.Open(stream, leaveOpen: true);
-        return new ProjectDocument(package.Project, null, package);
+        return new ProjectDocument(package.Project, null, package, time);
     }
 
     /// <summary>For an imported project that was just written to <paramref name="path"/>.</summary>
-    public static ProjectDocument OpenImported(string path) => Open(path);
+    public static ProjectDocument OpenImported(string path, TimeProvider? time = null) => Open(path, time);
 
     /// <summary>Media for the .bin export of this project.</summary>
     public ShowMedia? CreateMedia() => _source?.CreateMedia();
 
-    /// <summary>The project name, edited by the user.</summary>
+    /// <summary>The project name, edited by the user (an undoable edit).</summary>
     public string Name
     {
         get => Project.Name;
         set
         {
-            if (Project.Name == value) return;
-            Project.Name = value;
-            MarkChanged();
+            if (Project.Name != value) Execute(Edits.RenameProject(Project, value));
         }
     }
 
-    /// <summary>Call after every edit of <see cref="Project"/>.</summary>
-    public void MarkChanged()
-    {
-        IsDirty = true;
-        Changed?.Invoke(this, EventArgs.Empty);
-    }
+    /// <summary>
+    /// Makes a change to the project, as built by <see cref="Edits"/>. Every change of the
+    /// model goes through here, so it can be undone and marks the project as changed.
+    /// </summary>
+    public void Execute(Edit edit) => _history.Do(edit);
+
+    public bool Undo() => _history.Undo();
+    public bool Redo() => _history.Redo();
 
     /// <summary>Saves over the file the project was opened from or saved to.</summary>
     public void Save()
@@ -113,8 +128,7 @@ public sealed class ProjectDocument : IDisposable
         _source = saved;
         _createdUtc = saved.Manifest.CreatedUtc;
         Path = target;
-        IsDirty = false;
-        Changed?.Invoke(this, EventArgs.Empty);
+        _history.MarkSaved();   // raises Changed
     }
 
     private static bool SamePath(string a, string b) =>

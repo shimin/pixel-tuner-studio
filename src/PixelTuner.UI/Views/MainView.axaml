@@ -31,7 +31,8 @@
       <Border Classes="card" IsVisible="{Binding HasProject}">
         <StackPanel Spacing="8">
           <TextBlock Classes="muted" Text="{x:Static res:Strings.Project_Name}" />
-          <TextBox Text="{Binding ProjectName}" IsReadOnly="{Binding !CanEdit}" />
+          <!-- The document keeps the undo history, so the box must not keep its own. -->
+          <TextBox Text="{Binding ProjectName}" IsReadOnly="{Binding !CanEdit}" IsUndoEnabled="False" />
           <UniformGrid Columns="2">
             <TextBlock Classes="muted" Text="{x:Static res:Strings.Project_Timelines}" />
             <TextBlock Text="{Binding Project.Timelines}" />

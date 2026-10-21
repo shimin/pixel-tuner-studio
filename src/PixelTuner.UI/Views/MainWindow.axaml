@@ -34,6 +34,12 @@
                           Command="{Binding ExitCommand}" />
         </NativeMenu>
       </NativeMenuItem>
+      <NativeMenuItem Header="{x:Static res:Strings.Menu_Edit}">
+        <NativeMenu>
+          <NativeMenuItem Header="{Binding UndoHeader}" Command="{Binding UndoCommand}" Gesture="{x:Static views:Shortcuts.Undo}" />
+          <NativeMenuItem Header="{Binding RedoHeader}" Command="{Binding RedoCommand}" Gesture="{x:Static views:Shortcuts.Redo}" />
+        </NativeMenu>
+      </NativeMenuItem>
       <NativeMenuItem Header="{x:Static res:Strings.Menu_Help}" IsVisible="{Binding ShowWindowsMenus}">
         <NativeMenu>
           <NativeMenuItem Header="{Binding AboutHeader}" Command="{Binding AboutCommand}" />
@@ -47,6 +53,9 @@
     <KeyBinding Gesture="{x:Static views:Shortcuts.Import}" Command="{Binding ImportLegacyProjectCommand}" />
     <KeyBinding Gesture="{x:Static views:Shortcuts.Save}" Command="{Binding SaveCommand}" />
     <KeyBinding Gesture="{x:Static views:Shortcuts.SaveAs}" Command="{Binding SaveAsCommand}" />
+    <KeyBinding Gesture="{x:Static views:Shortcuts.Undo}" Command="{Binding UndoCommand}" />
+    <KeyBinding Gesture="{x:Static views:Shortcuts.Redo}" Command="{Binding RedoCommand}" />
+    <KeyBinding Gesture="{x:Static views:Shortcuts.RedoAlternate}" Command="{Binding RedoCommand}" />
     <KeyBinding Gesture="{x:Static views:Shortcuts.Close}" Command="{Binding CloseProjectCommand}" />
   </Window.KeyBindings>
   <DockPanel>

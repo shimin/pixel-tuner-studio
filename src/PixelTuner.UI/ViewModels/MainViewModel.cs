@@ -21,8 +21,8 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     public event EventHandler? ExitRequested;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HasProject), nameof(Title), nameof(ProjectName), nameof(Project))]
-    [NotifyCanExecuteChangedFor(nameof(SaveCommand), nameof(SaveAsCommand), nameof(CloseProjectCommand))]
+    [NotifyPropertyChangedFor(nameof(HasProject), nameof(Title), nameof(ProjectName), nameof(Project), nameof(UndoHeader), nameof(RedoHeader))]
+    [NotifyCanExecuteChangedFor(nameof(SaveCommand), nameof(SaveAsCommand), nameof(CloseProjectCommand), nameof(UndoCommand), nameof(RedoCommand))]
     ProjectDocument? _document;
 
     [ObservableProperty]
@@ -90,12 +90,45 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
         if (value is not null) value.Changed += DocumentEdited;
     }
 
+    // Saving runs on a pool thread and reports from there; bindings may only be touched on the UI thread.
+    private readonly SynchronizationContext? _ui = SynchronizationContext.Current;
+
     private void DocumentEdited(object? sender, EventArgs e)
+    {
+        if (_ui is null || SynchronizationContext.Current == _ui) RefreshFromDocument();
+        else _ui.Post(_ => RefreshFromDocument(), null);
+    }
+
+    private void RefreshFromDocument()
     {
         OnPropertyChanged(nameof(Title));
         OnPropertyChanged(nameof(ProjectName));
         OnPropertyChanged(nameof(Project));
+        OnPropertyChanged(nameof(UndoHeader));
+        OnPropertyChanged(nameof(RedoHeader));
+        UndoCommand.NotifyCanExecuteChanged();
+        RedoCommand.NotifyCanExecuteChanged();
     }
+
+    /// <summary>"Undo" with what would be undone: "Undo Rename project".</summary>
+    public string UndoHeader => Header(Strings.Command_Undo, Strings.Command_UndoNamed, Document?.UndoKey);
+
+    public string RedoHeader => Header(Strings.Command_Redo, Strings.Command_RedoNamed, Document?.RedoKey);
+
+    private static string Header(string plain, string named, string? editKey)
+    {
+        string? what = editKey is null ? null : Strings.ResourceManager.GetString("Edit_" + editKey, Strings.Culture);
+        return what is null ? plain : string.Format(named, what);
+    }
+
+    [RelayCommand(CanExecute = nameof(CanUndo))]
+    void Undo() => Document?.Undo();
+
+    [RelayCommand(CanExecute = nameof(CanRedo))]
+    void Redo() => Document?.Redo();
+
+    private bool CanUndo => Document?.CanUndo ?? false;
+    private bool CanRedo => Document?.CanRedo ?? false;
 
     [RelayCommand]
     async Task NewProjectAsync()
@@ -238,7 +271,6 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
         try
         {
             await Task.Run(() => save(doc));
-            OnPropertyChanged(nameof(Title));
             return true;
         }
         catch (Exception ex) when (IsFileProblem(ex))

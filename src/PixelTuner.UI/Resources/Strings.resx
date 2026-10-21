@@ -37,4 +37,25 @@
   <data name="About_Version" xml:space="preserve"><value>Version {0}</value></data>
   <data name="Project_Name" xml:space="preserve"><value>Name</value></data>
   <data name="Error_SaveFailed" xml:space="preserve"><value>Could not save the project: {0}</value></data>
+  <data name="Menu_Edit" xml:space="preserve"><value>Edit</value></data>
+  <data name="Command_Undo" xml:space="preserve"><value>Undo</value></data>
+  <data name="Command_UndoNamed" xml:space="preserve"><value>Undo {0}</value></data>
+  <data name="Command_Redo" xml:space="preserve"><value>Redo</value></data>
+  <data name="Command_RedoNamed" xml:space="preserve"><value>Redo {0}</value></data>
+  <data name="Edit_RenameProject" xml:space="preserve"><value>Rename project</value></data>
+  <data name="Edit_AddTimeline" xml:space="preserve"><value>Add timeline</value></data>
+  <data name="Edit_RemoveTimeline" xml:space="preserve"><value>Delete timeline</value></data>
+  <data name="Edit_RenameTimeline" xml:space="preserve"><value>Rename timeline</value></data>
+  <data name="Edit_MoveTimeline" xml:space="preserve"><value>Move timeline</value></data>
+  <data name="Edit_SetTimelineColor" xml:space="preserve"><value>Change timeline colour</value></data>
+  <data name="Edit_AddItem" xml:space="preserve"><value>Add item</value></data>
+  <data name="Edit_RemoveItem" xml:space="preserve"><value>Delete item</value></data>
+  <data name="Edit_MoveItem" xml:space="preserve"><value>Move item</value></data>
+  <data name="Edit_ResizeItem" xml:space="preserve"><value>Resize item</value></data>
+  <data name="Edit_SetBrightness" xml:space="preserve"><value>Change brightness</value></data>
+  <data name="Edit_SetStretching" xml:space="preserve"><value>Change stretching</value></data>
+  <data name="Edit_AddMarker" xml:space="preserve"><value>Add marker</value></data>
+  <data name="Edit_RemoveMarker" xml:space="preserve"><value>Delete marker</value></data>
+  <data name="Edit_RenameMarker" xml:space="preserve"><value>Rename marker</value></data>
+  <data name="Edit_MoveMarker" xml:space="preserve"><value>Move marker</value></data>
 </root>

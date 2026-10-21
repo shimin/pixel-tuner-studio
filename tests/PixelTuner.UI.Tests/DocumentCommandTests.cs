@@ -176,4 +176,74 @@ public class DocumentCommandTests : IDisposable
             Product.Current = previous;
         }
     }
+
+    [Fact]
+    public async Task Undo_and_redo_commands_follow_the_history_and_name_what_they_undo()
+    {
+        using var vm = Studio(new FakePicker { OpenPath = Package() });
+        Assert.False(vm.UndoCommand.CanExecute(null));
+        Assert.Equal("Undo", vm.UndoHeader);
+
+        await vm.OpenProjectCommand.ExecuteAsync(null);
+        Assert.False(vm.UndoCommand.CanExecute(null));
+
+        vm.ProjectName = "Changed";
+        Assert.True(vm.UndoCommand.CanExecute(null));
+        Assert.Equal("Undo Rename project", vm.UndoHeader);
+
+        vm.UndoCommand.Execute(null);
+        Assert.Equal("Show", vm.ProjectName);
+        Assert.Equal("Show — Pixel Tuner Studio", vm.Title);   // clean again
+        Assert.True(vm.RedoCommand.CanExecute(null));
+        Assert.Equal("Redo Rename project", vm.RedoHeader);
+
+        vm.RedoCommand.Execute(null);
+        Assert.Equal("Changed", vm.ProjectName);
+    }
+
+    [Fact]
+    public async Task Changes_reported_from_another_thread_reach_the_ui_thread()
+    {
+        // The save runs on a pool thread; the view model must raise its changes on the UI thread.
+        var context = new RecordingContext();
+        var previous = SynchronizationContext.Current;
+        SynchronizationContext.SetSynchronizationContext(context);
+        try
+        {
+            using var vm = Studio(new FakePicker { OpenPath = Package() });
+            await vm.OpenPathAsync(Package("again.pxpkg", "Again"));
+            var raisedOn = new List<SynchronizationContext?>();
+            vm.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == nameof(MainViewModel.Title)) raisedOn.Add(SynchronizationContext.Current);
+            };
+            vm.ProjectName = "Edit";
+            raisedOn.Clear();
+            context.Posted.Clear();
+
+            await vm.SaveCommand.ExecuteAsync(null);   // writes on a pool thread
+
+            Assert.NotEmpty(context.Posted);            // the change was handed to the UI context, not raised inline
+            Assert.DoesNotContain(raisedOn, c => c is null);
+        }
+        finally
+        {
+            SynchronizationContext.SetSynchronizationContext(previous);
+        }
+    }
+
+    private sealed class RecordingContext : SynchronizationContext
+    {
+        public List<SendOrPostCallback> Posted { get; } = [];
+
+        public override void Post(SendOrPostCallback d, object? state)
+        {
+            lock (Posted) Posted.Add(d);
+            // Run it as the UI thread would: with this context current.
+            var before = Current;
+            SetSynchronizationContext(this);
+            try { d(state); }
+            finally { SetSynchronizationContext(before); }
+        }
+    }
 }

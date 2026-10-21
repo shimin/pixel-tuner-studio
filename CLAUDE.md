@@ -37,7 +37,10 @@
   `tests/PixelTuner.Devices.Tests` drives it with an in-memory device and a real TCP connection.
 - Studio (not Stage; `Product.CanEdit`) creates, opens, saves and imports projects. The open project is a
   `ProjectDocument` (`PixelTuner.Package`: path, dirty flag, atomic Save/SaveAs that keeps the media);
-  every edit of the model must end in `MarkChanged()`. Desktop menus are one `NativeMenu` in `MainWindow.axaml`
+  every change of the model goes through `ProjectDocument.Execute(Edits.X(...))` (`PixelTuner.Core/Editing`:
+  an `Edit` applies and reverts itself, `UndoHistory` keeps the stacks and decides "unsaved": undoing back to
+  the saved state is clean again). New kinds of change are new factories in `Edits` with a test and an
+  `Edit_<Key>` string in the resx files; items on a timeline stay sorted and never overlap. Desktop menus are one `NativeMenu` in `MainWindow.axaml`
   (menu bar on macOS, `NativeMenuBar` on Windows); shortcuts come from `Views/Shortcuts` (Ctrl or Cmd).
   Unsaved changes are asked about before open, new, import, close and window close (`MainViewModel.ConfirmDiscardAsync`).
   `tests/PixelTuner.UI.Tests` drives all of it with fake dialogs.

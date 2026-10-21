@@ -37,4 +37,25 @@
   <data name="About_Version" xml:space="preserve"><value>Версия {0}</value></data>
   <data name="Project_Name" xml:space="preserve"><value>Название</value></data>
   <data name="Error_SaveFailed" xml:space="preserve"><value>Не удалось сохранить проект: {0}</value></data>
+  <data name="Menu_Edit" xml:space="preserve"><value>Правка</value></data>
+  <data name="Command_Undo" xml:space="preserve"><value>Отменить</value></data>
+  <data name="Command_UndoNamed" xml:space="preserve"><value>Отменить: {0}</value></data>
+  <data name="Command_Redo" xml:space="preserve"><value>Повторить</value></data>
+  <data name="Command_RedoNamed" xml:space="preserve"><value>Повторить: {0}</value></data>
+  <data name="Edit_RenameProject" xml:space="preserve"><value>Переименование проекта</value></data>
+  <data name="Edit_AddTimeline" xml:space="preserve"><value>Добавление дорожки</value></data>
+  <data name="Edit_RemoveTimeline" xml:space="preserve"><value>Удаление дорожки</value></data>
+  <data name="Edit_RenameTimeline" xml:space="preserve"><value>Переименование дорожки</value></data>
+  <data name="Edit_MoveTimeline" xml:space="preserve"><value>Перемещение дорожки</value></data>
+  <data name="Edit_SetTimelineColor" xml:space="preserve"><value>Смена цвета дорожки</value></data>
+  <data name="Edit_AddItem" xml:space="preserve"><value>Добавление элемента</value></data>
+  <data name="Edit_RemoveItem" xml:space="preserve"><value>Удаление элемента</value></data>
+  <data name="Edit_MoveItem" xml:space="preserve"><value>Перемещение элемента</value></data>
+  <data name="Edit_ResizeItem" xml:space="preserve"><value>Изменение длины элемента</value></data>
+  <data name="Edit_SetBrightness" xml:space="preserve"><value>Изменение яркости</value></data>
+  <data name="Edit_SetStretching" xml:space="preserve"><value>Изменение растяжения</value></data>
+  <data name="Edit_AddMarker" xml:space="preserve"><value>Добавление маркера</value></data>
+  <data name="Edit_RemoveMarker" xml:space="preserve"><value>Удаление маркера</value></data>
+  <data name="Edit_RenameMarker" xml:space="preserve"><value>Переименование маркера</value></data>
+  <data name="Edit_MoveMarker" xml:space="preserve"><value>Перемещение маркера</value></data>
 </root>
