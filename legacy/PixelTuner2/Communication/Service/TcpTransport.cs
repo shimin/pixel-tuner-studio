@@ -20,8 +20,14 @@ namespace Communication.Service
         {
             get
             {
-                if (_client != null) return _client.Client.RemoteEndPoint.ToString();
-                else return "";
+                try
+                {
+                    var socket = _client != null ? _client.Client : null;
+                    if (socket != null && socket.RemoteEndPoint != null) return socket.RemoteEndPoint.ToString();
+                }
+                catch (ObjectDisposedException) { }
+                catch (SocketException) { }
+                return "";
             }
         }
 
@@ -38,8 +44,12 @@ namespace Communication.Service
         {
             get
             {
-                if (_client != null) return _client.Connected;
-                return false;
+                // TcpClient.Connected throws NullReferenceException after Close()
+                // (TcpClient.Client becomes null), and Close() can come from another thread.
+                var client = _client;
+                if (client == null) return false;
+                var socket = client.Client;
+                return socket != null && socket.Connected;
             }
         }
 
@@ -98,7 +108,11 @@ namespace Communication.Service
                 NetworkStream ns = _client.GetStream();
                 if (_client.ReceiveBufferSize > 0)
                 {
-                    return ns.Read(buffer, offset, count);
+                    int read = ns.Read(buffer, offset, count);
+                    // 0 means the device closed the connection; without this the
+                    // session read loop spins at full CPU for 10 seconds.
+                    if (read == 0 && count > 0) throw new IOException("The connection was closed by the device.");
+                    return read;
                 }
             }
             return 0;

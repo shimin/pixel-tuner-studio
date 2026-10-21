@@ -24,7 +24,13 @@ namespace Communication.Service
         private static readonly object _blacklistSync = new object();
         private static readonly HashSet<string> _blacklistedPorts = new HashSet<string>();
 
-        private static List<SerialDeviceBase> _devices = new List<SerialDeviceBase>();
+        // Copy-on-write: the list is never modified after it is published, every change
+        // swaps in a new list. Devices is read from the UI thread, the seeker thread and
+        // the thread pool at the same time; mutating one shared List<T> from several
+        // threads gave "collection was modified" errors and torn reads (a null element),
+        // and a NullReferenceException on the seeker thread killed the process.
+        private static readonly object _devicesSync = new object();
+        private static volatile List<SerialDeviceBase> _devices = new List<SerialDeviceBase>();
         public static List<SerialDeviceBase> Devices
         {
             get
@@ -32,20 +38,47 @@ namespace Communication.Service
                 return _devices;
             }
         }
+
+        private static void AddDevice(SerialDeviceBase device)
+        {
+            lock (_devicesSync)
+            {
+                var copy = new List<SerialDeviceBase>(_devices);
+                copy.Add(device);
+                _devices = copy;
+            }
+        }
+
+        private static void RemoveDevice(SerialDeviceBase device)
+        {
+            lock (_devicesSync)
+            {
+                var copy = new List<SerialDeviceBase>(_devices);
+                copy.Remove(device);
+                _devices = copy;
+            }
+        }
         
         public static void StartSeeking()
         {
             //Devices.Add(new VirtualDevice());
             //OnDeviceFound(Devices.First());
-            DeviceSeekerThread = new Thread(DeviceListUpdater);
+            // Wait for the previous seeker thread, not the new one (joining a thread that
+            // was never started throws ThreadStateException).
+            var previous = DeviceSeekerThread;
             if (_keepSeeking == true)
             {
                 _keepSeeking = false;
-                DeviceSeekerThread.Join(1000);
-                if (DeviceSeekerThread.IsAlive)
-                    throw new InvalidOperationException("Таймаут при попытке повторного запуска сканирования портов.");
+                if (previous != null)
+                {
+                    previous.Join(1000);
+                    if (previous.IsAlive)
+                        throw new InvalidOperationException("Таймаут при попытке повторного запуска сканирования портов.");
+                }
             }
 
+            DeviceSeekerThread = new Thread(DeviceListUpdater);
+            DeviceSeekerThread.IsBackground = true;
             _keepSeeking = true;
             DeviceSeekerThread.Start();
         }
@@ -65,38 +98,50 @@ namespace Communication.Service
         {
             while (_keepSeeking)
             {
-                List<string> portNames = new List<string> (SerialPort.GetPortNames());
-                //List<string> portNames = GetVcpList();
-                ForgetRemovedPorts(portNames);
-                portNames.ForEach(portName =>
+                try
                 {
-                    if (!DeviceExists(portName))
-                    {
-                        if (IsBlacklisted(portName))
-                            return;
-
-                        var port = new Win32SerialPort(portName, 115200);
-                        port.ReadTimeout = 10000;
-                        port.WriteTimeout = 10000;
-                        try
-                        {
-                            port.Open();
-                            var tryCreateDeviceOperation = AsyncOperationManager.CreateOperation(portName);
-                            tryCreateDeviceOperation.Post(TryCreateDevice, port);
-                        }
-                        catch (Exception ex)
-                        {
-                            port.Close();
-                            port = null;
-                        }
-                    }
-                    else
-                    {
-                        CheckConnection(portName);
-                    }
-                });
+                    ScanPorts();
+                }
+                catch (Exception ex)
+                {
+                    // An exception escaping this thread would terminate the process.
+                }
                 Thread.Sleep(500);
             }
+        }
+
+        private static void ScanPorts()
+        {
+            List<string> portNames = new List<string> (SerialPort.GetPortNames());
+            //List<string> portNames = GetVcpList();
+            ForgetRemovedPorts(portNames);
+            portNames.ForEach(portName =>
+            {
+                if (!DeviceExists(portName))
+                {
+                    if (IsBlacklisted(portName))
+                        return;
+
+                    var port = new Win32SerialPort(portName, 115200);
+                    port.ReadTimeout = 10000;
+                    port.WriteTimeout = 10000;
+                    try
+                    {
+                        port.Open();
+                        var tryCreateDeviceOperation = AsyncOperationManager.CreateOperation(portName);
+                        tryCreateDeviceOperation.Post(TryCreateDevice, port);
+                    }
+                    catch (Exception ex)
+                    {
+                        port.Close();
+                        port = null;
+                    }
+                }
+                else
+                {
+                    CheckConnection(portName);
+                }
+            });
         }
 
         private static List<string> GetVcpList()
@@ -161,7 +206,7 @@ namespace Communication.Service
 
             try
             {
-                Devices.Add(d);
+                AddDevice(d);
                 OnDeviceFound(d);
             }
             catch (Exception ex) { }
@@ -170,9 +215,11 @@ namespace Communication.Service
         private static void CheckConnection(string portName)
         {
             var device = Devices.Find((d) => { return d.ChannelID == portName; });
-            if (device.Transport == null || !device.Transport.IsOpen)
+            if (device == null) return;
+            var transport = device.Transport;
+            if (transport == null || !transport.IsOpen)
             {
-                Devices.Remove(device);
+                RemoveDevice(device);
                 device.Dispose();
                 OnDeviceLost(device);
             }
@@ -184,7 +231,7 @@ namespace Communication.Service
                 }
                 catch
                 {
-                    Devices.Remove(device);
+                    RemoveDevice(device);
                     device.Dispose();
                     OnDeviceLost(device);
                 }
