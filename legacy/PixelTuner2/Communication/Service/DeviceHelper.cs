@@ -18,6 +18,12 @@ namespace Communication.Service
         }
         //static Dictionary<string, SerialPort> PortList = new Dictionary<string, SerialPort>();
 
+        // Ports that did not answer as a supported device. They are closed right away and
+        // not probed again while the program runs, until the port disappears from the
+        // system (device unplugged): if it comes back it is probed once more.
+        private static readonly object _blacklistSync = new object();
+        private static readonly HashSet<string> _blacklistedPorts = new HashSet<string>();
+
         private static List<SerialDeviceBase> _devices = new List<SerialDeviceBase>();
         public static List<SerialDeviceBase> Devices
         {
@@ -61,13 +67,15 @@ namespace Communication.Service
             {
                 List<string> portNames = new List<string> (SerialPort.GetPortNames());
                 //List<string> portNames = GetVcpList();
+                ForgetRemovedPorts(portNames);
                 portNames.ForEach(portName =>
                 {
                     if (!DeviceExists(portName))
                     {
-                        var port = new SerialPort();
-                        port.PortName = portName;
-                        port.BaudRate = 115200;
+                        if (IsBlacklisted(portName))
+                            return;
+
+                        var port = new Win32SerialPort(portName, 115200);
                         port.ReadTimeout = 10000;
                         port.WriteTimeout = 10000;
                         try
@@ -78,7 +86,7 @@ namespace Communication.Service
                         }
                         catch (Exception ex)
                         {
-                            port.Dispose();
+                            port.Close();
                             port = null;
                         }
                     }
@@ -130,18 +138,33 @@ namespace Communication.Service
 
         private static void TryCreateDevice(object arg)
         {
-            var p = arg as SerialPort;
-            if (p != null && p.IsOpen)
+            var p = arg as Win32SerialPort;
+            if (p == null) return;
+
+            SerialDeviceBase d = null;
+            if (p.IsOpen)
             {
                 try
                 {
-                    SerialTransport t = new SerialTransport(p);
-                    var d = SerialDeviceBase.Create(t);
-                    Devices.Add(d);
-                    OnDeviceFound(d);
+                    d = SerialDeviceBase.Create(p);
                 }
-                catch (Exception ex) { }
+                catch (Exception ex) { d = null; }
             }
+
+            if (d == null)
+            {
+                // Not one of our devices (another COM port, a device that did not answer
+                // in time, etc.): release it and stop probing it.
+                BlacklistPort(p);
+                return;
+            }
+
+            try
+            {
+                Devices.Add(d);
+                OnDeviceFound(d);
+            }
+            catch (Exception ex) { }
         }
 
         private static void CheckConnection(string portName)
@@ -165,6 +188,36 @@ namespace Communication.Service
                     device.Dispose();
                     OnDeviceLost(device);
                 }
+            }
+        }
+
+        private static bool IsBlacklisted(string portName)
+        {
+            lock (_blacklistSync)
+            {
+                return _blacklistedPorts.Contains(portName);
+            }
+        }
+
+        private static void BlacklistPort(Win32SerialPort port)
+        {
+            // Blacklist first, then close: the seeker must not reopen it in between.
+            lock (_blacklistSync)
+            {
+                _blacklistedPorts.Add(port.PortName);
+            }
+            port.Close();
+        }
+
+        /// <summary>
+        /// Drops blacklisted ports that are no longer present in the system, so a device
+        /// plugged in later under the same COM name gets probed.
+        /// </summary>
+        private static void ForgetRemovedPorts(List<string> currentPortNames)
+        {
+            lock (_blacklistSync)
+            {
+                _blacklistedPorts.RemoveWhere(name => !currentPortNames.Contains(name));
             }
         }
 

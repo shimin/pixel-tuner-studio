@@ -99,6 +99,8 @@
     <Compile Include="Service\PixelDeviceCommand.cs" />
     <Compile Include="Service\PlaybackState.cs" />
     <Compile Include="Service\SerialTransport.cs" />
+    <Compile Include="Service\Win32SerialNativeMethods.cs" />
+    <Compile Include="Service\Win32SerialPort.cs" />
     <Compile Include="Service\SimplePoiDevice.cs" />
     <Compile Include="Service\SupportedDevices.cs" />
     <Compile Include="Service\PixelDeviceTimeout.cs" />
