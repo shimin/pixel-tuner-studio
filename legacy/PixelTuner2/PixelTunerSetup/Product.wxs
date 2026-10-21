@@ -2,11 +2,11 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
   xmlns:utils="http://schemas.microsoft.com/wix/UtilExtension">
 
-  <?define ProductVersion="2.0.8.4" ?>
+  <?define ProductVersion="2.0.8.8" ?>
   <?define RTMProductVersion="1.0.0" ?>
   <?define UpgradeCode="{df1086f7-6803-4697-b66c-74dd2733c092}"?>
   <?define Manufacturer="e-pic.ru"?>
-  <?define ProductCode="{1A4F3353-497F-4F4D-9191-1E0E21B800F9}"?>
+  <?define ProductCode="{F361B133-47BC-492D-BCB3-4939810059F8}"?>
   <?define PackageCode="*"?>
 
   <Product Id="$(var.ProductCode)" Name="PixelTuner" Language="1033" Codepage="1252" Version="$(var.ProductVersion)" Manufacturer="$(var.Manufacturer)" UpgradeCode="$(var.UpgradeCode)">
