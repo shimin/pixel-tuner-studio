@@ -134,7 +134,7 @@
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" IsVisible="{Binding !Gallery.IsImporting}">
           <StackPanel Spacing="8">
-            <ListBox ItemsSource="{Binding Gallery.Entries}" SelectedItem="{Binding Gallery.Selected}" Background="Transparent">
+            <ListBox ItemsSource="{Binding Gallery.Entries}" SelectedItem="{Binding Gallery.Selected}" Background="Transparent" DoubleTapped="OnEntryDoubleTapped">
               <ListBox.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ListBox.ItemsPanel>
               <ListBox.ItemTemplate>
                 <DataTemplate x:DataType="lib:LibraryEntryViewModel">

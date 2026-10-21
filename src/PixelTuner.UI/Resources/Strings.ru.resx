@@ -121,7 +121,7 @@
   <data name="Item_AddFailed" xml:space="preserve"><value>Не удалось добавить {0}: {1}</value></data>
   <data name="Item_NoTimeline" xml:space="preserve"><value>Сначала выберите дорожку: файлы принимают дорожки пикселей, видео и E-Pic, а цвета и эффекты — дорожка LightMaster.</value></data>
   <data name="Item_NoRoom" xml:space="preserve"><value>На этой дорожке нет свободного времени с курсора и дальше.</value></data>
-  <data name="Item_WrongHeight" xml:space="preserve"><value>Высота «{0}» — {1} светодиодов, а эта дорожка играет картинки высотой {2}. Выберите дорожку такой высоты или приведите картинку к нужной.</value></data>
+  <data name="Item_WrongHeight" xml:space="preserve"><value>Высота «{0}» — {1} светодиодов, а эта дорожка играет картинки высотой {2}. Выберите дорожку такой высоты или импортируйте картинку с приведением к высоте (Импорт… в библиотеке).</value></data>
   <data name="Inspector_Brightness" xml:space="preserve"><value>Яркость</value></data>
   <data name="Inspector_Stretching" xml:space="preserve"><value>Растяжение</value></data>
   <data name="Inspector_Laser" xml:space="preserve"><value>Лазер</value></data>

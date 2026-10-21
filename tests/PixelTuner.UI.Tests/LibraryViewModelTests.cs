@@ -288,4 +288,52 @@ public sealed class LibraryViewModelTests : IDisposable
         Assert.Single(_editor.Gallery.Missing);   // still missing
         Assert.Null(pixel.Items[1].ResourceId);
     }
+
+    // ---- the gate of the epic: nothing the panel puts on a timeline fails to build
+
+    [Fact]
+    public void Whatever_the_panel_puts_on_a_timeline_builds_and_the_rules_of_the_library_and_the_timeline_agree()
+    {
+        // Pictures of two heights, a gradient, a GIF, a colour and an effect; one timeline of every kind.
+        var entries = new List<LibraryEntry>
+        {
+            Image("p36.png", 10, 36), Image("p80.png", 10, 80),
+            _editor.Gallery.AddFile(Picture("grad.png", 20, 3), LibraryKind.Gradient),
+            _editor.Gallery.AddFile(Gif(), LibraryKind.Video),
+        };
+        _doc.Execute(Edits.AddLibraryEntry(_doc.Project, new LibraryEntry { Name = "red", Kind = LibraryKind.Color, Color = "#FF0000" }));
+        _doc.Execute(Edits.AddLibraryEntry(_doc.Project, new LibraryEntry
+        {
+            Name = "wave", Kind = LibraryKind.Effect, Color = "#000000", ColorLast = "#00FF00", Effect = LightEffectKind.SineWave, T1 = 300,
+        }));
+        entries.AddRange(_doc.Project.Library.Where(e => e.Kind is LibraryKind.Color or LibraryKind.Effect));
+
+        var layout = new LedLayout { Name = "prop", Columns = 3, Rows = 3, Leds = [0, 1, 2, 3] };
+        _doc.Project.LedLayouts.Add(layout);
+        var timelines = new[] { TimelineKind.Pixel, TimelineKind.Video, TimelineKind.EpicPoi, TimelineKind.Light }.Select(Add).ToList();
+        _doc.Execute(Edits.SetLedLayout(_doc.Project, timelines[1], layout.Id));
+        string[] devices = [DeviceKind.Poi, DeviceKind.Video, DeviceKind.EpicPoi, DeviceKind.Light];
+
+        for (int t = 0; t < timelines.Count; t++)
+        {
+            var timeline = timelines[t];
+            foreach (var entry in entries)
+            {
+                bool allowed = Library.CanPlace(entry, timeline) == PlacementProblem.None;
+
+                // The library and the timeline's own check of an item say the same.
+                var probe = allowed ? Core.Model.Library.NewItem(entry, timeline) : null;
+                if (probe is not null) Assert.True(Edits.Accepts(timeline, probe) && Edits.FitsHeight(timeline, probe.MediaHeight));
+
+                _editor.Timelines.SetPlayhead(TimeSpan.FromSeconds(timeline.Items.Count * 6));
+                var placed = _editor.Gallery.Place(entry, timeline);
+                Assert.Equal(allowed, placed is not null);
+            }
+
+            var device = new DeviceBinding { DeviceType = devices[t], LedCount = devices[t] == DeviceKind.Poi ? Edits.PixelHeight(timeline) : 0, TimelineIds = [timeline.Id] };
+            var result = new Core.Export.ShowBuilder(_doc.Project, new Core.Export.ShowMedia(id => _doc.OpenMedia(id)!)).Build(device);
+            Assert.True(timeline.Items.Count > 0, $"nothing could be put on the {timeline.Kind} timeline");
+            Assert.True(result.Succeeded, $"{timeline.Kind}: {string.Join(", ", result.Errors.Select(e => e.Code))}");
+        }
+    }
 }

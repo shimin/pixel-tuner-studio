@@ -121,7 +121,7 @@
   <data name="Item_AddFailed" xml:space="preserve"><value>Cannot add {0}: {1}</value></data>
   <data name="Item_NoTimeline" xml:space="preserve"><value>Select a timeline first: a pixel, video or E-Pic timeline takes files, a LightMaster timeline takes colours and effects.</value></data>
   <data name="Item_NoRoom" xml:space="preserve"><value>There is no free time on this timeline at or after the playhead.</value></data>
-  <data name="Item_WrongHeight" xml:space="preserve"><value>{0} is {1} LEDs high, but this timeline plays pictures {2} LEDs high. Use a timeline of that height or scale the picture.</value></data>
+  <data name="Item_WrongHeight" xml:space="preserve"><value>{0} is {1} LEDs high, but this timeline plays pictures {2} LEDs high. Use a timeline of that height or import the picture with scaling (Import… in the library).</value></data>
   <data name="Inspector_Brightness" xml:space="preserve"><value>Brightness</value></data>
   <data name="Inspector_Stretching" xml:space="preserve"><value>Stretching</value></data>
   <data name="Inspector_Laser" xml:space="preserve"><value>Laser</value></data>
