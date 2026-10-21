@@ -36,6 +36,7 @@ public static class Edits
     {
         int at = index ?? project.Timelines.Count;
         if (at < 0 || at > project.Timelines.Count) throw new ArgumentOutOfRangeException(nameof(index));
+        if (!IsKnownKind(timeline.Kind)) throw new ArgumentException($"Unknown timeline kind '{timeline.Kind}'.", nameof(timeline));
         return new InsertEdit<Timeline>("AddTimeline", project.Timelines, at, timeline);
     }
 
@@ -76,8 +77,14 @@ public static class Edits
         return timeline.Items.All(other => ReferenceEquals(other, ignore) || end <= other.Start || other.End <= start);
     }
 
+    /// <summary>
+    /// Puts an item on a timeline of its own kind. The kind of the timeline decides what a column and a row
+    /// are for the device that plays it, so the .bin cannot mix kinds: anything else is refused.
+    /// </summary>
     public static Edit AddItem(Timeline timeline, TimelineItem item)
     {
+        if (!Accepts(timeline, item))
+            throw new InvalidOperationException($"A '{timeline.Kind}' timeline does not take '{item.Kind}' items.");
         if (!Fits(timeline, item.Start, item.Duration))
             throw new InvalidOperationException("The item overlaps another item or lies outside the timeline.");
         return new InsertEdit<TimelineItem>("AddItem", timeline.Items, SortedIndex(timeline, item.Start, item), item);
@@ -194,6 +201,9 @@ public static class Edits
         TimelineKind.Light => item.Kind is ItemKind.Solid or ItemKind.Effect,
         _ => false,
     };
+
+    private static bool IsKnownKind(string kind) =>
+        kind is TimelineKind.Pixel or TimelineKind.Video or TimelineKind.EpicPoi or TimelineKind.Light;
 
     /// <summary>Takes an item off one timeline and puts it on another, at a new start. One undo step.</summary>
     public static Edit MoveItemToTimeline(Timeline from, Timeline to, TimelineItem item, TimeSpan newStart)

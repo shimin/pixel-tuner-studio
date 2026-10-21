@@ -42,6 +42,43 @@ public class EditsTests
         Assert.Equal("#FF0000FF", a.Color);
     }
 
+    [Theory]
+    [InlineData(TimelineKind.Pixel, ItemKind.Image, true)]
+    [InlineData(TimelineKind.Pixel, ItemKind.Video, false)]
+    [InlineData(TimelineKind.Pixel, ItemKind.Gradient, false)]
+    [InlineData(TimelineKind.Pixel, ItemKind.Solid, false)]
+    [InlineData(TimelineKind.Video, ItemKind.Video, true)]
+    [InlineData(TimelineKind.Video, ItemKind.Image, false)]
+    [InlineData(TimelineKind.EpicPoi, ItemKind.Gradient, true)]
+    [InlineData(TimelineKind.EpicPoi, ItemKind.Image, false)]
+    [InlineData(TimelineKind.Light, ItemKind.Solid, true)]
+    [InlineData(TimelineKind.Light, ItemKind.Effect, true)]
+    [InlineData(TimelineKind.Light, ItemKind.Image, false)]
+    public void A_timeline_takes_only_items_of_its_kind(string timelineKind, string itemKind, bool accepted)
+    {
+        var timeline = new Timeline { Kind = timelineKind };
+        var item = new TimelineItem { Kind = itemKind, Duration = S(1) };
+
+        if (accepted)
+        {
+            _history.Do(Edits.AddItem(timeline, item));
+            Assert.Single(timeline.Items);
+        }
+        else
+        {
+            Assert.Throws<InvalidOperationException>(() => Edits.AddItem(timeline, item));
+            Assert.Empty(timeline.Items);
+            Assert.False(_history.CanUndo);
+        }
+    }
+
+    [Fact]
+    public void A_timeline_of_an_unknown_kind_is_refused()
+    {
+        Assert.Throws<ArgumentException>(() => Edits.AddTimeline(_project, new Timeline { Kind = "hologram" }));
+        Assert.Empty(_project.Timelines);
+    }
+
     [Fact]
     public void Removing_a_timeline_unbinds_its_devices_and_undo_binds_them_again()
     {
