@@ -72,6 +72,74 @@ public class EditsTests
         }
     }
 
+    private static TimelineItem Picture(int height, double start = 0) =>
+        new() { Kind = ItemKind.Image, Start = S(start), Duration = S(1), MediaWidth = 10, MediaHeight = height };
+
+    [Fact]
+    public void A_pixel_timeline_takes_pictures_of_the_height_of_its_first()
+    {
+        var timeline = new Timeline();
+        _history.Do(Edits.AddItem(timeline, Picture(36)));
+        Assert.Equal(36, Edits.PixelHeight(timeline));
+
+        _history.Do(Edits.AddItem(timeline, Picture(36, start: 2)));
+        Assert.Throws<InvalidOperationException>(() => Edits.AddItem(timeline, Picture(80, start: 4)));
+        Assert.Equal(2, timeline.Items.Count);
+    }
+
+    [Fact]
+    public void The_height_of_a_timeline_is_its_own_before_it_has_pictures()
+    {
+        var timeline = new Timeline();
+        _history.Do(Edits.SetTimelineHeight(timeline, 125));
+
+        Assert.False(Edits.FitsHeight(timeline, 36));
+        Assert.True(Edits.FitsHeight(timeline, 125));
+        Assert.Throws<InvalidOperationException>(() => Edits.AddItem(timeline, Picture(36)));
+        _history.Do(Edits.AddItem(timeline, Picture(125)));
+
+        Assert.Throws<InvalidOperationException>(() => Edits.SetTimelineHeight(timeline, 80));
+        _history.Do(Edits.SetTimelineHeight(timeline, 0));   // back to "the first picture decides"
+        Assert.Equal(125, Edits.PixelHeight(timeline));
+
+        _history.Undo();
+        Assert.Equal(125, timeline.Height);
+    }
+
+    [Fact]
+    public void A_picture_of_unknown_height_is_not_held_to_the_rule()
+    {
+        // Older packages did not store the size.
+        var timeline = new Timeline();
+        _history.Do(Edits.AddItem(timeline, Picture(36)));
+        _history.Do(Edits.AddItem(timeline, Picture(0, start: 2)));
+        Assert.Equal(2, timeline.Items.Count);
+        Assert.Equal(36, Edits.PixelHeight(timeline));
+    }
+
+    [Fact]
+    public void An_item_moves_only_to_a_timeline_of_its_height()
+    {
+        var from = new Timeline();
+        var same = new Timeline();
+        var other = new Timeline();
+        var item = Picture(36);
+        _history.Do(Edits.AddItem(from, item));
+        _history.Do(Edits.AddItem(same, Picture(36)));
+        _history.Do(Edits.AddItem(other, Picture(80)));
+
+        Assert.Throws<InvalidOperationException>(() => Edits.MoveItemToTimeline(from, other, item, S(5)));
+        _history.Do(Edits.MoveItemToTimeline(from, same, item, S(5)));
+        Assert.Equal(2, same.Items.Count);
+    }
+
+    [Fact]
+    public void Only_a_pixel_timeline_has_a_height()
+    {
+        Assert.Equal(0, Edits.PixelHeight(new Timeline { Kind = TimelineKind.Video }));
+        Assert.Throws<InvalidOperationException>(() => Edits.SetTimelineHeight(new Timeline { Kind = TimelineKind.Light }, 10));
+    }
+
     [Fact]
     public void A_timeline_of_an_unknown_kind_is_refused()
     {

@@ -100,11 +100,13 @@
   <data name="Audio_AddFailed" xml:space="preserve"><value>Der Ton konnte nicht hinzugefügt werden: {0}</value></data>
   <data name="Edit_SetAudio" xml:space="preserve"><value>Tonspur festlegen</value></data>
   <data name="Edit_RemoveAudio" xml:space="preserve"><value>Tonspur entfernen</value></data>
+  <data name="Edit_SetTimelineHeight" xml:space="preserve"><value>Höhe der Spur ändern</value></data>
   <data name="Command_AddItem" xml:space="preserve"><value>Datei hinzufügen…</value></data>
   <data name="FileType_Image" xml:space="preserve"><value>Bilder</value></data>
   <data name="Item_AddFailed" xml:space="preserve"><value>{0} kann nicht hinzugefügt werden: {1}</value></data>
   <data name="Item_NoTimeline" xml:space="preserve"><value>Wähle zuerst eine Spur: Pixel-, Video- und E-Pic-Spuren nehmen Dateien, die LightMaster-Spur nimmt Farben und Effekte.</value></data>
   <data name="Item_NoRoom" xml:space="preserve"><value>Auf dieser Spur ist ab dem Abspielkopf keine Zeit frei.</value></data>
+  <data name="Item_WrongHeight" xml:space="preserve"><value>{0} ist {1} LEDs hoch, diese Spur spielt aber Bilder mit {2} LEDs. Wähle eine Spur dieser Höhe oder passe das Bild an.</value></data>
   <data name="Inspector_Brightness" xml:space="preserve"><value>Helligkeit</value></data>
   <data name="Inspector_Stretching" xml:space="preserve"><value>Dehnung</value></data>
   <data name="Inspector_Laser" xml:space="preserve"><value>Laser</value></data>

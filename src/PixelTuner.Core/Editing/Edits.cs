@@ -85,6 +85,7 @@ public static class Edits
     {
         if (!Accepts(timeline, item))
             throw new InvalidOperationException($"A '{timeline.Kind}' timeline does not take '{item.Kind}' items.");
+        RequireHeight(timeline, item);
         if (!Fits(timeline, item.Start, item.Duration))
             throw new InvalidOperationException("The item overlaps another item or lies outside the timeline.");
         return new InsertEdit<TimelineItem>("AddItem", timeline.Items, SortedIndex(timeline, item.Start, item), item);
@@ -202,6 +203,40 @@ public static class Edits
         _ => false,
     };
 
+    /// <summary>
+    /// The height in LEDs that the pictures of a pixel timeline must have: the timeline's own, else the one of its
+    /// first picture of known size. 0 when nothing fixes it yet (and for timelines of other kinds).
+    /// </summary>
+    public static int PixelHeight(Timeline timeline)
+    {
+        if (timeline.Kind != TimelineKind.Pixel) return 0;
+        return timeline.Height > 0 ? timeline.Height : timeline.Items.FirstOrDefault(i => i.MediaHeight > 0)?.MediaHeight ?? 0;
+    }
+
+    /// <summary>Whether a picture of this height can go on the timeline (always, when either height is unknown).</summary>
+    public static bool FitsHeight(Timeline timeline, int mediaHeight)
+    {
+        int height = PixelHeight(timeline);
+        return height == 0 || mediaHeight == 0 || height == mediaHeight;
+    }
+
+    private static void RequireHeight(Timeline timeline, TimelineItem item)
+    {
+        if (!FitsHeight(timeline, item.MediaHeight))
+            throw new InvalidOperationException(
+                $"The picture is {item.MediaHeight} LEDs high, the timeline plays {PixelHeight(timeline)}.");
+    }
+
+    /// <summary>Fixes the number of LEDs of a pixel timeline. Pictures of another height must be taken off first.</summary>
+    public static Edit SetTimelineHeight(Timeline timeline, int height)
+    {
+        if (timeline.Kind != TimelineKind.Pixel) throw new InvalidOperationException("Only a pixel timeline has a height.");
+        if (height < 0 || height > ushort.MaxValue) throw new ArgumentOutOfRangeException(nameof(height));
+        if (height > 0 && timeline.Items.Any(i => i.MediaHeight > 0 && i.MediaHeight != height))
+            throw new InvalidOperationException("The timeline holds pictures of another height.");
+        return new SetValueEdit<int>("SetTimelineHeight", timeline, nameof(timeline.Height), () => timeline.Height, v => timeline.Height = v, height, mergeable: false);
+    }
+
     private static bool IsKnownKind(string kind) =>
         kind is TimelineKind.Pixel or TimelineKind.Video or TimelineKind.EpicPoi or TimelineKind.Light;
 
@@ -211,6 +246,7 @@ public static class Edits
         if (ReferenceEquals(from, to)) return MoveItem(from, item, newStart);
         RequireIndex(from, item);
         if (!Accepts(to, item)) throw new InvalidOperationException("The timeline does not take this kind of item.");
+        RequireHeight(to, item);
         if (!Fits(to, newStart, item.Duration)) throw new InvalidOperationException("The item would overlap another item or leave the timeline.");
         return new GroupEdit("MoveItem",
         [

@@ -75,6 +75,12 @@ public sealed class Timeline
     /// <summary>Video timelines: the LED layout the frames are sampled at.</summary>
     public Guid? LedLayoutId { get; set; }
 
+    /// <summary>
+    /// Pixel timelines: the number of LEDs of the device that plays it, which is the height of every picture on it
+    /// (H in the .bin). 0 while the timeline takes the height of its first picture.
+    /// </summary>
+    public int Height { get; set; }
+
     public List<TimelineItem> Items { get; set; } = [];
 }
 
@@ -118,6 +124,15 @@ public sealed class TimelineItem
 
     /// <summary>Media inside the package (images, GIF), by resource id. Null when the file is missing.</summary>
     public string? ResourceId { get; set; }
+
+    /// <summary>
+    /// Size of the picture in pixels (the first frame of a GIF), set when the media is added. 0 while unknown,
+    /// as in a package from before the size was stored; the rules that need it then do not apply to the item.
+    /// </summary>
+    public int MediaWidth { get; set; }
+
+    /// <summary>See <see cref="MediaWidth"/>. For a picture on a pixel timeline this is the number of LEDs it needs.</summary>
+    public int MediaHeight { get; set; }
 
     /// <summary>
     /// Path the media was added from, as PixelTuner 2 stored it (relative or absolute).

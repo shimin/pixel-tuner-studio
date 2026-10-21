@@ -186,17 +186,27 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         {
             string kind = timeline.Kind switch { TimelineKind.Video => ItemKind.Video, TimelineKind.EpicPoi => ItemKind.Gradient, _ => ItemKind.Image };
             // A file that is not a picture is refused before it enters the project.
+            int width, height;
             if (kind == ItemKind.Video)
             {
-                if (GifFrames.DecodeFile(path).Count == 0) throw new InvalidDataException(string.Format(Strings.Item_BadMedia, Path.GetFileName(path)));
+                var frames = GifFrames.DecodeFile(path);
+                if (frames.Count == 0) throw new InvalidDataException(string.Format(Strings.Item_BadMedia, Path.GetFileName(path)));
+                (width, height) = (frames[0].Width, frames[0].Height);
             }
             else
             {
-                ImageDecoder.DecodeFile(path);
+                var image = ImageDecoder.DecodeFile(path);
+                (width, height) = (image.Width, image.Height);
+            }
+            // A pixel timeline plays pictures of one height: the number of LEDs of its device.
+            if (!Edits.FitsHeight(timeline, height))
+            {
+                Message = string.Format(Strings.Item_WrongHeight, Path.GetFileName(path), height, Edits.PixelHeight(timeline));
+                return;
             }
             string id = Document.AddMedia(path);
             // PixelTuner 2's defaults: 4 intervals of 50 us for a picture, 40 ms (25 frames a second) for a video.
-            var item = new TimelineItem { Kind = kind, ResourceId = id, SourcePath = path, Stretching = kind == ItemKind.Video ? 40 : 4 };
+            var item = new TimelineItem { Kind = kind, ResourceId = id, SourcePath = path, MediaWidth = width, MediaHeight = height, Stretching = kind == ItemKind.Video ? 40 : 4 };
             Message = Timelines.AddItem(timeline, item, DefaultItemLength) is null ? Strings.Item_NoRoom : null;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)

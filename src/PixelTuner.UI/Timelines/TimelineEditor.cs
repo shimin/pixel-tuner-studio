@@ -415,7 +415,7 @@ public sealed class TimelineEditor
                 start = Clamp(start, floor, latest);
 
                 // Over another timeline that takes this item and has room at the wanted time, it goes there.
-                if (y is { } py && TimelineAt(py) is { } target && !ReferenceEquals(target, timeline) && Edits.Accepts(target, item))
+                if (y is { } py && TimelineAt(py) is { } target && !ReferenceEquals(target, timeline) && Edits.Accepts(target, item) && Edits.FitsHeight(target, item.MediaHeight))
                 {
                     var there = Max0(Snap(wanted, snapPoints));
                     if (Edits.Fits(target, there, duration)) return DragPreview.ForItem(item, target, there, duration);
@@ -511,7 +511,7 @@ public sealed class TimelineEditor
     /// </summary>
     public TimelineItem? AddItem(Timeline timeline, TimelineItem item, TimeSpan wanted)
     {
-        if (!Edits.Accepts(timeline, item) || FindRoom(timeline, Playhead, wanted) is not var (start, duration)) return null;
+        if (!Edits.Accepts(timeline, item) || !Edits.FitsHeight(timeline, item.MediaHeight) || FindRoom(timeline, Playhead, wanted) is not var (start, duration)) return null;
         item.Start = start;
         item.Duration = duration;
         _document.Execute(Edits.AddItem(timeline, item));
