@@ -34,9 +34,6 @@
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>PixelTuner_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Hresult.cs" />
     <Compile Include="Model.cs" />
@@ -60,7 +57,6 @@
     <Compile Include="UpdateViewModel.cs" />
     <Compile Include="WixBA.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <None Include="PixelTuner_TemporaryKey.pfx" />
     <None Include="WixBA.BootstrapperCore.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>

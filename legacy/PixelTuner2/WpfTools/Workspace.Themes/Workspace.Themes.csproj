@@ -34,9 +34,6 @@
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>PixelTuner_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -301,9 +298,6 @@
     <Resource Include="ThemeDefault\Images\PinRestore.png" />
     <Resource Include="ThemeDefault\Images\PinRestore_Dark.png" />
     <Resource Include="ThemeDefault\Images\VTabGroup.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="PixelTuner_TemporaryKey.pfx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
