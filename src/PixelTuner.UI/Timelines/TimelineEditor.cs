@@ -457,11 +457,13 @@ public sealed class TimelineEditor
 
     private static TimeSpan Clamp(TimeSpan value, TimeSpan min, TimeSpan max) => value < min ? min : value > max ? max : value;
 
-    /// <summary>Times an edge likes to stick to: zero, the playhead, markers and the edges of other items.</summary>
+    /// <summary>Times an edge likes to stick to: zero, the playhead and markers (rounded to the grid) and the edges of other items.</summary>
     private List<TimeSpan> SnapPoints(TimelineItem moving)
     {
-        var points = new List<TimeSpan> { TimeSpan.Zero, Playhead };
-        points.AddRange(Project.Markers.Select(m => m.Position));
+        // The playhead and the markers are anywhere in time, but an edge only lands on the grid: it sticks to the
+        // nearest multiple of the step (1.890 s pulls to 1.900 s, 1.870 s to 1.850 s).
+        var points = new List<TimeSpan> { TimeSpan.Zero, OnGrid(Playhead, TimeSpan.Zero, TimeSpan.MaxValue) };
+        points.AddRange(Project.Markers.Select(m => OnGrid(m.Position, TimeSpan.Zero, TimeSpan.MaxValue)));
         foreach (var timeline in Project.Timelines)
             foreach (var other in timeline.Items)
                 if (!ReferenceEquals(other, moving))

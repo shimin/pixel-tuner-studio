@@ -265,6 +265,54 @@ public class TimelineEditorTests
         Assert.Equal(S(4), item.End);
     }
 
+    [Theory]
+    [InlineData(1890, 1900)]   // 40 ms past a step: the nearest step is the next one
+    [InlineData(1870, 1850)]
+    [InlineData(1850, 1850)]
+    [InlineData(1875, 1900)]   // halfway rounds up
+    public void The_playhead_pulls_an_edge_to_the_nearest_multiple_of_50_ms(int playheadMs, int expectedMs)
+    {
+        var timeline = Track((5, 1));
+        var item = timeline.Items[0];
+        _editor.SetPlayhead(TimeSpan.FromMilliseconds(playheadMs));
+
+        // Drag the left edge to within a few pixels of the playhead.
+        _editor.PointerDown(X(5) + 1, RowY(0));
+        _editor.PointerMove(X(playheadMs / 1000.0) + 3);
+        _editor.PointerUp(X(playheadMs / 1000.0) + 3);
+
+        Assert.Equal(TimeSpan.FromMilliseconds(expectedMs), item.Start);
+        Assert.Equal(S(6), item.End);
+    }
+
+    [Fact]
+    public void The_pull_of_the_playhead_is_measured_to_the_step_it_pulls_to()
+    {
+        var timeline = Track((5, 1));
+        var item = timeline.Items[0];
+        _editor.SetPlayhead(TimeSpan.FromMilliseconds(1870));   // pulls to 1850; at 100 px/s that reaches 80 ms
+
+        _editor.PointerDown(X(5) + 1, RowY(0));
+        _editor.PointerMove(X(1.95));   // the edge is at 1.94 (the grab was 10 ms inside): 90 ms past 1850, out of reach
+        _editor.PointerUp(X(1.95));
+
+        Assert.Equal(TimeSpan.FromMilliseconds(1950), item.Start);
+    }
+
+    [Fact]
+    public void A_marker_pulls_an_edge_to_the_nearest_multiple_of_50_ms_too()
+    {
+        var timeline = Track((5, 1));
+        var item = timeline.Items[0];
+        _doc.Execute(PixelTuner.Core.Editing.Edits.AddMarker(_doc.Project, new Marker { Name = "m", Position = TimeSpan.FromMilliseconds(2870) }));
+
+        _editor.PointerDown(X(5) + 1, RowY(0));
+        _editor.PointerMove(X(2.87) - 3);
+        _editor.PointerUp(X(2.87) - 3);
+
+        Assert.Equal(TimeSpan.FromMilliseconds(2850), item.Start);
+    }
+
     [Fact]
     public void Edges_stay_a_grid_step_apart_at_least()
     {
