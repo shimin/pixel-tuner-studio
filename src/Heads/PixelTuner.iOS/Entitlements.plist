@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!-- UDP broadcast to show devices. Apple grants this on request:
+       https://developer.apple.com/contact/request/networking-multicast
+       Device builds fail to sign until the provisioning profile includes it. -->
+  <key>com.apple.developer.networking.multicast</key>
+  <true/>
+</dict>
+</plist>

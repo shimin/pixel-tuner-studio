@@ -1,0 +1,39 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PixelTuner.UI.ViewModels"
+             xmlns:res="using:PixelTuner.UI.Resources"
+             x:Class="PixelTuner.UI.Views.MainView"
+             x:DataType="vm:MainViewModel"
+             Background="{DynamicResource PtSurfaceBrush}">
+  <!-- Start screen, shared by desktop and mobile. Margins come from the
+       platform safe area on phones (notch, home indicator). -->
+  <ScrollViewer>
+    <StackPanel Margin="{StaticResource PtPagePadding}" Spacing="{StaticResource PtSpacing}" MaxWidth="720">
+      <TextBlock Classes="h1" Text="{x:Static res:Strings.AppTitle}" />
+      <TextBlock Classes="muted" TextWrapping="Wrap" Text="{x:Static res:Strings.Start_Subheading}" />
+      <Button Classes="accent" HorizontalAlignment="Left"
+              Content="{x:Static res:Strings.Command_OpenProject}"
+              Command="{Binding OpenProjectCommand}" />
+
+      <TextBlock Foreground="{DynamicResource SystemFillColorCriticalBrush}" TextWrapping="Wrap"
+                 Text="{Binding Error}" IsVisible="{Binding Error, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+      <Border Classes="card" IsVisible="{Binding HasProject}">
+        <StackPanel Spacing="8">
+          <TextBlock FontSize="20" FontWeight="SemiBold" Text="{Binding Project.Name}" />
+          <UniformGrid Columns="2">
+            <TextBlock Classes="muted" Text="{x:Static res:Strings.Project_Timelines}" />
+            <TextBlock Text="{Binding Project.Timelines}" />
+            <TextBlock Classes="muted" Text="{x:Static res:Strings.Project_Devices}" />
+            <TextBlock Text="{Binding Project.Devices}" />
+            <TextBlock Classes="muted" Text="{x:Static res:Strings.Project_Markers}" />
+            <TextBlock Text="{Binding Project.Markers}" />
+            <TextBlock Classes="muted" Text="{x:Static res:Strings.Project_Media}" />
+            <TextBlock Text="{Binding Project.Media}" />
+          </UniformGrid>
+          <ItemsControl ItemsSource="{Binding Project.TimelineNames}" />
+        </StackPanel>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

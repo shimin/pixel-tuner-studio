@@ -1,0 +1,6 @@
+<Project>
+  <!-- Legacy projects do not use central package management. -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+</Project>

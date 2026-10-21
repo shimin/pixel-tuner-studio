@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/PixelTuner.Core/PixelTuner.Core.csproj" />
+    <Project Path="src/PixelTuner.Package/PixelTuner.Package.csproj" />
+    <Project Path="src/PixelTuner.Sync/PixelTuner.Sync.csproj" />
+    <Project Path="src/PixelTuner.UI/PixelTuner.UI.csproj" />
+  </Folder>
+  <Folder Name="/src/Heads/">
+    <Project Path="src/Heads/PixelTuner.Android/PixelTuner.Android.csproj" />
+    <Project Path="src/Heads/PixelTuner.Desktop/PixelTuner.Desktop.csproj" />
+    <Project Path="src/Heads/PixelTuner.iOS/PixelTuner.iOS.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/PixelTuner.Package.Tests/PixelTuner.Package.Tests.csproj" />
+    <Project Path="tests/PixelTuner.Sync.Tests/PixelTuner.Sync.Tests.csproj" />
+  </Folder>
+</Solution>

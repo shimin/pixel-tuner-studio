@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Shared Avalonia UI: views, view models, theme. Platform heads in src/Heads only start it. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>PixelTuner.UI</RootNamespace>
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- UI strings: English by default, plus Russian and German as in PixelTuner 2. -->
+    <EmbeddedResource Update="Resources\Strings.resx"
+                      StronglyTypedFileName="$(IntermediateOutputPath)Strings.Designer.cs"
+                      StronglyTypedLanguage="CSharp"
+                      StronglyTypedNamespace="PixelTuner.UI.Resources"
+                      StronglyTypedClassName="Strings"
+                      PublicClass="true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
+    <PackageReference Include="Avalonia.Fonts.Inter" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="AvaloniaUI.DiagnosticsSupport">
+      <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+      <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PixelTuner.Core\PixelTuner.Core.csproj" />
+    <ProjectReference Include="..\PixelTuner.Package\PixelTuner.Package.csproj" />
+    <ProjectReference Include="..\PixelTuner.Sync\PixelTuner.Sync.csproj" />
+  </ItemGroup>
+</Project>

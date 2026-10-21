@@ -36,9 +36,6 @@
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>PixelTuner_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ImageProcessor, Version=2.4.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ImageProcessor.2.4.4.0\lib\net40\ImageProcessor.dll</HintPath>
@@ -168,7 +165,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="PixelTuner_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ProjectPlayer\PixelTwister\Round.fx" />

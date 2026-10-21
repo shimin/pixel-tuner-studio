@@ -37,9 +37,6 @@
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>PixelTuner_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -716,9 +713,6 @@
     <Resource Include="Themes\Generic\Images\restore_inactive.png" />
     <Resource Include="Themes\Generic\Images\restore_normal.png" />
     <Resource Include="Themes\Generic\Images\restore_pressed.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="PixelTuner_TemporaryKey.pfx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

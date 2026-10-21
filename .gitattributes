@@ -1,0 +1,21 @@
+# Text files are stored with LF; Windows-only scripts keep CRLF.
+* text=auto eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary assets are never normalized.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.bmp binary
+*.ico binary
+*.mp3 binary
+*.wav binary
+*.mp4 binary
+*.avi binary
+*.bin binary
+*.pfx binary
+*.dll binary
+*.exe binary
+*.pxpkg binary

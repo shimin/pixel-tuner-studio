@@ -1,0 +1,120 @@
+name: CI
+
+# Every pull request builds all four platforms. A change that breaks one of them is red.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  core:
+    name: Core and tests (Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Test
+        run: |
+          dotnet test tests/PixelTuner.Sync.Tests -c Release
+          dotnet test tests/PixelTuner.Package.Tests -c Release
+      - name: Build desktop on Linux
+        run: dotnet build src/Heads/PixelTuner.Desktop -c Release
+
+  windows:
+    name: Desktop (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Test
+        run: |
+          dotnet test tests/PixelTuner.Sync.Tests -c Release
+          dotnet test tests/PixelTuner.Package.Tests -c Release
+      - name: Publish
+        run: dotnet publish src/Heads/PixelTuner.Desktop -c Release -r win-x64 --self-contained -o out/win-x64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PixelTunerStudio-win-x64
+          path: out/win-x64
+          retention-days: 14
+
+  macos:
+    name: Desktop (macOS)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Test
+        run: |
+          dotnet test tests/PixelTuner.Sync.Tests -c Release
+          dotnet test tests/PixelTuner.Package.Tests -c Release
+      - name: Publish and bundle
+        run: |
+          dotnet publish src/Heads/PixelTuner.Desktop -c Release -r osx-arm64 --self-contained -o out/osx-arm64
+          scripts/macos/make-app.sh out/osx-arm64 out/app
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PixelTunerStudio-macos-arm64
+          path: out/app
+          retention-days: 14
+
+  android:
+    name: Mobile (Android)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: microsoft
+          java-version: '17'
+      - name: Install Android workload
+        run: dotnet workload install android
+      - name: Build APK
+        run: >
+          dotnet publish src/Heads/PixelTuner.Android -c Release
+          -p:AndroidSdkDirectory="$ANDROID_SDK_ROOT"
+          -o out/android
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PixelTunerStudio-android
+          path: out/android/*.apk
+          retention-days: 14
+
+  ios:
+    name: Mobile (iOS, simulator build)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: List installed Xcode versions
+        run: ls -d /Applications/Xcode*.app
+      # Each .NET for iOS SDK needs one exact Xcode major.minor. The workload ships
+      # several SDKs; build against iOS 26.0 with Xcode 26.0, both present on the runner.
+      # Move both forward together when the runner image gets a newer Xcode.
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '26.0'
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Install iOS workload
+        run: dotnet workload install ios
+      - name: Build for the simulator (no signing)
+        run: dotnet build src/Heads/PixelTuner.iOS -c Debug -r iossimulator-arm64 -p:IosSdkVersion=26.0

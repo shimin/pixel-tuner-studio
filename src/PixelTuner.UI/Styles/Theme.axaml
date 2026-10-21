@@ -1,0 +1,37 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- Design tokens shared by every platform. Colours follow the Fluent theme
+       and switch with the system light/dark setting. -->
+  <Styles.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+          <SolidColorBrush x:Key="PtSurfaceBrush" Color="#FFF7F7F8" />
+          <SolidColorBrush x:Key="PtCardBrush" Color="#FFFFFFFF" />
+          <SolidColorBrush x:Key="PtMutedTextBrush" Color="#FF5B5F6B" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+          <SolidColorBrush x:Key="PtSurfaceBrush" Color="#FF16171A" />
+          <SolidColorBrush x:Key="PtCardBrush" Color="#FF202227" />
+          <SolidColorBrush x:Key="PtMutedTextBrush" Color="#FFA4A8B3" />
+        </ResourceDictionary>
+      </ResourceDictionary.ThemeDictionaries>
+      <Thickness x:Key="PtPagePadding">24</Thickness>
+      <x:Double x:Key="PtSpacing">12</x:Double>
+      <CornerRadius x:Key="PtCardRadius">8</CornerRadius>
+    </ResourceDictionary>
+  </Styles.Resources>
+
+  <Style Selector="TextBlock.h1">
+    <Setter Property="FontSize" Value="28" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+  <Style Selector="TextBlock.muted">
+    <Setter Property="Foreground" Value="{DynamicResource PtMutedTextBrush}" />
+  </Style>
+  <Style Selector="Border.card">
+    <Setter Property="Background" Value="{DynamicResource PtCardBrush}" />
+    <Setter Property="CornerRadius" Value="{StaticResource PtCardRadius}" />
+    <Setter Property="Padding" Value="16" />
+  </Style>
+</Styles>

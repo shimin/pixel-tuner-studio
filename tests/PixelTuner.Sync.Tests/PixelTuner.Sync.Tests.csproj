@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\PixelTuner.Sync\PixelTuner.Sync.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- One source of truth for the wire format, shared with EpicPlayer for macOS (Swift)
+         and its Windows reference check. -->
+    <None Include="..\..\legacy\EpicPlayer\epicplayer-mac\Tests\Fixtures\*.json"
+          Link="Fixtures\%(Filename)%(Extension)"
+          CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>
