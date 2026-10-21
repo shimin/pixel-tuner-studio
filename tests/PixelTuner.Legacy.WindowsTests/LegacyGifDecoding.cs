@@ -50,6 +50,7 @@ public class LegacyGifDecoding(ITestOutputHelper output)
             }
             if (lines.Count == 0) continue;
             failures.Add($"{name}: {lines.Count} differences, first: {lines[0]}");
+            if (failures.Count <= 12) output.WriteLine(Explain(path, ours, theirs));
             if (!string.IsNullOrEmpty(report))
             {
                 Directory.CreateDirectory(report);
@@ -87,6 +88,56 @@ public class LegacyGifDecoding(ITestOutputHelper output)
             result.Add((image, frame.Format.ToString(), frame.Palette?.Colors.Count ?? 0));
         }
         return result;
+    }
+
+    /// <summary>
+    /// Where PixelTuner 2's value comes from, for the first differing frame: WPF's own indices and
+    /// palette before the BMP round trip, and what GDI+ made of the BMP.
+    /// </summary>
+    private static string Explain(string path, IReadOnlyList<PixelImage> ours,
+        List<(PixelImage Image, string Format, int Palette)> theirs)
+    {
+        var text = new System.Text.StringBuilder();
+        using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+        var decoder = new GifBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
+        for (int f = 0; f < Math.Min(ours.Count, theirs.Count); f++)
+        {
+            var mine = ours[f];
+            var image = theirs[f].Image;
+            if (mine.Width != image.Width || mine.Height != image.Height) continue;
+            var diffs = new List<(int X, int Y)>();
+            for (int y = 0; y < image.Height && diffs.Count < 6; y++)
+                for (int x = 0; x < image.Width && diffs.Count < 6; x++)
+                    if (mine[x, y] != image[x, y]) diffs.Add((x, y));
+            if (diffs.Count == 0) continue;
+
+            var frame = decoder.Frames[f];
+            int stride = (frame.PixelWidth * frame.Format.BitsPerPixel + 7) / 8;
+            var indices = new byte[stride * frame.PixelHeight];
+            frame.CopyPixels(indices, stride, 0);
+            var palette = frame.Palette?.Colors ?? [];
+            text.AppendLine($"  frame {f}: {frame.Format}, {frame.PixelWidth}x{frame.PixelHeight}, palette " +
+                string.Join(" ", palette.Select((c, i) => $"{i}:{c.A:X2}{c.R:X2}{c.G:X2}{c.B:X2}")));
+
+            using var bmp = new MemoryStream();
+            var encoder = new BmpBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(frame));
+            encoder.Save(bmp);
+            byte[] bytes = bmp.ToArray();
+            int bitCount = BitConverter.ToUInt16(bytes, 28);
+            int colorsUsed = BitConverter.ToInt32(bytes, 46);
+            using var loaded = new SD.Bitmap(new MemoryStream(bytes));
+            text.AppendLine($"    BMP: {bitCount} bpp, {colorsUsed} colours, header {BitConverter.ToInt32(bytes, 14)}; GDI+ {loaded.PixelFormat}, palette {loaded.Palette.Entries.Length}: " +
+                string.Join(" ", loaded.Palette.Entries.Take(16).Select(c => $"{c.A:X2}{c.R:X2}{c.G:X2}{c.B:X2}")));
+            foreach (var (x, y) in diffs)
+            {
+                int index = frame.Format.BitsPerPixel == 8 ? indices[y * stride + x] : -1;
+                var loadedPixel = loaded.GetPixel(x, y);
+                text.AppendLine($"    {x},{y}: WPF index {index}, ours {mine[x, y]}, GDI+ loaded {loadedPixel.R},{loadedPixel.G},{loadedPixel.B}, final {image[x, y]}");
+            }
+            break;
+        }
+        return $"{Path.GetFileName(path)}:\n{text}";
     }
 
     /// <summary>Raw dump for offline comparison: per frame u16 width, u16 height, then RGB rows.</summary>
