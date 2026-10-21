@@ -120,7 +120,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     [
         nameof(ShowBrightness), nameof(ShowStretching), nameof(ShowLaser), nameof(IsVideoSelected), nameof(IsLightItem), nameof(IsEffectSelected),
         nameof(OffsetX), nameof(OffsetY), nameof(T1), nameof(T2), nameof(ItemColor), nameof(ItemColorTo), nameof(ItemColorBrush), nameof(ItemColorToBrush),
-        nameof(EffectIndex), nameof(HasImage), nameof(ItemPreviewBitmap), nameof(HasPreview),
+        nameof(EffectIndex), nameof(HasImage), nameof(ItemPreviewBitmap), nameof(HasPreview), nameof(PlaybackText),
     ];
 
     private void Refresh()
@@ -459,6 +459,19 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     }
 
     public bool HasImage => Item is { Kind: ItemKind.Image };
+
+    /// <summary>Pixel items: how long one pass of the picture takes at this stretching, and how often it plays in the item.</summary>
+    public string PlaybackText
+    {
+        get
+        {
+            if (Item is not { Kind: ItemKind.Image } i || ItemPreviewBitmap is not { } bitmap) return "";
+            int width = bitmap.PixelSize.Width;
+            var pass = ItemPreview.PassDuration(width, i.Stretching);
+            double repeats = ItemPreview.Repeats(i.Duration, width, i.Stretching);
+            return string.Format(Strings.Inspector_Playback, $"{pass.TotalMilliseconds:0.##} ms", repeats.ToString("0.##", System.Globalization.CultureInfo.CurrentCulture));
+        }
+    }
 
     public bool HasPreview => ItemPreviewBitmap is not null;
 

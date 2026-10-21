@@ -68,6 +68,7 @@
             <StackPanel Spacing="4" IsVisible="{Binding ShowStretching}">
               <TextBlock Classes="muted" Text="{x:Static res:Strings.Inspector_Stretching}" />
               <NumericUpDown Minimum="1" Maximum="1000" Increment="1" FormatString="0" Value="{Binding Stretching}" />
+              <TextBlock Classes="muted" TextWrapping="Wrap" Text="{Binding PlaybackText}" />
             </StackPanel>
             <CheckBox Content="{x:Static res:Strings.Inspector_Laser}" IsChecked="{Binding LaserOn}" IsVisible="{Binding ShowLaser}" />
             <StackPanel Spacing="4" IsVisible="{Binding IsVideoSelected}">

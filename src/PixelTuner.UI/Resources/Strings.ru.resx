@@ -125,4 +125,5 @@
   <data name="Effect_SquareWave" xml:space="preserve"><value>Меандр</value></data>
   <data name="Effect_SawToothWave" xml:space="preserve"><value>Пила</value></data>
   <data name="Item_BadMedia" xml:space="preserve"><value>В {0} нет картинки.</value></data>
+  <data name="Inspector_Playback" xml:space="preserve"><value>Один проход картинки занимает {0}; в этом элементе она играет {1} раз(а). Чем меньше растяжение, тем быстрее.</value></data>
 </root>

@@ -39,4 +39,16 @@ public class ItemPreviewTests
         Assert.Equal(new Rgb(1, 2, 3), flipped[0, 0]);
         Assert.Equal(Rgb.Black, ItemPreview.Render(TwoByTwo(), 0, 1, false)[0, 0]);
     }
+
+    [Theory]
+    [InlineData(100, 100, 2.0)]    // a 100 px picture, 100 x 50 us per column: 500 ms a pass, twice in a second
+    [InlineData(100, 200, 1.0)]
+    [InlineData(100, 10, 20.0)]
+    [InlineData(100, 300, 1000.0 / 1500)]   // the second pass is cut off
+    public void Stretching_sets_the_speed_and_the_item_length_sets_how_often_the_picture_repeats(int width, int stretching, double repeats)
+    {
+        var second = TimeSpan.FromMilliseconds(1000);
+        Assert.Equal(repeats, ItemPreview.Repeats(second, width, stretching), 9);
+        Assert.Equal(TimeSpan.FromMilliseconds(width * stretching * 0.05), ItemPreview.PassDuration(width, stretching));
+    }
 }

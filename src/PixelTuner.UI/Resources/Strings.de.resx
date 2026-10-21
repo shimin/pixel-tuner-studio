@@ -125,4 +125,5 @@
   <data name="Effect_SquareWave" xml:space="preserve"><value>Rechteckwelle</value></data>
   <data name="Effect_SawToothWave" xml:space="preserve"><value>Sägezahnwelle</value></data>
   <data name="Item_BadMedia" xml:space="preserve"><value>{0} enthält kein Bild.</value></data>
+  <data name="Inspector_Playback" xml:space="preserve"><value>Ein Durchlauf des Bildes dauert {0}; im Element läuft es {1}-mal. Weniger Dehnung spielt schneller.</value></data>
 </root>

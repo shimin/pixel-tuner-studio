@@ -49,6 +49,9 @@
   `TimelineControl` only draws it and forwards the pointer. Do not put model rules into the control. An item dragged over another timeline moves there only if
   `Edits.Accepts` (same kind of item) and `Edits.Fits` say so; items are added by `EditorViewModel.AddItemCommand` (files), `AddColorCommand` and `AddEffectCommand`. To try the
   window with the mouse in the sandbox: `xvfb-run`, then `python-xlib` (`pip install python-xlib`) with XTest.
+- Stretching of a pixel item (PixelPoi) is a speed, not a position: each image column is held for k x 50 us, so one pass
+  of a W-column picture takes W x k x 50 us and the item's time span only says how long it plays (`ItemPreview.PassDuration`,
+  `Repeats`; Ivan: 100 columns, k=100, 1000 ms gives 2 passes). Lower k is faster.
 - `src/PixelTuner.Audio` holds the player and decoder contracts only; implementations go per
   platform. `src/PixelTuner.Audio.Vlc` (LibVLC, LGPL, dynamic) serves Windows and macOS: the VideoLAN NuGet
   packages carry LibVLC under `libvlc/<rid>`, Linux uses the system one (`apt install libvlc5 vlc-plugin-base`).
