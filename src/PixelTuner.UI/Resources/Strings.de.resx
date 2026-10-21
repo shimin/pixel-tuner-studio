@@ -112,6 +112,10 @@
   <data name="Edit_RemoveDevice" xml:space="preserve"><value>Gerät entfernen</value></data>
   <data name="Edit_SetDeviceTimelines" xml:space="preserve"><value>Spuren des Geräts ändern</value></data>
   <data name="Edit_SetDeviceLedCount" xml:space="preserve"><value>LED-Anzahl des Geräts ändern</value></data>
+  <data name="Edit_AddLibraryEntry" xml:space="preserve"><value>Zur Bibliothek hinzufügen</value></data>
+  <data name="Edit_RemoveLibraryEntry" xml:space="preserve"><value>Aus der Bibliothek entfernen</value></data>
+  <data name="Edit_RenameLibraryEntry" xml:space="preserve"><value>Bibliothekseintrag umbenennen</value></data>
+  <data name="Edit_ReplaceLibraryMedia" xml:space="preserve"><value>Datei in der Bibliothek ersetzen</value></data>
   <data name="Command_AddItem" xml:space="preserve"><value>Datei hinzufügen…</value></data>
   <data name="FileType_Image" xml:space="preserve"><value>Bilder</value></data>
   <data name="Item_AddFailed" xml:space="preserve"><value>{0} kann nicht hinzugefügt werden: {1}</value></data>

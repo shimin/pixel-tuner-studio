@@ -201,6 +201,31 @@ public sealed class PxPackageTests : IDisposable
     }
 
     [Fact]
+    public void The_library_round_trips_with_media_colours_and_effects()
+    {
+        var project = new ShowProject
+        {
+            Library =
+            [
+                new LibraryEntry { Name = "flag", Kind = LibraryKind.Image, ResourceId = "abc", SourcePath = "flag.png", Width = 40, Height = 36 },
+                new LibraryEntry { Name = "anim", Kind = LibraryKind.Video, ResourceId = "def", Width = 20, Height = 10, Frames = 12 },
+                new LibraryEntry { Name = "red", Kind = LibraryKind.Color, Color = "#FF0000" },
+                new LibraryEntry { Name = "wave", Kind = LibraryKind.Effect, Color = "#000000", ColorLast = "#00FF00", Effect = LightEffectKind.SineWave, T1 = 500, T2 = 20 },
+            ],
+        };
+        var path = Path.Combine(_dir, "library.pxpkg");
+        new PxPackageWriter().Save(path, project);
+
+        using var pkg = PxPackage.Open(path);
+        var library = pkg.Project.Library;
+        Assert.Equal(["flag", "anim", "red", "wave"], library.Select(e => e.Name));
+        Assert.Equal((40, 36, "abc"), (library[0].Width, library[0].Height, library[0].ResourceId));
+        Assert.Equal(12, library[1].Frames);
+        Assert.Equal("#FF0000", library[2].Color);
+        Assert.Equal((LightEffectKind.SineWave, "#00FF00", 500, 20), (library[3].Effect, library[3].ColorLast, library[3].T1, library[3].T2));
+    }
+
+    [Fact]
     public void Rejects_a_package_from_a_newer_version()
     {
         var path = Path.Combine(_dir, "new.pxpkg");

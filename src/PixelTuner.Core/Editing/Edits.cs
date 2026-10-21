@@ -385,6 +385,86 @@ public static class Edits
         ]);
     }
 
+    // ---- library
+
+    /// <summary>Puts an entry into the library. A media entry has a size (a missing file has none yet); a colour or effect has valid values.</summary>
+    public static Edit AddLibraryEntry(ShowProject project, LibraryEntry entry)
+    {
+        CheckEntry(entry);
+        if (project.Library.Any(e => e.Id == entry.Id)) throw new ArgumentException("The entry is already in the library.", nameof(entry));
+        return new InsertEdit<LibraryEntry>("AddLibraryEntry", project.Library, project.Library.Count, entry);
+    }
+
+    /// <summary>Takes an entry out of the library. What an item plays cannot be taken out: the item would lose its picture.</summary>
+    public static Edit RemoveLibraryEntry(ShowProject project, LibraryEntry entry)
+    {
+        if (Library.IsUsed(project, entry)) throw new InvalidOperationException("An item plays this entry.");
+        return new RemoveEdit<LibraryEntry>("RemoveLibraryEntry", project.Library, entry);
+    }
+
+    public static Edit RenameLibraryEntry(LibraryEntry entry, string name) =>
+        new SetValueEdit<string>("RenameLibraryEntry", entry, nameof(entry.Name), () => entry.Name, v => entry.Name = v, name, mergeable: true);
+
+    /// <summary>
+    /// Another file for an entry (a missing file found, a picture redone), and for every item that plays the old one.
+    /// The new picture must be as high as the others on each pixel timeline it lands on.
+    /// </summary>
+    public static Edit ReplaceLibraryMedia(ShowProject project, LibraryEntry entry, string resourceId, string sourcePath, int width, int height, int frames = 0)
+    {
+        if (!Library.HasMedia(entry.Kind)) throw new InvalidOperationException("Only a picture, animation or gradient has a file.");
+        if (width <= 0 || height <= 0) throw new ArgumentOutOfRangeException(nameof(width));
+
+        static bool Plays(LibraryEntry e, TimelineItem i) =>
+            e.ResourceId is { } id ? i.ResourceId == id : i.ResourceId is null && !string.IsNullOrEmpty(e.SourcePath)
+                && string.Equals(i.SourcePath, e.SourcePath, StringComparison.OrdinalIgnoreCase);
+
+        var affected = project.Timelines.SelectMany(t => t.Items.Select(i => (Timeline: t, Item: i))).Where(x => Plays(entry, x.Item)).ToList();
+        foreach (var timeline in affected.Select(x => x.Timeline).Distinct().Where(t => t.Kind == TimelineKind.Pixel))
+        {
+            var heights = timeline.Items.Select(i => Plays(entry, i) ? height : i.MediaHeight).Where(h => h > 0).Distinct().ToList();
+            if (heights.Count > 1 || (timeline.Height > 0 && heights.Any(h => h != timeline.Height)))
+                throw new InvalidOperationException($"The picture is {height} LEDs high, the timeline plays {PixelHeight(timeline)}.");
+        }
+
+        var edits = new List<Edit>();
+        foreach (var (_, item) in affected)
+        {
+            edits.Add(new SetValueEdit<string?>("ReplaceLibraryMedia", item, nameof(item.ResourceId), () => item.ResourceId, v => item.ResourceId = v, resourceId, mergeable: false));
+            edits.Add(new SetValueEdit<string?>("ReplaceLibraryMedia", item, nameof(item.SourcePath), () => item.SourcePath, v => item.SourcePath = v, sourcePath, mergeable: false));
+            edits.Add(new SetValueEdit<int>("ReplaceLibraryMedia", item, nameof(item.MediaWidth), () => item.MediaWidth, v => item.MediaWidth = v, width, mergeable: false));
+            edits.Add(new SetValueEdit<int>("ReplaceLibraryMedia", item, nameof(item.MediaHeight), () => item.MediaHeight, v => item.MediaHeight = v, height, mergeable: false));
+        }
+        edits.Add(new SetValueEdit<string?>("ReplaceLibraryMedia", entry, nameof(entry.ResourceId), () => entry.ResourceId, v => entry.ResourceId = v, resourceId, mergeable: false));
+        edits.Add(new SetValueEdit<string?>("ReplaceLibraryMedia", entry, nameof(entry.SourcePath), () => entry.SourcePath, v => entry.SourcePath = v, sourcePath, mergeable: false));
+        edits.Add(new SetValueEdit<int>("ReplaceLibraryMedia", entry, nameof(entry.Width), () => entry.Width, v => entry.Width = v, width, mergeable: false));
+        edits.Add(new SetValueEdit<int>("ReplaceLibraryMedia", entry, nameof(entry.Height), () => entry.Height, v => entry.Height = v, height, mergeable: false));
+        edits.Add(new SetValueEdit<int>("ReplaceLibraryMedia", entry, nameof(entry.Frames), () => entry.Frames, v => entry.Frames = v, frames, mergeable: false));
+        return new GroupEdit("ReplaceLibraryMedia", edits);
+    }
+
+    private static void CheckEntry(LibraryEntry entry)
+    {
+        switch (entry.Kind)
+        {
+            case LibraryKind.Image or LibraryKind.Video or LibraryKind.Gradient:
+                if (entry.ResourceId is not null && (entry.Width <= 0 || entry.Height <= 0))
+                    throw new ArgumentException("A picture in the package has a size.", nameof(entry));
+                break;
+            case LibraryKind.Color:
+                Imaging.ColorText.ParseRgb(entry.Color);
+                break;
+            case LibraryKind.Effect:
+                Imaging.ColorText.ParseRgb(entry.Color);
+                Imaging.ColorText.ParseRgb(entry.ColorLast);
+                if (entry.Effect is not (LightEffectKind.LinearTransition or LightEffectKind.SineWave or LightEffectKind.SquareWave or LightEffectKind.SawToothWave))
+                    throw new ArgumentException("Unknown light effect.", nameof(entry));
+                if (entry.T1 < 0 || entry.T2 < 0) throw new ArgumentException("Effect times cannot be negative.", nameof(entry));
+                break;
+            default:
+                throw new ArgumentException($"Unknown library kind '{entry.Kind}'.", nameof(entry));
+        }
+    }
+
     // ---- devices
 
     public static Edit AddDevice(ShowProject project, DeviceBinding device)

@@ -29,6 +29,9 @@ public sealed class ShowProject
     /// <summary>How the .bin is built from this project; saved with it, so every computer builds the same file.</summary>
     public BuildSettings Build { get; set; } = new();
 
+    /// <summary>What can be put on the timelines: the pictures, animations and gradients of the project, and colours and effects for light.</summary>
+    public List<LibraryEntry> Library { get; set; } = [];
+
     public List<Timeline> Timelines { get; set; } = [];
 
     /// <summary>LED markup of the props on the canvas; video timelines refer to one each.</summary>
@@ -59,6 +62,61 @@ public sealed class BuildSettings
 
     /// <summary>LightMaster: milliseconds between samples (PixelTuner 2's "discreteness").</summary>
     public int LightRate { get; set; } = DefaultLightRate;
+}
+
+/// <summary>Kinds of library entries; each is made for one kind of timeline.</summary>
+public static class LibraryKind
+{
+    /// <summary>A picture: its columns are played by a pixel timeline of the picture's height.</summary>
+    public const string Image = "image";
+
+    /// <summary>A GIF for a video timeline.</summary>
+    public const string Video = "video";
+
+    /// <summary>A gradient picture for an E-Pic timeline (it plays the top row).</summary>
+    public const string Gradient = "gradient";
+
+    /// <summary>A colour for a light timeline.</summary>
+    public const string Color = "color";
+
+    /// <summary>A light effect (colours, kind and times) for a light timeline.</summary>
+    public const string Effect = "effect";
+}
+
+/// <summary>One thing of the project's library. Media entries refer to a file in the package; colours and effects carry their values.</summary>
+public sealed class LibraryEntry
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public string Name { get; set; } = "";
+
+    /// <summary>One of <see cref="LibraryKind"/>.</summary>
+    public string Kind { get; set; } = LibraryKind.Image;
+
+    /// <summary>Media entries: the file in the package. Null when the file is missing.</summary>
+    public string? ResourceId { get; set; }
+
+    /// <summary>Media entries: where the file came from.</summary>
+    public string? SourcePath { get; set; }
+
+    /// <summary>Media entries: size in pixels (the first frame of a GIF); a picture's height is the number of LEDs it needs.</summary>
+    public int Width { get; set; }
+
+    public int Height { get; set; }
+
+    /// <summary>GIF entries: the number of frames; 0 while unknown.</summary>
+    public int Frames { get; set; }
+
+    /// <summary>Colour entries: the colour; effect entries: the first colour. #RRGGBB.</summary>
+    public string? Color { get; set; }
+
+    /// <summary>Effect entries: the colour the effect goes to.</summary>
+    public string? ColorLast { get; set; }
+
+    /// <summary>Effect entries: one of <see cref="LightEffectKind"/>.</summary>
+    public string? Effect { get; set; }
+
+    public int T1 { get; set; }
+    public int T2 { get; set; }
 }
 
 /// <summary>What a timeline drives. The value decides which .bin it compiles to.</summary>

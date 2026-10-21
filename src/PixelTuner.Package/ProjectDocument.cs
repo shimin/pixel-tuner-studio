@@ -22,7 +22,11 @@ public sealed class ProjectDocument : IDisposable
         _source = source;
         // Imported projects and older packages do not carry the picture sizes the editor's rules need.
         // Reading them is not a change of the project; they are saved with the next save.
-        if (source is not null) MediaSizes.Fill(project, id => source.HasResource(id) ? source.OpenResource(id) : null);
+        if (source is not null)
+        {
+            MediaSizes.Fill(project, id => source.HasResource(id) ? source.OpenResource(id) : null);
+            Library.AddMissingEntries(project);   // projects from before the library: what the items play is in it
+        }
         _createdUtc = source?.Manifest.CreatedUtc;
         _history = new UndoHistory(time);
         _history.Changed += (_, _) => Changed?.Invoke(this, EventArgs.Empty);
@@ -83,11 +87,13 @@ public sealed class ProjectDocument : IDisposable
     /// Takes a file into the project and returns its resource id (its SHA-256). The file is read now, so it
     /// may be moved or deleted afterwards; it is written into the package on the next save.
     /// </summary>
-    public string AddMedia(string filePath)
+    public string AddMedia(string filePath) => AddMedia(File.ReadAllBytes(filePath), System.IO.Path.GetFileName(filePath));
+
+    /// <summary>Takes media that was made here (a picture cut and scaled on import) into the project; returns its resource id.</summary>
+    public string AddMedia(byte[] content, string name)
     {
-        byte[] content = File.ReadAllBytes(filePath);
         string id = Convert.ToHexStringLower(System.Security.Cryptography.SHA256.HashData(content));
-        if (!(_source?.HasResource(id) ?? false)) _added[id] = (content, System.IO.Path.GetFileName(filePath));
+        if (!(_source?.HasResource(id) ?? false)) _added[id] = (content, name);
         return id;
     }
 
@@ -187,6 +193,7 @@ public sealed class ProjectDocument : IDisposable
 
     private bool IsReferenced(string id) =>
         Project.AudioResourceId == id || Project.CanvasResourceId == id
+        || Project.Library.Any(e => e.ResourceId == id)
         || Project.Timelines.Any(t => t.Items.Any(i => i.ResourceId == id));
 
     private static bool SamePath(string a, string b) =>
