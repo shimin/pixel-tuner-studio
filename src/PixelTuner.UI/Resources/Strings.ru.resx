@@ -100,4 +100,13 @@
   <data name="Audio_AddFailed" xml:space="preserve"><value>Не удалось добавить звук: {0}</value></data>
   <data name="Edit_SetAudio" xml:space="preserve"><value>Выбор звуковой дорожки</value></data>
   <data name="Edit_RemoveAudio" xml:space="preserve"><value>Удаление звуковой дорожки</value></data>
+  <data name="Command_AddImage" xml:space="preserve"><value>Добавить картинку…</value></data>
+  <data name="FileType_Image" xml:space="preserve"><value>Картинки</value></data>
+  <data name="Image_AddFailed" xml:space="preserve"><value>Не удалось добавить {0}: {1}</value></data>
+  <data name="Image_NoTimeline" xml:space="preserve"><value>Сначала выберите дорожку с картинками.</value></data>
+  <data name="Image_NoRoom" xml:space="preserve"><value>На этой дорожке нет свободного времени с курсора и дальше.</value></data>
+  <data name="Inspector_Brightness" xml:space="preserve"><value>Яркость</value></data>
+  <data name="Inspector_Stretching" xml:space="preserve"><value>Растяжение</value></data>
+  <data name="Inspector_Laser" xml:space="preserve"><value>Лазер</value></data>
+  <data name="Inspector_Preview" xml:space="preserve"><value>Картинка</value></data>
 </root>

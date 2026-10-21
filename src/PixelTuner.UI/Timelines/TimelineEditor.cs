@@ -487,6 +487,34 @@ public sealed class TimelineEditor
         Select(null);
     }
 
+    /// <summary>
+    /// The first free stretch on a timeline at or after a time, at most <paramref name="wanted"/> long and
+    /// at least <see cref="MinItemLength"/>; null when the timeline has none.
+    /// </summary>
+    public static (TimeSpan Start, TimeSpan Duration)? FindRoom(Timeline timeline, TimeSpan from, TimeSpan wanted)
+    {
+        var start = from;
+        foreach (var item in timeline.Items)   // sorted by start, never overlapping
+        {
+            if (item.End <= start) continue;
+            if (item.Start - start >= MinItemLength) return (start, Min(wanted, item.Start - start));
+            start = item.End;
+        }
+        return (start, wanted);
+    }
+
+    private static TimeSpan Min(TimeSpan a, TimeSpan b) => a < b ? a : b;
+
+    /// <summary>Puts an image on a pixel timeline at the playhead, or after the item that is there. Null when there is no room.</summary>
+    public TimelineItem? AddImage(Timeline timeline, string resourceId, string sourcePath, TimeSpan wanted)
+    {
+        if (timeline.Kind != TimelineKind.Pixel || FindRoom(timeline, Playhead, wanted) is not var (start, duration)) return null;
+        var item = new TimelineItem { Kind = ItemKind.Image, Start = start, Duration = duration, ResourceId = resourceId, SourcePath = sourcePath };
+        _document.Execute(Edits.AddItem(timeline, item));
+        Select(item);
+        return item;
+    }
+
     public Marker AddMarkerAtPlayhead(string name)
     {
         var marker = new Marker { Name = name, Position = Playhead };

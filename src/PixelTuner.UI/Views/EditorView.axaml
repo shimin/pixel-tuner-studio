@@ -20,6 +20,7 @@
         </Button.Flyout>
       </Button>
       <Button Content="⚑" Command="{Binding AddMarkerCommand}" ToolTip.Tip="{x:Static res:Strings.Command_AddMarker}" />
+      <Button Content="{x:Static res:Strings.Command_AddImage}" Command="{Binding AddImageCommand}" />
       <Button Content="✕" Command="{Binding DeleteSelectedCommand}" ToolTip.Tip="{x:Static res:Strings.Command_Delete}" />
       <Rectangle Width="1" Fill="{DynamicResource PtMutedTextBrush}" Opacity="0.4" Margin="4,2" />
       <Button Content="−" Command="{Binding ZoomOutCommand}" ToolTip.Tip="{x:Static res:Strings.Command_ZoomOut}" />
@@ -56,6 +57,17 @@
             <TextBlock Classes="muted" Text="{x:Static res:Strings.Inspector_Length}" />
             <TextBlock Text="{Binding LengthText}" />
           </UniformGrid>
+          <StackPanel Spacing="6" IsVisible="{Binding IsItemSelected}">
+            <TextBlock Classes="muted" Text="{x:Static res:Strings.Inspector_Brightness}" />
+            <Slider Minimum="0" Maximum="100" Value="{Binding Brightness}" />
+            <TextBlock Classes="muted" Text="{x:Static res:Strings.Inspector_Stretching}" />
+            <NumericUpDown Minimum="1" Maximum="1000" Increment="1" FormatString="0" Value="{Binding Stretching}" />
+            <CheckBox Content="{x:Static res:Strings.Inspector_Laser}" IsChecked="{Binding LaserOn}" />
+            <StackPanel Spacing="4" IsVisible="{Binding HasPreview}">
+              <TextBlock Classes="muted" Text="{x:Static res:Strings.Inspector_Preview}" />
+              <Image Source="{Binding ImagePreview}" MaxHeight="160" Stretch="Uniform" RenderOptions.BitmapInterpolationMode="None" />
+            </StackPanel>
+          </StackPanel>
           <UniformGrid Columns="2" IsVisible="{Binding IsMarkerSelected}">
             <TextBlock Classes="muted" Text="{x:Static res:Strings.Inspector_Position}" />
             <TextBlock Text="{Binding PositionText}" />

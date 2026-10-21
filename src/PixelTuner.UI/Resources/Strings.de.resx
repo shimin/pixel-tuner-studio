@@ -100,4 +100,13 @@
   <data name="Audio_AddFailed" xml:space="preserve"><value>Der Ton konnte nicht hinzugefügt werden: {0}</value></data>
   <data name="Edit_SetAudio" xml:space="preserve"><value>Tonspur festlegen</value></data>
   <data name="Edit_RemoveAudio" xml:space="preserve"><value>Tonspur entfernen</value></data>
+  <data name="Command_AddImage" xml:space="preserve"><value>Bild hinzufügen…</value></data>
+  <data name="FileType_Image" xml:space="preserve"><value>Bilder</value></data>
+  <data name="Image_AddFailed" xml:space="preserve"><value>{0} kann nicht hinzugefügt werden: {1}</value></data>
+  <data name="Image_NoTimeline" xml:space="preserve"><value>Wähle zuerst eine Pixel-Spur.</value></data>
+  <data name="Image_NoRoom" xml:space="preserve"><value>Auf dieser Spur ist ab dem Abspielkopf keine Zeit frei.</value></data>
+  <data name="Inspector_Brightness" xml:space="preserve"><value>Helligkeit</value></data>
+  <data name="Inspector_Stretching" xml:space="preserve"><value>Dehnung</value></data>
+  <data name="Inspector_Laser" xml:space="preserve"><value>Laser</value></data>
+  <data name="Inspector_Preview" xml:space="preserve"><value>Bild</value></data>
 </root>

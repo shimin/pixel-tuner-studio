@@ -1,7 +1,9 @@
+using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PixelTuner.Audio;
 using PixelTuner.Core.Editing;
+using PixelTuner.Core.Imaging;
 using PixelTuner.Core.Model;
 using PixelTuner.Package;
 using PixelTuner.UI.Resources;
@@ -124,6 +126,12 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(PositionText));
         OnPropertyChanged(nameof(IsItemSelected));
         OnPropertyChanged(nameof(IsMarkerSelected));
+        OnPropertyChanged(nameof(Brightness));
+        OnPropertyChanged(nameof(Stretching));
+        OnPropertyChanged(nameof(LaserOn));
+        OnPropertyChanged(nameof(HasImage));
+        OnPropertyChanged(nameof(ImagePreview));
+        OnPropertyChanged(nameof(HasPreview));
         OnPropertyChanged(nameof(HasSoundtrack));
         OnPropertyChanged(nameof(SoundtrackName));
         OnPropertyChanged(nameof(Message));
@@ -150,6 +158,35 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     [RelayCommand]
     void AddMarker() =>
         Timelines.AddMarkerAtPlayhead(string.Format(Strings.Marker_DefaultName, Timelines.Project.Markers.Count + 1));
+
+    /// <summary>A new image is this long, when there is room for it.</summary>
+    public static readonly TimeSpan DefaultImageLength = TimeSpan.FromSeconds(5);
+
+    // The timeline the image goes to: the selected one, or the one the selected item is on.
+    private Timeline? ImageTarget => Timelines.TimelineOf(Timelines.Selected) is { Kind: TimelineKind.Pixel } t ? t : null;
+
+    [RelayCommand]
+    async Task AddImageAsync()
+    {
+        if (ImageTarget is not { } timeline)
+        {
+            Message = Strings.Image_NoTimeline;
+            return;
+        }
+        if (_picker?.Invoke() is not { } picker) return;
+        string? path = await picker.PickImagePathAsync();
+        if (path is null) return;
+        try
+        {
+            ImageDecoder.DecodeFile(path);   // a file that is not an image is refused before it enters the project
+            string id = Document.AddMedia(path);
+            Message = Timelines.AddImage(timeline, id, path, DefaultImageLength) is null ? Strings.Image_NoRoom : null;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+        {
+            Message = string.Format(Strings.Image_AddFailed, Path.GetFileName(path), ex.Message);
+        }
+    }
 
     [RelayCommand(CanExecute = nameof(CanDelete))]
     void DeleteSelected() => Timelines.DeleteSelected();
@@ -256,6 +293,64 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
                     Document.Execute(Edits.RenameMarker(m, value));
                     break;
             }
+        }
+    }
+
+    public double Brightness
+    {
+        get => Timelines.Selected is TimelineItem i ? i.Brightness : 0;
+        set
+        {
+            if (Timelines.Selected is TimelineItem i && (byte)Math.Clamp(Math.Round(value), 0, 100) is var percent && percent != i.Brightness)
+                Document.Execute(Edits.SetBrightness(i, percent));
+        }
+    }
+
+    public decimal? Stretching
+    {
+        get => Timelines.Selected is TimelineItem i ? i.Stretching : null;
+        set
+        {
+            if (Timelines.Selected is TimelineItem i && value is { } v && (int)v >= 1 && (int)v != i.Stretching)
+                Document.Execute(Edits.SetStretching(i, (int)v));
+        }
+    }
+
+    public bool LaserOn
+    {
+        get => Timelines.Selected is TimelineItem { LaserOn: true };
+        set
+        {
+            if (Timelines.Selected is TimelineItem i && i.LaserOn != value) Document.Execute(Edits.SetLaser(i, value));
+        }
+    }
+
+    public bool HasImage => Timelines.Selected is TimelineItem { Kind: ItemKind.Image };
+
+    public bool HasPreview => ImagePreview is not null;
+
+    private string? _previewId;
+    private Bitmap? _preview;
+
+    /// <summary>The selected image as the device sees its pixels; null when nothing is selected or the file is missing.</summary>
+    public Bitmap? ImagePreview
+    {
+        get
+        {
+            string? id = Timelines.Selected is TimelineItem { Kind: ItemKind.Image } i ? i.ResourceId : null;
+            if (id == _previewId) return _preview;
+            _previewId = id;
+            _preview = null;
+            if (id is null || Document.OpenMedia(id) is not { } stream) return null;
+            try
+            {
+                using (stream) _preview = PixelBitmap.From(ImageDecoder.Decode(stream));
+            }
+            catch (InvalidDataException)
+            {
+                // damaged media: no preview
+            }
+            return _preview;
         }
     }
 

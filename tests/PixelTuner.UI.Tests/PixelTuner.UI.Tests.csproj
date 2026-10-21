@@ -3,6 +3,11 @@
     <ProjectReference Include="..\..\src\PixelTuner.UI\PixelTuner.UI.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Condition="$([MSBuild]::IsOSPlatform('Linux'))" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Win32" Condition="$([MSBuild]::IsOSPlatform('Windows'))" />
+    <PackageReference Include="SkiaSharp.NativeAssets.macOS" Condition="$([MSBuild]::IsOSPlatform('OSX'))" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="..\PixelTuner.Core.Tests\Fixtures\LegacyProjects\80_sample\**\*" CopyToOutputDirectory="PreserveNewest" LinkBase="Fixtures\80_sample" />
   </ItemGroup>
 </Project>
