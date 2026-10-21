@@ -1,0 +1,5 @@
+<Project>
+  <!-- Stops MSBuild from importing the repository-root Directory.Build.props
+       into the legacy projects: PixelTuner 2 and EpicPlayer build exactly as
+       they did in their own repositories. -->
+</Project>
