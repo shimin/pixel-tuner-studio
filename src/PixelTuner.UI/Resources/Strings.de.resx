@@ -137,6 +137,18 @@
   <data name="Inspector_OffsetX" xml:space="preserve"><value>Versatz X</value></data>
   <data name="Inspector_OffsetY" xml:space="preserve"><value>Versatz Y</value></data>
   <data name="Inspector_BadValue" xml:space="preserve"><value>Dieser Wert ist nicht möglich: {0}.</value></data>
+  <data name="Import_Cancel" xml:space="preserve"><value>Abbrechen</value></data>
+  <data name="Import_Apply" xml:space="preserve"><value>Zur Bibliothek</value></data>
+  <data name="Import_WrongHeight" xml:space="preserve"><value>Das Bild muss so hoch sein, wie die Spur es spielt: skaliere oder beschneide es.</value></data>
+  <data name="Import_Result" xml:space="preserve"><value>Ergebnis (Breite und Höhe in Pixeln)</value></data>
+  <data name="Import_Sharpen" xml:space="preserve"><value>Schärfe</value></data>
+  <data name="Import_Value" xml:space="preserve"><value>Helligkeit (HSL)</value></data>
+  <data name="Import_Saturation" xml:space="preserve"><value>Sättigung</value></data>
+  <data name="Import_Hue" xml:space="preserve"><value>Farbton</value></data>
+  <data name="Import_Contrast" xml:space="preserve"><value>Kontrast</value></data>
+  <data name="Import_Midtones" xml:space="preserve"><value>Nur Mitteltöne</value></data>
+  <data name="Import_Brightness" xml:space="preserve"><value>Helligkeit</value></data>
+  <data name="Import_Scale" xml:space="preserve"><value>Auf die Höhe des Geräts skalieren (LEDs)</value></data>
   <data name="Library_MissingTitle" xml:space="preserve"><value>Fehlende Dateien</value></data>
   <data name="Library_Replace" xml:space="preserve"><value>Datei suchen…</value></data>
   <data name="Library_ReplaceHeight" xml:space="preserve"><value>„{0}“ würde die Bilder einer Spur verschieden hoch machen.</value></data>

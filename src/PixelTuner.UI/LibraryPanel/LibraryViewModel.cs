@@ -27,6 +27,9 @@ public sealed class LibraryEntryViewModel(LibraryEntry entry, PlacementProblem p
     public PlacementProblem Problem { get; } = problem;
 
     public bool CanPlace => Problem == PlacementProblem.None;
+
+    /// <summary>What cannot be put on the selected timeline is shown dimmed.</summary>
+    public double Dim => CanPlace ? 1 : 0.45;
     public bool IsMissing => Library.HasMedia(Entry.Kind) && Entry.ResourceId is null;
 
     /// <summary>Size, frames or values: "40 × 36", "12 frames", "#FF0000".</summary>

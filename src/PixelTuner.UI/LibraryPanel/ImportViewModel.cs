@@ -149,9 +149,26 @@ public sealed partial class ImportViewModel : ObservableObject
 
     // ---- result
 
+    // The number boxes and sliders of the panel work with decimal and double; these are the same values.
+    public decimal? CropXBox { get => CropX; set { if (value is { } v) CropX = (int)v; } }
+    public decimal? CropYBox { get => CropY; set { if (value is { } v) CropY = (int)v; } }
+    public decimal? CropWidthBox { get => CropWidth; set { if (value is { } v) CropWidth = (int)v; } }
+    public decimal? CropHeightBox { get => CropHeight; set { if (value is { } v) CropHeight = (int)v; } }
+    public decimal? TargetHeightBox { get => TargetHeight; set { if (value is { } v) TargetHeight = (int)v; } }
+    public double BrightnessSlider { get => Brightness; set => Brightness = (int)Math.Round(value); }
+    public double HueSlider { get => Hue; set => Hue = (int)Math.Round(value); }
+
     private void Changed()
     {
+        OnPropertyChanged(nameof(CropXBox));
+        OnPropertyChanged(nameof(CropYBox));
+        OnPropertyChanged(nameof(CropWidthBox));
+        OnPropertyChanged(nameof(CropHeightBox));
+        OnPropertyChanged(nameof(TargetHeightBox));
+        OnPropertyChanged(nameof(BrightnessSlider));
+        OnPropertyChanged(nameof(HueSlider));
         _dirty = true;
+        OnPropertyChanged(nameof(ResultSize));
         OnPropertyChanged(nameof(ResultWidth));
         OnPropertyChanged(nameof(ResultHeight));
         OnPropertyChanged(nameof(ResultBitmap));
@@ -175,6 +192,9 @@ public sealed partial class ImportViewModel : ObservableObject
             return _result;
         }
     }
+
+    /// <summary>"72 × 36"</summary>
+    public string ResultSize => $"{Result.Width} × {Result.Height}";
 
     public int ResultWidth => Result.Width;
     public int ResultHeight => Result.Height;

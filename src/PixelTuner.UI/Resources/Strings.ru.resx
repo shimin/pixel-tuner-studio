@@ -137,6 +137,18 @@
   <data name="Inspector_OffsetX" xml:space="preserve"><value>Сдвиг по X</value></data>
   <data name="Inspector_OffsetY" xml:space="preserve"><value>Сдвиг по Y</value></data>
   <data name="Inspector_BadValue" xml:space="preserve"><value>Это значение не подходит: {0}.</value></data>
+  <data name="Import_Cancel" xml:space="preserve"><value>Отмена</value></data>
+  <data name="Import_Apply" xml:space="preserve"><value>В библиотеку</value></data>
+  <data name="Import_WrongHeight" xml:space="preserve"><value>Картинка должна быть такой высоты, какую играет дорожка: приведите её к ней или обрежьте.</value></data>
+  <data name="Import_Result" xml:space="preserve"><value>Результат (ширина и высота в пикселях)</value></data>
+  <data name="Import_Sharpen" xml:space="preserve"><value>Резкость</value></data>
+  <data name="Import_Value" xml:space="preserve"><value>Светлота</value></data>
+  <data name="Import_Saturation" xml:space="preserve"><value>Насыщенность</value></data>
+  <data name="Import_Hue" xml:space="preserve"><value>Тон</value></data>
+  <data name="Import_Contrast" xml:space="preserve"><value>Контраст</value></data>
+  <data name="Import_Midtones" xml:space="preserve"><value>Только средние тона</value></data>
+  <data name="Import_Brightness" xml:space="preserve"><value>Яркость</value></data>
+  <data name="Import_Scale" xml:space="preserve"><value>Привести к высоте устройства (светодиоды)</value></data>
   <data name="Library_MissingTitle" xml:space="preserve"><value>Пропавшие файлы</value></data>
   <data name="Library_Replace" xml:space="preserve"><value>Найти файл…</value></data>
   <data name="Library_ReplaceHeight" xml:space="preserve"><value>«{0}» сделал бы картинки на дорожке разной высоты.</value></data>

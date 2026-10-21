@@ -137,6 +137,18 @@
   <data name="Inspector_OffsetX" xml:space="preserve"><value>Offset X</value></data>
   <data name="Inspector_OffsetY" xml:space="preserve"><value>Offset Y</value></data>
   <data name="Inspector_BadValue" xml:space="preserve"><value>That value cannot be used: {0}.</value></data>
+  <data name="Import_Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Import_Apply" xml:space="preserve"><value>Add to library</value></data>
+  <data name="Import_WrongHeight" xml:space="preserve"><value>The picture must be as high as the timeline plays: scale it, or cut it to that height.</value></data>
+  <data name="Import_Result" xml:space="preserve"><value>Result (width and height in pixels)</value></data>
+  <data name="Import_Sharpen" xml:space="preserve"><value>Sharpening</value></data>
+  <data name="Import_Value" xml:space="preserve"><value>Lightness</value></data>
+  <data name="Import_Saturation" xml:space="preserve"><value>Saturation</value></data>
+  <data name="Import_Hue" xml:space="preserve"><value>Hue</value></data>
+  <data name="Import_Contrast" xml:space="preserve"><value>Contrast</value></data>
+  <data name="Import_Midtones" xml:space="preserve"><value>Midtones only</value></data>
+  <data name="Import_Brightness" xml:space="preserve"><value>Brightness</value></data>
+  <data name="Import_Scale" xml:space="preserve"><value>Scale to the height of the device (LEDs)</value></data>
   <data name="Library_MissingTitle" xml:space="preserve"><value>Missing files</value></data>
   <data name="Library_Replace" xml:space="preserve"><value>Find file…</value></data>
   <data name="Library_ReplaceHeight" xml:space="preserve"><value>{0} would make the pictures of a timeline different heights.</value></data>
