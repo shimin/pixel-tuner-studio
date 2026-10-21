@@ -13,6 +13,8 @@
     <ApplicationVersion>1</ApplicationVersion>
     <!-- Entitlements are applied only when building for a device with a provisioning profile. -->
     <CodesignEntitlements Condition="'$(RuntimeIdentifier)' == 'ios-arm64'">Entitlements.plist</CodesignEntitlements>
+    <!-- Simulator builds are signed ad hoc, so they need no Apple certificate (CI, fresh Macs). -->
+    <CodesignKey Condition="$(RuntimeIdentifier.StartsWith('iossimulator'))">-</CodesignKey>
   </PropertyGroup>
 
   <ItemGroup>
