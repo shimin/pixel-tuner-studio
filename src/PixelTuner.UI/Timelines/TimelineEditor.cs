@@ -240,6 +240,14 @@ public sealed class TimelineEditor
 
     // ---- hit testing
 
+    /// <summary>The timeline whose track lies at this height; null above or below the tracks.</summary>
+    public Timeline? TimelineAt(double y)
+    {
+        if (y < TracksTop) return null;
+        int row = (int)((y - TracksTop) / TrackHeight);
+        return row < Project.Timelines.Count ? Project.Timelines[row] : null;
+    }
+
     public Hit HitTest(double x, double y)
     {
         if (y < 0 || x < 0) return default;
@@ -311,7 +319,8 @@ public sealed class TimelineEditor
         }
     }
 
-    public void PointerMove(double x)
+    /// <param name="y">Where the pointer is vertically; an item dragged to another timeline of its kind moves there. Null keeps it on its own.</param>
+    public void PointerMove(double x, double? y = null)
     {
         if (_drag is not { } drag) return;
         switch (drag.Hit.Kind)
@@ -324,17 +333,17 @@ public sealed class TimelineEditor
                 Changed?.Invoke(this, EventArgs.Empty);
                 break;
             default:
-                Preview = ComputeItemPreview(drag, x);
+                Preview = ComputeItemPreview(drag, x, y);
                 Changed?.Invoke(this, EventArgs.Empty);
                 break;
         }
     }
 
     /// <summary>Pointer released: the drag becomes one undoable edit, if anything moved.</summary>
-    public void PointerUp(double x)
+    public void PointerUp(double x, double? y = null)
     {
         if (_drag is not { } drag) return;
-        PointerMove(x);
+        PointerMove(x, y);
         var preview = Preview;
         _drag = null;
         Preview = null;
@@ -358,7 +367,7 @@ public sealed class TimelineEditor
 
     private static TimeSpan Max0(TimeSpan t) => t < TimeSpan.Zero ? TimeSpan.Zero : t;
 
-    private DragPreview ComputeItemPreview(DragState drag, double x)
+    private DragPreview ComputeItemPreview(DragState drag, double x, double? y)
     {
         var item = drag.Hit.Item!;
         var timeline = drag.Hit.Timeline!;
@@ -404,6 +413,13 @@ public sealed class TimelineEditor
                 };
                 var latest = ceiling == TimeSpan.MaxValue ? TimeSpan.MaxValue : ceiling - duration;
                 start = Clamp(start, floor, latest);
+
+                // Over another timeline that takes this item and has room at the wanted time, it goes there.
+                if (y is { } py && TimelineAt(py) is { } target && !ReferenceEquals(target, timeline) && Edits.Accepts(target, item))
+                {
+                    var there = Max0(Snap(wanted, snapPoints));
+                    if (Edits.Fits(target, there, duration)) return DragPreview.ForItem(item, target, there, duration);
+                }
                 break;
             }
         }
@@ -471,6 +487,38 @@ public sealed class TimelineEditor
         Select(null);
     }
 
+    /// <summary>
+    /// The first free stretch on a timeline at or after a time, at most <paramref name="wanted"/> long and
+    /// at least <see cref="MinItemLength"/>; null when the timeline has none.
+    /// </summary>
+    public static (TimeSpan Start, TimeSpan Duration)? FindRoom(Timeline timeline, TimeSpan from, TimeSpan wanted)
+    {
+        var start = from;
+        foreach (var item in timeline.Items)   // sorted by start, never overlapping
+        {
+            if (item.End <= start) continue;
+            if (item.Start - start >= MinItemLength) return (start, Min(wanted, item.Start - start));
+            start = item.End;
+        }
+        return (start, wanted);
+    }
+
+    private static TimeSpan Min(TimeSpan a, TimeSpan b) => a < b ? a : b;
+
+    /// <summary>
+    /// Puts a new item on a timeline at the playhead, or after the item that is there, as long as <paramref name="wanted"/>
+    /// or as the gap allows. The item's kind decides whether the timeline takes it. Null when there is no room.
+    /// </summary>
+    public TimelineItem? AddItem(Timeline timeline, TimelineItem item, TimeSpan wanted)
+    {
+        if (!Edits.Accepts(timeline, item) || FindRoom(timeline, Playhead, wanted) is not var (start, duration)) return null;
+        item.Start = start;
+        item.Duration = duration;
+        _document.Execute(Edits.AddItem(timeline, item));
+        Select(item);
+        return item;
+    }
+
     public Marker AddMarkerAtPlayhead(string name)
     {
         var marker = new Marker { Name = name, Position = Playhead };
@@ -503,6 +551,7 @@ public sealed record DragPreview(TimelineItem? Item, Timeline? Timeline, Marker?
 
         var item = Item!;
         var timeline = Timeline!;
+        if (!ReferenceEquals(hit.Timeline, timeline)) return Edits.MoveItemToTimeline(hit.Timeline!, timeline, item, Start);
         if (item.Start == Start && item.Duration == Duration) return null;
         return hit.Kind switch
         {

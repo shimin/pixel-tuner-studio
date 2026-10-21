@@ -126,7 +126,11 @@ public sealed class TimelineItem
     /// </summary>
     public string? SourcePath { get; set; }
 
-    /// <summary>How many times each image column is repeated on the device.</summary>
+    /// <summary>
+    /// The speed of an image on the device: how long each column is held. Pixel devices and hoops count 50 µs
+    /// intervals (the same .bin), video devices count milliseconds per frame (40 is 25 frames a second).
+    /// The item's time span only says how long it plays. PixelTuner 2's defaults: 4 for pictures, 40 for video.
+    /// </summary>
     public int Stretching { get; set; } = 1;
 
     /// <summary>Brightness in percent, 0–100.</summary>
