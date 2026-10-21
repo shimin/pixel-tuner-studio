@@ -1,3 +1,4 @@
+using PixelTuner.Package.Import;
 using PixelTuner.Core.Editing;
 using PixelTuner.Core.Model;
 
@@ -291,5 +292,22 @@ public class ProjectDocumentTests : IDisposable
         using var copy = new MemoryStream();
         stream.CopyTo(copy);
         return copy.ToArray();
+    }
+
+    [Fact]
+    public void Opening_an_imported_project_reads_the_picture_sizes_the_import_did_not_store()
+    {
+        string dir = Path.Combine(AppContext.BaseDirectory, "Fixtures", "LegacyProjects", "80_sample");
+        string package = Path.Combine(Directory.CreateTempSubdirectory("doc-sizes").FullName, "p.pxpkg");
+        PtpImporter.Import(Path.Combine(dir, "80_sample.ptp"), package);
+
+        using var document = ProjectDocument.Open(package);
+
+        var pictures = document.Project.Timelines.Where(t => t.Kind == TimelineKind.Pixel).SelectMany(t => t.Items).ToList();
+        Assert.NotEmpty(pictures);
+        Assert.All(pictures, p => Assert.True(p.MediaWidth > 0 && p.MediaHeight > 0));
+        // The height of a timeline is what its pictures are: 80 LEDs in this show.
+        Assert.All(document.Project.Timelines.Where(t => t.Kind == TimelineKind.Pixel), t => Assert.Equal(80, Edits.PixelHeight(t)));
+        Assert.False(document.IsDirty);
     }
 }

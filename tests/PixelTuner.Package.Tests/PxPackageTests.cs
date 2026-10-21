@@ -125,6 +125,82 @@ public sealed class PxPackageTests : IDisposable
     }
 
     [Fact]
+    public void Build_settings_timeline_height_and_picture_sizes_survive_a_round_trip()
+    {
+        var project = new ShowProject
+        {
+            Build = new BuildSettings { Depth = PixelTuner.Core.Export.ColorDepth.Bit36, GapStretching = 9, LightRate = 20 },
+            Timelines = [new Timeline { Height = 125, Items = [new TimelineItem { MediaWidth = 40, MediaHeight = 125 }] }],
+        };
+        var path = Path.Combine(_dir, "settings.pxpkg");
+        new PxPackageWriter().Save(path, project);
+
+        using var pkg = PxPackage.Open(path);
+        Assert.Equal((PixelTuner.Core.Export.ColorDepth.Bit36, 9, 20), (pkg.Project.Build.Depth, pkg.Project.Build.GapStretching, pkg.Project.Build.LightRate));
+        Assert.Equal(125, pkg.Project.Timelines[0].Height);
+        Assert.Equal((40, 125), (pkg.Project.Timelines[0].Items[0].MediaWidth, pkg.Project.Timelines[0].Items[0].MediaHeight));
+    }
+
+    [Fact]
+    public void A_package_from_before_the_settings_reads_with_the_defaults_of_PixelTuner_2()
+    {
+        var path = Path.Combine(_dir, "old.pxpkg");
+        new PxPackageWriter().Save(path, new ShowProject { Timelines = [new Timeline { Items = [new TimelineItem()] }] });
+
+        using (var zip = ZipFile.Open(path, ZipArchiveMode.Update))
+        {
+            var entry = zip.GetEntry("project.json")!;
+            string json;
+            using (var r = new StreamReader(entry.Open()))
+                json = r.ReadToEnd();
+            entry.Delete();
+            // Cut out what older versions did not write.
+            json = System.Text.RegularExpressions.Regex.Replace(json, "\"(build|height|mediaWidth|mediaHeight)\": (\\{[^}]*\\}|\\d+),?", "");
+            Assert.DoesNotContain("\"build\"", json);
+            using var w = new StreamWriter(zip.CreateEntry("project.json").Open());
+            w.Write(json);
+        }
+
+        using var pkg = PxPackage.Open(path);
+        Assert.Equal((PixelTuner.Core.Export.ColorDepth.Bit24, 4, 5), (pkg.Project.Build.Depth, pkg.Project.Build.GapStretching, pkg.Project.Build.LightRate));
+        Assert.Equal(0, pkg.Project.Timelines[0].Height);
+        Assert.Equal(0, pkg.Project.Timelines[0].Items[0].MediaHeight);
+    }
+
+    [Fact]
+    public void Devices_keep_their_timelines_in_order_and_an_old_single_timeline_is_read_into_the_list()
+    {
+        var a = Guid.NewGuid();
+        var b = Guid.NewGuid();
+        var project = new ShowProject
+        {
+            Devices = [new DeviceBinding { Name = "poi", DeviceType = DeviceKind.Poi, LedCount = 36, MemoryBytes = 3_800_000, TimelineIds = [b, a] }],
+        };
+        var path = Path.Combine(_dir, "devices.pxpkg");
+        new PxPackageWriter().Save(path, project);
+        using (var pkg = PxPackage.Open(path))
+        {
+            var device = Assert.Single(pkg.Project.Devices);
+            Assert.Equal([b, a], device.TimelineIds);
+            Assert.Equal((36, 3_800_000), (device.LedCount, device.MemoryBytes));
+        }
+
+        // What earlier versions wrote: "timelineId" and no list.
+        using (var zip = ZipFile.Open(path, ZipArchiveMode.Update))
+        {
+            var entry = zip.GetEntry("project.json")!;
+            string json;
+            using (var r = new StreamReader(entry.Open())) json = r.ReadToEnd();
+            entry.Delete();
+            json = System.Text.RegularExpressions.Regex.Replace(json, "\"timelineIds\": \\[[^\\]]*\\]", $"\"timelineId\": \"{a}\"");
+            using var w = new StreamWriter(zip.CreateEntry("project.json").Open());
+            w.Write(json);
+        }
+        using var old = PxPackage.Open(path);
+        Assert.Equal([a], old.Project.Devices[0].TimelineIds);
+    }
+
+    [Fact]
     public void Rejects_a_package_from_a_newer_version()
     {
         var path = Path.Combine(_dir, "new.pxpkg");

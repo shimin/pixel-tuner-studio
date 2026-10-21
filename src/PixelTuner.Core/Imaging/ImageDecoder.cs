@@ -26,6 +26,16 @@ public static class ImageDecoder
         return Decode(data);
     }
 
+    /// <summary>Width and height of a picture (of the first frame of a GIF) without decoding its pixels.</summary>
+    public static (int Width, int Height) ReadSize(Stream stream)
+    {
+        using var data = SKData.Create(stream)
+            ?? throw new InvalidDataException("Cannot read the image data.");
+        using var codec = SKCodec.Create(data)
+            ?? throw new InvalidDataException("Unknown or damaged image format.");
+        return (codec.Info.Width, codec.Info.Height);
+    }
+
     public static PixelImage DecodeFile(string path)
     {
         using var stream = File.OpenRead(path);

@@ -20,7 +20,8 @@ namespace PixelTuner.Core.Export;
 /// <item>with two or more timelines selected only the first two are exported, as one timeline
 /// of both LED chains one after the other. Both chains take the second channel's brightness
 /// for the first scaling and the first channel's for the second, and pairs are matched by the
-/// first channel's file alone.</item>
+/// first channel's file alone. A gap filler of the first timeline that the second one cuts
+/// into pieces is one picture too: the first piece's.</item>
 /// </list>
 /// </remarks>
 public sealed class VideoExport
@@ -161,8 +162,9 @@ public sealed class VideoExport
 
     private PixelExportItem Entry(Segment segment, PixelImage image) => new()
     {
-        // PixelTuner 2 matched images by lower-cased path; its gap fillers were unique temp files.
-        ImageKey = segment.Item is null ? null : MediaKey(segment.Item),
+        // PixelTuner 2 matched images by lower-cased path. Each gap filler was a temp file of its
+        // own, but the pieces a pair cuts one filler into were clones of it and shared its picture.
+        ImageKey = segment.Item is null ? $"\0gap{segment.Gap}" : MediaKey(segment.Item),
         Image = image,
         StartMs = Milliseconds(segment.Start),
         DurationMs = Milliseconds(segment.End - segment.Start),
@@ -178,18 +180,20 @@ public sealed class VideoExport
     private static (int X, int Y) Offset(TimelineItem? item) =>
         item is null ? (0, 0) : (item.OffsetX, item.OffsetY);
 
-    private readonly record struct Segment(TimelineItem? Item, TimeSpan Start, TimeSpan End);
+    /// <param name="Gap">Number of the gap filler on its timeline; -1 for an item.</param>
+    private readonly record struct Segment(TimelineItem? Item, TimeSpan Start, TimeSpan End, int Gap = -1);
 
     /// <summary>Items with black gap fillers before the first one and between them.</summary>
     private static List<Segment> FillGaps(IReadOnlyList<TimelineItem> items)
     {
         var result = new List<Segment>();
-        if (items[0].Start != TimeSpan.Zero) result.Add(new Segment(null, TimeSpan.Zero, items[0].Start));
+        int gaps = 0;
+        if (items[0].Start != TimeSpan.Zero) result.Add(new Segment(null, TimeSpan.Zero, items[0].Start, gaps++));
         for (int i = 0; i < items.Count; i++)
         {
             result.Add(new Segment(items[i], items[i].Start, items[i].End));
             if (i + 1 < items.Count && items[i].End != items[i + 1].Start)
-                result.Add(new Segment(null, items[i].End, items[i + 1].Start));
+                result.Add(new Segment(null, items[i].End, items[i + 1].Start, gaps++));
         }
         return result;
     }

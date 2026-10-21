@@ -14,6 +14,9 @@ public sealed class ShowMedia(Func<string, Stream> open)
     /// <summary>Media of an imported PixelTuner 2 project before packaging: the resource id is the file path.</summary>
     public static ShowMedia FromFiles() => new(File.OpenRead);
 
+    /// <summary>Opens the file of a resource; the caller disposes the stream. Throws when the project does not have it.</summary>
+    internal Stream Open(string resourceId) => open(resourceId);
+
     /// <summary>The picture (the first frame of a GIF).</summary>
     public PixelImage Image(string resourceId)
     {

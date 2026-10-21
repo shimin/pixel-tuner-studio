@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using PixelTuner.Core.Export;
 
 namespace PixelTuner.Core.Model;
 
@@ -25,6 +26,9 @@ public sealed class ShowProject
     /// <summary>Drawing of the props (SVG) that LED layouts are marked up on.</summary>
     public string? CanvasResourceId { get; set; }
 
+    /// <summary>How the .bin is built from this project; saved with it, so every computer builds the same file.</summary>
+    public BuildSettings Build { get; set; } = new();
+
     public List<Timeline> Timelines { get; set; } = [];
 
     /// <summary>LED markup of the props on the canvas; video timelines refer to one each.</summary>
@@ -34,6 +38,27 @@ public sealed class ShowProject
 
     /// <summary>Named points on the soundtrack for quick jumps on stage.</summary>
     public List<Marker> Markers { get; set; } = [];
+}
+
+/// <summary>
+/// The parameters of the .bin that are not on the timelines. PixelTuner 2 kept them in the program's settings,
+/// so the same .ptp could give different files on two computers; here they belong to the project, with PixelTuner 2's
+/// defaults.
+/// </summary>
+public sealed class BuildSettings
+{
+    public const int DefaultGapStretching = 4;
+    public const int DefaultLightRate = 5;
+
+    /// <summary>Bits per colour in the picture blocks: 12, 24 (what current devices play) or 36.</summary>
+    [JsonConverter(typeof(JsonStringEnumConverter<ColorDepth>))]
+    public ColorDepth Depth { get; set; } = ColorDepth.Bit24;
+
+    /// <summary>Stretching of the black entries that fill the pauses between items (PixelTuner 2's "default stretching").</summary>
+    public int GapStretching { get; set; } = DefaultGapStretching;
+
+    /// <summary>LightMaster: milliseconds between samples (PixelTuner 2's "discreteness").</summary>
+    public int LightRate { get; set; } = DefaultLightRate;
 }
 
 /// <summary>What a timeline drives. The value decides which .bin it compiles to.</summary>
@@ -74,6 +99,12 @@ public sealed class Timeline
 
     /// <summary>Video timelines: the LED layout the frames are sampled at.</summary>
     public Guid? LedLayoutId { get; set; }
+
+    /// <summary>
+    /// Pixel timelines: the number of LEDs of the device that plays it, which is the height of every picture on it
+    /// (H in the .bin). 0 while the timeline takes the height of its first picture.
+    /// </summary>
+    public int Height { get; set; }
 
     public List<TimelineItem> Items { get; set; } = [];
 }
@@ -118,6 +149,15 @@ public sealed class TimelineItem
 
     /// <summary>Media inside the package (images, GIF), by resource id. Null when the file is missing.</summary>
     public string? ResourceId { get; set; }
+
+    /// <summary>
+    /// Size of the picture in pixels (the first frame of a GIF), set when the media is added. 0 while unknown,
+    /// as in a package from before the size was stored; the rules that need it then do not apply to the item.
+    /// </summary>
+    public int MediaWidth { get; set; }
+
+    /// <summary>See <see cref="MediaWidth"/>. For a picture on a pixel timeline this is the number of LEDs it needs.</summary>
+    public int MediaHeight { get; set; }
 
     /// <summary>
     /// Path the media was added from, as PixelTuner 2 stored it (relative or absolute).
@@ -181,19 +221,65 @@ public sealed class LedLayout
     public List<int> Leds { get; set; } = [];
 }
 
-/// <summary>Which device plays which timeline.</summary>
+/// <summary>The kinds of device a show is built for. Each takes its own .bin.</summary>
+public static class DeviceKind
+{
+    /// <summary>Pixel Poi and staves: pixel timelines, k × 50 µs per column.</summary>
+    public const string Poi = "poi";
+
+    /// <summary>Pixel Hoop: pixel timelines, a column is the whole ring.</summary>
+    public const string Hoop = "hoop";
+
+    /// <summary>Fan on a video module: one pixel timeline, k milliseconds per column.</summary>
+    public const string Fan = "fan";
+
+    /// <summary>Video module: video timelines (one, or a pair of LED chains).</summary>
+    public const string Video = "video";
+
+    /// <summary>E-Pic poi: E-Pic timelines.</summary>
+    public const string EpicPoi = "epic-poi";
+
+    /// <summary>LightMaster: light timelines, one per channel.</summary>
+    public const string Light = "light";
+}
+
+/// <summary>Which device plays which timelines, in which order: the .bin of a device is built from this list.</summary>
 public sealed class DeviceBinding
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Name { get; set; } = "";
 
-    /// <summary>Device type as in PixelTuner 2: "pixel", "hoop", "epic-poi", "illuminator", "video".</summary>
-    public string DeviceType { get; set; } = "";
+    /// <summary>One of <see cref="DeviceKind"/>.</summary>
+    public string DeviceType { get; set; } = DeviceKind.Poi;
 
     /// <summary>Name the device reports over the network (the lookup "tag").</summary>
     public string? NetworkTag { get; set; }
 
-    public Guid? TimelineId { get; set; }
+    /// <summary>
+    /// LEDs of the device (H in the .bin of a pixel device); the pixel timelines it plays must be that high.
+    /// 0 while unknown (before the device was ever connected).
+    /// </summary>
+    public int LedCount { get; set; }
+
+    /// <summary>Memory for shows in bytes; the .bin must fit. 0 while unknown.</summary>
+    public long MemoryBytes { get; set; }
+
+    /// <summary>
+    /// Timelines the device plays, in the order of the .bin: for a poi that is the order of its menu programs,
+    /// for the LightMaster the order of its channels.
+    /// </summary>
+    public List<Guid> TimelineIds { get; set; } = [];
+
+    /// <summary>Packages from before a device could play several timelines stored one id; it is read into the list.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Guid? TimelineId
+    {
+        get => null;
+        set
+        {
+            if (value is { } id && !TimelineIds.Contains(id)) TimelineIds.Add(id);
+        }
+    }
 }
 
 public sealed class Marker

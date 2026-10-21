@@ -1,3 +1,4 @@
+using PixelTuner.Core.Editing;
 using PixelTuner.Core.Model;
 using PixelTuner.Package;
 using PixelTuner.UI.Timelines;
@@ -183,6 +184,170 @@ public class TimelineEditorTests
         _editor.PointerDown(X(2.5), RowY(0));
         _editor.PointerUp(X(2.5) + 2.5 * 100 - 4 + 0.0);
         Assert.Equal(S(4.5), second.Start);
+    }
+
+    [Fact]
+    public void A_drag_ends_on_whole_milliseconds_whatever_the_zoom_and_the_pixel()
+    {
+        var timeline = Track((1, 2), (6, 1));
+        var item = timeline.Items[0];
+        _editor.ZoomAt(1.37, TimelineEditor.HeaderWidth);
+
+        double x = X(2);
+        _editor.PointerDown(x, RowY(0));
+        _editor.PointerMove(x + 123.4567);
+        _editor.PointerUp(x + 123.4567);
+        Assert.True(Edits.IsWholeMs(item.Start) && Edits.IsWholeMs(item.Duration));
+        Assert.NotEqual(S(1), item.Start);
+
+        // The right edge too, against the neighbour at 6 s.
+        x = X(item.End.TotalSeconds) - 1;
+        _editor.PointerDown(x, RowY(0));
+        _editor.PointerMove(x + 77.7777);
+        _editor.PointerUp(x + 77.7777);
+        Assert.True(Edits.IsWholeMs(item.Start) && Edits.IsWholeMs(item.Duration));
+        Assert.True(item.End <= S(6));
+    }
+
+    private static bool OnGrid(TimeSpan t) => t.Ticks % TimeSpan.FromMilliseconds(TimelineEditor.GridMilliseconds).Ticks == 0;
+
+    [Theory]
+    [InlineData(0.0)]
+    [InlineData(37.3)]
+    [InlineData(81.9)]
+    [InlineData(-52.4)]
+    public void Moving_an_item_puts_its_start_on_a_multiple_of_50_ms(double dragPixels)
+    {
+        var timeline = Track((2, 2));   // 100 px per second: one pixel is 10 ms
+        var item = timeline.Items[0];
+
+        _editor.PointerDown(X(3), RowY(0));
+        _editor.PointerMove(X(3) + dragPixels);
+        _editor.PointerUp(X(3) + dragPixels);
+
+        Assert.True(OnGrid(item.Start), item.Start.ToString());
+        Assert.True(OnGrid(item.End), item.End.ToString());
+        Assert.Equal(S(2), item.Duration);
+    }
+
+    [Fact]
+    public void Dragging_either_edge_puts_that_edge_on_a_multiple_of_50_ms()
+    {
+        var timeline = Track((2, 2));
+        var item = timeline.Items[0];
+
+        _editor.PointerDown(X(2) + 1, RowY(0));    // left edge
+        _editor.PointerMove(X(2) + 1 + 17.7);
+        _editor.PointerUp(X(2) + 1 + 17.7);
+        Assert.True(OnGrid(item.Start));
+        Assert.Equal(S(4), item.End);
+
+        _editor.PointerDown(X(4) - 1, RowY(0));    // right edge
+        _editor.PointerMove(X(4) - 1 + 63.3);
+        _editor.PointerUp(X(4) - 1 + 63.3);
+        Assert.True(OnGrid(item.End));
+        Assert.True(OnGrid(item.Duration));
+    }
+
+    [Fact]
+    public void A_neighbour_off_the_grid_is_never_overlapped_by_the_rounding()
+    {
+        // An imported project can have edges anywhere.
+        var timeline = Track((1, 0.973), (3, 1));   // the first ends at 1.973 s
+        var item = timeline.Items[1];
+
+        _editor.PointerDown(X(3) + 1, RowY(0));    // left edge of the second, dragged to the left neighbour
+        _editor.PointerMove(X(1.9));
+        _editor.PointerUp(X(1.9));
+
+        Assert.True(item.Start >= timeline.Items[0].End);
+        Assert.True(item.Start - timeline.Items[0].End < TimeSpan.FromMilliseconds(TimelineEditor.GridMilliseconds));
+        Assert.Equal(S(4), item.End);
+    }
+
+    [Theory]
+    [InlineData(1890, 1900)]   // 40 ms past a step: the nearest step is the next one
+    [InlineData(1870, 1850)]
+    [InlineData(1850, 1850)]
+    [InlineData(1875, 1900)]   // halfway rounds up
+    public void The_playhead_pulls_an_edge_to_the_nearest_multiple_of_50_ms(int playheadMs, int expectedMs)
+    {
+        var timeline = Track((5, 1));
+        var item = timeline.Items[0];
+        _editor.SetPlayhead(TimeSpan.FromMilliseconds(playheadMs));
+
+        // Drag the left edge to within a few pixels of the playhead.
+        _editor.PointerDown(X(5) + 1, RowY(0));
+        _editor.PointerMove(X(playheadMs / 1000.0) + 3);
+        _editor.PointerUp(X(playheadMs / 1000.0) + 3);
+
+        Assert.Equal(TimeSpan.FromMilliseconds(expectedMs), item.Start);
+        Assert.Equal(S(6), item.End);
+    }
+
+    [Fact]
+    public void The_pull_of_the_playhead_is_measured_to_the_step_it_pulls_to()
+    {
+        var timeline = Track((5, 1));
+        var item = timeline.Items[0];
+        _editor.SetPlayhead(TimeSpan.FromMilliseconds(1870));   // pulls to 1850; at 100 px/s that reaches 80 ms
+
+        _editor.PointerDown(X(5) + 1, RowY(0));
+        _editor.PointerMove(X(1.95));   // the edge is at 1.94 (the grab was 10 ms inside): 90 ms past 1850, out of reach
+        _editor.PointerUp(X(1.95));
+
+        Assert.Equal(TimeSpan.FromMilliseconds(1950), item.Start);
+    }
+
+    [Fact]
+    public void A_marker_pulls_an_edge_to_the_nearest_multiple_of_50_ms_too()
+    {
+        var timeline = Track((5, 1));
+        var item = timeline.Items[0];
+        _doc.Execute(PixelTuner.Core.Editing.Edits.AddMarker(_doc.Project, new Marker { Name = "m", Position = TimeSpan.FromMilliseconds(2870) }));
+
+        _editor.PointerDown(X(5) + 1, RowY(0));
+        _editor.PointerMove(X(2.87) - 3);
+        _editor.PointerUp(X(2.87) - 3);
+
+        Assert.Equal(TimeSpan.FromMilliseconds(2850), item.Start);
+    }
+
+    [Fact]
+    public void Edges_stay_a_grid_step_apart_at_least()
+    {
+        var timeline = Track((2, 1));
+        var item = timeline.Items[0];
+
+        _editor.PointerDown(X(3) - 1, RowY(0));
+        _editor.PointerMove(X(2));   // all the way over the start
+        _editor.PointerUp(X(2));
+
+        Assert.Equal(TimeSpan.FromMilliseconds(TimelineEditor.GridMilliseconds), item.Duration);
+        Assert.True(OnGrid(item.End));
+    }
+
+    [Fact]
+    public void A_new_item_starts_on_the_grid_when_the_playhead_is_between_steps()
+    {
+        var timeline = Track();
+        _editor.SetPlayhead(TimeSpan.FromMilliseconds(1234.5));
+        var item = _editor.AddItem(timeline, new TimelineItem(), S(5));
+
+        Assert.NotNull(item);
+        Assert.Equal(TimeSpan.FromMilliseconds(1250), item!.Start);
+        Assert.Equal(S(5), item.Duration);
+    }
+
+    [Fact]
+    public void A_new_item_cut_by_the_next_one_ends_on_the_grid()
+    {
+        var timeline = Track((3.0, 1));
+        _editor.SetPlayhead(TimeSpan.FromMilliseconds(1234));
+        var item = _editor.AddItem(timeline, new TimelineItem(), S(5));
+
+        Assert.True(OnGrid(item!.Start) && OnGrid(item.End));
+        Assert.Equal(S(3), item.End);
     }
 
     [Fact]

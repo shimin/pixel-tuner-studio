@@ -48,11 +48,28 @@ public sealed class EditorItemTests : IDisposable
         Assert.Equal(TimeSpan.FromSeconds(3), item.Start);
         Assert.Equal(EditorViewModel.DefaultItemLength, item.Duration);
         Assert.True(_doc.HasMedia(item.ResourceId));
+        Assert.Equal((2, 1), (item.MediaWidth, item.MediaHeight));
         Assert.Same(item, _editor.Timelines.Selected);
         Assert.True(_editor.HasImage);
 
         _doc.Undo();
         Assert.Empty(_doc.Project.Timelines[0].Items);
+    }
+
+    [Fact]
+    public async Task A_picture_of_another_height_than_the_timeline_plays_is_refused_with_the_reason()
+    {
+        _editor.AddPixelTimelineCommand.Execute(null);
+        var timeline = _doc.Project.Timelines[0];
+        _doc.Execute(PixelTuner.Core.Editing.Edits.SetTimelineHeight(timeline, 36));
+        _picker.ImagePath = WriteBmp();   // one LED high
+
+        await _editor.AddItemCommand.ExecuteAsync(null);
+
+        Assert.Empty(timeline.Items);
+        Assert.Contains("36", _editor.Message);
+        Assert.Contains("pic.bmp", _editor.Message);
+        Assert.Equal(0, _doc.MediaCount);   // nothing of it entered the project
     }
 
     [Fact]
@@ -110,8 +127,15 @@ public sealed class EditorItemTests : IDisposable
         Assert.Equal(40, _editor.Brightness);
 
         _editor.Stretching = 0;   // out of range: ignored
+        _editor.Stretching = 1;   // the least is 2, for every device
         Assert.Equal(3, item.Stretching);
+        _editor.Stretching = 2;
+        Assert.Equal(2, item.Stretching);
+        _doc.Undo();
+        Assert.Equal(3, item.Stretching);
+        _doc.Redo();
 
+        _doc.Undo();
         _doc.Undo();
         _doc.Undo();
         _doc.Undo();

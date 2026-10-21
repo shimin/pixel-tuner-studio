@@ -1,5 +1,6 @@
 using PixelTuner.Core.Editing;
 using PixelTuner.Core.Export;
+using PixelTuner.Core.Imaging;
 using PixelTuner.Core.Model;
 
 namespace PixelTuner.Package;
@@ -19,6 +20,9 @@ public sealed class ProjectDocument : IDisposable
         Project = project;
         Path = path;
         _source = source;
+        // Imported projects and older packages do not carry the picture sizes the editor's rules need.
+        // Reading them is not a change of the project; they are saved with the next save.
+        if (source is not null) MediaSizes.Fill(project, id => source.HasResource(id) ? source.OpenResource(id) : null);
         _createdUtc = source?.Manifest.CreatedUtc;
         _history = new UndoHistory(time);
         _history.Changed += (_, _) => Changed?.Invoke(this, EventArgs.Empty);
