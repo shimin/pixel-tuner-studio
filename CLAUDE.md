@@ -29,7 +29,9 @@
   `tests/PixelTuner.Legacy.OracleTests` compiles PixelTuner 2's own `Communication/Pixelate`, `Gradient`
   and `Binarize` (with the `FileViewModel` glue) and compares on random shows: pixel, fan, video, E-Pic poi
   and LightMaster (the last two have no reference shows). The format, field by field: `docs/binary-format.md`;
-  a change to the export updates it.
+  a change to the export updates it. `ShowBuilder` (project + device → .bin, with errors and warnings) is the one
+  entry for file export and upload; `BinReader` reads a .bin back. `EditorRulesTests` and `ShowBuilderTests` in
+  `tests/PixelTuner.Core.Tests` check each editor rule as edit → .bin field → undo.
 - The .bin export runs on the model (`ShowProject`). The `Ptp*Export` classes convert the .ptp with
   `PtpConverter` first, so the reference tests also cover the .ptp import. A field that the export
   needs must survive `PtpConverter` and the package JSON: `tests/PixelTuner.Package.Tests` checks

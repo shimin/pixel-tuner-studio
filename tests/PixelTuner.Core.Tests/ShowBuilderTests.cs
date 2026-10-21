@@ -320,6 +320,81 @@ public class ShowBuilderTests
         Assert.Single(BinReader.Images(BinReader.ReadPpoi(result.Bin!)));
     }
 
+    [Fact]
+    public void Video_offset_layout_and_laser_reach_the_file_and_undo_brings_the_old_file_back()
+    {
+        var item = Video(0, 2);
+        var timeline = Add(TimelineKind.Video, item);
+        var small = Layout(2, 2, 0, 1);
+        var big = Layout(3, 3, 0, 1, 2, 3);
+        _history.Do(Edits.SetLedLayout(_project, timeline, small.Id));
+        var device = Bind(DeviceKind.Video, 0, timeline);
+        byte[] first = Build(device).Bin!;
+
+        _history.Do(Edits.SetOffset(item, 40, 15));   // the markup sits elsewhere on the frame: other pixels
+        byte[] moved = Build(device).Bin!;
+        Assert.NotEqual(first, moved);
+        Assert.Equal(first.Length, moved.Length);     // same size, other colours
+        _history.Undo();
+        Assert.Equal(first, Build(device).Bin);
+
+        _history.Do(Edits.SetLedLayout(_project, timeline, big.Id));
+        Assert.Equal(4, BinReader.ReadPpoi(Build(device).Bin!).Height);   // H follows the markup
+        _history.Undo();
+        Assert.Equal(2, BinReader.ReadPpoi(Build(device).Bin!).Height);
+
+        Assert.Equal<ushort>(0, BinReader.ReadPpoi(first).Timelines[0].Entries[0].Mask);
+        _history.Do(Edits.SetLaser(item, true));
+        Assert.Equal<ushort>(1, BinReader.ReadPpoi(Build(device).Bin!).Timelines[0].Entries[0].Mask);   // video devices read bit 0 only
+    }
+
+    [Fact]
+    public void The_video_colour_of_the_timeline_is_not_written_and_the_epic_colour_is_written_as_it_is()
+    {
+        var video = Add(TimelineKind.Video, Video(0, 1));
+        _history.Do(Edits.SetLedLayout(_project, video, Layout(2, 1, 0, 1).Id));
+        _history.Do(Edits.SetTimelineColor(video, "#FF00FF00"));
+        Assert.Equal(new Rgb(0, 0, 20), BinReader.ReadPpoi(Build(Bind(DeviceKind.Video, 0, video)).Bin!).Timelines[0].Color);
+
+        Png("g", 2, 1, new SKColor(1, 2, 3));
+        var epic = Add(TimelineKind.EpicPoi, new TimelineItem { Kind = ItemKind.Gradient, ResourceId = "g", SourcePath = "g", Duration = S(1), Stretching = 4 });
+        _history.Do(Edits.SetTimelineColor(epic, "#FF28B4DC"));
+        var file = BinReader.ReadPpoi(Build(Bind(DeviceKind.EpicPoi, 0, epic)).Bin!);
+        Assert.Equal(new Rgb(0x28, 0xB4, 0xDC), file.Timelines[0].Color);   // not divided by ten
+        Assert.Equal(file.Timelines[0].Color, file.Timelines[0].SelectionColor);
+    }
+
+    [Fact]
+    public void Replacing_the_picture_of_an_item_changes_its_block_and_nothing_else()
+    {
+        var item = Picture("a", 4, 4, 0, 1);
+        var timeline = Add(TimelineKind.Pixel, item);
+        var device = Bind(DeviceKind.Poi, 4, timeline);
+        byte[] before = Build(device).Bin!;
+        Png("b", 6, 4, new SKColor(9, 9, 9));
+
+        _history.Do(Edits.ReplaceMedia(timeline, item, "b", "b.png", 6, 4));
+        var after = BinReader.ReadPpoi(Build(device).Bin!);
+        Assert.Equal(6, after.Timelines[0].Entries[0].Image.Width);
+        Assert.Equal(4, BinReader.ReadPpoi(before).Timelines[0].Entries[0].Image.Width);
+        _history.Undo();
+        Assert.Equal(before, Build(device).Bin);
+    }
+
+    [Fact]
+    public void The_order_of_light_timelines_is_the_order_of_the_slots()
+    {
+        var red = Add(TimelineKind.Light, Colour("#FF0000", 0, 1));
+        var blue = Add(TimelineKind.Light, Colour("#0000FF", 0, 1));
+        var device = Bind(DeviceKind.Light, 0, red, blue);
+        var file = BinReader.ReadLght(Build(device).Bin!);
+        Assert.Equal((new Rgb(255, 0, 0), new Rgb(0, 0, 255)), (file.At(0).Slot(0), file.At(0).Slot(1)));
+
+        _history.Do(Edits.SetDeviceTimelines(_project, device, [blue.Id, red.Id]));
+        file = BinReader.ReadLght(Build(device).Bin!);
+        Assert.Equal((new Rgb(0, 0, 255), new Rgb(255, 0, 0)), (file.At(0).Slot(0), file.At(0).Slot(1)));
+    }
+
     // ---- the device and its timelines
 
     [Fact]
