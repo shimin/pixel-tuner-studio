@@ -42,9 +42,9 @@ they aborted in most runs.
 
 **Ideas for a real fix, roughly in order of how much I would try them:**
 
-1. Do not use `Media.Parse` to decide whether a file is a sound. Open it in a `MediaPlayer` that is never played
-   and read the tracks from the `MediaPlayer`/`Media` after `libvlc_media_parse_with_options` is not involved at
-   all (or use `Media.ParsedStatus` events only on media we keep).
+1. Do not use `Media.Parse` to decide whether a file is a sound. Find another way to learn the length and the
+   tracks that does not start LibVLC's parser thread (for example, open the file in a `MediaPlayer` that is
+   never played), so there is no late event to race with.
 2. Keep failed media until LibVLC is certainly finished with them: a small graveyard owned by `VlcLibrary`,
    disposed when the library is, with no timer. A few leaked objects per bad file for the life of the process is
    a fair price.
