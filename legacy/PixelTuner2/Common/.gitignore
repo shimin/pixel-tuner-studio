@@ -1,0 +1,12 @@
+bin/
+obj/
+Output/
+Debug/
+Release/
+*.exe
+*.dll
+*.pdb
+*.sdf
+*.suo
+*.opensdf
+*.o

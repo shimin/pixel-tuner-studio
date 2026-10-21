@@ -1,0 +1,26 @@
+﻿<Window x:Name="RoundPixel" x:Class="Common.ProjectPlayer.PixelTwister.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:Common.ProjectPlayer.PixelTwister"
+        Title="MainWindow" Height="600" Width="600" Background="Black" ResizeMode="NoResize">
+    <Border Margin="0,368,-6,40" RenderTransformOrigin="0.5,0.5">
+        <Border.Effect>
+            <local:PolarShaderEffect TilingX="0.5"/>
+        </Border.Effect>
+        <Border.RenderTransform>
+            <TransformGroup>
+                <ScaleTransform ScaleY="-1" ScaleX="1"/>
+                <SkewTransform AngleY="0"/>
+                <RotateTransform/>
+                <TranslateTransform/>
+            </TransformGroup>
+        </Border.RenderTransform>
+        <Border.Background>
+            <VisualBrush>
+                <VisualBrush.Visual>
+                    <Image Name="PixelImage" Source="65_mickey.bmp" Stretch="Fill"/>
+                </VisualBrush.Visual>
+            </VisualBrush>
+        </Border.Background>
+    </Border>
+</Window>
