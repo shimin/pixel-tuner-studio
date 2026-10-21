@@ -103,8 +103,9 @@ public sealed class VlcAudioPlayer : IAudioPlayer
         }
         catch
         {
-            // Not at once: LibVLC's parser thread is still delivering the "parsed" event to this media for a
-            // moment after Parse returns, and releasing the media under it crashes the process.
+            // TODO(release): a stopgap, see docs/before-release.md. Not at once: LibVLC's parser thread is still
+            // delivering the "parsed" event to this media for a moment after Parse returns, and releasing the
+            // media under it crashes the process. A timer is a guess; find a real fix before shipping.
             if (media is not null) DisposeLater(media);
             DeleteQuietly(temp);
             throw;

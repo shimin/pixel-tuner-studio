@@ -56,6 +56,8 @@
   events from a worker, and release a `Media` that failed to parse late (releasing it at once crashes the process).
   `PIXELTUNER_VLC_ARGS="--aout=dummy"` runs the app without a sound card; `PIXELTUNER_REQUIRE_VLC=1` makes the
   LibVLC tests fail instead of passing quietly when LibVLC is missing (CI sets it).
+- `docs/before-release.md` lists what works today but must be redone before a release (start there when preparing
+  one). Add to it whenever a stopgap goes in, and mark the code with `TODO(release)`.
 - Merge PRs with a normal merge commit only.
 - The cloud sandbox can build and test Core, Package, Sync, UI and Desktop on Linux
   (`apt install dotnet-sdk-10.0`, `SSL_CERT_FILE=/root/.ccr/ca-bundle.crt` for NuGet).
