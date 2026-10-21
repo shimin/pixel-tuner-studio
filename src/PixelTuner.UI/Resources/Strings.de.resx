@@ -108,6 +108,10 @@
   <data name="Edit_SetMonochrome" xml:space="preserve"><value>Monochromer Kanal</value></data>
   <data name="Edit_SetLedLayout" xml:space="preserve"><value>LED-Layout ändern</value></data>
   <data name="Edit_ReplaceMedia" xml:space="preserve"><value>Bild ersetzen</value></data>
+  <data name="Edit_AddDevice" xml:space="preserve"><value>Gerät hinzufügen</value></data>
+  <data name="Edit_RemoveDevice" xml:space="preserve"><value>Gerät entfernen</value></data>
+  <data name="Edit_SetDeviceTimelines" xml:space="preserve"><value>Spuren des Geräts ändern</value></data>
+  <data name="Edit_SetDeviceLedCount" xml:space="preserve"><value>LED-Anzahl des Geräts ändern</value></data>
   <data name="Command_AddItem" xml:space="preserve"><value>Datei hinzufügen…</value></data>
   <data name="FileType_Image" xml:space="preserve"><value>Bilder</value></data>
   <data name="Item_AddFailed" xml:space="preserve"><value>{0} kann nicht hinzugefügt werden: {1}</value></data>

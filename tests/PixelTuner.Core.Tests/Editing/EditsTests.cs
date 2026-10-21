@@ -282,20 +282,91 @@ public class EditsTests
     }
 
     [Fact]
-    public void Removing_a_timeline_unbinds_its_devices_and_undo_binds_them_again()
+    public void Removing_a_timeline_takes_it_off_its_devices_and_undo_puts_it_back_in_place()
     {
+        var first = TimelineWith();
         var timeline = TimelineWith();
-        var device = new DeviceBinding { Name = "poi", TimelineId = timeline.Id };
-        var other = new DeviceBinding { Name = "hoop", TimelineId = Guid.NewGuid() };
+        var last = TimelineWith();
+        var device = new DeviceBinding { Name = "poi", TimelineIds = [first.Id, timeline.Id, last.Id] };
+        var other = new DeviceBinding { Name = "hoop", TimelineIds = [last.Id] };
         _project.Devices.AddRange([device, other]);
 
         _history.Do(Edits.RemoveTimeline(_project, timeline));
-        Assert.Null(device.TimelineId);
-        Assert.NotNull(other.TimelineId);
+        Assert.Equal([first.Id, last.Id], device.TimelineIds);
+        Assert.Equal([last.Id], other.TimelineIds);
 
         _history.Undo();
-        Assert.Equal(timeline.Id, device.TimelineId);
-        Assert.Single(_project.Timelines);
+        Assert.Equal([first.Id, timeline.Id, last.Id], device.TimelineIds);
+        Assert.Equal(3, _project.Timelines.Count);
+    }
+
+    private DeviceBinding Device(string type, int leds = 0, params Timeline[] timelines) =>
+        new() { Name = type, DeviceType = type, LedCount = leds, TimelineIds = timelines.Select(t => t.Id).ToList() };
+
+    [Fact]
+    public void A_device_plays_timelines_of_its_kind_in_the_order_chosen()
+    {
+        var a = TimelineWith();
+        var b = TimelineWith();
+        var device = Device(DeviceKind.Poi);
+        _history.Do(Edits.AddDevice(_project, device));
+
+        _history.Do(Edits.SetDeviceTimelines(_project, device, [b.Id, a.Id]));
+        Assert.Equal([b.Id, a.Id], device.TimelineIds);
+        _history.Do(Edits.SetDeviceTimelines(_project, device, [a.Id]));
+        _history.Undo();
+        Assert.Equal([b.Id, a.Id], device.TimelineIds);
+
+        var light = new Timeline { Kind = TimelineKind.Light };
+        _project.Timelines.Add(light);
+        Assert.Throws<InvalidOperationException>(() => Edits.SetDeviceTimelines(_project, device, [a.Id, light.Id]));
+        Assert.Throws<ArgumentException>(() => Edits.SetDeviceTimelines(_project, device, [a.Id, a.Id]));
+        Assert.Throws<ArgumentException>(() => Edits.SetDeviceTimelines(_project, device, [Guid.NewGuid()]));
+
+        _history.Do(Edits.RemoveDevice(_project, device));
+        Assert.Empty(_project.Devices);
+        _history.Undo();
+        Assert.Single(_project.Devices);
+    }
+
+    [Fact]
+    public void A_fan_plays_one_timeline_and_a_video_module_at_most_two()
+    {
+        var pixel = TimelineWith();
+        var pixel2 = TimelineWith();
+        var videos = Enumerable.Range(0, 3).Select(_ => new Timeline { Kind = TimelineKind.Video }).ToList();
+        _project.Timelines.AddRange(videos);
+
+        var fan = Device(DeviceKind.Fan);
+        _history.Do(Edits.AddDevice(_project, fan));
+        Assert.Throws<InvalidOperationException>(() => Edits.SetDeviceTimelines(_project, fan, [pixel.Id, pixel2.Id]));
+
+        var video = Device(DeviceKind.Video);
+        _history.Do(Edits.AddDevice(_project, video));
+        _history.Do(Edits.SetDeviceTimelines(_project, video, [videos[0].Id, videos[1].Id]));
+        Assert.Throws<InvalidOperationException>(() => Edits.SetDeviceTimelines(_project, video, videos.Select(t => t.Id).ToList()));
+    }
+
+    [Fact]
+    public void A_poi_plays_only_timelines_as_high_as_its_LEDs()
+    {
+        var tall = new Timeline();
+        _history.Do(Edits.AddTimeline(_project, tall));
+        _history.Do(Edits.AddItem(tall, Picture(80)));
+        var short1 = new Timeline();
+        _history.Do(Edits.AddTimeline(_project, short1));
+        _history.Do(Edits.AddItem(short1, Picture(36)));
+
+        var poi = Device(DeviceKind.Poi, leds: 36);
+        _history.Do(Edits.AddDevice(_project, poi));
+        Assert.Throws<InvalidOperationException>(() => Edits.SetDeviceTimelines(_project, poi, [tall.Id]));
+        _history.Do(Edits.SetDeviceTimelines(_project, poi, [short1.Id]));
+
+        // The number of LEDs cannot change under the timelines it plays.
+        Assert.Throws<InvalidOperationException>(() => Edits.SetDeviceLedCount(_project, poi, 80));
+        _history.Do(Edits.SetDeviceLedCount(_project, poi, 36));
+
+        Assert.Throws<ArgumentException>(() => Edits.AddDevice(_project, new DeviceBinding { DeviceType = "toaster" }));
     }
 
     [Fact]

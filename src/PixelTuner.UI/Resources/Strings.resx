@@ -108,6 +108,10 @@
   <data name="Edit_SetMonochrome" xml:space="preserve"><value>Change monochrome channel</value></data>
   <data name="Edit_SetLedLayout" xml:space="preserve"><value>Change LED layout</value></data>
   <data name="Edit_ReplaceMedia" xml:space="preserve"><value>Replace picture</value></data>
+  <data name="Edit_AddDevice" xml:space="preserve"><value>Add device</value></data>
+  <data name="Edit_RemoveDevice" xml:space="preserve"><value>Remove device</value></data>
+  <data name="Edit_SetDeviceTimelines" xml:space="preserve"><value>Change timelines of a device</value></data>
+  <data name="Edit_SetDeviceLedCount" xml:space="preserve"><value>Change LED count of a device</value></data>
   <data name="Command_AddItem" xml:space="preserve"><value>Add file…</value></data>
   <data name="FileType_Image" xml:space="preserve"><value>Images</value></data>
   <data name="Item_AddFailed" xml:space="preserve"><value>Cannot add {0}: {1}</value></data>

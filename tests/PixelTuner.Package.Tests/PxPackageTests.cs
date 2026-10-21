@@ -168,6 +168,39 @@ public sealed class PxPackageTests : IDisposable
     }
 
     [Fact]
+    public void Devices_keep_their_timelines_in_order_and_an_old_single_timeline_is_read_into_the_list()
+    {
+        var a = Guid.NewGuid();
+        var b = Guid.NewGuid();
+        var project = new ShowProject
+        {
+            Devices = [new DeviceBinding { Name = "poi", DeviceType = DeviceKind.Poi, LedCount = 36, MemoryBytes = 3_800_000, TimelineIds = [b, a] }],
+        };
+        var path = Path.Combine(_dir, "devices.pxpkg");
+        new PxPackageWriter().Save(path, project);
+        using (var pkg = PxPackage.Open(path))
+        {
+            var device = Assert.Single(pkg.Project.Devices);
+            Assert.Equal([b, a], device.TimelineIds);
+            Assert.Equal((36, 3_800_000), (device.LedCount, device.MemoryBytes));
+        }
+
+        // What earlier versions wrote: "timelineId" and no list.
+        using (var zip = ZipFile.Open(path, ZipArchiveMode.Update))
+        {
+            var entry = zip.GetEntry("project.json")!;
+            string json;
+            using (var r = new StreamReader(entry.Open())) json = r.ReadToEnd();
+            entry.Delete();
+            json = System.Text.RegularExpressions.Regex.Replace(json, "\"timelineIds\": \\[[^\\]]*\\]", $"\"timelineId\": \"{a}\"");
+            using var w = new StreamWriter(zip.CreateEntry("project.json").Open());
+            w.Write(json);
+        }
+        using var old = PxPackage.Open(path);
+        Assert.Equal([a], old.Project.Devices[0].TimelineIds);
+    }
+
+    [Fact]
     public void Rejects_a_package_from_a_newer_version()
     {
         var path = Path.Combine(_dir, "new.pxpkg");

@@ -79,10 +79,9 @@ public static class Edits
     public static Edit RemoveTimeline(ShowProject project, Timeline timeline)
     {
         var edits = new List<Edit>();
-        // Devices that played this timeline stay bound to nothing, and come back with undo.
-        foreach (var binding in project.Devices.Where(d => d.TimelineId == timeline.Id))
-            edits.Add(new SetValueEdit<Guid?>("RemoveTimeline", binding, nameof(binding.TimelineId),
-                () => binding.TimelineId, v => binding.TimelineId = v, null, mergeable: false));
+        // Devices that played this timeline stop playing it, and play it again with undo.
+        foreach (var binding in project.Devices.Where(d => d.TimelineIds.Contains(timeline.Id)))
+            edits.Add(new RemoveEdit<Guid>("RemoveTimeline", binding.TimelineIds, timeline.Id));
         edits.Add(new RemoveEdit<Timeline>("RemoveTimeline", project.Timelines, timeline));
         return new GroupEdit("RemoveTimeline", edits);
     }
@@ -382,6 +381,76 @@ public static class Edits
             new SetValueEdit<TimeSpan>("MoveItem", item, nameof(item.Start), () => item.Start, v => item.Start = v, newStart, mergeable: false),
             new InsertEdit<TimelineItem>("MoveItem", to.Items, SortedIndex(to, newStart, null), item),
         ]);
+    }
+
+    // ---- devices
+
+    public static Edit AddDevice(ShowProject project, DeviceBinding device)
+    {
+        if (!IsKnownDeviceKind(device.DeviceType)) throw new ArgumentException($"Unknown device type '{device.DeviceType}'.", nameof(device));
+        if (device.LedCount < 0 || device.LedCount > ushort.MaxValue) throw new ArgumentOutOfRangeException(nameof(device));
+        CheckTimelines(project, device, device.TimelineIds);
+        return new InsertEdit<DeviceBinding>("AddDevice", project.Devices, project.Devices.Count, device);
+    }
+
+    public static Edit RemoveDevice(ShowProject project, DeviceBinding device) =>
+        new RemoveEdit<DeviceBinding>("RemoveDevice", project.Devices, device);
+
+    /// <summary>The timelines a device plays and their order. Each must be of the kind the device plays, and as high as the device.</summary>
+    public static Edit SetDeviceTimelines(ShowProject project, DeviceBinding device, IReadOnlyList<Guid> timelineIds)
+    {
+        CheckTimelines(project, device, timelineIds);
+        var old = device.TimelineIds.ToList();
+        var next = timelineIds.ToList();
+        return new SetValueEdit<List<Guid>>("SetDeviceTimelines", device, nameof(device.TimelineIds), () => old, v => device.TimelineIds = v.ToList(), next, mergeable: false);
+    }
+
+    /// <summary>The number of LEDs the device reported (or the user chose for a file export).</summary>
+    public static Edit SetDeviceLedCount(ShowProject project, DeviceBinding device, int ledCount)
+    {
+        if (ledCount < 0 || ledCount > ushort.MaxValue) throw new ArgumentOutOfRangeException(nameof(ledCount));
+        CheckTimelines(project, device, device.TimelineIds, ledCount);
+        return new SetValueEdit<int>("SetDeviceLedCount", device, nameof(device.LedCount), () => device.LedCount, v => device.LedCount = v, ledCount, mergeable: false);
+    }
+
+    /// <summary>The kind of timeline a kind of device plays.</summary>
+    public static string TimelineKindOf(string deviceKind) => deviceKind switch
+    {
+        DeviceKind.Poi or DeviceKind.Hoop or DeviceKind.Fan => TimelineKind.Pixel,
+        DeviceKind.Video => TimelineKind.Video,
+        DeviceKind.EpicPoi => TimelineKind.EpicPoi,
+        DeviceKind.Light => TimelineKind.Light,
+        _ => throw new ArgumentException($"Unknown device type '{deviceKind}'.", nameof(deviceKind)),
+    };
+
+    /// <summary>The most timelines a device takes: a fan plays one, a video module one or two LED chains.</summary>
+    public static int MaxTimelinesOf(string deviceKind) => deviceKind switch
+    {
+        DeviceKind.Fan => 1,
+        DeviceKind.Video => 2,
+        _ => byte.MaxValue,   // the .bin counts timelines (and LightMaster slots) in a byte
+    };
+
+    private static bool IsKnownDeviceKind(string kind) =>
+        kind is DeviceKind.Poi or DeviceKind.Hoop or DeviceKind.Fan or DeviceKind.Video or DeviceKind.EpicPoi or DeviceKind.Light;
+
+    private static void CheckTimelines(ShowProject project, DeviceBinding device, IReadOnlyList<Guid> ids, int? ledCount = null)
+    {
+        string kind = TimelineKindOf(device.DeviceType);
+        if (ids.Count > MaxTimelinesOf(device.DeviceType))
+            throw new InvalidOperationException($"A '{device.DeviceType}' plays at most {MaxTimelinesOf(device.DeviceType)} timelines.");
+        if (ids.Distinct().Count() != ids.Count) throw new ArgumentException("A timeline is listed twice.", nameof(ids));
+        foreach (var id in ids)
+        {
+            var timeline = project.Timelines.FirstOrDefault(t => t.Id == id)
+                ?? throw new ArgumentException("The project has no such timeline.", nameof(ids));
+            if (timeline.Kind != kind)
+                throw new InvalidOperationException($"A '{device.DeviceType}' does not play '{timeline.Kind}' timelines.");
+            int leds = ledCount ?? device.LedCount;
+            // A poi or a hoop has as many LEDs as its pictures are high; a fan takes the height of its picture.
+            if (device.DeviceType is DeviceKind.Poi or DeviceKind.Hoop && leds > 0 && !FitsHeight(timeline, leds))
+                throw new InvalidOperationException($"The device has {leds} LEDs, the timeline plays {PixelHeight(timeline)}.");
+        }
     }
 
     // ---- markers

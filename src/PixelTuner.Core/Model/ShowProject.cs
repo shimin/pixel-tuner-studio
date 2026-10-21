@@ -221,19 +221,65 @@ public sealed class LedLayout
     public List<int> Leds { get; set; } = [];
 }
 
-/// <summary>Which device plays which timeline.</summary>
+/// <summary>The kinds of device a show is built for. Each takes its own .bin.</summary>
+public static class DeviceKind
+{
+    /// <summary>Pixel Poi and staves: pixel timelines, k × 50 µs per column.</summary>
+    public const string Poi = "poi";
+
+    /// <summary>Pixel Hoop: pixel timelines, a column is the whole ring.</summary>
+    public const string Hoop = "hoop";
+
+    /// <summary>Fan on a video module: one pixel timeline, k milliseconds per column.</summary>
+    public const string Fan = "fan";
+
+    /// <summary>Video module: video timelines (one, or a pair of LED chains).</summary>
+    public const string Video = "video";
+
+    /// <summary>E-Pic poi: E-Pic timelines.</summary>
+    public const string EpicPoi = "epic-poi";
+
+    /// <summary>LightMaster: light timelines, one per channel.</summary>
+    public const string Light = "light";
+}
+
+/// <summary>Which device plays which timelines, in which order: the .bin of a device is built from this list.</summary>
 public sealed class DeviceBinding
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Name { get; set; } = "";
 
-    /// <summary>Device type as in PixelTuner 2: "pixel", "hoop", "epic-poi", "illuminator", "video".</summary>
-    public string DeviceType { get; set; } = "";
+    /// <summary>One of <see cref="DeviceKind"/>.</summary>
+    public string DeviceType { get; set; } = DeviceKind.Poi;
 
     /// <summary>Name the device reports over the network (the lookup "tag").</summary>
     public string? NetworkTag { get; set; }
 
-    public Guid? TimelineId { get; set; }
+    /// <summary>
+    /// LEDs of the device (H in the .bin of a pixel device); the pixel timelines it plays must be that high.
+    /// 0 while unknown (before the device was ever connected).
+    /// </summary>
+    public int LedCount { get; set; }
+
+    /// <summary>Memory for shows in bytes; the .bin must fit. 0 while unknown.</summary>
+    public long MemoryBytes { get; set; }
+
+    /// <summary>
+    /// Timelines the device plays, in the order of the .bin: for a poi that is the order of its menu programs,
+    /// for the LightMaster the order of its channels.
+    /// </summary>
+    public List<Guid> TimelineIds { get; set; } = [];
+
+    /// <summary>Packages from before a device could play several timelines stored one id; it is read into the list.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Guid? TimelineId
+    {
+        get => null;
+        set
+        {
+            if (value is { } id && !TimelineIds.Contains(id)) TimelineIds.Add(id);
+        }
+    }
 }
 
 public sealed class Marker
