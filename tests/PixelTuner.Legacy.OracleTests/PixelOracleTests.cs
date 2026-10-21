@@ -114,6 +114,12 @@ public sealed class PixelOracleTests : IDisposable
     [InlineData(4, StudioDepth.Bit24)]
     [InlineData(5, StudioDepth.Bit36)]
     [InlineData(6, StudioDepth.Bit12)]
+    [InlineData(7, StudioDepth.Bit24)]
+    [InlineData(8, StudioDepth.Bit24)]
+    [InlineData(9, StudioDepth.Bit24)]
+    [InlineData(10, StudioDepth.Bit24)]
+    [InlineData(11, StudioDepth.Bit24)]
+    [InlineData(12, StudioDepth.Bit24)]
     public void Random_video_pair_matches_PixelTuner_2(int seed, StudioDepth depth)
     {
         var random = new Random(seed);
@@ -126,6 +132,25 @@ public sealed class PixelOracleTests : IDisposable
 
         byte[] actual = Studio([(line1, layout1), (line2, layout2)], depth);
         byte[] expected = LegacyVideoPair(line1, line2, Points(layout1), Points(layout2), Legacy(depth));
+        Assert.Equal(expected, actual);
+    }
+
+    /// <summary>
+    /// A pause on the first timeline that the second one cuts in two: PixelTuner 2 cloned the
+    /// pause item for each piece, so the pieces shared one picture (the first piece's).
+    /// </summary>
+    [Fact]
+    public void Video_pair_with_a_pause_cut_by_the_other_timeline_matches_PixelTuner_2()
+    {
+        var gifs = CopyGifs();
+        var random = new Random(1);
+        var layout1 = RandomLayout(random);
+        var layout2 = RandomLayout(random);
+        List<ItemSpec> line1 = [new(gifs[0], 1000, 3000, 3, 80, false)];
+        List<ItemSpec> line2 = [new(gifs[1], 0, 500, 2, 60, false), new(gifs[2], 500, 3000, 5, 100, true)];
+
+        byte[] actual = Studio([(line1, layout1), (line2, layout2)], StudioDepth.Bit24);
+        byte[] expected = LegacyVideoPair(line1, line2, Points(layout1), Points(layout2), LegacyDepth.Bit24);
         Assert.Equal(expected, actual);
     }
 
