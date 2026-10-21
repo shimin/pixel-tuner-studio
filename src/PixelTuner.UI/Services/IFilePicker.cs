@@ -22,6 +22,9 @@ public interface IFilePicker
     /// <summary>Desktop: asks for an image to put on a timeline. Returns its path, or null if cancelled.</summary>
     Task<string?> PickImagePathAsync();
 
+    /// <summary>Desktop: asks for an animation (GIF) for a video timeline. Returns its path, or null if cancelled.</summary>
+    Task<string?> PickGifPathAsync();
+
     /// <summary>Desktop: asks for a PixelTuner 2 project (.ptp). Returns its path, or null if cancelled.</summary>
     Task<string?> PickLegacyProjectAsync();
 }
@@ -58,6 +61,22 @@ public sealed class StorageFilePicker(TopLevel topLevel) : IFilePicker
         MimeTypes = ["image/png", "image/jpeg", "image/bmp", "image/gif"],
         AppleUniformTypeIdentifiers = ["public.image"],
     };
+
+    static readonly FilePickerFileType GifType = new(Strings.FileType_Gif)
+    {
+        Patterns = ["*.gif"],
+        MimeTypes = ["image/gif"],
+    };
+
+    public async Task<string?> PickGifPathAsync()
+    {
+        var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            AllowMultiple = false,
+            FileTypeFilter = [GifType, FilePickerFileTypes.All],
+        });
+        return files.Count == 0 ? null : files[0].TryGetLocalPath();
+    }
 
     public async Task<string?> PickImagePathAsync()
     {

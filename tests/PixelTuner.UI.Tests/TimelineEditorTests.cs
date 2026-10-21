@@ -324,4 +324,24 @@ public class TimelineEditorTests
         _editor.PointerUp(X(2), RowY(2));
         Assert.Contains(item, a.Items);
     }
+
+    [Theory]
+    [InlineData("1:05.250", 65.25)]
+    [InlineData("65.25", 65.25)]
+    [InlineData("65,25", 65.25)]
+    [InlineData(" 0:03 ", 3)]
+    [InlineData("12", 12)]
+    public void Time_text_is_read_back(string text, double seconds)
+    {
+        Assert.True(TimeFormat.TryParse(text, out var time));
+        Assert.Equal(seconds, time.TotalSeconds, 6);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("abc")]
+    [InlineData("1:2:3")]
+    [InlineData("-5")]
+    [InlineData("1:-5")]
+    public void Bad_time_text_is_refused(string text) => Assert.False(TimeFormat.TryParse(text, out _));
 }

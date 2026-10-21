@@ -100,13 +100,29 @@
   <data name="Audio_AddFailed" xml:space="preserve"><value>Der Ton konnte nicht hinzugefügt werden: {0}</value></data>
   <data name="Edit_SetAudio" xml:space="preserve"><value>Tonspur festlegen</value></data>
   <data name="Edit_RemoveAudio" xml:space="preserve"><value>Tonspur entfernen</value></data>
-  <data name="Command_AddImage" xml:space="preserve"><value>Bild hinzufügen…</value></data>
+  <data name="Command_AddItem" xml:space="preserve"><value>Datei hinzufügen…</value></data>
   <data name="FileType_Image" xml:space="preserve"><value>Bilder</value></data>
-  <data name="Image_AddFailed" xml:space="preserve"><value>{0} kann nicht hinzugefügt werden: {1}</value></data>
-  <data name="Image_NoTimeline" xml:space="preserve"><value>Wähle zuerst eine Pixel-Spur.</value></data>
-  <data name="Image_NoRoom" xml:space="preserve"><value>Auf dieser Spur ist ab dem Abspielkopf keine Zeit frei.</value></data>
+  <data name="Item_AddFailed" xml:space="preserve"><value>{0} kann nicht hinzugefügt werden: {1}</value></data>
+  <data name="Item_NoTimeline" xml:space="preserve"><value>Wähle zuerst eine Spur: Pixel-, Video- und E-Pic-Spuren nehmen Dateien, die LightMaster-Spur nimmt Farben und Effekte.</value></data>
+  <data name="Item_NoRoom" xml:space="preserve"><value>Auf dieser Spur ist ab dem Abspielkopf keine Zeit frei.</value></data>
   <data name="Inspector_Brightness" xml:space="preserve"><value>Helligkeit</value></data>
   <data name="Inspector_Stretching" xml:space="preserve"><value>Dehnung</value></data>
   <data name="Inspector_Laser" xml:space="preserve"><value>Laser</value></data>
   <data name="Inspector_Preview" xml:space="preserve"><value>Bild</value></data>
+  <data name="Command_AddColor" xml:space="preserve"><value>Farbe hinzufügen</value></data>
+  <data name="Command_AddEffect" xml:space="preserve"><value>Effekt hinzufügen</value></data>
+  <data name="FileType_Gif" xml:space="preserve"><value>Animationen (GIF)</value></data>
+  <data name="Inspector_Color" xml:space="preserve"><value>Farbe</value></data>
+  <data name="Inspector_ColorTo" xml:space="preserve"><value>Geht über zu</value></data>
+  <data name="Inspector_Effect" xml:space="preserve"><value>Effekt</value></data>
+  <data name="Inspector_T1" xml:space="preserve"><value>Zeit 1, ms</value></data>
+  <data name="Inspector_T2" xml:space="preserve"><value>Zeit 2, ms</value></data>
+  <data name="Inspector_OffsetX" xml:space="preserve"><value>Versatz X</value></data>
+  <data name="Inspector_OffsetY" xml:space="preserve"><value>Versatz Y</value></data>
+  <data name="Inspector_BadValue" xml:space="preserve"><value>Dieser Wert ist nicht möglich: {0}.</value></data>
+  <data name="Effect_LinearTransition" xml:space="preserve"><value>Linearer Übergang</value></data>
+  <data name="Effect_SineWave" xml:space="preserve"><value>Sinuswelle</value></data>
+  <data name="Effect_SquareWave" xml:space="preserve"><value>Rechteckwelle</value></data>
+  <data name="Effect_SawToothWave" xml:space="preserve"><value>Sägezahnwelle</value></data>
+  <data name="Item_BadMedia" xml:space="preserve"><value>{0} enthält kein Bild.</value></data>
 </root>

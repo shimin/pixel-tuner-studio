@@ -265,4 +265,26 @@ public class EditsTests
         Assert.False(item.LaserOn);
         Assert.Equal((0, 0), (item.OffsetX, item.OffsetY));
     }
+
+    [Fact]
+    public void Light_item_colours_effect_and_times_change_with_undo_and_refuse_bad_values()
+    {
+        var item = TimelineWith((0, 1)).Items[0];
+        item.Kind = ItemKind.Effect;
+        item.Color = "#FF0000";
+        item.Effect = LightEffectKind.SineWave;
+
+        _history.Do(Edits.SetItemColor(item, "#00FF00"));
+        _history.Do(Edits.SetItemColorLast(item, "#0000FF"));
+        _history.Do(Edits.SetEffect(item, LightEffectKind.SquareWave));
+        _history.Do(Edits.SetEffectTimes(item, 250, 500));
+        Assert.Equal(("#00FF00", "#0000FF", LightEffectKind.SquareWave, 250, 500), (item.Color, item.ColorLast, item.Effect, item.T1, item.T2));
+
+        Assert.Throws<InvalidDataException>(() => Edits.SetItemColor(item, "green"));
+        Assert.Throws<ArgumentOutOfRangeException>(() => Edits.SetEffect(item, "explosion"));
+        Assert.Throws<ArgumentOutOfRangeException>(() => Edits.SetEffectTimes(item, -1, 0));
+
+        while (_history.Undo()) { }
+        Assert.Equal(("#FF0000", null, LightEffectKind.SineWave, 0, 0), (item.Color, item.ColorLast, item.Effect, item.T1, item.T2));
+    }
 }

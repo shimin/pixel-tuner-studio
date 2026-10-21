@@ -27,6 +27,22 @@ public static class TimeFormat
         return $"{minutes}:{text}";
     }
 
+    /// <summary>Reads "1:05.250", "65.25" or "65,25" (minutes optional, seconds may have a fraction).</summary>
+    public static bool TryParse(string? text, out TimeSpan time)
+    {
+        time = default;
+        if (string.IsNullOrWhiteSpace(text)) return false;
+        var parts = text.Trim().Replace(',', '.').Split(':');
+        if (parts.Length > 2) return false;
+        double minutes = 0;
+        if (parts.Length == 2 && !double.TryParse(parts[0], NumberStyles.None, CultureInfo.InvariantCulture, out minutes)) return false;
+        if (!double.TryParse(parts[^1], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out double seconds)) return false;
+        double total = minutes * 60 + seconds;
+        if (total > TimeSpan.MaxValue.TotalSeconds / 2) return false;
+        time = TimeSpan.FromSeconds(total);
+        return true;
+    }
+
     /// <summary>Full precision for the inspector: "1:05.250".</summary>
     public static string Precise(TimeSpan time)
     {

@@ -47,7 +47,7 @@
 - The timelines (`src/PixelTuner.UI/Timelines`): `TimelineEditor` holds everything that is not drawing (coordinates,
   zoom, hit testing, selection, drags that end in one `Edit`, snapping) and is tested without a window;
   `TimelineControl` only draws it and forwards the pointer. Do not put model rules into the control. An item dragged over another timeline moves there only if
-  `Edits.Accepts` (same kind of item) and `Edits.Fits` say so; images are added by `EditorViewModel.AddImageCommand`. To try the
+  `Edits.Accepts` (same kind of item) and `Edits.Fits` say so; items are added by `EditorViewModel.AddItemCommand` (files), `AddColorCommand` and `AddEffectCommand`. To try the
   window with the mouse in the sandbox: `xvfb-run`, then `python-xlib` (`pip install python-xlib`) with XTest.
 - `src/PixelTuner.Audio` holds the player and decoder contracts only; implementations go per
   platform. `src/PixelTuner.Audio.Vlc` (LibVLC, LGPL, dynamic) serves Windows and macOS: the VideoLAN NuGet

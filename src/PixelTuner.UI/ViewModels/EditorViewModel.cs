@@ -1,3 +1,4 @@
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -115,6 +116,13 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         else _ui.Post(_ => action(), null);
     }
 
+    private static readonly string[] InspectorProperties =
+    [
+        nameof(ShowBrightness), nameof(ShowStretching), nameof(ShowLaser), nameof(IsVideoSelected), nameof(IsLightItem), nameof(IsEffectSelected),
+        nameof(OffsetX), nameof(OffsetY), nameof(T1), nameof(T2), nameof(ItemColor), nameof(ItemColorTo), nameof(ItemColorBrush), nameof(ItemColorToBrush),
+        nameof(EffectIndex), nameof(HasImage), nameof(ItemPreviewBitmap), nameof(HasPreview),
+    ];
+
     private void Refresh()
     {
         OnPropertyChanged(nameof(HasSelection));
@@ -129,9 +137,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(Brightness));
         OnPropertyChanged(nameof(Stretching));
         OnPropertyChanged(nameof(LaserOn));
-        OnPropertyChanged(nameof(HasImage));
-        OnPropertyChanged(nameof(ImagePreview));
-        OnPropertyChanged(nameof(HasPreview));
+        foreach (string name in InspectorProperties) OnPropertyChanged(name);
         OnPropertyChanged(nameof(HasSoundtrack));
         OnPropertyChanged(nameof(SoundtrackName));
         OnPropertyChanged(nameof(Message));
@@ -159,33 +165,56 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     void AddMarker() =>
         Timelines.AddMarkerAtPlayhead(string.Format(Strings.Marker_DefaultName, Timelines.Project.Markers.Count + 1));
 
-    /// <summary>A new image is this long, when there is room for it.</summary>
-    public static readonly TimeSpan DefaultImageLength = TimeSpan.FromSeconds(5);
+    /// <summary>A new item is this long, when there is room for it.</summary>
+    public static readonly TimeSpan DefaultItemLength = TimeSpan.FromSeconds(5);
 
-    // The timeline the image goes to: the selected one, or the one the selected item is on.
-    private Timeline? ImageTarget => Timelines.TimelineOf(Timelines.Selected) is { Kind: TimelineKind.Pixel } t ? t : null;
+    // The timeline a new item goes to: the selected one, or the one the selected item is on.
+    private Timeline? Target => Timelines.TimelineOf(Timelines.Selected);
 
+    /// <summary>Adds a picture or animation to the selected pixel, video or E-Pic timeline.</summary>
     [RelayCommand]
-    async Task AddImageAsync()
+    async Task AddItemAsync()
     {
-        if (ImageTarget is not { } timeline)
+        if (Target is not { Kind: not TimelineKind.Light } timeline || _picker?.Invoke() is not { } picker)
         {
-            Message = Strings.Image_NoTimeline;
+            if (Target is not { Kind: not TimelineKind.Light }) Message = Strings.Item_NoTimeline;
             return;
         }
-        if (_picker?.Invoke() is not { } picker) return;
-        string? path = await picker.PickImagePathAsync();
+        string? path = timeline.Kind == TimelineKind.Video ? await picker.PickGifPathAsync() : await picker.PickImagePathAsync();
         if (path is null) return;
         try
         {
-            ImageDecoder.DecodeFile(path);   // a file that is not an image is refused before it enters the project
+            string kind = timeline.Kind switch { TimelineKind.Video => ItemKind.Video, TimelineKind.EpicPoi => ItemKind.Gradient, _ => ItemKind.Image };
+            // A file that is not a picture is refused before it enters the project.
+            if (kind == ItemKind.Video)
+            {
+                if (GifFrames.DecodeFile(path).Count == 0) throw new InvalidDataException(string.Format(Strings.Item_BadMedia, Path.GetFileName(path)));
+            }
+            else
+            {
+                ImageDecoder.DecodeFile(path);
+            }
             string id = Document.AddMedia(path);
-            Message = Timelines.AddImage(timeline, id, path, DefaultImageLength) is null ? Strings.Image_NoRoom : null;
+            var item = new TimelineItem { Kind = kind, ResourceId = id, SourcePath = path };
+            Message = Timelines.AddItem(timeline, item, DefaultItemLength) is null ? Strings.Item_NoRoom : null;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
         {
-            Message = string.Format(Strings.Image_AddFailed, Path.GetFileName(path), ex.Message);
+            Message = string.Format(Strings.Item_AddFailed, Path.GetFileName(path), ex.Message);
         }
+    }
+
+    [RelayCommand]
+    void AddColor() => AddLight(new TimelineItem { Kind = ItemKind.Solid, Color = "#FFFFFF" });
+
+    [RelayCommand]
+    void AddEffect() =>
+        AddLight(new TimelineItem { Kind = ItemKind.Effect, Color = "#000000", ColorLast = "#FFFFFF", Effect = LightEffectKind.LinearTransition, T1 = 1000, T2 = 1000 });
+
+    private void AddLight(TimelineItem item)
+    {
+        if (Target is not { Kind: TimelineKind.Light } timeline) Message = Strings.Item_NoTimeline;
+        else Message = Timelines.AddItem(timeline, item, DefaultItemLength) is null ? Strings.Item_NoRoom : null;
     }
 
     [RelayCommand(CanExecute = nameof(CanDelete))]
@@ -296,57 +325,171 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         }
     }
 
+    private TimelineItem? Item => Timelines.Selected as TimelineItem;
+
+    public bool ShowBrightness => Item is { Kind: ItemKind.Image or ItemKind.Video or ItemKind.Gradient };
+    public bool ShowStretching => Item is { Kind: ItemKind.Image or ItemKind.Gradient };
+    public bool ShowLaser => Item is { Kind: ItemKind.Image };
+    public bool IsVideoSelected => Item is { Kind: ItemKind.Video };
+    public bool IsLightItem => Item is { Kind: ItemKind.Solid or ItemKind.Effect };
+    public bool IsEffectSelected => Item is { Kind: ItemKind.Effect };
+
     public double Brightness
     {
-        get => Timelines.Selected is TimelineItem i ? i.Brightness : 0;
+        get => Item?.Brightness ?? 0;
         set
         {
-            if (Timelines.Selected is TimelineItem i && (byte)Math.Clamp(Math.Round(value), 0, 100) is var percent && percent != i.Brightness)
+            if (Item is { } i && (byte)Math.Clamp(Math.Round(value), 0, 100) is var percent && percent != i.Brightness)
                 Document.Execute(Edits.SetBrightness(i, percent));
         }
     }
 
     public decimal? Stretching
     {
-        get => Timelines.Selected is TimelineItem i ? i.Stretching : null;
+        get => Item?.Stretching;
         set
         {
-            if (Timelines.Selected is TimelineItem i && value is { } v && (int)v >= 1 && (int)v != i.Stretching)
+            if (Item is { } i && value is { } v && (int)v >= 1 && (int)v != i.Stretching)
                 Document.Execute(Edits.SetStretching(i, (int)v));
         }
     }
 
     public bool LaserOn
     {
-        get => Timelines.Selected is TimelineItem { LaserOn: true };
+        get => Item is { LaserOn: true };
         set
         {
-            if (Timelines.Selected is TimelineItem i && i.LaserOn != value) Document.Execute(Edits.SetLaser(i, value));
+            if (Item is { } i && i.LaserOn != value) Document.Execute(Edits.SetLaser(i, value));
         }
     }
 
-    public bool HasImage => Timelines.Selected is TimelineItem { Kind: ItemKind.Image };
+    public decimal? OffsetX
+    {
+        get => Item?.OffsetX;
+        set
+        {
+            if (Item is { } i && value is { } v && (int)v != i.OffsetX) Document.Execute(Edits.SetOffset(i, (int)v, i.OffsetY));
+        }
+    }
 
-    public bool HasPreview => ImagePreview is not null;
+    public decimal? OffsetY
+    {
+        get => Item?.OffsetY;
+        set
+        {
+            if (Item is { } i && value is { } v && (int)v != i.OffsetY) Document.Execute(Edits.SetOffset(i, i.OffsetX, (int)v));
+        }
+    }
 
-    private string? _previewId;
+    public decimal? T1
+    {
+        get => Item?.T1;
+        set
+        {
+            if (Item is { } i && value is { } v && v >= 0 && (int)v != i.T1) Document.Execute(Edits.SetEffectTimes(i, (int)v, i.T2));
+        }
+    }
+
+    public decimal? T2
+    {
+        get => Item?.T2;
+        set
+        {
+            if (Item is { } i && value is { } v && v >= 0 && (int)v != i.T2) Document.Execute(Edits.SetEffectTimes(i, i.T1, (int)v));
+        }
+    }
+
+    /// <summary>Colours are typed as #RRGGBB; a text that is not a colour is refused and the old colour comes back.</summary>
+    public string ItemColor
+    {
+        get => Item?.Color ?? "";
+        set => TrySet(value, i => i.Color, Edits.SetItemColor);
+    }
+
+    public string ItemColorTo
+    {
+        get => Item?.ColorLast ?? "";
+        set => TrySet(value, i => i.ColorLast, Edits.SetItemColorLast);
+    }
+
+    private void TrySet(string value, Func<TimelineItem, string?> current, Func<TimelineItem, string, Edit> edit)
+    {
+        if (Item is not { } i || value == current(i)) return;
+        try
+        {
+            Document.Execute(edit(i, value));
+        }
+        catch (InvalidDataException)
+        {
+            Message = string.Format(Strings.Inspector_BadValue, value);
+            Refresh();
+        }
+    }
+
+    public IBrush ItemColorBrush => SwatchBrush(Item?.Color);
+    public IBrush ItemColorToBrush => SwatchBrush(Item?.ColorLast);
+
+    private static IBrush SwatchBrush(string? color)
+    {
+        try
+        {
+            var c = ColorText.ParseRgb(color);
+            return new SolidColorBrush(Color.FromRgb(c.R, c.G, c.B));
+        }
+        catch (InvalidDataException)
+        {
+            return Brushes.Transparent;
+        }
+    }
+
+    public IReadOnlyList<string> EffectNames { get; } =
+        [Strings.Effect_LinearTransition, Strings.Effect_SineWave, Strings.Effect_SquareWave, Strings.Effect_SawToothWave];
+
+    private static readonly string[] EffectKinds =
+        [LightEffectKind.LinearTransition, LightEffectKind.SineWave, LightEffectKind.SquareWave, LightEffectKind.SawToothWave];
+
+    public int EffectIndex
+    {
+        get => Item?.Effect is { } e ? Array.IndexOf(EffectKinds, e) : -1;
+        set
+        {
+            if (Item is { } i && value >= 0 && value < EffectKinds.Length && EffectKinds[value] != i.Effect)
+                Document.Execute(Edits.SetEffect(i, EffectKinds[value]));
+        }
+    }
+
+    public bool HasImage => Item is { Kind: ItemKind.Image };
+
+    public bool HasPreview => ItemPreviewBitmap is not null;
+
+    private (string? Id, string Kind, byte Brightness, bool Flip) _previewKey;
     private Bitmap? _preview;
 
-    /// <summary>The selected image as the device sees its pixels; null when nothing is selected or the file is missing.</summary>
-    public Bitmap? ImagePreview
+    /// <summary>The selected picture as the device would show it (brightness, flip); stretching repeats columns in time, so it is not drawn. Null when there is none or the file is missing.</summary>
+    public Bitmap? ItemPreviewBitmap
     {
         get
         {
-            string? id = Timelines.Selected is TimelineItem { Kind: ItemKind.Image } i ? i.ResourceId : null;
-            if (id == _previewId) return _preview;
-            _previewId = id;
+            if (Item is not { Kind: ItemKind.Image or ItemKind.Video or ItemKind.Gradient } i || Timelines.TimelineOf(i) is not { } timeline)
+            {
+                _previewKey = default;
+                return _preview = null;
+            }
+            (string? Id, string Kind, byte Brightness, bool Flip) key = (i.ResourceId, i.Kind, i.Brightness, i.Kind != ItemKind.Gradient && timeline.FlipVertical);
+            if (key == _previewKey) return _preview;
+            _previewKey = key;
             _preview = null;
-            if (id is null || Document.OpenMedia(id) is not { } stream) return null;
+            if (i.ResourceId is null || Document.OpenMedia(i.ResourceId) is not { } stream) return null;
             try
             {
-                using (stream) _preview = PixelBitmap.From(ImageDecoder.Decode(stream));
+                using (stream)
+                {
+                    // A video shows its first frame; the animation itself is the device's business.
+                    var source = i.Kind == ItemKind.Video ? GifFrames.Decode(((MemoryStream)stream).ToArray())[0] : ImageDecoder.Decode(stream);
+                    _preview = PixelBitmap.From(ItemPreview.Render(source, key.Brightness, 1, key.Flip));
+                }
             }
-            catch (InvalidDataException)
+            catch (Exception ex) when (ex is InvalidDataException or IndexOutOfRangeException or ArgumentOutOfRangeException)
             {
                 // damaged media: no preview
             }
@@ -354,7 +497,49 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         }
     }
 
-    public string StartText => Timelines.Selected is TimelineItem i ? TimeFormat.Precise(i.Start) : "";
-    public string LengthText => Timelines.Selected is TimelineItem i ? TimeFormat.Precise(i.Duration) : "";
-    public string PositionText => Timelines.Selected is Marker m ? TimeFormat.Precise(m.Position) : "";
+    public string StartText
+    {
+        get => Item is { } i ? TimeFormat.Precise(i.Start) : "";
+        set => SetTime(value, (timeline, i, time) => Edits.MoveItem(timeline, i, time), Item?.Start);
+    }
+
+    public string LengthText
+    {
+        get => Item is { } i ? TimeFormat.Precise(i.Duration) : "";
+        set => SetTime(value, (timeline, i, time) => Edits.ResizeItem(timeline, i, time), Item?.Duration);
+    }
+
+    public string PositionText
+    {
+        get => Timelines.Selected is Marker m ? TimeFormat.Precise(m.Position) : "";
+        set
+        {
+            if (Timelines.Selected is not Marker m) return;
+            if (TimeFormat.TryParse(value, out var time) && time != m.Position) Document.Execute(Edits.MoveMarker(Document.Project, m, time));
+            else if (time == m.Position) return;
+            else Reject(value);
+        }
+    }
+
+    // Edits refuse times that overlap a neighbour; the user is told and the old time comes back.
+    private void SetTime(string text, Func<Timeline, TimelineItem, TimeSpan, Edit> edit, TimeSpan? current)
+    {
+        if (Item is not { } i || Timelines.TimelineOf(i) is not { } timeline) return;
+        if (!TimeFormat.TryParse(text, out var time)) { Reject(text); return; }
+        if (time == current) return;
+        try
+        {
+            Document.Execute(edit(timeline, i, time));
+        }
+        catch (InvalidOperationException)
+        {
+            Reject(text);
+        }
+    }
+
+    private void Reject(string text)
+    {
+        Message = string.Format(Strings.Inspector_BadValue, text);
+        Refresh();
+    }
 }

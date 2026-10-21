@@ -141,6 +141,39 @@ public static class Edits
     public static Edit SetLaser(TimelineItem item, bool on) =>
         new SetValueEdit<bool>("SetLaser", item, nameof(item.LaserOn), () => item.LaserOn, v => item.LaserOn = v, on, mergeable: false);
 
+    /// <param name="color">#RRGGBB or #AARRGGBB; solid items and the first colour of effects.</param>
+    public static Edit SetItemColor(TimelineItem item, string color)
+    {
+        Imaging.ColorText.ParseRgb(color);   // throws on a bad colour
+        return new SetValueEdit<string?>("SetItemColor", item, nameof(item.Color), () => item.Color, v => item.Color = v, color, mergeable: true);
+    }
+
+    /// <param name="color">#RRGGBB or #AARRGGBB; the colour an effect goes to.</param>
+    public static Edit SetItemColorLast(TimelineItem item, string color)
+    {
+        Imaging.ColorText.ParseRgb(color);
+        return new SetValueEdit<string?>("SetItemColor", item, nameof(item.ColorLast), () => item.ColorLast, v => item.ColorLast = v, color, mergeable: true);
+    }
+
+    /// <param name="effect">One of <see cref="LightEffectKind"/>.</param>
+    public static Edit SetEffect(TimelineItem item, string effect)
+    {
+        if (effect is not (LightEffectKind.LinearTransition or LightEffectKind.SineWave or LightEffectKind.SquareWave or LightEffectKind.SawToothWave))
+            throw new ArgumentOutOfRangeException(nameof(effect));
+        return new SetValueEdit<string?>("SetEffect", item, nameof(item.Effect), () => item.Effect, v => item.Effect = v, effect, mergeable: false);
+    }
+
+    /// <summary>The time parameters of an effect, in milliseconds.</summary>
+    public static Edit SetEffectTimes(TimelineItem item, int t1, int t2)
+    {
+        if (t1 < 0 || t2 < 0) throw new ArgumentOutOfRangeException(nameof(t1));
+        return new GroupEdit("SetEffectTimes",
+        [
+            new SetValueEdit<int>("SetEffectTimes", item, nameof(item.T1), () => item.T1, v => item.T1 = v, t1, mergeable: true),
+            new SetValueEdit<int>("SetEffectTimes", item, nameof(item.T2), () => item.T2, v => item.T2 = v, t2, mergeable: true),
+        ]);
+    }
+
     /// <summary>Where the LED layout sits on a video frame.</summary>
     public static Edit SetOffset(TimelineItem item, int x, int y) =>
         new GroupEdit("SetOffset",

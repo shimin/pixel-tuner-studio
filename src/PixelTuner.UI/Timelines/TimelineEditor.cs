@@ -505,11 +505,15 @@ public sealed class TimelineEditor
 
     private static TimeSpan Min(TimeSpan a, TimeSpan b) => a < b ? a : b;
 
-    /// <summary>Puts an image on a pixel timeline at the playhead, or after the item that is there. Null when there is no room.</summary>
-    public TimelineItem? AddImage(Timeline timeline, string resourceId, string sourcePath, TimeSpan wanted)
+    /// <summary>
+    /// Puts a new item on a timeline at the playhead, or after the item that is there, as long as <paramref name="wanted"/>
+    /// or as the gap allows. The item's kind decides whether the timeline takes it. Null when there is no room.
+    /// </summary>
+    public TimelineItem? AddItem(Timeline timeline, TimelineItem item, TimeSpan wanted)
     {
-        if (timeline.Kind != TimelineKind.Pixel || FindRoom(timeline, Playhead, wanted) is not var (start, duration)) return null;
-        var item = new TimelineItem { Kind = ItemKind.Image, Start = start, Duration = duration, ResourceId = resourceId, SourcePath = sourcePath };
+        if (!Edits.Accepts(timeline, item) || FindRoom(timeline, Playhead, wanted) is not var (start, duration)) return null;
+        item.Start = start;
+        item.Duration = duration;
         _document.Execute(Edits.AddItem(timeline, item));
         Select(item);
         return item;

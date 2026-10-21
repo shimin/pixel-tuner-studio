@@ -100,13 +100,29 @@
   <data name="Audio_AddFailed" xml:space="preserve"><value>Could not add the sound: {0}</value></data>
   <data name="Edit_SetAudio" xml:space="preserve"><value>Set soundtrack</value></data>
   <data name="Edit_RemoveAudio" xml:space="preserve"><value>Remove soundtrack</value></data>
-  <data name="Command_AddImage" xml:space="preserve"><value>Add image…</value></data>
+  <data name="Command_AddItem" xml:space="preserve"><value>Add file…</value></data>
   <data name="FileType_Image" xml:space="preserve"><value>Images</value></data>
-  <data name="Image_AddFailed" xml:space="preserve"><value>Cannot add {0}: {1}</value></data>
-  <data name="Image_NoTimeline" xml:space="preserve"><value>Select a pixel timeline first.</value></data>
-  <data name="Image_NoRoom" xml:space="preserve"><value>There is no free time on this timeline at or after the playhead.</value></data>
+  <data name="Item_AddFailed" xml:space="preserve"><value>Cannot add {0}: {1}</value></data>
+  <data name="Item_NoTimeline" xml:space="preserve"><value>Select a timeline first: a pixel, video or E-Pic timeline takes files, a LightMaster timeline takes colours and effects.</value></data>
+  <data name="Item_NoRoom" xml:space="preserve"><value>There is no free time on this timeline at or after the playhead.</value></data>
   <data name="Inspector_Brightness" xml:space="preserve"><value>Brightness</value></data>
   <data name="Inspector_Stretching" xml:space="preserve"><value>Stretching</value></data>
   <data name="Inspector_Laser" xml:space="preserve"><value>Laser</value></data>
   <data name="Inspector_Preview" xml:space="preserve"><value>Image</value></data>
+  <data name="Command_AddColor" xml:space="preserve"><value>Add colour</value></data>
+  <data name="Command_AddEffect" xml:space="preserve"><value>Add effect</value></data>
+  <data name="FileType_Gif" xml:space="preserve"><value>Animations (GIF)</value></data>
+  <data name="Inspector_Color" xml:space="preserve"><value>Colour</value></data>
+  <data name="Inspector_ColorTo" xml:space="preserve"><value>Goes to</value></data>
+  <data name="Inspector_Effect" xml:space="preserve"><value>Effect</value></data>
+  <data name="Inspector_T1" xml:space="preserve"><value>Time 1, ms</value></data>
+  <data name="Inspector_T2" xml:space="preserve"><value>Time 2, ms</value></data>
+  <data name="Inspector_OffsetX" xml:space="preserve"><value>Offset X</value></data>
+  <data name="Inspector_OffsetY" xml:space="preserve"><value>Offset Y</value></data>
+  <data name="Inspector_BadValue" xml:space="preserve"><value>That value cannot be used: {0}.</value></data>
+  <data name="Effect_LinearTransition" xml:space="preserve"><value>Linear transition</value></data>
+  <data name="Effect_SineWave" xml:space="preserve"><value>Sine wave</value></data>
+  <data name="Effect_SquareWave" xml:space="preserve"><value>Square wave</value></data>
+  <data name="Effect_SawToothWave" xml:space="preserve"><value>Saw-tooth wave</value></data>
+  <data name="Item_BadMedia" xml:space="preserve"><value>{0} has no picture in it.</value></data>
 </root>

@@ -100,13 +100,29 @@
   <data name="Audio_AddFailed" xml:space="preserve"><value>Не удалось добавить звук: {0}</value></data>
   <data name="Edit_SetAudio" xml:space="preserve"><value>Выбор звуковой дорожки</value></data>
   <data name="Edit_RemoveAudio" xml:space="preserve"><value>Удаление звуковой дорожки</value></data>
-  <data name="Command_AddImage" xml:space="preserve"><value>Добавить картинку…</value></data>
+  <data name="Command_AddItem" xml:space="preserve"><value>Добавить файл…</value></data>
   <data name="FileType_Image" xml:space="preserve"><value>Картинки</value></data>
-  <data name="Image_AddFailed" xml:space="preserve"><value>Не удалось добавить {0}: {1}</value></data>
-  <data name="Image_NoTimeline" xml:space="preserve"><value>Сначала выберите дорожку с картинками.</value></data>
-  <data name="Image_NoRoom" xml:space="preserve"><value>На этой дорожке нет свободного времени с курсора и дальше.</value></data>
+  <data name="Item_AddFailed" xml:space="preserve"><value>Не удалось добавить {0}: {1}</value></data>
+  <data name="Item_NoTimeline" xml:space="preserve"><value>Сначала выберите дорожку: файлы принимают дорожки пикселей, видео и E-Pic, а цвета и эффекты — дорожка LightMaster.</value></data>
+  <data name="Item_NoRoom" xml:space="preserve"><value>На этой дорожке нет свободного времени с курсора и дальше.</value></data>
   <data name="Inspector_Brightness" xml:space="preserve"><value>Яркость</value></data>
   <data name="Inspector_Stretching" xml:space="preserve"><value>Растяжение</value></data>
   <data name="Inspector_Laser" xml:space="preserve"><value>Лазер</value></data>
   <data name="Inspector_Preview" xml:space="preserve"><value>Картинка</value></data>
+  <data name="Command_AddColor" xml:space="preserve"><value>Добавить цвет</value></data>
+  <data name="Command_AddEffect" xml:space="preserve"><value>Добавить эффект</value></data>
+  <data name="FileType_Gif" xml:space="preserve"><value>Анимации (GIF)</value></data>
+  <data name="Inspector_Color" xml:space="preserve"><value>Цвет</value></data>
+  <data name="Inspector_ColorTo" xml:space="preserve"><value>Переходит в</value></data>
+  <data name="Inspector_Effect" xml:space="preserve"><value>Эффект</value></data>
+  <data name="Inspector_T1" xml:space="preserve"><value>Время 1, мс</value></data>
+  <data name="Inspector_T2" xml:space="preserve"><value>Время 2, мс</value></data>
+  <data name="Inspector_OffsetX" xml:space="preserve"><value>Сдвиг по X</value></data>
+  <data name="Inspector_OffsetY" xml:space="preserve"><value>Сдвиг по Y</value></data>
+  <data name="Inspector_BadValue" xml:space="preserve"><value>Это значение не подходит: {0}.</value></data>
+  <data name="Effect_LinearTransition" xml:space="preserve"><value>Плавный переход</value></data>
+  <data name="Effect_SineWave" xml:space="preserve"><value>Синусоида</value></data>
+  <data name="Effect_SquareWave" xml:space="preserve"><value>Меандр</value></data>
+  <data name="Effect_SawToothWave" xml:space="preserve"><value>Пила</value></data>
+  <data name="Item_BadMedia" xml:space="preserve"><value>В {0} нет картинки.</value></data>
 </root>
