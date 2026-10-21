@@ -1,16 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- iOS / iPadOS head: project viewer and device sync. -->
+  <!-- Pixel Tuner Stage for iPhone and iPad: plays a show and keeps the devices in sync. -->
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <!-- IosSdkVersion pins the iOS SDK (and so the Xcode) to build with, for example 26.0.
          Empty = the newest the installed workload has, which needs the matching newest Xcode. -->
     <TargetFramework>net10.0-ios$(IosSdkVersion)</TargetFramework>
     <SupportedOSPlatformVersion>16.0</SupportedOSPlatformVersion>
-    <RootNamespace>PixelTuner.iOS</RootNamespace>
-    <ApplicationId>com.pixeltuner.studio</ApplicationId>
-    <ApplicationTitle>Pixel Tuner Studio</ApplicationTitle>
+    <RootNamespace>PixelTuner.Stage.iOS</RootNamespace>
+    <AssemblyName>PixelTunerStage</AssemblyName>
+    <Product>Pixel Tuner Stage</Product>
+    <Version>$(StageVersion)</Version>
+    <ApplicationId>com.pixeltuner.stage</ApplicationId>
+    <ApplicationTitle>Pixel Tuner Stage</ApplicationTitle>
     <ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>
+    <!-- Assets.xcassets/AppIcon.appiconset, drawn by scripts/icons/make-icons.py. -->
+    <AppIcon>AppIcon</AppIcon>
     <!-- Entitlements are applied only when building for a device with a provisioning profile. -->
     <CodesignEntitlements Condition="'$(RuntimeIdentifier)' == 'ios-arm64'">Entitlements.plist</CodesignEntitlements>
     <!-- Simulator builds are signed ad hoc, so they need no Apple certificate (CI, fresh Macs). -->

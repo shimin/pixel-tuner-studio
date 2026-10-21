@@ -4,12 +4,15 @@ using Avalonia;
 using Avalonia.Android;
 using PixelTuner.UI;
 
-namespace PixelTuner.Android;
+namespace PixelTuner.Stage.Android;
 
 [Application]
 public class Application(nint javaReference, JniHandleOwnership transfer)
     : AvaloniaAndroidApplication<App>(javaReference, transfer)
 {
-    protected override AppBuilder CustomizeAppBuilder(AppBuilder builder) =>
-        base.CustomizeAppBuilder(builder).WithInterFont();
+    protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
+    {
+        Product.Current = Product.Stage;
+        return base.CustomizeAppBuilder(builder).WithInterFont();
+    }
 }

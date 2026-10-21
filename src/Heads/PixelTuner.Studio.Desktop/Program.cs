@@ -1,7 +1,7 @@
 using Avalonia;
 using PixelTuner.UI;
 
-namespace PixelTuner.Desktop;
+namespace PixelTuner.Studio.Desktop;
 
 static class Program
 {

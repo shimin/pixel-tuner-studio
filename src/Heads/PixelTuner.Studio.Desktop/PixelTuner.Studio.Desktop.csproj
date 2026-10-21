@@ -1,9 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- Desktop head: Windows and macOS (Linux builds too, for CI). -->
+  <!-- Pixel Tuner Studio for Windows and macOS (Linux builds too, for CI). -->
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
-    <RootNamespace>PixelTuner.Desktop</RootNamespace>
+    <RootNamespace>PixelTuner.Studio.Desktop</RootNamespace>
+    <Product>Pixel Tuner Studio</Product>
     <AssemblyName>PixelTunerStudio</AssemblyName>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>app-icon.ico</ApplicationIcon>

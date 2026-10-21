@@ -33,7 +33,7 @@ public sealed class PxPackage : IDisposable
         {
             var mime = ReadText(zip, PxPackageFormat.MimeTypeEntry);
             if (mime != PxPackageFormat.MimeType)
-                throw new InvalidDataException("This is not a Pixel Tuner Studio package.");
+                throw new InvalidDataException("This is not a Pixel Tuner project package.");
 
             var manifest = JsonSerializer.Deserialize(ReadBytes(zip, PxPackageFormat.ManifestEntry), PackageJsonContext.Default.Manifest)
                 ?? throw new InvalidDataException("The package manifest is empty.");
@@ -122,7 +122,7 @@ public sealed class PxPackage : IDisposable
 }
 
 public sealed class PackageTooNewException(int formatVersion, int minReaderVersion)
-    : Exception($"The package needs a newer Pixel Tuner Studio (format {formatVersion}, reader {minReaderVersion} or later).")
+    : Exception($"The package needs a newer version of Pixel Tuner (format {formatVersion}, reader {minReaderVersion} or later).")
 {
     public int FormatVersion { get; } = formatVersion;
     public int MinReaderVersion { get; } = minReaderVersion;

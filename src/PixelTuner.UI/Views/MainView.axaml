@@ -9,7 +9,7 @@
        platform safe area on phones (notch, home indicator). -->
   <ScrollViewer>
     <StackPanel Margin="{StaticResource PtPagePadding}" Spacing="{StaticResource PtSpacing}" MaxWidth="720">
-      <TextBlock Classes="h1" Text="{x:Static res:Strings.AppTitle}" />
+      <TextBlock Classes="h1" Text="{Binding Title}" />
       <TextBlock Classes="muted" TextWrapping="Wrap" Text="{x:Static res:Strings.Start_Subheading}" />
       <Button Classes="accent" HorizontalAlignment="Left"
               Content="{x:Static res:Strings.Command_OpenProject}"

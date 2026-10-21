@@ -21,7 +21,8 @@ public sealed partial class MainViewModel : ObservableObject
 
     public bool HasProject => Project is not null;
 
-    public string Title => Strings.AppTitle;
+    /// <summary>The app name: Pixel Tuner Studio or Pixel Tuner Stage.</summary>
+    public string Title => Product.Current.Name;
 
     [RelayCommand]
     async Task OpenProjectAsync()

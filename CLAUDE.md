@@ -1,7 +1,13 @@
 # Pixel Tuner Studio: notes for coding agents
 
 - Reply to the owner in Russian. Code, comments, and commit messages in English.
-- Window titles and product name: "Pixel Tuner Studio". Repository: shimin/pixel-tuner-studio.
+- Two apps on one code base: "Pixel Tuner Studio" (Windows, macOS; `com.pixeltuner.studio`,
+  head `src/Heads/PixelTuner.Studio.Desktop`) and "Pixel Tuner Stage" (iOS, Android;
+  `com.pixeltuner.stage`, heads `PixelTuner.Stage.iOS` and `PixelTuner.Stage.Android`).
+  Shared code speaks as "Pixel Tuner": no version, no Studio or Stage. The app name appears only
+  in its head and where the text is about the running app (`PixelTuner.UI.Product.Current`).
+  Versions: `StudioVersion` and `StageVersion` in `Directory.Build.props`. Icons come from
+  `scripts/icons/make-icons.py`. Repository: shimin/pixel-tuner-studio.
 - Project package extension is `.pxpkg` (not .pixpkg, not .ptpkg).
 - Stack: .NET 10 + Avalonia 12. Shared code in `src/PixelTuner.*`; platform code only in `src/Heads/*`.
 - Follow each platform's guidelines: Fluent on Windows, macOS menu bar and Cmd shortcuts,

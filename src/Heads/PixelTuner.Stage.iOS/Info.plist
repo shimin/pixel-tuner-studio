@@ -2,14 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-  <key>CFBundleDisplayName</key>
-  <string>Pixel Tuner Studio</string>
-  <key>CFBundleIdentifier</key>
-  <string>com.pixeltuner.studio</string>
-  <key>CFBundleShortVersionString</key>
-  <string>4.0.0</string>
-  <key>CFBundleVersion</key>
-  <string>1</string>
+  <!-- Name, bundle id and version come from PixelTuner.Stage.iOS.csproj. -->
   <key>LSRequiresIPhoneOS</key>
   <true/>
   <key>MinimumOSVersion</key>
@@ -46,7 +39,7 @@
   </array>
   <!-- Shown in the system prompt for local network access. -->
   <key>NSLocalNetworkUsageDescription</key>
-  <string>Pixel Tuner Studio finds show devices on your Wi-Fi network and keeps them in sync with the soundtrack.</string>
+  <string>Pixel Tuner Stage finds show devices on your Wi-Fi network and keeps them in sync with the soundtrack.</string>
   <!-- Open .pxpkg from Files, AirDrop and messengers. -->
   <key>LSSupportsOpeningDocumentsInPlace</key>
   <false/>
@@ -56,7 +49,7 @@
   <array>
     <dict>
       <key>CFBundleTypeName</key>
-      <string>Pixel Tuner Studio project</string>
+      <string>Pixel Tuner project</string>
       <key>CFBundleTypeRole</key>
       <string>Viewer</string>
       <key>LSHandlerRank</key>
@@ -73,7 +66,7 @@
       <key>UTTypeIdentifier</key>
       <string>com.pixeltuner.pxpkg</string>
       <key>UTTypeDescription</key>
-      <string>Pixel Tuner Studio project</string>
+      <string>Pixel Tuner project</string>
       <key>UTTypeConformsTo</key>
       <array>
         <string>public.data</string>

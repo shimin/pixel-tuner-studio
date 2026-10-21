@@ -30,8 +30,8 @@ jobs:
           dotnet test tests/PixelTuner.Package.Tests -c Release
           dotnet test tests/PixelTuner.Core.Tests -c Release
           dotnet test tests/PixelTuner.Legacy.OracleTests -c Release
-      - name: Build desktop on Linux
-        run: dotnet build src/Heads/PixelTuner.Desktop -c Release
+      - name: Build Studio on Linux
+        run: dotnet build src/Heads/PixelTuner.Studio.Desktop -c Release
 
   samples:
     # The whole PixelTuner 2 reference set (about 540 MB) from the draft release "samples-v1".
@@ -57,7 +57,7 @@ jobs:
         run: dotnet test tests/PixelTuner.Package.Tests -c Release --filter "FullyQualifiedName~FullSample" --logger "console;verbosity=detailed"
 
   windows:
-    name: Desktop (Windows)
+    name: Studio (Windows)
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -71,7 +71,7 @@ jobs:
           dotnet test tests/PixelTuner.Core.Tests -c Release
           dotnet test tests/PixelTuner.Legacy.OracleTests -c Release
       - name: Publish
-        run: dotnet publish src/Heads/PixelTuner.Desktop -c Release -r win-x64 --self-contained -o out/win-x64
+        run: dotnet publish src/Heads/PixelTuner.Studio.Desktop -c Release -r win-x64 --self-contained -o out/win-x64
       - uses: actions/upload-artifact@v4
         with:
           name: PixelTunerStudio-win-x64
@@ -79,7 +79,7 @@ jobs:
           retention-days: 14
 
   macos:
-    name: Desktop (macOS)
+    name: Studio (macOS)
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -94,7 +94,7 @@ jobs:
           dotnet test tests/PixelTuner.Legacy.OracleTests -c Release
       - name: Publish and bundle
         run: |
-          dotnet publish src/Heads/PixelTuner.Desktop -c Release -r osx-arm64 --self-contained -o out/osx-arm64
+          dotnet publish src/Heads/PixelTuner.Studio.Desktop -c Release -r osx-arm64 --self-contained -o out/osx-arm64
           scripts/macos/make-app.sh out/osx-arm64 out/app
       - uses: actions/upload-artifact@v4
         with:
@@ -103,7 +103,7 @@ jobs:
           retention-days: 14
 
   android:
-    name: Mobile (Android)
+    name: Stage (Android)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -118,17 +118,17 @@ jobs:
         run: dotnet workload install android
       - name: Build APK
         run: >
-          dotnet publish src/Heads/PixelTuner.Android -c Release
+          dotnet publish src/Heads/PixelTuner.Stage.Android -c Release
           -p:AndroidSdkDirectory="$ANDROID_SDK_ROOT"
           -o out/android
       - uses: actions/upload-artifact@v4
         with:
-          name: PixelTunerStudio-android
+          name: PixelTunerStage-android
           path: out/android/*.apk
           retention-days: 14
 
   ios:
-    name: Mobile (iOS, simulator build)
+    name: Stage (iOS, simulator build)
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -146,4 +146,4 @@ jobs:
       - name: Install iOS workload
         run: dotnet workload install ios
       - name: Build for the simulator (no signing)
-        run: dotnet build src/Heads/PixelTuner.iOS -c Debug -r iossimulator-arm64 -p:IosSdkVersion=26.0
+        run: dotnet build src/Heads/PixelTuner.Stage.iOS -c Debug -r iossimulator-arm64 -p:IosSdkVersion=26.0

@@ -6,9 +6,9 @@
     <Project Path="src/PixelTuner.UI/PixelTuner.UI.csproj" />
   </Folder>
   <Folder Name="/src/Heads/">
-    <Project Path="src/Heads/PixelTuner.Android/PixelTuner.Android.csproj" />
-    <Project Path="src/Heads/PixelTuner.Desktop/PixelTuner.Desktop.csproj" />
-    <Project Path="src/Heads/PixelTuner.iOS/PixelTuner.iOS.csproj" />
+    <Project Path="src/Heads/PixelTuner.Stage.Android/PixelTuner.Stage.Android.csproj" />
+    <Project Path="src/Heads/PixelTuner.Stage.iOS/PixelTuner.Stage.iOS.csproj" />
+    <Project Path="src/Heads/PixelTuner.Studio.Desktop/PixelTuner.Studio.Desktop.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/PixelTuner.Core.Tests/PixelTuner.Core.Tests.csproj" />

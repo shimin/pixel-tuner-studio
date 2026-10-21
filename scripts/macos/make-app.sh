@@ -12,7 +12,7 @@ app="$out_dir/Pixel Tuner Studio.app"
 rm -rf "$app"
 mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 cp -R "$publish_dir"/. "$app/Contents/MacOS/"
-cp "$root/src/Heads/PixelTuner.Desktop/macOS/Info.plist" "$app/Contents/Info.plist"
+cp "$root/src/Heads/PixelTuner.Studio.Desktop/macOS/Info.plist" "$app/Contents/Info.plist"
 chmod +x "$app/Contents/MacOS/PixelTunerStudio"
 
 if command -v codesign >/dev/null; then

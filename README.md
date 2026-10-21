@@ -1,11 +1,15 @@
-# Pixel Tuner Studio
+# Pixel Tuner
 
 Платформа для создания шоу и управления пиксельным реквизитом. Следующее поколение
-PixelTuner 2: Windows, macOS, Android и iOS из одного кода.
+PixelTuner 2: Windows, macOS, Android и iOS из одного кода. Два приложения:
 
-- **Windows и macOS** — полный редактор проектов (в работе, этап 3).
-- **Android и iOS** — просмотр проекта и синхронизация сетевых устройств по
-  звуковой дорожке (этап 2).
+- **Pixel Tuner Studio 4.0** (Windows и macOS, `com.pixeltuner.studio`) — редактор
+  проектов: импорт .ptp, таймлайны, сборка .bin и заливка в устройства.
+- **Pixel Tuner Stage 1.0** (iPhone, iPad, Android, `com.pixeltuner.stage`) — открывает
+  .pxpkg, играет звук шоу и синхронизирует по нему устройства в сети.
+
+Общий код говорит от имени «Pixel Tuner», без версии и без Studio или Stage. Полное
+имя приложения встречается только в его запускалке (`src/Heads`) и в заголовке окна.
 
 Стек: .NET 10, Avalonia 12 (Fluent), CommunityToolkit.Mvvm. План и решения —
 в документе «PixelTuner нового поколения».
@@ -18,12 +22,13 @@ src/
   PixelTuner.Package/     формат .pxpkg: чтение, запись, проверка целостности, импорт .ptp
   PixelTuner.Sync/        протокол устройств (UDP 333), поиск устройств, Art-Net
   PixelTuner.UI/          общий интерфейс Avalonia: экраны, тема, строки ru/en/de
+  PixelTuner.UI/Product.cs  какое приложение запущено: Studio или Stage
   Heads/
-    PixelTuner.Desktop/   запуск на Windows и macOS (+ Info.plist для .app)
-    PixelTuner.Android/   запуск на Android
-    PixelTuner.iOS/       запуск на iPhone и iPad
+    PixelTuner.Studio.Desktop/  Studio на Windows и macOS (+ Info.plist для .app)
+    PixelTuner.Stage.Android/   Stage на Android
+    PixelTuner.Stage.iOS/       Stage на iPhone и iPad
 tests/                    тесты ядра; протокол сверяется с эталонными векторами
-scripts/                  сборка .app для macOS
+scripts/                  сборка .app для macOS, иконки (icons/make-icons.py), эталоны для CI
 legacy/                   PixelTuner 2, Common, Communication, WpfTools, EpicPlayer с историей
 ```
 
@@ -39,20 +44,20 @@ legacy/                   PixelTuner 2, Common, Communication, WpfTools, EpicPla
 ```bash
 dotnet test tests/PixelTuner.Sync.Tests
 dotnet test tests/PixelTuner.Package.Tests
-dotnet run --project src/Heads/PixelTuner.Desktop
+dotnet run --project src/Heads/PixelTuner.Studio.Desktop
 ```
 
 Мобильные платформы:
 
 ```bash
 dotnet workload install android ios
-dotnet build src/Heads/PixelTuner.Android -t:Run          # на подключённом устройстве или эмуляторе
-dotnet build src/Heads/PixelTuner.iOS -r iossimulator-arm64  # только на Mac с Xcode
+dotnet build src/Heads/PixelTuner.Stage.Android -t:Run          # на подключённом устройстве или эмуляторе
+dotnet build src/Heads/PixelTuner.Stage.iOS -r iossimulator-arm64  # только на Mac с Xcode
 ```
 
 Решение целиком: `PixelTunerStudio.slnx` (Visual Studio 2022 17.13+, Rider 2024.3+).
 
-macOS-приложение: `dotnet publish src/Heads/PixelTuner.Desktop -c Release -r osx-arm64 --self-contained -o out/osx`,
+macOS-приложение: `dotnet publish src/Heads/PixelTuner.Studio.Desktop -c Release -r osx-arm64 --self-contained -o out/osx`,
 затем `scripts/macos/make-app.sh out/osx out/app`.
 
 PixelTuner 2 по-прежнему собирается из `legacy/PixelTuner2` (см. `legacy/README.md`).
@@ -120,4 +125,4 @@ export/<device>.bin скомпилированные файлы устройст
 - CI (`.github/workflows/ci.yml`) на каждый PR собирает Windows, macOS, Android и
   iOS и гоняет тесты. Красная платформа = красный PR.
 - PR сливаются обычным merge-коммитом (история `legacy/` и перенос кода важны).
-- Версия продукта задаётся в одном месте: `Directory.Build.props` (`<Version>`).
+- Версии задаются в одном месте, в `Directory.Build.props`: `StudioVersion` и `StageVersion`.

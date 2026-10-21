@@ -1,6 +1,6 @@
 using UIKit;
 
-namespace PixelTuner.iOS;
+namespace PixelTuner.Stage.iOS;
 
 public static class Application
 {

@@ -3,10 +3,10 @@ using Android.Content;
 using Android.Content.PM;
 using Avalonia.Android;
 
-namespace PixelTuner.Android;
+namespace PixelTuner.Stage.Android;
 
 [Activity(
-    Label = "Pixel Tuner Studio",
+    Label = "Pixel Tuner Stage",
     Theme = "@style/PtTheme.NoActionBar",
     Icon = "@drawable/icon",
     MainLauncher = true,

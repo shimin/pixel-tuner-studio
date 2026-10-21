@@ -4,7 +4,6 @@
   <resheader name="version"><value>2.0</value></resheader>
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
-  <data name="AppTitle" xml:space="preserve"><value>Pixel Tuner Studio</value></data>
   <data name="Start_Heading" xml:space="preserve"><value>Shows and props in one place</value></data>
   <data name="Start_Subheading" xml:space="preserve"><value>Open a project package (.pxpkg) to view it and sync devices to the soundtrack.</value></data>
   <data name="Command_OpenProject" xml:space="preserve"><value>Open project…</value></data>
@@ -12,6 +11,6 @@
   <data name="Project_Devices" xml:space="preserve"><value>Devices</value></data>
   <data name="Project_Markers" xml:space="preserve"><value>Markers</value></data>
   <data name="Project_Media" xml:space="preserve"><value>Media files</value></data>
-  <data name="FileType_Package" xml:space="preserve"><value>Pixel Tuner Studio project</value></data>
+  <data name="FileType_Package" xml:space="preserve"><value>Pixel Tuner project</value></data>
   <data name="Error_OpenFailed" xml:space="preserve"><value>Could not open the project: {0}</value></data>
 </root>
