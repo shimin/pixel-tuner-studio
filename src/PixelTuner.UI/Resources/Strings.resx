@@ -58,4 +58,29 @@
   <data name="Edit_RemoveMarker" xml:space="preserve"><value>Delete marker</value></data>
   <data name="Edit_RenameMarker" xml:space="preserve"><value>Rename marker</value></data>
   <data name="Edit_MoveMarker" xml:space="preserve"><value>Move marker</value></data>
+  <data name="Menu_View" xml:space="preserve"><value>View</value></data>
+  <data name="Menu_Timeline" xml:space="preserve"><value>Timeline</value></data>
+  <data name="Command_AddPixelTimeline" xml:space="preserve"><value>Add pixel timeline</value></data>
+  <data name="Command_AddVideoTimeline" xml:space="preserve"><value>Add video timeline</value></data>
+  <data name="Command_AddEpicTimeline" xml:space="preserve"><value>Add E-Pic poi timeline</value></data>
+  <data name="Command_AddLightTimeline" xml:space="preserve"><value>Add LightMaster timeline</value></data>
+  <data name="Command_AddMarker" xml:space="preserve"><value>Add marker at playhead</value></data>
+  <data name="Command_Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="Command_ZoomIn" xml:space="preserve"><value>Zoom in</value></data>
+  <data name="Command_ZoomOut" xml:space="preserve"><value>Zoom out</value></data>
+  <data name="Command_ZoomFit" xml:space="preserve"><value>Fit the whole show</value></data>
+  <data name="Kind_Pixel" xml:space="preserve"><value>Pixel: poi, staff, hoop</value></data>
+  <data name="Kind_Video" xml:space="preserve"><value>Video: matrix, shield</value></data>
+  <data name="Kind_EpicPoi" xml:space="preserve"><value>E-Pic poi</value></data>
+  <data name="Kind_Light" xml:space="preserve"><value>LightMaster</value></data>
+  <data name="Timeline_DefaultName" xml:space="preserve"><value>Timeline {0}</value></data>
+  <data name="Marker_DefaultName" xml:space="preserve"><value>Marker {0}</value></data>
+  <data name="Inspector_Nothing" xml:space="preserve"><value>Select a timeline, item or marker.</value></data>
+  <data name="Inspector_Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Inspector_Start" xml:space="preserve"><value>Start</value></data>
+  <data name="Inspector_Length" xml:space="preserve"><value>Length</value></data>
+  <data name="Inspector_Position" xml:space="preserve"><value>Position</value></data>
+  <data name="Inspector_Timeline" xml:space="preserve"><value>Timeline</value></data>
+  <data name="Inspector_Item" xml:space="preserve"><value>Item</value></data>
+  <data name="Inspector_Marker" xml:space="preserve"><value>Marker</value></data>
 </root>

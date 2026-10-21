@@ -19,5 +19,11 @@ public static class Shortcuts
     // macOS: Cmd+Shift+Z. Windows: Ctrl+Y (Ctrl+Shift+Z works too, as in most editors).
     public static KeyGesture Redo { get; } = OperatingSystem.IsMacOS() ? new(Key.Z, Primary | KeyModifiers.Shift) : new(Key.Y, Primary);
     public static KeyGesture RedoAlternate { get; } = new(Key.Z, Primary | KeyModifiers.Shift);
+    public static KeyGesture AddMarker { get; } = new(Key.M, Primary);
+    public static KeyGesture Delete { get; } = new(Key.Delete);
+    public static KeyGesture Backspace { get; } = new(Key.Back);   // the Delete key of a Mac keyboard
+    public static KeyGesture ZoomIn { get; } = new(Key.OemPlus, Primary);
+    public static KeyGesture ZoomOut { get; } = new(Key.OemMinus, Primary);
+    public static KeyGesture ZoomFit { get; } = new(Key.D0, Primary);
     public static KeyGesture Close { get; } = new(Key.W, Primary);
 }

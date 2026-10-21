@@ -44,6 +44,10 @@
   (menu bar on macOS, `NativeMenuBar` on Windows); shortcuts come from `Views/Shortcuts` (Ctrl or Cmd).
   Unsaved changes are asked about before open, new, import, close and window close (`MainViewModel.ConfirmDiscardAsync`).
   `tests/PixelTuner.UI.Tests` drives all of it with fake dialogs.
+- The timelines (`src/PixelTuner.UI/Timelines`): `TimelineEditor` holds everything that is not drawing (coordinates,
+  zoom, hit testing, selection, drags that end in one `Edit`, snapping) and is tested without a window;
+  `TimelineControl` only draws it and forwards the pointer. Do not put model rules into the control. To try the
+  window with the mouse in the sandbox: `xvfb-run`, then `python-xlib` (`pip install python-xlib`) with XTest.
 - `src/PixelTuner.Audio` holds the player and decoder contracts only; implementations go per
   platform (LibVLC on desktop, system players on phones).
 - Merge PRs with a normal merge commit only.

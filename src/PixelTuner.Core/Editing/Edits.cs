@@ -96,6 +96,20 @@ public static class Edits
         return new SetValueEdit<TimeSpan>("ResizeItem", item, nameof(item.Duration), () => item.Duration, v => item.Duration = v, newDuration, mergeable: false);
     }
 
+    /// <summary>Moves the start of an item and keeps its end where it is (dragging the left edge).</summary>
+    public static Edit TrimItemStart(Timeline timeline, TimelineItem item, TimeSpan newStart)
+    {
+        RequireIndex(timeline, item);
+        var newDuration = item.End - newStart;
+        if (!Fits(timeline, newStart, newDuration, item))
+            throw new InvalidOperationException("The item would overlap the previous item or have no length.");
+        return new GroupEdit("ResizeItem",
+        [
+            new SetValueEdit<TimeSpan>("ResizeItem", item, nameof(item.Start), () => item.Start, v => item.Start = v, newStart, mergeable: false),
+            new SetValueEdit<TimeSpan>("ResizeItem", item, nameof(item.Duration), () => item.Duration, v => item.Duration = v, newDuration, mergeable: false),
+        ]);
+    }
+
     /// <param name="percent">0 to 100.</param>
     public static Edit SetBrightness(TimelineItem item, byte percent)
     {

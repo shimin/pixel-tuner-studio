@@ -58,4 +58,29 @@
   <data name="Edit_RemoveMarker" xml:space="preserve"><value>Удаление маркера</value></data>
   <data name="Edit_RenameMarker" xml:space="preserve"><value>Переименование маркера</value></data>
   <data name="Edit_MoveMarker" xml:space="preserve"><value>Перемещение маркера</value></data>
+  <data name="Menu_View" xml:space="preserve"><value>Вид</value></data>
+  <data name="Menu_Timeline" xml:space="preserve"><value>Дорожка</value></data>
+  <data name="Command_AddPixelTimeline" xml:space="preserve"><value>Добавить дорожку для пикселей</value></data>
+  <data name="Command_AddVideoTimeline" xml:space="preserve"><value>Добавить видеодорожку</value></data>
+  <data name="Command_AddEpicTimeline" xml:space="preserve"><value>Добавить дорожку E-Pic poi</value></data>
+  <data name="Command_AddLightTimeline" xml:space="preserve"><value>Добавить дорожку LightMaster</value></data>
+  <data name="Command_AddMarker" xml:space="preserve"><value>Поставить маркер на курсоре</value></data>
+  <data name="Command_Delete" xml:space="preserve"><value>Удалить</value></data>
+  <data name="Command_ZoomIn" xml:space="preserve"><value>Приблизить</value></data>
+  <data name="Command_ZoomOut" xml:space="preserve"><value>Отдалить</value></data>
+  <data name="Command_ZoomFit" xml:space="preserve"><value>Показать всё шоу</value></data>
+  <data name="Kind_Pixel" xml:space="preserve"><value>Пиксели: пои, посох, обруч</value></data>
+  <data name="Kind_Video" xml:space="preserve"><value>Видео: матрица, щит</value></data>
+  <data name="Kind_EpicPoi" xml:space="preserve"><value>E-Pic poi</value></data>
+  <data name="Kind_Light" xml:space="preserve"><value>LightMaster</value></data>
+  <data name="Timeline_DefaultName" xml:space="preserve"><value>Дорожка {0}</value></data>
+  <data name="Marker_DefaultName" xml:space="preserve"><value>Маркер {0}</value></data>
+  <data name="Inspector_Nothing" xml:space="preserve"><value>Выберите дорожку, элемент или маркер.</value></data>
+  <data name="Inspector_Name" xml:space="preserve"><value>Название</value></data>
+  <data name="Inspector_Start" xml:space="preserve"><value>Начало</value></data>
+  <data name="Inspector_Length" xml:space="preserve"><value>Длина</value></data>
+  <data name="Inspector_Position" xml:space="preserve"><value>Позиция</value></data>
+  <data name="Inspector_Timeline" xml:space="preserve"><value>Дорожка</value></data>
+  <data name="Inspector_Item" xml:space="preserve"><value>Элемент</value></data>
+  <data name="Inspector_Marker" xml:space="preserve"><value>Маркер</value></data>
 </root>

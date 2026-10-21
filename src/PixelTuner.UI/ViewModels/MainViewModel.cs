@@ -25,6 +25,14 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     [NotifyCanExecuteChangedFor(nameof(SaveCommand), nameof(SaveAsCommand), nameof(CloseProjectCommand), nameof(UndoCommand), nameof(RedoCommand))]
     ProjectDocument? _document;
 
+    /// <summary>The timelines of the open project. Studio only; Stage opens projects to look at them.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowEditor), nameof(ShowStart))]
+    EditorViewModel? _editor;
+
+    public bool ShowEditor => Editor is not null;
+    public bool ShowStart => Editor is null;
+
     [ObservableProperty]
     string? _error;
 
@@ -88,6 +96,7 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     partial void OnDocumentChanged(ProjectDocument? value)
     {
         if (value is not null) value.Changed += DocumentEdited;
+        Editor = value is not null && CanEdit ? new EditorViewModel(value) : null;
     }
 
     // Saving runs on a pool thread and reports from there; bindings may only be touched on the UI thread.
