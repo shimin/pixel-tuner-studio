@@ -331,4 +331,8 @@
   <data name="Preview_Pitch" xml:space="preserve"><value>LED-Abstand, mm</value></data>
   <data name="Preview_Tail" xml:space="preserve"><value>Nachleuchten, ms</value></data>
   <data name="Preview_Orbit" xml:space="preserve"><value>Umlauf, Umdrehungen pro Sekunde</value></data>
+  <data name="Edit_RenameDevice" xml:space="preserve"><value>Gerät umbenennen</value></data>
+  <data name="Edit_SetDeviceTag" xml:space="preserve"><value>Netzwerkname des Geräts ändern</value></data>
+  <data name="Edit_SetDeviceMemory" xml:space="preserve"><value>Speicher des Geräts ändern</value></data>
+  <data name="Edit_SetDeviceKind" xml:space="preserve"><value>Gerätetyp ändern</value></data>
 </root>

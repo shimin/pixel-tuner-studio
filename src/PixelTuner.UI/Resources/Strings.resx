@@ -331,4 +331,8 @@
   <data name="Preview_Pitch" xml:space="preserve"><value>LED pitch, mm</value></data>
   <data name="Preview_Tail" xml:space="preserve"><value>Afterglow, ms</value></data>
   <data name="Preview_Orbit" xml:space="preserve"><value>Orbit, turns a second</value></data>
+  <data name="Edit_RenameDevice" xml:space="preserve"><value>Rename device</value></data>
+  <data name="Edit_SetDeviceTag" xml:space="preserve"><value>Change device name on the network</value></data>
+  <data name="Edit_SetDeviceMemory" xml:space="preserve"><value>Change memory of a device</value></data>
+  <data name="Edit_SetDeviceKind" xml:space="preserve"><value>Change kind of device</value></data>
 </root>

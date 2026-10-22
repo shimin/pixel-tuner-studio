@@ -331,4 +331,8 @@
   <data name="Preview_Pitch" xml:space="preserve"><value>Шаг светодиодов, мм</value></data>
   <data name="Preview_Tail" xml:space="preserve"><value>Шлейф, мс</value></data>
   <data name="Preview_Orbit" xml:space="preserve"><value>Орбита, оборотов в секунду</value></data>
+  <data name="Edit_RenameDevice" xml:space="preserve"><value>Переименовать устройство</value></data>
+  <data name="Edit_SetDeviceTag" xml:space="preserve"><value>Имя устройства в сети</value></data>
+  <data name="Edit_SetDeviceMemory" xml:space="preserve"><value>Память устройства</value></data>
+  <data name="Edit_SetDeviceKind" xml:space="preserve"><value>Тип устройства</value></data>
 </root>
