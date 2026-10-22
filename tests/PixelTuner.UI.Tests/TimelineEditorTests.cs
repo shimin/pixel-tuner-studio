@@ -543,6 +543,105 @@ public class TimelineEditorTests
         Assert.Equal(DropDenialReason.NoRoom, _editor.Preview!.Denial!.Reason);
     }
 
+    [Fact]
+    public void Ctrl_click_adds_an_item_to_the_selection_and_takes_it_out_again()
+    {
+        var a = Track((1, 1), (3, 1), (5, 1));
+        var (one, two, three) = (a.Items[0], a.Items[1], a.Items[2]);
+
+        _editor.PointerDown(X(1.5), RowY(0));
+        _editor.PointerUp(X(1.5), RowY(0));
+        _editor.PointerDown(X(5.5), RowY(0), SelectionMode.Toggle);
+        Assert.False(_editor.IsDragging);   // a ctrl click only selects
+        Assert.Equal([one, three], _editor.SelectedItems);
+        Assert.Same(three, _editor.Selected);   // the last one picked is the one the inspector shows
+
+        _editor.PointerDown(X(3.5), RowY(0), SelectionMode.Toggle);
+        Assert.Equal([one, three, two], _editor.SelectedItems);
+
+        _editor.PointerDown(X(5.5), RowY(0), SelectionMode.Toggle);   // out again
+        Assert.Equal([one, two], _editor.SelectedItems);
+        Assert.Same(two, _editor.Selected);
+
+        _editor.PointerDown(X(1.5), RowY(0), SelectionMode.Toggle);
+        _editor.PointerDown(X(3.5), RowY(0), SelectionMode.Toggle);
+        Assert.Empty(_editor.SelectedItems);
+        Assert.Null(_editor.Selected);
+    }
+
+    [Fact]
+    public void Shift_click_selects_the_run_between_the_current_item_and_the_clicked_one_on_the_same_timeline()
+    {
+        var a = Track((1, 1), (3, 1), (5, 1), (7, 1));
+        var b = Track((1, 1));
+
+        _editor.Select(a.Items[1]);
+        _editor.PointerDown(X(7.5), RowY(0), SelectionMode.Range);
+        Assert.Equal([a.Items[1], a.Items[2], a.Items[3]], _editor.SelectedItems.OrderBy(i => i.Start));
+        Assert.Same(a.Items[3], _editor.Selected);
+
+        // From the other direction too.
+        _editor.Select(a.Items[3]);
+        _editor.PointerDown(X(1.5), RowY(0), SelectionMode.Range);
+        Assert.Equal(4, _editor.SelectedItems.Count);
+
+        // An item on another timeline is not in the run: it is selected alone.
+        _editor.PointerDown(X(1.5), RowY(1), SelectionMode.Range);
+        Assert.Equal([b.Items[0]], _editor.SelectedItems);
+    }
+
+    [Fact]
+    public void A_plain_click_on_an_item_outside_the_selection_makes_it_the_only_one_and_a_click_on_nothing_clears_it()
+    {
+        var a = Track((1, 1), (3, 1), (5, 1));
+        _editor.Select(a.Items[0]);
+        _editor.PointerDown(X(3.5), RowY(0), SelectionMode.Toggle);
+        Assert.Equal(2, _editor.SelectedItems.Count);
+
+        _editor.PointerDown(X(5.5), RowY(0));
+        _editor.PointerUp(X(5.5), RowY(0));
+        Assert.Equal([a.Items[2]], _editor.SelectedItems);
+
+        _editor.PointerDown(X(9), RowY(0));
+        Assert.Empty(_editor.SelectedItems);
+    }
+
+    [Fact]
+    public void Dragging_an_item_of_a_selection_of_several_moves_only_that_item_and_keeps_the_selection()
+    {
+        var a = Track((1, 1), (3, 1), (5, 1));
+        _editor.Select(a.Items[0]);
+        _editor.PointerDown(X(3.5), RowY(0), SelectionMode.Toggle);
+
+        _editor.PointerDown(X(1.5), RowY(0));
+        _editor.PointerMove(X(1.5) - 50);
+        _editor.PointerUp(X(1.5) - 50);
+
+        Assert.Equal(2, _editor.SelectedItems.Count);
+        Assert.True(a.Items[0].Start < S(1));
+        Assert.Equal(S(3), a.Items.First(i => i.Start >= S(2)).Start);
+    }
+
+    [Fact]
+    public void Delete_takes_every_selected_item_in_one_undo_step()
+    {
+        var a = Track((1, 1), (3, 1), (5, 1));
+        var b = Track((1, 1));
+        _editor.Select(a.Items[0]);
+        _editor.PointerDown(X(5.5), RowY(0), SelectionMode.Toggle);
+        _editor.PointerDown(X(1.5), RowY(1), SelectionMode.Toggle);   // another timeline
+
+        _editor.DeleteSelected();
+
+        Assert.Equal([S(3)], a.Items.Select(i => i.Start));
+        Assert.Empty(b.Items);
+        Assert.Empty(_editor.SelectedItems);
+        _doc.Undo();
+        Assert.Equal(3, a.Items.Count);
+        Assert.Single(b.Items);
+        Assert.False(_doc.CanUndo);
+    }
+
     [Theory]
     [InlineData("1:05.250", 65.25)]
     [InlineData("65.25", 65.25)]

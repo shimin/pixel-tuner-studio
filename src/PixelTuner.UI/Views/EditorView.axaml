@@ -93,6 +93,10 @@
             <TextBlock Classes="muted" Text="{x:Static res:Strings.Inspector_Length}" />
             <TextBox Text="{Binding LengthText}" IsUndoEnabled="False" />
           </StackPanel>
+          <StackPanel Spacing="4" IsVisible="{Binding IsMultiSelection}">
+            <TextBlock Classes="muted" TextWrapping="Wrap" Text="{x:Static res:Strings.Inspector_MultiHint}" />
+            <Button Content="{x:Static res:Strings.Inspector_ApplyToAll}" Command="{Binding ApplyToAllCommand}" HorizontalAlignment="Stretch" />
+          </StackPanel>
           <StackPanel Spacing="4" IsVisible="{Binding IsItemSelected}">
             <StackPanel Spacing="4" IsVisible="{Binding ShowBrightness}">
               <TextBlock Classes="muted" Text="{x:Static res:Strings.Inspector_Brightness}" />

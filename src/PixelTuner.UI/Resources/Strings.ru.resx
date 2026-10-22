@@ -139,6 +139,10 @@
   <data name="Inspector_OffsetX" xml:space="preserve"><value>Сдвиг по X</value></data>
   <data name="Inspector_OffsetY" xml:space="preserve"><value>Сдвиг по Y</value></data>
   <data name="Inspector_BadValue" xml:space="preserve"><value>Это значение не подходит: {0}.</value></data>
+  <data name="Inspector_NothingToApply" xml:space="preserve"><value>У остальных элементов уже такие настройки.</value></data>
+  <data name="Inspector_ApplyToAll" xml:space="preserve"><value>Применить к остальным выбранным</value></data>
+  <data name="Inspector_MultiHint" xml:space="preserve"><value>Ниже настройки элемента, выбранного последним. Ctrl или Cmd и щелчок добавляют элемент, Shift и щелчок выбирают ряд.</value></data>
+  <data name="Inspector_Multi" xml:space="preserve"><value>Элементов: {0}</value></data>
   <data name="Import_Trim" xml:space="preserve"><value>Обрезать то, что осталось после сжатия</value></data>
   <data name="Import_WarpBottom" xml:space="preserve"><value>Низ</value></data>
   <data name="Import_WarpMiddle" xml:space="preserve"><value>Середина</value></data>

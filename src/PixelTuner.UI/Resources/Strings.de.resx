@@ -139,6 +139,10 @@
   <data name="Inspector_OffsetX" xml:space="preserve"><value>Versatz X</value></data>
   <data name="Inspector_OffsetY" xml:space="preserve"><value>Versatz Y</value></data>
   <data name="Inspector_BadValue" xml:space="preserve"><value>Dieser Wert ist nicht möglich: {0}.</value></data>
+  <data name="Inspector_NothingToApply" xml:space="preserve"><value>Die anderen Elemente haben diese Einstellungen schon.</value></data>
+  <data name="Inspector_ApplyToAll" xml:space="preserve"><value>Auf die anderen ausgewählten anwenden</value></data>
+  <data name="Inspector_MultiHint" xml:space="preserve"><value>Unten stehen die Einstellungen des zuletzt gewählten Elements. Strg oder Cmd und Klick fügen ein Element hinzu, Umschalt und Klick wählt eine Reihe.</value></data>
+  <data name="Inspector_Multi" xml:space="preserve"><value>{0} Elemente</value></data>
   <data name="Import_Trim" xml:space="preserve"><value>Beschneiden, was die Stauchung übrig ließ</value></data>
   <data name="Import_WarpBottom" xml:space="preserve"><value>Unten</value></data>
   <data name="Import_WarpMiddle" xml:space="preserve"><value>Mitte</value></data>

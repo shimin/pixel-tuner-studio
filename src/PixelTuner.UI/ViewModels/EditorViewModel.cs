@@ -127,6 +127,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         nameof(ShowBrightness), nameof(ShowStretching), nameof(StretchingLabel), nameof(ShowLaser), nameof(IsVideoSelected), nameof(IsLightItem), nameof(IsEffectSelected),
         nameof(OffsetX), nameof(OffsetY), nameof(T1), nameof(T2), nameof(ItemColor), nameof(ItemColorTo), nameof(ItemColorBrush), nameof(ItemColorToBrush),
         nameof(EffectIndex), nameof(HasImage), nameof(ItemPreviewBitmap), nameof(HasPreview), nameof(PlaybackText),
+        nameof(SelectedItemCount), nameof(IsMultiSelection), nameof(MultiText),
         nameof(IsTimelineSelected), nameof(TimelineColorText), nameof(TimelineColorBrush), nameof(ColorIsOnlyALabel), nameof(ShowFlip), nameof(FlipVertical),
         nameof(ShowMonochrome), nameof(Monochrome), nameof(ShowHeight), nameof(TimelineHeight), nameof(HeightText), nameof(ShowLayout), nameof(LayoutNames), nameof(LayoutIndex),
     ];
@@ -154,6 +155,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(TimeText));
         OnPropertyChanged(nameof(CanPlay));
         DeleteSelectedCommand.NotifyCanExecuteChanged();
+        ApplyToAllCommand.NotifyCanExecuteChanged();
         MoveTimelineUpCommand.NotifyCanExecuteChanged();
         MoveTimelineDownCommand.NotifyCanExecuteChanged();
         PlayPauseCommand.NotifyCanExecuteChanged();
@@ -321,9 +323,30 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     public bool IsMarkerSelected => Timelines.Selected is Marker;
     public bool CanRename => Timelines.Selected is Timeline or Marker;
 
+    public int SelectedItemCount => Timelines.SelectedItems.Count;
+
+    /// <summary>Several items are selected: the inspector shows the last one picked, and can give its settings to the others.</summary>
+    public bool IsMultiSelection => Timelines.SelectedItems.Count > 1;
+
+    public string MultiText => string.Format(Strings.Inspector_Multi, Timelines.SelectedItems.Count);
+
+    private bool CanApplyToAll => Item is { } source && Timelines.SelectedItems.Any(i => !ReferenceEquals(i, source) && i.Kind == source.Kind);
+
+    /// <summary>Gives the shown item's brightness, stretching, laser, offset, colours and effect to the other selected items of its kind: one undo step.</summary>
+    [RelayCommand(CanExecute = nameof(CanApplyToAll))]
+    void ApplyToAll()
+    {
+        if (Item is not { } source) return;
+        Message = null;
+        var edit = Edits.ApplySettings(source, Timelines.SelectedItems);
+        if (edit is null) Message = Strings.Inspector_NothingToApply;
+        else Document.Execute(edit);
+    }
+
     public string InspectorTitle => Timelines.Selected switch
     {
         Timeline => Strings.Inspector_Timeline,
+        TimelineItem when IsMultiSelection => MultiText,
         TimelineItem => Strings.Inspector_Item,
         Marker => Strings.Inspector_Marker,
         _ => "",

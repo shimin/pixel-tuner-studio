@@ -139,6 +139,10 @@
   <data name="Inspector_OffsetX" xml:space="preserve"><value>Offset X</value></data>
   <data name="Inspector_OffsetY" xml:space="preserve"><value>Offset Y</value></data>
   <data name="Inspector_BadValue" xml:space="preserve"><value>That value cannot be used: {0}.</value></data>
+  <data name="Inspector_NothingToApply" xml:space="preserve"><value>The other items have these settings already.</value></data>
+  <data name="Inspector_ApplyToAll" xml:space="preserve"><value>Apply to the other selected items</value></data>
+  <data name="Inspector_MultiHint" xml:space="preserve"><value>The settings below are those of the item picked last. Ctrl or Cmd and a click adds an item, Shift and a click selects a run.</value></data>
+  <data name="Inspector_Multi" xml:space="preserve"><value>{0} items</value></data>
   <data name="Import_Trim" xml:space="preserve"><value>Trim what the squeeze left</value></data>
   <data name="Import_WarpBottom" xml:space="preserve"><value>Bottom</value></data>
   <data name="Import_WarpMiddle" xml:space="preserve"><value>Middle</value></data>
