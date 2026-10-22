@@ -92,3 +92,23 @@ looks is not: a poi is drawn as if swung at 6 m/s with its LEDs 16 mm apart, a h
 
 **To do before release.** Compare with real devices (a poi and a hoop with a known picture, filmed with a long exposure) and set the
 defaults so that the picture looks as wide as it does in the air. The units of the stretching under it are the open question above.
+
+
+## Devices: memory units, refusals and a cancelled upload
+
+**Where:** `src/PixelTuner.UI/DevicesPanel` (`DeviceMapping.MemoryBytes`, `DevicesPanelViewModel.Upload`). Marked `TODO(release)` in the code.
+
+**Memory units are unverified.** The memory a device reports is capped at 3,800,000 and is in kilobytes on platform 2 (`DeviceInfo.MaxMemory`), in
+bytes on the others; a LightMaster reports free kilobytes. `DeviceMapping.MemoryBytes` turns all of them to bytes and the build refuses a file that is
+bigger (`TooBig`). PixelTuner 2 compared its pixel files with the memory in a way that mixed kilobytes and `MaxMemory * 1024`, and had the video check
+switched off, so its numbers cannot settle this. The panel also shows the file against the memory ("12.7 KB of 1.91 MB").
+
+**Stricter than PixelTuner 2.** PixelTuner 2 asked "send anyway?" when a picture was not as high as the device. Studio refuses (`WrongHeight`, and a project
+device whose LEDs differ from the connected one), a video pair that ends at different times (`VideoPairEndsDiffer`), and a family that cannot play the file
+(a video module plays a fan's file; nothing else crosses). If real devices take such files, loosen the refusal into a warning.
+
+**A cancelled upload leaves the device half written.** Cancelling stops between blocks and does not close the transfer (as PixelTuner 2's cancel did); the
+device keeps its old show until a new upload completes, or is left in write mode until it is switched off. Check on real devices and, if needed, send
+`EndWriteData` or reconnect on cancel.
+
+**Not ported yet:** firmware update (`Flash_*.bin`, the boot-mode switch and its offer), Wi-Fi settings windows, Illuminator, SetAsMaster, WriteMac.

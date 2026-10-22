@@ -155,7 +155,7 @@
   <data name="Issue_VideoPairEndsDiffer" xml:space="preserve"><value>The two video timelines of the device must end at the same time.</value></data>
   <data name="Issue_NoLedLayout" xml:space="preserve"><value>The video timeline has no LED layout: choose one in the timeline header.</value></data>
   <data name="Issue_StretchingTooLarge" xml:space="preserve"><value>The stretching is too large for the E-Pic.</value></data>
-  <data name="Issue_WrongHeight" xml:space="preserve"><value>The picture is not as high as the device ({0} LEDs).</value></data>
+  <data name="Issue_WrongHeight" xml:space="preserve"><value>The picture is {0} LEDs high, not as high as the device.</value></data>
   <data name="Issue_MissingMedia" xml:space="preserve"><value>The file of this item is missing: the file cannot be built. Find it in the library.</value></data>
   <data name="Issue_TimelineKindMismatch" xml:space="preserve"><value>The device does not play this kind of timeline.</value></data>
   <data name="Issue_TooManyTimelines" xml:space="preserve"><value>The device plays fewer timelines than are given to it.</value></data>
@@ -171,7 +171,7 @@
   <data name="Inspector_NothingToApply" xml:space="preserve"><value>The other items have these settings already.</value></data>
   <data name="Inspector_ApplyToAll" xml:space="preserve"><value>Apply to the other selected items</value></data>
   <data name="Inspector_MultiHint" xml:space="preserve"><value>The settings below are those of the item picked last. Ctrl or Cmd and a click adds an item, Shift and a click selects a run.</value></data>
-  <data name="Inspector_Multi" xml:space="preserve"><value>{0} items</value></data>
+  <data name="Inspector_Multi" xml:space="preserve"><value>items: {0}</value></data>
   <data name="Import_Trim" xml:space="preserve"><value>Trim what the squeeze left</value></data>
   <data name="Import_WarpBottom" xml:space="preserve"><value>Bottom</value></data>
   <data name="Import_WarpMiddle" xml:space="preserve"><value>Middle</value></data>
@@ -335,4 +335,64 @@
   <data name="Edit_SetDeviceTag" xml:space="preserve"><value>Change device name on the network</value></data>
   <data name="Edit_SetDeviceMemory" xml:space="preserve"><value>Change memory of a device</value></data>
   <data name="Edit_SetDeviceKind" xml:space="preserve"><value>Change kind of device</value></data>
+  <data name="Devices_Title" xml:space="preserve"><value>Devices</value></data>
+  <data name="Devices_Unnamed" xml:space="preserve"><value>(no name)</value></data>
+  <data name="Devices_ItemCount" xml:space="preserve"><value>items: {0}</value></data>
+  <data name="Devices_TimelineHeight" xml:space="preserve"><value>{0} · {1} LEDs high</value></data>
+  <data name="Devices_DoesNotFit" xml:space="preserve"><value>the device has {1}</value></data>
+  <data name="Devices_KindPoi" xml:space="preserve"><value>Pixel poi, staff</value></data>
+  <data name="Devices_KindHoop" xml:space="preserve"><value>Pixel hoop</value></data>
+  <data name="Devices_KindFan" xml:space="preserve"><value>Fan (video module, pixel timeline)</value></data>
+  <data name="Devices_KindVideo" xml:space="preserve"><value>Video module</value></data>
+  <data name="Devices_KindEpic" xml:space="preserve"><value>E-Pic poi</value></data>
+  <data name="Devices_KindLight" xml:space="preserve"><value>LightMaster</value></data>
+  <data name="Devices_Settings" xml:space="preserve"><value>Build settings</value></data>
+  <data name="Devices_Depth" xml:space="preserve"><value>Colour depth</value></data>
+  <data name="Devices_GapStretching" xml:space="preserve"><value>Stretching of pauses</value></data>
+  <data name="Devices_LightRate" xml:space="preserve"><value>Light step, ms</value></data>
+  <data name="Devices_Project" xml:space="preserve"><value>Devices of the project</value></data>
+  <data name="Devices_Add" xml:space="preserve"><value>Add</value></data>
+  <data name="Devices_AddFromConnected" xml:space="preserve"><value>From the connected device</value></data>
+  <data name="Devices_Remove" xml:space="preserve"><value>Remove</value></data>
+  <data name="Devices_Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Devices_Kind" xml:space="preserve"><value>Kind</value></data>
+  <data name="Devices_Leds" xml:space="preserve"><value>LEDs</value></data>
+  <data name="Devices_Memory" xml:space="preserve"><value>Memory, KB</value></data>
+  <data name="Devices_Tag" xml:space="preserve"><value>Name on the network</value></data>
+  <data name="Devices_Timelines" xml:space="preserve"><value>Timelines it plays, in the order of the file</value></data>
+  <data name="Devices_Up" xml:space="preserve"><value>Earlier</value></data>
+  <data name="Devices_Down" xml:space="preserve"><value>Later</value></data>
+  <data name="Devices_Export" xml:space="preserve"><value>Export .bin…</value></data>
+  <data name="Devices_Upload" xml:space="preserve"><value>Upload to the device</value></data>
+  <data name="Devices_Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Devices_Take" xml:space="preserve"><value>Take LEDs and memory from the device</value></data>
+  <data name="Devices_Connected" xml:space="preserve"><value>Connected devices</value></data>
+  <data name="Devices_Search" xml:space="preserve"><value>Search for devices</value></data>
+  <data name="Devices_Stop" xml:space="preserve"><value>Stop searching</value></data>
+  <data name="Devices_NoneFound" xml:space="preserve"><value>No devices found. Connect a cable or switch the device on over Wi-Fi, then search.</value></data>
+  <data name="Devices_FileInfo" xml:space="preserve"><value>File: {0}</value></data>
+  <data name="Devices_FileInfoOf" xml:space="preserve"><value>File: {0} of {1}</value></data>
+  <data name="Devices_NotBuilt" xml:space="preserve"><value>Nothing to build for this device yet.</value></data>
+  <data name="Devices_Warnings" xml:space="preserve"><value>warnings: {0}</value></data>
+  <data name="Devices_Firmware" xml:space="preserve"><value>firmware {0}.{1}.{2}</value></data>
+  <data name="Devices_LedsOf" xml:space="preserve"><value>{0} LEDs</value></data>
+  <data name="Devices_Channels" xml:space="preserve"><value>{0} channels</value></data>
+  <data name="Devices_MemoryOf" xml:space="preserve"><value>memory {0}</value></data>
+  <data name="Devices_Battery" xml:space="preserve"><value>battery {0}</value></data>
+  <data name="Devices_Busy" xml:space="preserve"><value>busy</value></data>
+  <data name="Devices_BootMode" xml:space="preserve"><value>boot mode</value></data>
+  <data name="Devices_Uploading" xml:space="preserve"><value>Uploading… {0}%</value></data>
+  <data name="Devices_Uploaded" xml:space="preserve"><value>Uploaded {0} to {1}.</value></data>
+  <data name="Devices_UploadCancelled" xml:space="preserve"><value>Upload cancelled.</value></data>
+  <data name="Devices_UploadFailed" xml:space="preserve"><value>Upload failed: {0}</value></data>
+  <data name="Devices_NoConnected" xml:space="preserve"><value>Select a connected device first.</value></data>
+  <data name="Devices_NoProjectDevice" xml:space="preserve"><value>Select a device of the project first.</value></data>
+  <data name="Devices_Unsupported" xml:space="preserve"><value>{0} is not supported.</value></data>
+  <data name="Devices_BootModeOnly" xml:space="preserve"><value>{0} is in boot mode: only firmware can be written.</value></data>
+  <data name="Devices_WrongFamily" xml:space="preserve"><value>{0} cannot play the file of this kind of device ({1}).</value></data>
+  <data name="Devices_WrongLeds" xml:space="preserve"><value>The device has {0} LEDs and the device of the project {1}. Take the LEDs from the device first.</value></data>
+  <data name="Devices_Exported" xml:space="preserve"><value>Saved {0}.</value></data>
+  <data name="Devices_ExportFailed" xml:space="preserve"><value>Could not save the file: {0}</value></data>
+  <data name="Devices_OutOfRange" xml:space="preserve"><value>Enter a number from {0} to {1}.</value></data>
+  <data name="FileType_Bin" xml:space="preserve"><value>Show file for a device</value></data>
 </root>

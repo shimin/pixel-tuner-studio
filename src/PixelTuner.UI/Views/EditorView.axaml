@@ -6,6 +6,7 @@
              xmlns:lib="using:PixelTuner.UI.LibraryPanel"
              xmlns:led="using:PixelTuner.UI.LedLayouts"
              xmlns:pv="using:PixelTuner.UI.PreviewPanel"
+             xmlns:dv="using:PixelTuner.UI.DevicesPanel"
              xmlns:core="using:PixelTuner.Core.Model"
              x:Class="PixelTuner.UI.Views.EditorView"
              x:DataType="vm:EditorViewModel"
@@ -328,6 +329,10 @@
       <!-- The drawing of the props, with the markup state of each outline. -->
       <TabItem Header="{x:Static res:Strings.Canvas_Title}">
         <led:CanvasPanelView DataContext="{Binding Canvas}" MinHeight="260" />
+      </TabItem>
+      <!-- The devices of the project, what the files are built with, and the connected devices. -->
+      <TabItem Header="{x:Static res:Strings.Devices_Title}">
+        <dv:DevicesPanelView DataContext="{Binding Devices}" MinHeight="300" />
       </TabItem>
      </TabControl>
     </Border>

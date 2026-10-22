@@ -97,6 +97,13 @@
   (the sound's position). `TimelinePreview.Trail` gives the afterglow snapshots. `PreviewViewModel` rebuilds per timeline when the project changes
   and gives `ColoursOn(layout)`, with which the canvas fills the outline a video plays on; `TimelinePreviewControl` only draws (poi tiled
   as swung, hoop ring on an orbit, video on the markup over its outline, colours). How a swing looks is a guess: `docs/before-release.md`.
+- The devices tab (`PixelTuner.UI/DevicesPanel`, `EditorViewModel.Devices`; Studio only talks to hardware: `DeviceHub.Current` is set by the head,
+  `DeviceManagerHub`, and is null on phones): the project's devices (`ShowProject.Devices`, edits `Edits.AddDevice`, `SetDeviceKind`,
+  `SetDeviceTimelines`, `SetDeviceLedCount`, `SetDeviceMemory`, `RenameDevice`, `SetDeviceTag`; the factories throw when a rule is broken, so
+  `DevicesPanelViewModel.Do` takes a lambda and turns the refusal into a line), the timelines each plays with ticks and file order, the build
+  settings (colour depth, pause stretching, light step) and the connected devices. The file is `ShowBuilder`'s (cached per row), "Export .bin" saves
+  it, "Upload" sends it block by block with progress and cancel and refuses before sending what the device cannot take (family, bootloader, LEDs,
+  memory, `BuildIssue`s). Memory units and the cancel behaviour: `docs/before-release.md`. `tests/PixelTuner.UI.Tests/FakeDevices.cs` is a firmware in memory.
 - `src/PixelTuner.Audio` holds the player and decoder contracts only; implementations go per
   platform. `src/PixelTuner.Audio.Vlc` (LibVLC, LGPL, dynamic) serves Windows and macOS: the VideoLAN NuGet
   packages carry LibVLC under `libvlc/<rid>`, Linux uses the system one (`apt install libvlc5 vlc-plugin-base`).
