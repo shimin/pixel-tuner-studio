@@ -107,6 +107,11 @@
   <data name="Edit_SetFlipVertical" xml:space="preserve"><value>Отражение дорожки</value></data>
   <data name="Edit_SetMonochrome" xml:space="preserve"><value>Монохромный канал</value></data>
   <data name="Edit_SetLedLayout" xml:space="preserve"><value>Разметка светодиодов</value></data>
+  <data name="Edit_AddLedLayout" xml:space="preserve"><value>Добавить раскладку светодиодов</value></data>
+  <data name="Edit_RemoveLedLayout" xml:space="preserve"><value>Удалить раскладку светодиодов</value></data>
+  <data name="Edit_RenameLedLayout" xml:space="preserve"><value>Переименовать раскладку светодиодов</value></data>
+  <data name="Edit_SetLedMarkup" xml:space="preserve"><value>Разметка светодиодов</value></data>
+  <data name="Edit_SetCanvas" xml:space="preserve"><value>Рисунок канвы</value></data>
   <data name="Edit_ReplaceMedia" xml:space="preserve"><value>Замена картинки</value></data>
   <data name="Edit_AddDevice" xml:space="preserve"><value>Добавление устройства</value></data>
   <data name="Edit_RemoveDevice" xml:space="preserve"><value>Удаление устройства</value></data>
@@ -229,4 +234,89 @@
   <data name="Inspector_Playback" xml:space="preserve"><value>Один проход картинки занимает {0}; в этом элементе она играет {1} раз(а). Чем меньше растяжение, тем быстрее.</value></data>
   <data name="Inspector_FrameTime" xml:space="preserve"><value>Время кадра, мс</value></data>
   <data name="Inspector_PlaybackVideo" xml:space="preserve"><value>Один проход анимации занимает {0}; в этом элементе она играет {1} раз(а). Время кадра в миллисекундах: 40 — это 25 кадров в секунду.</value></data>
+  <data name="Markup_Title" xml:space="preserve"><value>Разметка светодиодов</value></data>
+  <data name="Markup_Name" xml:space="preserve"><value>Название</value></data>
+  <data name="Markup_Status" xml:space="preserve"><value>Светодиодов: {0} (1–{0}), без пропусков и повторов · следующий: {1}</value></data>
+  <data name="Markup_Jumps" xml:space="preserve"><value>скачков: {0}</value></data>
+  <data name="Markup_HoverEmpty" xml:space="preserve"><value>X {0}, Y {1}</value></data>
+  <data name="Markup_HoverLed" xml:space="preserve"><value>X {0}, Y {1}  →  № {2}</value></data>
+  <data name="Markup_BadSize" xml:space="preserve"><value>В сетке от 1 до {0} клеток.</value></data>
+  <data name="Markup_Dropped" xml:space="preserve"><value>Светодиодов за пределами новой сетки: {0}, они убраны.</value></data>
+  <data name="Markup_Repaired" xml:space="preserve"><value>В файле повторов: {0}, клеток вне сетки: {1}; они убраны.</value></data>
+  <data name="Markup_Next" xml:space="preserve"><value>Следующий номер</value></data>
+  <data name="Markup_Undo" xml:space="preserve"><value>Отменить</value></data>
+  <data name="Markup_Redo" xml:space="preserve"><value>Повторить</value></data>
+  <data name="Markup_Ok" xml:space="preserve"><value>OK</value></data>
+  <data name="Markup_Cancel" xml:space="preserve"><value>Отмена</value></data>
+  <data name="Markup_Grid" xml:space="preserve"><value>Сетка</value></data>
+  <data name="Markup_Columns" xml:space="preserve"><value>Столбцов</value></data>
+  <data name="Markup_Rows" xml:space="preserve"><value>Строк</value></data>
+  <data name="Markup_Resize" xml:space="preserve"><value>Изменить</value></data>
+  <data name="Markup_Fill" xml:space="preserve"><value>Заливка прямоугольника (Ctrl + перетаскивание)</value></data>
+  <data name="Markup_TopLeft" xml:space="preserve"><value>Сверху слева</value></data>
+  <data name="Markup_TopRight" xml:space="preserve"><value>Сверху справа</value></data>
+  <data name="Markup_BottomLeft" xml:space="preserve"><value>Снизу слева</value></data>
+  <data name="Markup_BottomRight" xml:space="preserve"><value>Снизу справа</value></data>
+  <data name="Markup_ByRows" xml:space="preserve"><value>По строкам</value></data>
+  <data name="Markup_ByColumns" xml:space="preserve"><value>По столбцам</value></data>
+  <data name="Markup_Snake" xml:space="preserve"><value>Змейка</value></data>
+  <data name="Markup_Straight" xml:space="preserve"><value>Прямо</value></data>
+  <data name="Markup_FillAll" xml:space="preserve"><value>Вся матрица</value></data>
+  <data name="Markup_Range" xml:space="preserve"><value>Светодиоды от … до</value></data>
+  <data name="Markup_ReverseRange" xml:space="preserve"><value>Развернуть</value></data>
+  <data name="Markup_MoveTo" xml:space="preserve"><value>Перенести, чтобы начиналось с</value></data>
+  <data name="Markup_MoveRange" xml:space="preserve"><value>Перенести</value></data>
+  <data name="Markup_DeleteRange" xml:space="preserve"><value>Удалить</value></data>
+  <data name="Markup_ClearTail" xml:space="preserve"><value>Стереть всё после «до»</value></data>
+  <data name="Markup_MirrorH" xml:space="preserve"><value>Зеркало ↔</value></data>
+  <data name="Markup_MirrorV" xml:space="preserve"><value>Зеркало ↕</value></data>
+  <data name="Markup_Rotate" xml:space="preserve"><value>Повернуть на 90°</value></data>
+  <data name="Markup_ReverseAll" xml:space="preserve"><value>Развернуть всё</value></data>
+  <data name="Markup_ClearAll" xml:space="preserve"><value>Очистить всё</value></data>
+  <data name="Markup_Whole" xml:space="preserve"><value>Вся разметка</value></data>
+  <data name="Markup_Help" xml:space="preserve"><value>Клик или перетаскивание — нумеровать пустые клетки с «следующего» · Shift + клик — линия от последнего светодиода · Shift + перетаскивание — линия · Ctrl + перетаскивание — заливка прямоугольника · Ctrl + Shift + перетаскивание — выбрать диапазон · Alt + клик — продолжить после этого светодиода · правый клик или перетаскивание — убрать · двойной клик — перенести на номер · Ctrl + колесо — масштаб · Del — удалить диапазон · R — развернуть диапазон · Esc — сбросить жест или выйти</value></data>
+  <data name="Markup_TransferTo" xml:space="preserve"><value>Перенести светодиод на номер</value></data>
+  <data name="Layout_New" xml:space="preserve"><value>Новая…</value></data>
+  <data name="Layout_Edit" xml:space="preserve"><value>Править…</value></data>
+  <data name="Layout_Delete" xml:space="preserve"><value>Удалить</value></data>
+  <data name="Markup_StatusEmpty" xml:space="preserve"><value>Светодиоды не пронумерованы · следующий: {0}</value></data>
+  <data name="Markup_Corner" xml:space="preserve"><value>Вся матрица начинается с угла</value></data>
+  <data name="Markup_Overwrite" xml:space="preserve"><value>Перенумеровывать уже стоящие светодиоды (линии и заливки)</value></data>
+  <data name="Markup_ShowNumbers" xml:space="preserve"><value>Номера</value></data>
+  <data name="Markup_ShowPath" xml:space="preserve"><value>Путь</value></data>
+  <data name="Markup_ShowGradient" xml:space="preserve"><value>Цвет по номеру</value></data>
+  <data name="Markup_NextAtEnd" xml:space="preserve"><value>В конец</value></data>
+  <data name="Markup_ClearRange" xml:space="preserve"><value>Снять диапазон</value></data>
+  <data name="Markup_LeaveAsk" xml:space="preserve"><value>Сохранить изменения разметки?</value></data>
+  <data name="Markup_Save" xml:space="preserve"><value>Сохранить</value></data>
+  <data name="Markup_Discard" xml:space="preserve"><value>Не сохранять</value></data>
+  <data name="Markup_KeepEditing" xml:space="preserve"><value>Продолжить</value></data>
+  <data name="Markup_Spacing" xml:space="preserve"><value>Расстояние между плитками</value></data>
+  <data name="Markup_ShowIssues" xml:space="preserve"><value>Отмечать проблемы сохранённой нумерации</value></data>
+  <data name="Markup_SourceGaps" xml:space="preserve"><value>пропуски: {0}</value></data>
+  <data name="Markup_SourceRepeats" xml:space="preserve"><value>повторы: {0}</value></data>
+  <data name="Markup_SourceIssues" xml:space="preserve"><value>В сохранённой нумерации: {0}. Лента и раньше получала светодиоды в порядке номеров, поэтому по OK номера сжимаются до 1–N в том же порядке. Клетки отмечены.</value></data>
+  <data name="FileType_Svg" xml:space="preserve"><value>Рисунок SVG</value></data>
+  <data name="Canvas_Title" xml:space="preserve"><value>Канва</value></data>
+  <data name="Canvas_Import" xml:space="preserve"><value>Импорт SVG…</value></data>
+  <data name="Canvas_Schema" xml:space="preserve"><value>Готовый рисунок</value></data>
+  <data name="Canvas_Remove" xml:space="preserve"><value>Убрать рисунок</value></data>
+  <data name="Canvas_Markup" xml:space="preserve"><value>Разметка…</value></data>
+  <data name="Canvas_Copy" xml:space="preserve"><value>Копировать разметку</value></data>
+  <data name="Canvas_Paste" xml:space="preserve"><value>Вставить разметку</value></data>
+  <data name="Canvas_UseFor" xml:space="preserve"><value>Назначить выбранному видеотаймлайну</value></data>
+  <data name="Canvas_Empty" xml:space="preserve"><value>В проекте нет рисунка с устройствами. Импортируйте SVG или возьмите готовый.</value></data>
+  <data name="Canvas_Hint" xml:space="preserve"><value>Двойной щелчок по фигуре — разметка светодиодов, перетащите её на видеотаймлайн, чтобы отдать ему раскладку, правый щелчок — остальное.</value></data>
+  <data name="Canvas_NotSvg" xml:space="preserve"><value>{0} — не рисунок SVG.</value></data>
+  <data name="Canvas_NoShapes" xml:space="preserve"><value>В {0} нет фигур для разметки.</value></data>
+  <data name="Canvas_ReadFailed" xml:space="preserve"><value>Не удалось прочитать {0}: {1}</value></data>
+  <data name="Canvas_Unreadable" xml:space="preserve"><value>Рисунок проекта не читается.</value></data>
+  <data name="Canvas_Shape" xml:space="preserve"><value>{0}: {1} × {2}, светодиодов: {3}</value></data>
+  <data name="Canvas_ShapeUnmarked" xml:space="preserve"><value>{0}: разметки ещё нет</value></data>
+  <data name="Canvas_Copied" xml:space="preserve"><value>Разметка {0} скопирована.</value></data>
+  <data name="Canvas_NoVideoTimeline" xml:space="preserve"><value>Сначала выберите видеотаймлайн.</value></data>
+  <data name="Canvas_SchemaHuman" xml:space="preserve"><value>Человек</value></data>
+  <data name="Canvas_SchemaHumanSimple" xml:space="preserve"><value>Человек (простой)</value></data>
+  <data name="Drop_LayoutOnlyVideo" xml:space="preserve"><value>Раскладка светодиодов подходит только видеотаймлайну.</value></data>
+  <data name="Canvas_DragNeedsMarkup" xml:space="preserve"><value>Сначала разметьте светодиоды контура, потом перетащите его на видеотаймлайн.</value></data>
 </root>

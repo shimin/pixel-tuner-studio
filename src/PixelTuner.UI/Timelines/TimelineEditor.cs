@@ -297,6 +297,42 @@ public sealed class TimelineEditor
         _ => null,
     };
 
+    // ---- an LED layout dragged here from the canvas
+
+    /// <summary>The timeline an LED layout is being dragged over, and whether it would take it (only a video timeline plays from a layout).</summary>
+    public LayoutDropHint? LayoutDrop { get; private set; }
+
+    /// <summary>The pointer with a dragged layout is at this height: the timeline under it is marked as a target or as one that refuses.</summary>
+    public void HoverLayout(double y)
+    {
+        var target = TimelineAt(y);
+        var hint = target is null ? null : new LayoutDropHint(target, target.Kind == TimelineKind.Video);
+        if (hint == LayoutDrop) return;
+        LayoutDrop = hint;
+        RaiseChanged();
+    }
+
+    /// <summary>The drag left the timelines or ended.</summary>
+    public void LeaveLayout()
+    {
+        if (LayoutDrop is null) return;
+        LayoutDrop = null;
+        RaiseChanged();
+    }
+
+    /// <summary>
+    /// The layout is dropped at this height: a video timeline takes it (one undo step) and is selected; any other does not. True when the
+    /// layout went to a timeline.
+    /// </summary>
+    public bool DropLayout(double y, LedLayout layout)
+    {
+        LeaveLayout();
+        if (TimelineAt(y) is not { Kind: TimelineKind.Video } target || !Project.LedLayouts.Contains(layout)) return false;
+        if (target.LedLayoutId != layout.Id) _document.Execute(Edits.SetLedLayout(Project, target, layout.Id));
+        Select(target);
+        return true;
+    }
+
     // ---- hit testing
 
     /// <summary>The timeline whose track lies at this height; null above or below the tracks.</summary>
@@ -747,6 +783,13 @@ public sealed record DropDenial(Timeline Target, DropDenialReason Reason, int Re
         TimelineKind.Light => Strings.Kind_Light,
         _ => Strings.Kind_Pixel,
     };
+}
+
+/// <summary>A timeline under a layout that is being dragged, and whether it would take it.</summary>
+public sealed record LayoutDropHint(Timeline Target, bool Allowed)
+{
+    /// <summary>The words shown over a timeline that refuses.</summary>
+    public string Text() => Allowed ? "" : Strings.Drop_LayoutOnlyVideo;
 }
 
 /// <summary>An item or marker as it would be if the drag ended now.</summary>

@@ -258,6 +258,86 @@ public class EditsTests
     }
 
     [Fact]
+    public void Led_layouts_are_added_renamed_marked_and_removed_with_undo()
+    {
+        var layout = new LedLayout { Name = "prop", Columns = 3, Rows = 2 };
+        _history.Do(Edits.AddLedLayout(_project, layout));
+        _history.Do(Edits.RenameLedLayout(layout, "left"));
+        _history.Do(Edits.SetLedMarkup(layout, new Core.Layout.LedMarkup(4, 3, [0, 1, 5, 4])));
+        Assert.Equal(("left", 4, 3), (layout.Name, layout.Columns, layout.Rows));
+        Assert.Equal([0, 1, 5, 4], layout.Leds);
+
+        _history.Do(Edits.RemoveLedLayout(_project, layout));
+        Assert.Empty(_project.LedLayouts);
+
+        _history.Undo();                       // the layout is back, with its markup
+        Assert.Same(layout, Assert.Single(_project.LedLayouts));
+        _history.Undo();                       // markup in one step: grid and chain together
+        Assert.Equal((3, 2), (layout.Columns, layout.Rows));
+        Assert.Empty(layout.Leds);
+        while (_history.Undo()) { }
+        Assert.Empty(_project.LedLayouts);
+    }
+
+    [Fact]
+    public void The_markup_edit_can_set_the_tile_margin_and_forgets_what_the_numbers_of_the_file_had_wrong()
+    {
+        var layout = new LedLayout { Columns = 3, Rows = 2, Leds = [0, 2], SourceIssues = new Core.Layout.LedNumberIssues { MissingNumbers = [2] } };
+        _history.Do(Edits.AddLedLayout(_project, layout));
+        _history.Do(Edits.SetLedMarkup(layout, new Core.Layout.LedMarkup(3, 2, [0, 1]), tilesMargin: 9));
+        Assert.Equal(9, layout.TilesMargin);
+        Assert.Null(layout.SourceIssues);
+
+        _history.Undo();
+        Assert.Equal(2, layout.TilesMargin);
+        Assert.Equal([2], layout.SourceIssues!.MissingNumbers);
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => Edits.SetLedMarkup(layout, new Core.Layout.LedMarkup(3, 2), tilesMargin: 101));
+        Assert.Throws<ArgumentOutOfRangeException>(() => Edits.SetLedMarkup(layout, new Core.Layout.LedMarkup(3, 2), tilesMargin: -1));
+        _history.Do(Edits.SetLedMarkup(layout, new Core.Layout.LedMarkup(3, 2, [0]), tilesMargin: null));
+        Assert.Equal(2, layout.TilesMargin);   // null leaves it
+    }
+
+    [Fact]
+    public void The_canvas_drawing_is_set_and_taken_away_with_undo()
+    {
+        _history.Do(Edits.SetCanvas(_project, "svg1"));
+        Assert.Equal("svg1", _project.CanvasResourceId);
+        _history.Do(Edits.SetCanvas(_project, null));
+        Assert.Null(_project.CanvasResourceId);
+        _history.Undo();
+        Assert.Equal("svg1", _project.CanvasResourceId);
+    }
+
+    [Fact]
+    public void Removing_a_layout_takes_it_from_the_timelines_that_use_it_and_undo_gives_it_back_and_the_markup_has_a_size_limit()
+    {
+        var video = new Timeline { Kind = TimelineKind.Video };
+        var other = new Timeline { Kind = TimelineKind.Video };
+        _project.Timelines.AddRange([video, other]);
+        var layout = new LedLayout { Columns = 2, Rows = 2, Leds = [0, 1] };
+        _history.Do(Edits.AddLedLayout(_project, layout));
+        _history.Do(Edits.SetLedLayout(_project, video, layout.Id));
+        _history.Do(Edits.SetLedLayout(_project, other, layout.Id));
+
+        _history.Do(Edits.RemoveLedLayout(_project, layout));
+        Assert.Empty(_project.LedLayouts);
+        Assert.Null(video.LedLayoutId);
+        Assert.Null(other.LedLayoutId);
+        _history.Undo();
+        Assert.Equal(layout.Id, video.LedLayoutId);
+        Assert.Equal(layout.Id, other.LedLayoutId);
+        Assert.Same(layout, Assert.Single(_project.LedLayouts));
+        _history.Do(Edits.RemoveLedLayout(_project, layout));
+
+        _history.Do(Edits.AddLedLayout(_project, layout));
+        Assert.Throws<ArgumentException>(() => Edits.AddLedLayout(_project, layout));   // the same layout twice
+        Assert.Throws<ArgumentOutOfRangeException>(() => Edits.AddLedLayout(_project, new LedLayout { Columns = 65, Rows = 64 }));
+        Assert.Throws<ArgumentOutOfRangeException>(() => Edits.AddLedLayout(_project, new LedLayout { Columns = 0, Rows = 4 }));
+        _history.Do(Edits.AddLedLayout(_project, new LedLayout { Columns = 64, Rows = 64 }));   // exactly the limit
+    }
+
+    [Fact]
     public void Replacing_a_picture_keeps_the_timeline_height_and_undoes()
     {
         var timeline = new Timeline();

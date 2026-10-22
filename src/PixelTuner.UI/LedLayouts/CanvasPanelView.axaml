@@ -1,0 +1,48 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:res="using:PixelTuner.UI.Resources"
+             xmlns:led="using:PixelTuner.UI.LedLayouts"
+             x:Class="PixelTuner.UI.LedLayouts.CanvasPanelView"
+             x:DataType="led:CanvasPanelViewModel">
+  <!-- The drawing of the props: pick an outline, double click it to mark up its LEDs. -->
+  <Grid RowDefinitions="Auto,*,Auto" RowSpacing="8">
+    <WrapPanel>
+      <Button Content="{x:Static res:Strings.Canvas_Import}" Command="{Binding ImportSvgCommand}" Margin="0,0,8,0" />
+      <Button Content="{x:Static res:Strings.Canvas_Schema}" Margin="0,0,8,0">
+        <Button.Flyout>
+          <MenuFlyout>
+            <MenuItem Header="{x:Static res:Strings.Canvas_SchemaHuman}" Command="{Binding UseSchemaCommand}" CommandParameter="human" />
+            <MenuItem Header="{x:Static res:Strings.Canvas_SchemaHumanSimple}" Command="{Binding UseSchemaCommand}" CommandParameter="human_1" />
+          </MenuFlyout>
+        </Button.Flyout>
+      </Button>
+      <Button Content="{x:Static res:Strings.Canvas_Remove}" Command="{Binding RemoveDrawingCommand}" Margin="0,0,16,0" />
+      <Button Content="{x:Static res:Strings.Canvas_Markup}" Command="{Binding EditCommand}" Margin="0,0,8,0" />
+      <Button Content="{x:Static res:Strings.Canvas_Copy}" Command="{Binding CopyMarkupCommand}" Margin="0,0,8,0" />
+      <Button Content="{x:Static res:Strings.Canvas_Paste}" Command="{Binding PasteMarkupCommand}" Margin="0,0,8,0" />
+      <Button Content="{x:Static res:Strings.Canvas_UseFor}" Command="{Binding UseForTimelineCommand}" Margin="0,0,8,0" />
+    </WrapPanel>
+
+    <Panel Grid.Row="1" MinHeight="180">
+      <led:CanvasDrawingControl Panel="{Binding}" IsVisible="{Binding HasDrawing}">
+        <led:CanvasDrawingControl.ContextMenu>
+          <ContextMenu>
+            <MenuItem Header="{x:Static res:Strings.Canvas_Markup}" Command="{Binding EditCommand}" />
+            <MenuItem Header="{x:Static res:Strings.Canvas_Copy}" Command="{Binding CopyMarkupCommand}" />
+            <MenuItem Header="{x:Static res:Strings.Canvas_Paste}" Command="{Binding PasteMarkupCommand}" />
+            <MenuItem Header="{x:Static res:Strings.Canvas_UseFor}" Command="{Binding UseForTimelineCommand}" />
+          </ContextMenu>
+        </led:CanvasDrawingControl.ContextMenu>
+      </led:CanvasDrawingControl>
+      <TextBlock Classes="muted" TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center"
+                 Text="{x:Static res:Strings.Canvas_Empty}" IsVisible="{Binding HasNoDrawing}" />
+    </Panel>
+
+    <WrapPanel Grid.Row="2">
+      <TextBlock Text="{Binding HoverText}" FontWeight="SemiBold" Margin="0,0,16,0" />
+      <TextBlock Classes="muted" Text="{x:Static res:Strings.Canvas_Hint}" Margin="0,0,16,0" IsVisible="{Binding HasDrawing}" />
+      <TextBlock Text="{Binding Message}" Foreground="{DynamicResource SystemFillColorCautionBrush}" TextWrapping="Wrap"
+                 IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNotNull}}" />
+    </WrapPanel>
+  </Grid>
+</UserControl>

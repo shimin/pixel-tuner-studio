@@ -53,6 +53,7 @@ public sealed partial class PtpDocument
                 Path = (string?)element.Attribute("Path") ?? "",
                 Columns = ParseInt((string?)element.Attribute("ColumnsCount"), 0),
                 Rows = ParseInt((string?)element.Attribute("RowsCount"), 0),
+                TilesMargin = ParseInt((string?)element.Attribute("TilesMargin"), 2),
             };
             foreach (var tile in element.Element("LedTiles")?.Elements("LedTile") ?? [])
             {
@@ -146,6 +147,10 @@ public sealed class PtpCanvasElement
     public string Path { get; init; } = "";
     public int Columns { get; init; }
     public int Rows { get; init; }
+
+    /// <summary>Space between the tiles when drawn, in pixels; 2 when the file does not say.</summary>
+    public int TilesMargin { get; init; } = 2;
+
     public List<PtpLedTile> Tiles { get; } = [];
 
     /// <summary>

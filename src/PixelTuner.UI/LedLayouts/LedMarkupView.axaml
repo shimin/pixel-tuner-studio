@@ -1,0 +1,142 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:res="using:PixelTuner.UI.Resources"
+             xmlns:led="using:PixelTuner.UI.LedLayouts"
+             x:Class="PixelTuner.UI.LedLayouts.LedMarkupView"
+             x:DataType="led:LedMarkupViewModel"
+             Background="{DynamicResource PtSurfaceBrush}">
+  <!-- The LED markup of a prop: the grid with its numbered LEDs, and everything that changes it. OK hands the markup to the project. -->
+  <Grid RowDefinitions="Auto,*,Auto,Auto" ColumnDefinitions="*,300">
+    <DockPanel Grid.ColumnSpan="2" Margin="12,8" LastChildFill="True">
+      <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="8">
+        <Button Content="⟲" Command="{Binding UndoCommand}" ToolTip.Tip="{x:Static res:Strings.Markup_Undo}" />
+        <Button Content="⟳" Command="{Binding RedoCommand}" ToolTip.Tip="{x:Static res:Strings.Markup_Redo}" />
+        <Button Classes="accent" Content="{x:Static res:Strings.Markup_Ok}" Command="{Binding ApplyCommand}" MinWidth="72" />
+        <Button Content="{x:Static res:Strings.Markup_Cancel}" Command="{Binding CancelCommand}" />
+      </StackPanel>
+      <TextBlock DockPanel.Dock="Left" Text="{x:Static res:Strings.Markup_Title}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,12,0" />
+      <TextBox Text="{Binding Name}" IsEnabled="{Binding CanRename}" IsUndoEnabled="False" MaxWidth="260" HorizontalAlignment="Left" Watermark="{x:Static res:Strings.Markup_Name}" />
+    </DockPanel>
+
+    <Border Grid.Row="1" Margin="12,0,8,0" CornerRadius="6" ClipToBounds="True" Background="{DynamicResource PtCardBrush}">
+      <ScrollViewer x:Name="Scroller" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <led:LedMarkupCanvas Editor="{Binding}" Viewport="{Binding #Scroller.Viewport}" Margin="8" HorizontalAlignment="Center" VerticalAlignment="Center" />
+      </ScrollViewer>
+    </Border>
+
+    <ScrollViewer Grid.Row="1" Grid.Column="1" Margin="0,0,12,0" VerticalScrollBarVisibility="Auto">
+      <StackPanel Spacing="14">
+        <StackPanel Spacing="4">
+          <TextBlock Classes="muted" Text="{x:Static res:Strings.Markup_Next}" />
+          <DockPanel>
+            <Button DockPanel.Dock="Right" Content="{x:Static res:Strings.Markup_NextAtEnd}" Command="{Binding NextAtEndCommand}" Margin="6,0,0,0" />
+            <NumericUpDown Minimum="1" Maximum="100000" Increment="1" FormatString="0" Value="{Binding Next}" />
+          </DockPanel>
+          <CheckBox Content="{x:Static res:Strings.Markup_Overwrite}" IsChecked="{Binding Overwrite}" />
+          <CheckBox Content="{x:Static res:Strings.Markup_ShowIssues}" IsChecked="{Binding ShowSourceIssues}" IsVisible="{Binding HasSourceIssues}" />
+          <WrapPanel>
+            <CheckBox Content="{x:Static res:Strings.Markup_ShowNumbers}" IsChecked="{Binding ShowNumbers}" Margin="0,0,10,0" />
+            <CheckBox Content="{x:Static res:Strings.Markup_ShowPath}" IsChecked="{Binding ShowPath}" Margin="0,0,10,0" />
+            <CheckBox Content="{x:Static res:Strings.Markup_ShowGradient}" IsChecked="{Binding ShowGradient}" />
+          </WrapPanel>
+        </StackPanel>
+
+        <StackPanel Spacing="4">
+          <TextBlock FontWeight="SemiBold" Text="{x:Static res:Strings.Markup_Grid}" />
+          <UniformGrid Columns="2">
+            <StackPanel Margin="0,0,4,0"><TextBlock Classes="muted" Text="{x:Static res:Strings.Markup_Columns}" /><NumericUpDown Minimum="1" Maximum="4096" FormatString="0" Value="{Binding ColumnsBox}" /></StackPanel>
+            <StackPanel><TextBlock Classes="muted" Text="{x:Static res:Strings.Markup_Rows}" /><NumericUpDown Minimum="1" Maximum="4096" FormatString="0" Value="{Binding RowsBox}" /></StackPanel>
+          </UniformGrid>
+          <Button Content="{x:Static res:Strings.Markup_Resize}" Command="{Binding ApplySizeCommand}" />
+          <TextBlock Classes="muted" Text="{x:Static res:Strings.Markup_Spacing}" />
+          <NumericUpDown Minimum="0" Maximum="100" FormatString="0" Value="{Binding Spacing}" />
+        </StackPanel>
+
+        <StackPanel Spacing="4">
+          <TextBlock FontWeight="SemiBold" Text="{x:Static res:Strings.Markup_Fill}" />
+          <TextBlock Classes="muted" Text="{x:Static res:Strings.Markup_Corner}" />
+          <ComboBox SelectedIndex="{Binding FillCornerIndex}" HorizontalAlignment="Stretch">
+            <ComboBoxItem Content="{x:Static res:Strings.Markup_TopLeft}" />
+            <ComboBoxItem Content="{x:Static res:Strings.Markup_TopRight}" />
+            <ComboBoxItem Content="{x:Static res:Strings.Markup_BottomLeft}" />
+            <ComboBoxItem Content="{x:Static res:Strings.Markup_BottomRight}" />
+          </ComboBox>
+          <ComboBox SelectedIndex="{Binding FillDirectionIndex}" HorizontalAlignment="Stretch">
+            <ComboBoxItem Content="{x:Static res:Strings.Markup_ByRows}" />
+            <ComboBoxItem Content="{x:Static res:Strings.Markup_ByColumns}" />
+          </ComboBox>
+          <ComboBox SelectedIndex="{Binding FillPatternIndex}" HorizontalAlignment="Stretch">
+            <ComboBoxItem Content="{x:Static res:Strings.Markup_Snake}" />
+            <ComboBoxItem Content="{x:Static res:Strings.Markup_Straight}" />
+          </ComboBox>
+          <Button Content="{x:Static res:Strings.Markup_FillAll}" Command="{Binding FillAllCommand}" />
+        </StackPanel>
+
+        <StackPanel Spacing="4">
+          <TextBlock FontWeight="SemiBold" Text="{x:Static res:Strings.Markup_Range}" />
+          <UniformGrid Columns="2">
+            <NumericUpDown Margin="0,0,4,0" Minimum="0" Maximum="100000" FormatString="0" Value="{Binding RangeFrom}" />
+            <NumericUpDown Minimum="0" Maximum="100000" FormatString="0" Value="{Binding RangeTo}" />
+          </UniformGrid>
+          <WrapPanel>
+            <Button Content="{x:Static res:Strings.Markup_ReverseRange}" Command="{Binding ReverseRangeCommand}" Margin="0,0,6,6" />
+            <Button Content="{x:Static res:Strings.Markup_DeleteRange}" Command="{Binding DeleteRangeCommand}" Margin="0,0,6,6" />
+            <Button Content="{x:Static res:Strings.Markup_ClearRange}" Command="{Binding ClearRangeSelectionCommand}" Margin="0,0,6,6" />
+          </WrapPanel>
+          <TextBlock Classes="muted" TextWrapping="Wrap" Text="{x:Static res:Strings.Markup_MoveTo}" />
+          <DockPanel>
+            <Button DockPanel.Dock="Right" Content="{x:Static res:Strings.Markup_MoveRange}" Command="{Binding MoveRangeCommand}" Margin="6,0,0,0" />
+            <NumericUpDown Minimum="1" Maximum="100000" FormatString="0" Value="{Binding MoveTarget}" />
+          </DockPanel>
+          <Button Content="{x:Static res:Strings.Markup_ClearTail}" Command="{Binding ClearTailCommand}" />
+        </StackPanel>
+
+        <StackPanel Spacing="4">
+          <TextBlock FontWeight="SemiBold" Text="{x:Static res:Strings.Markup_Whole}" />
+          <WrapPanel>
+            <Button Content="{x:Static res:Strings.Markup_MirrorH}" Command="{Binding MirrorHorizontallyCommand}" Margin="0,0,6,6" />
+            <Button Content="{x:Static res:Strings.Markup_MirrorV}" Command="{Binding MirrorVerticallyCommand}" Margin="0,0,6,6" />
+            <Button Content="{x:Static res:Strings.Markup_Rotate}" Command="{Binding RotateCommand}" Margin="0,0,6,6" />
+            <Button Content="{x:Static res:Strings.Markup_ReverseAll}" Command="{Binding ReverseAllCommand}" Margin="0,0,6,6" />
+            <Button Content="{x:Static res:Strings.Markup_ClearAll}" Command="{Binding ClearAllCommand}" Margin="0,0,6,6" />
+          </WrapPanel>
+        </StackPanel>
+      </StackPanel>
+    </ScrollViewer>
+
+    <!-- The LED that a double click picked, and the number to move it to. -->
+    <Border Grid.Row="2" Grid.ColumnSpan="2" Classes="card" Margin="12,8,12,0" IsVisible="{Binding IsTransferring}">
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <StackPanel.KeyBindings>
+          <KeyBinding Gesture="Enter" Command="{Binding CommitTransferCommand}" />
+          <KeyBinding Gesture="Escape" Command="{Binding CancelTransferCommand}" />
+        </StackPanel.KeyBindings>
+        <TextBlock Text="{x:Static res:Strings.Markup_TransferTo}" VerticalAlignment="Center" />
+        <NumericUpDown Minimum="1" Maximum="100000" FormatString="0" Value="{Binding TransferNumber}" Width="130" />
+        <Button Classes="accent" Content="{x:Static res:Strings.Markup_Ok}" Command="{Binding CommitTransferCommand}" />
+        <Button Content="{x:Static res:Strings.Markup_Cancel}" Command="{Binding CancelTransferCommand}" />
+      </StackPanel>
+    </Border>
+
+    <Border Grid.Row="2" Grid.ColumnSpan="2" Classes="card" Margin="12,8,12,0" IsVisible="{Binding IsAskingToLeave}">
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <TextBlock Text="{x:Static res:Strings.Markup_LeaveAsk}" VerticalAlignment="Center" />
+        <Button Classes="accent" Content="{x:Static res:Strings.Markup_Save}" Command="{Binding ApplyCommand}" />
+        <Button Content="{x:Static res:Strings.Markup_Discard}" Command="{Binding CancelCommand}" />
+        <Button Content="{x:Static res:Strings.Markup_KeepEditing}" Command="{Binding KeepEditingCommand}" />
+      </StackPanel>
+    </Border>
+
+    <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Margin="14,8,12,10" Spacing="2">
+      <TextBlock Text="{Binding SourceIssuesText}" IsVisible="{Binding HasSourceIssues}" TextWrapping="Wrap"
+                 Foreground="{DynamicResource SystemFillColorCautionBrush}" />
+      <WrapPanel>
+        <TextBlock Text="{Binding StatusText}" FontWeight="SemiBold" Margin="0,0,16,0" />
+        <TextBlock Text="{Binding HoverText}" Classes="muted" Margin="0,0,16,0" />
+        <TextBlock Text="{Binding Hint}" Foreground="{DynamicResource SystemFillColorCautionBrush}" />
+        <TextBlock Text="{Binding Notice}" Foreground="{DynamicResource SystemFillColorCautionBrush}" />
+      </WrapPanel>
+      <TextBlock Classes="muted" FontSize="11" TextWrapping="Wrap" Text="{x:Static res:Strings.Markup_Help}" />
+    </StackPanel>
+  </Grid>
+</UserControl>

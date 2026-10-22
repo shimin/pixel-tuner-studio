@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text;
 using PixelTuner.Core.Imaging;
+using PixelTuner.Core.Layout;
 using PixelTuner.Core.Model;
 
 namespace PixelTuner.Core.Legacy;
@@ -33,7 +34,14 @@ public sealed class PtpConverter
                 Columns = element.Columns,
                 Rows = element.Rows,
                 Leds = element.OrderedLeds().Select(p => p.Y * element.Columns + p.X).ToList(),
+                TilesMargin = element.TilesMargin,
             };
+            // What the editor of PixelTuner 2 reported when it opened the element: gaps and repeats of the stored numbers.
+            if (element.Columns > 0 && element.Rows > 0)
+            {
+                LedMarkup.FromNumbers(element.Columns, element.Rows, element.Tiles.Where(t => t.Selected).Select(t => (t.Index, t.LedNumber)), out var issues);
+                if (!issues.IsClean) layout.SourceIssues = issues;
+            }
             LedLayouts.Add(layout);
             _layoutIds[element.Path] = layout.Id;
         }

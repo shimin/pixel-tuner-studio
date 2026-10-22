@@ -107,6 +107,11 @@
   <data name="Edit_SetFlipVertical" xml:space="preserve"><value>Flip timeline</value></data>
   <data name="Edit_SetMonochrome" xml:space="preserve"><value>Change monochrome channel</value></data>
   <data name="Edit_SetLedLayout" xml:space="preserve"><value>Change LED layout</value></data>
+  <data name="Edit_AddLedLayout" xml:space="preserve"><value>Add LED layout</value></data>
+  <data name="Edit_RemoveLedLayout" xml:space="preserve"><value>Remove LED layout</value></data>
+  <data name="Edit_RenameLedLayout" xml:space="preserve"><value>Rename LED layout</value></data>
+  <data name="Edit_SetLedMarkup" xml:space="preserve"><value>Edit LED markup</value></data>
+  <data name="Edit_SetCanvas" xml:space="preserve"><value>Change canvas drawing</value></data>
   <data name="Edit_ReplaceMedia" xml:space="preserve"><value>Replace picture</value></data>
   <data name="Edit_AddDevice" xml:space="preserve"><value>Add device</value></data>
   <data name="Edit_RemoveDevice" xml:space="preserve"><value>Remove device</value></data>
@@ -229,4 +234,89 @@
   <data name="Inspector_Playback" xml:space="preserve"><value>One pass of the picture takes {0}; it plays {1} times in this item. A lower stretching plays it faster.</value></data>
   <data name="Inspector_FrameTime" xml:space="preserve"><value>Frame time, ms</value></data>
   <data name="Inspector_PlaybackVideo" xml:space="preserve"><value>One pass of the animation takes {0}; it plays {1} times in this item. The frame time is in milliseconds: 40 is 25 frames a second.</value></data>
+  <data name="Markup_Title" xml:space="preserve"><value>LED markup</value></data>
+  <data name="Markup_Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Markup_Status" xml:space="preserve"><value>LEDs: {0} (1–{0}), no gaps or repeats · next: {1}</value></data>
+  <data name="Markup_Jumps" xml:space="preserve"><value>{0} jumps</value></data>
+  <data name="Markup_HoverEmpty" xml:space="preserve"><value>X {0}, Y {1}</value></data>
+  <data name="Markup_HoverLed" xml:space="preserve"><value>X {0}, Y {1}  →  № {2}</value></data>
+  <data name="Markup_BadSize" xml:space="preserve"><value>A grid has 1 to {0} cells.</value></data>
+  <data name="Markup_Dropped" xml:space="preserve"><value>{0} LEDs fell outside the new grid and were removed.</value></data>
+  <data name="Markup_Repaired" xml:space="preserve"><value>The file had {0} repeated cells and {1} outside the grid; they were taken out.</value></data>
+  <data name="Markup_Next" xml:space="preserve"><value>Next number</value></data>
+  <data name="Markup_Undo" xml:space="preserve"><value>Undo</value></data>
+  <data name="Markup_Redo" xml:space="preserve"><value>Redo</value></data>
+  <data name="Markup_Ok" xml:space="preserve"><value>OK</value></data>
+  <data name="Markup_Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Markup_Grid" xml:space="preserve"><value>Grid</value></data>
+  <data name="Markup_Columns" xml:space="preserve"><value>Columns</value></data>
+  <data name="Markup_Rows" xml:space="preserve"><value>Rows</value></data>
+  <data name="Markup_Resize" xml:space="preserve"><value>Resize</value></data>
+  <data name="Markup_Fill" xml:space="preserve"><value>Rectangle fill (Ctrl + drag)</value></data>
+  <data name="Markup_TopLeft" xml:space="preserve"><value>Top left</value></data>
+  <data name="Markup_TopRight" xml:space="preserve"><value>Top right</value></data>
+  <data name="Markup_BottomLeft" xml:space="preserve"><value>Bottom left</value></data>
+  <data name="Markup_BottomRight" xml:space="preserve"><value>Bottom right</value></data>
+  <data name="Markup_ByRows" xml:space="preserve"><value>By rows</value></data>
+  <data name="Markup_ByColumns" xml:space="preserve"><value>By columns</value></data>
+  <data name="Markup_Snake" xml:space="preserve"><value>Snake</value></data>
+  <data name="Markup_Straight" xml:space="preserve"><value>Straight</value></data>
+  <data name="Markup_FillAll" xml:space="preserve"><value>Whole matrix</value></data>
+  <data name="Markup_Range" xml:space="preserve"><value>LEDs from … to</value></data>
+  <data name="Markup_ReverseRange" xml:space="preserve"><value>Reverse</value></data>
+  <data name="Markup_MoveTo" xml:space="preserve"><value>Move so it starts at</value></data>
+  <data name="Markup_MoveRange" xml:space="preserve"><value>Move</value></data>
+  <data name="Markup_DeleteRange" xml:space="preserve"><value>Delete</value></data>
+  <data name="Markup_ClearTail" xml:space="preserve"><value>Erase everything after “to”</value></data>
+  <data name="Markup_MirrorH" xml:space="preserve"><value>Mirror ↔</value></data>
+  <data name="Markup_MirrorV" xml:space="preserve"><value>Mirror ↕</value></data>
+  <data name="Markup_Rotate" xml:space="preserve"><value>Rotate 90°</value></data>
+  <data name="Markup_ReverseAll" xml:space="preserve"><value>Reverse all</value></data>
+  <data name="Markup_ClearAll" xml:space="preserve"><value>Clear all</value></data>
+  <data name="Markup_Whole" xml:space="preserve"><value>Whole markup</value></data>
+  <data name="Markup_Help" xml:space="preserve"><value>Click or drag: number empty cells from the next number · Shift + click: line from the last LED · Shift + drag: line · Ctrl + drag: rectangle fill · Ctrl + Shift + drag: pick a range · Alt + click: continue after this LED · right click or drag: take out · double click: move to a number · Ctrl + wheel: zoom · Del: delete range · R: reverse range · Esc: drop the gesture or leave</value></data>
+  <data name="Markup_TransferTo" xml:space="preserve"><value>Move this LED to number</value></data>
+  <data name="Layout_New" xml:space="preserve"><value>New…</value></data>
+  <data name="Layout_Edit" xml:space="preserve"><value>Edit…</value></data>
+  <data name="Layout_Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="Markup_StatusEmpty" xml:space="preserve"><value>No LEDs numbered · next: {0}</value></data>
+  <data name="Markup_Corner" xml:space="preserve"><value>Whole matrix starts at</value></data>
+  <data name="Markup_Overwrite" xml:space="preserve"><value>Renumber LEDs that are there (lines and fills)</value></data>
+  <data name="Markup_ShowNumbers" xml:space="preserve"><value>Numbers</value></data>
+  <data name="Markup_ShowPath" xml:space="preserve"><value>Path</value></data>
+  <data name="Markup_ShowGradient" xml:space="preserve"><value>Colour by number</value></data>
+  <data name="Markup_NextAtEnd" xml:space="preserve"><value>At the end</value></data>
+  <data name="Markup_ClearRange" xml:space="preserve"><value>Clear range</value></data>
+  <data name="Markup_LeaveAsk" xml:space="preserve"><value>Save markup changes?</value></data>
+  <data name="Markup_Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Markup_Discard" xml:space="preserve"><value>Discard</value></data>
+  <data name="Markup_KeepEditing" xml:space="preserve"><value>Keep editing</value></data>
+  <data name="Markup_Spacing" xml:space="preserve"><value>Space between tiles</value></data>
+  <data name="Markup_ShowIssues" xml:space="preserve"><value>Mark problems of the saved numbering</value></data>
+  <data name="Markup_SourceGaps" xml:space="preserve"><value>gaps: {0}</value></data>
+  <data name="Markup_SourceRepeats" xml:space="preserve"><value>repeats: {0}</value></data>
+  <data name="Markup_SourceIssues" xml:space="preserve"><value>Saved numbering had {0}. The strip already received LEDs in number order, so on OK the numbers are compacted to 1–N in the same order. The cells are marked.</value></data>
+  <data name="FileType_Svg" xml:space="preserve"><value>SVG drawing</value></data>
+  <data name="Canvas_Title" xml:space="preserve"><value>Canvas</value></data>
+  <data name="Canvas_Import" xml:space="preserve"><value>Import SVG…</value></data>
+  <data name="Canvas_Schema" xml:space="preserve"><value>Built-in drawing</value></data>
+  <data name="Canvas_Remove" xml:space="preserve"><value>Remove drawing</value></data>
+  <data name="Canvas_Markup" xml:space="preserve"><value>Markup…</value></data>
+  <data name="Canvas_Copy" xml:space="preserve"><value>Copy markup</value></data>
+  <data name="Canvas_Paste" xml:space="preserve"><value>Paste markup</value></data>
+  <data name="Canvas_UseFor" xml:space="preserve"><value>Use for the selected video timeline</value></data>
+  <data name="Canvas_Empty" xml:space="preserve"><value>The project has no drawing of the props. Import an SVG or take a built-in one.</value></data>
+  <data name="Canvas_Hint" xml:space="preserve"><value>Double click a shape to mark up its LEDs, drag it onto a video timeline to give it its layout, right click for more.</value></data>
+  <data name="Canvas_NotSvg" xml:space="preserve"><value>{0} is not an SVG drawing.</value></data>
+  <data name="Canvas_NoShapes" xml:space="preserve"><value>{0} has no shapes to mark up.</value></data>
+  <data name="Canvas_ReadFailed" xml:space="preserve"><value>Could not read {0}: {1}</value></data>
+  <data name="Canvas_Unreadable" xml:space="preserve"><value>The drawing of the project cannot be read.</value></data>
+  <data name="Canvas_Shape" xml:space="preserve"><value>{0}: {1} × {2}, LEDs: {3}</value></data>
+  <data name="Canvas_ShapeUnmarked" xml:space="preserve"><value>{0}: no markup yet</value></data>
+  <data name="Canvas_Copied" xml:space="preserve"><value>Markup of {0} copied.</value></data>
+  <data name="Canvas_NoVideoTimeline" xml:space="preserve"><value>Select a video timeline first.</value></data>
+  <data name="Canvas_SchemaHuman" xml:space="preserve"><value>Human</value></data>
+  <data name="Canvas_SchemaHumanSimple" xml:space="preserve"><value>Human (simple)</value></data>
+  <data name="Drop_LayoutOnlyVideo" xml:space="preserve"><value>An LED layout goes to a video timeline only.</value></data>
+  <data name="Canvas_DragNeedsMarkup" xml:space="preserve"><value>Mark up the LEDs of the outline first, then drag it onto a video timeline.</value></data>
 </root>

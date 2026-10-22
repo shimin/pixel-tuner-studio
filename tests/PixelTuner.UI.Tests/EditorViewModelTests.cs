@@ -120,6 +120,18 @@ public class EditorOwnershipTests
     }
 
     [Fact]
+    public async Task A_new_project_starts_with_the_human_schema_as_PixelTuner_2_did_and_is_still_clean()
+    {
+        using var vm = new MainViewModel { FilePicker = new FakePicker(), Dialogs = new FakeDialogs(PixelTuner.UI.Services.SaveChoice.Discard) };
+        await vm.NewProjectCommand.ExecuteAsync(null);
+
+        Assert.False(vm.Document!.IsDirty);                       // it is the starting state, not an edit
+        Assert.NotNull(vm.Document.Project.CanvasResourceId);
+        Assert.Equal(12, vm.Editor!.Canvas.Elements.Count);
+        Assert.False(vm.Document.CanUndo);
+    }
+
+    [Fact]
     public async Task Stage_never_gets_an_editor()
     {
         var previous = Product.Current;

@@ -9,6 +9,7 @@ using PixelTuner.Core.Model;
 using PixelTuner.Package;
 using PixelTuner.UI.Resources;
 using PixelTuner.UI.Services;
+using PixelTuner.UI.LedLayouts;
 using PixelTuner.UI.LibraryPanel;
 using PixelTuner.UI.Timelines;
 
@@ -38,6 +39,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         document.Changed += DocumentChanged;
         Timelines = new TimelineEditor(document);
         Gallery = new LibraryViewModel(this, () => _picker?.Invoke());
+        Canvas = new CanvasPanelViewModel(this, () => _picker?.Invoke());
         BuildPalette();
         if (engine is not null)
         {
@@ -62,6 +64,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         {
             ForgetBinInfo();   // the file is built again only when the project changed, not on every move of the playhead or a drag
             if (Document.Project.AudioResourceId != _loadedAudioId) _ = LoadAudioAsync();
+            Canvas.Refresh();
         });
 
     /// <summary>Opens the project's soundtrack in the player and reads its waveform.</summary>
@@ -132,7 +135,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         nameof(SelectedItemCount), nameof(IsMultiSelection), nameof(MultiText),
         nameof(ColumnTimeText), nameof(BinInfo), nameof(HasBinInfo), nameof(BinLine), nameof(BinIssues), nameof(HasBinIssues),
         nameof(IsTimelineSelected), nameof(TimelineColorText), nameof(TimelineColorBrush), nameof(ColorIsOnlyALabel), nameof(ShowFlip), nameof(FlipVertical),
-        nameof(ShowMonochrome), nameof(Monochrome), nameof(ShowHeight), nameof(TimelineHeight), nameof(HeightText), nameof(ShowLayout), nameof(LayoutNames), nameof(LayoutIndex),
+        nameof(ShowMonochrome), nameof(Monochrome), nameof(ShowHeight), nameof(TimelineHeight), nameof(HeightText), nameof(ShowLayout), nameof(LayoutNames), nameof(LayoutIndex), nameof(CanEditLayout),
     ];
 
     private void Refresh()

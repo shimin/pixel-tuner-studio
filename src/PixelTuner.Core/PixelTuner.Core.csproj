@@ -12,6 +12,10 @@
     <PackageReference Include="SkiaSharp" />
   </ItemGroup>
   <ItemGroup>
+    <!-- The schemas PixelTuner 2 came with: drawings of a body to mark the LEDs of the props on. -->
+    <EmbeddedResource Include="Layout\Schemas\*.svg" LogicalName="PixelTuner.Core.Schemas.%(Filename)%(Extension)" />
+  </ItemGroup>
+  <ItemGroup>
     <InternalsVisibleTo Include="PixelTuner.Core.Tests" />
   </ItemGroup>
 </Project>

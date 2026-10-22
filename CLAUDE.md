@@ -72,6 +72,24 @@
   warnings come from `BinInfo.Of` (it builds the file of the device that plays the timeline with `ShowBuilder` and reads it back with
   `BinReader`, so they are what the device will get); `BuildIssue` codes get their words in `EditorViewModel.IssueText`.
   `InspectorControlsToBinTests` has a test for every control: turn it, build, read the field, undo.
+- LED markup (`LedLayout`, the layout of a video timeline; `PixelTuner.Core/Layout/LedMarkup.cs`, UI in `PixelTuner.UI/LedLayouts`): a port of
+  PixelTuner 2's canvas element window (`legacy/.../ViewModel/Tools/LedMarkup.cs`, `LedMarkupEditor.cs`, `Controls/LedMarkupCanvas.cs`,
+  `CanvasViewModel.cs`, `CanvasElementViewModel.cs`, which stay the reference: read them before changing anything here). The chain is the
+  order of the LEDs on the strip (number = place, always 1..N), the model is immutable and every operation is insert/remove with the tail shifting;
+  `tests/PixelTuner.Legacy.OracleTests/LedMarkupOracleTests` runs PixelTuner 2's own `LedMarkup` and `LedMarkupIssues` on random edits next to the
+  port. `LedMarkupViewModel` is `LedMarkupEditor` (working copy, gestures as cells + keys, window-local undo of 300 steps, OK = one document edit
+  through `Edits.AddLedLayout` / `SetLedMarkup`), `LedMarkupCanvas` only draws it and forwards the pointer. The drawing of the props is an SVG in the
+  project's media (`ShowProject.CanvasResourceId`, set by `Edits.SetCanvas`; PixelTuner 2's two schemas are embedded in Core): `CanvasDrawing`
+  (Core, no drawing platform) reads its outlines (id, path data, transforms), `SvgPath` flattens them for bounds and `CanvasDrawing.HitTest`; an
+  outline and its layout are tied by the layout's `Name` = the outline's id. `CanvasPanelViewModel` (`EditorViewModel.Canvas`, the "Canvas" tab)
+  imports an SVG or a schema, picks outlines, opens the window, copies and pastes markup (a static clipboard, as PixelTuner 2 kept it) and gives an
+  outline's layout to a video timeline: the outline is dragged onto the timeline (`CanvasDrawingControl` starts the drag with `LayoutDrag.Format`,
+  `TimelineControl` takes it and `TimelineEditor.HoverLayout` / `DropLayout` decide, one `SetLedLayout` step) or the button gives it to the selected one; the window shows the outline under the grid (cells stretched
+  over it), `LedLayout.TilesMargin` (PixelTuner 2's tile margin, 0-100, only for looking at) as the space between tiles, and, for layouts imported
+  from a .ptp, `LedLayout.SourceIssues` (gaps and repeats of the stored numbers, `LedNumberIssues`; OK compacts them). The chain of an imported
+  layout is still ordered by number then cell, as the export did. A new project starts with the human schema as PixelTuner 2's did (set as the starting state in `MainViewModel.NewProjectAsync`, not as an edit, so it
+  stays clean). Not ported: PixelTuner 2's canvas filled the outlines with the playing video (the preview, epic 6). A quarter
+  turn also works on grids that are not square; SVG shapes other than paths, rect, circle, ellipse, line, polyline and polygon (text, `use`, clipping) are not read.
 - `src/PixelTuner.Audio` holds the player and decoder contracts only; implementations go per
   platform. `src/PixelTuner.Audio.Vlc` (LibVLC, LGPL, dynamic) serves Windows and macOS: the VideoLAN NuGet
   packages carry LibVLC under `libvlc/<rid>`, Linux uses the system one (`apt install libvlc5 vlc-plugin-base`).

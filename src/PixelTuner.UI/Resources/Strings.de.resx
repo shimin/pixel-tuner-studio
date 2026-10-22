@@ -107,6 +107,11 @@
   <data name="Edit_SetFlipVertical" xml:space="preserve"><value>Spur spiegeln</value></data>
   <data name="Edit_SetMonochrome" xml:space="preserve"><value>Monochromer Kanal</value></data>
   <data name="Edit_SetLedLayout" xml:space="preserve"><value>LED-Layout ändern</value></data>
+  <data name="Edit_AddLedLayout" xml:space="preserve"><value>LED-Layout hinzufügen</value></data>
+  <data name="Edit_RemoveLedLayout" xml:space="preserve"><value>LED-Layout entfernen</value></data>
+  <data name="Edit_RenameLedLayout" xml:space="preserve"><value>LED-Layout umbenennen</value></data>
+  <data name="Edit_SetLedMarkup" xml:space="preserve"><value>LED-Markierung ändern</value></data>
+  <data name="Edit_SetCanvas" xml:space="preserve"><value>Zeichnung der Leinwand ändern</value></data>
   <data name="Edit_ReplaceMedia" xml:space="preserve"><value>Bild ersetzen</value></data>
   <data name="Edit_AddDevice" xml:space="preserve"><value>Gerät hinzufügen</value></data>
   <data name="Edit_RemoveDevice" xml:space="preserve"><value>Gerät entfernen</value></data>
@@ -229,4 +234,89 @@
   <data name="Inspector_Playback" xml:space="preserve"><value>Ein Durchlauf des Bildes dauert {0}; im Element läuft es {1}-mal. Weniger Dehnung spielt schneller.</value></data>
   <data name="Inspector_FrameTime" xml:space="preserve"><value>Bildzeit, ms</value></data>
   <data name="Inspector_PlaybackVideo" xml:space="preserve"><value>Ein Durchlauf der Animation dauert {0}; im Element läuft sie {1}-mal. Die Bildzeit ist in Millisekunden: 40 sind 25 Bilder pro Sekunde.</value></data>
+  <data name="Markup_Title" xml:space="preserve"><value>LED-Markierung</value></data>
+  <data name="Markup_Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Markup_Status" xml:space="preserve"><value>LEDs: {0} (1–{0}), ohne Lücken und Wiederholungen · nächste: {1}</value></data>
+  <data name="Markup_Jumps" xml:space="preserve"><value>Sprünge: {0}</value></data>
+  <data name="Markup_HoverEmpty" xml:space="preserve"><value>X {0}, Y {1}</value></data>
+  <data name="Markup_HoverLed" xml:space="preserve"><value>X {0}, Y {1}  →  Nr. {2}</value></data>
+  <data name="Markup_BadSize" xml:space="preserve"><value>Ein Raster hat 1 bis {0} Zellen.</value></data>
+  <data name="Markup_Dropped" xml:space="preserve"><value>{0} LEDs lagen außerhalb des neuen Rasters und wurden entfernt.</value></data>
+  <data name="Markup_Repaired" xml:space="preserve"><value>Die Datei hatte {0} doppelte Zellen und {1} außerhalb des Rasters; sie wurden entfernt.</value></data>
+  <data name="Markup_Next" xml:space="preserve"><value>Nächste Nummer</value></data>
+  <data name="Markup_Undo" xml:space="preserve"><value>Rückgängig</value></data>
+  <data name="Markup_Redo" xml:space="preserve"><value>Wiederholen</value></data>
+  <data name="Markup_Ok" xml:space="preserve"><value>OK</value></data>
+  <data name="Markup_Cancel" xml:space="preserve"><value>Abbrechen</value></data>
+  <data name="Markup_Grid" xml:space="preserve"><value>Raster</value></data>
+  <data name="Markup_Columns" xml:space="preserve"><value>Spalten</value></data>
+  <data name="Markup_Rows" xml:space="preserve"><value>Zeilen</value></data>
+  <data name="Markup_Resize" xml:space="preserve"><value>Ändern</value></data>
+  <data name="Markup_Fill" xml:space="preserve"><value>Rechteck füllen (Strg + Ziehen)</value></data>
+  <data name="Markup_TopLeft" xml:space="preserve"><value>Oben links</value></data>
+  <data name="Markup_TopRight" xml:space="preserve"><value>Oben rechts</value></data>
+  <data name="Markup_BottomLeft" xml:space="preserve"><value>Unten links</value></data>
+  <data name="Markup_BottomRight" xml:space="preserve"><value>Unten rechts</value></data>
+  <data name="Markup_ByRows" xml:space="preserve"><value>Zeilenweise</value></data>
+  <data name="Markup_ByColumns" xml:space="preserve"><value>Spaltenweise</value></data>
+  <data name="Markup_Snake" xml:space="preserve"><value>Schlange</value></data>
+  <data name="Markup_Straight" xml:space="preserve"><value>Gerade</value></data>
+  <data name="Markup_FillAll" xml:space="preserve"><value>Ganze Matrix</value></data>
+  <data name="Markup_Range" xml:space="preserve"><value>LEDs von … bis</value></data>
+  <data name="Markup_ReverseRange" xml:space="preserve"><value>Umkehren</value></data>
+  <data name="Markup_MoveTo" xml:space="preserve"><value>Verschieben, sodass es beginnt bei</value></data>
+  <data name="Markup_MoveRange" xml:space="preserve"><value>Verschieben</value></data>
+  <data name="Markup_DeleteRange" xml:space="preserve"><value>Löschen</value></data>
+  <data name="Markup_ClearTail" xml:space="preserve"><value>Alles nach „bis“ löschen</value></data>
+  <data name="Markup_MirrorH" xml:space="preserve"><value>Spiegeln ↔</value></data>
+  <data name="Markup_MirrorV" xml:space="preserve"><value>Spiegeln ↕</value></data>
+  <data name="Markup_Rotate" xml:space="preserve"><value>90° drehen</value></data>
+  <data name="Markup_ReverseAll" xml:space="preserve"><value>Alles umkehren</value></data>
+  <data name="Markup_ClearAll" xml:space="preserve"><value>Alles löschen</value></data>
+  <data name="Markup_Whole" xml:space="preserve"><value>Ganze Markierung</value></data>
+  <data name="Markup_Help" xml:space="preserve"><value>Klick oder Ziehen: leere Zellen ab der nächsten Nummer nummerieren · Umschalt + Klick: Linie von der letzten LED · Umschalt + Ziehen: Linie · Strg + Ziehen: Rechteck füllen · Strg + Umschalt + Ziehen: Bereich wählen · Alt + Klick: nach dieser LED fortfahren · Rechtsklick oder Ziehen: entfernen · Doppelklick: auf Nummer verschieben · Strg + Rad: Zoom · Entf: Bereich löschen · R: Bereich umkehren · Esc: Geste verwerfen oder verlassen</value></data>
+  <data name="Markup_TransferTo" xml:space="preserve"><value>Diese LED verschieben auf Nummer</value></data>
+  <data name="Layout_New" xml:space="preserve"><value>Neu…</value></data>
+  <data name="Layout_Edit" xml:space="preserve"><value>Bearbeiten…</value></data>
+  <data name="Layout_Delete" xml:space="preserve"><value>Löschen</value></data>
+  <data name="Markup_StatusEmpty" xml:space="preserve"><value>Keine LEDs nummeriert · nächste: {0}</value></data>
+  <data name="Markup_Corner" xml:space="preserve"><value>Ganze Matrix beginnt in der Ecke</value></data>
+  <data name="Markup_Overwrite" xml:space="preserve"><value>Vorhandene LEDs neu nummerieren (Linien und Füllungen)</value></data>
+  <data name="Markup_ShowNumbers" xml:space="preserve"><value>Nummern</value></data>
+  <data name="Markup_ShowPath" xml:space="preserve"><value>Pfad</value></data>
+  <data name="Markup_ShowGradient" xml:space="preserve"><value>Farbe nach Nummer</value></data>
+  <data name="Markup_NextAtEnd" xml:space="preserve"><value>Ans Ende</value></data>
+  <data name="Markup_ClearRange" xml:space="preserve"><value>Bereich aufheben</value></data>
+  <data name="Markup_LeaveAsk" xml:space="preserve"><value>Änderungen der Markierung speichern?</value></data>
+  <data name="Markup_Save" xml:space="preserve"><value>Speichern</value></data>
+  <data name="Markup_Discard" xml:space="preserve"><value>Verwerfen</value></data>
+  <data name="Markup_KeepEditing" xml:space="preserve"><value>Weiter bearbeiten</value></data>
+  <data name="Markup_Spacing" xml:space="preserve"><value>Abstand zwischen den Kacheln</value></data>
+  <data name="Markup_ShowIssues" xml:space="preserve"><value>Probleme der gespeicherten Nummerierung markieren</value></data>
+  <data name="Markup_SourceGaps" xml:space="preserve"><value>Lücken: {0}</value></data>
+  <data name="Markup_SourceRepeats" xml:space="preserve"><value>Wiederholungen: {0}</value></data>
+  <data name="Markup_SourceIssues" xml:space="preserve"><value>Die gespeicherte Nummerierung hatte {0}. Der Streifen bekam die LEDs schon in Nummernfolge, daher werden die Nummern mit OK in gleicher Reihenfolge auf 1–N verdichtet. Die Zellen sind markiert.</value></data>
+  <data name="FileType_Svg" xml:space="preserve"><value>SVG-Zeichnung</value></data>
+  <data name="Canvas_Title" xml:space="preserve"><value>Leinwand</value></data>
+  <data name="Canvas_Import" xml:space="preserve"><value>SVG importieren…</value></data>
+  <data name="Canvas_Schema" xml:space="preserve"><value>Mitgelieferte Zeichnung</value></data>
+  <data name="Canvas_Remove" xml:space="preserve"><value>Zeichnung entfernen</value></data>
+  <data name="Canvas_Markup" xml:space="preserve"><value>Markierung…</value></data>
+  <data name="Canvas_Copy" xml:space="preserve"><value>Markierung kopieren</value></data>
+  <data name="Canvas_Paste" xml:space="preserve"><value>Markierung einfügen</value></data>
+  <data name="Canvas_UseFor" xml:space="preserve"><value>Der gewählten Videospur zuweisen</value></data>
+  <data name="Canvas_Empty" xml:space="preserve"><value>Das Projekt hat keine Zeichnung der Props. Importiere ein SVG oder nimm eine mitgelieferte.</value></data>
+  <data name="Canvas_Hint" xml:space="preserve"><value>Doppelklick auf eine Form markiert ihre LEDs, auf eine Videospur ziehen weist ihr Layout zu, Rechtsklick für mehr.</value></data>
+  <data name="Canvas_NotSvg" xml:space="preserve"><value>{0} ist keine SVG-Zeichnung.</value></data>
+  <data name="Canvas_NoShapes" xml:space="preserve"><value>{0} enthält keine Formen zum Markieren.</value></data>
+  <data name="Canvas_ReadFailed" xml:space="preserve"><value>{0} konnte nicht gelesen werden: {1}</value></data>
+  <data name="Canvas_Unreadable" xml:space="preserve"><value>Die Zeichnung des Projekts kann nicht gelesen werden.</value></data>
+  <data name="Canvas_Shape" xml:space="preserve"><value>{0}: {1} × {2}, LEDs: {3}</value></data>
+  <data name="Canvas_ShapeUnmarked" xml:space="preserve"><value>{0}: noch keine Markierung</value></data>
+  <data name="Canvas_Copied" xml:space="preserve"><value>Markierung von {0} kopiert.</value></data>
+  <data name="Canvas_NoVideoTimeline" xml:space="preserve"><value>Wähle zuerst eine Videospur.</value></data>
+  <data name="Canvas_SchemaHuman" xml:space="preserve"><value>Mensch</value></data>
+  <data name="Canvas_SchemaHumanSimple" xml:space="preserve"><value>Mensch (einfach)</value></data>
+  <data name="Drop_LayoutOnlyVideo" xml:space="preserve"><value>Ein LED-Layout passt nur auf eine Videospur.</value></data>
+  <data name="Canvas_DragNeedsMarkup" xml:space="preserve"><value>Markiere zuerst die LEDs der Kontur und ziehe sie dann auf eine Videospur.</value></data>
 </root>
