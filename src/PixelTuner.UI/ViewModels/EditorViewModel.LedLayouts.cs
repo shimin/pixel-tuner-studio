@@ -13,6 +13,11 @@ public sealed partial class EditorViewModel
 
     public bool IsEditingMarkup => MarkupEditor is not null;
 
+    /// <summary>The drawing of the props: its outlines, and the markup that belongs to each.</summary>
+    public CanvasPanelViewModel Canvas { get; private set; } = null!;
+
+    internal Timeline? SelectedVideoTimeline => SelectedTimeline is { Kind: TimelineKind.Video } timeline ? timeline : null;
+
     private LedLayout? SelectedLayout =>
         SelectedTimeline is { Kind: TimelineKind.Video, LedLayoutId: { } id } ? Document.Project.LedLayouts.FirstOrDefault(l => l.Id == id) : null;
 
@@ -25,13 +30,13 @@ public sealed partial class EditorViewModel
     private void NewLayout()
     {
         if (SelectedTimeline is not { Kind: TimelineKind.Video } timeline) return;
-        Open(new LedMarkupViewModel(Document, null, timeline, string.Format(Strings.Inspector_LayoutN, Document.Project.LedLayouts.Count + 1), Close));
+        OpenMarkup(new LedMarkupViewModel(Document, null, timeline, string.Format(Strings.Inspector_LayoutN, Document.Project.LedLayouts.Count + 1), CloseMarkup));
     }
 
     [RelayCommand]
     private void EditLayout()
     {
-        if (SelectedLayout is { } layout) Open(new LedMarkupViewModel(Document, layout, null, LayoutTitle(layout), Close));
+        if (SelectedLayout is { } layout) OpenMarkup(new LedMarkupViewModel(Document, layout, null, LayoutTitle(layout), CloseMarkup, Canvas.ShapeOf(layout)));
     }
 
     /// <summary>Takes the layout away from the project; the timelines that used it are left without one. Undo brings it back.</summary>
@@ -41,18 +46,21 @@ public sealed partial class EditorViewModel
         if (SelectedLayout is { } layout) Document.Execute(Edits.RemoveLedLayout(Document.Project, layout));
     }
 
-    private void Open(LedMarkupViewModel editor)
+    /// <summary>Opens the markup window; it takes the place of the editor until it is closed.</summary>
+    internal void OpenMarkup(LedMarkupViewModel editor)
     {
         MarkupEditor = editor;
         OnPropertyChanged(nameof(MarkupEditor));
         OnPropertyChanged(nameof(IsEditingMarkup));
     }
 
-    private void Close(bool applied)
+    /// <summary>What the markup window calls when it is done, with OK or without.</summary>
+    internal void CloseMarkup(bool applied)
     {
         MarkupEditor = null;
         OnPropertyChanged(nameof(MarkupEditor));
         OnPropertyChanged(nameof(IsEditingMarkup));
+        Canvas.Refresh();
         Refresh();
     }
 }

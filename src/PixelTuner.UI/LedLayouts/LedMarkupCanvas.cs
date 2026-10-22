@@ -141,7 +141,7 @@ public sealed class LedMarkupCanvas : Control
     // ---- drawing
 
     // Blue at the strip start through cyan and green to yellow at the end.
-    private static Color GradientColour(int number, int count)
+    internal static Color GradientColour(int number, int count)
     {
         double t = count <= 1 ? 0 : (double)(number - 1) / (count - 1);
         return Hsv(230 - 175 * t, 0.7, 0.95);

@@ -9,6 +9,7 @@ using PixelTuner.Core.Model;
 using PixelTuner.Package;
 using PixelTuner.UI.Resources;
 using PixelTuner.UI.Services;
+using PixelTuner.UI.LedLayouts;
 using PixelTuner.UI.LibraryPanel;
 using PixelTuner.UI.Timelines;
 
@@ -36,6 +37,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         _picker = picker;
         Timelines = new TimelineEditor(document);
         Gallery = new LibraryViewModel(this, () => _picker?.Invoke());
+        Canvas = new CanvasPanelViewModel(this, () => _picker?.Invoke());
         BuildPalette();
         if (engine is not null)
         {
@@ -60,6 +62,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         OnUi(() =>
         {
             if (Document.Project.AudioResourceId != _loadedAudioId) _ = LoadAudioAsync();
+            Canvas.Refresh();
         });
 
     /// <summary>Opens the project's soundtrack in the player and reads its waveform.</summary>

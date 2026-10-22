@@ -55,6 +55,55 @@ public sealed class CanvasDrawing
 
     public CanvasShape? Find(string id) => Shapes.FirstOrDefault(s => s.Id == id);
 
+    // The outlines as polygons in drawing units, made when a point is first asked about.
+    private Dictionary<string, (double X, double Y)[][]>? _polygons;
+
+    /// <summary>
+    /// The shape under a point of the drawing (drawing units), the one drawn last when several lie there; null when the point is on none.
+    /// An outline counts as filled, also when it is open (a line of LEDs is picked inside the area its ends enclose).
+    /// </summary>
+    public CanvasShape? HitTest(double x, double y)
+    {
+        _polygons ??= Shapes.ToDictionary(shape => shape.Id, shape => SvgPath.Flatten(shape.PathData)
+            .Select(sub => sub.Select(p => shape.Transform.Apply(p.X, p.Y)).ToArray()).ToArray());
+        for (int i = Shapes.Count - 1; i >= 0; i--)
+            if (Inside(_polygons[Shapes[i].Id], x, y)) return Shapes[i];
+        return null;
+    }
+
+    // Even-odd rule over all the subpaths: a hole of the outline is not inside it.
+    private static bool Inside((double X, double Y)[][] polygons, double x, double y)
+    {
+        bool inside = false;
+        foreach (var polygon in polygons)
+            for (int i = 0, j = polygon.Length - 1; i < polygon.Length; j = i++)
+            {
+                var (xi, yi) = polygon[i];
+                var (xj, yj) = polygon[j];
+                if ((yi > y) != (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) inside = !inside;
+            }
+        return inside;
+    }
+
+    /// <summary>The page to show: the view box or the width and height, and when the SVG says neither, the box around all the outlines.</summary>
+    public (double X, double Y, double Width, double Height) Page
+    {
+        get
+        {
+            if (Width > 0 && Height > 0) return (X, Y, Width, Height);
+            double minX = double.MaxValue, minY = double.MaxValue, maxX = double.MinValue, maxY = double.MinValue;
+            foreach (var shape in Shapes)
+            {
+                var (bx, by, bw, bh) = shape.Bounds;
+                minX = Math.Min(minX, bx);
+                minY = Math.Min(minY, by);
+                maxX = Math.Max(maxX, bx + bw);
+                maxY = Math.Max(maxY, by + bh);
+            }
+            return minX > maxX ? (0, 0, 0, 0) : (minX, minY, maxX - minX, maxY - minY);
+        }
+    }
+
     /// <summary>Reads an SVG; null when the text is not an SVG document.</summary>
     public static CanvasDrawing? TryParse(string svg)
     {

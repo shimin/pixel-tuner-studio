@@ -154,6 +154,8 @@
     <!-- The library: what the project has to put on timelines, narrowed to what the selected timeline can play.
          While a picture is imported, the import panel takes its place. -->
     <Border Grid.Row="3" Grid.ColumnSpan="2" Classes="card" Margin="12,0,12,12" MaxHeight="440">
+     <TabControl Padding="0,8,0,0">
+      <TabItem Header="{x:Static res:Strings.Library_Title}">
       <Grid RowDefinitions="Auto,*" RowSpacing="8">
         <WrapPanel Orientation="Horizontal">
           <TextBlock Text="{x:Static res:Strings.Library_Title}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,12,0" />
@@ -297,6 +299,12 @@
         </ScrollViewer>
         </Panel>
       </Grid>
+      </TabItem>
+      <!-- The drawing of the props, with the markup state of each outline. -->
+      <TabItem Header="{x:Static res:Strings.Canvas_Title}">
+        <led:CanvasPanelView DataContext="{Binding Canvas}" MinHeight="260" />
+      </TabItem>
+     </TabControl>
     </Border>
 
     <!-- The LED markup window takes the place of the whole editor while it is open. -->

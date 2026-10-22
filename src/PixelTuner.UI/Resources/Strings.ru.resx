@@ -266,4 +266,25 @@
   <data name="Markup_SourceGaps" xml:space="preserve"><value>пропуски: {0}</value></data>
   <data name="Markup_SourceRepeats" xml:space="preserve"><value>повторы: {0}</value></data>
   <data name="Markup_SourceIssues" xml:space="preserve"><value>В сохранённой нумерации: {0}. Лента и раньше получала светодиоды в порядке номеров, поэтому по OK номера сжимаются до 1–N в том же порядке. Клетки отмечены.</value></data>
+  <data name="FileType_Svg" xml:space="preserve"><value>Рисунок SVG</value></data>
+  <data name="Canvas_Title" xml:space="preserve"><value>Канва</value></data>
+  <data name="Canvas_Import" xml:space="preserve"><value>Импорт SVG…</value></data>
+  <data name="Canvas_Schema" xml:space="preserve"><value>Готовый рисунок</value></data>
+  <data name="Canvas_Remove" xml:space="preserve"><value>Убрать рисунок</value></data>
+  <data name="Canvas_Markup" xml:space="preserve"><value>Разметка…</value></data>
+  <data name="Canvas_Copy" xml:space="preserve"><value>Копировать разметку</value></data>
+  <data name="Canvas_Paste" xml:space="preserve"><value>Вставить разметку</value></data>
+  <data name="Canvas_UseFor" xml:space="preserve"><value>Назначить выбранному видеотаймлайну</value></data>
+  <data name="Canvas_Empty" xml:space="preserve"><value>В проекте нет рисунка с устройствами. Импортируйте SVG или возьмите готовый.</value></data>
+  <data name="Canvas_Hint" xml:space="preserve"><value>Двойной щелчок по фигуре — разметка светодиодов; правый щелчок — копирование и вставка.</value></data>
+  <data name="Canvas_NotSvg" xml:space="preserve"><value>{0} — не рисунок SVG.</value></data>
+  <data name="Canvas_NoShapes" xml:space="preserve"><value>В {0} нет фигур для разметки.</value></data>
+  <data name="Canvas_ReadFailed" xml:space="preserve"><value>Не удалось прочитать {0}: {1}</value></data>
+  <data name="Canvas_Unreadable" xml:space="preserve"><value>Рисунок проекта не читается.</value></data>
+  <data name="Canvas_Shape" xml:space="preserve"><value>{0}: {1} × {2}, светодиодов: {3}</value></data>
+  <data name="Canvas_ShapeUnmarked" xml:space="preserve"><value>{0}: разметки ещё нет</value></data>
+  <data name="Canvas_Copied" xml:space="preserve"><value>Разметка {0} скопирована.</value></data>
+  <data name="Canvas_NoVideoTimeline" xml:space="preserve"><value>Сначала выберите видеотаймлайн.</value></data>
+  <data name="Canvas_SchemaHuman" xml:space="preserve"><value>Человек</value></data>
+  <data name="Canvas_SchemaHumanSimple" xml:space="preserve"><value>Человек (простой)</value></data>
 </root>

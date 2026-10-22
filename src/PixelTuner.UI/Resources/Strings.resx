@@ -266,4 +266,25 @@
   <data name="Markup_SourceGaps" xml:space="preserve"><value>gaps: {0}</value></data>
   <data name="Markup_SourceRepeats" xml:space="preserve"><value>repeats: {0}</value></data>
   <data name="Markup_SourceIssues" xml:space="preserve"><value>Saved numbering had {0}. The strip already received LEDs in number order, so on OK the numbers are compacted to 1–N in the same order. The cells are marked.</value></data>
+  <data name="FileType_Svg" xml:space="preserve"><value>SVG drawing</value></data>
+  <data name="Canvas_Title" xml:space="preserve"><value>Canvas</value></data>
+  <data name="Canvas_Import" xml:space="preserve"><value>Import SVG…</value></data>
+  <data name="Canvas_Schema" xml:space="preserve"><value>Built-in drawing</value></data>
+  <data name="Canvas_Remove" xml:space="preserve"><value>Remove drawing</value></data>
+  <data name="Canvas_Markup" xml:space="preserve"><value>Markup…</value></data>
+  <data name="Canvas_Copy" xml:space="preserve"><value>Copy markup</value></data>
+  <data name="Canvas_Paste" xml:space="preserve"><value>Paste markup</value></data>
+  <data name="Canvas_UseFor" xml:space="preserve"><value>Use for the selected video timeline</value></data>
+  <data name="Canvas_Empty" xml:space="preserve"><value>The project has no drawing of the props. Import an SVG or take a built-in one.</value></data>
+  <data name="Canvas_Hint" xml:space="preserve"><value>Double click a shape to mark up its LEDs; right click for copy and paste.</value></data>
+  <data name="Canvas_NotSvg" xml:space="preserve"><value>{0} is not an SVG drawing.</value></data>
+  <data name="Canvas_NoShapes" xml:space="preserve"><value>{0} has no shapes to mark up.</value></data>
+  <data name="Canvas_ReadFailed" xml:space="preserve"><value>Could not read {0}: {1}</value></data>
+  <data name="Canvas_Unreadable" xml:space="preserve"><value>The drawing of the project cannot be read.</value></data>
+  <data name="Canvas_Shape" xml:space="preserve"><value>{0}: {1} × {2}, LEDs: {3}</value></data>
+  <data name="Canvas_ShapeUnmarked" xml:space="preserve"><value>{0}: no markup yet</value></data>
+  <data name="Canvas_Copied" xml:space="preserve"><value>Markup of {0} copied.</value></data>
+  <data name="Canvas_NoVideoTimeline" xml:space="preserve"><value>Select a video timeline first.</value></data>
+  <data name="Canvas_SchemaHuman" xml:space="preserve"><value>Human</value></data>
+  <data name="Canvas_SchemaHumanSimple" xml:space="preserve"><value>Human (simple)</value></data>
 </root>

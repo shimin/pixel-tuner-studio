@@ -151,6 +151,29 @@ public class ProjectDocumentTests : IDisposable
     }
 
     [Fact]
+    public void The_canvas_drawing_and_the_markup_made_on_it_are_saved_and_come_back()
+    {
+        string path = Path.Combine(_dir, "canvas.pxpkg");
+        string svg = PixelTuner.Core.Layout.CanvasSchemas.Read("human");
+        using (var doc = ProjectDocument.CreateNew("Props"))
+        {
+            string id = doc.AddMedia(System.Text.Encoding.UTF8.GetBytes(svg), "human.svg");
+            doc.Execute(Edits.SetCanvas(doc.Project, id));
+            doc.Execute(Edits.AddLedLayout(doc.Project, new LedLayout { Name = "path3336", Columns = 2, Rows = 2, Leds = [0, 1, 3], TilesMargin = 5 }));
+            doc.SaveAs(path);
+        }
+
+        using var reopened = ProjectDocument.Open(path);
+        string? canvas = reopened.Project.CanvasResourceId;
+        Assert.NotNull(canvas);
+        using var stream = reopened.OpenMedia(canvas)!;
+        Assert.Equal(svg, new StreamReader(stream).ReadToEnd());
+        var layout = Assert.Single(reopened.Project.LedLayouts);
+        Assert.Equal(("path3336", 5), (layout.Name, layout.TilesMargin));
+        Assert.Equal([0, 1, 3], layout.Leds);
+    }
+
+    [Fact]
     public void Saving_keeps_the_history_and_undo_after_it_is_a_change_again()
     {
         string path = PackageWithMedia();

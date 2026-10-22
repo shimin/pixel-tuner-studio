@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Text.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using PixelTuner.Core.Layout;
 using PixelTuner.Package;
 using PixelTuner.Package.Import;
 using PixelTuner.UI.Resources;
@@ -146,7 +147,11 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     {
         if (!await ConfirmDiscardAsync()) return;
         Error = Status = null;
-        SetDocument(ProjectDocument.CreateNew());
+        var document = ProjectDocument.CreateNew();
+        // As in PixelTuner 2 a new project starts with the human schema to mark the props up on. It is the starting state, not an edit:
+        // a project the user has not touched is still clean.
+        document.Project.CanvasResourceId = document.AddMedia(System.Text.Encoding.UTF8.GetBytes(CanvasSchemas.Read(CanvasSchemas.All[0].Name)), CanvasSchemas.All[0].Name + ".svg");
+        SetDocument(document);
     }
 
     [RelayCommand]

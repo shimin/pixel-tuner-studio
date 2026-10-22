@@ -148,6 +148,9 @@ public sealed partial class LedMarkupViewModel : ObservableObject
 
     [ObservableProperty] private string _name;
 
+    /// <summary>The name of a layout that belongs to an outline of the drawing is the id of the outline: it is what ties them together.</summary>
+    public bool CanRename => Outline is null;
+
     /// <summary>The number the next LED gets: an LED placed now goes in here and the ones behind it shift. Count + 1 appends.</summary>
     public int Next
     {

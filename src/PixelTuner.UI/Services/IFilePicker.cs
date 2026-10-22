@@ -27,6 +27,9 @@ public interface IFilePicker
 
     /// <summary>Desktop: asks for a PixelTuner 2 project (.ptp). Returns its path, or null if cancelled.</summary>
     Task<string?> PickLegacyProjectAsync();
+
+    /// <summary>Desktop: asks for the SVG drawing of the props. Returns its path, or null if cancelled.</summary>
+    Task<string?> PickSvgPathAsync();
 }
 
 /// <summary>
@@ -67,6 +70,22 @@ public sealed class StorageFilePicker(TopLevel topLevel) : IFilePicker
         Patterns = ["*.gif"],
         MimeTypes = ["image/gif"],
     };
+
+    static readonly FilePickerFileType SvgType = new(Strings.FileType_Svg)
+    {
+        Patterns = ["*.svg"],
+        MimeTypes = ["image/svg+xml"],
+    };
+
+    public async Task<string?> PickSvgPathAsync()
+    {
+        var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            AllowMultiple = false,
+            FileTypeFilter = [SvgType, FilePickerFileTypes.All],
+        });
+        return files.Count == 0 ? null : files[0].TryGetLocalPath();
+    }
 
     public async Task<string?> PickGifPathAsync()
     {

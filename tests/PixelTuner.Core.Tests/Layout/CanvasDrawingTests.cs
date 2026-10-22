@@ -200,4 +200,47 @@ public class CanvasDrawingTests
         Assert.Equal("rect3342", drawing.Find("rect3342")!.Id);
         Assert.Null(drawing.Find("nothing"));
     }
+
+    [Fact]
+    public void A_point_picks_the_shape_under_it_and_the_one_drawn_last_when_they_overlap()
+    {
+        var drawing = Read("""
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+              <rect id="back" x="0" y="0" width="60" height="60"/>
+              <rect id="front" x="40" y="40" width="40" height="40"/>
+              <circle id="ring" cx="90" cy="10" r="8"/>
+            </svg>
+            """);
+        Assert.Equal("back", drawing.HitTest(10, 10)!.Id);
+        Assert.Equal("front", drawing.HitTest(50, 50)!.Id);       // both there: the later one is on top
+        Assert.Equal("front", drawing.HitTest(70, 70)!.Id);
+        Assert.Equal("ring", drawing.HitTest(90, 10)!.Id);
+        Assert.Null(drawing.HitTest(95, 95));
+        Assert.Null(drawing.HitTest(-5, 10));
+    }
+
+    [Fact]
+    public void A_hole_of_an_outline_is_not_inside_it_and_transforms_move_the_hit_area()
+    {
+        var drawing = Read("""
+            <svg xmlns="http://www.w3.org/2000/svg">
+              <path id="frame" d="M0,0 H30 V30 H0 Z M10,10 H20 V20 H10 Z"/>
+              <g transform="translate(100,0)"><rect id="moved" width="10" height="10"/></g>
+            </svg>
+            """);
+        Assert.Equal("frame", drawing.HitTest(5, 5)!.Id);
+        Assert.Null(drawing.HitTest(15, 15));
+        Assert.Null(drawing.HitTest(105, 105));
+        Assert.Equal("moved", drawing.HitTest(105, 5)!.Id);
+        Assert.Null(drawing.HitTest(5, 105));
+    }
+
+    [Fact]
+    public void The_page_is_the_view_box_or_failing_that_the_box_around_the_outlines()
+    {
+        Assert.Equal((0, 0, 100, 50), Read("""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50"><rect width="5" height="5"/></svg>""").Page);
+        var (x, y, w, h) = Read("""<svg xmlns="http://www.w3.org/2000/svg"><rect x="10" y="20" width="5" height="5"/><rect x="30" y="40" width="5" height="10"/></svg>""").Page;
+        Assert.Equal((10, 20, 25, 30), (x, y, w, h));
+        Assert.Equal((0, 0, 0, 0), Read("""<svg xmlns="http://www.w3.org/2000/svg"/>""").Page);
+    }
 }
