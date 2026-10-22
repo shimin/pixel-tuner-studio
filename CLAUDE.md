@@ -90,6 +90,13 @@
   layout is still ordered by number then cell, as the export did. A new project starts with the human schema as PixelTuner 2's did (set as the starting state in `MainViewModel.NewProjectAsync`, not as an edit, so it
   stays clean). Not ported: PixelTuner 2's canvas filled the outlines with the playing video (the preview, epic 6). A quarter
   turn also works on grids that are not square; SVG shapes other than paths, rect, circle, ellipse, line, polyline and polygon (text, `use`, clipping) are not read.
+- The preview (`PixelTuner.Core/Preview/TimelinePreview`, UI in `PixelTuner.UI/PreviewPanel`, the "Preview" tab of `EditorViewModel.Preview`):
+  it plays the .bin the build makes for the device of the selected timeline (`BinInfo.DeviceFor` + `ShowBuilder` + `BinReader`), so a pixel of
+  the preview is the byte of the block (`TimelinePreviewTests`), at the speed of each kind of device (a column is k x 50 us on a poi or hoop, k ms on
+  a video or fan module, k / 5 ms on E-Pic; a picture repeats from its first column until the next entry; pauses are dark entries) and at the playhead
+  (the sound's position). `TimelinePreview.Trail` gives the afterglow snapshots. `PreviewViewModel` rebuilds per timeline when the project changes
+  and gives `ColoursOn(layout)`, with which the canvas fills the outline a video plays on; `TimelinePreviewControl` only draws (poi tiled
+  as swung, hoop ring on an orbit, video on the markup over its outline, colours). How a swing looks is a guess: `docs/before-release.md`.
 - `src/PixelTuner.Audio` holds the player and decoder contracts only; implementations go per
   platform. `src/PixelTuner.Audio.Vlc` (LibVLC, LGPL, dynamic) serves Windows and macOS: the VideoLAN NuGet
   packages carry LibVLC under `libvlc/<rid>`, Linux uses the system one (`apt install libvlc5 vlc-plugin-base`).

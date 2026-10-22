@@ -46,7 +46,7 @@ public sealed partial class PreviewViewModel : ObservableObject
 
     /// <summary>The timeline shown: the selected one, or the one the selected item is on.</summary>
     /// <summary>The name of the timeline shown, with the kind of device.</summary>
-    public string Name => Timeline is { } t ? $"{t.Name} · {Current?.DeviceType ?? t.Kind}" : "";
+    public string Name => Timeline is { } t ? $"{t.Name} · {(Mode == PreviewMode.Hoop ? DeviceKind.Hoop : Current?.DeviceType ?? t.Kind)}" : "";
 
     public Timeline? Timeline => _editor.Timelines.Selected switch
     {
@@ -152,6 +152,7 @@ public sealed partial class PreviewViewModel : ObservableObject
 
     // ---- how a swing is drawn (PixelTuner 2's sliders: tail, scan speed, rotation)
 
+    // TODO(release): the swing model (speed, pitch, orbit, afterglow) is a guess, see docs/before-release.md.
     /// <summary>How fast the device is swung, in millimetres a millisecond (6 m/s): with the time a column is held it sets how wide a column is in the air.</summary>
     [ObservableProperty] private double _swingSpeed = 6;
 
