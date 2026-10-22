@@ -107,6 +107,10 @@
   <data name="Edit_SetFlipVertical" xml:space="preserve"><value>Отражение дорожки</value></data>
   <data name="Edit_SetMonochrome" xml:space="preserve"><value>Монохромный канал</value></data>
   <data name="Edit_SetLedLayout" xml:space="preserve"><value>Разметка светодиодов</value></data>
+  <data name="Edit_AddLedLayout" xml:space="preserve"><value>Добавить раскладку светодиодов</value></data>
+  <data name="Edit_RemoveLedLayout" xml:space="preserve"><value>Удалить раскладку светодиодов</value></data>
+  <data name="Edit_RenameLedLayout" xml:space="preserve"><value>Переименовать раскладку светодиодов</value></data>
+  <data name="Edit_SetLedMarkup" xml:space="preserve"><value>Разметка светодиодов</value></data>
   <data name="Edit_ReplaceMedia" xml:space="preserve"><value>Замена картинки</value></data>
   <data name="Edit_AddDevice" xml:space="preserve"><value>Добавление устройства</value></data>
   <data name="Edit_RemoveDevice" xml:space="preserve"><value>Удаление устройства</value></data>

@@ -268,6 +268,40 @@ public class ShowBuilderTests
     }
 
     [Fact]
+    public void A_layout_drawn_with_the_markup_editor_decides_the_rows_and_their_order_of_the_file_and_undo_restores_them()
+    {
+        var item = Video(0, 2);
+        var timeline = Add(TimelineKind.Video, item);
+        var layout = new LedLayout { Name = "prop", Columns = 4, Rows = 3 };
+        _history.Do(Edits.AddLedLayout(_project, layout));
+        _history.Do(Edits.SetLedLayout(_project, timeline, layout.Id));
+        var device = Bind(DeviceKind.Video, 0, timeline);
+        Assert.Equal(BuildIssueCode.NoLedLayout, Assert.Single(Build(device).Errors).Code);   // an empty layout is no markup
+
+        // A 4 x 3 panel: a snake over the whole grid, then the same grid with LED 1 at the other end.
+        var grid = new Core.Layout.LedMarkup(4, 3);
+        var snake = grid.Insert(grid.SweepCells(Core.Layout.Corner.TopLeft, Core.Layout.FillDirection.Rows, Core.Layout.FillPattern.Snake), 1);
+        _history.Do(Edits.SetLedMarkup(layout, snake));
+        byte[] first = Build(device).Bin!;
+        Assert.Equal(12, BinReader.ReadPpoi(first).Height);
+
+        _history.Do(Edits.SetLedMarkup(layout, snake.ReverseAll()));
+        byte[] reversed = Build(device).Bin!;
+        Assert.Equal(12, BinReader.ReadPpoi(reversed).Height);
+        Assert.NotEqual(first, reversed);                                 // same cells, other order: other rows
+
+        _history.Do(Edits.SetLedMarkup(layout, snake.ClearTail(5)));
+        Assert.Equal(5, BinReader.ReadPpoi(Build(device).Bin!).Height);   // H follows the chain
+
+        _history.Undo();
+        Assert.Equal(reversed, Build(device).Bin);
+        _history.Undo();
+        Assert.Equal(first, Build(device).Bin);
+        _history.Undo();
+        Assert.Equal(BuildIssueCode.NoLedLayout, Assert.Single(Build(device).Errors).Code);
+    }
+
+    [Fact]
     public void A_video_timeline_without_markup_is_an_error_before_the_build()
     {
         var timeline = Add(TimelineKind.Video, Video(0, 2));

@@ -107,6 +107,10 @@
   <data name="Edit_SetFlipVertical" xml:space="preserve"><value>Spur spiegeln</value></data>
   <data name="Edit_SetMonochrome" xml:space="preserve"><value>Monochromer Kanal</value></data>
   <data name="Edit_SetLedLayout" xml:space="preserve"><value>LED-Layout ändern</value></data>
+  <data name="Edit_AddLedLayout" xml:space="preserve"><value>LED-Layout hinzufügen</value></data>
+  <data name="Edit_RemoveLedLayout" xml:space="preserve"><value>LED-Layout entfernen</value></data>
+  <data name="Edit_RenameLedLayout" xml:space="preserve"><value>LED-Layout umbenennen</value></data>
+  <data name="Edit_SetLedMarkup" xml:space="preserve"><value>LED-Markierung ändern</value></data>
   <data name="Edit_ReplaceMedia" xml:space="preserve"><value>Bild ersetzen</value></data>
   <data name="Edit_AddDevice" xml:space="preserve"><value>Gerät hinzufügen</value></data>
   <data name="Edit_RemoveDevice" xml:space="preserve"><value>Gerät entfernen</value></data>

@@ -60,6 +60,21 @@ public sealed class PxPackageTests : IDisposable
     }
 
     [Fact]
+    public void An_led_layout_comes_back_from_the_package_as_it_was_saved()
+    {
+        var layout = new LedLayout { Name = "prop", Columns = 4, Rows = 3, Leds = [0, 1, 2, 3, 7, 6, 5, 4] };
+        var project = new ShowProject { LedLayouts = [layout], Timelines = [new Timeline { Kind = TimelineKind.Video, LedLayoutId = layout.Id }] };
+        var path = Path.Combine(_dir, "layout.pxpkg");
+        new PxPackageWriter().Save(path, project);
+
+        using var pkg = PxPackage.Open(path);
+        var back = Assert.Single(pkg.Project.LedLayouts);
+        Assert.Equal((layout.Id, "prop", 4, 3), (back.Id, back.Name, back.Columns, back.Rows));
+        Assert.Equal(layout.Leds, back.Leds);
+        Assert.Equal(layout.Id, pkg.Project.Timelines[0].LedLayoutId);
+    }
+
+    [Fact]
     public void Same_media_is_stored_once()
     {
         var a = Write("a.png", [1, 2, 3, 4]);

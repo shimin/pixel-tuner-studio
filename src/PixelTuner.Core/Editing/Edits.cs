@@ -126,6 +126,46 @@ public static class Edits
         return new SetValueEdit<Guid?>("SetLedLayout", timeline, nameof(timeline.LedLayoutId), () => timeline.LedLayoutId, v => timeline.LedLayoutId = v, layoutId, mergeable: false);
     }
 
+    // ---- LED layouts
+
+    /// <summary>Most cells a layout grid can have: the editor draws every one, and a video module has no use for more.</summary>
+    public const int MaxLedGridCells = 4096;
+
+    public static Edit AddLedLayout(ShowProject project, LedLayout layout)
+    {
+        if (project.LedLayouts.Any(l => l.Id == layout.Id)) throw new ArgumentException("The project has this layout already.", nameof(layout));
+        CheckGrid(layout.Columns, layout.Rows);
+        return new InsertEdit<LedLayout>("AddLedLayout", project.LedLayouts, project.LedLayouts.Count, layout);
+    }
+
+    /// <summary>Takes a layout away. A layout that a timeline samples its frames at stays: the timeline would lose its picture.</summary>
+    public static Edit RemoveLedLayout(ShowProject project, LedLayout layout)
+    {
+        if (project.Timelines.Any(t => t.LedLayoutId == layout.Id)) throw new InvalidOperationException("A timeline uses this layout.");
+        return new RemoveEdit<LedLayout>("RemoveLedLayout", project.LedLayouts, layout);
+    }
+
+    public static Edit RenameLedLayout(LedLayout layout, string name) =>
+        new SetValueEdit<string>("RenameLedLayout", layout, nameof(layout.Name), () => layout.Name, v => layout.Name = v, name, mergeable: true);
+
+    /// <summary>The grid and the LED chain of a layout, in one step; what the markup editor hands back with OK.</summary>
+    public static Edit SetLedMarkup(LedLayout layout, Layout.LedMarkup markup)
+    {
+        CheckGrid(markup.Columns, markup.Rows);
+        return new GroupEdit("SetLedMarkup",
+        [
+            new SetValueEdit<int>("SetLedMarkup", layout, nameof(layout.Columns), () => layout.Columns, v => layout.Columns = v, markup.Columns, mergeable: false),
+            new SetValueEdit<int>("SetLedMarkup", layout, nameof(layout.Rows), () => layout.Rows, v => layout.Rows = v, markup.Rows, mergeable: false),
+            new SetValueEdit<List<int>>("SetLedMarkup", layout, nameof(layout.Leds), () => layout.Leds, v => layout.Leds = v, [.. markup.Chain], mergeable: false),
+        ]);
+    }
+
+    private static void CheckGrid(int columns, int rows)
+    {
+        if (columns < 1 || rows < 1 || (long)columns * rows > MaxLedGridCells)
+            throw new ArgumentOutOfRangeException(nameof(columns), $"A layout grid has 1 to {MaxLedGridCells} cells.");
+    }
+
     // ---- items
 
     /// <summary>
