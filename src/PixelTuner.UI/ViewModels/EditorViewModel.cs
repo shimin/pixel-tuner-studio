@@ -128,7 +128,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         nameof(OffsetX), nameof(OffsetY), nameof(T1), nameof(T2), nameof(ItemColor), nameof(ItemColorTo), nameof(ItemColorBrush), nameof(ItemColorToBrush),
         nameof(EffectIndex), nameof(HasImage), nameof(ItemPreviewBitmap), nameof(HasPreview), nameof(PlaybackText),
         nameof(IsTimelineSelected), nameof(TimelineColorText), nameof(TimelineColorBrush), nameof(ColorIsOnlyALabel), nameof(ShowFlip), nameof(FlipVertical),
-        nameof(ShowMonochrome), nameof(Monochrome), nameof(ShowHeight), nameof(TimelineHeight), nameof(HeightText), nameof(ShowLayout), nameof(LayoutNames), nameof(LayoutIndex),
+        nameof(ShowMonochrome), nameof(Monochrome), nameof(ShowHeight), nameof(TimelineHeight), nameof(HeightText), nameof(ShowLayout), nameof(LayoutNames), nameof(LayoutIndex), nameof(CanEditLayout),
     ];
 
     private void Refresh()

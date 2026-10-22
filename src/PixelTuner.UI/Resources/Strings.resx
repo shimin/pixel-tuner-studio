@@ -203,4 +203,51 @@
   <data name="Inspector_Playback" xml:space="preserve"><value>One pass of the picture takes {0}; it plays {1} times in this item. A lower stretching plays it faster.</value></data>
   <data name="Inspector_FrameTime" xml:space="preserve"><value>Frame time, ms</value></data>
   <data name="Inspector_PlaybackVideo" xml:space="preserve"><value>One pass of the animation takes {0}; it plays {1} times in this item. The frame time is in milliseconds: 40 is 25 frames a second.</value></data>
+  <data name="Markup_Title" xml:space="preserve"><value>LED markup</value></data>
+  <data name="Markup_Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Markup_Status" xml:space="preserve"><value>LEDs: {0} · next: {1}</value></data>
+  <data name="Markup_Jumps" xml:space="preserve"><value>{0} jumps</value></data>
+  <data name="Markup_HoverEmpty" xml:space="preserve"><value>Cell {0}, {1}: empty</value></data>
+  <data name="Markup_HoverLed" xml:space="preserve"><value>Cell {0}, {1}: LED {2}</value></data>
+  <data name="Markup_NotOnALine" xml:space="preserve"><value>The last LED and this cell are not on one row, column or diagonal.</value></data>
+  <data name="Markup_BadSize" xml:space="preserve"><value>A grid has 1 to {0} cells.</value></data>
+  <data name="Markup_Dropped" xml:space="preserve"><value>{0} LEDs fell outside the new grid and were removed.</value></data>
+  <data name="Markup_Repaired" xml:space="preserve"><value>The file had {0} repeated cells and {1} outside the grid; they were taken out.</value></data>
+  <data name="Markup_Next" xml:space="preserve"><value>Next number</value></data>
+  <data name="Markup_Undo" xml:space="preserve"><value>Undo</value></data>
+  <data name="Markup_Redo" xml:space="preserve"><value>Redo</value></data>
+  <data name="Markup_Ok" xml:space="preserve"><value>OK</value></data>
+  <data name="Markup_Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Markup_Grid" xml:space="preserve"><value>Grid</value></data>
+  <data name="Markup_Columns" xml:space="preserve"><value>Columns</value></data>
+  <data name="Markup_Rows" xml:space="preserve"><value>Rows</value></data>
+  <data name="Markup_Resize" xml:space="preserve"><value>Resize</value></data>
+  <data name="Markup_Fill" xml:space="preserve"><value>Fill (Ctrl + drag)</value></data>
+  <data name="Markup_FillFromDrag" xml:space="preserve"><value>Start at the corner where the drag began</value></data>
+  <data name="Markup_TopLeft" xml:space="preserve"><value>Top left</value></data>
+  <data name="Markup_TopRight" xml:space="preserve"><value>Top right</value></data>
+  <data name="Markup_BottomLeft" xml:space="preserve"><value>Bottom left</value></data>
+  <data name="Markup_BottomRight" xml:space="preserve"><value>Bottom right</value></data>
+  <data name="Markup_ByRows" xml:space="preserve"><value>By rows</value></data>
+  <data name="Markup_ByColumns" xml:space="preserve"><value>By columns</value></data>
+  <data name="Markup_Snake" xml:space="preserve"><value>Snake</value></data>
+  <data name="Markup_Straight" xml:space="preserve"><value>Straight</value></data>
+  <data name="Markup_FillAll" xml:space="preserve"><value>Whole matrix</value></data>
+  <data name="Markup_Range" xml:space="preserve"><value>LEDs from … to</value></data>
+  <data name="Markup_ReverseRange" xml:space="preserve"><value>Reverse</value></data>
+  <data name="Markup_MoveTo" xml:space="preserve"><value>Move so it starts at</value></data>
+  <data name="Markup_MoveRange" xml:space="preserve"><value>Move</value></data>
+  <data name="Markup_DeleteRange" xml:space="preserve"><value>Delete</value></data>
+  <data name="Markup_ClearTail" xml:space="preserve"><value>Erase everything after “to”</value></data>
+  <data name="Markup_MirrorH" xml:space="preserve"><value>Mirror ↔</value></data>
+  <data name="Markup_MirrorV" xml:space="preserve"><value>Mirror ↕</value></data>
+  <data name="Markup_Rotate" xml:space="preserve"><value>Rotate 90°</value></data>
+  <data name="Markup_ReverseAll" xml:space="preserve"><value>Reverse all</value></data>
+  <data name="Markup_ClearAll" xml:space="preserve"><value>Clear all</value></data>
+  <data name="Markup_Whole" xml:space="preserve"><value>Whole markup</value></data>
+  <data name="Markup_Help" xml:space="preserve"><value>Click: next LED · drag: LEDs along the way · Shift + click: line from the last LED · Shift + drag: line · Ctrl + drag: fill a rectangle · right click: take out · double click: move to a number · Alt + click: continue after this LED</value></data>
+  <data name="Markup_TransferTo" xml:space="preserve"><value>Move this LED to number</value></data>
+  <data name="Layout_New" xml:space="preserve"><value>New…</value></data>
+  <data name="Layout_Edit" xml:space="preserve"><value>Edit…</value></data>
+  <data name="Layout_Delete" xml:space="preserve"><value>Delete</value></data>
 </root>

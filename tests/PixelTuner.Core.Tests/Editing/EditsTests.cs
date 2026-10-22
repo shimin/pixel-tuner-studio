@@ -280,16 +280,24 @@ public class EditsTests
     }
 
     [Fact]
-    public void A_layout_that_a_timeline_uses_cannot_be_removed_and_the_markup_has_a_size_limit()
+    public void Removing_a_layout_takes_it_from_the_timelines_that_use_it_and_undo_gives_it_back_and_the_markup_has_a_size_limit()
     {
         var video = new Timeline { Kind = TimelineKind.Video };
-        _project.Timelines.Add(video);
+        var other = new Timeline { Kind = TimelineKind.Video };
+        _project.Timelines.AddRange([video, other]);
         var layout = new LedLayout { Columns = 2, Rows = 2, Leds = [0, 1] };
         _history.Do(Edits.AddLedLayout(_project, layout));
         _history.Do(Edits.SetLedLayout(_project, video, layout.Id));
-        Assert.Throws<InvalidOperationException>(() => Edits.RemoveLedLayout(_project, layout));
+        _history.Do(Edits.SetLedLayout(_project, other, layout.Id));
 
-        _history.Do(Edits.SetLedLayout(_project, video, null));
+        _history.Do(Edits.RemoveLedLayout(_project, layout));
+        Assert.Empty(_project.LedLayouts);
+        Assert.Null(video.LedLayoutId);
+        Assert.Null(other.LedLayoutId);
+        _history.Undo();
+        Assert.Equal(layout.Id, video.LedLayoutId);
+        Assert.Equal(layout.Id, other.LedLayoutId);
+        Assert.Same(layout, Assert.Single(_project.LedLayouts));
         _history.Do(Edits.RemoveLedLayout(_project, layout));
 
         _history.Do(Edits.AddLedLayout(_project, layout));

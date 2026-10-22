@@ -131,18 +131,32 @@ public static class Edits
     /// <summary>Most cells a layout grid can have: the editor draws every one, and a video module has no use for more.</summary>
     public const int MaxLedGridCells = 4096;
 
-    public static Edit AddLedLayout(ShowProject project, LedLayout layout)
+    /// <param name="use">A video timeline that takes the new layout at once, in the same undo step.</param>
+    public static Edit AddLedLayout(ShowProject project, LedLayout layout, Timeline? use = null)
     {
         if (project.LedLayouts.Any(l => l.Id == layout.Id)) throw new ArgumentException("The project has this layout already.", nameof(layout));
         CheckGrid(layout.Columns, layout.Rows);
-        return new InsertEdit<LedLayout>("AddLedLayout", project.LedLayouts, project.LedLayouts.Count, layout);
+        var add = new InsertEdit<LedLayout>("AddLedLayout", project.LedLayouts, project.LedLayouts.Count, layout);
+        if (use is null) return add;
+        if (use.Kind != TimelineKind.Video) throw new InvalidOperationException("Only a video timeline has an LED layout.");
+        return new GroupEdit("AddLedLayout",
+        [
+            add,
+            new SetValueEdit<Guid?>("AddLedLayout", use, nameof(use.LedLayoutId), () => use.LedLayoutId, v => use.LedLayoutId = v, layout.Id, mergeable: false),
+        ]);
     }
 
-    /// <summary>Takes a layout away. A layout that a timeline samples its frames at stays: the timeline would lose its picture.</summary>
+    /// <summary>Takes a layout away. The timelines that sampled their frames at it are left without one, and undo gives it back to them.</summary>
     public static Edit RemoveLedLayout(ShowProject project, LedLayout layout)
     {
-        if (project.Timelines.Any(t => t.LedLayoutId == layout.Id)) throw new InvalidOperationException("A timeline uses this layout.");
-        return new RemoveEdit<LedLayout>("RemoveLedLayout", project.LedLayouts, layout);
+        var edits = new List<Edit>();
+        foreach (var timeline in project.Timelines.Where(t => t.LedLayoutId == layout.Id))
+        {
+            var t = timeline;
+            edits.Add(new SetValueEdit<Guid?>("RemoveLedLayout", t, nameof(t.LedLayoutId), () => t.LedLayoutId, v => t.LedLayoutId = v, null, mergeable: false));
+        }
+        edits.Add(new RemoveEdit<LedLayout>("RemoveLedLayout", project.LedLayouts, layout));
+        return new GroupEdit("RemoveLedLayout", edits);
     }
 
     public static Edit RenameLedLayout(LedLayout layout, string name) =>
