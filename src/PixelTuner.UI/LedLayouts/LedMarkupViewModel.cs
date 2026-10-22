@@ -53,14 +53,20 @@ public sealed partial class LedMarkupViewModel : ObservableObject
     /// <param name="layout">The layout to edit; null makes a new one.</param>
     /// <param name="use">For a new layout: the video timeline that takes it.</param>
     /// <param name="done">Called with true when the markup went into the document, false when the user gave up.</param>
-    public LedMarkupViewModel(ProjectDocument document, LedLayout? layout, Timeline? use, string name, Action<bool> done)
+    /// <param name="outline">The outline of the prop in the canvas drawing, shown under the grid; null when the layout has none.</param>
+    public LedMarkupViewModel(ProjectDocument document, LedLayout? layout, Timeline? use, string name, Action<bool> done, CanvasShape? outline = null)
     {
         _document = document;
         _layout = layout;
         _use = use;
         _done = done;
-        if (layout is null)
+        Outline = outline;
+        _originalSpacing = layout?.TilesMargin ?? DefaultSpacing;
+        _spacing = _originalSpacing;
+        if (layout is not null && layout.SourceIssues is { IsClean: false } issues) SourceIssues = issues;
+        if (layout is null || layout.Columns < 1 || layout.Rows < 1)
         {
+            // A prop of the drawing that was never marked up has no grid yet.
             _original = new LedMarkup(DefaultSize, DefaultSize);
         }
         else
@@ -80,6 +86,58 @@ public sealed partial class LedMarkupViewModel : ObservableObject
     }
 
     public const int DefaultSize = 16;
+    public const int DefaultSpacing = 2;
+
+    private readonly int _originalSpacing;
+
+    // ---- the outline and the problems of a PixelTuner 2 file
+
+    /// <summary>The outline of the prop in the drawing of the canvas, shown under the grid; null when there is none.</summary>
+    public CanvasShape? Outline { get; }
+
+    /// <summary>Gaps and repeats in the numbers the project was stored with; until OK compacts them to 1..N.</summary>
+    public LedNumberIssues? SourceIssues { get; }
+
+    public bool HasSourceIssues => SourceIssues is { IsClean: false };
+
+    /// <summary>The cells to mark in the grid: where numbers repeat, and the ones that come after a gap.</summary>
+    public bool ShowSourceIssuesOnGrid => ShowSourceIssues && HasSourceIssues;
+
+    [ObservableProperty] private bool _showSourceIssues = true;
+
+    partial void OnShowSourceIssuesChanged(bool value)
+    {
+        OnPropertyChanged(nameof(ShowSourceIssuesOnGrid));
+        Redraw?.Invoke(this, EventArgs.Empty);
+    }
+
+    public string SourceIssuesText
+    {
+        get
+        {
+            if (SourceIssues is not { IsClean: false } issues) return "";
+            var parts = new List<string>();
+            if (issues.MissingNumbers.Count > 0) parts.Add(string.Format(Strings.Markup_SourceGaps, LedNumberIssues.FormatRanges(issues.MissingNumbers)));
+            if (issues.DuplicateNumbers.Count > 0) parts.Add(string.Format(Strings.Markup_SourceRepeats, LedNumberIssues.FormatRanges(issues.DuplicateNumbers)));
+            return string.Format(Strings.Markup_SourceIssues, string.Join("; ", parts));
+        }
+    }
+
+    /// <summary>Space between the tiles when they are drawn over the outline, in pixels (0 to 100). Only for looking at.</summary>
+    public int Spacing
+    {
+        get => _spacing;
+        set
+        {
+            int clamped = Math.Clamp(value, 0, Edits.MaxTilesMargin);
+            if (clamped == _spacing) return;
+            _spacing = clamped;
+            OnPropertyChanged();
+            Changed();
+        }
+    }
+
+    private int _spacing;
 
     // ---- the working copy
 
@@ -108,7 +166,7 @@ public sealed partial class LedMarkupViewModel : ObservableObject
     /// <summary>The last cell a numbering gesture placed: where a Shift click draws its line from.</summary>
     public int LastPlaced => _lastPlaced;
 
-    public bool IsDirty => !Markup.Equals(_original) || Name != _originalName;
+    public bool IsDirty => !Markup.Equals(_original) || Name != _originalName || Spacing != _originalSpacing;
 
     /// <summary>What was wrong with the stored chain, until the user has looked at it.</summary>
     [ObservableProperty] private string? _notice;
@@ -636,15 +694,17 @@ public sealed partial class LedMarkupViewModel : ObservableObject
         string name = Name.Trim();
         if (_layout is null)
         {
-            var layout = new LedLayout { Name = name, Columns = Markup.Columns, Rows = Markup.Rows, Leds = [.. Markup.Chain] };
+            var layout = new LedLayout { Name = name, Columns = Markup.Columns, Rows = Markup.Rows, Leds = [.. Markup.Chain], TilesMargin = Spacing };
             _document.Execute(Edits.AddLedLayout(_document.Project, layout, _use));
         }
-        else if (IsDirty || Notice is not null)
+        else if (IsDirty || Notice is not null || HasSourceIssues)
         {
             var edits = new List<Edit>();
             if (name != _layout.Name) edits.Add(Edits.RenameLedLayout(_layout, name));
-            // A repaired chain is written even when the user changed nothing else: the stored one was not what the editor showed.
-            if (!Markup.Equals(_original) || Notice is not null) edits.Add(Edits.SetLedMarkup(_layout, Markup));
+            // A repaired chain and numbers with gaps are written even when nothing else changed: what is stored is not what the editor showed.
+            bool markupChanged = !Markup.Equals(_original) || Spacing != _originalSpacing || Notice is not null || HasSourceIssues
+                || Markup.Columns != _layout.Columns || Markup.Rows != _layout.Rows;
+            if (markupChanged) edits.Add(Edits.SetLedMarkup(_layout, Markup, Spacing != _layout.TilesMargin ? Spacing : null));
             if (edits.Count > 0) _document.Execute(edits.Count == 1 ? edits[0] : new GroupEdit("SetLedMarkup", edits));
         }
         _done(true);

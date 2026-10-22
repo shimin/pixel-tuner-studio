@@ -261,4 +261,9 @@
   <data name="Markup_Save" xml:space="preserve"><value>Save</value></data>
   <data name="Markup_Discard" xml:space="preserve"><value>Discard</value></data>
   <data name="Markup_KeepEditing" xml:space="preserve"><value>Keep editing</value></data>
+  <data name="Markup_Spacing" xml:space="preserve"><value>Space between tiles</value></data>
+  <data name="Markup_ShowIssues" xml:space="preserve"><value>Mark problems of the saved numbering</value></data>
+  <data name="Markup_SourceGaps" xml:space="preserve"><value>gaps: {0}</value></data>
+  <data name="Markup_SourceRepeats" xml:space="preserve"><value>repeats: {0}</value></data>
+  <data name="Markup_SourceIssues" xml:space="preserve"><value>Saved numbering had {0}. The strip already received LEDs in number order, so on OK the numbers are compacted to 1–N in the same order. The cells are marked.</value></data>
 </root>

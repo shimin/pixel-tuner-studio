@@ -36,6 +36,14 @@ public sealed class LedMarkupViewModelTests : IDisposable
         return layout;
     }
 
+    // What an imported project has for a prop that was never marked up: a layout with no grid.
+    private LedLayout Unmarked()
+    {
+        var layout = new LedLayout { Name = "path1" };
+        _doc.Project.LedLayouts.Add(layout);
+        return layout;
+    }
+
     private static void Click(LedMarkupViewModel vm, int x, int y, GestureKeys keys = GestureKeys.None)
     {
         vm.Press(x, y, keys);
@@ -563,6 +571,102 @@ public sealed class LedMarkupViewModelTests : IDisposable
         Assert.True(_result);
         Assert.Equal(undoKey, _doc.UndoKey);
         Assert.Equal(dirtyBefore, _doc.IsDirty);
+    }
+
+    [Fact]
+    public void The_space_between_tiles_is_part_of_the_markup_and_goes_in_with_OK_in_one_step()
+    {
+        var layout = Existing(3, 2, 0, 1);
+        layout.TilesMargin = 4;
+        var vm = Edit(layout);
+        Assert.Equal(4, vm.Spacing);
+        Assert.False(vm.IsDirty);
+
+        vm.Spacing = 500;
+        Assert.Equal(100, vm.Spacing);                 // PixelTuner 2's range is 0 to 100
+        vm.Spacing = -3;
+        Assert.Equal(0, vm.Spacing);
+        Assert.True(vm.IsDirty);
+        vm.Spacing = 9;
+        vm.ApplyCommand.Execute(null);
+        Assert.Equal(9, layout.TilesMargin);
+
+        _doc.Undo();
+        Assert.Equal(4, layout.TilesMargin);
+    }
+
+    [Fact]
+    public void A_new_layout_starts_with_the_default_space_and_a_changed_space_is_stored_with_it()
+    {
+        var vm = New();
+        Assert.Equal(LedMarkupViewModel.DefaultSpacing, vm.Spacing);
+        vm.Spacing = 7;
+        vm.ApplyCommand.Execute(null);
+        Assert.Equal(7, Assert.Single(_doc.Project.LedLayouts).TilesMargin);
+    }
+
+    [Fact]
+    public void A_prop_of_the_drawing_that_was_never_marked_up_opens_on_a_new_grid_and_OK_gives_it_its_size()
+    {
+        var layout = Unmarked();
+        var vm = Edit(layout);
+        Assert.Equal((LedMarkupViewModel.DefaultSize, LedMarkupViewModel.DefaultSize), (vm.Markup.Columns, vm.Markup.Rows));
+        Click(vm, 3, 3);
+        vm.ApplyCommand.Execute(null);
+        Assert.Equal((16, 16), (layout.Columns, layout.Rows));
+        Assert.Equal([3 * 16 + 3], layout.Leds);
+    }
+
+    [Fact]
+    public void A_prop_of_the_drawing_that_is_left_as_it_was_stays_without_a_grid()
+    {
+        var layout = Unmarked();
+        var vm = Edit(layout);
+        Assert.False(vm.IsDirty);
+        vm.ApplyCommand.Execute(null);
+        Assert.Equal((0, 0), (layout.Columns, layout.Rows));
+    }
+
+    [Fact]
+    public void The_gaps_and_repeats_a_PixelTuner_2_file_had_are_told_and_OK_compacts_the_numbers_even_when_nothing_else_changed()
+    {
+        var layout = Existing(3, 2, 0, 1, 2);
+        layout.SourceIssues = new LedNumberIssues
+        {
+            MissingNumbers = [2, 5, 6], DuplicateNumbers = [3], DuplicateCells = [1, 2], CellsAfterGap = [1, 2], MaxNumber = 7,
+        };
+        var vm = Edit(layout);
+        Assert.True(vm.HasSourceIssues);
+        Assert.Contains("2, 5–6", vm.SourceIssuesText);
+        Assert.Contains("3", vm.SourceIssuesText);
+        Assert.True(vm.ShowSourceIssuesOnGrid);
+        vm.ShowSourceIssues = false;
+        Assert.False(vm.ShowSourceIssuesOnGrid);
+
+        vm.ApplyCommand.Execute(null);
+        Assert.Null(layout.SourceIssues);
+        Assert.Equal([0, 1, 2], layout.Leds);
+
+        _doc.Undo();                                  // one step brings the report back
+        Assert.NotNull(layout.SourceIssues);
+    }
+
+    [Fact]
+    public void A_clean_layout_has_nothing_to_report()
+    {
+        var vm = Edit(Existing(3, 2, 0, 1));
+        Assert.False(vm.HasSourceIssues);
+        Assert.Equal("", vm.SourceIssuesText);
+        Assert.False(vm.ShowSourceIssuesOnGrid);
+    }
+
+    [Fact]
+    public void The_outline_of_the_prop_is_kept_for_the_canvas()
+    {
+        var outline = new CanvasShape("rect1", "M0,0H10V5H0Z", Affine.Identity, null);
+        var vm = new LedMarkupViewModel(_doc, null, _video, "prop", _ => { }, outline);
+        Assert.Same(outline, vm.Outline);
+        Assert.Null(New().Outline);
     }
 
     [Fact]

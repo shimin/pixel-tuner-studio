@@ -261,4 +261,9 @@
   <data name="Markup_Save" xml:space="preserve"><value>Speichern</value></data>
   <data name="Markup_Discard" xml:space="preserve"><value>Verwerfen</value></data>
   <data name="Markup_KeepEditing" xml:space="preserve"><value>Weiter bearbeiten</value></data>
+  <data name="Markup_Spacing" xml:space="preserve"><value>Abstand zwischen den Kacheln</value></data>
+  <data name="Markup_ShowIssues" xml:space="preserve"><value>Probleme der gespeicherten Nummerierung markieren</value></data>
+  <data name="Markup_SourceGaps" xml:space="preserve"><value>Lücken: {0}</value></data>
+  <data name="Markup_SourceRepeats" xml:space="preserve"><value>Wiederholungen: {0}</value></data>
+  <data name="Markup_SourceIssues" xml:space="preserve"><value>Die gespeicherte Nummerierung hatte {0}. Der Streifen bekam die LEDs schon in Nummernfolge, daher werden die Nummern mit OK in gleicher Reihenfolge auf 1–N verdichtet. Die Zellen sind markiert.</value></data>
 </root>

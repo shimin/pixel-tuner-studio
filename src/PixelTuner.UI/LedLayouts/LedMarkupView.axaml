@@ -33,6 +33,7 @@
             <NumericUpDown Minimum="1" Maximum="100000" Increment="1" FormatString="0" Value="{Binding Next}" />
           </DockPanel>
           <CheckBox Content="{x:Static res:Strings.Markup_Overwrite}" IsChecked="{Binding Overwrite}" />
+          <CheckBox Content="{x:Static res:Strings.Markup_ShowIssues}" IsChecked="{Binding ShowSourceIssues}" IsVisible="{Binding HasSourceIssues}" />
           <WrapPanel>
             <CheckBox Content="{x:Static res:Strings.Markup_ShowNumbers}" IsChecked="{Binding ShowNumbers}" Margin="0,0,10,0" />
             <CheckBox Content="{x:Static res:Strings.Markup_ShowPath}" IsChecked="{Binding ShowPath}" Margin="0,0,10,0" />
@@ -47,6 +48,8 @@
             <StackPanel><TextBlock Classes="muted" Text="{x:Static res:Strings.Markup_Rows}" /><NumericUpDown Minimum="1" Maximum="4096" FormatString="0" Value="{Binding RowsBox}" /></StackPanel>
           </UniformGrid>
           <Button Content="{x:Static res:Strings.Markup_Resize}" Command="{Binding ApplySizeCommand}" />
+          <TextBlock Classes="muted" Text="{x:Static res:Strings.Markup_Spacing}" />
+          <NumericUpDown Minimum="0" Maximum="100" FormatString="0" Value="{Binding Spacing}" />
         </StackPanel>
 
         <StackPanel Spacing="4">
@@ -125,6 +128,8 @@
     </Border>
 
     <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Margin="14,8,12,10" Spacing="2">
+      <TextBlock Text="{Binding SourceIssuesText}" IsVisible="{Binding HasSourceIssues}" TextWrapping="Wrap"
+                 Foreground="{DynamicResource SystemFillColorCautionBrush}" />
       <WrapPanel>
         <TextBlock Text="{Binding StatusText}" FontWeight="SemiBold" Margin="0,0,16,0" />
         <TextBlock Text="{Binding HoverText}" Classes="muted" Margin="0,0,16,0" />

@@ -261,4 +261,9 @@
   <data name="Markup_Save" xml:space="preserve"><value>Сохранить</value></data>
   <data name="Markup_Discard" xml:space="preserve"><value>Не сохранять</value></data>
   <data name="Markup_KeepEditing" xml:space="preserve"><value>Продолжить</value></data>
+  <data name="Markup_Spacing" xml:space="preserve"><value>Расстояние между плитками</value></data>
+  <data name="Markup_ShowIssues" xml:space="preserve"><value>Отмечать проблемы сохранённой нумерации</value></data>
+  <data name="Markup_SourceGaps" xml:space="preserve"><value>пропуски: {0}</value></data>
+  <data name="Markup_SourceRepeats" xml:space="preserve"><value>повторы: {0}</value></data>
+  <data name="Markup_SourceIssues" xml:space="preserve"><value>В сохранённой нумерации: {0}. Лента и раньше получала светодиоды в порядке номеров, поэтому по OK номера сжимаются до 1–N в том же порядке. Клетки отмечены.</value></data>
 </root>

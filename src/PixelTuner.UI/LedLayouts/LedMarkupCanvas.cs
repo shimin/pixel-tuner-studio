@@ -8,9 +8,10 @@ using PixelTuner.Core.Layout;
 namespace PixelTuner.UI.LedLayouts;
 
 /// <summary>
-/// The grid of a prop with its LEDs (PixelTuner 2's <c>LedMarkupCanvas</c>). It draws <see cref="LedMarkupViewModel"/> and turns the
-/// pointer into cells and keys; what a press, a drag or a double click mean is decided in the view model, which is tested without a window.
-/// Put it in a ScrollViewer and give it the viewport: at zoom 1 the grid fits in it, Ctrl + wheel zooms.
+/// The grid of a prop with its LEDs over the outline of the prop (PixelTuner 2's <c>LedMarkupCanvas</c>). It draws
+/// <see cref="LedMarkupViewModel"/> and turns the pointer into cells and keys; what a press, a drag or a double click mean is decided in
+/// the view model, which is tested without a window. Put it in a ScrollViewer and give it the viewport: at zoom 1 the grid fits in it
+/// (in the proportions of the outline when there is one, so the cells are as wide and high as the prop is), Ctrl + wheel zooms.
 /// </summary>
 public sealed class LedMarkupCanvas : Control
 {
@@ -31,6 +32,7 @@ public sealed class LedMarkupCanvas : Control
     private const double ArrowsFromCellSize = 22;
 
     private static readonly IBrush Background = new SolidColorBrush(Color.FromRgb(0x3A, 0x3A, 0x3A));
+    private static readonly IBrush ShapeFill = new SolidColorBrush(Colors.White, 0.19);
     private static readonly IBrush EmptyCell = new SolidColorBrush(Colors.White, 0.22);
     private static readonly IBrush PlainCell = new SolidColorBrush(Color.FromRgb(0xE0, 0x40, 0x40), 0.82);
     private static readonly IBrush PreviewBrush = new SolidColorBrush(Color.FromRgb(0x30, 0xD0, 0x60), 0.63);
@@ -43,6 +45,8 @@ public sealed class LedMarkupCanvas : Control
 
     private readonly Dictionary<(string Text, int Size, bool Dark, bool Italic), FormattedText> _texts = [];
     private bool _pressed;
+    private CanvasShape? _outlineSource;
+    private Geometry? _outline;
 
     static LedMarkupCanvas()
     {
@@ -91,27 +95,45 @@ public sealed class LedMarkupCanvas : Control
 
     // ---- where the grid is
 
-    // The size of a cell at zoom 1: as large as the grid fits in the viewport, with room for the scroll bars.
-    private double FitCell()
-    {
-        if (Editor is not { } editor) return 1;
-        double width = Math.Max(50, Viewport.Width - 20), height = Math.Max(50, Viewport.Height - 20);
-        return Math.Max(1, Math.Min(width / editor.Markup.Columns, height / editor.Markup.Rows));
-    }
+    // The outline of the prop, as the box the grid is stretched over; none without an outline or with one that has no size.
+    private (double X, double Y, double Width, double Height)? OutlineBox =>
+        Editor?.Outline is { } shape && shape.Bounds is { Width: > 0, Height: > 0 } box ? box : null;
 
-    private double Cell => Editor is null ? 1 : Math.Max(1, Math.Floor(FitCell() * Zoom));
-
-    protected override Size MeasureOverride(Size availableSize)
+    // The size of the whole grid: as large as fits in the viewport, with room for the scroll bars, in the proportions of the outline
+    // (or of the grid itself), times the zoom.
+    private Size GridSize()
     {
         if (Editor is not { } editor) return default;
-        double cell = Cell;
-        return new Size(cell * editor.Markup.Columns, cell * editor.Markup.Rows);
+        double aspect = OutlineBox is { } box ? box.Width / box.Height : (double)editor.Markup.Columns / editor.Markup.Rows;
+        double fitWidth = Math.Max(50, Viewport.Width - 20), fitHeight = Math.Max(50, Viewport.Height - 20);
+        double width, height;
+        if (fitWidth / fitHeight > aspect)
+        {
+            height = fitHeight;
+            width = height * aspect;
+        }
+        else
+        {
+            width = fitWidth;
+            height = width / aspect;
+        }
+        double zoom = Math.Max(0.1, Zoom);
+        return new Size(Math.Max(editor.Markup.Columns, Math.Floor(width * zoom)), Math.Max(editor.Markup.Rows, Math.Floor(height * zoom)));
+    }
+
+    protected override Size MeasureOverride(Size availableSize) => GridSize();
+
+    private (double Width, double Height) CellSize()
+    {
+        if (Editor is not { } editor) return (1, 1);
+        var size = GridSize();
+        return (size.Width / editor.Markup.Columns, size.Height / editor.Markup.Rows);
     }
 
     private (int X, int Y) CellAt(Point point, bool clamp)
     {
-        double cell = Cell;
-        int x = (int)Math.Floor(point.X / cell), y = (int)Math.Floor(point.Y / cell);
+        var (w, h) = CellSize();
+        int x = (int)Math.Floor(point.X / w), y = (int)Math.Floor(point.Y / h);
         if (clamp && Editor is { } editor) (x, y) = (Math.Clamp(x, 0, editor.Markup.Columns - 1), Math.Clamp(y, 0, editor.Markup.Rows - 1));
         return (x, y);
     }
@@ -147,7 +169,7 @@ public sealed class LedMarkupCanvas : Control
     private void Number(DrawingContext context, Rect rect, string text, bool dark, bool italic = false)
     {
         double size = Math.Min(rect.Height * 0.55, rect.Width * 0.95 / (0.58 * text.Length));
-        if (size < 5 || rect.Width < NumbersFromCellSize * 0.7) return;
+        if (size < 5 || Math.Min(rect.Width, rect.Height) < NumbersFromCellSize * 0.7) return;
         int rounded = (int)Math.Round(size);
         var key = (text, rounded, dark, italic);
         if (!_texts.TryGetValue(key, out var formatted))
@@ -160,11 +182,11 @@ public sealed class LedMarkupCanvas : Control
         context.DrawText(formatted, new Point(rect.X + (rect.Width - formatted.Width) / 2, rect.Y + (rect.Height - formatted.Height) / 2));
     }
 
-    private static Rect CellRect(LedMarkup markup, int cell, double cellSize, double inset = 0)
+    private static Rect CellRect(LedMarkup markup, int cell, double cellWidth, double cellHeight, double inset = 0)
     {
         var (x, y) = markup.Position(cell);
-        double shrink = Math.Min(inset, cellSize * 0.4);
-        return new Rect(x * cellSize + shrink, y * cellSize + shrink, cellSize - 2 * shrink, cellSize - 2 * shrink);
+        double shrinkX = Math.Min(inset, cellWidth * 0.4), shrinkY = Math.Min(inset, cellHeight * 0.4);
+        return new Rect(x * cellWidth + shrinkX, y * cellHeight + shrinkY, cellWidth - 2 * shrinkX, cellHeight - 2 * shrinkY);
     }
 
     public override void Render(DrawingContext context)
@@ -172,47 +194,84 @@ public sealed class LedMarkupCanvas : Control
         base.Render(context);
         if (Editor is not { } editor) return;
         var markup = editor.Markup;
-        double cell = Cell;
-        context.FillRectangle(Background, new Rect(0, 0, cell * markup.Columns, cell * markup.Rows));
+        var size = GridSize();
+        var (cw, ch) = CellSize();
+        context.FillRectangle(Background, new Rect(0, 0, size.Width, size.Height));
+        DrawOutline(context, size);
 
-        double inset = Math.Min(cell * 0.08, 3), radius = cell * 0.15;
-        var rangePen = new Pen(Brushes.Cyan, Math.Max(2, cell * 0.08));
-        var hoverPen = new Pen(Brushes.White, Math.Max(1.5, cell * 0.06));
+        double smallest = Math.Min(cw, ch);
+        double inset = editor.Spacing * Math.Max(0.1, Zoom) / 2, radius = smallest * 0.15;
+        double ring = Math.Max(2, smallest * 0.08), hoverRing = Math.Max(1.5, smallest * 0.06);
+        var rangePen = new Pen(Brushes.Cyan, ring);
+        var repeatPen = new Pen(Brushes.Red, Math.Max(2, smallest * 0.1));
+        var gapPen = new Pen(Brushes.Orange, Math.Max(2, smallest * 0.1));
+        var hoverPen = new Pen(Brushes.White, hoverRing);
+        var issues = editor.ShowSourceIssuesOnGrid ? editor.SourceIssues : null;
+        var repeated = issues is null ? null : new HashSet<int>(issues.DuplicateCells);
+        var afterGap = issues is null ? null : new HashSet<int>(issues.CellsAfterGap);
         var previewCells = editor.Preview.Select(p => p.Cell).ToHashSet();
 
         for (int c = 0; c < markup.Columns * markup.Rows; c++)
         {
             int number = markup.NumberOf(c);
-            var rect = CellRect(markup, c, cell, inset);
+            var rect = CellRect(markup, c, cw, ch, inset);
             IBrush fill = number == 0 ? EmptyCell : editor.ShowGradient ? new SolidColorBrush(GradientColour(number, markup.Count)) : PlainCell;
             IPen? pen = number == 0 ? EmptyPen : null;
+            if (repeated is not null && repeated.Contains(c)) pen = repeatPen;
+            else if (afterGap is not null && afterGap.Contains(c)) pen = gapPen;
             if (number > 0 && editor.IsInRange(number)) pen = rangePen;
             if (c == editor.HoverCell) pen = hoverPen;
             context.DrawRectangle(fill, pen, rect, radius, radius);
             if (number > 0 && editor.ShowNumbers && !previewCells.Contains(c)) Number(context, rect, number.ToString(CultureInfo.InvariantCulture), IsLight(fill));
         }
 
-        if (editor.ShowPath && markup.Count > 1) DrawPath(context, markup, cell);
-        DrawGesture(context, editor, markup, cell, inset, radius);
+        if (editor.ShowPath && markup.Count > 1) DrawPath(context, markup, cw, ch);
+        DrawGesture(context, editor, markup, cw, ch, inset, radius);
 
         if (editor.TransferCell >= 0)
-            context.DrawRectangle(null, new Pen(new SolidColorBrush(Color.FromRgb(0xFF, 0xC8, 0x57)), 3), CellRect(markup, editor.TransferCell, cell), radius, radius);
+            context.DrawRectangle(null, new Pen(new SolidColorBrush(Color.FromRgb(0xFF, 0xC8, 0x57)), 3), CellRect(markup, editor.TransferCell, cw, ch), radius, radius);
     }
 
-    private static Point Centre(LedMarkup markup, int cell, double size)
+    // The outline of the prop under the grid, stretched over it: the grid is a picture of the prop, not of its pixels.
+    private void DrawOutline(DrawingContext context, Size size)
+    {
+        if (Editor?.Outline is not { } shape || OutlineBox is not { } box) return;
+        if (!ReferenceEquals(shape, _outlineSource))
+        {
+            _outlineSource = shape;
+            try
+            {
+                _outline = Geometry.Parse(shape.PathData);
+            }
+            catch (Exception ex) when (ex is FormatException or ArgumentException)
+            {
+                _outline = null;   // path data the platform cannot read: the grid is drawn without the outline
+            }
+        }
+        if (_outline is null) return;
+
+        double sx = size.Width / box.Width, sy = size.Height / box.Height;
+        var t = shape.Transform;
+        var matrix = new Matrix(t.A, t.B, t.C, t.D, t.E, t.F) * Matrix.CreateTranslation(-box.X, -box.Y) * Matrix.CreateScale(sx, sy);
+        using (context.PushTransform(matrix))
+            context.DrawGeometry(ShapeFill, new Pen(Brushes.Black, 1.0 / Math.Max(0.0001, Math.Min(sx, sy))), _outline);
+    }
+
+    private static Point Centre(LedMarkup markup, int cell, double width, double height)
     {
         var (x, y) = markup.Position(cell);
-        return new Point((x + 0.5) * size, (y + 0.5) * size);
+        return new Point((x + 0.5) * width, (y + 0.5) * height);
     }
 
     // The route of the strip, from LED to LED, with an arrow in the middle of each step; steps that jump over cells are dashed. A green
     // disc marks the first LED and a red square the last.
-    private static void DrawPath(DrawingContext context, LedMarkup markup, double cell)
+    private static void DrawPath(DrawingContext context, LedMarkup markup, double cw, double ch)
     {
-        double thickness = Math.Max(1, cell * 0.04);
+        double smallest = Math.Min(cw, ch);
+        double thickness = Math.Max(1, smallest * 0.04);
         var solid = new Pen(new SolidColorBrush(Colors.White, 0.82), thickness, lineCap: PenLineCap.Round);
         var dashed = new Pen(new SolidColorBrush(Colors.White, 0.56), thickness, new DashStyle([2, 2], 0));
-        double arrow = Math.Max(4, cell * 0.22);
+        double arrow = Math.Max(4, smallest * 0.22);
 
         var near = new StreamGeometry();
         var far = new StreamGeometry();
@@ -224,8 +283,8 @@ public sealed class LedMarkupCanvas : Control
             var chain = markup.Chain;
             for (int i = 1; i < chain.Count; i++)
             {
-                var a = Centre(markup, chain[i - 1], cell);
-                var b = Centre(markup, chain[i], cell);
+                var a = Centre(markup, chain[i - 1], cw, ch);
+                var b = Centre(markup, chain[i], cw, ch);
                 var (x0, y0) = markup.Position(chain[i - 1]);
                 var (x1, y1) = markup.Position(chain[i]);
                 var target = Math.Abs(x0 - x1) <= 1 && Math.Abs(y0 - y1) <= 1 ? nearContext : farContext;
@@ -234,7 +293,7 @@ public sealed class LedMarkupCanvas : Control
                 target.EndFigure(false);
 
                 double length = Math.Sqrt((b.X - a.X) * (b.X - a.X) + (b.Y - a.Y) * (b.Y - a.Y));
-                if (cell < ArrowsFromCellSize || length < arrow * 2.5) continue;
+                if (smallest < ArrowsFromCellSize || length < arrow * 2.5) continue;
                 double ux = (b.X - a.X) / length, uy = (b.Y - a.Y) / length;
                 var middle = new Point((a.X + b.X) / 2, (a.Y + b.Y) / 2);
                 var tip = new Point(middle.X + ux * arrow / 2, middle.Y + uy * arrow / 2);
@@ -249,25 +308,25 @@ public sealed class LedMarkupCanvas : Control
         context.DrawGeometry(null, dashed, far);
         context.DrawGeometry(null, solid, arrows);
 
-        double marker = Math.Max(3, cell * 0.16);
-        var start = Centre(markup, markup.Chain[0], cell);
+        double marker = Math.Max(3, smallest * 0.16);
+        var start = Centre(markup, markup.Chain[0], cw, ch);
         context.DrawEllipse(StartBrush, MarkerPen, start, marker, marker);
-        var end = Centre(markup, markup.Chain[^1], cell);
+        var end = Centre(markup, markup.Chain[^1], cw, ch);
         context.DrawRectangle(EndBrush, MarkerPen, new Rect(end.X - marker, end.Y - marker, marker * 2, marker * 2));
     }
 
     // What the pointer that is down is making: the cells and numbers of a line or a fill, or the rectangle of a range pick.
-    private void DrawGesture(DrawingContext context, LedMarkupViewModel editor, LedMarkup markup, double cell, double inset, double radius)
+    private void DrawGesture(DrawingContext context, LedMarkupViewModel editor, LedMarkup markup, double cw, double ch, double inset, double radius)
     {
         if (editor.Selection is { } selection)
         {
-            var rect = CellRect(markup, markup.Cell(selection.X0, selection.Y0), cell).Union(CellRect(markup, markup.Cell(selection.X1, selection.Y1), cell));
+            var rect = CellRect(markup, markup.Cell(selection.X0, selection.Y0), cw, ch).Union(CellRect(markup, markup.Cell(selection.X1, selection.Y1), cw, ch));
             context.DrawRectangle(SelectFill, SelectPen, rect);
             return;
         }
         foreach (var (c, number) in editor.Preview)
         {
-            var rect = CellRect(markup, c, cell, inset);
+            var rect = CellRect(markup, c, cw, ch, inset);
             context.DrawRectangle(PreviewBrush, new Pen(Brushes.White, 1), rect, radius, radius);
             Number(context, rect, number.ToString(CultureInfo.InvariantCulture), dark: false, italic: true);
         }
