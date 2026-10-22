@@ -277,6 +277,15 @@ public sealed class LedLayout
 
     /// <summary>Tile index (row * Columns + column) of each LED, in wiring order.</summary>
     public List<int> Leds { get; set; } = [];
+
+    /// <summary>Space between the tiles when the grid is drawn over the outline, in pixels (PixelTuner 2's TilesMargin). Only for looking at.</summary>
+    public int TilesMargin { get; set; } = 2;
+
+    /// <summary>
+    /// Gaps and repeats in the LED numbers of a PixelTuner 2 project this layout came from. The chain in <see cref="Leds"/> is
+    /// what its export gave the device; this is what the markup window tells the user about, until the numbers are compacted on OK.
+    /// </summary>
+    public Layout.LedNumberIssues? SourceIssues { get; set; }
 }
 
 /// <summary>The kinds of device a show is built for. Each takes its own .bin.</summary>

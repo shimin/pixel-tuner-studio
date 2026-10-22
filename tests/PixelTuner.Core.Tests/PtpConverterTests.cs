@@ -89,4 +89,58 @@ public class PtpConverterTests
         Assert.Equal((TimelineKind.EpicPoi, ItemKind.Gradient), (project.Timelines[4].Kind, epic.Kind));
         Assert.Equal(("./missing.png", (string?)null), (epic.SourcePath, epic.ResourceId));
     }
+
+    private static LedLayout LayoutOf(string tiles, string margin = "")
+    {
+        string xml = $"""
+            <?xml version="1.0"?>
+            <FileViewModel>
+              <Canvas>
+                <Elements>
+                  <CanvasElementViewModel {margin} RowsCount="2" ColumnsCount="3" Path="rect1">
+                    <LedTiles>{tiles}</LedTiles>
+                  </CanvasElementViewModel>
+                </Elements>
+                <Content />
+              </Canvas>
+            </FileViewModel>
+            """;
+        var converter = new PtpConverter(PtpDocument.Load(new MemoryStream(Encoding.UTF8.GetBytes(xml))), _ => null);
+        return Assert.Single(converter.LedLayouts);
+    }
+
+    [Fact]
+    public void The_tile_margin_comes_across_and_is_2_when_the_file_does_not_say()
+    {
+        Assert.Equal(7, LayoutOf("", "TilesMargin=\"7\"").TilesMargin);
+        Assert.Equal(2, LayoutOf("").TilesMargin);
+    }
+
+    [Fact]
+    public void Numbers_without_gaps_or_repeats_have_nothing_to_report()
+    {
+        var layout = LayoutOf("""<LedTile LedNumber="2" Index="1" Selected="true" /><LedTile LedNumber="1" Index="5" Selected="true" />""");
+        Assert.Null(layout.SourceIssues);
+        Assert.Equal([5, 1], layout.Leds);
+    }
+
+    [Fact]
+    public void Gaps_and_repeats_of_the_stored_numbers_are_kept_for_the_editor_to_report_while_the_chain_stays_what_the_export_used()
+    {
+        // Numbers 1, 3, 3, 6: 2, 4 and 5 are missing, 3 is used twice.
+        var layout = LayoutOf("""
+            <LedTile LedNumber="1" Index="0" Selected="true" />
+            <LedTile LedNumber="3" Index="2" Selected="true" />
+            <LedTile LedNumber="3" Index="3" Selected="true" />
+            <LedTile LedNumber="6" Index="5" Selected="true" />
+            <LedTile LedNumber="9" Index="4" Selected="false" />
+            """);
+        Assert.Equal([0, 2, 3, 5], layout.Leds);
+        var issues = layout.SourceIssues!;
+        Assert.Equal([2, 4, 5], issues.MissingNumbers);
+        Assert.Equal([3], issues.DuplicateNumbers);
+        Assert.Equal([2, 3], issues.DuplicateCells);
+        Assert.Equal([2, 3, 5], issues.CellsAfterGap);   // the cells of 3 follow the gap at 2, the cell of 6 the gap at 5
+        Assert.Equal(6, issues.MaxNumber);
+    }
 }

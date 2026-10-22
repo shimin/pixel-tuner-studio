@@ -62,7 +62,11 @@ public sealed class PxPackageTests : IDisposable
     [Fact]
     public void An_led_layout_comes_back_from_the_package_as_it_was_saved()
     {
-        var layout = new LedLayout { Name = "prop", Columns = 4, Rows = 3, Leds = [0, 1, 2, 3, 7, 6, 5, 4] };
+        var layout = new LedLayout
+        {
+            Name = "prop", Columns = 4, Rows = 3, Leds = [0, 1, 2, 3, 7, 6, 5, 4], TilesMargin = 5,
+            SourceIssues = new PixelTuner.Core.Layout.LedNumberIssues { MissingNumbers = [3], DuplicateNumbers = [2], DuplicateCells = [1, 2], CellsAfterGap = [4], MaxNumber = 8 },
+        };
         var project = new ShowProject { LedLayouts = [layout], Timelines = [new Timeline { Kind = TimelineKind.Video, LedLayoutId = layout.Id }] };
         var path = Path.Combine(_dir, "layout.pxpkg");
         new PxPackageWriter().Save(path, project);
@@ -71,6 +75,13 @@ public sealed class PxPackageTests : IDisposable
         var back = Assert.Single(pkg.Project.LedLayouts);
         Assert.Equal((layout.Id, "prop", 4, 3), (back.Id, back.Name, back.Columns, back.Rows));
         Assert.Equal(layout.Leds, back.Leds);
+        Assert.Equal(5, back.TilesMargin);
+        var issues = back.SourceIssues!;
+        Assert.Equal([3], issues.MissingNumbers);
+        Assert.Equal([2], issues.DuplicateNumbers);
+        Assert.Equal([1, 2], issues.DuplicateCells);
+        Assert.Equal([4], issues.CellsAfterGap);
+        Assert.Equal(8, issues.MaxNumber);
         Assert.Equal(layout.Id, pkg.Project.Timelines[0].LedLayoutId);
     }
 

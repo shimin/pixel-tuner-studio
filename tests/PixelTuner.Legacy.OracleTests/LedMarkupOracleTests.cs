@@ -188,5 +188,33 @@ namespace PixelTuner.Legacy.OracleTests
                         }
             }
         }
+
+        [Fact]
+        public void Stored_numbers_make_the_same_chain_and_the_same_report_as_PixelTuner_2()
+        {
+            for (int seed = 0; seed < 400; seed++)
+            {
+                var random = new Random(seed);
+                int columns = random.Next(1, 7), rows = random.Next(1, 7);
+                var pairs = new List<(int Cell, int Number)>();
+                for (int i = random.Next(0, 20); i > 0; i--)
+                    pairs.Add((random.Next(-1, columns * rows + 2), random.Next(-1, 14)));
+
+                var legacy = Pt2.LedMarkup.FromNumbers(columns, rows, pairs.Select(p => new KeyValuePair<int, int>(p.Cell, p.Number)), out var legacyIssues);
+                var port = Port.LedMarkup.FromNumbers(columns, rows, pairs, out var portIssues);
+
+                Assert.True(legacy.Chain.SequenceEqual(port.Chain), "chain, seed " + seed);
+                Assert.True(legacyIssues.MissingNumbers.SequenceEqual(portIssues.MissingNumbers), "missing, seed " + seed);
+                Assert.True(legacyIssues.DuplicateNumbers.SequenceEqual(portIssues.DuplicateNumbers), "repeats, seed " + seed);
+                Assert.True(legacyIssues.DuplicateCells.OrderBy(c => c).SequenceEqual(portIssues.DuplicateCells), "repeated cells, seed " + seed);
+                Assert.True(legacyIssues.CellsAfterGap.OrderBy(c => c).SequenceEqual(portIssues.CellsAfterGap), "cells after a gap, seed " + seed);
+                Assert.Equal(legacyIssues.MaxNumber, portIssues.MaxNumber);
+                Assert.Equal(legacyIssues.IsClean, portIssues.IsClean);
+
+                var numbers = pairs.Select(p => p.Number).Distinct().OrderBy(n => n).ToList();
+                Assert.Equal(Pt2.LedMarkupIssues.FormatRanges(numbers), Port.LedNumberIssues.FormatRanges(numbers));
+                Assert.Equal(Pt2.LedMarkupIssues.FormatRanges(numbers, 2), Port.LedNumberIssues.FormatRanges(numbers, 2));
+            }
+        }
     }
 }

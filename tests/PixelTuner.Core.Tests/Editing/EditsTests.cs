@@ -280,6 +280,36 @@ public class EditsTests
     }
 
     [Fact]
+    public void The_markup_edit_can_set_the_tile_margin_and_forgets_what_the_numbers_of_the_file_had_wrong()
+    {
+        var layout = new LedLayout { Columns = 3, Rows = 2, Leds = [0, 2], SourceIssues = new Core.Layout.LedNumberIssues { MissingNumbers = [2] } };
+        _history.Do(Edits.AddLedLayout(_project, layout));
+        _history.Do(Edits.SetLedMarkup(layout, new Core.Layout.LedMarkup(3, 2, [0, 1]), tilesMargin: 9));
+        Assert.Equal(9, layout.TilesMargin);
+        Assert.Null(layout.SourceIssues);
+
+        _history.Undo();
+        Assert.Equal(2, layout.TilesMargin);
+        Assert.Equal([2], layout.SourceIssues!.MissingNumbers);
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => Edits.SetLedMarkup(layout, new Core.Layout.LedMarkup(3, 2), tilesMargin: 101));
+        Assert.Throws<ArgumentOutOfRangeException>(() => Edits.SetLedMarkup(layout, new Core.Layout.LedMarkup(3, 2), tilesMargin: -1));
+        _history.Do(Edits.SetLedMarkup(layout, new Core.Layout.LedMarkup(3, 2, [0]), tilesMargin: null));
+        Assert.Equal(2, layout.TilesMargin);   // null leaves it
+    }
+
+    [Fact]
+    public void The_canvas_drawing_is_set_and_taken_away_with_undo()
+    {
+        _history.Do(Edits.SetCanvas(_project, "svg1"));
+        Assert.Equal("svg1", _project.CanvasResourceId);
+        _history.Do(Edits.SetCanvas(_project, null));
+        Assert.Null(_project.CanvasResourceId);
+        _history.Undo();
+        Assert.Equal("svg1", _project.CanvasResourceId);
+    }
+
+    [Fact]
     public void Removing_a_layout_takes_it_from_the_timelines_that_use_it_and_undo_gives_it_back_and_the_markup_has_a_size_limit()
     {
         var video = new Timeline { Kind = TimelineKind.Video };

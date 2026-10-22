@@ -94,6 +94,22 @@ public sealed class LedMarkup
         return new LedMarkup(columns, rows, leds.Where(c => c >= 0 && c < columns * rows && seen.Add(c)));
     }
 
+    /// <summary>
+    /// The markup of stored (cell, number) pairs, as PixelTuner 2 built it: one entry per cell (the first), cells off the grid left out, the
+    /// chain in number order and, among equal numbers, in cell order (the order its export gave the device). What the numbers had wrong goes to
+    /// <paramref name="issues"/>.
+    /// </summary>
+    public static LedMarkup FromNumbers(int columns, int rows, IEnumerable<(int Cell, int Number)> cellNumbers, out LedNumberIssues issues)
+    {
+        var valid = cellNumbers
+            .Where(p => p.Cell >= 0 && p.Cell < columns * rows)
+            .GroupBy(p => p.Cell).Select(g => g.First())
+            .OrderBy(p => p.Number).ThenBy(p => p.Cell)
+            .ToList();
+        issues = LedNumberIssues.Analyze(valid);
+        return new LedMarkup(columns, rows, valid.Select(p => p.Cell));
+    }
+
     // ---- placing and removing
 
     /// <summary>

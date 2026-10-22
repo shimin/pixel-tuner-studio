@@ -162,17 +162,36 @@ public static class Edits
     public static Edit RenameLedLayout(LedLayout layout, string name) =>
         new SetValueEdit<string>("RenameLedLayout", layout, nameof(layout.Name), () => layout.Name, v => layout.Name = v, name, mergeable: true);
 
-    /// <summary>The grid and the LED chain of a layout, in one step; what the markup editor hands back with OK.</summary>
-    public static Edit SetLedMarkup(LedLayout layout, Layout.LedMarkup markup)
+    /// <summary>Most space between tiles the markup window allows (PixelTuner 2's range was 0 to 100).</summary>
+    public const int MaxTilesMargin = 100;
+
+    /// <summary>
+    /// The grid and the LED chain of a layout, in one step; what the markup window hands back with OK. The numbers are 1..N from here on,
+    /// so what a PixelTuner 2 file had wrong with them is forgotten.
+    /// </summary>
+    /// <param name="tilesMargin">The space between the tiles, or null to leave it.</param>
+    public static Edit SetLedMarkup(LedLayout layout, Layout.LedMarkup markup, int? tilesMargin = null)
     {
         CheckGrid(markup.Columns, markup.Rows);
-        return new GroupEdit("SetLedMarkup",
-        [
+        var edits = new List<Edit>
+        {
             new SetValueEdit<int>("SetLedMarkup", layout, nameof(layout.Columns), () => layout.Columns, v => layout.Columns = v, markup.Columns, mergeable: false),
             new SetValueEdit<int>("SetLedMarkup", layout, nameof(layout.Rows), () => layout.Rows, v => layout.Rows = v, markup.Rows, mergeable: false),
             new SetValueEdit<List<int>>("SetLedMarkup", layout, nameof(layout.Leds), () => layout.Leds, v => layout.Leds = v, [.. markup.Chain], mergeable: false),
-        ]);
+        };
+        if (tilesMargin is { } margin)
+        {
+            if (margin < 0 || margin > MaxTilesMargin) throw new ArgumentOutOfRangeException(nameof(tilesMargin));
+            edits.Add(new SetValueEdit<int>("SetLedMarkup", layout, nameof(layout.TilesMargin), () => layout.TilesMargin, v => layout.TilesMargin = v, margin, mergeable: false));
+        }
+        if (layout.SourceIssues is not null)
+            edits.Add(new SetValueEdit<Layout.LedNumberIssues?>("SetLedMarkup", layout, nameof(layout.SourceIssues), () => layout.SourceIssues, v => layout.SourceIssues = v, null, mergeable: false));
+        return new GroupEdit("SetLedMarkup", edits);
     }
+
+    /// <summary>The drawing of the props (an SVG in the package's media) the layouts are marked up on; null takes it away.</summary>
+    public static Edit SetCanvas(ShowProject project, string? resourceId) =>
+        new SetValueEdit<string?>("SetCanvas", project, nameof(project.CanvasResourceId), () => project.CanvasResourceId, v => project.CanvasResourceId = v, resourceId, mergeable: false);
 
     private static void CheckGrid(int columns, int rows)
     {
