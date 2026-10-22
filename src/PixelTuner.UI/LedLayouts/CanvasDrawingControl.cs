@@ -21,6 +21,12 @@ public sealed class CanvasDrawingControl : Control
     private static readonly IBrush Stroke = new SolidColorBrush(Colors.White, 0.7);
     private static readonly IBrush SelectedStroke = new SolidColorBrush(Color.FromRgb(0xFF, 0xC8, 0x57));
 
+    // A press on an outline may turn into a drag onto a video timeline once the pointer has moved this far.
+    private const double DragDistance = 6;
+    private PointerPressedEventArgs? _pressed;
+    private Point _pressedAt;
+    private bool _dragging;
+
     private readonly Dictionary<string, Geometry?> _geometries = [];
     private CanvasDrawing? _geometriesOf;
 
@@ -130,12 +136,54 @@ public sealed class CanvasDrawingControl : Control
         panel.SelectAt(x, y);
         // A double click opens the markup of the outline; the right button only selects, for the menu.
         if (e.ClickCount == 2 && properties.IsLeftButtonPressed && panel.Selected is { } element) panel.Edit(element);
+        else if (properties.IsLeftButtonPressed && panel.Selected is not null)
+        {
+            _pressed = e;
+            _pressedAt = e.GetPosition(this);
+        }
+    }
+
+    protected override void OnPointerReleased(PointerReleasedEventArgs e)
+    {
+        base.OnPointerReleased(e);
+        _pressed = null;
+    }
+
+    // The outline is dragged onto a video timeline to give it its layout, as in PixelTuner 2.
+    private async Task StartDragAsync(CanvasPanelViewModel panel, PointerPressedEventArgs pressed)
+    {
+        if (panel.Selected is not { Layout: { } layout } || !panel.Selected.HasMarkup)
+        {
+            panel.RefuseDrag();
+            return;
+        }
+        var item = DataTransferItem.Create(LayoutDrag.Format, layout.Id.ToString());
+        var transfer = new DataTransfer();
+        transfer.Add(item);
+        _dragging = true;
+        try
+        {
+            await DragDrop.DoDragDropAsync(pressed, transfer, DragDropEffects.Link);
+        }
+        finally
+        {
+            _dragging = false;
+        }
     }
 
     protected override void OnPointerMoved(PointerEventArgs e)
     {
         base.OnPointerMoved(e);
-        if (Panel is { } panel && ToDrawing(e.GetPosition(this)) is var (x, y)) panel.Hover(x, y);
+        if (Panel is not { } panel) return;
+        var position = e.GetPosition(this);
+        if (_pressed is { } pressed && !_dragging && e.GetCurrentPoint(this).Properties.IsLeftButtonPressed
+            && Math.Abs(position.X - _pressedAt.X) + Math.Abs(position.Y - _pressedAt.Y) > DragDistance)
+        {
+            _pressed = null;
+            _ = StartDragAsync(panel, pressed);
+            return;
+        }
+        if (ToDrawing(position) is var (x, y)) panel.Hover(x, y);
     }
 
     protected override void OnPointerExited(PointerEventArgs e)

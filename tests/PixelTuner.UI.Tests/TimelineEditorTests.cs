@@ -562,6 +562,95 @@ public class TimelineEditorTests
     [InlineData("-5")]
     [InlineData("1:-5")]
     public void Bad_time_text_is_refused(string text) => Assert.False(TimeFormat.TryParse(text, out _));
+    // ---- an LED layout dragged from the canvas
+
+    private LedLayout Layout()
+    {
+        var layout = new LedLayout { Name = "left", Columns = 2, Rows = 2, Leds = [0, 1, 3] };
+        _doc.Project.LedLayouts.Add(layout);
+        return layout;
+    }
+
+    private Timeline VideoTrack()
+    {
+        var timeline = Track();
+        timeline.Kind = TimelineKind.Video;
+        return timeline;
+    }
+
+    [Fact]
+    public void A_layout_dragged_over_a_video_timeline_marks_it_as_a_target_and_over_another_kind_as_one_that_refuses()
+    {
+        var pixel = Track();
+        var video = VideoTrack();
+        int changes = 0;
+        _editor.Changed += (_, _) => changes++;
+
+        _editor.HoverLayout(RowY(1));
+        Assert.Equal(new LayoutDropHint(video, true), _editor.LayoutDrop);
+        Assert.Equal("", _editor.LayoutDrop!.Text());
+
+        _editor.HoverLayout(RowY(0));
+        Assert.Equal(new LayoutDropHint(pixel, false), _editor.LayoutDrop);
+        Assert.NotEqual("", _editor.LayoutDrop!.Text());
+
+        int before = changes;
+        _editor.HoverLayout(RowY(0));                  // the same place again: nothing to draw
+        Assert.Equal(before, changes);
+
+        _editor.HoverLayout(TimelineEditor.TracksTop + 5 * TimelineEditor.TrackHeight);   // below the tracks
+        Assert.Null(_editor.LayoutDrop);
+
+        _editor.HoverLayout(RowY(1));
+        _editor.LeaveLayout();
+        Assert.Null(_editor.LayoutDrop);
+    }
+
+    [Fact]
+    public void Dropping_a_layout_on_a_video_timeline_gives_it_the_layout_in_one_undo_step_and_selects_the_timeline()
+    {
+        Track();
+        var video = VideoTrack();
+        var layout = Layout();
+        _editor.HoverLayout(RowY(1));
+
+        Assert.True(_editor.DropLayout(RowY(1), layout));
+        Assert.Equal(layout.Id, video.LedLayoutId);
+        Assert.Same(video, _editor.Selected);
+        Assert.Null(_editor.LayoutDrop);
+
+        _doc.Undo();
+        Assert.Null(video.LedLayoutId);
+    }
+
+    [Fact]
+    public void Dropping_the_layout_a_timeline_has_already_changes_nothing_but_still_selects_it()
+    {
+        var video = VideoTrack();
+        var layout = Layout();
+        _doc.Execute(Edits.SetLedLayout(_doc.Project, video, layout.Id));
+        string? undoKey = _doc.UndoKey;
+
+        Assert.True(_editor.DropLayout(RowY(0), layout));
+        Assert.Equal(undoKey, _doc.UndoKey);
+        Assert.Same(video, _editor.Selected);
+    }
+
+    [Fact]
+    public void A_layout_is_not_dropped_on_other_kinds_of_timeline_on_the_ruler_or_when_the_project_does_not_have_it()
+    {
+        var pixel = Track();
+        var video = VideoTrack();
+        var layout = Layout();
+
+        Assert.False(_editor.DropLayout(RowY(0), layout));
+        Assert.Null(pixel.LedLayoutId);
+        Assert.False(_editor.DropLayout(5, layout));                                   // the ruler
+        Assert.False(_editor.DropLayout(RowY(1), new LedLayout { Name = "stranger" }));
+        Assert.Null(video.LedLayoutId);
+        Assert.False(_doc.CanUndo);
+    }
+
 }
 
 public class LaneContentTests

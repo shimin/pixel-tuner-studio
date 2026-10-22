@@ -276,7 +276,7 @@
   <data name="Canvas_Paste" xml:space="preserve"><value>Вставить разметку</value></data>
   <data name="Canvas_UseFor" xml:space="preserve"><value>Назначить выбранному видеотаймлайну</value></data>
   <data name="Canvas_Empty" xml:space="preserve"><value>В проекте нет рисунка с устройствами. Импортируйте SVG или возьмите готовый.</value></data>
-  <data name="Canvas_Hint" xml:space="preserve"><value>Двойной щелчок по фигуре — разметка светодиодов; правый щелчок — копирование и вставка.</value></data>
+  <data name="Canvas_Hint" xml:space="preserve"><value>Двойной щелчок по фигуре — разметка светодиодов, перетащите её на видеотаймлайн, чтобы отдать ему раскладку, правый щелчок — остальное.</value></data>
   <data name="Canvas_NotSvg" xml:space="preserve"><value>{0} — не рисунок SVG.</value></data>
   <data name="Canvas_NoShapes" xml:space="preserve"><value>В {0} нет фигур для разметки.</value></data>
   <data name="Canvas_ReadFailed" xml:space="preserve"><value>Не удалось прочитать {0}: {1}</value></data>
@@ -287,4 +287,6 @@
   <data name="Canvas_NoVideoTimeline" xml:space="preserve"><value>Сначала выберите видеотаймлайн.</value></data>
   <data name="Canvas_SchemaHuman" xml:space="preserve"><value>Человек</value></data>
   <data name="Canvas_SchemaHumanSimple" xml:space="preserve"><value>Человек (простой)</value></data>
+  <data name="Drop_LayoutOnlyVideo" xml:space="preserve"><value>Раскладка светодиодов подходит только видеотаймлайну.</value></data>
+  <data name="Canvas_DragNeedsMarkup" xml:space="preserve"><value>Сначала разметьте светодиоды контура, потом перетащите его на видеотаймлайн.</value></data>
 </root>

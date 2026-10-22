@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Platform.Storage;
 using PixelTuner.Package;
+using PixelTuner.UI.LedLayouts;
 using PixelTuner.UI.ViewModels;
 
 namespace PixelTuner.UI.Views;
@@ -44,8 +45,11 @@ public partial class MainWindow : Window
             .Select(f => f.TryGetLocalPath())
             .FirstOrDefault(p => p is not null && p.EndsWith(PxPackageFormat.Extension, StringComparison.OrdinalIgnoreCase));
 
-    private void OnDragOver(object? sender, DragEventArgs e) =>
+    private void OnDragOver(object? sender, DragEventArgs e)
+    {
+        if (e.DataTransfer.Contains(LayoutDrag.Format)) return;   // a layout from the canvas panel: the timelines answer
         e.DragEffects = DroppedPackage(e) is null ? DragDropEffects.None : DragDropEffects.Copy;
+    }
 
     private async void OnDrop(object? sender, DragEventArgs e)
     {

@@ -78,7 +78,8 @@
   (Core, no drawing platform) reads its outlines (id, path data, transforms), `SvgPath` flattens them for bounds and `CanvasDrawing.HitTest`; an
   outline and its layout are tied by the layout's `Name` = the outline's id. `CanvasPanelViewModel` (`EditorViewModel.Canvas`, the "Canvas" tab)
   imports an SVG or a schema, picks outlines, opens the window, copies and pastes markup (a static clipboard, as PixelTuner 2 kept it) and gives an
-  outline's layout to the selected video timeline (PixelTuner 2 dragged it there); the window shows the outline under the grid (cells stretched
+  outline's layout to a video timeline: the outline is dragged onto the timeline (`CanvasDrawingControl` starts the drag with `LayoutDrag.Format`,
+  `TimelineControl` takes it and `TimelineEditor.HoverLayout` / `DropLayout` decide, one `SetLedLayout` step) or the button gives it to the selected one; the window shows the outline under the grid (cells stretched
   over it), `LedLayout.TilesMargin` (PixelTuner 2's tile margin, 0-100, only for looking at) as the space between tiles, and, for layouts imported
   from a .ptp, `LedLayout.SourceIssues` (gaps and repeats of the stored numbers, `LedNumberIssues`; OK compacts them). The chain of an imported
   layout is still ordered by number then cell, as the export did. A new project starts with the human schema as PixelTuner 2's did (set as the starting state in `MainViewModel.NewProjectAsync`, not as an edit, so it

@@ -7,6 +7,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PixelTuner.Core.Model;
+using PixelTuner.UI.LedLayouts;
 using PixelTuner.UI.Resources;
 
 namespace PixelTuner.UI.Timelines;
@@ -23,6 +24,38 @@ public sealed class TimelineControl : Control
 
     private int _rows = -1;
     private DispatcherTimer? _timer;
+
+    public TimelineControl()
+    {
+        // An LED layout dragged from the canvas panel can be dropped on a video timeline.
+        DragDrop.SetAllowDrop(this, true);
+        AddHandler(DragDrop.DragOverEvent, OnLayoutDragOver);
+        AddHandler(DragDrop.DragLeaveEvent, OnLayoutDragLeave);
+        AddHandler(DragDrop.DropEvent, OnLayoutDrop);
+    }
+
+    private LedLayout? DraggedLayout(DragEventArgs e) =>
+        Editor is { } editor && e.DataTransfer.TryGetValue(LayoutDrag.Format) is { } id && Guid.TryParse(id, out var guid)
+            ? editor.Project.LedLayouts.FirstOrDefault(l => l.Id == guid)
+            : null;
+
+    private void OnLayoutDragOver(object? sender, DragEventArgs e)
+    {
+        if (Editor is not { } editor || DraggedLayout(e) is null) return;   // not ours: the window decides (a package file)
+        double y = e.GetPosition(this).Y;
+        editor.HoverLayout(y);
+        e.DragEffects = editor.TimelineAt(y) is { Kind: TimelineKind.Video } ? DragDropEffects.Link : DragDropEffects.None;
+        e.Handled = true;
+    }
+
+    private void OnLayoutDragLeave(object? sender, DragEventArgs e) => Editor?.LeaveLayout();
+
+    private void OnLayoutDrop(object? sender, DragEventArgs e)
+    {
+        if (Editor is not { } editor || DraggedLayout(e) is not { } layout) return;
+        editor.DropLayout(e.GetPosition(this).Y, layout);
+        e.Handled = true;
+    }
 
     static TimelineControl()
     {
@@ -237,6 +270,7 @@ public sealed class TimelineControl : Control
             DrawMarkers(context, editor, accent, text);
             DrawPlayhead(context, editor, accent);
             DrawDenial(context, editor, timeArea);
+            DrawLayoutDrop(context, editor, timeArea);
         }
 
         context.DrawLine(new Pen(muted, 1), new Point(0, TimelineEditor.RulerHeight), new Point(width, TimelineEditor.RulerHeight));
@@ -257,6 +291,25 @@ public sealed class TimelineControl : Control
         var label = Text(denial.Text(), 12, Brushes.White, FontWeight.SemiBold);
         double x = timeArea.X + 10, y = top + (TimelineEditor.TrackHeight - label.Height) / 2;
         context.DrawRectangle(new SolidColorBrush(red), null, new Rect(x - 6, y - 3, label.Width + 12, label.Height + 6), 4, 4);
+        context.DrawText(label, new Point(x, y));
+    }
+
+    /// <summary>A layout dragged over a timeline: green where it would go, red and a reason where it would not.</summary>
+    private void DrawLayoutDrop(DrawingContext context, TimelineEditor editor, Rect timeArea)
+    {
+        if (editor.LayoutDrop is not { } hint) return;
+        int row = editor.Project.Timelines.IndexOf(hint.Target);
+        if (row < 0) return;
+        double top = editor.TrackTop(row);
+        var colour = hint.Allowed ? Color.FromRgb(51, 170, 119) : Color.FromRgb(209, 73, 91);
+        var bounds = new Rect(0, top, timeArea.X + timeArea.Width, TimelineEditor.TrackHeight);
+        context.FillRectangle(new SolidColorBrush(colour, 0.18), bounds);
+        context.DrawRectangle(null, new Pen(new SolidColorBrush(colour), 2), bounds.Deflate(1));
+        if (hint.Allowed) return;
+
+        var label = Text(hint.Text(), 12, Brushes.White, FontWeight.SemiBold);
+        double x = timeArea.X + 10, y = top + (TimelineEditor.TrackHeight - label.Height) / 2;
+        context.DrawRectangle(new SolidColorBrush(colour), null, new Rect(x - 6, y - 3, label.Width + 12, label.Height + 6), 4, 4);
         context.DrawText(label, new Point(x, y));
     }
 

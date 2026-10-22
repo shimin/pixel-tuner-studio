@@ -276,7 +276,7 @@
   <data name="Canvas_Paste" xml:space="preserve"><value>Paste markup</value></data>
   <data name="Canvas_UseFor" xml:space="preserve"><value>Use for the selected video timeline</value></data>
   <data name="Canvas_Empty" xml:space="preserve"><value>The project has no drawing of the props. Import an SVG or take a built-in one.</value></data>
-  <data name="Canvas_Hint" xml:space="preserve"><value>Double click a shape to mark up its LEDs; right click for copy and paste.</value></data>
+  <data name="Canvas_Hint" xml:space="preserve"><value>Double click a shape to mark up its LEDs, drag it onto a video timeline to give it its layout, right click for more.</value></data>
   <data name="Canvas_NotSvg" xml:space="preserve"><value>{0} is not an SVG drawing.</value></data>
   <data name="Canvas_NoShapes" xml:space="preserve"><value>{0} has no shapes to mark up.</value></data>
   <data name="Canvas_ReadFailed" xml:space="preserve"><value>Could not read {0}: {1}</value></data>
@@ -287,4 +287,6 @@
   <data name="Canvas_NoVideoTimeline" xml:space="preserve"><value>Select a video timeline first.</value></data>
   <data name="Canvas_SchemaHuman" xml:space="preserve"><value>Human</value></data>
   <data name="Canvas_SchemaHumanSimple" xml:space="preserve"><value>Human (simple)</value></data>
+  <data name="Drop_LayoutOnlyVideo" xml:space="preserve"><value>An LED layout goes to a video timeline only.</value></data>
+  <data name="Canvas_DragNeedsMarkup" xml:space="preserve"><value>Mark up the LEDs of the outline first, then drag it onto a video timeline.</value></data>
 </root>

@@ -204,6 +204,9 @@ public sealed partial class CanvasPanelViewModel : ObservableObject
         _editor.OpenMarkup(new LedMarkupViewModel(_editor.Document, element.Layout, null, element.Id, _editor.CloseMarkup, element.Shape));
     }
 
+    /// <summary>A drag of an outline without markup was started: there is no layout to give to a timeline yet.</summary>
+    public void RefuseDrag() => Message = Strings.Canvas_DragNeedsMarkup;
+
     /// <summary>Opens the markup window for an outline (a double click).</summary>
     public void Edit(CanvasElementViewModel element)
     {

@@ -276,7 +276,7 @@
   <data name="Canvas_Paste" xml:space="preserve"><value>Markierung einfügen</value></data>
   <data name="Canvas_UseFor" xml:space="preserve"><value>Der gewählten Videospur zuweisen</value></data>
   <data name="Canvas_Empty" xml:space="preserve"><value>Das Projekt hat keine Zeichnung der Props. Importiere ein SVG oder nimm eine mitgelieferte.</value></data>
-  <data name="Canvas_Hint" xml:space="preserve"><value>Doppelklick auf eine Form markiert ihre LEDs; Rechtsklick für Kopieren und Einfügen.</value></data>
+  <data name="Canvas_Hint" xml:space="preserve"><value>Doppelklick auf eine Form markiert ihre LEDs, auf eine Videospur ziehen weist ihr Layout zu, Rechtsklick für mehr.</value></data>
   <data name="Canvas_NotSvg" xml:space="preserve"><value>{0} ist keine SVG-Zeichnung.</value></data>
   <data name="Canvas_NoShapes" xml:space="preserve"><value>{0} enthält keine Formen zum Markieren.</value></data>
   <data name="Canvas_ReadFailed" xml:space="preserve"><value>{0} konnte nicht gelesen werden: {1}</value></data>
@@ -287,4 +287,6 @@
   <data name="Canvas_NoVideoTimeline" xml:space="preserve"><value>Wähle zuerst eine Videospur.</value></data>
   <data name="Canvas_SchemaHuman" xml:space="preserve"><value>Mensch</value></data>
   <data name="Canvas_SchemaHumanSimple" xml:space="preserve"><value>Mensch (einfach)</value></data>
+  <data name="Drop_LayoutOnlyVideo" xml:space="preserve"><value>Ein LED-Layout passt nur auf eine Videospur.</value></data>
+  <data name="Canvas_DragNeedsMarkup" xml:space="preserve"><value>Markiere zuerst die LEDs der Kontur und ziehe sie dann auf eine Videospur.</value></data>
 </root>
