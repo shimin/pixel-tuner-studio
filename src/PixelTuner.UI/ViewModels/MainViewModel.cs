@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using PixelTuner.Core.Layout;
 using PixelTuner.Package;
 using PixelTuner.Package.Import;
+using PixelTuner.UI.DevicesPanel;
 using PixelTuner.UI.Resources;
 using PixelTuner.UI.Services;
 
@@ -98,7 +99,7 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     {
         if (value is not null) value.Changed += DocumentEdited;
         var old = Editor;
-        Editor = value is not null && CanEdit ? new EditorViewModel(value, AudioEngine.Current, () => FilePicker) : null;
+        Editor = value is not null && CanEdit ? new EditorViewModel(value, AudioEngine.Current, () => FilePicker, DeviceHub.Current) : null;
         old?.Dispose();
     }
 

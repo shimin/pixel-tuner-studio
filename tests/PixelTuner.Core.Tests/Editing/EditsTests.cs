@@ -526,6 +526,55 @@ public class EditsTests
     }
 
     [Fact]
+    public void A_device_is_renamed_given_a_network_tag_and_a_memory_size_with_undo()
+    {
+        var device = Device(DeviceKind.Poi);
+        _history.Do(Edits.AddDevice(_project, device));
+
+        _history.Do(Edits.RenameDevice(device, "Left poi"));
+        _history.Do(Edits.SetDeviceTag(device, "  LEFT  "));
+        _history.Do(Edits.SetDeviceMemory(device, 3_800_000));
+        Assert.Equal(("Left poi", "LEFT", 3_800_000L), (device.Name, device.NetworkTag, device.MemoryBytes));
+
+        _history.Do(Edits.SetDeviceTag(device, "  "));
+        Assert.Null(device.NetworkTag);                 // an empty tag is none
+        Assert.Throws<ArgumentOutOfRangeException>(() => Edits.SetDeviceMemory(device, -1));
+
+        while (_history.Undo()) { }
+        Assert.Empty(_project.Devices);
+    }
+
+    [Fact]
+    public void Another_kind_of_device_keeps_the_timelines_it_plays_too_and_drops_the_rest_in_one_step()
+    {
+        var pixel1 = TimelineWith();
+        var pixel2 = TimelineWith();
+        var video = new Timeline { Kind = TimelineKind.Video };
+        _project.Timelines.Add(video);
+        var device = Device(DeviceKind.Poi, 0, pixel1, pixel2);
+        _history.Do(Edits.AddDevice(_project, device));
+
+        _history.Do(Edits.SetDeviceKind(_project, device, DeviceKind.Hoop));
+        Assert.Equal([pixel1.Id, pixel2.Id], device.TimelineIds);          // a hoop plays the same timelines
+
+        _history.Do(Edits.SetDeviceKind(_project, device, DeviceKind.Fan));
+        Assert.Equal([pixel1.Id], device.TimelineIds);                     // a fan plays one
+
+        _history.Do(Edits.SetDeviceKind(_project, device, DeviceKind.Video));
+        Assert.Empty(device.TimelineIds);                                  // pixel timelines are not video
+
+        _history.Undo();
+        Assert.Equal(DeviceKind.Fan, device.DeviceType);
+        Assert.Equal([pixel1.Id], device.TimelineIds);
+        _history.Undo();
+        _history.Undo();
+        Assert.Equal(DeviceKind.Poi, device.DeviceType);
+        Assert.Equal([pixel1.Id, pixel2.Id], device.TimelineIds);
+
+        Assert.Throws<ArgumentException>(() => Edits.SetDeviceKind(_project, device, "toaster"));
+    }
+
+    [Fact]
     public void Items_are_inserted_in_time_order()
     {
         var timeline = TimelineWith((0, 1), (5, 1));

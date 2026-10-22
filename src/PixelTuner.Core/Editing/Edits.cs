@@ -618,6 +618,39 @@ public static class Edits
         return new SetValueEdit<int>("SetDeviceLedCount", device, nameof(device.LedCount), () => device.LedCount, v => device.LedCount = v, ledCount, mergeable: false);
     }
 
+    public static Edit RenameDevice(DeviceBinding device, string name) =>
+        new SetValueEdit<string>("RenameDevice", device, nameof(device.Name), () => device.Name, v => device.Name = v, name, mergeable: true);
+
+    /// <summary>The name the device reports over the network (the lookup "tag"); null for none.</summary>
+    public static Edit SetDeviceTag(DeviceBinding device, string? tag) =>
+        new SetValueEdit<string?>("SetDeviceTag", device, nameof(device.NetworkTag), () => device.NetworkTag, v => device.NetworkTag = v, string.IsNullOrWhiteSpace(tag) ? null : tag.Trim(), mergeable: true);
+
+    /// <summary>What the device can hold, in bytes; 0 when not known (the build then does not check the size).</summary>
+    public static Edit SetDeviceMemory(DeviceBinding device, long bytes)
+    {
+        if (bytes < 0) throw new ArgumentOutOfRangeException(nameof(bytes));
+        return new SetValueEdit<long>("SetDeviceMemory", device, nameof(device.MemoryBytes), () => device.MemoryBytes, v => device.MemoryBytes = v, bytes, mergeable: true);
+    }
+
+    /// <summary>
+    /// Another kind of device. The timelines it played stay when the new kind plays them too (a poi becomes a hoop, a video module a
+    /// fan only if they are of its kind and few enough), and the others stop being played, in the same undo step.
+    /// </summary>
+    public static Edit SetDeviceKind(ShowProject project, DeviceBinding device, string kind)
+    {
+        if (!IsKnownDeviceKind(kind)) throw new ArgumentException($"Unknown device type '{kind}'.", nameof(kind));
+        string timelineKind = TimelineKindOf(kind);
+        var kept = device.TimelineIds
+            .Where(id => project.Timelines.FirstOrDefault(t => t.Id == id)?.Kind == timelineKind)
+            .Take(MaxTimelinesOf(kind)).ToList();
+        var old = device.TimelineIds.ToList();
+        return new GroupEdit("SetDeviceKind",
+        [
+            new SetValueEdit<string>("SetDeviceKind", device, nameof(device.DeviceType), () => device.DeviceType, v => device.DeviceType = v, kind, mergeable: false),
+            new SetValueEdit<List<Guid>>("SetDeviceKind", device, nameof(device.TimelineIds), () => old, v => device.TimelineIds = v.ToList(), kept, mergeable: false),
+        ]);
+    }
+
     /// <summary>The kind of timeline a kind of device plays.</summary>
     public static string TimelineKindOf(string deviceKind) => deviceKind switch
     {

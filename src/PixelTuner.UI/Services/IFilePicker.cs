@@ -30,6 +30,9 @@ public interface IFilePicker
 
     /// <summary>Desktop: asks for the SVG drawing of the props. Returns its path, or null if cancelled.</summary>
     Task<string?> PickSvgPathAsync();
+
+    /// <summary>Desktop: asks where to save a show file for a device (.bin). Returns the path, or null if cancelled.</summary>
+    Task<string?> PickBinSavePathAsync(string suggestedName);
 }
 
 /// <summary>
@@ -76,6 +79,24 @@ public sealed class StorageFilePicker(TopLevel topLevel) : IFilePicker
         Patterns = ["*.svg"],
         MimeTypes = ["image/svg+xml"],
     };
+
+    static readonly FilePickerFileType BinType = new(Strings.FileType_Bin)
+    {
+        Patterns = ["*.bin"],
+        MimeTypes = ["application/octet-stream"],
+    };
+
+    public async Task<string?> PickBinSavePathAsync(string suggestedName)
+    {
+        var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        {
+            SuggestedFileName = suggestedName,
+            DefaultExtension = "bin",
+            FileTypeChoices = [BinType],
+            ShowOverwritePrompt = true,
+        });
+        return file?.TryGetLocalPath();
+    }
 
     public async Task<string?> PickSvgPathAsync()
     {

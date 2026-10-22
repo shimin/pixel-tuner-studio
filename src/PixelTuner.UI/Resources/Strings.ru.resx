@@ -155,7 +155,7 @@
   <data name="Issue_VideoPairEndsDiffer" xml:space="preserve"><value>Две видеодорожки устройства должны кончаться в одно время.</value></data>
   <data name="Issue_NoLedLayout" xml:space="preserve"><value>У видеодорожки нет разметки светодиодов: выберите её в заголовке дорожки.</value></data>
   <data name="Issue_StretchingTooLarge" xml:space="preserve"><value>Растяжение слишком велико для E-Pic.</value></data>
-  <data name="Issue_WrongHeight" xml:space="preserve"><value>Картинка не той высоты, что устройство ({0} светодиодов).</value></data>
+  <data name="Issue_WrongHeight" xml:space="preserve"><value>Картинка высотой {0} светодиодов, не такая, как у устройства.</value></data>
   <data name="Issue_MissingMedia" xml:space="preserve"><value>Файл этого элемента пропал: файл не соберётся. Найдите его в библиотеке.</value></data>
   <data name="Issue_TimelineKindMismatch" xml:space="preserve"><value>Устройство не играет дорожки такого типа.</value></data>
   <data name="Issue_TooManyTimelines" xml:space="preserve"><value>Устройство играет меньше дорожек, чем ему дано.</value></data>
@@ -331,4 +331,68 @@
   <data name="Preview_Pitch" xml:space="preserve"><value>Шаг светодиодов, мм</value></data>
   <data name="Preview_Tail" xml:space="preserve"><value>Шлейф, мс</value></data>
   <data name="Preview_Orbit" xml:space="preserve"><value>Орбита, оборотов в секунду</value></data>
+  <data name="Edit_RenameDevice" xml:space="preserve"><value>Переименовать устройство</value></data>
+  <data name="Edit_SetDeviceTag" xml:space="preserve"><value>Имя устройства в сети</value></data>
+  <data name="Edit_SetDeviceMemory" xml:space="preserve"><value>Память устройства</value></data>
+  <data name="Edit_SetDeviceKind" xml:space="preserve"><value>Тип устройства</value></data>
+  <data name="Devices_Title" xml:space="preserve"><value>Устройства</value></data>
+  <data name="Devices_Unnamed" xml:space="preserve"><value>(без названия)</value></data>
+  <data name="Devices_ItemCount" xml:space="preserve"><value>элементов: {0}</value></data>
+  <data name="Devices_TimelineHeight" xml:space="preserve"><value>{0} · высота {1} светодиодов</value></data>
+  <data name="Devices_DoesNotFit" xml:space="preserve"><value>у устройства {1}</value></data>
+  <data name="Devices_KindPoi" xml:space="preserve"><value>Пиксельные пои, посох</value></data>
+  <data name="Devices_KindHoop" xml:space="preserve"><value>Пиксельный обруч</value></data>
+  <data name="Devices_KindFan" xml:space="preserve"><value>Веер (видеомодуль, пиксельный таймлайн)</value></data>
+  <data name="Devices_KindVideo" xml:space="preserve"><value>Видеомодуль</value></data>
+  <data name="Devices_KindEpic" xml:space="preserve"><value>E-Pic пои</value></data>
+  <data name="Devices_KindLight" xml:space="preserve"><value>LightMaster</value></data>
+  <data name="Devices_Settings" xml:space="preserve"><value>Настройки сборки</value></data>
+  <data name="Devices_Depth" xml:space="preserve"><value>Глубина цвета</value></data>
+  <data name="Devices_GapStretching" xml:space="preserve"><value>Растяжение пауз</value></data>
+  <data name="Devices_LightRate" xml:space="preserve"><value>Шаг света, мс</value></data>
+  <data name="Devices_Project" xml:space="preserve"><value>Устройства проекта</value></data>
+  <data name="Devices_Add" xml:space="preserve"><value>Добавить</value></data>
+  <data name="Devices_AddFromConnected" xml:space="preserve"><value>По подключённому</value></data>
+  <data name="Devices_Remove" xml:space="preserve"><value>Удалить</value></data>
+  <data name="Devices_Name" xml:space="preserve"><value>Название</value></data>
+  <data name="Devices_Kind" xml:space="preserve"><value>Тип</value></data>
+  <data name="Devices_Leds" xml:space="preserve"><value>Светодиодов</value></data>
+  <data name="Devices_Memory" xml:space="preserve"><value>Память, КБ</value></data>
+  <data name="Devices_Tag" xml:space="preserve"><value>Имя в сети</value></data>
+  <data name="Devices_Timelines" xml:space="preserve"><value>Какие таймлайны играет, в порядке файла</value></data>
+  <data name="Devices_Up" xml:space="preserve"><value>Раньше</value></data>
+  <data name="Devices_Down" xml:space="preserve"><value>Позже</value></data>
+  <data name="Devices_Export" xml:space="preserve"><value>Экспорт .bin…</value></data>
+  <data name="Devices_Upload" xml:space="preserve"><value>Залить в устройство</value></data>
+  <data name="Devices_Cancel" xml:space="preserve"><value>Отмена</value></data>
+  <data name="Devices_Take" xml:space="preserve"><value>Взять светодиоды и память с устройства</value></data>
+  <data name="Devices_Connected" xml:space="preserve"><value>Подключённые устройства</value></data>
+  <data name="Devices_Search" xml:space="preserve"><value>Искать устройства</value></data>
+  <data name="Devices_Stop" xml:space="preserve"><value>Остановить поиск</value></data>
+  <data name="Devices_NoneFound" xml:space="preserve"><value>Устройств нет. Подключите кабель или включите устройство по Wi-Fi и начните поиск.</value></data>
+  <data name="Devices_FileInfo" xml:space="preserve"><value>Файл: {0}</value></data>
+  <data name="Devices_FileInfoOf" xml:space="preserve"><value>Файл: {0} из {1}</value></data>
+  <data name="Devices_NotBuilt" xml:space="preserve"><value>Для этого устройства пока нечего собирать.</value></data>
+  <data name="Devices_Warnings" xml:space="preserve"><value>предупреждений: {0}</value></data>
+  <data name="Devices_Firmware" xml:space="preserve"><value>прошивка {0}.{1}.{2}</value></data>
+  <data name="Devices_LedsOf" xml:space="preserve"><value>светодиодов: {0}</value></data>
+  <data name="Devices_Channels" xml:space="preserve"><value>каналов: {0}</value></data>
+  <data name="Devices_MemoryOf" xml:space="preserve"><value>память {0}</value></data>
+  <data name="Devices_Battery" xml:space="preserve"><value>заряд {0}</value></data>
+  <data name="Devices_Busy" xml:space="preserve"><value>занято</value></data>
+  <data name="Devices_BootMode" xml:space="preserve"><value>режим загрузчика</value></data>
+  <data name="Devices_Uploading" xml:space="preserve"><value>Заливка… {0}%</value></data>
+  <data name="Devices_Uploaded" xml:space="preserve"><value>Залито {0} в {1}.</value></data>
+  <data name="Devices_UploadCancelled" xml:space="preserve"><value>Заливка отменена.</value></data>
+  <data name="Devices_UploadFailed" xml:space="preserve"><value>Заливка не удалась: {0}</value></data>
+  <data name="Devices_NoConnected" xml:space="preserve"><value>Сначала выберите подключённое устройство.</value></data>
+  <data name="Devices_NoProjectDevice" xml:space="preserve"><value>Сначала выберите устройство проекта.</value></data>
+  <data name="Devices_Unsupported" xml:space="preserve"><value>{0} не поддерживается.</value></data>
+  <data name="Devices_BootModeOnly" xml:space="preserve"><value>{0} в режиме загрузчика: можно записать только прошивку.</value></data>
+  <data name="Devices_WrongFamily" xml:space="preserve"><value>{0} не сможет играть файл для этого типа устройства ({1}).</value></data>
+  <data name="Devices_WrongLeds" xml:space="preserve"><value>У устройства светодиодов: {0}, у устройства проекта: {1}. Сначала возьмите число светодиодов с устройства.</value></data>
+  <data name="Devices_Exported" xml:space="preserve"><value>Сохранено: {0}.</value></data>
+  <data name="Devices_ExportFailed" xml:space="preserve"><value>Не удалось сохранить файл: {0}</value></data>
+  <data name="Devices_OutOfRange" xml:space="preserve"><value>Введите число от {0} до {1}.</value></data>
+  <data name="FileType_Bin" xml:space="preserve"><value>Файл шоу для устройства</value></data>
 </root>

@@ -9,6 +9,7 @@ using PixelTuner.Core.Model;
 using PixelTuner.Package;
 using PixelTuner.UI.Resources;
 using PixelTuner.UI.Services;
+using PixelTuner.UI.DevicesPanel;
 using PixelTuner.UI.LedLayouts;
 using PixelTuner.UI.LibraryPanel;
 using PixelTuner.UI.PreviewPanel;
@@ -31,7 +32,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     /// <param name="engine">Plays and reads sound; null on a computer without one (the editor works, silently).</param>
     /// <param name="picker">Asks the user for the soundtrack file.</param>
-    public EditorViewModel(ProjectDocument document, IAudioEngine? engine = null, Func<IFilePicker?>? picker = null)
+    public EditorViewModel(ProjectDocument document, IAudioEngine? engine = null, Func<IFilePicker?>? picker = null, IDeviceHub? devices = null)
     {
         Document = document;
         _engine = engine;
@@ -42,6 +43,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         Gallery = new LibraryViewModel(this, () => _picker?.Invoke());
         Canvas = new CanvasPanelViewModel(this, () => _picker?.Invoke());
         Preview = new PreviewViewModel(this);
+        Devices = new DevicesPanelViewModel(this, devices, () => _picker?.Invoke());
         Preview.Changed += (_, _) => Canvas.PlayheadMoved();
         BuildPalette();
         if (engine is not null)
@@ -65,6 +67,9 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     /// <summary>What the selected timeline plays at the playhead, as its device would light it.</summary>
     public PreviewViewModel Preview { get; }
 
+    /// <summary>The devices of the project, the settings the files are built with, and the connected devices.</summary>
+    public DevicesPanelViewModel Devices { get; }
+
     private void DocumentChanged(object? sender, EventArgs e) =>
         OnUi(() =>
         {
@@ -72,6 +77,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
             if (Document.Project.AudioResourceId != _loadedAudioId) _ = LoadAudioAsync();
             Preview.ProjectChanged();
             Canvas.Refresh();
+            Devices.Refresh();
         });
 
     /// <summary>Opens the project's soundtrack in the player and reads its waveform.</summary>
@@ -124,6 +130,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     public void Dispose()
     {
         Document.Changed -= DocumentChanged;
+        Devices.Dispose();
         _loadVersion++;
         if (_player is not null) _ = _player.DisposeAsync().AsTask();
     }
