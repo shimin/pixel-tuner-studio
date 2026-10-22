@@ -46,7 +46,9 @@
       <tl:TimelineControl Editor="{Binding Timelines}" />
     </ScrollViewer>
 
-    <Border Grid.Row="2" Grid.Column="1" Classes="card" Margin="8,0,12,12" VerticalAlignment="Top">
+    <!-- The inspector is longer than the room beside the timelines when the library is open: it scrolls. -->
+    <ScrollViewer Grid.Row="2" Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <Border Classes="card" Margin="8,0,12,12" VerticalAlignment="Top">
       <StackPanel Spacing="8">
         <TextBlock Classes="muted" TextWrapping="Wrap" Text="{x:Static res:Strings.Inspector_Nothing}"
                    IsVisible="{Binding !HasSelection}" />
@@ -93,6 +95,10 @@
             <TextBlock Classes="muted" Text="{x:Static res:Strings.Inspector_Length}" />
             <TextBox Text="{Binding LengthText}" IsUndoEnabled="False" />
           </StackPanel>
+          <StackPanel Spacing="4" IsVisible="{Binding IsMultiSelection}">
+            <TextBlock Classes="muted" TextWrapping="Wrap" Text="{x:Static res:Strings.Inspector_MultiHint}" />
+            <Button Content="{x:Static res:Strings.Inspector_ApplyToAll}" Command="{Binding ApplyToAllCommand}" HorizontalAlignment="Stretch" />
+          </StackPanel>
           <StackPanel Spacing="4" IsVisible="{Binding IsItemSelected}">
             <StackPanel Spacing="4" IsVisible="{Binding ShowBrightness}">
               <TextBlock Classes="muted" Text="{x:Static res:Strings.Inspector_Brightness}" />
@@ -101,6 +107,7 @@
             <StackPanel Spacing="4" IsVisible="{Binding ShowStretching}">
               <TextBlock Classes="muted" Text="{Binding StretchingLabel}" />
               <NumericUpDown Minimum="2" Maximum="1000" Increment="1" FormatString="0" Value="{Binding Stretching}" />
+              <TextBlock TextWrapping="Wrap" Text="{Binding ColumnTimeText}" />
               <TextBlock Classes="muted" TextWrapping="Wrap" Text="{Binding PlaybackText}" />
             </StackPanel>
             <CheckBox Content="{x:Static res:Strings.Inspector_Laser}" IsChecked="{Binding LaserOn}" IsVisible="{Binding ShowLaser}" />
@@ -132,6 +139,18 @@
               <TextBlock Classes="muted" Text="{x:Static res:Strings.Inspector_T2}" />
               <NumericUpDown Minimum="0" Maximum="3600000" Increment="10" FormatString="0" Value="{Binding T2}" />
             </StackPanel>
+            <!-- Where the item lands in the .bin of its device, and what the build says about it. -->
+            <StackPanel Spacing="2" IsVisible="{Binding HasBinInfo}">
+              <TextBlock Classes="muted" Text="{x:Static res:Strings.Inspector_Bin}" />
+              <TextBlock TextWrapping="Wrap" Text="{Binding BinLine}" />
+              <ItemsControl ItemsSource="{Binding BinIssues}" IsVisible="{Binding HasBinIssues}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="x:String">
+                    <TextBlock TextWrapping="Wrap" Text="{Binding}" Foreground="{DynamicResource SystemFillColorCautionBrush}" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
             <StackPanel Spacing="4" IsVisible="{Binding HasPreview}">
               <TextBlock Classes="muted" Text="{x:Static res:Strings.Inspector_Preview}" />
               <Image Source="{Binding ItemPreviewBitmap}" MaxHeight="160" Stretch="Uniform" RenderOptions.BitmapInterpolationMode="None" />
@@ -144,6 +163,7 @@
         </StackPanel>
       </StackPanel>
     </Border>
+    </ScrollViewer>
 
     <!-- The library: what the project has to put on timelines, narrowed to what the selected timeline can play.
          While a picture is imported, the import panel takes its place. -->

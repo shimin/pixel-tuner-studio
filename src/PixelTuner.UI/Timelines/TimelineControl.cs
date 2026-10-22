@@ -112,7 +112,9 @@ public sealed class TimelineControl : Control
         if (Editor is not { } editor || !e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
         Focus();
         var p = e.GetPosition(this);
-        editor.PointerDown(p.X, p.Y);
+        var mode = e.KeyModifiers.HasFlag(KeyModifiers.Control) || e.KeyModifiers.HasFlag(KeyModifiers.Meta) ? SelectionMode.Toggle
+            : e.KeyModifiers.HasFlag(KeyModifiers.Shift) ? SelectionMode.Range : SelectionMode.Replace;
+        editor.PointerDown(p.X, p.Y, mode);
         e.Pointer.Capture(this);
         e.Handled = true;
     }
@@ -356,7 +358,7 @@ public sealed class TimelineControl : Control
             double left = editor.TimeToX(start), right = editor.TimeToX(start + duration);
             if (right < editor.ViewWidth * -1 || left > editor.ViewWidth) return;
             var rect = new Rect(left, top + 6, Math.Max(2, right - left), TimelineEditor.TrackHeight - 12);
-            bool selected = ReferenceEquals(editor.Selected, item);
+            bool selected = editor.IsSelected(item);
             context.DrawRectangle(new SolidColorBrush(fill, opacity * 0.85), selected || outline ? new Pen(accent, 2) : new Pen(new SolidColorBrush(fill), 1), rect, 4, 4);
 
             // The content is clipped to the item: the last pass is cut off where the item ends.

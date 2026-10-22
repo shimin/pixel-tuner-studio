@@ -280,6 +280,76 @@ public class EditsTests
         Assert.Equal(10, second.MediaWidth);
     }
 
+    private TimelineItem Pic(double start, int stretching = 4, byte brightness = 100, bool laser = false) =>
+        new() { Kind = ItemKind.Image, Start = S(start), Duration = S(1), Stretching = stretching, Brightness = brightness, LaserOn = laser };
+
+    [Fact]
+    public void Settings_of_one_item_go_to_the_others_in_one_undo_step()
+    {
+        var timeline = new Timeline();
+        var source = Pic(0, stretching: 9, brightness: 40, laser: true);
+        var a = Pic(2);
+        var b = Pic(4, stretching: 9);   // partly the same already
+        foreach (var item in new[] { source, a, b }) _history.Do(Edits.AddItem(timeline, item));
+
+        _history.Do(Edits.ApplySettings(source, [source, a, b])!);
+
+        Assert.All(new[] { a, b }, i => Assert.Equal((9, (byte)40, true), (i.Stretching, i.Brightness, i.LaserOn)));
+        _history.Undo();
+        Assert.Equal((4, (byte)100, false), (a.Stretching, a.Brightness, a.LaserOn));
+        Assert.Equal((9, (byte)100, false), (b.Stretching, b.Brightness, b.LaserOn));
+        Assert.Equal("AddItem", _history.UndoKey);   // one step took the whole application back
+    }
+
+    [Fact]
+    public void Settings_go_only_to_items_of_the_same_kind_and_nothing_to_change_is_no_edit()
+    {
+        var timeline = new Timeline();
+        var source = Pic(0, stretching: 9);
+        var other = new TimelineItem { Kind = ItemKind.Video, Start = S(2), Duration = S(1), Stretching = 40 };
+        var same = Pic(4, stretching: 9);
+        foreach (var item in new[] { source, same }) _history.Do(Edits.AddItem(timeline, item));
+
+        Assert.Null(Edits.ApplySettings(source, [other, same]));   // the video is left alone, the picture has it all
+        Assert.Equal(40, other.Stretching);
+    }
+
+    [Fact]
+    public void Offsets_of_videos_and_colours_and_effects_of_lights_are_applied_too()
+    {
+        var video = new TimelineItem { Kind = ItemKind.Video, OffsetX = 5, OffsetY = 7, Stretching = 40 };
+        var video2 = new TimelineItem { Kind = ItemKind.Video, Stretching = 40 };
+        _history.Do(Edits.ApplySettings(video, [video2])!);
+        Assert.Equal((5, 7), (video2.OffsetX, video2.OffsetY));
+
+        var effect = new TimelineItem { Kind = ItemKind.Effect, Color = "#112233", ColorLast = "#445566", Effect = LightEffectKind.SineWave, T1 = 300, T2 = 20 };
+        var effect2 = new TimelineItem { Kind = ItemKind.Effect, Color = "#000000", ColorLast = "#FFFFFF", Effect = LightEffectKind.LinearTransition };
+        _history.Do(Edits.ApplySettings(effect, [effect2])!);
+        Assert.Equal(("#112233", "#445566", LightEffectKind.SineWave, 300, 20), (effect2.Color, effect2.ColorLast, effect2.Effect, effect2.T1, effect2.T2));
+
+        var solid = new TimelineItem { Kind = ItemKind.Solid, Color = "#ABCDEF" };
+        var solid2 = new TimelineItem { Kind = ItemKind.Solid, Color = "#000000" };
+        _history.Do(Edits.ApplySettings(solid, [solid2])!);
+        Assert.Equal("#ABCDEF", solid2.Color);
+    }
+
+    [Fact]
+    public void Several_items_are_removed_in_one_step_and_come_back_in_their_places()
+    {
+        var a = TimelineWith((0, 1), (2, 1), (4, 1), (6, 1));
+        var b = TimelineWith((0, 1), (2, 1));
+        var gone = new[] { a.Items[0], a.Items[2], a.Items[3], b.Items[1] };
+
+        _history.Do(Edits.RemoveItems(_project, gone));
+        Assert.Equal([2.0], Starts(a));
+        Assert.Equal([0.0], Starts(b));
+
+        _history.Undo();
+        Assert.Equal([0.0, 2.0, 4.0, 6.0], Starts(a));
+        Assert.Equal([0.0, 2.0], Starts(b));
+        Assert.Throws<InvalidOperationException>(() => Edits.RemoveItems(_project, [new TimelineItem()]));
+    }
+
     [Fact]
     public void A_timeline_of_an_unknown_kind_is_refused()
     {

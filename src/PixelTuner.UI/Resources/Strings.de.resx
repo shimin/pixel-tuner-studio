@@ -116,6 +116,8 @@
   <data name="Edit_RemoveLibraryEntry" xml:space="preserve"><value>Aus der Bibliothek entfernen</value></data>
   <data name="Edit_RenameLibraryEntry" xml:space="preserve"><value>Bibliothekseintrag umbenennen</value></data>
   <data name="Edit_ReplaceLibraryMedia" xml:space="preserve"><value>Datei in der Bibliothek ersetzen</value></data>
+  <data name="Edit_ApplySettings" xml:space="preserve"><value>Einstellungen auf alle anwenden</value></data>
+  <data name="Edit_RemoveItems" xml:space="preserve"><value>Elemente entfernen</value></data>
   <data name="Command_AddItem" xml:space="preserve"><value>Datei hinzufügen…</value></data>
   <data name="FileType_Image" xml:space="preserve"><value>Bilder</value></data>
   <data name="Item_AddFailed" xml:space="preserve"><value>{0} kann nicht hinzugefügt werden: {1}</value></data>
@@ -137,6 +139,34 @@
   <data name="Inspector_OffsetX" xml:space="preserve"><value>Versatz X</value></data>
   <data name="Inspector_OffsetY" xml:space="preserve"><value>Versatz Y</value></data>
   <data name="Inspector_BadValue" xml:space="preserve"><value>Dieser Wert ist nicht möglich: {0}.</value></data>
+  <data name="Inspector_FrameLasts" xml:space="preserve"><value>Ein Bild dauert {0}: {1} Bilder pro Sekunde.</value></data>
+  <data name="Inspector_ColourLasts" xml:space="preserve"><value>Eine Farbe wird {0} gehalten.</value></data>
+  <data name="Inspector_ColumnLasts" xml:space="preserve"><value>Eine Spalte leuchtet {0}.</value></data>
+  <data name="Issue_TooBig" xml:space="preserve"><value>Die Datei ({0}) passt nicht in den Speicher des Geräts.</value></data>
+  <data name="Issue_LightTooLong" xml:space="preserve"><value>Die Show ist länger, als der LightMaster bei diesem Schritt spielen kann.</value></data>
+  <data name="Issue_UnknownEffect" xml:space="preserve"><value>Der Lichteffekt ist unbekannt: die Datei lässt sich nicht bauen.</value></data>
+  <data name="Issue_LightStepNotMultiple" xml:space="preserve"><value>Die Länge ist kein Vielfaches des Lichtschritts, darum verschieben sich die folgenden Elemente etwas.</value></data>
+  <data name="Issue_SharedBlockOffsets" xml:space="preserve"><value>Ein anderes Element spielt dasselbe GIF mit derselben Helligkeit und beide teilen ein Bild: der Versatz dieses wird nicht gespielt.</value></data>
+  <data name="Issue_VideoPairEndsDiffer" xml:space="preserve"><value>Die zwei Videospuren des Geräts müssen zur gleichen Zeit enden.</value></data>
+  <data name="Issue_NoLedLayout" xml:space="preserve"><value>Die Videospur hat kein LED-Layout: wähle eines im Spurkopf.</value></data>
+  <data name="Issue_StretchingTooLarge" xml:space="preserve"><value>Die Dehnung ist für den E-Pic zu groß.</value></data>
+  <data name="Issue_WrongHeight" xml:space="preserve"><value>Das Bild ist nicht so hoch wie das Gerät ({0} LEDs).</value></data>
+  <data name="Issue_MissingMedia" xml:space="preserve"><value>Die Datei dieses Elements fehlt: die Datei lässt sich nicht bauen. Suche sie in der Bibliothek.</value></data>
+  <data name="Issue_TimelineKindMismatch" xml:space="preserve"><value>Das Gerät spielt diese Art von Spur nicht.</value></data>
+  <data name="Issue_TooManyTimelines" xml:space="preserve"><value>Das Gerät spielt weniger Spuren, als ihm gegeben sind.</value></data>
+  <data name="Issue_EmptyTimelineSkipped" xml:space="preserve"><value>Eine leere Spur kommt nicht in die Datei.</value></data>
+  <data name="Issue_NothingToPlay" xml:space="preserve"><value>Das Gerät hat nichts zu spielen.</value></data>
+  <data name="Bin_NotBuilt" xml:space="preserve"><value>Die Datei lässt sich noch nicht bauen, siehe unten.</value></data>
+  <data name="Bin_FileOf" xml:space="preserve"><value>Datei {0} von {1} ({2} %)</value></data>
+  <data name="Bin_File" xml:space="preserve"><value>Datei {0}</value></data>
+  <data name="Bin_Shared" xml:space="preserve"><value>geteilt mit {0} weiteren</value></data>
+  <data name="Bin_Block" xml:space="preserve"><value>Bild {0}</value></data>
+  <data name="Bin_Entry" xml:space="preserve"><value>Eintrag {0} von {1}</value></data>
+  <data name="Inspector_Bin" xml:space="preserve"><value>In der .bin</value></data>
+  <data name="Inspector_NothingToApply" xml:space="preserve"><value>Die anderen Elemente haben diese Einstellungen schon.</value></data>
+  <data name="Inspector_ApplyToAll" xml:space="preserve"><value>Auf die anderen ausgewählten anwenden</value></data>
+  <data name="Inspector_MultiHint" xml:space="preserve"><value>Unten stehen die Einstellungen des zuletzt gewählten Elements. Strg oder Cmd und Klick fügen ein Element hinzu, Umschalt und Klick wählt eine Reihe.</value></data>
+  <data name="Inspector_Multi" xml:space="preserve"><value>{0} Elemente</value></data>
   <data name="Import_Trim" xml:space="preserve"><value>Beschneiden, was die Stauchung übrig ließ</value></data>
   <data name="Import_WarpBottom" xml:space="preserve"><value>Unten</value></data>
   <data name="Import_WarpMiddle" xml:space="preserve"><value>Mitte</value></data>
