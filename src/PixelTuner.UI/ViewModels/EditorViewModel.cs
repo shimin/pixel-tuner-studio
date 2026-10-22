@@ -35,6 +35,8 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         Document = document;
         _engine = engine;
         _picker = picker;
+        // First in line: what it forgets must be forgotten before the timelines' own handlers redraw and the inspector reads it again.
+        document.Changed += DocumentChanged;
         Timelines = new TimelineEditor(document);
         Gallery = new LibraryViewModel(this, () => _picker?.Invoke());
         Canvas = new CanvasPanelViewModel(this, () => _picker?.Invoke());
@@ -47,7 +49,6 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         }
         Timelines.Changed += (_, _) => OnUi(Refresh);
         Timelines.SelectionChanged += (_, _) => OnUi(Refresh);
-        document.Changed += DocumentChanged;
         _ = LoadAudioAsync();
     }
 
@@ -61,6 +62,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     private void DocumentChanged(object? sender, EventArgs e) =>
         OnUi(() =>
         {
+            ForgetBinInfo();   // the file is built again only when the project changed, not on every move of the playhead or a drag
             if (Document.Project.AudioResourceId != _loadedAudioId) _ = LoadAudioAsync();
             Canvas.Refresh();
         });
@@ -130,6 +132,8 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         nameof(ShowBrightness), nameof(ShowStretching), nameof(StretchingLabel), nameof(ShowLaser), nameof(IsVideoSelected), nameof(IsLightItem), nameof(IsEffectSelected),
         nameof(OffsetX), nameof(OffsetY), nameof(T1), nameof(T2), nameof(ItemColor), nameof(ItemColorTo), nameof(ItemColorBrush), nameof(ItemColorToBrush),
         nameof(EffectIndex), nameof(HasImage), nameof(ItemPreviewBitmap), nameof(HasPreview), nameof(PlaybackText),
+        nameof(SelectedItemCount), nameof(IsMultiSelection), nameof(MultiText),
+        nameof(ColumnTimeText), nameof(BinInfo), nameof(HasBinInfo), nameof(BinLine), nameof(BinIssues), nameof(HasBinIssues),
         nameof(IsTimelineSelected), nameof(TimelineColorText), nameof(TimelineColorBrush), nameof(ColorIsOnlyALabel), nameof(ShowFlip), nameof(FlipVertical),
         nameof(ShowMonochrome), nameof(Monochrome), nameof(ShowHeight), nameof(TimelineHeight), nameof(HeightText), nameof(ShowLayout), nameof(LayoutNames), nameof(LayoutIndex), nameof(CanEditLayout),
     ];
@@ -157,6 +161,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(TimeText));
         OnPropertyChanged(nameof(CanPlay));
         DeleteSelectedCommand.NotifyCanExecuteChanged();
+        ApplyToAllCommand.NotifyCanExecuteChanged();
         MoveTimelineUpCommand.NotifyCanExecuteChanged();
         MoveTimelineDownCommand.NotifyCanExecuteChanged();
         PlayPauseCommand.NotifyCanExecuteChanged();
@@ -324,9 +329,30 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     public bool IsMarkerSelected => Timelines.Selected is Marker;
     public bool CanRename => Timelines.Selected is Timeline or Marker;
 
+    public int SelectedItemCount => Timelines.SelectedItems.Count;
+
+    /// <summary>Several items are selected: the inspector shows the last one picked, and can give its settings to the others.</summary>
+    public bool IsMultiSelection => Timelines.SelectedItems.Count > 1;
+
+    public string MultiText => string.Format(Strings.Inspector_Multi, Timelines.SelectedItems.Count);
+
+    private bool CanApplyToAll => Item is { } source && Timelines.SelectedItems.Any(i => !ReferenceEquals(i, source) && i.Kind == source.Kind);
+
+    /// <summary>Gives the shown item's brightness, stretching, laser, offset, colours and effect to the other selected items of its kind: one undo step.</summary>
+    [RelayCommand(CanExecute = nameof(CanApplyToAll))]
+    void ApplyToAll()
+    {
+        if (Item is not { } source) return;
+        Message = null;
+        var edit = Edits.ApplySettings(source, Timelines.SelectedItems);
+        if (edit is null) Message = Strings.Inspector_NothingToApply;
+        else Document.Execute(edit);
+    }
+
     public string InspectorTitle => Timelines.Selected switch
     {
         Timeline => Strings.Inspector_Timeline,
+        TimelineItem when IsMultiSelection => MultiText,
         TimelineItem => Strings.Inspector_Item,
         Marker => Strings.Inspector_Marker,
         _ => "",

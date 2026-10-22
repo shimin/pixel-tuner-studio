@@ -121,6 +121,8 @@
   <data name="Edit_RemoveLibraryEntry" xml:space="preserve"><value>Удаление из библиотеки</value></data>
   <data name="Edit_RenameLibraryEntry" xml:space="preserve"><value>Переименование в библиотеке</value></data>
   <data name="Edit_ReplaceLibraryMedia" xml:space="preserve"><value>Замена файла в библиотеке</value></data>
+  <data name="Edit_ApplySettings" xml:space="preserve"><value>Применение настроек ко всем</value></data>
+  <data name="Edit_RemoveItems" xml:space="preserve"><value>Удаление элементов</value></data>
   <data name="Command_AddItem" xml:space="preserve"><value>Добавить файл…</value></data>
   <data name="FileType_Image" xml:space="preserve"><value>Картинки</value></data>
   <data name="Item_AddFailed" xml:space="preserve"><value>Не удалось добавить {0}: {1}</value></data>
@@ -142,6 +144,34 @@
   <data name="Inspector_OffsetX" xml:space="preserve"><value>Сдвиг по X</value></data>
   <data name="Inspector_OffsetY" xml:space="preserve"><value>Сдвиг по Y</value></data>
   <data name="Inspector_BadValue" xml:space="preserve"><value>Это значение не подходит: {0}.</value></data>
+  <data name="Inspector_FrameLasts" xml:space="preserve"><value>Кадр длится {0}: {1} кадров в секунду.</value></data>
+  <data name="Inspector_ColourLasts" xml:space="preserve"><value>Один цвет держится {0}.</value></data>
+  <data name="Inspector_ColumnLasts" xml:space="preserve"><value>Один столбец горит {0}.</value></data>
+  <data name="Issue_TooBig" xml:space="preserve"><value>Файл ({0}) не помещается в память устройства.</value></data>
+  <data name="Issue_LightTooLong" xml:space="preserve"><value>Шоу длиннее, чем LightMaster сыграет при таком шаге.</value></data>
+  <data name="Issue_UnknownEffect" xml:space="preserve"><value>Световой эффект неизвестен: файл не соберётся.</value></data>
+  <data name="Issue_LightStepNotMultiple" xml:space="preserve"><value>Длина не кратна шагу света, поэтому элементы после этого немного сдвинутся в файле.</value></data>
+  <data name="Issue_SharedBlockOffsets" xml:space="preserve"><value>Другой элемент играет тот же GIF с той же яркостью, и у них одна картинка: смещение этого элемента не сыграет.</value></data>
+  <data name="Issue_VideoPairEndsDiffer" xml:space="preserve"><value>Две видеодорожки устройства должны кончаться в одно время.</value></data>
+  <data name="Issue_NoLedLayout" xml:space="preserve"><value>У видеодорожки нет разметки светодиодов: выберите её в заголовке дорожки.</value></data>
+  <data name="Issue_StretchingTooLarge" xml:space="preserve"><value>Растяжение слишком велико для E-Pic.</value></data>
+  <data name="Issue_WrongHeight" xml:space="preserve"><value>Картинка не той высоты, что устройство ({0} светодиодов).</value></data>
+  <data name="Issue_MissingMedia" xml:space="preserve"><value>Файл этого элемента пропал: файл не соберётся. Найдите его в библиотеке.</value></data>
+  <data name="Issue_TimelineKindMismatch" xml:space="preserve"><value>Устройство не играет дорожки такого типа.</value></data>
+  <data name="Issue_TooManyTimelines" xml:space="preserve"><value>Устройство играет меньше дорожек, чем ему дано.</value></data>
+  <data name="Issue_EmptyTimelineSkipped" xml:space="preserve"><value>Пустая дорожка в файл не попадёт.</value></data>
+  <data name="Issue_NothingToPlay" xml:space="preserve"><value>Устройству нечего играть.</value></data>
+  <data name="Bin_NotBuilt" xml:space="preserve"><value>Файл пока не собирается, см. ниже.</value></data>
+  <data name="Bin_FileOf" xml:space="preserve"><value>Файл {0} из {1} ({2} %)</value></data>
+  <data name="Bin_File" xml:space="preserve"><value>Файл {0}</value></data>
+  <data name="Bin_Shared" xml:space="preserve"><value>общая ещё с {0}</value></data>
+  <data name="Bin_Block" xml:space="preserve"><value>картинка {0}</value></data>
+  <data name="Bin_Entry" xml:space="preserve"><value>Запись {0} из {1}</value></data>
+  <data name="Inspector_Bin" xml:space="preserve"><value>В .bin</value></data>
+  <data name="Inspector_NothingToApply" xml:space="preserve"><value>У остальных элементов уже такие настройки.</value></data>
+  <data name="Inspector_ApplyToAll" xml:space="preserve"><value>Применить к остальным выбранным</value></data>
+  <data name="Inspector_MultiHint" xml:space="preserve"><value>Ниже настройки элемента, выбранного последним. Ctrl или Cmd и щелчок добавляют элемент, Shift и щелчок выбирают ряд.</value></data>
+  <data name="Inspector_Multi" xml:space="preserve"><value>Элементов: {0}</value></data>
   <data name="Import_Trim" xml:space="preserve"><value>Обрезать то, что осталось после сжатия</value></data>
   <data name="Import_WarpBottom" xml:space="preserve"><value>Низ</value></data>
   <data name="Import_WarpMiddle" xml:space="preserve"><value>Середина</value></data>

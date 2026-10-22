@@ -227,10 +227,62 @@ public sealed class TimelineEditor
     /// <summary>The selected item, marker or timeline; null when nothing is.</summary>
     public object? Selected { get; private set; }
 
+    private readonly List<TimelineItem> _selectedItems = [];
+
+    /// <summary>
+    /// Every selected item, in the order they were picked; <see cref="Selected"/> is the last one picked (the one the
+    /// inspector shows and the others can be given the settings of). Empty unless items are selected.
+    /// </summary>
+    public IReadOnlyList<TimelineItem> SelectedItems => _selectedItems;
+
+    public bool IsSelected(TimelineItem item) => _selectedItems.Contains(item);
+
     public void Select(object? what)
     {
-        if (ReferenceEquals(Selected, what)) return;
+        if (ReferenceEquals(Selected, what) && _selectedItems.Count <= 1) return;
         Selected = what;
+        _selectedItems.Clear();
+        if (what is TimelineItem item) _selectedItems.Add(item);
+        RaiseSelectionChanged();
+    }
+
+    /// <summary>Adds an item to the selection, or takes it out when it is in (Ctrl or Cmd and a click).</summary>
+    public void ToggleItem(TimelineItem item)
+    {
+        if (Selected is not TimelineItem)
+        {
+            Select(item);
+            return;
+        }
+        if (!_selectedItems.Remove(item)) _selectedItems.Add(item);
+        Selected = _selectedItems.Count == 0 ? null : _selectedItems[^1];
+        RaiseSelectionChanged();
+    }
+
+    /// <summary>
+    /// Selects the items from the current one to this one on the same timeline (Shift and a click). On another timeline,
+    /// or with no item selected, it selects just this one.
+    /// </summary>
+    public void SelectRangeTo(TimelineItem item)
+    {
+        var timeline = TimelineOf(item);
+        if (Selected is not TimelineItem from || timeline is null || TimelineOf(from) != timeline)
+        {
+            Select(item);
+            return;
+        }
+        int a = timeline.Items.IndexOf(from), b = timeline.Items.IndexOf(item);
+        _selectedItems.Clear();
+        for (int i = Math.Min(a, b); i <= Math.Max(a, b); i++) _selectedItems.Add(timeline.Items[i]);
+        // The item picked last is the one the inspector shows.
+        _selectedItems.Remove(item);
+        _selectedItems.Add(item);
+        Selected = item;
+        RaiseSelectionChanged();
+    }
+
+    private void RaiseSelectionChanged()
+    {
         SelectionChanged?.Invoke(this, EventArgs.Empty);
         Changed?.Invoke(this, EventArgs.Empty);
     }
@@ -333,15 +385,25 @@ public sealed class TimelineEditor
     public bool IsDragging => _drag is not null;
 
     /// <summary>Pointer pressed: selects what was hit and starts a drag when it can move.</summary>
-    public void PointerDown(double x, double y)
+    /// <param name="mode">Ctrl or Cmd adds or takes out an item, Shift selects a run of items; neither starts a drag.</param>
+    public void PointerDown(double x, double y, SelectionMode mode = SelectionMode.Replace)
     {
         _drag = null;
         Preview = null;
         var hit = HitTest(x, y);
+        if (hit.Item is { } clicked && mode != SelectionMode.Replace)
+        {
+            if (mode == SelectionMode.Toggle) ToggleItem(clicked);
+            else SelectRangeTo(clicked);
+            return;
+        }
         switch (hit.Kind)
         {
             case HitKind.Item or HitKind.ItemStart or HitKind.ItemEnd:
-                Select(hit.Item);
+                // A click on an item of a selection that is already several keeps them, so they can be seen while the item is dragged;
+                // a drag moves just the item that was grabbed.
+                if (!(IsSelected(hit.Item!) && _selectedItems.Count > 1)) Select(hit.Item);
+                else Selected = hit.Item;
                 _drag = new DragState(hit, x, hit.Item!.Start, hit.Item.Duration, default);
                 break;
             case HitKind.Marker:
@@ -594,6 +656,12 @@ public sealed class TimelineEditor
 
     public void DeleteSelected()
     {
+        if (_selectedItems.Count > 1)
+        {
+            _document.Execute(Edits.RemoveItems(Project, _selectedItems.ToList()));
+            Select(null);
+            return;
+        }
         switch (Selected)
         {
             case TimelineItem item when TimelineOf(item) is { } timeline:
@@ -668,6 +736,19 @@ public sealed class TimelineEditor
         Select(timeline);
         return timeline;
     }
+}
+
+/// <summary>What a click does to the selection.</summary>
+public enum SelectionMode
+{
+    /// <summary>The clicked item becomes the selection.</summary>
+    Replace,
+
+    /// <summary>The clicked item is added to the selection, or taken out of it.</summary>
+    Toggle,
+
+    /// <summary>The run of items from the selected one to the clicked one is selected.</summary>
+    Range,
 }
 
 public enum DropDenialReason

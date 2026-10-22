@@ -385,6 +385,56 @@ public static class Edits
     }
 
     /// <summary>
+    /// Gives the other items the settings of <paramref name="source"/> in one undo step: brightness, stretching and laser of
+    /// pictures, GIFs and gradients, the offset of GIFs, the colours, effect and times of lights. Items of another kind than the
+    /// source are left alone, as are settings that are the same already. Null when nothing would change (so no empty undo step).
+    /// </summary>
+    public static Edit? ApplySettings(TimelineItem source, IEnumerable<TimelineItem> targets)
+    {
+        var edits = new List<Edit>();
+        foreach (var target in targets)
+        {
+            if (ReferenceEquals(target, source) || target.Kind != source.Kind) continue;
+            switch (source.Kind)
+            {
+                case ItemKind.Image or ItemKind.Video or ItemKind.Gradient:
+                    if (target.Brightness != source.Brightness) edits.Add(SetBrightness(target, source.Brightness));
+                    if (target.Stretching != source.Stretching) edits.Add(SetStretching(target, source.Stretching));
+                    if (target.LaserOn != source.LaserOn) edits.Add(SetLaser(target, source.LaserOn));
+                    if (source.Kind == ItemKind.Video && (target.OffsetX, target.OffsetY) != (source.OffsetX, source.OffsetY))
+                        edits.Add(SetOffset(target, source.OffsetX, source.OffsetY));
+                    break;
+                case ItemKind.Solid:
+                    if (target.Color != source.Color && source.Color is not null) edits.Add(SetItemColor(target, source.Color));
+                    break;
+                case ItemKind.Effect:
+                    if (target.Color != source.Color && source.Color is not null) edits.Add(SetItemColor(target, source.Color));
+                    if (target.ColorLast != source.ColorLast && source.ColorLast is not null) edits.Add(SetItemColorLast(target, source.ColorLast));
+                    if (target.Effect != source.Effect && source.Effect is not null) edits.Add(SetEffect(target, source.Effect));
+                    if ((target.T1, target.T2) != (source.T1, source.T2)) edits.Add(SetEffectTimes(target, source.T1, source.T2));
+                    break;
+            }
+        }
+        return edits.Count == 0 ? null : new GroupEdit("ApplySettings", edits);
+    }
+
+    /// <summary>Takes several items off their timelines in one undo step.</summary>
+    public static Edit RemoveItems(ShowProject project, IEnumerable<TimelineItem> items)
+    {
+        var found = new List<(Timeline Timeline, TimelineItem Item, int Index)>();
+        foreach (var item in items)
+        {
+            var timeline = project.Timelines.FirstOrDefault(t => t.Items.Contains(item))
+                ?? throw new InvalidOperationException("The item is not on a timeline.");
+            found.Add((timeline, item, timeline.Items.IndexOf(item)));
+        }
+        // Each removal remembers its index, so later ones in a list go first: the earlier indexes stay right, and undo puts them back in order.
+        var edits = found.OrderBy(f => project.Timelines.IndexOf(f.Timeline)).ThenByDescending(f => f.Index)
+            .Select(f => (Edit)new RemoveEdit<TimelineItem>("RemoveItems", f.Timeline.Items, f.Item)).ToList();
+        return new GroupEdit("RemoveItems", edits);
+    }
+
+    /// <summary>
     /// Whether an item can be played by this timeline. Timelines only take their own kind of item,
     /// because each kind of device compiles its items differently.
     /// </summary>
