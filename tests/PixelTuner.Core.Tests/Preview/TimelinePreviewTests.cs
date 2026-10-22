@@ -152,6 +152,32 @@ public class TimelinePreviewTests
         Assert.True(preview.At(S(0.5)).Laser);
     }
 
+    // ---- the afterglow
+
+    [Fact]
+    public void The_trail_is_what_the_leds_showed_before_one_snapshot_per_column_the_newest_first()
+    {
+        var timeline = Add(TimelineKind.Pixel, Picture("a", 4, 3, 0, 1, stretching: 20));   // 1 ms a column
+        var (preview, _) = Play(DeviceKind.Poi, timeline, 3);
+
+        var trail = preview.Trail(Ms(10.5), Ms(5), 100);
+        Assert.Equal([0, 1, 2, 3, 4, 5], trail.Select(t => t.Age.TotalMilliseconds));      // a column every millisecond
+        for (int i = 0; i < trail.Count; i++)
+            Assert.Equal(preview.At(Ms(10.5 - i)).Colors, trail[i].Colors);
+    }
+
+    [Fact]
+    public void A_fast_device_is_sampled_coarsely_and_the_trail_never_reaches_before_the_start_of_the_show()
+    {
+        var timeline = Add(TimelineKind.Pixel, Picture("a", 4, 3, 0, 1, stretching: 2));    // 0.1 ms a column
+        var (preview, _) = Play(DeviceKind.Poi, timeline, 3);
+
+        Assert.Equal(10, preview.Trail(S(0.5), Ms(100), 10).Count);                         // at most what was asked
+        Assert.Equal(TimeSpan.Zero, preview.Trail(S(0.5), Ms(100), 10)[0].Age);
+        var early = preview.Trail(Ms(2), Ms(100), 50);
+        Assert.All(early, t => Assert.True(t.Age <= Ms(2)));
+    }
+
     // ---- the speed of each kind of device
 
     [Fact]

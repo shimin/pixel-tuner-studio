@@ -127,6 +127,21 @@ public sealed class TimelinePreview
         return new PreviewFrame(time, index, shown, TimeSpan.FromTicks(columnTicks), colours, picture, entry.LaserOn);
     }
 
+    /// <summary>
+    /// What the LEDs showed in the last <paramref name="length"/> before a time, newest first, for the afterglow a moving device leaves: one
+    /// snapshot for every column the device held (at most <paramref name="maxSnapshots"/>, so a fast device is sampled more coarsely). Nothing
+    /// is shown from before the start of the show.
+    /// </summary>
+    public IReadOnlyList<(TimeSpan Age, IReadOnlyList<Rgb> Colors)> Trail(TimeSpan time, TimeSpan length, int maxSnapshots)
+    {
+        var now = At(time);
+        var step = TimeSpan.FromTicks(Math.Max(Math.Max(now.ColumnTime.Ticks, length.Ticks / Math.Max(1, maxSnapshots)), 1));
+        var snapshots = new List<(TimeSpan, IReadOnlyList<Rgb>)>();
+        for (var age = TimeSpan.Zero; age <= length && age <= time && snapshots.Count < maxSnapshots; age += step)
+            snapshots.Add((age, age == TimeSpan.Zero ? now.Colors : At(time - age).Colors));
+        return snapshots;
+    }
+
     private PreviewPicture Picture(PpoiImage image)
     {
         if (_pictures.TryGetValue(image.Address, out var known)) return known;

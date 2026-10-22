@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PixelTuner.Core.Editing;
+using PixelTuner.Core.Imaging;
 using PixelTuner.Core.Layout;
 using PixelTuner.Core.Model;
 using PixelTuner.UI.Resources;
@@ -135,6 +136,12 @@ public sealed partial class CanvasPanelViewModel : ObservableObject
 
     public void Hover(double x, double y) =>
         HoverText = _drawing?.HitTest(x, y) is { } shape ? Elements.First(e => e.Id == shape.Id).Description : "";
+
+    /// <summary>What the LEDs of an outline show at the playhead when a video timeline plays on it; null when none does.</summary>
+    public IReadOnlyList<Rgb>? PlayingColours(CanvasElementViewModel element) => element.Layout is { } layout ? _editor.Preview.ColoursOn(layout) : null;
+
+    /// <summary>The playhead moved: the outlines that play a video are drawn again.</summary>
+    public void PlayheadMoved() => Changed?.Invoke(this, EventArgs.Empty);
 
     /// <summary>The page to draw, in drawing units.</summary>
     public (double X, double Y, double Width, double Height) Page => _drawing?.Page ?? default;
