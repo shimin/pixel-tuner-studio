@@ -4,6 +4,7 @@
              xmlns:res="using:PixelTuner.UI.Resources"
              xmlns:tl="using:PixelTuner.UI.Timelines"
              xmlns:lib="using:PixelTuner.UI.LibraryPanel"
+             xmlns:led="using:PixelTuner.UI.LedLayouts"
              xmlns:core="using:PixelTuner.Core.Model"
              x:Class="PixelTuner.UI.Views.EditorView"
              x:DataType="vm:EditorViewModel"
@@ -84,6 +85,11 @@
             <StackPanel Spacing="4" IsVisible="{Binding ShowLayout}">
               <TextBlock Classes="muted" Text="{x:Static res:Strings.Inspector_Layout}" />
               <ComboBox ItemsSource="{Binding LayoutNames}" SelectedIndex="{Binding LayoutIndex}" HorizontalAlignment="Stretch" />
+              <WrapPanel>
+                <Button Content="{x:Static res:Strings.Layout_New}" Command="{Binding NewLayoutCommand}" Margin="0,0,6,0" />
+                <Button Content="{x:Static res:Strings.Layout_Edit}" Command="{Binding EditLayoutCommand}" IsEnabled="{Binding CanEditLayout}" Margin="0,0,6,0" />
+                <Button Content="{x:Static res:Strings.Layout_Delete}" Command="{Binding DeleteLayoutCommand}" IsEnabled="{Binding CanEditLayout}" />
+              </WrapPanel>
             </StackPanel>
           </StackPanel>
           <!-- Times are typed as 1:05.250 (or 65.25) and applied on Enter or when the box loses focus. -->
@@ -292,5 +298,10 @@
         </Panel>
       </Grid>
     </Border>
+
+    <!-- The LED markup window takes the place of the whole editor while it is open. -->
+    <Panel Grid.RowSpan="4" Grid.ColumnSpan="2" IsVisible="{Binding IsEditingMarkup}" Background="{DynamicResource PtSurfaceBrush}">
+      <led:LedMarkupView DataContext="{Binding MarkupEditor}" />
+    </Panel>
   </Grid>
 </UserControl>

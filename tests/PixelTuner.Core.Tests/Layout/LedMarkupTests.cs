@@ -105,10 +105,8 @@ public class LedMarkupTests
         var m = Grid(4, 3, 0, 1, 2, 3, 4);
         // Cell 3 (LED 4) goes to place 2; the cells behind it keep their order.
         Assert.Equal([0, 3, 1, 2, 4], Chain(m.Insert([3], 2, overwrite: true)));
-        // Cell 0 (LED 1) becomes LED 4, not the one that was 4 before it left.
-        var later = m.Insert([0], 4, overwrite: true);
-        Assert.Equal([1, 2, 3, 0, 4], Chain(later));
-        Assert.Equal(4, later.NumberOf(0));
+        // Cell 0 (LED 1) goes in front of what was LED 4, as PixelTuner 2 counted: the place is in the chain as it was.
+        Assert.Equal([1, 2, 0, 3, 4], Chain(m.Insert([0], 4, overwrite: true)));
     }
 
     [Fact]
@@ -150,49 +148,52 @@ public class LedMarkupTests
         Assert.Equal([m.Cell(2, 0), m.Cell(2, 1), m.Cell(2, 2)], m.LineCells(m.Cell(2, 0), m.Cell(2, 2)));
         Assert.Equal([m.Cell(0, 0), m.Cell(1, 1), m.Cell(2, 2)], m.LineCells(m.Cell(0, 0), m.Cell(2, 2)));
         Assert.Equal([m.Cell(3, 0), m.Cell(2, 1), m.Cell(1, 2)], m.LineCells(m.Cell(3, 0), m.Cell(1, 2)));
-        Assert.Equal([m.Cell(4, 4), m.Cell(3, 3)], m.LineCells(m.Cell(4, 4), m.Cell(3, 3)));
+        Assert.Equal([m.Cell(2, 2)], m.LineCells(m.Cell(2, 2), m.Cell(2, 2)));
     }
 
     [Fact]
-    public void LineBetweenCellsNotOnOneLineIsEmptyAndToItselfIsOneCell()
+    public void LineAtAnyAngleIsOneUnbrokenStepwiseRunFromTheFirstCellToTheLast()
     {
-        var m = new LedMarkup(5, 5);
-        Assert.Empty(m.LineCells(m.Cell(0, 0), m.Cell(2, 1)));
-        Assert.Equal([m.Cell(2, 2)], m.LineCells(m.Cell(2, 2), m.Cell(2, 2)));
+        var m = new LedMarkup(9, 6);
+        var cells = m.LineCells(m.Cell(0, 0), m.Cell(8, 3));
+        Assert.Equal(9, cells.Count);                       // one cell per column: the long side sets the count
+        Assert.Equal((m.Cell(0, 0), m.Cell(8, 3)), (cells[0], cells[^1]));
+        Assert.Empty(m.Insert(cells, 1).Jumps());           // neighbours always touch
+        Assert.Equal(m.LineCells(m.Cell(0, 0), m.Cell(8, 3)), m.LineCells(0, 0, 8, 3));
     }
 
     [Fact]
     public void FillSnakeByRowsFromTopLeft()
     {
         var m = new LedMarkup(3, 2);
-        Assert.Equal([0, 1, 2, 5, 4, 3], m.FillCells(0, 0, 3, 2, Corner.TopLeft, FillDirection.Rows, FillPattern.Snake));
+        Assert.Equal([0, 1, 2, 5, 4, 3], m.RectCells(0, 0, 2, 1, FillDirection.Rows, FillPattern.Snake));
     }
 
     [Fact]
     public void FillStraightByRowsFromTopLeft()
     {
         var m = new LedMarkup(3, 2);
-        Assert.Equal([0, 1, 2, 3, 4, 5], m.FillCells(0, 0, 3, 2, Corner.TopLeft, FillDirection.Rows, FillPattern.Straight));
+        Assert.Equal([0, 1, 2, 3, 4, 5], m.RectCells(0, 0, 2, 1, FillDirection.Rows, FillPattern.Straight));
     }
 
     [Fact]
     public void FillByColumnsRunsDownThenAcross()
     {
         var m = new LedMarkup(3, 2);
-        Assert.Equal([0, 3, 4, 1, 2, 5], m.FillCells(0, 0, 3, 2, Corner.TopLeft, FillDirection.Columns, FillPattern.Snake));
-        Assert.Equal([0, 3, 1, 4, 2, 5], m.FillCells(0, 0, 3, 2, Corner.TopLeft, FillDirection.Columns, FillPattern.Straight));
+        Assert.Equal([0, 3, 4, 1, 2, 5], m.RectCells(0, 0, 2, 1, FillDirection.Columns, FillPattern.Snake));
+        Assert.Equal([0, 3, 1, 4, 2, 5], m.RectCells(0, 0, 2, 1, FillDirection.Columns, FillPattern.Straight));
     }
 
     [Fact]
     public void FillStartsAtEachCorner()
     {
         var m = new LedMarkup(3, 2);
-        Assert.Equal([2, 1, 0, 3, 4, 5], m.FillCells(0, 0, 3, 2, Corner.TopRight, FillDirection.Rows, FillPattern.Snake));
-        Assert.Equal([3, 4, 5, 2, 1, 0], m.FillCells(0, 0, 3, 2, Corner.BottomLeft, FillDirection.Rows, FillPattern.Snake));
-        Assert.Equal([5, 4, 3, 0, 1, 2], m.FillCells(0, 0, 3, 2, Corner.BottomRight, FillDirection.Rows, FillPattern.Snake));
-        Assert.Equal([3, 0, 1, 4, 5, 2], m.FillCells(0, 0, 3, 2, Corner.BottomLeft, FillDirection.Columns, FillPattern.Snake));
-        Assert.Equal([2, 5, 4, 1, 0, 3], m.FillCells(0, 0, 3, 2, Corner.TopRight, FillDirection.Columns, FillPattern.Snake));
-        Assert.Equal([5, 2, 4, 1, 3, 0], m.FillCells(0, 0, 3, 2, Corner.BottomRight, FillDirection.Columns, FillPattern.Straight));
+        Assert.Equal([2, 1, 0, 3, 4, 5], m.SweepCells(Corner.TopRight, FillDirection.Rows, FillPattern.Snake));
+        Assert.Equal([3, 4, 5, 2, 1, 0], m.SweepCells(Corner.BottomLeft, FillDirection.Rows, FillPattern.Snake));
+        Assert.Equal([5, 4, 3, 0, 1, 2], m.SweepCells(Corner.BottomRight, FillDirection.Rows, FillPattern.Snake));
+        Assert.Equal([3, 0, 1, 4, 5, 2], m.SweepCells(Corner.BottomLeft, FillDirection.Columns, FillPattern.Snake));
+        Assert.Equal([2, 5, 4, 1, 0, 3], m.SweepCells(Corner.TopRight, FillDirection.Columns, FillPattern.Snake));
+        Assert.Equal([5, 2, 4, 1, 3, 0], m.SweepCells(Corner.BottomRight, FillDirection.Columns, FillPattern.Straight));
     }
 
     [Fact]
@@ -200,15 +201,15 @@ public class LedMarkupTests
     {
         var m = new LedMarkup(5, 4);
         Assert.Equal([m.Cell(2, 1), m.Cell(3, 1), m.Cell(3, 2), m.Cell(2, 2)],
-            m.FillCells(2, 1, 2, 2, Corner.TopLeft, FillDirection.Rows, FillPattern.Snake));
+            m.RectCells(2, 1, 3, 2, FillDirection.Rows, FillPattern.Snake));
     }
 
     [Fact]
-    public void FillRefusesARectangleOutsideTheGrid()
+    public void ARectangleHangingOutOfTheGridIsClippedToIt()
     {
         var m = new LedMarkup(3, 2);
-        Assert.Throws<ArgumentOutOfRangeException>(() => m.FillCells(2, 0, 2, 1, Corner.TopLeft, FillDirection.Rows, FillPattern.Snake));
-        Assert.Throws<ArgumentOutOfRangeException>(() => m.FillCells(0, 0, 0, 1, Corner.TopLeft, FillDirection.Rows, FillPattern.Snake));
+        Assert.Equal([2, 5], m.RectCells(2, 0, 4, 1, FillDirection.Rows, FillPattern.Straight));
+        Assert.Empty(m.RectCells(5, 5, 6, 6, FillDirection.Rows, FillPattern.Snake));
     }
 
     [Theory]

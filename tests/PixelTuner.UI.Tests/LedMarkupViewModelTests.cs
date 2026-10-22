@@ -64,7 +64,7 @@ public sealed class LedMarkupViewModelTests : IDisposable
         Click(vm, 1, 0);   // already LED 2
         Assert.Equal([Cell(vm, 0, 0), Cell(vm, 1, 0)], Chain(vm));
         Assert.Equal(3, vm.Next);
-        Assert.Contains("2", vm.StatusText);
+        Assert.Equal(Cell(vm, 1, 0), vm.LastPlaced);
     }
 
     [Fact]
@@ -78,6 +78,9 @@ public sealed class LedMarkupViewModelTests : IDisposable
         Assert.Equal([Cell(vm, 0, 0), Cell(vm, 1, 0), Cell(vm, 0, 1), Cell(vm, 2, 0), Cell(vm, 3, 0)], Chain(vm));
         Assert.Equal(4, vm.Next);
         Assert.Equal(3, vm.Markup.NumberOf(Cell(vm, 0, 1)));
+
+        vm.NextAtEndCommand.Execute(null);
+        Assert.Equal(6, vm.Next);
     }
 
     [Fact]
@@ -103,15 +106,6 @@ public sealed class LedMarkupViewModelTests : IDisposable
     }
 
     [Fact]
-    public void CellsBetween_leaves_out_the_first_cell_and_ends_on_the_last()
-    {
-        Assert.Equal([(1, 0), (2, 0)], LedMarkupViewModel.CellsBetween(0, 0, 2, 0));
-        Assert.Equal([(0, 1), (0, 2)], LedMarkupViewModel.CellsBetween(0, 0, 0, 2));
-        Assert.Empty(LedMarkupViewModel.CellsBetween(3, 3, 3, 3));
-        Assert.Equal((5, 2), LedMarkupViewModel.CellsBetween(0, 0, 5, 2).Last());
-    }
-
-    [Fact]
     public void A_press_outside_the_grid_does_nothing_and_a_release_without_a_press_does_not_crash()
     {
         var vm = New();
@@ -126,19 +120,18 @@ public sealed class LedMarkupViewModelTests : IDisposable
     // ---- lines and fills
 
     [Fact]
-    public void Shift_click_draws_a_line_from_the_last_led_and_a_cell_off_the_line_says_so()
+    public void Shift_click_draws_a_line_from_the_last_placed_led_at_any_angle()
     {
-        var vm = New();
+        var vm = New(9, 6);
         Click(vm, 0, 0);
-        Click(vm, 3, 0, GestureKeys.Shift);
-        Assert.Equal([0, 1, 2, 3], Chain(vm));
-        Assert.Equal(5, vm.Next);
+        Click(vm, 8, 3, GestureKeys.Shift);
+        Assert.Equal(9, vm.Markup.Count);                  // one LED per column of the long side
+        Assert.Empty(vm.Markup.Jumps());
+        Assert.Equal(Cell(vm, 8, 3), vm.LastPlaced);
+        Assert.Equal(10, vm.Next);
 
-        Click(vm, 5, 3, GestureKeys.Shift);   // from (3,0): 2 across, 3 down: not a line
-        Assert.Equal(4, vm.Markup.Count);
-        Assert.NotNull(vm.Hint);
-        Click(vm, 0, 1);
-        Assert.Null(vm.Hint);
+        Click(vm, 8, 3, GestureKeys.Shift);                // on the last LED itself: nothing new
+        Assert.Equal(9, vm.Markup.Count);
     }
 
     [Fact]
@@ -150,52 +143,82 @@ public sealed class LedMarkupViewModelTests : IDisposable
     }
 
     [Fact]
-    public void Shift_drag_shows_the_segment_before_it_is_made()
+    public void Shift_drag_shows_the_segment_with_its_numbers_before_it_is_made()
     {
         var vm = New();
         vm.Press(1, 1, GestureKeys.Shift);
         vm.Move(4, 1);
-        Assert.Equal([Cell(vm, 1, 1), Cell(vm, 2, 1), Cell(vm, 3, 1), Cell(vm, 4, 1)], vm.Preview);
+        Assert.Equal([(Cell(vm, 1, 1), 1), (Cell(vm, 2, 1), 2), (Cell(vm, 3, 1), 3), (Cell(vm, 4, 1), 4)], vm.Preview);
         Assert.Empty(Chain(vm));
         vm.Move(1, 3);                         // the pointer found another end
-        Assert.Equal([Cell(vm, 1, 1), Cell(vm, 1, 2), Cell(vm, 1, 3)], vm.Preview);
+        Assert.Equal([Cell(vm, 1, 1), Cell(vm, 1, 2), Cell(vm, 1, 3)], vm.Preview.Select(p => p.Cell));
         vm.Release(1, 3);
         Assert.Empty(vm.Preview);
         Assert.Equal([Cell(vm, 1, 1), Cell(vm, 1, 2), Cell(vm, 1, 3)], Chain(vm));
     }
 
     [Fact]
-    public void Ctrl_drag_fills_a_rectangle_from_the_corner_where_the_drag_began_as_a_snake()
+    public void Ctrl_drag_fills_a_rectangle_starting_where_the_drag_began_with_the_direction_and_pattern_that_are_set()
     {
         var vm = New();
         Drag(vm, (2, 1), (0, 0), GestureKeys.Ctrl);      // from the bottom right of the rectangle
         // Rows, snake, starting at the bottom right: bottom row right to left, then the top row left to right.
         Assert.Equal([Cell(vm, 2, 1), Cell(vm, 1, 1), Cell(vm, 0, 1), Cell(vm, 0, 0), Cell(vm, 1, 0), Cell(vm, 2, 0)], Chain(vm));
         Assert.Equal(7, vm.Next);
+
+        var other = New();
+        other.FillDirectionIndex = (int)FillDirection.Columns;
+        other.FillPatternIndex = (int)FillPattern.Straight;
+        Drag(other, (0, 0), (1, 1), GestureKeys.Ctrl);
+        Assert.Equal([Cell(other, 0, 0), Cell(other, 0, 1), Cell(other, 1, 0), Cell(other, 1, 1)], Chain(other));
     }
 
     [Fact]
-    public void The_fill_can_use_a_fixed_corner_direction_and_pattern()
-    {
-        var vm = New();
-        vm.FillFromDragStart = false;
-        vm.FillCornerIndex = (int)Corner.TopRight;
-        vm.FillDirectionIndex = (int)FillDirection.Columns;
-        vm.FillPatternIndex = (int)FillPattern.Straight;
-        Drag(vm, (0, 0), (1, 1), GestureKeys.Ctrl);
-        Assert.Equal([Cell(vm, 1, 0), Cell(vm, 1, 1), Cell(vm, 0, 0), Cell(vm, 0, 1)], Chain(vm));
-    }
-
-    [Fact]
-    public void A_fill_leaves_the_leds_that_are_there_and_shows_only_the_new_cells_in_the_preview()
+    public void A_fill_leaves_the_leds_that_are_there_and_numbers_only_the_new_cells_in_the_preview()
     {
         var vm = New();
         Click(vm, 1, 0);
         vm.Press(0, 0, GestureKeys.Ctrl);
         vm.Move(2, 0);
-        Assert.Equal([Cell(vm, 0, 0), Cell(vm, 2, 0)], vm.Preview);
+        Assert.Equal([(Cell(vm, 0, 0), 2), (Cell(vm, 2, 0), 3)], vm.Preview);
         vm.Release(2, 0);
         Assert.Equal(3, vm.Markup.Count);
+    }
+
+    [Fact]
+    public void With_overwrite_a_fill_renumbers_the_leds_that_are_there_and_the_preview_counts_as_the_chain_will()
+    {
+        var vm = New();
+        Drag(vm, (0, 0), (3, 0));                          // LEDs 1..4 on the top row
+        vm.Overwrite = true;
+        vm.NextAtEndCommand.Execute(null);
+        Click(vm, 1, 0, GestureKeys.Alt);                  // the cursor behind LED 2
+        vm.Press(3, 0, GestureKeys.Shift);
+        vm.Move(0, 0);                                     // a line (3,0) -> (0,0): all four cells again
+        // LEDs 1 and 2 stand in front of the place, so the first of the line takes number 3 - 2 = 1.
+        Assert.Equal([1, 2, 3, 4], vm.Preview.Select(p => p.Number));
+        vm.Release(0, 0);
+        Assert.Equal([3, 2, 1, 0], Chain(vm));
+    }
+
+    [Fact]
+    public void Ctrl_Shift_drag_picks_the_range_of_the_leds_inside_the_rectangle()
+    {
+        var vm = New();
+        Drag(vm, (0, 0), (5, 0));
+        Drag(vm, (0, 1), (5, 1));                          // LEDs 7..12 on row 2
+        vm.Press(1, 0, GestureKeys.Ctrl | GestureKeys.Shift);
+        vm.Move(2, 1);
+        Assert.Equal((1, 0, 2, 1), vm.Selection);
+        vm.Release(2, 1);
+        Assert.Null(vm.Selection);
+        Assert.Equal((2, 9), (vm.RangeFrom, vm.RangeTo));    // LEDs in x 1..2, y 0..1: 2, 3 and 8, 9
+        Assert.Equal(2, vm.MoveTarget);
+        Assert.Equal(12, vm.Markup.Count);
+
+        vm.Press(4, 3, GestureKeys.Ctrl | GestureKeys.Shift);   // no LEDs in here
+        vm.Release(5, 3);
+        Assert.False(vm.HasRange);
     }
 
     [Fact]
@@ -206,6 +229,7 @@ public sealed class LedMarkupViewModelTests : IDisposable
         vm.FillAllCommand.Execute(null);
         Assert.Equal([0, 1, 2, 5, 4, 3], Chain(vm));
         Assert.Equal(7, vm.Next);
+        Assert.Equal(Cell(vm, 0, 1), vm.LastPlaced);
         vm.UndoCommand.Execute(null);
         Assert.Equal([Cell(vm, 2, 1)], Chain(vm));
     }
@@ -222,6 +246,16 @@ public sealed class LedMarkupViewModelTests : IDisposable
         Assert.Equal(4, vm.Next);          // the cursor stays behind the last LED
         Click(vm, 5, 3, GestureKeys.Erase);
         Assert.Equal(3, vm.Markup.Count);
+    }
+
+    [Fact]
+    public void A_right_click_in_front_of_the_cursor_moves_the_cursor_back_with_the_tail()
+    {
+        var vm = New();
+        Drag(vm, (0, 0), (3, 0));
+        Click(vm, 1, 0, GestureKeys.Alt);                  // the cursor behind LED 2
+        Click(vm, 0, 0, GestureKeys.Erase);                // LED 1 goes
+        Assert.Equal(2, vm.Next);
     }
 
     [Fact]
@@ -257,55 +291,91 @@ public sealed class LedMarkupViewModelTests : IDisposable
     }
 
     [Fact]
-    public void Escape_in_the_middle_of_a_drag_drops_it()
+    public void Dropping_a_gesture_in_the_middle_of_a_drag_puts_everything_back()
     {
         var vm = New();
         Click(vm, 0, 0);
         vm.Press(1, 0, GestureKeys.None);
         vm.Move(4, 0);
-        vm.CancelGesture();
+        Assert.True(vm.CancelGesture());
         vm.Release(4, 0);
         Assert.Equal([0], Chain(vm));
         Assert.Equal(2, vm.Next);
+        Assert.False(vm.CancelGesture());
     }
 
     // ---- ranges and the whole markup
 
-    [Fact]
-    public void Range_commands_reverse_move_delete_and_cut_the_tail()
+    private static LedMarkupViewModel Strip(LedMarkupViewModel vm)
     {
-        var vm = New();
         Drag(vm, (0, 0), (5, 0));                 // LEDs 1..6 on the top row
-        vm.RangeFrom = 2; vm.RangeTo = 4;
-        vm.ReverseRangeCommand.Execute(null);
-        Assert.Equal([0, 3, 2, 1, 4, 5], Chain(vm));
-
-        vm.RangeMoveTo = 4;
-        vm.MoveRangeCommand.Execute(null);
-        Assert.Equal([0, 4, 5, 3, 2, 1], Chain(vm));
-
-        vm.RangeFrom = 2; vm.RangeTo = 3;
-        vm.DeleteRangeCommand.Execute(null);
-        Assert.Equal([0, 3, 2, 1], Chain(vm));
-        Assert.Equal(5, vm.Next);
-
-        vm.RangeTo = 2;
-        vm.ClearTailCommand.Execute(null);
-        Assert.Equal([0, 3], Chain(vm));
+        return vm;
     }
 
     [Fact]
-    public void A_range_outside_the_chain_disables_its_commands()
+    public void Range_commands_reverse_move_delete_and_cut_the_tail()
     {
-        var vm = New();
-        Drag(vm, (0, 0), (2, 0));
-        vm.RangeFrom = 2; vm.RangeTo = 9;
+        var vm = Strip(New());
+        Assert.False(vm.HasRange);
         Assert.False(vm.ReverseRangeCommand.CanExecute(null));
+
+        vm.SetRange(2, 4);
+        vm.ReverseRangeCommand.Execute(null);
+        Assert.Equal([0, 3, 2, 1, 4, 5], Chain(vm));
+
+        vm.MoveTarget = 4;
+        vm.MoveRangeCommand.Execute(null);
+        Assert.Equal([0, 4, 5, 3, 2, 1], Chain(vm));
+        Assert.Equal((4, 6), (vm.RangeFrom, vm.RangeTo));   // the block stays selected where it went
+
+        vm.SetRange(2, 3);
+        vm.DeleteRangeCommand.Execute(null);
+        Assert.Equal([0, 3, 2, 1], Chain(vm));
+        Assert.False(vm.HasRange);                          // as in PixelTuner 2 the selection is gone
+        Assert.Equal(5, vm.Next);
+
+        vm.SetRange(1, 2);
+        vm.ClearTailCommand.Execute(null);
+        Assert.Equal([0, 3], Chain(vm));
+        Assert.Equal(3, vm.Next);
+    }
+
+    [Fact]
+    public void A_range_typed_the_wrong_way_round_or_too_far_still_works_on_what_is_in_the_chain()
+    {
+        var vm = Strip(New());
+        vm.SetRange(4, 2);
+        vm.ReverseRangeCommand.Execute(null);
+        Assert.Equal([0, 3, 2, 1, 4, 5], Chain(vm));
+
+        vm.SetRange(5, 99);
+        vm.DeleteRangeCommand.Execute(null);
+        Assert.Equal([0, 3, 2, 1], Chain(vm));
+
+        vm.SetRange(9, 12);                                  // reaches past the chain
+        Assert.False(vm.HasRange);
         Assert.False(vm.DeleteRangeCommand.CanExecute(null));
-        vm.RangeFrom = 3; vm.RangeTo = 2;
-        Assert.False(vm.ReverseRangeCommand.CanExecute(null));
-        vm.RangeFrom = 1; vm.RangeTo = 2; vm.RangeMoveTo = 3;
-        Assert.False(vm.MoveRangeCommand.CanExecute(null));   // would end behind the last LED
+    }
+
+    [Fact]
+    public void A_block_moved_too_far_stops_at_the_end_of_the_chain()
+    {
+        var vm = Strip(New());
+        vm.SetRange(1, 2);
+        vm.MoveTarget = 50;
+        vm.MoveRangeCommand.Execute(null);
+        Assert.Equal([2, 3, 4, 5, 0, 1], Chain(vm));
+        Assert.Equal((5, 6), (vm.RangeFrom, vm.RangeTo));
+    }
+
+    [Fact]
+    public void The_range_can_be_taken_off_without_changing_the_chain()
+    {
+        var vm = Strip(New());
+        vm.SetRange(2, 3);
+        vm.ClearRangeSelectionCommand.Execute(null);
+        Assert.False(vm.HasRange);
+        Assert.Equal(6, vm.Markup.Count);
     }
 
     [Fact]
@@ -319,6 +389,7 @@ public sealed class LedMarkupViewModelTests : IDisposable
         Assert.Equal([5, 4, 3], Chain(vm));
         vm.ReverseAllCommand.Execute(null);
         Assert.Equal([3, 4, 5], Chain(vm));
+        Assert.Equal(4, vm.Next);              // the cursor stayed at the end
 
         vm.RotateCommand.Execute(null);
         Assert.Equal((2, 3), (vm.Markup.Columns, vm.Markup.Rows));
@@ -363,19 +434,69 @@ public sealed class LedMarkupViewModelTests : IDisposable
         Assert.False(vm.RedoCommand.CanExecute(null));
     }
 
-    // ---- hover
+    [Fact]
+    public void The_history_keeps_the_last_300_steps()
+    {
+        var vm = New(40, 10);
+        for (int i = 0; i < 350; i++) Click(vm, i % 40, i / 40);
+        int undone = 0;
+        while (vm.UndoCommand.CanExecute(null)) { vm.UndoCommand.Execute(null); undone++; }
+        Assert.Equal(300, undone);
+        Assert.Equal(50, vm.Markup.Count);
+    }
+
+    // ---- what the canvas shows
 
     [Fact]
-    public void The_status_names_the_cell_under_the_pointer()
+    public void The_status_and_the_hover_text_name_the_numbers_and_the_cell_under_the_pointer()
     {
         var vm = New();
+        Assert.Contains("1", vm.StatusText);
         Click(vm, 2, 1);
         vm.Hover(2, 1);
-        Assert.Contains("LED 1", vm.HoverText);
+        Assert.Contains("№ 1", vm.HoverText);
+        Assert.Contains("X 2, Y 1", vm.HoverText);
         vm.Hover(0, 0);
-        Assert.DoesNotContain("LED", vm.HoverText);
+        Assert.DoesNotContain("№", vm.HoverText);
         vm.Hover(-5, 0);
         Assert.Equal("", vm.HoverText);
+    }
+
+    [Fact]
+    public void The_toggles_of_the_view_ask_the_canvas_to_draw_again()
+    {
+        var vm = New();
+        int redraws = 0;
+        vm.Redraw += (_, _) => redraws++;
+        vm.ShowNumbers = false;
+        vm.ShowPath = false;
+        vm.ShowGradient = false;
+        Assert.Equal(3, redraws);
+    }
+
+    // ---- leaving
+
+    [Fact]
+    public void Closing_with_changes_asks_first_and_without_them_just_closes()
+    {
+        var clean = Edit(Existing(3, 2, 0, 1));
+        clean.RequestClose();
+        Assert.False(clean.IsAskingToLeave);
+        Assert.False(_result);
+
+        _result = null;
+        var vm = Edit(Existing(3, 2, 0, 1));
+        Click(vm, 2, 0);
+        vm.RequestClose();
+        Assert.True(vm.IsAskingToLeave);
+        Assert.Null(_result);                       // nothing is decided yet
+        vm.KeepEditingCommand.Execute(null);
+        Assert.False(vm.IsAskingToLeave);
+        Assert.Null(_result);
+
+        vm.RequestClose();
+        vm.ApplyCommand.Execute(null);               // "Save"
+        Assert.True(_result);
     }
 
     // ---- OK and Cancel

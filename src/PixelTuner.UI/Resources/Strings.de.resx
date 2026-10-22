@@ -205,11 +205,10 @@
   <data name="Inspector_PlaybackVideo" xml:space="preserve"><value>Ein Durchlauf der Animation dauert {0}; im Element läuft sie {1}-mal. Die Bildzeit ist in Millisekunden: 40 sind 25 Bilder pro Sekunde.</value></data>
   <data name="Markup_Title" xml:space="preserve"><value>LED-Markierung</value></data>
   <data name="Markup_Name" xml:space="preserve"><value>Name</value></data>
-  <data name="Markup_Status" xml:space="preserve"><value>LEDs: {0} · nächste: {1}</value></data>
+  <data name="Markup_Status" xml:space="preserve"><value>LEDs: {0} (1–{0}), ohne Lücken und Wiederholungen · nächste: {1}</value></data>
   <data name="Markup_Jumps" xml:space="preserve"><value>Sprünge: {0}</value></data>
-  <data name="Markup_HoverEmpty" xml:space="preserve"><value>Zelle {0}, {1}: leer</value></data>
-  <data name="Markup_HoverLed" xml:space="preserve"><value>Zelle {0}, {1}: LED {2}</value></data>
-  <data name="Markup_NotOnALine" xml:space="preserve"><value>Die letzte LED und diese Zelle liegen nicht auf einer Zeile, Spalte oder Diagonale.</value></data>
+  <data name="Markup_HoverEmpty" xml:space="preserve"><value>X {0}, Y {1}</value></data>
+  <data name="Markup_HoverLed" xml:space="preserve"><value>X {0}, Y {1}  →  Nr. {2}</value></data>
   <data name="Markup_BadSize" xml:space="preserve"><value>Ein Raster hat 1 bis {0} Zellen.</value></data>
   <data name="Markup_Dropped" xml:space="preserve"><value>{0} LEDs lagen außerhalb des neuen Rasters und wurden entfernt.</value></data>
   <data name="Markup_Repaired" xml:space="preserve"><value>Die Datei hatte {0} doppelte Zellen und {1} außerhalb des Rasters; sie wurden entfernt.</value></data>
@@ -222,8 +221,7 @@
   <data name="Markup_Columns" xml:space="preserve"><value>Spalten</value></data>
   <data name="Markup_Rows" xml:space="preserve"><value>Zeilen</value></data>
   <data name="Markup_Resize" xml:space="preserve"><value>Ändern</value></data>
-  <data name="Markup_Fill" xml:space="preserve"><value>Füllen (Strg + Ziehen)</value></data>
-  <data name="Markup_FillFromDrag" xml:space="preserve"><value>In der Ecke beginnen, wo das Ziehen begann</value></data>
+  <data name="Markup_Fill" xml:space="preserve"><value>Rechteck füllen (Strg + Ziehen)</value></data>
   <data name="Markup_TopLeft" xml:space="preserve"><value>Oben links</value></data>
   <data name="Markup_TopRight" xml:space="preserve"><value>Oben rechts</value></data>
   <data name="Markup_BottomLeft" xml:space="preserve"><value>Unten links</value></data>
@@ -245,9 +243,21 @@
   <data name="Markup_ReverseAll" xml:space="preserve"><value>Alles umkehren</value></data>
   <data name="Markup_ClearAll" xml:space="preserve"><value>Alles löschen</value></data>
   <data name="Markup_Whole" xml:space="preserve"><value>Ganze Markierung</value></data>
-  <data name="Markup_Help" xml:space="preserve"><value>Klick: nächste LED · Ziehen: LEDs entlang des Wegs · Umschalt + Klick: Linie von der letzten LED · Umschalt + Ziehen: Linie · Strg + Ziehen: Rechteck füllen · Rechtsklick: entfernen · Doppelklick: auf Nummer verschieben · Alt + Klick: nach dieser LED fortfahren</value></data>
+  <data name="Markup_Help" xml:space="preserve"><value>Klick oder Ziehen: leere Zellen ab der nächsten Nummer nummerieren · Umschalt + Klick: Linie von der letzten LED · Umschalt + Ziehen: Linie · Strg + Ziehen: Rechteck füllen · Strg + Umschalt + Ziehen: Bereich wählen · Alt + Klick: nach dieser LED fortfahren · Rechtsklick oder Ziehen: entfernen · Doppelklick: auf Nummer verschieben · Strg + Rad: Zoom · Entf: Bereich löschen · R: Bereich umkehren · Esc: Geste verwerfen oder verlassen</value></data>
   <data name="Markup_TransferTo" xml:space="preserve"><value>Diese LED verschieben auf Nummer</value></data>
   <data name="Layout_New" xml:space="preserve"><value>Neu…</value></data>
   <data name="Layout_Edit" xml:space="preserve"><value>Bearbeiten…</value></data>
   <data name="Layout_Delete" xml:space="preserve"><value>Löschen</value></data>
+  <data name="Markup_StatusEmpty" xml:space="preserve"><value>Keine LEDs nummeriert · nächste: {0}</value></data>
+  <data name="Markup_Corner" xml:space="preserve"><value>Ganze Matrix beginnt in der Ecke</value></data>
+  <data name="Markup_Overwrite" xml:space="preserve"><value>Vorhandene LEDs neu nummerieren (Linien und Füllungen)</value></data>
+  <data name="Markup_ShowNumbers" xml:space="preserve"><value>Nummern</value></data>
+  <data name="Markup_ShowPath" xml:space="preserve"><value>Pfad</value></data>
+  <data name="Markup_ShowGradient" xml:space="preserve"><value>Farbe nach Nummer</value></data>
+  <data name="Markup_NextAtEnd" xml:space="preserve"><value>Ans Ende</value></data>
+  <data name="Markup_ClearRange" xml:space="preserve"><value>Bereich aufheben</value></data>
+  <data name="Markup_LeaveAsk" xml:space="preserve"><value>Änderungen der Markierung speichern?</value></data>
+  <data name="Markup_Save" xml:space="preserve"><value>Speichern</value></data>
+  <data name="Markup_Discard" xml:space="preserve"><value>Verwerfen</value></data>
+  <data name="Markup_KeepEditing" xml:space="preserve"><value>Weiter bearbeiten</value></data>
 </root>

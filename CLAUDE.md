@@ -67,6 +67,14 @@
   `ImportViewModel` (the steps of PixelTuner 2's import window: cut, `PerspectiveWarp` (its mesh warp, ported and checked against the legacy
   `WarpGrid` in `WarpOracleTests`), trim, `ImageImport` scale to the device height and colour), the panel's logic is
   `LibraryViewModel` (`EditorViewModel.Gallery`; namespace `PixelTuner.UI.LibraryPanel`, because `Library` is the Core class).
+- LED markup (`LedLayout`, the layout of a video timeline; `PixelTuner.Core/Layout/LedMarkup.cs`, UI in `PixelTuner.UI/LedLayouts`): a port of
+  PixelTuner 2's canvas element window (`legacy/.../ViewModel/Tools/LedMarkup.cs`, `LedMarkupEditor.cs`, `Controls/LedMarkupCanvas.cs`, which stay the
+  reference: read them before changing anything here). The chain is the order of the LEDs on the strip (number = place, always 1..N), the model is immutable and
+  every operation is insert/remove with the tail shifting; `tests/PixelTuner.Legacy.OracleTests/LedMarkupOracleTests` runs PixelTuner 2's own
+  `LedMarkup` on random edits next to the port. `LedMarkupViewModel` is `LedMarkupEditor` (working copy, gestures as cells + keys, window-local
+  undo of 300 steps, OK = one document edit through `Edits.AddLedLayout` / `SetLedMarkup`), `LedMarkupCanvas` only draws it and forwards the pointer.
+  Not ported on purpose: the SVG outline under the grid and `TilesMargin` (Studio keeps no canvas drawing), the report of gaps in the numbers of an
+  imported .ptp (`PtpConverter` already orders by number, as the export did, so the chain has none); a quarter turn also works on grids that are not square.
 - `src/PixelTuner.Audio` holds the player and decoder contracts only; implementations go per
   platform. `src/PixelTuner.Audio.Vlc` (LibVLC, LGPL, dynamic) serves Windows and macOS: the VideoLAN NuGet
   packages carry LibVLC under `libvlc/<rid>`, Linux uses the system one (`apt install libvlc5 vlc-plugin-base`).

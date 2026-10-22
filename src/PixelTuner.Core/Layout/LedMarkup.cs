@@ -98,8 +98,9 @@ public sealed class LedMarkup
 
     /// <summary>
     /// Puts cells into the chain from <paramref name="number"/> on, in the order given, and shifts the tail after them.
-    /// Cells that are marked already are left where they are, or, with <paramref name="overwrite"/>, taken out first and put in again,
-    /// so that the first of them has exactly <paramref name="number"/> afterwards.
+    /// Cells that are marked already are left where they are, or, with <paramref name="overwrite"/>, taken out first and put in again
+    /// (as PixelTuner 2 did): <paramref name="number"/> counts the chain as it was, so taking out cells in front of the place moves the
+    /// new cells back by as many.
     /// </summary>
     /// <param name="number">1-based place of the first new LED; more than <c>Count + 1</c> is the end of the chain.</param>
     public LedMarkup Insert(IEnumerable<int> cells, int number, bool overwrite = false)
@@ -114,18 +115,32 @@ public sealed class LedMarkup
         if (wanted.Count == 0) return this;
 
         var chain = new List<int>(_chain);
+        int at = Math.Clamp(number, 1, chain.Count + 1) - 1;
         if (overwrite)
         {
-            foreach (int cell in wanted) chain.Remove(cell);
+            foreach (int cell in wanted)
+            {
+                int index = chain.IndexOf(cell);
+                if (index < 0) continue;
+                chain.RemoveAt(index);
+                if (index < at) at--;
+            }
         }
-        // The number is the place the first cell ends up at, so it counts the chain without the cells that were taken out.
-        int at = Math.Clamp(number, 1, chain.Count + 1) - 1;
         chain.InsertRange(at, wanted);
         return With(chain);
     }
 
-    /// <summary>Puts one cell at a number; a cell that is marked already moves there (the manual number of a double click).</summary>
-    public LedMarkup Place(int cell, int number) => Insert([cell], number, overwrite: true);
+    /// <summary>
+    /// Gives a cell a number: a cell that is not marked is inserted there, one that is marked moves there, and the LEDs in between
+    /// shift by one (the manual number of a double click). Afterwards the cell has exactly that number.
+    /// </summary>
+    public LedMarkup Place(int cell, int number)
+    {
+        if (_numberOf[cell] == 0) return Insert([cell], number);
+        int current = _numberOf[cell];
+        int target = Math.Clamp(number, 1, Count);
+        return current == target ? this : MoveRange(current, current, target);
+    }
 
     public LedMarkup Append(int cell) => Insert([cell], Count + 1);
 
@@ -141,54 +156,66 @@ public sealed class LedMarkup
     // ---- shapes
 
     /// <summary>
-    /// The cells from one cell to another along a row, a column or a diagonal, both included, in that order; empty when the
-    /// two are not on one such line (a Shift click away from the last LED does nothing).
+    /// The cells on a straight line from one cell to another, both included, in that order (Bresenham, as PixelTuner 2 drew it);
+    /// cells of the line that are off the grid are left out.
     /// </summary>
+    public IReadOnlyList<int> LineCells(int x0, int y0, int x1, int y1)
+    {
+        var cells = new List<int>();
+        int dx = Math.Abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
+        int dy = -Math.Abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
+        int error = dx + dy;
+        while (true)
+        {
+            if (Contains(x0, y0)) cells.Add(Cell(x0, y0));
+            if (x0 == x1 && y0 == y1) break;
+            int doubled = 2 * error;
+            if (doubled >= dy) { error += dy; x0 += sx; }
+            if (doubled <= dx) { error += dx; y0 += sy; }
+        }
+        return cells;
+    }
+
     public IReadOnlyList<int> LineCells(int from, int to)
     {
         var (x0, y0) = Position(from);
         var (x1, y1) = Position(to);
-        int dx = Math.Sign(x1 - x0), dy = Math.Sign(y1 - y0);
-        if (x1 != x0 && y1 != y0 && Math.Abs(x1 - x0) != Math.Abs(y1 - y0)) return [];
-        int steps = Math.Max(Math.Abs(x1 - x0), Math.Abs(y1 - y0));
-        var cells = new List<int>(steps + 1);
-        for (int i = 0; i <= steps; i++) cells.Add(Cell(x0 + dx * i, y0 + dy * i));
-        return cells;
+        return LineCells(x0, y0, x1, y1);
     }
 
-    /// <summary>The cells of a rectangle in the order a fill numbers them.</summary>
-    /// <param name="x">Left column of the rectangle.</param>
-    /// <param name="start">The corner the fill starts at.</param>
-    public IReadOnlyList<int> FillCells(int x, int y, int width, int height, Corner start, FillDirection direction, FillPattern pattern)
+    /// <summary>
+    /// The cells of the rectangle between two corners the way a drag numbers them: the strip starts at the first corner and runs
+    /// toward the second, along the rows or down the columns, and with a snake every other line runs back. Cells off the grid are left out.
+    /// </summary>
+    public IReadOnlyList<int> RectCells(int x0, int y0, int x1, int y1, FillDirection direction, FillPattern pattern)
     {
-        if (width < 1 || height < 1 || x < 0 || y < 0 || x + width > Columns || y + height > Rows)
-            throw new ArgumentOutOfRangeException(nameof(width), "The rectangle is not inside the grid.");
-        bool fromRight = start is Corner.TopRight or Corner.BottomRight;
-        bool fromBottom = start is Corner.BottomLeft or Corner.BottomRight;
-
-        // "Lines" run along the direction; "steps" go from one line to the next.
-        int lines = direction == FillDirection.Rows ? height : width;
-        int lineLength = direction == FillDirection.Rows ? width : height;
-        bool lineReversed = direction == FillDirection.Rows ? fromRight : fromBottom;   // the first line runs from the high end
-        bool stepsReversed = direction == FillDirection.Rows ? fromBottom : fromRight;
-
+        int sx = x1 >= x0 ? 1 : -1, sy = y1 >= y0 ? 1 : -1;
+        int width = Math.Abs(x1 - x0) + 1, height = Math.Abs(y1 - y0) + 1;
+        bool byColumns = direction == FillDirection.Columns;
+        int lines = byColumns ? width : height, along = byColumns ? height : width;
         var cells = new List<int>(width * height);
         for (int line = 0; line < lines; line++)
         {
-            bool back = lineReversed ^ (pattern == FillPattern.Snake && line % 2 == 1);
-            int across = stepsReversed ? lines - 1 - line : line;
-            for (int i = 0; i < lineLength; i++)
+            bool back = pattern == FillPattern.Snake && line % 2 == 1;
+            for (int i = 0; i < along; i++)
             {
-                int along = back ? lineLength - 1 - i : i;
-                cells.Add(direction == FillDirection.Rows ? Cell(x + along, y + across) : Cell(x + across, y + along));
+                int k = back ? along - 1 - i : i;
+                int x = byColumns ? x0 + line * sx : x0 + k * sx;
+                int y = byColumns ? y0 + k * sy : y0 + line * sy;
+                if (Contains(x, y)) cells.Add(Cell(x, y));
             }
         }
         return cells;
     }
 
-    /// <summary>All 16 sweeps of the whole grid: four corners, rows or columns, snake or straight.</summary>
-    public IReadOnlyList<int> SweepCells(Corner start, FillDirection direction, FillPattern pattern) =>
-        FillCells(0, 0, Columns, Rows, start, direction, pattern);
+    /// <summary>All the cells of the grid in one sweep: it starts at a corner, runs along the rows or down the columns, and turns as a snake or not.</summary>
+    public IReadOnlyList<int> SweepCells(Corner start, FillDirection direction, FillPattern pattern)
+    {
+        int maxX = Columns - 1, maxY = Rows - 1;
+        int x0 = start is Corner.TopRight or Corner.BottomRight ? maxX : 0;
+        int y0 = start is Corner.BottomLeft or Corner.BottomRight ? maxY : 0;
+        return RectCells(x0, y0, maxX - x0, maxY - y0, direction, pattern);
+    }
 
     // ---- ranges of numbers
 

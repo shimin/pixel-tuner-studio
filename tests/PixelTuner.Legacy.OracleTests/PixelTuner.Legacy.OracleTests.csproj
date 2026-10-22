@@ -18,6 +18,8 @@
          never used it, and it saved a debug bitmap to c:\test.bmp. -->
     <!-- The mesh warp of the import window's Transform page. -->
     <Compile Include="..\..\legacy\PixelTuner2\Common\Imaging\WarpGrid.cs" Link="Legacy\WarpGrid.cs" />
+    <!-- The LED markup of the canvas element window: pure chain logic, no WPF. -->
+    <Compile Include="..\..\legacy\PixelTuner2\PixelTuner\ViewModel\Tools\LedMarkup.cs" Link="Legacy\LedMarkup.cs" />
     <Compile Include="..\..\legacy\PixelTuner2\Communication\Pixelate\*.cs" Exclude="..\..\legacy\PixelTuner2\Communication\Pixelate\ImagesCollectionFanItem.cs" LinkBase="Legacy\Pixelate" />
   </ItemGroup>
   <ItemGroup>

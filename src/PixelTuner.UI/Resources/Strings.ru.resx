@@ -205,11 +205,10 @@
   <data name="Inspector_PlaybackVideo" xml:space="preserve"><value>Один проход анимации занимает {0}; в этом элементе она играет {1} раз(а). Время кадра в миллисекундах: 40 — это 25 кадров в секунду.</value></data>
   <data name="Markup_Title" xml:space="preserve"><value>Разметка светодиодов</value></data>
   <data name="Markup_Name" xml:space="preserve"><value>Название</value></data>
-  <data name="Markup_Status" xml:space="preserve"><value>Светодиодов: {0} · следующий: {1}</value></data>
+  <data name="Markup_Status" xml:space="preserve"><value>Светодиодов: {0} (1–{0}), без пропусков и повторов · следующий: {1}</value></data>
   <data name="Markup_Jumps" xml:space="preserve"><value>скачков: {0}</value></data>
-  <data name="Markup_HoverEmpty" xml:space="preserve"><value>Клетка {0}, {1}: пусто</value></data>
-  <data name="Markup_HoverLed" xml:space="preserve"><value>Клетка {0}, {1}: светодиод {2}</value></data>
-  <data name="Markup_NotOnALine" xml:space="preserve"><value>Последний светодиод и эта клетка не лежат на одной строке, столбце или диагонали.</value></data>
+  <data name="Markup_HoverEmpty" xml:space="preserve"><value>X {0}, Y {1}</value></data>
+  <data name="Markup_HoverLed" xml:space="preserve"><value>X {0}, Y {1}  →  № {2}</value></data>
   <data name="Markup_BadSize" xml:space="preserve"><value>В сетке от 1 до {0} клеток.</value></data>
   <data name="Markup_Dropped" xml:space="preserve"><value>Светодиодов за пределами новой сетки: {0}, они убраны.</value></data>
   <data name="Markup_Repaired" xml:space="preserve"><value>В файле повторов: {0}, клеток вне сетки: {1}; они убраны.</value></data>
@@ -222,8 +221,7 @@
   <data name="Markup_Columns" xml:space="preserve"><value>Столбцов</value></data>
   <data name="Markup_Rows" xml:space="preserve"><value>Строк</value></data>
   <data name="Markup_Resize" xml:space="preserve"><value>Изменить</value></data>
-  <data name="Markup_Fill" xml:space="preserve"><value>Заливка (Ctrl + перетаскивание)</value></data>
-  <data name="Markup_FillFromDrag" xml:space="preserve"><value>Начинать с угла, где началось перетаскивание</value></data>
+  <data name="Markup_Fill" xml:space="preserve"><value>Заливка прямоугольника (Ctrl + перетаскивание)</value></data>
   <data name="Markup_TopLeft" xml:space="preserve"><value>Сверху слева</value></data>
   <data name="Markup_TopRight" xml:space="preserve"><value>Сверху справа</value></data>
   <data name="Markup_BottomLeft" xml:space="preserve"><value>Снизу слева</value></data>
@@ -245,9 +243,21 @@
   <data name="Markup_ReverseAll" xml:space="preserve"><value>Развернуть всё</value></data>
   <data name="Markup_ClearAll" xml:space="preserve"><value>Очистить всё</value></data>
   <data name="Markup_Whole" xml:space="preserve"><value>Вся разметка</value></data>
-  <data name="Markup_Help" xml:space="preserve"><value>Клик — следующий светодиод · перетаскивание — светодиоды по пути · Shift + клик — линия от последнего · Shift + перетаскивание — линия · Ctrl + перетаскивание — заливка прямоугольника · правый клик — убрать · двойной клик — перенести на номер · Alt + клик — продолжить после этого светодиода</value></data>
+  <data name="Markup_Help" xml:space="preserve"><value>Клик или перетаскивание — нумеровать пустые клетки с «следующего» · Shift + клик — линия от последнего светодиода · Shift + перетаскивание — линия · Ctrl + перетаскивание — заливка прямоугольника · Ctrl + Shift + перетаскивание — выбрать диапазон · Alt + клик — продолжить после этого светодиода · правый клик или перетаскивание — убрать · двойной клик — перенести на номер · Ctrl + колесо — масштаб · Del — удалить диапазон · R — развернуть диапазон · Esc — сбросить жест или выйти</value></data>
   <data name="Markup_TransferTo" xml:space="preserve"><value>Перенести светодиод на номер</value></data>
   <data name="Layout_New" xml:space="preserve"><value>Новая…</value></data>
   <data name="Layout_Edit" xml:space="preserve"><value>Править…</value></data>
   <data name="Layout_Delete" xml:space="preserve"><value>Удалить</value></data>
+  <data name="Markup_StatusEmpty" xml:space="preserve"><value>Светодиоды не пронумерованы · следующий: {0}</value></data>
+  <data name="Markup_Corner" xml:space="preserve"><value>Вся матрица начинается с угла</value></data>
+  <data name="Markup_Overwrite" xml:space="preserve"><value>Перенумеровывать уже стоящие светодиоды (линии и заливки)</value></data>
+  <data name="Markup_ShowNumbers" xml:space="preserve"><value>Номера</value></data>
+  <data name="Markup_ShowPath" xml:space="preserve"><value>Путь</value></data>
+  <data name="Markup_ShowGradient" xml:space="preserve"><value>Цвет по номеру</value></data>
+  <data name="Markup_NextAtEnd" xml:space="preserve"><value>В конец</value></data>
+  <data name="Markup_ClearRange" xml:space="preserve"><value>Снять диапазон</value></data>
+  <data name="Markup_LeaveAsk" xml:space="preserve"><value>Сохранить изменения разметки?</value></data>
+  <data name="Markup_Save" xml:space="preserve"><value>Сохранить</value></data>
+  <data name="Markup_Discard" xml:space="preserve"><value>Не сохранять</value></data>
+  <data name="Markup_KeepEditing" xml:space="preserve"><value>Продолжить</value></data>
 </root>
