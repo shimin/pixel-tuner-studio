@@ -116,6 +116,8 @@
   <data name="Edit_RemoveLibraryEntry" xml:space="preserve"><value>Aus der Bibliothek entfernen</value></data>
   <data name="Edit_RenameLibraryEntry" xml:space="preserve"><value>Bibliothekseintrag umbenennen</value></data>
   <data name="Edit_ReplaceLibraryMedia" xml:space="preserve"><value>Datei in der Bibliothek ersetzen</value></data>
+  <data name="Edit_ApplySettings" xml:space="preserve"><value>Einstellungen auf alle anwenden</value></data>
+  <data name="Edit_RemoveItems" xml:space="preserve"><value>Elemente entfernen</value></data>
   <data name="Command_AddItem" xml:space="preserve"><value>Datei hinzufügen…</value></data>
   <data name="FileType_Image" xml:space="preserve"><value>Bilder</value></data>
   <data name="Item_AddFailed" xml:space="preserve"><value>{0} kann nicht hinzugefügt werden: {1}</value></data>

@@ -116,6 +116,8 @@
   <data name="Edit_RemoveLibraryEntry" xml:space="preserve"><value>Удаление из библиотеки</value></data>
   <data name="Edit_RenameLibraryEntry" xml:space="preserve"><value>Переименование в библиотеке</value></data>
   <data name="Edit_ReplaceLibraryMedia" xml:space="preserve"><value>Замена файла в библиотеке</value></data>
+  <data name="Edit_ApplySettings" xml:space="preserve"><value>Применение настроек ко всем</value></data>
+  <data name="Edit_RemoveItems" xml:space="preserve"><value>Удаление элементов</value></data>
   <data name="Command_AddItem" xml:space="preserve"><value>Добавить файл…</value></data>
   <data name="FileType_Image" xml:space="preserve"><value>Картинки</value></data>
   <data name="Item_AddFailed" xml:space="preserve"><value>Не удалось добавить {0}: {1}</value></data>
