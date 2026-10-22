@@ -81,3 +81,14 @@ pass against the inspector's number, and fix the unit (and this note) where it i
 in PixelTuner 2's code (only the preview of its player maps stretching to a tiling by LED count), so confirm they match the
 pixel poi.
 
+
+## Preview: the swing model is a guess
+
+**Where:** `src/PixelTuner.UI/PreviewPanel` (`PreviewViewModel.SwingSpeed`, `LedPitch`, `Tail`, `OrbitSpeed`, drawn by
+`TimelinePreviewControl`). Marked `TODO(release)` in the code. What is shown is exact (`Core/Preview/TimelinePreview` plays the .bin the
+build makes, pixel for byte, at the speed of each kind of device, and `tests/PixelTuner.Core.Tests/Preview` checks it); how a swing
+looks is not: a poi is drawn as if swung at 6 m/s with its LEDs 16 mm apart, a hoop as a ring on an orbit of 1.5 turns a second with a
+120 ms afterglow. PixelTuner 2 had a GL scene with its own sliders (scan speed 6, rotation 2, tail 0.8) and tiling tables tuned by eye.
+
+**To do before release.** Compare with real devices (a poi and a hoop with a known picture, filmed with a long exposure) and set the
+defaults so that the picture looks as wide as it does in the air. The units of the stretching under it are the open question above.

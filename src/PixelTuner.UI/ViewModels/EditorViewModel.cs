@@ -11,6 +11,7 @@ using PixelTuner.UI.Resources;
 using PixelTuner.UI.Services;
 using PixelTuner.UI.LedLayouts;
 using PixelTuner.UI.LibraryPanel;
+using PixelTuner.UI.PreviewPanel;
 using PixelTuner.UI.Timelines;
 
 namespace PixelTuner.UI.ViewModels;
@@ -40,6 +41,8 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         Timelines = new TimelineEditor(document);
         Gallery = new LibraryViewModel(this, () => _picker?.Invoke());
         Canvas = new CanvasPanelViewModel(this, () => _picker?.Invoke());
+        Preview = new PreviewViewModel(this);
+        Preview.Changed += (_, _) => Canvas.PlayheadMoved();
         BuildPalette();
         if (engine is not null)
         {
@@ -47,8 +50,8 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
             _decoder = engine.CreateDecoder();
             Timelines.Player = _player;
         }
-        Timelines.Changed += (_, _) => OnUi(Refresh);
-        Timelines.SelectionChanged += (_, _) => OnUi(Refresh);
+        Timelines.Changed += (_, _) => OnUi(() => { Refresh(); Preview.Moved(); });
+        Timelines.SelectionChanged += (_, _) => OnUi(() => { Refresh(); Preview.Moved(); });
         _ = LoadAudioAsync();
     }
 
@@ -59,11 +62,15 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     /// <summary>The library of the project: what can be put on the timelines.</summary>
     public LibraryViewModel Gallery { get; }
 
+    /// <summary>What the selected timeline plays at the playhead, as its device would light it.</summary>
+    public PreviewViewModel Preview { get; }
+
     private void DocumentChanged(object? sender, EventArgs e) =>
         OnUi(() =>
         {
             ForgetBinInfo();   // the file is built again only when the project changed, not on every move of the playhead or a drag
             if (Document.Project.AudioResourceId != _loadedAudioId) _ = LoadAudioAsync();
+            Preview.ProjectChanged();
             Canvas.Refresh();
         });
 

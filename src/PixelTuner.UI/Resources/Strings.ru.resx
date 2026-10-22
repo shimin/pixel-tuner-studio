@@ -319,4 +319,16 @@
   <data name="Canvas_SchemaHumanSimple" xml:space="preserve"><value>Человек (простой)</value></data>
   <data name="Drop_LayoutOnlyVideo" xml:space="preserve"><value>Раскладка светодиодов подходит только видеотаймлайну.</value></data>
   <data name="Canvas_DragNeedsMarkup" xml:space="preserve"><value>Сначала разметьте светодиоды контура, потом перетащите его на видеотаймлайн.</value></data>
+  <data name="Preview_Title" xml:space="preserve"><value>Превью</value></data>
+  <data name="Preview_NoTimeline" xml:space="preserve"><value>Выберите таймлайн, чтобы увидеть, что он играет.</value></data>
+  <data name="Preview_Nothing" xml:space="preserve"><value>На этом таймлайне пока нечего играть.</value></data>
+  <data name="Preview_Poi" xml:space="preserve"><value>Пои, посох</value></data>
+  <data name="Preview_Hoop" xml:space="preserve"><value>Обруч</value></data>
+  <data name="Preview_Info" xml:space="preserve"><value>Запись {0} · столбец {1} из {2} · {3} на столбец · проход {4:0.##} мс · светодиодов: {5}</value></data>
+  <data name="Preview_InfoLight" xml:space="preserve"><value>Каналов света: {0}</value></data>
+  <data name="Preview_Stopped" xml:space="preserve"><value>В этот момент ничего не играет.</value></data>
+  <data name="Preview_Swing" xml:space="preserve"><value>Скорость взмаха, м/с</value></data>
+  <data name="Preview_Pitch" xml:space="preserve"><value>Шаг светодиодов, мм</value></data>
+  <data name="Preview_Tail" xml:space="preserve"><value>Шлейф, мс</value></data>
+  <data name="Preview_Orbit" xml:space="preserve"><value>Орбита, оборотов в секунду</value></data>
 </root>

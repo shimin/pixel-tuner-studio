@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
+using PixelTuner.Core.Imaging;
 using PixelTuner.Core.Layout;
 
 namespace PixelTuner.UI.LedLayouts;
@@ -100,12 +101,12 @@ public sealed class CanvasDrawingControl : Control
                 var pen = new Pen(selected ? SelectedStroke : Stroke, (selected ? 2.5 : 1) / scale);
                 context.DrawGeometry(element.HasMarkup ? Marked : Unmarked, pen, geometry);
             }
-            if (element.HasMarkup) DrawLeds(context, element, toScreen, scale);
+            if (element.HasMarkup) DrawLeds(context, element, toScreen, scale, panel.PlayingColours(element));
         }
     }
 
-    // The LEDs of a marked outline as dots over it, coloured by number, so the state of the markup can be seen without opening it.
-    private static void DrawLeds(DrawingContext context, CanvasElementViewModel element, Matrix toScreen, double scale)
+    // The LEDs of a marked outline as dots over it, coloured by number (or by the video that plays on it), so the state of the markup can be seen without opening it.
+    private static void DrawLeds(DrawingContext context, CanvasElementViewModel element, Matrix toScreen, double scale, IReadOnlyList<Rgb>? playing)
     {
         var layout = element.Layout!;
         var (bx, by, bw, bh) = element.Shape.Bounds;
@@ -116,7 +117,9 @@ public sealed class CanvasDrawingControl : Control
             int cell = layout.Leds[i];
             if (cell < 0 || cell >= layout.Columns * layout.Rows) continue;
             var point = toScreen.Transform(new Point(bx + (cell % layout.Columns + 0.5) * bw / layout.Columns, by + (cell / layout.Columns + 0.5) * bh / layout.Rows));
-            context.DrawEllipse(new SolidColorBrush(LedMarkupCanvas.GradientColour(i + 1, layout.Leds.Count)), null, point, radius, radius);
+            // A video that plays on the outline fills it; without one the LEDs are coloured by their number.
+            var colour = playing is not null ? (i < playing.Count ? Color.FromRgb(playing[i].R, playing[i].G, playing[i].B) : Colors.Black) : LedMarkupCanvas.GradientColour(i + 1, layout.Leds.Count);
+            context.DrawEllipse(new SolidColorBrush(colour), null, point, radius, radius);
         }
     }
 

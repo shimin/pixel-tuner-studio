@@ -15,7 +15,7 @@ public sealed partial class EditorViewModel
     private ItemBinInfo? _binInfo;
     private TimelineItem? _binInfoOf;
 
-    private ShowMedia BinMedia => _binMedia ??= new ShowMedia(id => Document.OpenMedia(id) ?? throw new FileNotFoundException(id));
+    internal ShowMedia BinMedia => _binMedia ??= new ShowMedia(id => Document.OpenMedia(id) ?? throw new FileNotFoundException(id));
 
     private void ForgetBinInfo() => _binInfo = null;
 

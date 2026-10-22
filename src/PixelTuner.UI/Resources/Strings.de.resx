@@ -319,4 +319,16 @@
   <data name="Canvas_SchemaHumanSimple" xml:space="preserve"><value>Mensch (einfach)</value></data>
   <data name="Drop_LayoutOnlyVideo" xml:space="preserve"><value>Ein LED-Layout passt nur auf eine Videospur.</value></data>
   <data name="Canvas_DragNeedsMarkup" xml:space="preserve"><value>Markiere zuerst die LEDs der Kontur und ziehe sie dann auf eine Videospur.</value></data>
+  <data name="Preview_Title" xml:space="preserve"><value>Vorschau</value></data>
+  <data name="Preview_NoTimeline" xml:space="preserve"><value>Wähle eine Spur, um zu sehen, was sie spielt.</value></data>
+  <data name="Preview_Nothing" xml:space="preserve"><value>Auf dieser Spur gibt es noch nichts zu spielen.</value></data>
+  <data name="Preview_Poi" xml:space="preserve"><value>Poi, Stab</value></data>
+  <data name="Preview_Hoop" xml:space="preserve"><value>Hoop</value></data>
+  <data name="Preview_Info" xml:space="preserve"><value>Eintrag {0} · Spalte {1} von {2} · {3} je Spalte · ein Durchlauf dauert {4:0.##} ms · {5} LEDs</value></data>
+  <data name="Preview_InfoLight" xml:space="preserve"><value>{0} Lichtkanäle</value></data>
+  <data name="Preview_Stopped" xml:space="preserve"><value>Zu diesem Zeitpunkt wird nichts gespielt.</value></data>
+  <data name="Preview_Swing" xml:space="preserve"><value>Schwunggeschwindigkeit, m/s</value></data>
+  <data name="Preview_Pitch" xml:space="preserve"><value>LED-Abstand, mm</value></data>
+  <data name="Preview_Tail" xml:space="preserve"><value>Nachleuchten, ms</value></data>
+  <data name="Preview_Orbit" xml:space="preserve"><value>Umlauf, Umdrehungen pro Sekunde</value></data>
 </root>

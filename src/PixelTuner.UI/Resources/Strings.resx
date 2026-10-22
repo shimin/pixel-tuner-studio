@@ -319,4 +319,16 @@
   <data name="Canvas_SchemaHumanSimple" xml:space="preserve"><value>Human (simple)</value></data>
   <data name="Drop_LayoutOnlyVideo" xml:space="preserve"><value>An LED layout goes to a video timeline only.</value></data>
   <data name="Canvas_DragNeedsMarkup" xml:space="preserve"><value>Mark up the LEDs of the outline first, then drag it onto a video timeline.</value></data>
+  <data name="Preview_Title" xml:space="preserve"><value>Preview</value></data>
+  <data name="Preview_NoTimeline" xml:space="preserve"><value>Select a timeline to see what it plays.</value></data>
+  <data name="Preview_Nothing" xml:space="preserve"><value>Nothing to play on this timeline yet.</value></data>
+  <data name="Preview_Poi" xml:space="preserve"><value>Poi, staff</value></data>
+  <data name="Preview_Hoop" xml:space="preserve"><value>Hoop</value></data>
+  <data name="Preview_Info" xml:space="preserve"><value>Entry {0} · column {1} of {2} · {3} a column · a pass takes {4:0.##} ms · {5} LEDs</value></data>
+  <data name="Preview_InfoLight" xml:space="preserve"><value>{0} light channels</value></data>
+  <data name="Preview_Stopped" xml:space="preserve"><value>Nothing plays at this time.</value></data>
+  <data name="Preview_Swing" xml:space="preserve"><value>Swing speed, m/s</value></data>
+  <data name="Preview_Pitch" xml:space="preserve"><value>LED pitch, mm</value></data>
+  <data name="Preview_Tail" xml:space="preserve"><value>Afterglow, ms</value></data>
+  <data name="Preview_Orbit" xml:space="preserve"><value>Orbit, turns a second</value></data>
 </root>

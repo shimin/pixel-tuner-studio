@@ -5,6 +5,7 @@
              xmlns:tl="using:PixelTuner.UI.Timelines"
              xmlns:lib="using:PixelTuner.UI.LibraryPanel"
              xmlns:led="using:PixelTuner.UI.LedLayouts"
+             xmlns:pv="using:PixelTuner.UI.PreviewPanel"
              xmlns:core="using:PixelTuner.Core.Model"
              x:Class="PixelTuner.UI.Views.EditorView"
              x:DataType="vm:EditorViewModel"
@@ -319,6 +320,10 @@
         </ScrollViewer>
         </Panel>
       </Grid>
+      </TabItem>
+      <!-- What the selected timeline plays at the playhead, as its device would light it. -->
+      <TabItem Header="{x:Static res:Strings.Preview_Title}">
+        <pv:PreviewPanelView DataContext="{Binding Preview}" MinHeight="260" />
       </TabItem>
       <!-- The drawing of the props, with the markup state of each outline. -->
       <TabItem Header="{x:Static res:Strings.Canvas_Title}">
