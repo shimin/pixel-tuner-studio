@@ -34,6 +34,8 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         Document = document;
         _engine = engine;
         _picker = picker;
+        // First in line: what it forgets must be forgotten before the timelines' own handlers redraw and the inspector reads it again.
+        document.Changed += DocumentChanged;
         Timelines = new TimelineEditor(document);
         Gallery = new LibraryViewModel(this, () => _picker?.Invoke());
         BuildPalette();
@@ -45,7 +47,6 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         }
         Timelines.Changed += (_, _) => OnUi(Refresh);
         Timelines.SelectionChanged += (_, _) => OnUi(Refresh);
-        document.Changed += DocumentChanged;
         _ = LoadAudioAsync();
     }
 
@@ -59,6 +60,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     private void DocumentChanged(object? sender, EventArgs e) =>
         OnUi(() =>
         {
+            ForgetBinInfo();   // the file is built again only when the project changed, not on every move of the playhead or a drag
             if (Document.Project.AudioResourceId != _loadedAudioId) _ = LoadAudioAsync();
         });
 
@@ -128,6 +130,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         nameof(OffsetX), nameof(OffsetY), nameof(T1), nameof(T2), nameof(ItemColor), nameof(ItemColorTo), nameof(ItemColorBrush), nameof(ItemColorToBrush),
         nameof(EffectIndex), nameof(HasImage), nameof(ItemPreviewBitmap), nameof(HasPreview), nameof(PlaybackText),
         nameof(SelectedItemCount), nameof(IsMultiSelection), nameof(MultiText),
+        nameof(ColumnTimeText), nameof(BinInfo), nameof(HasBinInfo), nameof(BinLine), nameof(BinIssues), nameof(HasBinIssues),
         nameof(IsTimelineSelected), nameof(TimelineColorText), nameof(TimelineColorBrush), nameof(ColorIsOnlyALabel), nameof(ShowFlip), nameof(FlipVertical),
         nameof(ShowMonochrome), nameof(Monochrome), nameof(ShowHeight), nameof(TimelineHeight), nameof(HeightText), nameof(ShowLayout), nameof(LayoutNames), nameof(LayoutIndex),
     ];

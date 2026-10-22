@@ -139,6 +139,30 @@
   <data name="Inspector_OffsetX" xml:space="preserve"><value>Offset X</value></data>
   <data name="Inspector_OffsetY" xml:space="preserve"><value>Offset Y</value></data>
   <data name="Inspector_BadValue" xml:space="preserve"><value>That value cannot be used: {0}.</value></data>
+  <data name="Inspector_FrameLasts" xml:space="preserve"><value>A frame lasts {0}: {1} frames a second.</value></data>
+  <data name="Inspector_ColourLasts" xml:space="preserve"><value>A colour is held for {0}.</value></data>
+  <data name="Inspector_ColumnLasts" xml:space="preserve"><value>A column is held for {0}.</value></data>
+  <data name="Issue_TooBig" xml:space="preserve"><value>The file ({0}) does not fit in the memory of the device.</value></data>
+  <data name="Issue_LightTooLong" xml:space="preserve"><value>The show is longer than the LightMaster can play at this step.</value></data>
+  <data name="Issue_UnknownEffect" xml:space="preserve"><value>The light effect is not known: the file cannot be built.</value></data>
+  <data name="Issue_LightStepNotMultiple" xml:space="preserve"><value>The length is not a whole number of light steps, so the items after it shift a little in the file.</value></data>
+  <data name="Issue_SharedBlockOffsets" xml:space="preserve"><value>Another item plays the same GIF at the same brightness, and they share one picture: the offset of this one is not played.</value></data>
+  <data name="Issue_VideoPairEndsDiffer" xml:space="preserve"><value>The two video timelines of the device must end at the same time.</value></data>
+  <data name="Issue_NoLedLayout" xml:space="preserve"><value>The video timeline has no LED layout: choose one in the timeline header.</value></data>
+  <data name="Issue_StretchingTooLarge" xml:space="preserve"><value>The stretching is too large for the E-Pic.</value></data>
+  <data name="Issue_WrongHeight" xml:space="preserve"><value>The picture is not as high as the device ({0} LEDs).</value></data>
+  <data name="Issue_MissingMedia" xml:space="preserve"><value>The file of this item is missing: the file cannot be built. Find it in the library.</value></data>
+  <data name="Issue_TimelineKindMismatch" xml:space="preserve"><value>The device does not play this kind of timeline.</value></data>
+  <data name="Issue_TooManyTimelines" xml:space="preserve"><value>The device plays fewer timelines than are given to it.</value></data>
+  <data name="Issue_EmptyTimelineSkipped" xml:space="preserve"><value>An empty timeline is left out of the file.</value></data>
+  <data name="Issue_NothingToPlay" xml:space="preserve"><value>The device has nothing to play.</value></data>
+  <data name="Bin_NotBuilt" xml:space="preserve"><value>The file cannot be built yet, see below.</value></data>
+  <data name="Bin_FileOf" xml:space="preserve"><value>file {0} of {1} ({2} %)</value></data>
+  <data name="Bin_File" xml:space="preserve"><value>file {0}</value></data>
+  <data name="Bin_Shared" xml:space="preserve"><value>shared with {0} more</value></data>
+  <data name="Bin_Block" xml:space="preserve"><value>picture {0}</value></data>
+  <data name="Bin_Entry" xml:space="preserve"><value>entry {0} of {1}</value></data>
+  <data name="Inspector_Bin" xml:space="preserve"><value>In the .bin</value></data>
   <data name="Inspector_NothingToApply" xml:space="preserve"><value>The other items have these settings already.</value></data>
   <data name="Inspector_ApplyToAll" xml:space="preserve"><value>Apply to the other selected items</value></data>
   <data name="Inspector_MultiHint" xml:space="preserve"><value>The settings below are those of the item picked last. Ctrl or Cmd and a click adds an item, Shift and a click selects a run.</value></data>
