@@ -157,11 +157,11 @@
   <data name="Issue_EmptyTimelineSkipped" xml:space="preserve"><value>Пустая дорожка в файл не попадёт.</value></data>
   <data name="Issue_NothingToPlay" xml:space="preserve"><value>Устройству нечего играть.</value></data>
   <data name="Bin_NotBuilt" xml:space="preserve"><value>Файл пока не собирается, см. ниже.</value></data>
-  <data name="Bin_FileOf" xml:space="preserve"><value>файл {0} из {1} ({2} %)</value></data>
-  <data name="Bin_File" xml:space="preserve"><value>файл {0}</value></data>
+  <data name="Bin_FileOf" xml:space="preserve"><value>Файл {0} из {1} ({2} %)</value></data>
+  <data name="Bin_File" xml:space="preserve"><value>Файл {0}</value></data>
   <data name="Bin_Shared" xml:space="preserve"><value>общая ещё с {0}</value></data>
   <data name="Bin_Block" xml:space="preserve"><value>картинка {0}</value></data>
-  <data name="Bin_Entry" xml:space="preserve"><value>запись {0} из {1}</value></data>
+  <data name="Bin_Entry" xml:space="preserve"><value>Запись {0} из {1}</value></data>
   <data name="Inspector_Bin" xml:space="preserve"><value>В .bin</value></data>
   <data name="Inspector_NothingToApply" xml:space="preserve"><value>У остальных элементов уже такие настройки.</value></data>
   <data name="Inspector_ApplyToAll" xml:space="preserve"><value>Применить к остальным выбранным</value></data>

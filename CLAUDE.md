@@ -67,6 +67,11 @@
   `ImportViewModel` (the steps of PixelTuner 2's import window: cut, `PerspectiveWarp` (its mesh warp, ported and checked against the legacy
   `WarpGrid` in `WarpOracleTests`), trim, `ImageImport` scale to the device height and colour), the panel's logic is
   `LibraryViewModel` (`EditorViewModel.Gallery`; namespace `PixelTuner.UI.LibraryPanel`, because `Library` is the Core class).
+- The inspector (`EditorViewModel`, partials `.TimelineInspector.cs` and `.BinInfo.cs`): several items can be selected (`TimelineEditor.SelectedItems`;
+  Ctrl/Cmd click toggles, Shift click selects a run) and "apply to the others" is one `Edits.ApplySettings` step; the ".bin" line and the
+  warnings come from `BinInfo.Of` (it builds the file of the device that plays the timeline with `ShowBuilder` and reads it back with
+  `BinReader`, so they are what the device will get); `BuildIssue` codes get their words in `EditorViewModel.IssueText`.
+  `InspectorControlsToBinTests` has a test for every control: turn it, build, read the field, undo.
 - `src/PixelTuner.Audio` holds the player and decoder contracts only; implementations go per
   platform. `src/PixelTuner.Audio.Vlc` (LibVLC, LGPL, dynamic) serves Windows and macOS: the VideoLAN NuGet
   packages carry LibVLC under `libvlc/<rid>`, Linux uses the system one (`apt install libvlc5 vlc-plugin-base`).

@@ -46,7 +46,9 @@
       <tl:TimelineControl Editor="{Binding Timelines}" />
     </ScrollViewer>
 
-    <Border Grid.Row="2" Grid.Column="1" Classes="card" Margin="8,0,12,12" VerticalAlignment="Top">
+    <!-- The inspector is longer than the room beside the timelines when the library is open: it scrolls. -->
+    <ScrollViewer Grid.Row="2" Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <Border Classes="card" Margin="8,0,12,12" VerticalAlignment="Top">
       <StackPanel Spacing="8">
         <TextBlock Classes="muted" TextWrapping="Wrap" Text="{x:Static res:Strings.Inspector_Nothing}"
                    IsVisible="{Binding !HasSelection}" />
@@ -161,6 +163,7 @@
         </StackPanel>
       </StackPanel>
     </Border>
+    </ScrollViewer>
 
     <!-- The library: what the project has to put on timelines, narrowed to what the selected timeline can play.
          While a picture is imported, the import panel takes its place. -->

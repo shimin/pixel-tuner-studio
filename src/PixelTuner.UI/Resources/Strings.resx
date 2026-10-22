@@ -157,11 +157,11 @@
   <data name="Issue_EmptyTimelineSkipped" xml:space="preserve"><value>An empty timeline is left out of the file.</value></data>
   <data name="Issue_NothingToPlay" xml:space="preserve"><value>The device has nothing to play.</value></data>
   <data name="Bin_NotBuilt" xml:space="preserve"><value>The file cannot be built yet, see below.</value></data>
-  <data name="Bin_FileOf" xml:space="preserve"><value>file {0} of {1} ({2} %)</value></data>
-  <data name="Bin_File" xml:space="preserve"><value>file {0}</value></data>
+  <data name="Bin_FileOf" xml:space="preserve"><value>File {0} of {1} ({2} %)</value></data>
+  <data name="Bin_File" xml:space="preserve"><value>File {0}</value></data>
   <data name="Bin_Shared" xml:space="preserve"><value>shared with {0} more</value></data>
   <data name="Bin_Block" xml:space="preserve"><value>picture {0}</value></data>
-  <data name="Bin_Entry" xml:space="preserve"><value>entry {0} of {1}</value></data>
+  <data name="Bin_Entry" xml:space="preserve"><value>Entry {0} of {1}</value></data>
   <data name="Inspector_Bin" xml:space="preserve"><value>In the .bin</value></data>
   <data name="Inspector_NothingToApply" xml:space="preserve"><value>The other items have these settings already.</value></data>
   <data name="Inspector_ApplyToAll" xml:space="preserve"><value>Apply to the other selected items</value></data>

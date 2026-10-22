@@ -52,7 +52,7 @@ public sealed class EditorBinInfoTests : IDisposable
         Assert.True(_editor.HasBinInfo);
         Assert.Contains("3", _editor.BinLine);      // entry 3 of 3
         Assert.Contains("shared with 1", _editor.BinLine);
-        Assert.Contains("file", _editor.BinLine);
+        Assert.Contains("File", _editor.BinLine);
 
         // Another brightness is a block of its own, and the line follows the edit.
         _editor.Brightness = 50;
