@@ -23,7 +23,11 @@ public readonly record struct Affine(double A, double B, double C, double D, dou
 /// <param name="PathData">The outline as SVG path data, in the coordinates of the shape itself.</param>
 /// <param name="Transform">What the groups around it and its own transform do to those coordinates.</param>
 /// <param name="Stroke">The stroke colour as written in the SVG, or null when it has none.</param>
-public sealed record CanvasShape(string Id, string PathData, Affine Transform, string? Stroke);
+public sealed record CanvasShape(string Id, string PathData, Affine Transform, string? Stroke)
+{
+    /// <summary>The rectangle around the outline in drawing units, groups' transforms included; empty for an outline with no points.</summary>
+    public (double X, double Y, double Width, double Height) Bounds => SvgPath.Bounds(PathData, Transform) ?? default;
+}
 
 /// <summary>
 /// The drawing of the props: an SVG, read as the outlines PixelTuner 2's canvas showed (its shapes, each with an id, under groups with
