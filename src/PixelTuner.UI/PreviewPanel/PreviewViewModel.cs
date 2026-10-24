@@ -44,11 +44,18 @@ public sealed partial class PreviewViewModel : ObservableObject
 
     // ---- what is built
 
-    /// <summary>The timeline shown: the selected one, or the one the selected item is on.</summary>
     /// <summary>The name of the timeline shown, with the kind of device.</summary>
     public string Name => Timeline is { } t ? $"{t.Name} · {(Mode == PreviewMode.Hoop ? DeviceKind.Hoop : Current?.DeviceType ?? t.Kind)}" : "";
 
-    public Timeline? Timeline => _editor.Timelines.Selected switch
+    private Timeline? _last;
+
+    /// <summary>
+    /// The timeline shown: the selected one, or the one the selected item is on. A click on the sound lane, a marker or empty space selects
+    /// no timeline, and the preview stays with the last one (until it is removed from the project).
+    /// </summary>
+    public Timeline? Timeline => OfSelection ?? (_last is not null && _editor.Document.Project.Timelines.Contains(_last) ? _last : null);
+
+    private Timeline? OfSelection => _editor.Timelines.Selected switch
     {
         Timeline timeline => timeline,
         TimelineItem item => _editor.Timelines.TimelineOf(item),
@@ -137,15 +144,15 @@ public sealed partial class PreviewViewModel : ObservableObject
     public Core.Layout.CanvasShape? Outline => Layout is { } layout ? _editor.Canvas.ShapeOf(layout) : null;
 
     /// <summary>
-    /// The colours the LEDs of a layout show at the playhead, when a video timeline plays on it (black where it plays nothing); null when no
-    /// video timeline does. This is how the canvas fills an outline with its video.
+    /// The colours the LEDs of a layout show at the playhead, when a video timeline plays on it (black where it plays nothing), as a screen
+    /// should show them (<see cref="PreviewFrame.Seen"/>); null when no video timeline does. This is how the canvas fills an outline with its video.
     /// </summary>
     public IReadOnlyList<Rgb>? ColoursOn(LedLayout layout)
     {
         foreach (var timeline in _editor.Document.Project.Timelines)
         {
             if (timeline.Kind != TimelineKind.Video || timeline.LedLayoutId != layout.Id || PreviewOf(timeline) is not { } preview) continue;
-            return preview.At(_editor.Timelines.Playhead).Colors;
+            return preview.At(_editor.Timelines.Playhead).Seen;
         }
         return null;
     }
@@ -195,7 +202,11 @@ public sealed partial class PreviewViewModel : ObservableObject
     }
 
     /// <summary>The selection or the playhead moved.</summary>
-    public void Moved() => Redraw();
+    public void Moved()
+    {
+        if (OfSelection is { } timeline) _last = timeline;
+        Redraw();
+    }
 
     private void Redraw()
     {

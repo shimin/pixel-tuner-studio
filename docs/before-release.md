@@ -93,6 +93,11 @@ looks is not: a poi is drawn as if swung at 6 m/s with its LEDs 16 mm apart, a h
 **To do before release.** Compare with real devices (a poi and a hoop with a known picture, filmed with a long exposure) and set the
 defaults so that the picture looks as wide as it does in the air. The units of the stretching under it are the open question above.
 
+What a screen shows is not a guess: the export corrects every colour for the LEDs, so `LedCorrection` runs that correction (`PixelColor`,
+`Ws2812Profile`) forwards on every level of grey and reads it backwards (`PreviewFrame.Seen`), which gives the picture back as it was
+drawn, with the item's brightness. Only how a swing looks, and how bright a real LED looks next to the picture on a screen, are to be
+compared with devices.
+
 
 ## Devices: memory units, refusals and a cancelled upload
 

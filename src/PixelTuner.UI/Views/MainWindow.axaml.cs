@@ -18,6 +18,21 @@ public partial class MainWindow : Window
         AddHandler(DragDrop.DropEvent, OnDrop);
     }
 
+    /// <summary>
+    /// Delete and Backspace remove what is selected on the timelines, unless a text box has the focus (they edit its text then) or the
+    /// LED markup window is open (it has its own).
+    /// </summary>
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+        base.OnKeyDown(e);
+        if (e.Handled || e.KeyModifiers != KeyModifiers.None || e.Key is not (Key.Delete or Key.Back)) return;
+        if (DataContext is not MainViewModel { Editor: { IsEditingMarkup: false } editor }) return;
+        if (FocusManager?.GetFocusedElement() is TextBox) return;
+        if (!editor.DeleteSelectedCommand.CanExecute(null)) return;
+        editor.DeleteSelectedCommand.Execute(null);
+        e.Handled = true;
+    }
+
     protected override void OnDataContextChanged(EventArgs e)
     {
         base.OnDataContextChanged(e);

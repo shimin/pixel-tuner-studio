@@ -172,7 +172,7 @@ public class TimelinePlaybackTests
         _doc.Project.Timelines.Add(new Timeline { Name = "T" });
         Assert.Equal(TimelineEditor.RulerHeight + TimelineEditor.WaveHeight, _editor.TrackTop(0));
         Assert.Equal(HitKind.Header, _editor.HitTest(20, _editor.TrackTop(0) + 5).Kind);
-        Assert.Equal(HitKind.None, _editor.HitTest(20, TimelineEditor.RulerHeight + 5).Kind);   // the name column of the sound lane
+        Assert.Equal(HitKind.SoundtrackButton, _editor.HitTest(20, TimelineEditor.RulerHeight + 5).Kind);   // the soundtrack button in the sound lane header
         Assert.Equal(_editor.TrackTop(0) + TimelineEditor.TrackHeight, _editor.TotalHeight);
     }
 }

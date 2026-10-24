@@ -3,12 +3,14 @@
     <ProjectReference Include="..\..\src\PixelTuner.UI\PixelTuner.UI.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Avalonia.Headless" />
     <PackageReference Include="SkiaSharp.NativeAssets.Linux" Condition="$([MSBuild]::IsOSPlatform('Linux'))" />
     <PackageReference Include="SkiaSharp.NativeAssets.Win32" Condition="$([MSBuild]::IsOSPlatform('Windows'))" />
     <PackageReference Include="SkiaSharp.NativeAssets.macOS" Condition="$([MSBuild]::IsOSPlatform('OSX'))" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\PixelTuner.Core.Tests\Fixtures\LegacyProjects\80_sample\**\*" CopyToOutputDirectory="PreserveNewest" LinkBase="Fixtures\80_sample" />
-    <None Include="..\PixelTuner.Core.Tests\Fixtures\LegacyProjects\glasses\glasses.gif" CopyToOutputDirectory="PreserveNewest" Link="Fixtures\glasses\glasses.gif" />
+    <None Include="..\PixelTuner.Core.Tests\Fixtures\LegacyProjects\glasses\*.gif" CopyToOutputDirectory="PreserveNewest" LinkBase="Fixtures\glasses" />
+    <None Include="..\PixelTuner.Core.Tests\Fixtures\LegacyProjects\glasses\glasses.ptp" CopyToOutputDirectory="PreserveNewest" Link="Fixtures\glasses\glasses.ptp" />
   </ItemGroup>
 </Project>

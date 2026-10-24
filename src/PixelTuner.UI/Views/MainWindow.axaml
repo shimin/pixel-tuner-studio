@@ -85,8 +85,6 @@
     <KeyBinding Gesture="{x:Static views:Shortcuts.Undo}" Command="{Binding UndoCommand}" />
     <KeyBinding Gesture="{x:Static views:Shortcuts.Redo}" Command="{Binding RedoCommand}" />
     <KeyBinding Gesture="{x:Static views:Shortcuts.RedoAlternate}" Command="{Binding RedoCommand}" />
-    <KeyBinding Gesture="{x:Static views:Shortcuts.Delete}" Command="{Binding Editor.DeleteSelectedCommand}" />
-    <KeyBinding Gesture="{x:Static views:Shortcuts.Backspace}" Command="{Binding Editor.DeleteSelectedCommand}" />
     <KeyBinding Gesture="{x:Static views:Shortcuts.AddMarker}" Command="{Binding Editor.AddMarkerCommand}" />
     <KeyBinding Gesture="{x:Static views:Shortcuts.ZoomIn}" Command="{Binding Editor.ZoomInCommand}" />
     <KeyBinding Gesture="{x:Static views:Shortcuts.ZoomOut}" Command="{Binding Editor.ZoomOutCommand}" />

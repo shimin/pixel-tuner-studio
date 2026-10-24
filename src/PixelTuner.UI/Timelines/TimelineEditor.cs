@@ -21,6 +21,8 @@ public enum HitKind
     Marker,
     /// <summary>The soundtrack's waveform: a click moves the playhead, as on the ruler.</summary>
     Wave,
+    /// <summary>The soundtrack button in the header: opens the soundtrack picker.</summary>
+    SoundtrackButton,
 }
 
 public readonly record struct Hit(HitKind Kind, Timeline? Timeline = null, TimelineItem? Item = null, Marker? Marker = null);
@@ -64,6 +66,14 @@ public sealed class TimelineEditor
 
     /// <summary>Raised when something that is drawn changed: the project, view, selection, playhead or a drag.</summary>
     public event EventHandler? Changed;
+
+    /// <summary>Raised when the soundtrack button is clicked.</summary>
+    public event EventHandler? SoundtrackButtonClicked;
+
+    public void RaiseSoundtrackButtonClicked()
+    {
+        SoundtrackButtonClicked?.Invoke(this, EventArgs.Empty);
+    }
 
     // ---- view
 
@@ -355,7 +365,11 @@ public sealed class TimelineEditor
             return new Hit(HitKind.Ruler);
         }
 
-        if (y < TracksTop) return x >= HeaderWidth ? new Hit(HitKind.Wave) : default;
+        if (y < TracksTop)
+                {
+                    if (x < HeaderWidth) return new Hit(HitKind.SoundtrackButton);
+                    return new Hit(HitKind.Wave);
+                }
 
         int row = (int)((y - TracksTop) / TrackHeight);
         if (row < 0 || row >= Project.Timelines.Count) return default;

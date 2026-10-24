@@ -94,6 +94,7 @@
   <data name="Command_ToStart" xml:space="preserve"><value>Go to start</value></data>
   <data name="Soundtrack_Label" xml:space="preserve"><value>Soundtrack</value></data>
   <data name="Soundtrack_None" xml:space="preserve"><value>None: Timeline ▸ Set soundtrack…</value></data>
+  <data name="Soundtrack_Import" xml:space="preserve"><value>Import sound</value></data>
   <data name="Audio_Missing" xml:space="preserve"><value>The soundtrack “{0}” is not in the project.</value></data>
   <data name="Audio_CannotPlay" xml:space="preserve"><value>The soundtrack cannot be played: {0}</value></data>
   <data name="Audio_NoEngine" xml:space="preserve"><value>This computer has no sound engine (LibVLC), so the soundtrack cannot be played.</value></data>

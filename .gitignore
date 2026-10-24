@@ -25,3 +25,6 @@ Thumbs.db
 *.aab
 *.ipa
 *.dmg
+publish/osx-arm64/
+out/
+tmp/apiprobe/

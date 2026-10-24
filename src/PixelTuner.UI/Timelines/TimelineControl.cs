@@ -24,6 +24,7 @@ public sealed class TimelineControl : Control
 
     private int _rows = -1;
     private DispatcherTimer? _timer;
+    private bool _soundtrackHovered;
 
     public TimelineControl()
     {
@@ -145,6 +146,14 @@ public sealed class TimelineControl : Control
         if (Editor is not { } editor || !e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
         Focus();
         var p = e.GetPosition(this);
+        var hit = editor.HitTest(p.X, p.Y);
+        if (hit.Kind == HitKind.SoundtrackButton)
+        {
+            editor.RaiseSoundtrackButtonClicked();
+            e.Pointer.Capture(null);
+            e.Handled = true;
+            return;
+        }
         var mode = e.KeyModifiers.HasFlag(KeyModifiers.Control) || e.KeyModifiers.HasFlag(KeyModifiers.Meta) ? SelectionMode.Toggle
             : e.KeyModifiers.HasFlag(KeyModifiers.Shift) ? SelectionMode.Range : SelectionMode.Replace;
         editor.PointerDown(p.X, p.Y, mode);
@@ -162,12 +171,20 @@ public sealed class TimelineControl : Control
             editor.PointerMove(p.X, p.Y);
             return;
         }
-        Cursor = editor.HitTest(p.X, p.Y).Kind switch
+        var hit = editor.HitTest(p.X, p.Y);
+        bool hovered = hit.Kind == HitKind.SoundtrackButton;
+        if (hovered != _soundtrackHovered)
+        {
+            _soundtrackHovered = hovered;
+            InvalidateVisual();
+        }
+        Cursor = hit.Kind switch
         {
             HitKind.ItemStart or HitKind.ItemEnd => new Cursor(StandardCursorType.SizeWestEast),
             HitKind.Marker => new Cursor(StandardCursorType.SizeWestEast),
             HitKind.Item => new Cursor(StandardCursorType.Hand),
             HitKind.Ruler or HitKind.Wave => new Cursor(StandardCursorType.Ibeam),
+            HitKind.SoundtrackButton => new Cursor(StandardCursorType.Hand),
             _ => Cursor.Default,
         };
     }
@@ -216,6 +233,35 @@ public sealed class TimelineControl : Control
         new(text, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight,
             new Typeface(FontFamily.Default, FontStyle.Normal, weight), size, brush);
 
+    private static IReadOnlyList<FormattedText> WrapTextLines(string text, double size, IBrush brush, FontWeight weight, double maxWidth)
+    {
+        var lines = new List<FormattedText>();
+        var typeface = new Typeface(FontFamily.Default, FontStyle.Normal, weight);
+        string[] words = text.Split(' ');
+        string currentLine = "";
+        foreach (string word in words)
+        {
+            string testLine = string.IsNullOrEmpty(currentLine) ? word : currentLine + " " + word;
+            var testText = new FormattedText(testLine, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, size, brush);
+            if (testText.Width > maxWidth && !string.IsNullOrEmpty(currentLine))
+            {
+                var line = new FormattedText(currentLine, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, size, brush);
+                lines.Add(line);
+                currentLine = word;
+            }
+            else
+            {
+                currentLine = testLine;
+            }
+        }
+        if (!string.IsNullOrEmpty(currentLine))
+        {
+            var lastLine = new FormattedText(currentLine, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, size, brush);
+            lines.Add(lastLine);
+        }
+        return lines;
+    }
+
     public override void Render(DrawingContext context)
     {
         base.Render(context);
@@ -232,7 +278,7 @@ public sealed class TimelineControl : Control
 
         context.FillRectangle(surface, new Rect(0, 0, width, Bounds.Height));
 
-        DrawWaveHeader(context, editor, card, muted, text, faint);
+        DrawWaveHeader(context, editor, card, muted, text, faint, accent);
 
         // Rows: a header with the name, and a lane for the items.
         for (int i = 0; i < editor.Project.Timelines.Count; i++)
@@ -315,19 +361,25 @@ public sealed class TimelineControl : Control
         context.DrawText(label, new Point(x, y));
     }
 
-    private void DrawWaveHeader(DrawingContext context, TimelineEditor editor, IBrush card, IBrush muted, IBrush text, Pen faint)
+    private void DrawWaveHeader(DrawingContext context, TimelineEditor editor, IBrush card, IBrush muted, IBrush text, Pen faint, IBrush accent)
     {
         double top = TimelineEditor.RulerHeight;
         context.FillRectangle(card, new Rect(0, top, Bounds.Width, TimelineEditor.WaveHeight));
         context.DrawLine(faint, new Point(0, top + TimelineEditor.WaveHeight), new Point(Bounds.Width, top + TimelineEditor.WaveHeight));
-        DrawClipped(context, new Rect(12, top, TimelineEditor.HeaderWidth - 18, TimelineEditor.WaveHeight), () =>
-        {
-            context.DrawText(Text("♪ " + Strings.Soundtrack_Label, 14, text, FontWeight.SemiBold), new Point(12, top + 10));
-            string sub = editor.Project.AudioResourceId is null
-                ? Strings.Soundtrack_None
-                : System.IO.Path.GetFileName((editor.Project.AudioSourcePath ?? "").Replace('\\', '/'));
-            context.DrawText(Text(sub, 12, muted), new Point(12, top + 32));
-        });
+
+        // The whole name column of the wave lane is the button: nothing is drawn but the text,
+        // so the click area is as big as the header and the name reads as a caption.
+        string buttonText = editor.Project.AudioResourceId is null
+            ? Strings.Soundtrack_Import
+            : System.IO.Path.GetFileName((editor.Project.AudioSourcePath ?? "").Replace('\\', '/'));
+
+        double textLeft = 12;
+        double textMaxWidth = TimelineEditor.HeaderWidth - 24;
+        var lines = WrapTextLines(buttonText, 12, _soundtrackHovered ? accent : text, FontWeight.SemiBold, textMaxWidth);
+        double lineHeight = 14;
+        double startY = top + (TimelineEditor.WaveHeight - lines.Count * lineHeight) / 2;
+        for (int i = 0; i < lines.Count; i++)
+            context.DrawText(lines[i], new Point(textLeft, startY + i * lineHeight));
     }
 
     private void DrawWave(DrawingContext context, TimelineEditor editor, Rect timeArea, IBrush card, IBrush accent, Pen faint)

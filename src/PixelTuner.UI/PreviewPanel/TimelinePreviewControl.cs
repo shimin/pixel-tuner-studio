@@ -75,7 +75,7 @@ public sealed class TimelinePreviewControl : Control
             {
                 for (int x = 0; x < p.Width; x++)
                 {
-                    var c = p.At(x, y);
+                    var c = p.SeenAt(x, y);
                     row[x * 4] = c.R;
                     row[x * 4 + 1] = c.G;
                     row[x * 4 + 2] = c.B;
@@ -183,10 +183,10 @@ public sealed class TimelinePreviewControl : Control
         else context.DrawRectangle(null, Hairline, new Rect(origin, new Size(width, height)));
 
         double radius = Math.Max(1.5, Math.Min(cw, ch) * 0.42);
-        for (int led = 0; led < positions.Count && led < frame.Colors.Count; led++)
+        for (int led = 0; led < positions.Count && led < frame.Seen.Count; led++)
         {
             var (x, y) = positions[led];
-            context.DrawEllipse(new SolidColorBrush(ColourOf(frame.Colors[led])), null, new Point(origin.X + (x + 0.5) * cw, origin.Y + (y + 0.5) * ch), radius, radius);
+            context.DrawEllipse(new SolidColorBrush(ColourOf(frame.Seen[led])), null, new Point(origin.X + (x + 0.5) * cw, origin.Y + (y + 0.5) * ch), radius, radius);
         }
     }
 

@@ -94,6 +94,7 @@
   <data name="Command_ToStart" xml:space="preserve"><value>В начало</value></data>
   <data name="Soundtrack_Label" xml:space="preserve"><value>Звук</value></data>
   <data name="Soundtrack_None" xml:space="preserve"><value>Нет: Дорожка ▸ Выбрать звуковую дорожку…</value></data>
+  <data name="Soundtrack_Import" xml:space="preserve"><value>Импорт звука</value></data>
   <data name="Audio_Missing" xml:space="preserve"><value>Звука «{0}» нет в проекте.</value></data>
   <data name="Audio_CannotPlay" xml:space="preserve"><value>Не удаётся проиграть звук: {0}</value></data>
   <data name="Audio_NoEngine" xml:space="preserve"><value>На этом компьютере нет звукового движка (LibVLC), поэтому звук проиграть нельзя.</value></data>

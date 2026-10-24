@@ -5,26 +5,38 @@ using PixelTuner.Core.Model;
 
 namespace PixelTuner.Core.Preview;
 
-/// <summary>A picture block of the .bin as the device lights it: columns of LEDs, in 8-bit colours.</summary>
-public sealed class PreviewPicture(int width, int height, Rgb[] pixels)
+/// <summary>
+/// A picture block of the .bin as the device lights it: columns of LEDs, in 8-bit values. <see cref="At"/> is the value stored in the file;
+/// <see cref="SeenAt"/> is the colour of the picture it was made from, which is what a screen should show (see <see cref="TimelinePreview.Appearance"/>).
+/// </summary>
+public sealed class PreviewPicture(int width, int height, Rgb[] pixels, Rgb[]? seen = null)
 {
     public int Width { get; } = width;
     public int Height { get; } = height;
 
     public Rgb At(int column, int row) => pixels[column * Height + row];
 
-    /// <summary>One column: the colours of the LEDs from the first to the last.</summary>
+    /// <summary>One column: the values of the LEDs from the first to the last.</summary>
     public Rgb[] Column(int column) => pixels.AsSpan(column * Height, Height).ToArray();
+
+    public Rgb SeenAt(int column, int row) => (seen ?? pixels)[column * Height + row];
+
+    public Rgb[] SeenColumn(int column) => (seen ?? pixels).AsSpan(column * Height, Height).ToArray();
 }
 
 /// <summary>What the LEDs of a device show at one moment of a timeline.</summary>
 /// <param name="Entry">Index of the entry that plays (pauses are entries), or -1 when nothing plays: before the first one and after the end.</param>
 /// <param name="Column">The column of the picture that is lit now; for light, always 0.</param>
 /// <param name="ColumnTime">How long the device holds a column; zero for light.</param>
-/// <param name="Colors">The LEDs of the column from the first to the last; for light, the colours of the slots.</param>
+/// <param name="Colors">The values of the LEDs of the column from the first to the last, as stored in the file; for light, the colours of the slots.</param>
 /// <param name="Picture">The picture the entry plays, whole (for drawing what the device paints as it moves); null for light or when nothing plays.</param>
-public sealed record PreviewFrame(TimeSpan Time, int Entry, int Column, TimeSpan ColumnTime, IReadOnlyList<Rgb> Colors, PreviewPicture? Picture, bool Laser)
+/// <param name="SeenColors">What a screen should show for <paramref name="Colors"/>; null when it is the same.</param>
+public sealed record PreviewFrame(TimeSpan Time, int Entry, int Column, TimeSpan ColumnTime, IReadOnlyList<Rgb> Colors, PreviewPicture? Picture, bool Laser,
+    IReadOnlyList<Rgb>? SeenColors = null)
 {
+    /// <summary>The colours of the LEDs as the picture had them before the export corrected them for the LEDs: what a screen shows.</summary>
+    public IReadOnlyList<Rgb> Seen => SeenColors ?? Colors;
+
     public bool IsPlaying => Entry >= 0;
 
     /// <summary>How long the picture takes to play once.</summary>
@@ -124,13 +136,14 @@ public sealed class TimelinePreview
         long column = (time - TimeSpan.FromMilliseconds(entry.StartMs)).Ticks / columnTicks;
         int shown = picture.Width == 0 ? 0 : (int)(column % picture.Width);
         var colours = picture.Width == 0 ? new Rgb[Height] : picture.Column(shown);
-        return new PreviewFrame(time, index, shown, TimeSpan.FromTicks(columnTicks), colours, picture, entry.LaserOn);
+        var seen = picture.Width == 0 ? colours : picture.SeenColumn(shown);
+        return new PreviewFrame(time, index, shown, TimeSpan.FromTicks(columnTicks), colours, picture, entry.LaserOn, seen);
     }
 
     /// <summary>
     /// What the LEDs showed in the last <paramref name="length"/> before a time, newest first, for the afterglow a moving device leaves: one
     /// snapshot for every column the device held (at most <paramref name="maxSnapshots"/>, so a fast device is sampled more coarsely). Nothing
-    /// is shown from before the start of the show.
+    /// is shown from before the start of the show. The colours are the ones to show on a screen (<see cref="PreviewFrame.Seen"/>).
     /// </summary>
     public IReadOnlyList<(TimeSpan Age, IReadOnlyList<Rgb> Colors)> Trail(TimeSpan time, TimeSpan length, int maxSnapshots)
     {
@@ -138,7 +151,7 @@ public sealed class TimelinePreview
         var step = TimeSpan.FromTicks(Math.Max(Math.Max(now.ColumnTime.Ticks, length.Ticks / Math.Max(1, maxSnapshots)), 1));
         var snapshots = new List<(TimeSpan, IReadOnlyList<Rgb>)>();
         for (var age = TimeSpan.Zero; age <= length && age <= time && snapshots.Count < maxSnapshots; age += step)
-            snapshots.Add((age, age == TimeSpan.Zero ? now.Colors : At(time - age).Colors));
+            snapshots.Add((age, age == TimeSpan.Zero ? now.Seen : At(time - age).Seen));
         return snapshots;
     }
 
@@ -147,10 +160,16 @@ public sealed class TimelinePreview
         if (_pictures.TryGetValue(image.Address, out var known)) return known;
         int width = image.Width, height = image.Height;
         var pixels = new Rgb[width * height];
+        var seen = new Rgb[width * height];
+        var correction = LedCorrection.Corrects(DeviceType) ? LedCorrection.For(DeviceType, Height, image.BitsPerChannel) : null;
         for (int x = 0; x < width; x++)
             for (int y = 0; y < height; y++)
+            {
                 pixels[x * height + y] = new Rgb(Channel(image, x, y, 0), Channel(image, x, y, 1), Channel(image, x, y, 2));
-        return _pictures[image.Address] = new PreviewPicture(width, height, pixels);
+                seen[x * height + y] = correction is null ? pixels[x * height + y]
+                    : new Rgb(correction[0][image.Value(x, y, 0)], correction[1][image.Value(x, y, 1)], correction[2][image.Value(x, y, 2)]);
+            }
+        return _pictures[image.Address] = new PreviewPicture(width, height, pixels, seen);
     }
 
     // The device's value of a channel as the 8 bits a screen shows: 4 and 12 bit values are spread over 0..255.

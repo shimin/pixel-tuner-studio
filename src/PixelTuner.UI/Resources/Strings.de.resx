@@ -94,6 +94,7 @@
   <data name="Command_ToStart" xml:space="preserve"><value>Zum Anfang</value></data>
   <data name="Soundtrack_Label" xml:space="preserve"><value>Tonspur</value></data>
   <data name="Soundtrack_None" xml:space="preserve"><value>Keine: Zeitleiste ▸ Tonspur festlegen…</value></data>
+  <data name="Soundtrack_Import" xml:space="preserve"><value>Soundtrack importieren</value></data>
   <data name="Audio_Missing" xml:space="preserve"><value>Die Tonspur „{0}“ ist nicht im Projekt.</value></data>
   <data name="Audio_CannotPlay" xml:space="preserve"><value>Die Tonspur kann nicht abgespielt werden: {0}</value></data>
   <data name="Audio_NoEngine" xml:space="preserve"><value>Auf diesem Computer gibt es keine Audio-Engine (LibVLC), die Tonspur kann nicht abgespielt werden.</value></data>

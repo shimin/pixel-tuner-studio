@@ -132,15 +132,27 @@ public sealed partial class EditorViewModel
 
     public bool ShowLayout => SelectedTimeline is { Kind: TimelineKind.Video };
 
-    public IReadOnlyList<string> LayoutNames =>
-        [Strings.Inspector_NoLayout, .. Document.Project.LedLayouts.Select((l, n) => string.IsNullOrEmpty(l.Name) ? string.Format(Strings.Inspector_LayoutN, n + 1) : l.Name)];
+    private string[]? _layoutNames;
+
+    /// <summary>
+    /// The same list until the names change: the box rebuilds its selection when it gets another list, and on the way it writes
+    /// stale indexes back through <see cref="LayoutIndex"/>.
+    /// </summary>
+    public IReadOnlyList<string> LayoutNames
+    {
+        get
+        {
+            string[] names = [Strings.Inspector_NoLayout, .. Document.Project.LedLayouts.Select((l, n) => string.IsNullOrEmpty(l.Name) ? string.Format(Strings.Inspector_LayoutN, n + 1) : l.Name)];
+            return _layoutNames is not null && _layoutNames.AsSpan().SequenceEqual(names) ? _layoutNames : _layoutNames = names;
+        }
+    }
 
     public int LayoutIndex
     {
         get => SelectedTimeline is { LedLayoutId: { } id } ? Document.Project.LedLayouts.FindIndex(l => l.Id == id) + 1 : 0;
         set
         {
-            if (SelectedTimeline is not { Kind: TimelineKind.Video } t || value < 0 || value > Document.Project.LedLayouts.Count) return;
+            if (_pushingToInspector || SelectedTimeline is not { Kind: TimelineKind.Video } t || value < 0 || value > Document.Project.LedLayouts.Count) return;
             Guid? id = value == 0 ? null : Document.Project.LedLayouts[value - 1].Id;
             if (id != t.LedLayoutId) Document.Execute(Edits.SetLedLayout(Document.Project, t, id));
         }

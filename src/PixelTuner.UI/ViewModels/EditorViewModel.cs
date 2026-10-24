@@ -40,6 +40,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         // First in line: what it forgets must be forgotten before the timelines' own handlers redraw and the inspector reads it again.
         document.Changed += DocumentChanged;
         Timelines = new TimelineEditor(document);
+        Timelines.SoundtrackButtonClicked += (_, _) => OnUi(async () => await SetSoundtrackAsync());
         Gallery = new LibraryViewModel(this, () => _picker?.Invoke());
         Canvas = new CanvasPanelViewModel(this, () => _picker?.Invoke());
         Preview = new PreviewViewModel(this);
@@ -152,6 +153,12 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         nameof(ShowMonochrome), nameof(Monochrome), nameof(ShowHeight), nameof(TimelineHeight), nameof(HeightText), nameof(ShowLayout), nameof(LayoutNames), nameof(LayoutIndex), nameof(CanEditLayout),
     ];
 
+    /// <summary>
+    /// True while the inspector is being told what changed. A list box that gets new items answers with indexes of its own; those are not
+    /// the user's choice and must not become edits.
+    /// </summary>
+    private bool _pushingToInspector;
+
     private void Refresh()
     {
         OnPropertyChanged(nameof(HasSelection));
@@ -166,7 +173,9 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(Brightness));
         OnPropertyChanged(nameof(Stretching));
         OnPropertyChanged(nameof(LaserOn));
-        foreach (string name in InspectorProperties) OnPropertyChanged(name);
+        _pushingToInspector = true;
+        try { foreach (string name in InspectorProperties) OnPropertyChanged(name); }
+        finally { _pushingToInspector = false; }
         OnPropertyChanged(nameof(HasSoundtrack));
         OnPropertyChanged(nameof(SoundtrackName));
         OnPropertyChanged(nameof(Message));
@@ -520,7 +529,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         get => Item?.Effect is { } e ? Array.IndexOf(EffectKinds, e) : -1;
         set
         {
-            if (Item is { } i && value >= 0 && value < EffectKinds.Length && EffectKinds[value] != i.Effect)
+            if (!_pushingToInspector && Item is { } i && value >= 0 && value < EffectKinds.Length && EffectKinds[value] != i.Effect)
                 Document.Execute(Edits.SetEffect(i, EffectKinds[value]));
         }
     }

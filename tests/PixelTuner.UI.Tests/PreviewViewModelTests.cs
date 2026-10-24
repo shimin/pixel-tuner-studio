@@ -67,6 +67,21 @@ public sealed class PreviewViewModelTests : IDisposable
     }
 
     [Fact]
+    public void Selecting_nothing_keeps_the_last_timeline_until_it_is_removed()
+    {
+        var timeline = AddTimeline(TimelineKind.Pixel);
+        PictureOn(timeline, 4, 3, 0, 1);
+        _editor.Timelines.Select(timeline);
+        _editor.Timelines.Select(null);   // the sound lane, a marker, empty space
+        Assert.Same(timeline, Preview.Timeline);
+        Assert.Equal(PreviewMode.Poi, Preview.Mode);
+
+        _doc.Execute(Edits.RemoveTimeline(_doc.Project, timeline));
+        Assert.Null(Preview.Timeline);
+        Assert.Equal(PreviewMode.None, Preview.Mode);
+    }
+
+    [Fact]
     public void A_pixel_timeline_is_a_poi_by_default_and_a_hoop_when_asked_and_the_frame_follows_the_playhead()
     {
         var timeline = AddTimeline(TimelineKind.Pixel);
@@ -188,7 +203,7 @@ public sealed class PreviewViewModelTests : IDisposable
 
         // The canvas fills the outline of the prop with the same colours.
         _editor.Timelines.SetPlayhead(Ms(100));
-        Assert.Equal(Preview.Frame.Colors, Preview.ColoursOn(layout));
+        Assert.Equal(Preview.Frame.Seen, Preview.ColoursOn(layout));
     }
 
     [Fact]

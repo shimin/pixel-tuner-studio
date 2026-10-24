@@ -163,7 +163,7 @@ public class TimelinePreviewTests
         var trail = preview.Trail(Ms(10.5), Ms(5), 100);
         Assert.Equal([0, 1, 2, 3, 4, 5], trail.Select(t => t.Age.TotalMilliseconds));      // a column every millisecond
         for (int i = 0; i < trail.Count; i++)
-            Assert.Equal(preview.At(Ms(10.5 - i)).Colors, trail[i].Colors);
+            Assert.Equal(preview.At(Ms(10.5 - i)).Seen, trail[i].Colors);   // the colours a screen shows
     }
 
     [Fact]
