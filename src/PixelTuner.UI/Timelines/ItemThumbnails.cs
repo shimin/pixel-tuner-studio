@@ -9,9 +9,20 @@ namespace PixelTuner.UI.Timelines;
 /// <param name="Image">The picture as the device shows it (brightness, flip); for a video its first frame, a still.</param>
 /// <param name="Columns">Columns of the device image, or the frames of a video; with the stretching it sets how long one pass takes.</param>
 /// <param name="Average">The colour of the item seen from far away.</param>
-public sealed record Thumbnail(PixelImage Image, int Columns, Rgb Average)
+/// <param name="Strip">For a video: frames taken evenly from the whole animation (at most <see cref="ItemThumbnails.MaxStripFrames"/>), small enough for a lane;
+/// the lane lays them out along a pass like a film strip. Null for the rest.</param>
+public sealed record Thumbnail(PixelImage Image, int Columns, Rgb Average, IReadOnlyList<PixelImage>? Strip = null)
 {
     private Bitmap? _bitmap;
+    private Bitmap?[]? _stripBitmaps;
+
+    /// <summary>A frame of the strip for drawing; made on first use.</summary>
+    public Bitmap? StripBitmap(int index)
+    {
+        if (Strip is not { Count: > 0 } strip) return null;
+        _stripBitmaps ??= new Bitmap?[strip.Count];
+        return _stripBitmaps[index] ??= PixelBitmap.From(strip[index]);
+    }
 
     /// <summary>The image for drawing; made on first use, because only the window can make it.</summary>
     public Bitmap? Bitmap => _bitmap ??= PixelBitmap.From(Image);
@@ -31,6 +42,15 @@ public sealed record Thumbnail(PixelImage Image, int Columns, Rgb Average)
 /// </summary>
 public sealed class ItemThumbnails(Func<string, Stream?> open)
 {
+    /// <summary>
+    /// A video keeps up to this many frames for its film strip, evenly taken from the animation: all of them for most GIFs, so a tile
+    /// shows exactly the frame that plays there; a longer one is thinned out evenly.
+    /// </summary>
+    public const int MaxStripFrames = 300;
+
+    /// <summary>The frames of a strip are no higher than a lane can show.</summary>
+    public const int StripHeight = 50;
+
     private readonly Dictionary<(string Id, string Kind, byte Brightness, bool Flip), Thumbnail?> _cache = [];
 
     public Thumbnail? Get(TimelineItem item, Timeline timeline)
@@ -51,14 +71,16 @@ public sealed class ItemThumbnails(Func<string, Stream?> open)
             stream.CopyTo(copy);
             var bytes = copy.ToArray();
 
-            // A video shows a still, its first frame, as PixelTuner 2 did; the frame count only sets how long a pass takes.
+            // A video shows its first frame as the picture (and as the average colour); the frame count sets how long a pass takes, and the strip is what the lane lays along it.
             int columns = 0;
             PixelImage source;
+            IReadOnlyList<PixelImage>? strip = null;
             if (kind == ItemKind.Video)
             {
                 var frames = GifFrames.Decode(bytes);
                 source = frames[0];
                 columns = frames.Count;
+                strip = Strip(frames, brightness);
             }
             else
             {
@@ -66,12 +88,26 @@ public sealed class ItemThumbnails(Func<string, Stream?> open)
                 columns = source.Width;
             }
             var shown = ItemPreview.Render(source, brightness, 1, flip);
-            return shown.Width == 0 || shown.Height == 0 ? null : new Thumbnail(shown, columns, Average(shown));
+            return shown.Width == 0 || shown.Height == 0 ? null : new Thumbnail(shown, columns, Average(shown), strip);
         }
         catch (Exception ex) when (ex is InvalidDataException or IOException or KeyNotFoundException or ArgumentOutOfRangeException or IndexOutOfRangeException)
         {
             return null;
         }
+    }
+
+    /// <summary>Frames taken evenly from the animation, brightness applied, scaled down to the height of a lane.</summary>
+    private static List<PixelImage> Strip(IReadOnlyList<PixelImage> frames, byte brightness)
+    {
+        int count = Math.Min(frames.Count, MaxStripFrames);
+        var strip = new List<PixelImage>(count);
+        for (int j = 0; j < count; j++)
+        {
+            var frame = frames[(int)((long)j * frames.Count / count)];
+            if (frame.Height > StripHeight) frame = ImageImport.Scale(frame, ImageImport.ScaledWidth(frame.Width, frame.Height, StripHeight), StripHeight);
+            strip.Add(ItemPreview.Render(frame, brightness, 1, flipVertical: false));
+        }
+        return strip;
     }
 
     /// <summary>The gradient the E-Pic plays: the top row, one colour per column.</summary>

@@ -31,6 +31,37 @@ public class TimelineEditorTests
     private static double RowY(int row) => TimelineEditor.TracksTop + row * TimelineEditor.TrackHeight + 10;
 
     [Fact]
+    public void A_shift_range_keeps_the_item_it_began_with_so_the_next_shift_click_only_moves_its_end()
+    {
+        var t = Track([.. Enumerable.Range(0, 8).Select(i => ((double)i * 2, 1.0))]);
+        var other = Track((0, 1));
+        var items = t.Items;
+        int[] Picked() => [.. _editor.SelectedItems.Select(i => items.IndexOf(i)).Order()];
+
+        _editor.Select(items[0]);
+        _editor.SelectRangeTo(items[3]);
+        Assert.Equal([0, 1, 2, 3], Picked());
+
+        _editor.SelectRangeTo(items[6]);                 // 0..6, not 3..6
+        Assert.Equal([0, 1, 2, 3, 4, 5, 6], Picked());
+        Assert.Same(items[6], _editor.Selected);
+
+        _editor.SelectRangeTo(items[2]);                 // and back: the range shrinks towards the start
+        Assert.Equal([0, 1, 2], Picked());
+
+        _editor.ToggleItem(items[5]);                    // a Ctrl/Cmd click begins a new range
+        _editor.SelectRangeTo(items[7]);
+        Assert.Equal([5, 6, 7], Picked());
+
+        _editor.Select(items[4]);                        // a plain click too
+        _editor.SelectRangeTo(items[1]);
+        Assert.Equal([1, 2, 3, 4], Picked());
+
+        _editor.SelectRangeTo(other.Items[0]);           // another timeline: just that item
+        Assert.Equal([other.Items[0]], _editor.SelectedItems);
+    }
+
+    [Fact]
     public void The_corner_buttons_are_in_the_ruler_row_left_of_the_time_and_the_rest_of_the_corner_is_still_the_ruler()
     {
         foreach (var button in Enum.GetValues<HeaderButton>())
@@ -85,6 +116,17 @@ public class TimelineEditorTests
                 // a few levels apart, not a stripe
                 Assert.InRange(Math.Abs(even.R + even.G + even.B - odd.R - odd.G - odd.B), 1, 60);
             }
+
+        // The light theme keeps the weight of the rows against its page: the same distance from it (three quarters, the page being lighter)
+        // and the same tint of each kind, so a video row is purple in both and a pixel row grey.
+        var pixel = TimelineRows.Background(TimelineKind.Pixel, 0, false);
+        Assert.InRange(pixel.R, 205, 217);
+        Assert.Equal((pixel.R, pixel.R), (pixel.G, pixel.B));
+        var video = TimelineRows.Background(TimelineKind.Video, 0, false);
+        Assert.True(video.R > video.G && video.B > video.G);
+        var light = TimelineRows.Background(TimelineKind.Light, 0, false);
+        Assert.True(light.B > light.R);
+        Assert.True(TimelineRows.Background(TimelineKind.Pixel, 0, false).R < TimelineRows.Background(TimelineKind.Pixel, 1, false).R);   // the even place is the one further from the page, in both themes
 
         // PixelTuner 2's own values in the dark theme.
         Assert.Equal(Avalonia.Media.Color.FromRgb(70, 70, 70), TimelineRows.Background(TimelineKind.Pixel, 0, true));

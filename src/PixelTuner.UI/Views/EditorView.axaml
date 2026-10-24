@@ -48,9 +48,9 @@
     </ScrollViewer>
 
     <!-- The inspector is longer than the room beside the timelines when the library is open: it scrolls. -->
-    <DockPanel Grid.Row="2" Grid.Column="1" Margin="0,0,12,0">
+    <DockPanel Grid.Row="2" Grid.Column="1">
     <!-- The name of the panel is the button that folds it: open, a bar across the top of the panel; folded, the whole narrow strip. -->
-    <Button DockPanel.Dock="Left" Width="28" Margin="8,0,0,12" Padding="0,8" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Top"
+    <Button DockPanel.Dock="Left" Width="28" Padding="0,8" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Top"
             IsVisible="{Binding !IsInspectorVisible}" Command="{Binding ToggleInspectorCommand}" ToolTip.Tip="{Binding InspectorToggleTip}">
       <StackPanel Spacing="10">
         <TextBlock Text="{Binding InspectorToggleGlyph}" HorizontalAlignment="Center" />
@@ -60,16 +60,18 @@
         </LayoutTransformControl>
       </StackPanel>
     </Button>
-    <ScrollViewer Width="272" IsVisible="{Binding IsInspectorVisible}" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-    <Border Classes="card" Margin="8,0,0,12" VerticalAlignment="Top">
-      <StackPanel Spacing="8">
-        <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" MinHeight="28" Padding="10,2"
+    <ScrollViewer Width="280" IsVisible="{Binding IsInspectorVisible}" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <!-- No padding on the card: the name of the panel is a button edge to edge across its top; the rest has the padding in a panel of its own. -->
+    <Border Classes="card" VerticalAlignment="Stretch" Padding="0" ClipToBounds="True">
+      <StackPanel>
+        <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" MinHeight="32" Padding="16,2" CornerRadius="0"
                 Command="{Binding ToggleInspectorCommand}" ToolTip.Tip="{Binding InspectorToggleTip}">
           <Grid ColumnDefinitions="*,Auto">
             <TextBlock Text="{x:Static res:Strings.Inspector_Heading}" VerticalAlignment="Center" />
             <TextBlock Grid.Column="1" Text="{Binding InspectorToggleGlyph}" VerticalAlignment="Center" />
           </Grid>
         </Button>
+      <StackPanel Spacing="8" Margin="16">
         <TextBlock Classes="muted" TextWrapping="Wrap" Text="{x:Static res:Strings.Inspector_Nothing}"
                    IsVisible="{Binding !HasSelection}" />
         <StackPanel Spacing="8" IsVisible="{Binding HasSelection}">
@@ -187,21 +189,24 @@
           </StackPanel>
         </StackPanel>
       </StackPanel>
+      </StackPanel>
     </Border>
     </ScrollViewer>
     </DockPanel>
 
     <!-- A bar between the timelines and the bottom panel: the splitter that sets the panel's height, and over its left end the button
          that folds the panel away (the bar then stays, to bring it back). -->
-    <!-- (The splitter must be a child of the grid whose rows it resizes.) -->
-    <GridSplitter Grid.Row="3" Grid.ColumnSpan="2" Height="28" Margin="12,0" Background="Transparent" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext"
+    <!-- (The splitter must be a child of the grid whose rows it resizes.) The bar is the button across the whole window; the splitter is
+         the strip along its top edge. -->
+    <GridSplitter Grid.Row="3" Grid.ColumnSpan="2" Height="28" Background="Transparent" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext"
                   IsEnabled="{Binding IsBottomPanelVisible}" />
-    <Button Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" MinHeight="24" Height="24" Padding="10,0" Margin="12,0,0,0" FontSize="12"
+    <Button Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Bottom"
+            MinHeight="22" Height="22" Padding="16,0" Margin="0,6,0,0" CornerRadius="0" FontSize="12"
             Command="{Binding ToggleBottomPanelCommand}" ToolTip.Tip="{Binding BottomPanelToggleTip}">
-      <StackPanel Orientation="Horizontal" Spacing="8">
+      <Grid ColumnDefinitions="*,Auto">
         <TextBlock Text="{x:Static res:Strings.Panels_Heading}" VerticalAlignment="Center" />
-        <TextBlock Text="{Binding BottomPanelToggleGlyph}" VerticalAlignment="Center" />
-      </StackPanel>
+        <TextBlock Grid.Column="1" Text="{Binding BottomPanelToggleGlyph}" VerticalAlignment="Center" />
+      </Grid>
     </Button>
 
     <!-- The bottom panel: the tabs stand in a column on the left, the tools of a tab in a column of its own, and the rest is the content,
@@ -235,7 +240,7 @@
 
         <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" IsVisible="{Binding !Gallery.IsImporting}">
           <StackPanel Spacing="8">
-            <ListBox ItemsSource="{Binding Gallery.Entries}" SelectedItem="{Binding Gallery.Selected}" Background="Transparent" DoubleTapped="OnEntryDoubleTapped">
+            <ListBox x:Name="EntryList" ItemsSource="{Binding Gallery.Entries}" SelectedItem="{Binding Gallery.Selected}" Background="Transparent" DoubleTapped="OnEntryDoubleTapped">
               <ListBox.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ListBox.ItemsPanel>
               <ListBox.ItemTemplate>
                 <DataTemplate x:DataType="lib:LibraryEntryViewModel">

@@ -44,8 +44,8 @@
 
 | Хочу изменить | Поиск в `TimelineControl.cs` | Что это |
 | --- | --- | --- |
-| Рамка вокруг **выбранного таймлайна** (заголовка) | `ReferenceEquals(editor.Selected, timeline)` | `new Pen(accent, 2)`: цвет и толщина (`2`) |
-| Рамка вокруг **выбранного элемента** (картинки на дорожке) | `new Pen(accent, 2) : new Pen(new SolidColorBrush(fill), 1)` в `DrawItem` | то же: цвет и толщина |
+| Отметка **выбранного таймлайна**: та же серая затухающая рамка, что у элемента, вдоль всей строки (колонка имён и дорожка) | `ReferenceEquals(editor.Selected, editor.Project.Timelines[i])` в `Render`, рисует `DrawGlow` (общий с `DrawSelectionGlow`) | `GlowWidth`, `SelectionGrey`, прозрачность `0.9` в `DrawGlow` |
+| Отметка **выбранного элемента** (картинки на дорожке): серая рамка, уходящая в прозрачность | `private void DrawSelectionGlow`; `GlowWidth` (4 px) и `SelectionGrey` над ним | цвет (светлый в тёмной теме, тёмный в светлой), начальная прозрачность `0.9`, ширина. Акцентного цвета нет. Место, куда ляжет перетаскиваемый элемент, обведено простой рамкой 2 px того же серого (`outline` в `DrawItem`) |
 | Цвет **курсора воспроизведения** и его «шапки» | `private void DrawPlayhead`, строка `var pen = new Pen(accent, 2);` и `DrawGeometry(accent` | толщина `2`; размер шапки — числа `6` и `12` ниже |
 | Цвета **маркеров** | `Colors.OrangeRed` в `DrawMarkers` | обычный маркер; выбранный рисуется цветом `accent` |
 | Красная / зелёная подсказка при перетаскивании | `Color.FromRgb(209, 73, 91)` (нельзя, красный) и `Color.FromRgb(51, 170, 119)` (можно, зелёный) | красный есть в `DrawDenial` и в `DrawLayoutDrop`, зелёный только в `DrawLayoutDrop` |
@@ -57,10 +57,10 @@
 | **Имя** таймлайна: размер, насыщенность, цвет | `timeline.Name, 14` | `Text(текст, размер, кисть, насыщенность)`: `14` — размер, `text` — цвет |
 | **Строка типа** таймлайна («Pixel: poi, staff, hoop») | `KindLabel(timeline.Kind), 12` | `12` — размер, `muted` — цвет |
 | Цветная **полоска** слева от заголовка | `new Rect(0, top, 4,` | `4` — её ширина; цвет — собственный цвет таймлайна (его выбирает пользователь в инспекторе) |
-| **Фон строк** (два чередующихся оттенка, с оттенком по типу таймлайна, как в PixelTuner 2) | `class TimelineRows` в конце файла | пары RGB в `Dark(...)` — оригинальные значения PixelTuner 2 (чётное место, нечётное место), светлая тема считается из них в `Background(...)`. Линий между строками нет; оттенок зависит от места, поэтому меняется при перестановке таймлайнов |
+| **Фон строк** (два чередующихся оттенка, с оттенком по типу таймлайна, как в PixelTuner 2) | `class TimelineRows` в конце файла | пары RGB в `Dark(...)` — оригинальные значения PixelTuner 2 (чётное место, нечётное место), светлая тема считается из них в `Background(...)`: те же оттенки и три четверти расстояния от страницы (`LightWeight`). Линий между строками нет; оттенок зависит от места, поэтому меняется при перестановке таймлайнов |
 | **Граница** под линейкой и разделитель колонки имён (он заканчивается там, где начинаются таймлайны) | строки `DrawLine(new Pen(muted, 1), new Point(0, TimelineEditor.RulerHeight)` и `DrawLine(faint, new Point(TimelineEditor.HeaderWidth, 0)` (последние строки `Render`) | цвет и толщина пера |
 | **Угловые кнопки** (удалить, выше, ниже; слева от линейки) | `private void DrawCornerButtons` | `fill`, `border`, скругление `6`, размер значка `14`. Их размер и положение — `CornerButton*` в `TimelineEditor.cs` |
-| Кнопка **Import sound** (заголовок дорожки звука) | `private void DrawWaveHeader` | `fill`, `border`, скругление `8` в `DrawRectangle(fill, border, button, 8, 8)`, размер текста `13` в `FormattedText`. Её размер и положение — `SoundtrackButton*` в `TimelineEditor.cs` |
+| Кнопка **Import sound** (заголовок дорожки звука) | `private void DrawWaveHeader` | тот же вид, что у кнопки «Add timeline» на тулбаре: собственные ресурсы кнопки Fluent (`ButtonBackground`, `ButtonBackgroundPointerOver`, `ButtonForeground`, `ButtonBorderBrush`), скругление `4` в `DrawRectangle(fill, border, button, 4, 4)`, размер текста `14` в `FormattedText`. Её размер и положение — `SoundtrackButton*` в `TimelineEditor.cs` |
 
 ### Дорожка звука (волна)
 
@@ -78,7 +78,7 @@
 
 | Хочу изменить | Поиск | Что это |
 | --- | --- | --- |
-| **Заливка** элемента и его тонкая **рамка** | `new SolidColorBrush(fill, opacity * 0.85)` в `DrawItem` | заливка — цвет таймлайна с 85 % непрозрачности; рамка — `new Pen(new SolidColorBrush(fill), 1)` |
+| **Заливка** элемента и его тонкая **рамка** | `new SolidColorBrush(fill, opacity * 0.85)` в `DrawItem` | заливка — цвет таймлайна с 85 % непрозрачности, на пиксель короче края; рамка — полупрозрачный серый 1 px `new Pen(new SolidColorBrush(EdgeGrey, 0.4), 1)` (светлый в тёмной теме, тёмный в светлой; без цвета) |
 | **Скругление углов** элемента | `4, 4` в конце этого `DrawRectangle` | |
 | **Подпись** элемента (имя файла): размер, цвет | `ItemLabel(item), 12` | `12` — размер; цвет чёрный или белый по `Contrast(fill)` |
 | Тёмная **плашка** под подписью | `Colors.Black, 0.55` | чёрный с 55 % непрозрачности |
@@ -106,6 +106,7 @@
 | **Кнопки инструментов** в колонке слева от содержимого вкладки (Import, Put on timeline, ...) | `Theme.axaml`, `Button.tool`; ширина колонки — `ColumnDefinitions="190,*"` в `EditorView.axaml`, `CanvasPanelView.axaml`, `PreviewPanelView.axaml` | отступы, высота, размер шрифта |
 | **Высота нижней панели** (пользователь тянет разделитель над ней) | `EditorView.axaml`, `RowDefinitions="Auto,Auto,*,Auto,320"`: `320` — стартовая высота | высота не меняется при смене вкладок |
 | Мелкий серый текст в библиотеке | `EditorView.axaml`, `Classes="muted" FontSize="11"` | |
+| **Слайдеры** (зум, превью, импорт картинки): таблетка с круглым бегунком внутри | `Theme.axaml`: контрол-тема `PtSliderTheme` (размеры: таблетка высотой 20, радиус скругления 9 = радиусу бегунка, бегунок 18 с отступом 1 px, в коробке 20, правая половина которой цвета заливки: заливка идёт под кружок и кончается его правым краем) и кисти `Pt*Slider*` в обоих словарях тем (дорожка, дорожка при наведении, заливка левее бегунка, бегунок, бегунок при наведении, бегунок зажатый); цвета при наведении и нажатии — стили `Slider:pointerover` и `Thumb#thumb:pressed` ниже | монохромный: меняйте серые цвета по темам. Стиль не может заменить шаблон контрола Fluent: шаблон заменяется через `ControlTheme` и `Theme=` |
 | **Кнопки** (форма, акцентная кнопка) | `src/PixelTuner.UI/App.axaml`, `<FluentTheme />` | вид берётся из Fluent. Акцентная кнопка (`Classes="accent"`) использует системный акцентный цвет. Чтобы поменять цвет всех стандартных контролов Fluent, дайте `FluentTheme` палитру с `Accent` (документация Avalonia: `FluentTheme.Palettes`). Здесь не проверялось: соберите и посмотрите |
 | Панель **Preview** (точки светодиодов, фон) | `src/PixelTuner.UI/PreviewPanel/TimelinePreviewControl.cs`, `Dark`, `Hairline`, `Marker` в начале файла | |
 | Контуры на панели **Canvas** | `src/PixelTuner.UI/LedLayouts/CanvasDrawingControl.cs`, `Page`, `Unmarked`, `Marked`, `Stroke`, `SelectedStroke` в начале файла | |
@@ -120,7 +121,7 @@
 | `RulerHeight` | 34 | высота линейки |
 | `WaveHeight` | 84 | высота дорожки звука |
 | `TrackHeight` | 64 | высота одной строки таймлайна |
-| `SoundtrackButtonInset`, `SoundtrackButtonHeight` | 12, 40 | кнопка Import sound |
+| `SoundtrackButtonInset`, `SoundtrackButtonHeight` | 6 (= `CornerButtonGap`), 40 | кнопка Import sound |
 | `CornerButtonGap` | 6 | кнопки удаления и перестановки заполняют ячейку слева от линейки; это отступ вокруг них и между ними (ширина и высота следуют из него) |
 
 Если текст заголовка стал больше, чем позволяет строка, увеличьте здесь `TrackHeight` и сдвиньте вторую строку текста (`top + 32`) в рисовалке.

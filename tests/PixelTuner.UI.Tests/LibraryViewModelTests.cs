@@ -1,6 +1,7 @@
 using PixelTuner.Core.Editing;
 using PixelTuner.Core.Model;
 using PixelTuner.Package;
+using PixelTuner.UI.LibraryPanel;
 using PixelTuner.UI.ViewModels;
 using SkiaSharp;
 
@@ -199,11 +200,49 @@ public sealed class LibraryViewModelTests : IDisposable
 
         // From the list onto the timeline: a colour as a solid item, an effect with its defaults.
         var solid = gallery.Place(gallery.Entries[0].Entry, light)!;
-        Assert.Equal((ItemKind.Solid, "#FFFFFF"), (solid.Kind, solid.Color));
+        Assert.Equal((ItemKind.Solid, "#000000"), (solid.Kind, solid.Color));
         var effect = gallery.Place(gallery.Entries[2].Entry, light)!;
-        Assert.Equal((ItemKind.Effect, LightEffectKind.SineWave, "#000000", "#FFFFFF"), (effect.Kind, effect.Effect, effect.Color, effect.ColorLast));
+        Assert.Equal((ItemKind.Effect, LightEffectKind.SineWave, "#000000", "#FF0000"), (effect.Kind, effect.Effect, effect.Color, effect.ColorLast));
         Assert.Empty(_doc.Project.Library);
     }
+
+    [Fact]
+    public void The_LightMaster_list_is_PixelTuner_2s_with_its_names_and_the_values_it_started_each_effect_with()
+    {
+        // PixelTuner 2: EffectsViewModel and Effect*ThumbnailViewModel (colour first black, last red; T1 and T2 as below, 0 for "not set").
+        var list = LibraryViewModel.LightEntries;
+        Assert.Equal(["Solid Color", "Linear Transition", "Sine Wave", "Square Wave", "Saw-tooth Wave"], list.Select(e => e.Name));
+        Assert.Equal(["#000000", "#000000", "#000000", "#000000", "#000000"], list.Select(e => e.Color));
+        Assert.Equal([null, "#FF0000", "#FF0000", "#FF0000", "#FF0000"], list.Select(e => e.ColorLast));
+        Assert.Equal([(0, 0), (0, 0), (2000, 0), (1000, 1000), (1000, 1000)], list.Select(e => (e.T1, e.T2)));
+    }
+
+    [Fact]
+    public void Each_fixed_entry_has_the_picture_PixelTuner_2_showed_for_it() => HeadlessAppBuilder.Run(() =>
+    {
+        var light = Add(TimelineKind.Light);
+        _editor.Timelines.Select(light);
+        Assert.True(_editor.Gallery.IsFixedSection);
+
+        foreach (var entry in _editor.Gallery.Entries)
+        {
+            Assert.NotNull(entry.Thumbnail);
+            Assert.Null(entry.Swatch);   // the picture, not a colour behind it
+        }
+        Assert.Equal(5, _editor.Gallery.Entries.Select(e => e.Thumbnail).Distinct().Count());
+
+        // And the files are PixelTuner 2's own, byte for byte.
+        var dir = new DirectoryInfo(AppContext.BaseDirectory);
+        while (dir is not null && !Directory.Exists(Path.Combine(dir.FullName, "legacy", "PixelTuner2", "PixelTuner", "Effects"))) dir = dir.Parent;
+        Assert.NotNull(dir);
+        foreach (string name in new[] { "00_effect", "01_effect", "02_effect", "03_effect", "04_solid" })
+        {
+            using var shipped = Avalonia.Platform.AssetLoader.Open(new Uri($"avares://PixelTuner.UI/Assets/LightEffects/{name}.png"));
+            using var copy = new MemoryStream();
+            shipped.CopyTo(copy);
+            Assert.Equal(File.ReadAllBytes(Path.Combine(dir!.FullName, "legacy", "PixelTuner2", "PixelTuner", "Effects", name + ".png")), copy.ToArray());
+        }
+    });
 
     [Fact]
     public async Task Importing_for_a_pixel_timeline_opens_the_panel_scaled_to_its_height_and_the_result_lands_in_the_library()

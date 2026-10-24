@@ -1,6 +1,7 @@
 using PixelTuner.Audio;
 using PixelTuner.Core.Editing;
 using PixelTuner.Core.Model;
+using PixelTuner.UI.LibraryPanel;
 using PixelTuner.UI.Resources;
 using PixelTuner.Package;
 
@@ -52,7 +53,7 @@ public sealed class TimelineEditor
     public const double TrackHeight = 64;
 
     /// <summary>The soundtrack button in the header of the sound lane: inset from the sides of the header, centred in the lane.</summary>
-    public const double SoundtrackButtonInset = 12;
+    public const double SoundtrackButtonInset = CornerButtonGap;
     public const double SoundtrackButtonHeight = 40;
     public const double SoundtrackButtonTop = RulerHeight + (WaveHeight - SoundtrackButtonHeight) / 2;
 
@@ -311,8 +312,12 @@ public sealed class TimelineEditor
 
     public bool IsSelected(TimelineItem item) => _selectedItems.Contains(item);
 
+    // Where a Shift range starts: the item last picked by a plain click or Ctrl/Cmd click. Shift clicks move the other end of the range only.
+    private TimelineItem? _anchor;
+
     public void Select(object? what)
     {
+        _anchor = what as TimelineItem;
         if (ReferenceEquals(Selected, what) && _selectedItems.Count <= 1) return;
         Selected = what;
         _selectedItems.Clear();
@@ -328,19 +333,25 @@ public sealed class TimelineEditor
             Select(item);
             return;
         }
-        if (!_selectedItems.Remove(item)) _selectedItems.Add(item);
+        if (!_selectedItems.Remove(item))
+        {
+            _selectedItems.Add(item);
+            _anchor = item;
+        }
         Selected = _selectedItems.Count == 0 ? null : _selectedItems[^1];
         RaiseSelectionChanged();
     }
 
     /// <summary>
-    /// Selects the items from the current one to this one on the same timeline (Shift and a click). On another timeline,
-    /// or with no item selected, it selects just this one.
+    /// Selects the items from the one the selection began with (the last plain or Ctrl/Cmd click) to this one on the same timeline
+    /// (Shift and a click). The start stays where it is, so a second Shift click moves the end of the range and does not drop the first
+    /// items. On another timeline, or with no item selected, it selects just this one.
     /// </summary>
     public void SelectRangeTo(TimelineItem item)
     {
         var timeline = TimelineOf(item);
-        if (Selected is not TimelineItem from || timeline is null || TimelineOf(from) != timeline)
+        var from = _anchor is { } anchor && TimelineOf(anchor) == timeline ? anchor : Selected as TimelineItem;
+        if (from is null || timeline is null || TimelineOf(from) != timeline)
         {
             Select(item);
             return;
@@ -352,6 +363,7 @@ public sealed class TimelineEditor
         _selectedItems.Remove(item);
         _selectedItems.Add(item);
         Selected = item;
+        _anchor = from;   // the range still begins there
         RaiseSelectionChanged();
     }
 
@@ -385,6 +397,43 @@ public sealed class TimelineEditor
         LayoutDrop = hint;
         RaiseChanged();
     }
+
+    // ---- an entry of the library dragged onto a timeline
+
+    /// <summary>An entry of the project's library or of the LightMaster's fixed list; null when there is none with this id.</summary>
+    public LibraryEntry? FindEntry(Guid id) =>
+        Project.Library.FirstOrDefault(e => e.Id == id) ?? LibraryViewModel.LightEntries.FirstOrDefault(e => e.Id == id);
+
+    /// <summary>Raised when an entry was dropped on a timeline that takes it but has no room at that place.</summary>
+    public event EventHandler? DropHadNoRoom;
+
+    /// <summary>The pointer with a dragged entry is at this height: the timeline under it is marked as a target, or as one that refuses and why.</summary>
+    public void HoverEntry(double y, LibraryEntry entry)
+    {
+        var target = TimelineAt(y);
+        var problem = target is null ? PlacementProblem.None : Library.CanPlace(entry, target);
+        var hint = target is null ? null : new LayoutDropHint(target, problem == PlacementProblem.None, LibraryEntryViewModel.ReasonOf(problem, entry));
+        if (hint == LayoutDrop) return;
+        LayoutDrop = hint;
+        RaiseChanged();
+    }
+
+    /// <summary>
+    /// The entry is dropped at this place: the timeline under it takes it if it can play it, at the time under the pointer or at the
+    /// first free place after it; the new item is selected. Null when nothing was put on a timeline.
+    /// </summary>
+    public TimelineItem? DropEntry(double x, double y, LibraryEntry entry)
+    {
+        LeaveLayout();
+        if (TimelineAt(y) is not { } target || Library.CanPlace(entry, target) != PlacementProblem.None) return null;
+        var from = Edits.WholeMs(OnGrid(Max0(XToTime(x)), TimeSpan.Zero, TimeSpan.MaxValue));
+        var item = AddItemAt(target, Library.NewItem(entry, target), DefaultDropLength, from);
+        if (item is null) DropHadNoRoom?.Invoke(this, EventArgs.Empty);
+        return item;
+    }
+
+    /// <summary>A dropped entry is this long, when there is room for it (the same as one put on a timeline by the button).</summary>
+    public static readonly TimeSpan DefaultDropLength = TimeSpan.FromSeconds(5);
 
     /// <summary>The drag left the timelines or ended.</summary>
     public void LeaveLayout()
@@ -709,9 +758,6 @@ public sealed class TimelineEditor
     /// <summary>A pass narrower than this many pixels is not drawn as a picture but as its average colour.</summary>
     public const double MinTileWidth = 3;
 
-    /// <summary>A pass at least this wide gets a line at its end, so the user can see where the device starts over.</summary>
-    public const double PassLineWidth = 14;
-
     /// <summary>
     /// Where one picture is repeated across an item. The device repeats the item from its start to its end at the speed
     /// the stretching sets, so pass <c>n</c> begins at <c>left + n * PassWidth</c>; the last pass is cut off by the item's end.
@@ -830,9 +876,12 @@ public sealed class TimelineEditor
     /// Puts a new item on a timeline at the playhead, or after the item that is there, as long as <paramref name="wanted"/>
     /// or as the gap allows. The item's kind decides whether the timeline takes it. Null when there is no room.
     /// </summary>
-    public TimelineItem? AddItem(Timeline timeline, TimelineItem item, TimeSpan wanted)
+    public TimelineItem? AddItem(Timeline timeline, TimelineItem item, TimeSpan wanted) => AddItemAt(timeline, item, wanted, Playhead);
+
+    /// <summary>As <see cref="AddItem"/>, from a time of the caller's (where an entry of the library was dropped) instead of the playhead.</summary>
+    public TimelineItem? AddItemAt(Timeline timeline, TimelineItem item, TimeSpan wanted, TimeSpan from)
     {
-        if (!Edits.Accepts(timeline, item) || !Edits.FitsHeight(timeline, item.MediaHeight) || FindRoom(timeline, Playhead, wanted) is not var (start, duration)) return null;
+        if (!Edits.Accepts(timeline, item) || !Edits.FitsHeight(timeline, item.MediaHeight) || FindRoom(timeline, from, wanted) is not var (start, duration)) return null;
         // Start on the grid when the gap has room for it; the length stays as asked unless the gap cuts it.
         long step = Grid.Ticks;
         var gridStart = TimeSpan.FromTicks((start.Ticks + step - 1) / step * step);
@@ -914,11 +963,11 @@ public sealed record DropDenial(Timeline Target, DropDenialReason Reason, int Re
     };
 }
 
-/// <summary>A timeline under a layout that is being dragged, and whether it would take it.</summary>
-public sealed record LayoutDropHint(Timeline Target, bool Allowed)
+/// <summary>A timeline under a layout or an entry of the library that is being dragged, and whether it would take it.</summary>
+public sealed record LayoutDropHint(Timeline Target, bool Allowed, string? Reason = null)
 {
-    /// <summary>The words shown over a timeline that refuses.</summary>
-    public string Text() => Allowed ? "" : Strings.Drop_LayoutOnlyVideo;
+    /// <summary>The words shown over a timeline that refuses (a layout: it goes to video timelines only; an entry of the library: why not).</summary>
+    public string Text() => Allowed ? "" : Reason ?? Strings.Drop_LayoutOnlyVideo;
 }
 
 /// <summary>An item or marker as it would be if the drag ended now.</summary>

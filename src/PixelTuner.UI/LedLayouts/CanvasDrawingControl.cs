@@ -18,10 +18,15 @@ public sealed class CanvasDrawingControl : Control
 
     // Transparent: the page shows the window behind it. (Only its outline is drawn; the fill stays so the colour is one edit away.)
     private static readonly IBrush Page = new SolidColorBrush(Color.FromArgb(0, 0x2B, 0x2B, 0x2B));
+    // Outlines on the dark theme (light on dark) and on the light one (dark on light).
     private static readonly IBrush Unmarked = new SolidColorBrush(Colors.White, 0.16);
     private static readonly IBrush Marked = new SolidColorBrush(Color.FromRgb(0x33, 0xAA, 0xFF), 0.34);
     private static readonly IBrush Stroke = new SolidColorBrush(Colors.White, 0.7);
     private static readonly IBrush SelectedStroke = new SolidColorBrush(Color.FromRgb(0xFF, 0xC8, 0x57));
+    private static readonly IBrush UnmarkedLight = new SolidColorBrush(Colors.Black, 0.10);
+    private static readonly IBrush MarkedLight = new SolidColorBrush(Color.FromRgb(0x1E, 0x7F, 0xD6), 0.30);
+    private static readonly IBrush StrokeLight = new SolidColorBrush(Color.FromRgb(0x40, 0x40, 0x48), 0.8);
+    private static readonly IBrush SelectedStrokeLight = new SolidColorBrush(Color.FromRgb(0xD9, 0x8A, 0x00));
 
     // A press on an outline may turn into a drag onto a video timeline once the pointer has moved this far.
     private const double DragDistance = 6;
@@ -34,7 +39,11 @@ public sealed class CanvasDrawingControl : Control
 
     static CanvasDrawingControl() => AffectsRender<CanvasDrawingControl>(PanelProperty);
 
-    public CanvasDrawingControl() => ClipToBounds = true;
+    public CanvasDrawingControl()
+    {
+        ClipToBounds = true;
+        ActualThemeVariantChanged += (_, _) => InvalidateVisual();
+    }
 
     public CanvasPanelViewModel? Panel
     {
@@ -53,6 +62,9 @@ public sealed class CanvasDrawingControl : Control
     private void Redrawn(object? sender, EventArgs e) => InvalidateVisual();
 
     // The page is drawn as large as it fits, in its own proportions, centred.
+    /// <summary>True while an outline is being dragged onto a timeline.</summary>
+    public bool IsDragging => _dragging;
+
     private (double Scale, Point Origin, (double X, double Y, double Width, double Height) Page)? Fit()
     {
         if (Panel is not { HasDrawing: true } panel) return null;
@@ -99,8 +111,9 @@ public sealed class CanvasDrawingControl : Control
             using (context.PushTransform(new Matrix(t.A, t.B, t.C, t.D, t.E, t.F) * toScreen))
             {
                 // The pen is in drawing units: a line that is the same on screen at every zoom.
-                var pen = new Pen(selected ? SelectedStroke : Stroke, (selected ? 2.5 : 1) / scale);
-                context.DrawGeometry(element.HasMarkup ? Marked : Unmarked, pen, geometry);
+                bool dark = ActualThemeVariant == Avalonia.Styling.ThemeVariant.Dark;
+                var pen = new Pen(selected ? (dark ? SelectedStroke : SelectedStrokeLight) : (dark ? Stroke : StrokeLight), (selected ? 2.5 : 1) / scale);
+                context.DrawGeometry(element.HasMarkup ? (dark ? Marked : MarkedLight) : (dark ? Unmarked : UnmarkedLight), pen, geometry);
             }
             if (element.HasMarkup) DrawLeds(context, element, toScreen, scale, panel.PlayingColours(element));
         }

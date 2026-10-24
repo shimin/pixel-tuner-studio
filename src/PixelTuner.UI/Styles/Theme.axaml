@@ -9,13 +9,73 @@
           <SolidColorBrush x:Key="PtSurfaceBrush" Color="#FFF7F7F8" />
           <SolidColorBrush x:Key="PtCardBrush" Color="#FFFFFFFF" />
           <SolidColorBrush x:Key="PtMutedTextBrush" Color="#FF5B5F6B" />
+          <SolidColorBrush x:Key="PtSliderTrackBrush" Color="#FFE4E4E8" />
+          <SolidColorBrush x:Key="PtSliderTrackHoverBrush" Color="#FFD9D9DF" />
+          <SolidColorBrush x:Key="PtSliderFillBrush" Color="#FFC6C6CE" />
+          <SolidColorBrush x:Key="PtSliderThumbBrush" Color="#FF55565E" />
+          <SolidColorBrush x:Key="PtSliderThumbHoverBrush" Color="#FF33343A" />
+          <SolidColorBrush x:Key="PtSliderThumbPressedBrush" Color="#FF1F2024" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
           <SolidColorBrush x:Key="PtSurfaceBrush" Color="#FF16171A" />
           <SolidColorBrush x:Key="PtCardBrush" Color="#FF202227" />
           <SolidColorBrush x:Key="PtMutedTextBrush" Color="#FFA4A8B3" />
+          <SolidColorBrush x:Key="PtSliderTrackBrush" Color="#FF26272C" />
+          <SolidColorBrush x:Key="PtSliderTrackHoverBrush" Color="#FF30323A" />
+          <SolidColorBrush x:Key="PtSliderFillBrush" Color="#FF3E4049" />
+          <SolidColorBrush x:Key="PtSliderThumbBrush" Color="#FFC9CAD0" />
+          <SolidColorBrush x:Key="PtSliderThumbHoverBrush" Color="#FFE6E7EB" />
+          <SolidColorBrush x:Key="PtSliderThumbPressedBrush" Color="#FFFFFFFF" />
         </ResourceDictionary>
       </ResourceDictionary.ThemeDictionaries>
+      <!-- The two halves of the slider's track: the one before the thumb is the fill (rounded like the pill), the other only takes clicks. -->
+      <ControlTheme x:Key="PtSliderFillTheme" TargetType="RepeatButton">
+        <Setter Property="Template">
+          <ControlTemplate>
+            <!-- Round only at the left: its right end runs into the ring of the thumb, which is round -->
+            <Border CornerRadius="9,0,0,9" Background="{DynamicResource PtSliderFillBrush}" />
+          </ControlTemplate>
+        </Setter>
+      </ControlTheme>
+      <ControlTheme x:Key="PtSliderRestTheme" TargetType="RepeatButton">
+        <Setter Property="Template">
+          <ControlTemplate>
+            <Border Background="Transparent" />
+          </ControlTemplate>
+        </Setter>
+      </ControlTheme>
+      <ControlTheme x:Key="PtSliderTheme" TargetType="Slider">
+        <Setter Property="MinHeight" Value="20" />
+        <Setter Property="Template">
+          <ControlTemplate>
+            <!-- The pill clips what is in it to its round corners, so a square end of the fill or of the thumb's ring never shows outside it. -->
+            <Border Name="Pill" Height="20" CornerRadius="9" ClipToBounds="True" Background="{DynamicResource PtSliderTrackBrush}">
+              <Track Name="PART_Track" Minimum="{TemplateBinding Minimum}" Maximum="{TemplateBinding Maximum}"
+                     Value="{TemplateBinding Value, Mode=TwoWay}" IsDirectionReversed="{TemplateBinding IsDirectionReversed}" Orientation="Horizontal">
+                <Track.DecreaseButton>
+                  <RepeatButton Name="PART_DecreaseButton" Focusable="False" Theme="{StaticResource PtSliderFillTheme}" />
+                </Track.DecreaseButton>
+                <Track.IncreaseButton>
+                  <RepeatButton Name="PART_IncreaseButton" Focusable="False" Theme="{StaticResource PtSliderRestTheme}" />
+                </Track.IncreaseButton>
+                <!-- A pill 20 high with corners of radius 9, the radius of the thumb, which is 18 across and 1 px from the edge all round.
+                     The thumb is a box 20 across: flat on the left, where the fill runs into it, and round on the right, concentric with the
+                     circle, in the fill's colour. So the fill goes on under the circle and ends at its right edge. -->
+                <Thumb Name="thumb" Width="20" Height="20">
+                  <Thumb.Template>
+                    <ControlTemplate>
+                      <Grid>
+                        <Border CornerRadius="0,10,10,0" Background="{DynamicResource PtSliderFillBrush}" />
+                        <Border Margin="1" CornerRadius="9" Background="{TemplateBinding Background}" />
+                      </Grid>
+                    </ControlTemplate>
+                  </Thumb.Template>
+                </Thumb>
+              </Track>
+            </Border>
+          </ControlTemplate>
+        </Setter>
+      </ControlTheme>
       <Thickness x:Key="PtPagePadding">24</Thickness>
       <x:Double x:Key="PtSpacing">12</x:Double>
       <CornerRadius x:Key="PtCardRadius">8</CornerRadius>
@@ -59,5 +119,29 @@
     <Setter Property="Padding" Value="10,4" />
     <Setter Property="MinHeight" Value="28" />
     <Setter Property="FontSize" Value="13" />
+  </Style>
+  <!-- Sliders, in one colour: a pill (a rectangle whose corner radius is half its height) with a round thumb inside it, one pixel from the
+       edge all round; the part left of the thumb is a little darker or lighter than the rest. Only horizontal sliders are used. The greys
+       are the Pt*Slider* brushes above, for each theme; the thumb gets lighter or darker under the pointer and when it is held. -->
+  <Style Selector="Slider">
+    <Setter Property="Theme" Value="{StaticResource PtSliderTheme}" />
+  </Style>
+  <Style Selector="Slider /template/ Thumb#thumb">
+    <Setter Property="Background" Value="{DynamicResource PtSliderThumbBrush}" />
+  </Style>
+  <Style Selector="Slider:pointerover /template/ Thumb#thumb">
+    <Setter Property="Background" Value="{DynamicResource PtSliderThumbHoverBrush}" />
+  </Style>
+  <Style Selector="Slider /template/ Thumb#thumb:pressed">
+    <Setter Property="Background" Value="{DynamicResource PtSliderThumbPressedBrush}" />
+  </Style>
+  <Style Selector="Slider:pointerover /template/ Border#Pill">
+    <Setter Property="Background" Value="{DynamicResource PtSliderTrackHoverBrush}" />
+  </Style>
+  <Style Selector="Slider:focus-visible /template/ Thumb#thumb">
+    <Setter Property="Background" Value="{DynamicResource PtSliderThumbHoverBrush}" />
+  </Style>
+  <Style Selector="Slider:disabled">
+    <Setter Property="Opacity" Value="0.45" />
   </Style>
 </Styles>

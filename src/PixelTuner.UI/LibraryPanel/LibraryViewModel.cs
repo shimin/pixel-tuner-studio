@@ -44,10 +44,13 @@ public sealed class LibraryEntryViewModel(LibraryEntry entry, PlacementProblem p
         _ => $"{Entry.Width} × {Entry.Height}",
     };
 
-    public string Reason => Problem switch
+    public string Reason => ReasonOf(Problem, Entry);
+
+    /// <summary>Why an entry does not go on a timeline, in words ("" when it does).</summary>
+    public static string ReasonOf(PlacementProblem problem, LibraryEntry entry) => problem switch
     {
         PlacementProblem.WrongKind => Strings.Library_WrongKind,
-        PlacementProblem.WrongHeight => string.Format(Strings.Library_WrongHeight, Entry.Height),
+        PlacementProblem.WrongHeight => string.Format(Strings.Library_WrongHeight, entry.Height),
         PlacementProblem.MissingMedia => Strings.Library_Missing,
         _ => "",
     };
@@ -71,6 +74,7 @@ public sealed class LibraryEntryViewModel(LibraryEntry entry, PlacementProblem p
     {
         get
         {
+            if (IsFixed) return null;   // PixelTuner 2's picture is shown instead
             try
             {
                 if (Entry.Kind == LibraryKind.Color) return Brush(Entry.Color);
@@ -117,6 +121,7 @@ public sealed partial class LibraryViewModel : ObservableObject
     private readonly EditorViewModel _editor;
     private readonly Func<IFilePicker?> _picker;
     private readonly Dictionary<string, Bitmap?> _thumbnails = [];
+    private static readonly Dictionary<string, Bitmap?> _pictures = [];
 
     public LibraryViewModel(EditorViewModel editor, Func<IFilePicker?> picker)
     {
@@ -138,20 +143,32 @@ public sealed partial class LibraryViewModel : ObservableObject
     ];
 
     /// <summary>
-    /// The LightMaster's colour and effects as PixelTuner 2's effects pane had them (solid colour, linear transition, sine, square and
-    /// saw-tooth wave) with the defaults a new light item gets. Fixed: not in the project.
+    /// The LightMaster's colour and effects exactly as PixelTuner 2's effects pane had them (<c>EffectsViewModel</c> and the
+    /// <c>Effect*ThumbnailViewModel</c> classes): solid colour (black), linear transition, sine wave, square wave and saw-tooth wave, each
+    /// from black to red, with the times PixelTuner 2 started them with (0 is "not set"). The pictures are PixelTuner 2's, in
+    /// <c>Assets/LightEffects</c>. Fixed: not in the project.
     /// </summary>
     public static IReadOnlyList<LibraryEntry> LightEntries { get; } =
     [
-        new() { Name = Strings.Effect_Solid, Kind = LibraryKind.Color, Color = "#FFFFFF" },
-        Effect(Strings.Effect_LinearTransition, LightEffectKind.LinearTransition),
-        Effect(Strings.Effect_SineWave, LightEffectKind.SineWave),
-        Effect(Strings.Effect_SquareWave, LightEffectKind.SquareWave),
-        Effect(Strings.Effect_SawToothWave, LightEffectKind.SawToothWave),
+        new() { Name = Strings.Effect_Solid, Kind = LibraryKind.Color, Color = "#000000" },
+        Effect(Strings.Effect_LinearTransition, LightEffectKind.LinearTransition, t1: 0, t2: 0),
+        Effect(Strings.Effect_SineWave, LightEffectKind.SineWave, t1: 2000, t2: 0),
+        Effect(Strings.Effect_SquareWave, LightEffectKind.SquareWave, t1: 1000, t2: 1000),
+        Effect(Strings.Effect_SawToothWave, LightEffectKind.SawToothWave, t1: 1000, t2: 1000),
     ];
 
-    private static LibraryEntry Effect(string name, string effect) =>
-        new() { Name = name, Kind = LibraryKind.Effect, Color = "#000000", ColorLast = "#FFFFFF", Effect = effect, T1 = 1000, T2 = 1000 };
+    private static LibraryEntry Effect(string name, string effect, int t1, int t2) =>
+        new() { Name = name, Kind = LibraryKind.Effect, Color = "#000000", ColorLast = "#FF0000", Effect = effect, T1 = t1, T2 = t2 };
+
+    /// <summary>The picture PixelTuner 2 showed for a fixed entry.</summary>
+    private static string? PictureOf(LibraryEntry entry) => entry.Kind == LibraryKind.Color ? "04_solid" : entry.Effect switch
+    {
+        LightEffectKind.LinearTransition => "00_effect",
+        LightEffectKind.SineWave => "01_effect",
+        LightEffectKind.SquareWave => "02_effect",
+        LightEffectKind.SawToothWave => "03_effect",
+        _ => null,
+    };
 
     private int _sectionIndex;
 
@@ -292,6 +309,13 @@ public sealed partial class LibraryViewModel : ObservableObject
 
     private Bitmap? Thumbnail(LibraryEntry entry)
     {
+        if (!Library.HasMedia(entry.Kind))
+        {
+            if (PictureOf(entry) is not { } picture) return null;
+            if (_pictures.TryGetValue(picture, out var known)) return known;
+            using var stream = Avalonia.Platform.AssetLoader.Open(new Uri($"avares://PixelTuner.UI/Assets/LightEffects/{picture}.png"));
+            return _pictures[picture] = new Bitmap(stream);
+        }
         if (entry.ResourceId is not { } id || !Library.HasMedia(entry.Kind)) return null;
         if (_thumbnails.TryGetValue(id, out var made)) return made;
         try
@@ -321,6 +345,9 @@ public sealed partial class LibraryViewModel : ObservableObject
         if (Selected is not { } selected || Target is not { } timeline) return;
         Place(selected.Entry, timeline);
     }
+
+    /// <summary>"No room" for a drop that found none (the timelines tell: an item cannot be put where it was dropped).</summary>
+    public void ShowNoRoom() => Message = Strings.Item_NoRoom;
 
     public TimelineItem? Place(LibraryEntry entry, Timeline timeline)
     {

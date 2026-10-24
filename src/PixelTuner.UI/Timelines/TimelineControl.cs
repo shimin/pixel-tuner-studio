@@ -8,6 +8,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PixelTuner.Core.Model;
 using PixelTuner.UI.LedLayouts;
+using PixelTuner.UI.LibraryPanel;
 using PixelTuner.UI.Resources;
 
 namespace PixelTuner.UI.Timelines;
@@ -34,6 +35,7 @@ public sealed class TimelineControl : Control
         AddHandler(DragDrop.DragOverEvent, OnLayoutDragOver);
         AddHandler(DragDrop.DragLeaveEvent, OnLayoutDragLeave);
         AddHandler(DragDrop.DropEvent, OnLayoutDrop);
+        ActualThemeVariantChanged += (_, _) => InvalidateVisual();
     }
 
     private LedLayout? DraggedLayout(DragEventArgs e) =>
@@ -41,10 +43,21 @@ public sealed class TimelineControl : Control
             ? editor.Project.LedLayouts.FirstOrDefault(l => l.Id == guid)
             : null;
 
+    private LibraryEntry? DraggedEntry(DragEventArgs e) =>
+        Editor is { } editor && e.DataTransfer.TryGetValue(LibraryDrag.Format) is { } id && Guid.TryParse(id, out var guid) ? editor.FindEntry(guid) : null;
+
     private void OnLayoutDragOver(object? sender, DragEventArgs e)
     {
-        if (Editor is not { } editor || DraggedLayout(e) is null) return;   // not ours: the window decides (a package file)
+        if (Editor is not { } editor) return;
         double y = e.GetPosition(this).Y;
+        if (DraggedEntry(e) is { } entry)
+        {
+            editor.HoverEntry(y, entry);
+            e.DragEffects = editor.LayoutDrop is { Allowed: true } ? DragDropEffects.Copy : DragDropEffects.None;
+            e.Handled = true;
+            return;
+        }
+        if (DraggedLayout(e) is null) return;   // not ours: the window decides (a package file)
         editor.HoverLayout(y);
         e.DragEffects = editor.TimelineAt(y) is { Kind: TimelineKind.Video } ? DragDropEffects.Link : DragDropEffects.None;
         e.Handled = true;
@@ -54,6 +67,13 @@ public sealed class TimelineControl : Control
 
     private void OnLayoutDrop(object? sender, DragEventArgs e)
     {
+        if (Editor is { } dropTo && DraggedEntry(e) is { } entry)
+        {
+            var at = e.GetPosition(this);
+            dropTo.DropEntry(at.X, at.Y, entry);
+            e.Handled = true;
+            return;
+        }
         if (Editor is not { } editor || DraggedLayout(e) is not { } layout) return;
         editor.DropLayout(e.GetPosition(this).Y, layout);
         e.Handled = true;
@@ -281,7 +301,8 @@ public sealed class TimelineControl : Control
         var text = ThemeBrush("SystemControlForegroundBaseHighBrush", Colors.Black);
         var accent = ThemeBrush("SystemControlHighlightAccentBrush", Colors.DodgerBlue);
         var line = new Pen(muted, 1) { DashStyle = null };
-        var faint = new Pen(new SolidColorBrush(((ISolidColorBrush)muted).Color, 0.25), 1);
+        // Thin lines: the same weight against the page in both themes (the muted grey is darker against a light page, so it takes less).
+        var faint = new Pen(new SolidColorBrush(((ISolidColorBrush)muted).Color, ActualThemeVariant == Avalonia.Styling.ThemeVariant.Dark ? 0.25 : 0.16), 1);
 
         context.FillRectangle(surface, new Rect(0, 0, width, Bounds.Height));
 
@@ -298,8 +319,6 @@ public sealed class TimelineControl : Control
 
             var color = ParseColor(timeline.Color, Colors.DodgerBlue);
             context.FillRectangle(new SolidColorBrush(color), new Rect(0, top, 4, TimelineEditor.TrackHeight));
-            if (ReferenceEquals(editor.Selected, timeline))
-                context.DrawRectangle(null, new Pen(accent, 2), new Rect(1, top + 1, TimelineEditor.HeaderWidth - 2, TimelineEditor.TrackHeight - 2));
             DrawClipped(context, new Rect(12, top, TimelineEditor.HeaderWidth - 18, TimelineEditor.TrackHeight), () =>
             {
                 context.DrawText(Text(timeline.Name, 14, text, FontWeight.SemiBold), new Point(12, top + 10));
@@ -322,11 +341,20 @@ public sealed class TimelineControl : Control
                 foreach (var item in editor.Project.Timelines[i].Items)
                     DrawItem(context, editor, editor.Project.Timelines[i], item, editor.TrackTop(i), text, accent);
 
+            for (int i = 0; i < editor.Project.Timelines.Count; i++)
+                foreach (var item in editor.Project.Timelines[i].Items)
+                    if (editor.IsSelected(item)) DrawSelectionGlow(context, editor, editor.Project.Timelines[i], item, editor.TrackTop(i));
+
             DrawMarkers(context, editor, accent, text);
             DrawPlayhead(context, editor, accent);
             DrawDenial(context, editor, timeArea);
             DrawLayoutDrop(context, editor, timeArea);
         }
+
+        // The selected timeline is marked as an item is, along its whole row: the name column and the lane.
+        for (int i = 0; i < editor.Project.Timelines.Count; i++)
+            if (ReferenceEquals(editor.Selected, editor.Project.Timelines[i]))
+                DrawGlow(context, new Rect(0, editor.TrackTop(i), width, TimelineEditor.TrackHeight), 4);
 
         context.DrawLine(new Pen(new SolidColorBrush(((ISolidColorBrush)muted).Color, 0.15), 1), new Point(0, TimelineEditor.RulerHeight), new Point(width, TimelineEditor.RulerHeight));
         // The divider of the name column stops where the timelines begin: the rows tell themselves apart by colour.
@@ -393,22 +421,21 @@ public sealed class TimelineControl : Control
         context.FillRectangle(card, new Rect(0, top, Bounds.Width, TimelineEditor.WaveHeight));
         context.DrawLine(faint, new Point(0, top + TimelineEditor.WaveHeight), new Point(Bounds.Width, top + TimelineEditor.WaveHeight));
 
-        // A button, drawn like the ones of the toolbar: without a sound it asks for one (accent), with one it names it and
-        // replaces it on a click. The click area is the button, nothing else of the header.
+        // A button as the toolbar's ("Add timeline"): the Fluent button's own fill, text and corner, 40 px high, over the whole name column
+        // less the same space at its sides. Without a sound it asks for one, with one it names it and replaces it on a click.
         bool empty = editor.Project.AudioResourceId is null;
         var button = new Rect(TimelineEditor.SoundtrackButtonInset, TimelineEditor.SoundtrackButtonTop,
             TimelineEditor.HeaderWidth - 2 * TimelineEditor.SoundtrackButtonInset, TimelineEditor.SoundtrackButtonHeight);
-        var accentColour = ((ISolidColorBrush)accent).Color;
-        var mutedColour = ((ISolidColorBrush)muted).Color;
-        var fill = new SolidColorBrush(empty ? accentColour : mutedColour, _soundtrackHovered ? (empty ? 0.28 : 0.2) : (empty ? 0.16 : 0.1));
-        var border = new Pen(_soundtrackHovered || empty ? accent : new SolidColorBrush(mutedColour, 0.45), 1);
-        context.DrawRectangle(fill, border, button, 8, 8);
+        var fill = _soundtrackHovered ? ThemeBrush("ButtonBackgroundPointerOver", Color.FromRgb(0x44, 0x44, 0x44)) : ThemeBrush("ButtonBackground", Color.FromRgb(0x3A, 0x3A, 0x3A));
+        var foreground = ThemeBrush("ButtonForeground", Colors.White);
+        var border = new Pen(ThemeBrush("ButtonBorderBrush", Colors.Transparent), 1);
+        context.DrawRectangle(fill, border, button, 4, 4);
 
         string label = "♪  " + (empty
             ? Strings.Soundtrack_Import
             : System.IO.Path.GetFileName((editor.Project.AudioSourcePath ?? "").Replace('\\', '/')));
         var caption = new FormattedText(label, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight,
-            new Typeface(FontFamily.Default, FontStyle.Normal, FontWeight.SemiBold), 13, _soundtrackHovered && !empty ? accent : text)
+            new Typeface(FontFamily.Default, FontStyle.Normal, FontWeight.Normal), 14, foreground)
         {
             MaxTextWidth = button.Width - 16,
             MaxLineCount = 2,
@@ -498,9 +525,12 @@ public sealed class TimelineControl : Control
         {
             double left = editor.TimeToX(start), right = editor.TimeToX(start + duration);
             if (right < editor.ViewWidth * -1 || left > editor.ViewWidth) return;
-            var rect = new Rect(left, top + 6, Math.Max(2, right - left), TimelineEditor.TrackHeight - 12);
-            bool selected = editor.IsSelected(item);
-            context.DrawRectangle(new SolidColorBrush(fill, opacity * 0.85), selected || outline ? new Pen(accent, 2) : new Pen(new SolidColorBrush(fill), 1), rect, 4, 4);
+            var rect = ItemRect(editor, start, duration, top);
+            // Every item has a 1 px border of a translucent grey (not a colour); a selected one has the glow drawn over everything
+            // (DrawSelectionGlow). The place an item being dragged would land on has a plain light outline.
+            // The fill stops one pixel short of the edge and the border is that pixel, so none of the timeline's colour shows through the border.
+            context.DrawRectangle(new SolidColorBrush(fill, opacity * 0.85), null, rect.Deflate(1), 3, 3);
+            context.DrawRectangle(null, outline ? new Pen(new SolidColorBrush(SelectionGrey), 2) : new Pen(new SolidColorBrush(EdgeGrey, 0.4), 1), rect.Deflate(outline ? 0 : 0.5), 4, 4);
 
             // The content is clipped to the item: the last pass is cut off where the item ends.
             var inner = rect.Deflate(1);
@@ -529,6 +559,39 @@ public sealed class TimelineControl : Control
         }
     }
 
+    private static Rect ItemRect(TimelineEditor editor, TimeSpan start, TimeSpan duration, double top)
+    {
+        double left = editor.TimeToX(start), right = editor.TimeToX(start + duration);
+        return new Rect(left, top + 6, Math.Max(2, right - left), TimelineEditor.TrackHeight - 12);
+    }
+
+    // The mark of a selected item (an experiment: no colour): a light grey border that fades out to nothing over this many pixels.
+    private const int GlowWidth = 4;
+    private static readonly Color SelectionGrey = Color.FromRgb(0xD8, 0xD8, 0xD8);
+
+    /// <summary>The grey of item borders and of the selection glow: light on the dark theme, dark on the light one, where light would not show.</summary>
+    private Color EdgeGrey => ActualThemeVariant == Avalonia.Styling.ThemeVariant.Dark ? SelectionGrey : Color.FromRgb(0x40, 0x40, 0x40);
+
+    /// <summary>
+    /// A grey border on the inside edge of every selected item that fades away outward in <see cref="GlowWidth"/> pixels. Drawn after all
+    /// the items, so the neighbours do not cover it. The grey is light on the dark theme and dark on the light one, where it would not show.
+    /// </summary>
+    private void DrawSelectionGlow(DrawingContext context, TimelineEditor editor, Timeline timeline, TimelineItem item, double top) =>
+        DrawGlow(context, ItemRect(editor, item.Start, item.Duration, top), 4);
+
+    /// <summary>The border and the fade-out of a selection round a rectangle (see <see cref="DrawSelectionGlow"/>).</summary>
+    private void DrawGlow(DrawingContext context, Rect rect, double radius)
+    {
+        var grey = EdgeGrey;
+        for (int k = 0; k < GlowWidth; k++)
+        {
+            // Ring k is one pixel wide: the first lies just inside the edge, the next ones outside it.
+            double grow = k - 0.5;
+            double corner = radius + Math.Max(0, grow);
+            context.DrawRectangle(null, new Pen(new SolidColorBrush(grey, 0.9 * (1 - (double)k / GlowWidth)), 1), rect.Inflate(grow), corner, corner);
+        }
+    }
+
     /// <summary>
     /// The picture repeated along the item, as the device repeats it from the item's start to its end. A pass is as wide as it
     /// takes to play at the item's speed; when passes are too narrow to tell apart, the average colour is drawn.
@@ -546,7 +609,7 @@ public sealed class TimelineControl : Control
         var source = new Rect(0, 0, bitmap.PixelSize.Width, bitmap.PixelSize.Height);
         if (item.Kind == ItemKind.Video)
         {
-            DrawStills(context, bitmap, source, run, inner, left, right);
+            DrawFilmStrip(context, thumb, bitmap, source, run, inner, left);
             return;
         }
         // Sharp columns when a pass is wider than its picture, smooth when it is squeezed.
@@ -556,40 +619,49 @@ public sealed class TimelineControl : Control
             for (int n = run.FirstPass; n <= run.LastPass; n++)
                 context.DrawImage(bitmap, source, new Rect(left + n * run.PassWidth, inner.Y, run.PassWidth, inner.Height));
         }
-
-        if (run.PassWidth < TimelineEditor.PassLineWidth) return;
-        var line = new Pen(new SolidColorBrush(Colors.White, 0.7), 1);
-        for (int n = Math.Max(1, run.FirstPass); n <= run.LastPass; n++)
-        {
-            double x = left + n * run.PassWidth;
-            if (x < right) context.DrawLine(line, new Point(x, inner.Y), new Point(x, inner.Bottom));
-        }
     }
 
     /// <summary>
-    /// A video is a still frame, not the animation: the first frame in its own proportions at the start of each pass, the
-    /// rest of the pass left to the item's colour. Passes are told apart by a line when they are wide enough.
+    /// A video along its pass as a film strip: tiles of one fixed size (the frame in its own proportions at the height of the lane), side by
+    /// side from the start of the pass, each showing the frame that plays at its left edge, so the first tile is the first frame and the
+    /// strip reads like time. The size of a tile does not depend on the zoom, only how many fit, so zooming moves and cuts tiles but never
+    /// stretches them; the last tile of a pass is cut where the pass ends. A pass narrower than a tile shows the left part of the first
+    /// frame. Tile edges are on whole pixels, so neighbours neither overlap nor leave a gap. The same again for every pass.
     /// </summary>
-    private static void DrawStills(DrawingContext context, Bitmap bitmap, Rect source, TimelineEditor.TileRun run, Rect inner, double left, double right)
+    private static void DrawFilmStrip(DrawingContext context, Thumbnail thumb, Bitmap first, Rect source, TimelineEditor.TileRun run, Rect inner, double left)
     {
-        context.FillRectangle(Brushes.Black, inner);   // behind the stills, like film around its frames
-        double stillWidth = Math.Min(run.PassWidth, inner.Height * source.Width / source.Height);
+        context.FillRectangle(Brushes.Black, inner);   // behind the tiles, like film around its frames
+        double tile = inner.Height * source.Width / source.Height;
+        int frames = thumb.Strip?.Count ?? 0;
+        double visibleLeft = Math.Max(inner.X, TimelineEditor.HeaderWidth);
         using (context.PushRenderOptions(new RenderOptions { BitmapInterpolationMode = BitmapInterpolationMode.MediumQuality }))
         {
             for (int n = run.FirstPass; n <= run.LastPass; n++)
             {
-                double x = left + n * run.PassWidth;
-                // The still is cut to the pass, so a narrow pass shows the left part of the frame, not a squeezed one.
-                var part = new Rect(0, 0, source.Width * stillWidth / (inner.Height * source.Width / source.Height), source.Height);
-                context.DrawImage(bitmap, part, new Rect(x, inner.Y, stillWidth, inner.Height));
+                double x0 = left + n * run.PassWidth;
+                if (frames == 0 || run.PassWidth < tile)
+                {
+                    // The still is cut to the pass, so a narrow pass shows the left part of the frame, not a squeezed one.
+                    double width = Math.Min(run.PassWidth, tile);
+                    context.DrawImage(first, new Rect(0, 0, source.Width * width / tile, source.Height), new Rect(x0, inner.Y, width, inner.Height));
+                    continue;
+                }
+                // Only the tiles that can be seen: the lane is clipped to the item and the window.
+                int from = (int)Math.Max(0, Math.Floor((visibleLeft - x0) / tile));
+                int to = (int)Math.Min(Math.Ceiling(run.PassWidth / tile) - 1, Math.Floor((inner.Right - x0) / tile));
+                for (int i = from; i <= to; i++)
+                {
+                    double start = i * tile, end = Math.Min(start + tile, run.PassWidth);
+                    double u = start / run.PassWidth;   // how far into the pass: which frame plays here
+                    var frame = thumb.StripBitmap(Math.Min(frames - 1, (int)(u * frames)));
+                    if (frame is null) continue;
+                    double xa = Math.Round(x0 + start), xb = Math.Round(x0 + end);
+                    if (xb <= xa) continue;
+                    // The last tile of a pass is cut, not squeezed.
+                    double shown = (end - start) / tile;
+                    context.DrawImage(frame, new Rect(0, 0, frame.PixelSize.Width * shown, frame.PixelSize.Height), new Rect(xa, inner.Y, xb - xa, inner.Height));
+                }
             }
-        }
-        if (run.PassWidth < TimelineEditor.PassLineWidth) return;
-        var line = new Pen(new SolidColorBrush(Colors.White, 0.7), 1);
-        for (int n = Math.Max(1, run.FirstPass); n <= run.LastPass; n++)
-        {
-            double x = left + n * run.PassWidth;
-            if (x < right) context.DrawLine(line, new Point(x, inner.Y), new Point(x, inner.Bottom));
         }
     }
 
@@ -671,7 +743,7 @@ public sealed class TimelineControl : Control
 /// <summary>
 /// The background of a timeline's row, as PixelTuner 2 had it (<c>TimeLineViewModel.Background</c> and <c>SetBackgrounds</c>): two shades a
 /// few levels apart that alternate with the place of the timeline, and a tint for each kind of device. PixelTuner 2 was dark only; the
-/// light theme keeps the same differences on a light ground.
+/// light theme has the same weight against its page and the same tints.
 /// </summary>
 public static class TimelineRows
 {
@@ -684,16 +756,20 @@ public static class TimelineRows
         _ => (Color.FromRgb(70, 70, 70), Color.FromRgb(64, 64, 64)),
     };
 
+    // The page and the dark rows' base grey in the dark theme, and the page in the light one: the light rows keep the same distance from the
+    // page (three quarters of it, a lighter page shows the same distance stronger) and the same tint of each kind.
+    private const double DarkPage = 22, LightPage = 247, LightWeight = 0.75;
+
     public static Color Background(string kind, int place, bool darkTheme)
     {
         var (even, odd) = Dark(kind);
         var dark = place % 2 == 0 ? even : odd;
         if (darkTheme) return dark;
 
-        // Light theme: the same offsets from grey, on a light base.
-        var (grey, _) = Dark(TimelineKind.Pixel);
-        byte Lift(byte value, byte reference, int baseLevel) => (byte)Math.Clamp(baseLevel + (value - reference) / 2, 0, 255);
-        int level = place % 2 == 0 ? 244 : 236;
-        return Color.FromRgb(Lift(dark.R, grey.R, level), Lift(dark.G, grey.G, level), Lift(dark.B, grey.B, level));
+        var (greyEven, greyOdd) = Dark(TimelineKind.Pixel);
+        var grey = place % 2 == 0 ? greyEven : greyOdd;
+        double baseLevel = LightPage - LightWeight * (grey.R - DarkPage);
+        byte Channel(byte value, byte reference) => (byte)Math.Clamp(Math.Round(baseLevel + LightWeight * (value - reference)), 0, 255);
+        return Color.FromRgb(Channel(dark.R, grey.R), Channel(dark.G, grey.R), Channel(dark.B, grey.R));
     }
 }

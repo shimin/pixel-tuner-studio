@@ -44,8 +44,8 @@ Replace the whole line with a brush: `var accent = new SolidColorBrush(Color.Par
 
 | I want to change | Search in `TimelineControl.cs` | What it is |
 | --- | --- | --- |
-| Frame around a **selected timeline** (header) | `ReferenceEquals(editor.Selected, timeline)` | `new Pen(accent, 2)`: colour and thickness (the `2`) |
-| Frame around a **selected item** (picture on a lane) | `new Pen(accent, 2) : new Pen(new SolidColorBrush(fill), 1)` in `DrawItem` | same: colour and thickness |
+| Mark of a **selected timeline**: the same grey fading border as an item, along its whole row (name column and lane) | `ReferenceEquals(editor.Selected, editor.Project.Timelines[i])` in `Render`, drawn by `DrawGlow` (shared with `DrawSelectionGlow`) | `GlowWidth`, `SelectionGrey`, the alpha `0.9` in `DrawGlow` |
+| Mark of a **selected item** (picture on a lane): a grey border that fades out | `private void DrawSelectionGlow`; `GlowWidth` (4 px) and `SelectionGrey` above it | the colour (light on the dark theme, dark on the light one), the start alpha `0.9`, the width. No accent colour. The place a dragged item would land on has a plain 2 px outline of the same grey (`outline` in `DrawItem`) |
 | Colour of the **playhead** (the cursor) and its cap | `private void DrawPlayhead`, line `var pen = new Pen(accent, 2);` and `DrawGeometry(accent` | thickness `2`; cap size is the `6` and `12` below it |
 | **Marker** colours | `Colors.OrangeRed` in `DrawMarkers` | normal marker; the selected one uses `accent` |
 | Red / green hint while dragging | `Color.FromRgb(209, 73, 91)` (denied, red) and `Color.FromRgb(51, 170, 119)` (allowed, green) | red is in `DrawDenial` and in `DrawLayoutDrop`, green only in `DrawLayoutDrop` |
@@ -57,10 +57,10 @@ Replace the whole line with a brush: `var accent = new SolidColorBrush(Color.Par
 | Timeline **name**: size, weight, colour | `timeline.Name, 14` | `Text(text, size, brush, weight)`: `14` is the size, `text` the colour |
 | Timeline **kind line** ("Pixel: poi, staff, hoop") | `KindLabel(timeline.Kind), 12` | `12` is the size, `muted` the colour |
 | Coloured **strip** on the left of a header | `new Rect(0, top, 4,` | the `4` is its width; its colour is the timeline's own colour (the user picks it in the inspector) |
-| **Row background** (two alternating shades, tinted by kind of timeline, as PixelTuner 2 had) | `class TimelineRows` at the end of the file | the RGB pairs in `Dark(...)` are PixelTuner 2's own (even place, odd place) and the light theme is derived from them in `Background(...)`. There are no lines between rows; the shade follows the place, so it changes when a timeline is moved |
+| **Row background** (two alternating shades, tinted by kind of timeline, as PixelTuner 2 had) | `class TimelineRows` at the end of the file | the RGB pairs in `Dark(...)` are PixelTuner 2's own (even place, odd place) and the light theme is derived from them in `Background(...)`: the same tints, and three quarters of the distance from the page (`LightWeight`). There are no lines between rows; the shade follows the place, so it changes when a timeline is moved |
 | **Border** under the ruler and the divider of the name column (it stops where the timelines begin) | lines `DrawLine(new Pen(muted, 1), new Point(0, TimelineEditor.RulerHeight)` and `DrawLine(faint, new Point(TimelineEditor.HeaderWidth, 0)` (last lines of `Render`) | pen colour and thickness |
 | **Corner buttons** (delete, move up, move down; left of the ruler) | `private void DrawCornerButtons` | `fill`, `border`, corner `6`, glyph size `14`. Their size and place are `CornerButton*` in `TimelineEditor.cs` |
-| **Import sound** button (sound lane header) | `private void DrawWaveHeader` | `fill`, `border`, corner `8` in `DrawRectangle(fill, border, button, 8, 8)`, text size `13` in the `FormattedText`. Its size and place are `SoundtrackButton*` in `TimelineEditor.cs` |
+| **Import sound** button (sound lane header) | `private void DrawWaveHeader` | the same look as the toolbar's "Add timeline": the Fluent button's own resources (`ButtonBackground`, `ButtonBackgroundPointerOver`, `ButtonForeground`, `ButtonBorderBrush`), corner `4` in `DrawRectangle(fill, border, button, 4, 4)`, text size `14` in the `FormattedText`. Its size and place are `SoundtrackButton*` in `TimelineEditor.cs` |
 
 ### Sound lane (waveform)
 
@@ -78,7 +78,7 @@ Replace the whole line with a brush: `var accent = new SolidColorBrush(Color.Par
 
 | I want to change | Search | What it is |
 | --- | --- | --- |
-| Item **fill** and its thin **border** | `new SolidColorBrush(fill, opacity * 0.85)` in `DrawItem` | fill = timeline colour at 85 %; border = `new Pen(new SolidColorBrush(fill), 1)` |
+| Item **fill** and its thin **border** | `new SolidColorBrush(fill, opacity * 0.85)` in `DrawItem` | fill = timeline colour at 85 %, one pixel short of the edge; border = the 1 px translucent grey pen `new Pen(new SolidColorBrush(EdgeGrey, 0.4), 1)` (light on the dark theme, dark on the light one; no colour) |
 | Item **corner radius** | the `4, 4` at the end of that `DrawRectangle` | |
 | Item **label** (file name): size, colour | `ItemLabel(item), 12` | `12` is the size; colour is black or white by `Contrast(fill)` |
 | Dark **plate** behind the label | `Colors.Black, 0.55` | 55 % black |
@@ -106,6 +106,7 @@ Replace the whole line with a brush: `var accent = new SolidColorBrush(Color.Par
 | **Tool buttons** in the column left of a tab's content (Import, Put on timeline, ...) | `Theme.axaml`, `Button.tool`; the column width is `ColumnDefinitions="190,*"` in `EditorView.axaml`, `CanvasPanelView.axaml`, `PreviewPanelView.axaml` | padding, height, font size |
 | **Height of the bottom panel** (the user drags the splitter above it) | `EditorView.axaml`, `RowDefinitions="Auto,Auto,*,Auto,320"`: the `320` is the starting height | the height stays while tabs change |
 | Small grey text in the library | `EditorView.axaml`, `Classes="muted" FontSize="11"` | |
+| **Sliders** (zoom, preview, picture import): a pill with a round thumb inside | `Theme.axaml`: the `PtSliderTheme` control theme (sizes: pill 20 high, corner radius 9 = the thumb's radius, thumb 18 across with 1 px margin, in a 20 box whose right half is the fill's colour: the fill runs under the circle and ends at its right edge) and the `Pt*Slider*` brushes in both theme dictionaries (track, hover track, fill left of the thumb, thumb, thumb on hover, thumb held); the hover and held colours are the `Slider:pointerover` and `Thumb#thumb:pressed` styles below | monochrome: change the greys per theme. A style cannot replace a Fluent control's template here: replace a template through a `ControlTheme` and set `Theme=` |
 | **Buttons** (shape, accent button) | `src/PixelTuner.UI/App.axaml`, `<FluentTheme />` | the look comes from Fluent. The accent button (`Classes="accent"`) takes the system accent colour. Changing the colour of all Fluent controls: give `FluentTheme` a palette with `Accent` (Avalonia docs: `FluentTheme.Palettes`). Not tried here: build and look |
 | **Preview** panel (LED dots, background) | `src/PixelTuner.UI/PreviewPanel/TimelinePreviewControl.cs`, `Dark`, `Hairline`, `Marker` at the top | |
 | **Canvas** panel outlines | `src/PixelTuner.UI/LedLayouts/CanvasDrawingControl.cs`, `Page`, `Unmarked`, `Marked`, `Stroke`, `SelectedStroke` at the top | |
@@ -120,7 +121,7 @@ Replace the whole line with a brush: `var accent = new SolidColorBrush(Color.Par
 | `RulerHeight` | 34 | height of the ruler |
 | `WaveHeight` | 84 | height of the sound lane |
 | `TrackHeight` | 64 | height of one timeline row |
-| `SoundtrackButtonInset`, `SoundtrackButtonHeight` | 12, 40 | the Import sound button |
+| `SoundtrackButtonInset`, `SoundtrackButtonHeight` | 6 (= `CornerButtonGap`), 40 | the Import sound button |
 | `CornerButtonGap` | 6 | the delete / move buttons left of the ruler fill the corner cell; this is the space round and between them (their width and height follow from it) |
 
 If you make a header text bigger than the row allows, raise `TrackHeight` here, and move the second text line (`top + 32`) in the control.

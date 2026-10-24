@@ -61,10 +61,44 @@ public sealed class ItemThumbnailsTests
         var thumb = Thumbnails().Get(item, new Timeline { Kind = TimelineKind.Video })!;
 
         var first = GifFrames.Decode(gif)[0];
-        Assert.Equal((first.Width, first.Height), (thumb.Image.Width, thumb.Image.Height));   // a still, not a strip of frames
+        Assert.Equal((first.Width, first.Height), (thumb.Image.Width, thumb.Image.Height));   // the picture is the first frame
         Assert.Equal(first[0, 0], thumb.Image[0, 0]);
         Assert.Equal(frames, thumb.Columns);
         Assert.Equal(S(frames * 0.040), thumb.Pass(item));
+    }
+
+    [Fact]
+    public void A_video_keeps_a_few_frames_from_the_whole_animation_for_its_film_strip_and_brightness_applies_to_them()
+    {
+        var gif = File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "Fixtures", "glasses", "glasses.gif"));
+        _files["gif"] = gif;
+        var all = GifFrames.Decode(gif);
+        var item = new TimelineItem { Kind = ItemKind.Video, ResourceId = "gif", Stretching = 40, Brightness = 100 };
+        var timeline = new Timeline { Kind = TimelineKind.Video };
+
+        var strip = Thumbnails().Get(item, timeline)!.Strip!;
+
+        Assert.Equal(Math.Min(all.Count, ItemThumbnails.MaxStripFrames), strip.Count);
+        Assert.Equal(all[0][0, 0], strip[0][0, 0]);                                      // the strip begins with the first frame
+        Assert.All(strip, f => Assert.True(f.Height <= ItemThumbnails.StripHeight));      // small enough for a lane
+
+        // A frame in the middle comes from the middle of the animation: the strip's frames are evenly spaced.
+        int middle = strip.Count / 2;
+        var source = all[(int)((long)middle * all.Count / strip.Count)];
+        Assert.Equal(source[source.Width / 2, source.Height / 2], strip[middle][source.Width / 2, source.Height / 2]);
+
+        item.Brightness = 50;
+        var dim = Thumbnails().Get(item, timeline)!.Strip!;
+        var c = strip[0][strip[0].Width / 2, strip[0].Height / 2];
+        var d = dim[0][strip[0].Width / 2, strip[0].Height / 2];
+        Assert.True(d.R <= c.R / 2 + 1 && d.G <= c.G / 2 + 1 && d.B <= c.B / 2 + 1);
+    }
+
+    [Fact]
+    public void Pictures_and_gradients_have_no_strip()
+    {
+        Png("a", 4, 3, new SKColor(1, 2, 3));
+        Assert.Null(Thumbnails().Get(new TimelineItem { Kind = ItemKind.Image, ResourceId = "a" }, new Timeline())!.Strip);
     }
 
     [Fact]

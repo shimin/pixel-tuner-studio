@@ -221,7 +221,7 @@
   <data name="Library_SectionEpic" xml:space="preserve"><value>E-pic poi</value></data>
   <data name="Library_SectionLight" xml:space="preserve"><value>LightMaster</value></data>
   <data name="Library_LightHint" xml:space="preserve"><value>Colours and effects of the LightMaster are a fixed list: pick one and put it on a LightMaster timeline.</value></data>
-  <data name="Effect_Solid" xml:space="preserve"><value>Solid colour</value></data>
+  <data name="Effect_Solid" xml:space="preserve"><value>Solid Color</value></data>
   <data name="Library_HeightFilter" xml:space="preserve"><value>Height:</value></data>
   <data name="Library_AllHeights" xml:space="preserve"><value>All</value></data>
   <data name="Command_Zoom" xml:space="preserve"><value>Zoom</value></data>
@@ -243,10 +243,10 @@
   <data name="Inspector_Flip" xml:space="preserve"><value>Flip vertically (the device is mounted upside down)</value></data>
   <data name="Inspector_ColorNotWritten" xml:space="preserve"><value>This device does not store the timeline colour; it only helps you tell timelines apart.</value></data>
   <data name="Inspector_TimelineColor" xml:space="preserve"><value>Timeline colour</value></data>
-  <data name="Effect_LinearTransition" xml:space="preserve"><value>Linear transition</value></data>
-  <data name="Effect_SineWave" xml:space="preserve"><value>Sine wave</value></data>
-  <data name="Effect_SquareWave" xml:space="preserve"><value>Square wave</value></data>
-  <data name="Effect_SawToothWave" xml:space="preserve"><value>Saw-tooth wave</value></data>
+  <data name="Effect_LinearTransition" xml:space="preserve"><value>Linear Transition</value></data>
+  <data name="Effect_SineWave" xml:space="preserve"><value>Sine Wave</value></data>
+  <data name="Effect_SquareWave" xml:space="preserve"><value>Square Wave</value></data>
+  <data name="Effect_SawToothWave" xml:space="preserve"><value>Saw-tooth Wave</value></data>
   <data name="Item_BadMedia" xml:space="preserve"><value>{0} has no picture in it.</value></data>
   <data name="Inspector_Playback" xml:space="preserve"><value>One pass of the picture takes {0}; it plays {1} times in this item. A lower stretching plays it faster.</value></data>
   <data name="Inspector_FrameTime" xml:space="preserve"><value>Frame time, ms</value></data>

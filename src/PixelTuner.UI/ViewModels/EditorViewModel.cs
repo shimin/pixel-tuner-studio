@@ -54,6 +54,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
             Timelines.Player = _player;
         }
         Timelines.Changed += (_, _) => OnUi(() => { Refresh(); Preview.Moved(); });
+        Timelines.DropHadNoRoom += (_, _) => OnUi(() => Gallery.ShowNoRoom());
         Timelines.SelectionChanged += (_, _) => OnUi(() => { Refresh(); Preview.Moved(); });
         _ = LoadAudioAsync();
     }
