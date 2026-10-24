@@ -61,5 +61,8 @@ internal static class GradientColorProfile
         1996, 2012, 2028, 2044, 2060, 2076, 2092, 2108, 2124, 2140, 2160, 2180, 2200, 2220, 2240, 2260,
         2280, 2300, 2320, 2350, 2380, 2410, 2440, 2470, 2500, 2530, 2560, 2590, 2620, 2650, 2700, 2750,
         2800, 2850, 2900, 2950, 3000, 3050, 3100, 3150, 3200, 3250, 3350, 3450, 3550, 3650, 3750,
+            // PixelTuner 2 stopped at 254 and failed on full blue; 3850 continues the last steps
+        // and matches the green maximum.
+        3850,
     ];
 }

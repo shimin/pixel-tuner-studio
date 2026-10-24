@@ -32,14 +32,11 @@ public sealed class EpicOracleTests : IDisposable
     [InlineData(3, StudioDepth.Bit24)]
     [InlineData(4, StudioDepth.Bit36)]
     [InlineData(5, StudioDepth.Bit36)]
-    [InlineData(6, StudioDepth.Bit12)]
-    [InlineData(7, StudioDepth.Bit12)]
-    [InlineData(8, StudioDepth.Bit12)]
     public void Random_show_matches_PixelTuner_2(int seed, StudioDepth depth)
     {
         var random = new Random(seed);
         // Gradient pictures of random sizes; one name is never written, as a missing file.
-        // PixelTuner 2's 36-bit blue table stops at 254 and threw on full blue.
+        // PixelTuner 2's 36-bit blue table stopped at 254 and threw on full blue (Studio completes it).
         byte max = depth == StudioDepth.Bit36 ? (byte)254 : (byte)255;
         var files = Enumerable.Range(0, 6).Select(i => WriteBmp(random, $"g{i}.bmp", max)).ToList();
         files.Add(Path.Combine(_folder, "missing.bmp"));
@@ -51,6 +48,98 @@ public sealed class EpicOracleTests : IDisposable
 
         byte[] expected = Legacy(lines, (LegacyDepth)Enum.Parse(typeof(LegacyDepth), depth.ToString()));
         Assert.Equal(expected, actual);
+    }
+
+    /// <summary>
+    /// PixelTuner 2 wrote broken 12-bit files, so 12 bits are checked against the 24-bit export
+    /// (checked above): the same timelines, and each image holds 15 * value / 255 of its colours,
+    /// with its end address and the next image right after it.
+    /// </summary>
+    [Theory]
+    [InlineData(6)]
+    [InlineData(7)]
+    [InlineData(8)]
+    public void Twelve_bit_export_is_the_24_bit_one_in_4_bits(int seed)
+    {
+        var random = new Random(seed);
+        var files = Enumerable.Range(0, 6).Select(i => WriteBmp(random, $"g{i}.bmp", 255)).ToList();
+        files.Add(Path.Combine(_folder, "missing.bmp"));
+        var lines = Enumerable.Range(0, random.Next(1, 5)).Select(_ => RandomLine(random, files)).ToList();
+        var document = PtpDocument.Load(new MemoryStream(Encoding.UTF8.GetBytes(ToPtp(lines))));
+        var timelines = PtpEpicExport.EpicTimelines(document);
+        byte[] bin24 = new PtpEpicExport(path => File.Exists(path) ? path : null) { Depth = StudioDepth.Bit24 }.Export(timelines);
+        byte[] bin12 = new PtpEpicExport(path => File.Exists(path) ? path : null) { Depth = StudioDepth.Bit12 }.Export(timelines);
+
+        Assert.Equal(bin24.AsSpan(0, 7).ToArray(), bin12.AsSpan(0, 7).ToArray());
+        Assert.Equal((uint)bin12.Length, System.BitConverter.ToUInt32(bin12, 7));
+        int lineCount = bin24[11];
+        uint imagesStart = 0;
+        for (int t = 0; t < lineCount; t++)
+        {
+            int line = (int)System.BitConverter.ToUInt32(bin24, 12 + 4 * t);
+            Assert.Equal(line, (int)System.BitConverter.ToUInt32(bin12, 12 + 4 * t));
+            int count = System.BitConverter.ToUInt16(bin24, line);
+            Assert.Equal(bin24.AsSpan(line, 12).ToArray(), bin12.AsSpan(line, 12).ToArray());
+            for (int i = 0; i < count; i++)
+            {
+                int entry = line + 12 + 12 * i;
+                // Everything but the image address is the same.
+                Assert.Equal(bin24.AsSpan(entry + 4, 8).ToArray(), bin12.AsSpan(entry + 4, 8).ToArray());
+                int a24 = (int)System.BitConverter.ToUInt32(bin24, entry);
+                int a12 = (int)System.BitConverter.ToUInt32(bin12, entry);
+                imagesStart = (uint)(line + 12 + 12 * count);
+
+                Assert.Equal(8, bin24[a24]);
+                Assert.Equal(4, bin12[a12]);
+                int end24 = (int)System.BitConverter.ToUInt32(bin24, a24 + 1);
+                int end12 = (int)System.BitConverter.ToUInt32(bin12, a12 + 1);
+                int values = end24 - a24 - 4;
+                Assert.Equal(a12 + 4 + (values + 1) / 2, end12);
+                for (int v = 0; v < values; v++)
+                {
+                    int expected = 15 * bin24[a24 + 5 + v] / 255;
+                    byte packed = bin12[a12 + 5 + v / 2];
+                    Assert.Equal(expected, v % 2 == 0 ? packed >> 4 : packed & 0x0f);
+                }
+                if (values % 2 == 1) Assert.Equal(0, bin12[end12] & 0x0f);
+            }
+        }
+
+        // Images follow each other with no gap up to the end of the file.
+        int address = (int)imagesStart;
+        while (address < bin12.Length)
+        {
+            Assert.Equal(4, bin12[address]);
+            address = (int)System.BitConverter.ToUInt32(bin12, address + 1) + 1;
+        }
+        Assert.Equal(bin12.Length, address);
+    }
+
+    /// <summary>PixelTuner 2's blue table stopped at 254 and failed on full blue.</summary>
+    [Fact]
+    public void Full_blue_at_36_bits_takes_the_completed_table_entry()
+    {
+        string bmp = Path.Combine(_folder, "blue.bmp");
+        var bytes = new byte[58];
+        bytes[0] = (byte)'B'; bytes[1] = (byte)'M';
+        System.BitConverter.GetBytes(58).CopyTo(bytes, 2);
+        System.BitConverter.GetBytes(54).CopyTo(bytes, 10);
+        System.BitConverter.GetBytes(40).CopyTo(bytes, 14);
+        System.BitConverter.GetBytes(1).CopyTo(bytes, 18);
+        System.BitConverter.GetBytes(1).CopyTo(bytes, 22);
+        System.BitConverter.GetBytes((short)1).CopyTo(bytes, 26);
+        System.BitConverter.GetBytes((short)24).CopyTo(bytes, 28);
+        bytes[54] = 255;   // B, G, R
+        File.WriteAllBytes(bmp, bytes);
+        var lines = new List<LineSpec> { new((0, 0, 255), [new ItemSpec(bmp, 0, 1000, 1, 100, false)]) };
+        var document = PtpDocument.Load(new MemoryStream(Encoding.UTF8.GetBytes(ToPtp(lines))));
+        byte[] bin = new PtpEpicExport(path => File.Exists(path) ? path : null) { Depth = StudioDepth.Bit36 }
+            .Export(PtpEpicExport.EpicTimelines(document));
+        int image = (int)System.BitConverter.ToUInt32(bin, 12 + 4 + 12);
+        Assert.Equal(12, bin[image]);
+        Assert.Equal(0, System.BitConverter.ToUInt16(bin, image + 5));
+        Assert.Equal(0, System.BitConverter.ToUInt16(bin, image + 7));
+        Assert.Equal(3850, System.BitConverter.ToUInt16(bin, image + 9));
     }
 
     private sealed record LineSpec((byte R, byte G, byte B) Color, List<ItemSpec> Items);

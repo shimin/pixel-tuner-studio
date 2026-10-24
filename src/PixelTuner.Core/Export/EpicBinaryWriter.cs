@@ -45,10 +45,11 @@ public sealed class EpicExportItem
 /// <list type="bullet">
 /// <item>stretching is stored multiplied by 5, the laser bit is 1;</item>
 /// <item>24-bit colours are R, G, B of each column with brightness applied and no gamma;</item>
-/// <item>the 12-bit layout is broken in PixelTuner 2 and kept that way: the end address
-/// overwrites the bits-per-pixel byte, an odd last nibble is dropped, and the image addresses
-/// are counted as if every image took 3 bytes per column (see <see cref="Bit12Image"/>).</item>
 /// </list>
+/// Two PixelTuner 2 bugs are fixed (Ivan, 2026-10-24): its 12-bit images were broken (the end
+/// address overwrote the bits-per-pixel byte, an odd last nibble was dropped and the next image
+/// was placed as if this one took 3 bytes per column), and its 36-bit blue table had 255 entries,
+/// so full blue failed. 12-bit images now have the same layout as 24- and 36-bit ones.
 /// </remarks>
 public static class EpicBinaryWriter
 {
@@ -92,9 +93,7 @@ public static class EpicBinaryWriter
                 ColorDepth.Bit12 => Bit12Image(colors, imageAddress[i]),
                 _ => throw new ArgumentOutOfRangeException(nameof(depth)),
             });
-            // PixelTuner 2 placed the next image by the size it expected, which for 12 bits
-            // is not the size it wrote.
-            address += 5 + (long)colors.Length * (depth == ColorDepth.Bit36 ? 6 : 3);
+            address += blocks[i].Length;
         }
 
         var output = new List<byte>();
@@ -171,43 +170,32 @@ public static class EpicBinaryWriter
             var span = block.AsSpan(5 + 6 * i);
             BinaryPrimitives.WriteUInt16LittleEndian(span, r[colors[i].R]);
             BinaryPrimitives.WriteUInt16LittleEndian(span[2..], g[colors[i].G]);
-            // PixelTuner 2's blue table has 255 entries and failed on full blue;
-            // full blue takes the brightest entry here.
-            BinaryPrimitives.WriteUInt16LittleEndian(span[4..], b[Math.Min((int)colors[i].B, b.Length - 1)]);
+            BinaryPrimitives.WriteUInt16LittleEndian(span[4..], b[colors[i].B]);
         }
         return block;
     }
 
     /// <summary>
-    /// 4 bits per value, packed R, G, B, R, G, B, ... two to a byte, high nibble first.
-    /// PixelTuner 2 then wrote "start + length" over the first four bytes, so the
-    /// bits-per-pixel byte is lost and the fifth byte keeps the top byte of the address it
-    /// meant to write; an odd last nibble is never written.
+    /// 4 bits per value, packed R, G, B, R, G, B, ... two to a byte, high nibble first; an odd
+    /// last value takes the high nibble of the last byte.
     /// </summary>
     private static byte[] Bit12Image(Rgb[] colors, uint start)
     {
-        var block = new List<byte>(5 + colors.Length * 3 / 2) { 4 };
-        int planned = colors.Length * 3 / 2 + colors.Length * 3 % 2;
-        AddUInt32(block, (uint)(start + planned + 4));
-        int nibble = 0;
-        byte value = 0;
+        int values = colors.Length * 3;
+        var block = new byte[5 + (values + 1) / 2];
+        block[0] = 4;
+        BinaryPrimitives.WriteUInt32LittleEndian(block.AsSpan(1), (uint)(start + block.Length - 1));
+        int n = 0;
         foreach (var c in colors)
         {
             foreach (byte channel in (ReadOnlySpan<byte>)[c.R, c.G, c.B])
             {
-                byte v = (byte)(15 * channel / 255);
-                if (nibble % 2 == 0) value = (byte)((v & 0x0f) << 4);
-                else
-                {
-                    block.Add((byte)(value + (v & 0x0f)));
-                    value = 0;
-                }
-                nibble++;
+                int v = 15 * channel / 255;
+                block[5 + n / 2] |= (byte)(n % 2 == 0 ? v << 4 : v);
+                n++;
             }
         }
-        var result = block.ToArray();
-        BinaryPrimitives.WriteUInt32LittleEndian(result, (uint)(start + result.Length));
-        return result;
+        return block;
     }
 
     private static void AddUInt16(List<byte> output, ushort value)

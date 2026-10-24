@@ -22,6 +22,7 @@
   (Ivan: where Windows and the cleaner result differ, prefer quality over parity).
   E-Pic poi and LightMaster have no reference shows: `tests/PixelTuner.Legacy.OracleTests` compiles
   PixelTuner 2's own `Communication/Gradient` and `Communication/Binarize` and compares on random shows.
+  Two E-Pic bugs of PixelTuner 2 are fixed on purpose (Ivan): broken 12-bit images and full blue at 36 bits.
 - Merge PRs with a normal merge commit only.
 - The cloud sandbox can build and test Core, Package, Sync, UI and Desktop on Linux
   (`apt install dotnet-sdk-10.0`, `SSL_CERT_FILE=/root/.ccr/ca-bundle.crt` for NuGet).
