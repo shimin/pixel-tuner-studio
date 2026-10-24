@@ -57,9 +57,9 @@
 | **Имя** таймлайна: размер, насыщенность, цвет | `timeline.Name, 14` | `Text(текст, размер, кисть, насыщенность)`: `14` — размер, `text` — цвет |
 | **Строка типа** таймлайна («Pixel: poi, staff, hoop») | `KindLabel(timeline.Kind), 12` | `12` — размер, `muted` — цвет |
 | Цветная **полоска** слева от заголовка | `new Rect(0, top, 4,` | `4` — её ширина; цвет — собственный цвет таймлайна (его выбирает пользователь в инспекторе) |
-| **Фон строк** (полосатость) | `i % 2 == 0 ? card : surface` | поменять два имени местами или поставить одну кисть для всех строк |
-| **Линия между строками** | `DrawLine(faint, new Point(0, top + TimelineEditor.TrackHeight)` | перо: `faint` |
-| **Граница** под линейкой и между заголовками и дорожками | строки `DrawLine(new Pen(muted, 1), new Point(0, TimelineEditor.RulerHeight)` и `DrawLine(faint, new Point(TimelineEditor.HeaderWidth, 0)` (последние строки `Render`) | цвет и толщина пера |
+| **Фон строк** (два чередующихся оттенка, с оттенком по типу таймлайна, как в PixelTuner 2) | `class TimelineRows` в конце файла | пары RGB в `Dark(...)` — оригинальные значения PixelTuner 2 (чётное место, нечётное место), светлая тема считается из них в `Background(...)`. Линий между строками нет; оттенок зависит от места, поэтому меняется при перестановке таймлайнов |
+| **Граница** под линейкой и разделитель колонки имён (он заканчивается там, где начинаются таймлайны) | строки `DrawLine(new Pen(muted, 1), new Point(0, TimelineEditor.RulerHeight)` и `DrawLine(faint, new Point(TimelineEditor.HeaderWidth, 0)` (последние строки `Render`) | цвет и толщина пера |
+| **Угловые кнопки** (удалить, выше, ниже; слева от линейки) | `private void DrawCornerButtons` | `fill`, `border`, скругление `6`, размер значка `14`. Их размер и положение — `CornerButton*` в `TimelineEditor.cs` |
 | Кнопка **Import sound** (заголовок дорожки звука) | `private void DrawWaveHeader` | `fill`, `border`, скругление `8` в `DrawRectangle(fill, border, button, 8, 8)`, размер текста `13` в `FormattedText`. Её размер и положение — `SoundtrackButton*` в `TimelineEditor.cs` |
 
 ### Дорожка звука (волна)
@@ -101,7 +101,10 @@
 | Большой **заголовок** («Pixel Tuner Studio») | `Theme.axaml`, `TextBlock.h1` | `FontSize 28`, насыщенность |
 | Класс серого текста | `Theme.axaml`, `TextBlock.muted` | цвет |
 | Поля страницы и промежутки | `Theme.axaml`, `PtPagePadding`, `PtSpacing` | |
-| **Заголовки** инспектора и библиотеки | `src/PixelTuner.UI/Views/EditorView.axaml`, `FontSize="16"` (два места: `InspectorTitle` и `Library_Title`) | |
+| **Заголовок** инспектора | `src/PixelTuner.UI/Views/EditorView.axaml`, `FontSize="16"` (`InspectorTitle`) | |
+| **Вкладки** нижней панели (Library, Preview, Canvas, Devices: колонка слева) | `Theme.axaml`, `TabControl.rail TabItem`; сам контрол — `<TabControl Classes="rail" TabStripPlacement="Left"` в `EditorView.axaml` | размер шрифта, высота, отступы вкладки |
+| **Кнопки инструментов** в колонке слева от содержимого вкладки (Import, Put on timeline, ...) | `Theme.axaml`, `Button.tool`; ширина колонки — `ColumnDefinitions="190,*"` в `EditorView.axaml`, `CanvasPanelView.axaml`, `PreviewPanelView.axaml` | отступы, высота, размер шрифта |
+| **Высота нижней панели** (пользователь тянет разделитель над ней) | `EditorView.axaml`, `RowDefinitions="Auto,Auto,*,Auto,320"`: `320` — стартовая высота | высота не меняется при смене вкладок |
 | Мелкий серый текст в библиотеке | `EditorView.axaml`, `Classes="muted" FontSize="11"` | |
 | **Кнопки** (форма, акцентная кнопка) | `src/PixelTuner.UI/App.axaml`, `<FluentTheme />` | вид берётся из Fluent. Акцентная кнопка (`Classes="accent"`) использует системный акцентный цвет. Чтобы поменять цвет всех стандартных контролов Fluent, дайте `FluentTheme` палитру с `Accent` (документация Avalonia: `FluentTheme.Palettes`). Здесь не проверялось: соберите и посмотрите |
 | Панель **Preview** (точки светодиодов, фон) | `src/PixelTuner.UI/PreviewPanel/TimelinePreviewControl.cs`, `Dark`, `Hairline`, `Marker` в начале файла | |
@@ -118,6 +121,7 @@
 | `WaveHeight` | 84 | высота дорожки звука |
 | `TrackHeight` | 64 | высота одной строки таймлайна |
 | `SoundtrackButtonInset`, `SoundtrackButtonHeight` | 12, 40 | кнопка Import sound |
+| `CornerButtonGap` | 6 | кнопки удаления и перестановки заполняют ячейку слева от линейки; это отступ вокруг них и между ними (ширина и высота следуют из него) |
 
 Если текст заголовка стал больше, чем позволяет строка, увеличьте здесь `TrackHeight` и сдвиньте вторую строку текста (`top + 32`) в рисовалке.
 

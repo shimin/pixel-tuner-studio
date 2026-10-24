@@ -1,5 +1,6 @@
 using PixelTuner.Core.Model;
 using PixelTuner.Package;
+using PixelTuner.UI.Timelines;
 using PixelTuner.UI.ViewModels;
 
 namespace PixelTuner.UI.Tests;
@@ -97,6 +98,59 @@ public class EditorViewModelTests
         Assert.Equal(before, _editor.Timelines.PixelsPerSecond, 6);
         _editor.ZoomFitCommand.Execute(null);
         Assert.NotEqual(before, _editor.Timelines.PixelsPerSecond);
+    }
+
+    [Fact]
+    public void The_inspector_can_be_folded_away_and_brought_back()
+    {
+        Assert.True(_editor.IsInspectorVisible);
+        Assert.Equal("›", _editor.InspectorToggleGlyph);
+        var changed = new List<string?>();
+        _editor.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
+
+        _editor.ToggleInspectorCommand.Execute(null);
+        Assert.False(_editor.IsInspectorVisible);
+        Assert.Equal("‹", _editor.InspectorToggleGlyph);
+        Assert.Contains(nameof(EditorViewModel.InspectorToggleTip), changed);
+
+        _editor.ToggleInspectorCommand.Execute(null);
+        Assert.True(_editor.IsInspectorVisible);
+    }
+
+    [Fact]
+    public void The_bottom_panel_can_be_folded_away_and_brought_back()
+    {
+        Assert.True(_editor.IsBottomPanelVisible);
+        Assert.Equal("▾", _editor.BottomPanelToggleGlyph);
+
+        _editor.ToggleBottomPanelCommand.Execute(null);
+        Assert.False(_editor.IsBottomPanelVisible);
+        Assert.Equal("▴", _editor.BottomPanelToggleGlyph);
+
+        _editor.ToggleBottomPanelCommand.Execute(null);
+        Assert.True(_editor.IsBottomPanelVisible);
+    }
+
+    [Fact]
+    public void The_zoom_slider_sets_the_scale_and_follows_the_wheel_and_fit()
+    {
+        // 0 is the widest view, 1 the closest.
+        _editor.ZoomSlider = 0;
+        Assert.Equal(TimelineEditor.MinZoom, _editor.Timelines.PixelsPerSecond, 6);
+        _editor.ZoomSlider = 1;
+        Assert.Equal(TimelineEditor.MaxZoom, _editor.Timelines.PixelsPerSecond, 6);
+
+        _editor.ZoomSlider = 0.5;
+        Assert.Equal(Math.Sqrt(TimelineEditor.MinZoom * TimelineEditor.MaxZoom), _editor.Timelines.PixelsPerSecond, 6);
+
+        // What the wheel does moves the slider, and the slider echoing it back changes nothing.
+        var seen = new List<string?>();
+        _editor.PropertyChanged += (_, e) => seen.Add(e.PropertyName);
+        _editor.Timelines.ZoomAt(2, TimelineEditor.HeaderWidth);
+        Assert.Contains(nameof(EditorViewModel.ZoomSlider), seen);
+        double scale = _editor.Timelines.PixelsPerSecond;
+        _editor.ZoomSlider = _editor.ZoomSlider;
+        Assert.Equal(scale, _editor.Timelines.PixelsPerSecond, 9);
     }
 }
 

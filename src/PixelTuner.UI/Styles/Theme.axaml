@@ -34,4 +34,30 @@
     <Setter Property="CornerRadius" Value="{StaticResource PtCardRadius}" />
     <Setter Property="Padding" Value="16" />
   </Style>
+
+  <!-- The bottom panel's tabs: a stack of labels on the left (a rail), not a row of headings on top. -->
+  <Style Selector="TabControl.rail TabItem">
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="MinHeight" Value="32" />
+    <Setter Property="Padding" Value="12,4" />
+    <Setter Property="HorizontalContentAlignment" Value="Left" />
+  </Style>
+  <!-- A button of a tools column: as wide as the column, left aligned, no taller than the text needs. -->
+  <Style Selector="Button.tool">
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="HorizontalContentAlignment" Value="Left" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="Padding" Value="10,4" />
+    <Setter Property="MinHeight" Value="28" />
+    <Setter Property="FontSize" Value="13" />
+    <!-- A long label wraps instead of being cut. -->
+    <Setter Property="ContentTemplate">
+      <DataTemplate x:DataType="x:String"><TextBlock Text="{Binding}" TextWrapping="Wrap" /></DataTemplate>
+    </Setter>
+  </Style>
+  <Style Selector="ListBox.sections ListBoxItem">
+    <Setter Property="Padding" Value="10,4" />
+    <Setter Property="MinHeight" Value="28" />
+    <Setter Property="FontSize" Value="13" />
+  </Style>
 </Styles>

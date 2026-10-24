@@ -57,9 +57,9 @@ Replace the whole line with a brush: `var accent = new SolidColorBrush(Color.Par
 | Timeline **name**: size, weight, colour | `timeline.Name, 14` | `Text(text, size, brush, weight)`: `14` is the size, `text` the colour |
 | Timeline **kind line** ("Pixel: poi, staff, hoop") | `KindLabel(timeline.Kind), 12` | `12` is the size, `muted` the colour |
 | Coloured **strip** on the left of a header | `new Rect(0, top, 4,` | the `4` is its width; its colour is the timeline's own colour (the user picks it in the inspector) |
-| **Row background** (stripes) | `i % 2 == 0 ? card : surface` | swap the two names, or use one brush for all rows |
-| **Line between rows** | `DrawLine(faint, new Point(0, top + TimelineEditor.TrackHeight)` | pen: `faint` |
-| **Border** under the ruler and between header and lanes | lines `DrawLine(new Pen(muted, 1), new Point(0, TimelineEditor.RulerHeight)` and `DrawLine(faint, new Point(TimelineEditor.HeaderWidth, 0)` (last lines of `Render`) | pen colour and thickness |
+| **Row background** (two alternating shades, tinted by kind of timeline, as PixelTuner 2 had) | `class TimelineRows` at the end of the file | the RGB pairs in `Dark(...)` are PixelTuner 2's own (even place, odd place) and the light theme is derived from them in `Background(...)`. There are no lines between rows; the shade follows the place, so it changes when a timeline is moved |
+| **Border** under the ruler and the divider of the name column (it stops where the timelines begin) | lines `DrawLine(new Pen(muted, 1), new Point(0, TimelineEditor.RulerHeight)` and `DrawLine(faint, new Point(TimelineEditor.HeaderWidth, 0)` (last lines of `Render`) | pen colour and thickness |
+| **Corner buttons** (delete, move up, move down; left of the ruler) | `private void DrawCornerButtons` | `fill`, `border`, corner `6`, glyph size `14`. Their size and place are `CornerButton*` in `TimelineEditor.cs` |
 | **Import sound** button (sound lane header) | `private void DrawWaveHeader` | `fill`, `border`, corner `8` in `DrawRectangle(fill, border, button, 8, 8)`, text size `13` in the `FormattedText`. Its size and place are `SoundtrackButton*` in `TimelineEditor.cs` |
 
 ### Sound lane (waveform)
@@ -101,7 +101,10 @@ Replace the whole line with a brush: `var accent = new SolidColorBrush(Color.Par
 | Big **heading** ("Pixel Tuner Studio") | `Theme.axaml`, `TextBlock.h1` | `FontSize 28`, weight |
 | Grey text class | `Theme.axaml`, `TextBlock.muted` | colour |
 | Page margins and spacing | `Theme.axaml`, `PtPagePadding`, `PtSpacing` | |
-| Inspector / library **titles** | `src/PixelTuner.UI/Views/EditorView.axaml`, `FontSize="16"` (two places: `InspectorTitle` and `Library_Title`) | |
+| Inspector **title** | `src/PixelTuner.UI/Views/EditorView.axaml`, `FontSize="16"` (`InspectorTitle`) | |
+| **Bottom panel** tabs (Library, Preview, Canvas, Devices: a column on the left) | `Theme.axaml`, `TabControl.rail TabItem`; the control is `<TabControl Classes="rail" TabStripPlacement="Left"` in `EditorView.axaml` | font size, height, padding of a tab |
+| **Tool buttons** in the column left of a tab's content (Import, Put on timeline, ...) | `Theme.axaml`, `Button.tool`; the column width is `ColumnDefinitions="190,*"` in `EditorView.axaml`, `CanvasPanelView.axaml`, `PreviewPanelView.axaml` | padding, height, font size |
+| **Height of the bottom panel** (the user drags the splitter above it) | `EditorView.axaml`, `RowDefinitions="Auto,Auto,*,Auto,320"`: the `320` is the starting height | the height stays while tabs change |
 | Small grey text in the library | `EditorView.axaml`, `Classes="muted" FontSize="11"` | |
 | **Buttons** (shape, accent button) | `src/PixelTuner.UI/App.axaml`, `<FluentTheme />` | the look comes from Fluent. The accent button (`Classes="accent"`) takes the system accent colour. Changing the colour of all Fluent controls: give `FluentTheme` a palette with `Accent` (Avalonia docs: `FluentTheme.Palettes`). Not tried here: build and look |
 | **Preview** panel (LED dots, background) | `src/PixelTuner.UI/PreviewPanel/TimelinePreviewControl.cs`, `Dark`, `Hairline`, `Marker` at the top | |
@@ -118,6 +121,7 @@ Replace the whole line with a brush: `var accent = new SolidColorBrush(Color.Par
 | `WaveHeight` | 84 | height of the sound lane |
 | `TrackHeight` | 64 | height of one timeline row |
 | `SoundtrackButtonInset`, `SoundtrackButtonHeight` | 12, 40 | the Import sound button |
+| `CornerButtonGap` | 6 | the delete / move buttons left of the ruler fill the corner cell; this is the space round and between them (their width and height follow from it) |
 
 If you make a header text bigger than the row allows, raise `TrackHeight` here, and move the second text line (`top + 32`) in the control.
 

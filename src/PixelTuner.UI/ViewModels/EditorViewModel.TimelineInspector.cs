@@ -1,4 +1,5 @@
 using Avalonia.Media;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PixelTuner.Core.Editing;
 using PixelTuner.Core.Imaging;
@@ -16,6 +17,34 @@ public sealed partial class EditorViewModel
 {
     private static readonly string[] PaletteColors =
         ["#2D7DD2", "#2FA84F", "#E07A1F", "#C9A227", "#D1495B", "#8E5BD1", "#1FA2A8", "#8A8F98"];
+
+    // ---- the panel itself
+
+    /// <summary>The inspector can be folded into a narrow strip to give the timelines the room.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(InspectorToggleGlyph), nameof(InspectorToggleTip))]
+    private bool _isInspectorVisible = true;
+
+    /// <summary>The bottom panel (library, preview, canvas, devices) can be folded away the same way, leaving the bar it is brought back by.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(BottomPanelToggleGlyph), nameof(BottomPanelToggleTip))]
+    private bool _isBottomPanelVisible = true;
+
+    /// <summary>Down to fold the panel away, up to bring it back.</summary>
+    public string BottomPanelToggleGlyph => IsBottomPanelVisible ? "▾" : "▴";
+
+    public string BottomPanelToggleTip => IsBottomPanelVisible ? Strings.Panels_Hide : Strings.Panels_Show;
+
+    [RelayCommand]
+    void ToggleBottomPanel() => IsBottomPanelVisible = !IsBottomPanelVisible;
+
+    /// <summary>The arrow points the way the panel goes: right to fold it away, left to bring it back.</summary>
+    public string InspectorToggleGlyph => IsInspectorVisible ? "›" : "‹";
+
+    public string InspectorToggleTip => IsInspectorVisible ? Strings.Inspector_Hide : Strings.Inspector_Show;
+
+    [RelayCommand]
+    void ToggleInspector() => IsInspectorVisible = !IsInspectorVisible;
 
     private Timeline? SelectedTimeline => Timelines.Selected as Timeline;
 
@@ -160,18 +189,12 @@ public sealed partial class EditorViewModel
 
     // ---- order
 
-    private bool CanMoveUp => SelectedTimeline is { } t && Document.Project.Timelines.IndexOf(t) > 0;
-    private bool CanMoveDown => SelectedTimeline is { } t && Document.Project.Timelines.IndexOf(t) is var n && n >= 0 && n < Document.Project.Timelines.Count - 1;
-
     [RelayCommand(CanExecute = nameof(CanMoveUp))]
-    void MoveTimelineUp() => MoveSelectedTimeline(-1);
+    void MoveTimelineUp() => Timelines.MoveSelectedTimeline(-1);
 
     [RelayCommand(CanExecute = nameof(CanMoveDown))]
-    void MoveTimelineDown() => MoveSelectedTimeline(1);
+    void MoveTimelineDown() => Timelines.MoveSelectedTimeline(1);
 
-    private void MoveSelectedTimeline(int by)
-    {
-        if (SelectedTimeline is not { } t) return;
-        Document.Execute(Edits.MoveTimeline(Document.Project, t, Document.Project.Timelines.IndexOf(t) + by));
-    }
+    private bool CanMoveUp => Timelines.CanMoveUp;
+    private bool CanMoveDown => Timelines.CanMoveDown;
 }

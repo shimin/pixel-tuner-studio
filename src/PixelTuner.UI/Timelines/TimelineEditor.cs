@@ -23,9 +23,19 @@ public enum HitKind
     Wave,
     /// <summary>The soundtrack button in the header: opens the soundtrack picker.</summary>
     SoundtrackButton,
+    /// <summary>One of the buttons in the corner left of the ruler (<see cref="HeaderButton"/>).</summary>
+    CornerButton,
 }
 
-public readonly record struct Hit(HitKind Kind, Timeline? Timeline = null, TimelineItem? Item = null, Marker? Marker = null);
+/// <summary>The buttons in the corner left of the ruler: they act on the selection.</summary>
+public enum HeaderButton
+{
+    Delete,
+    MoveUp,
+    MoveDown,
+}
+
+public readonly record struct Hit(HitKind Kind, Timeline? Timeline = null, TimelineItem? Item = null, Marker? Marker = null, HeaderButton? Button = null);
 
 /// <summary>
 /// What the timeline shows and does, without any drawing: where things are on screen, what a
@@ -45,6 +55,16 @@ public sealed class TimelineEditor
     public const double SoundtrackButtonInset = 12;
     public const double SoundtrackButtonHeight = 40;
     public const double SoundtrackButtonTop = RulerHeight + (WaveHeight - SoundtrackButtonHeight) / 2;
+
+    /// <summary>
+    /// The corner buttons left of the ruler fill the cell of the corner: three in a row, the same space all round and between them.
+    /// </summary>
+    public const double CornerButtonGap = 6;
+    public const double CornerButtonWidth = (HeaderWidth - 4 * CornerButtonGap) / 3;
+    public const double CornerButtonHeight = RulerHeight - 2 * CornerButtonGap;
+
+    /// <summary>"Add timeline" in the toolbar is as wide as the name column less the same space at its sides, so it stands over the corner buttons.</summary>
+    public const double AddTimelineButtonWidth = HeaderWidth - 2 * CornerButtonGap;
     public const double MinZoom = 4;
     public const double MaxZoom = 2000;
 
@@ -150,7 +170,11 @@ public sealed class TimelineEditor
         if (Player is not { } player) return;
         if (player.State == AudioPlayerState.Playing)
         {
+            // The playhead stops exactly where it is at this moment: not at the last position the player reported (LibVLC reports in
+            // steps of a few hundred ms), and not at the position it gives once paused.
+            Playhead = (_smoother ??= new PlayheadSmoother(Time)).Next(player.Position);
             player.Pause();
+            Changed?.Invoke(this, EventArgs.Empty);
             return;
         }
         // At the end a second Play starts over; otherwise play from where the playhead stands.
@@ -164,6 +188,7 @@ public sealed class TimelineEditor
     public void Stop()
     {
         _following = false;
+        _centred = false;
         Player?.Stop();
         _smoother?.Reset();
         Playhead = TimeSpan.Zero;
@@ -183,14 +208,15 @@ public sealed class TimelineEditor
         {
             _following = true;
             Playhead = (_smoother ??= new PlayheadSmoother(Time)).Next(player.Position);
-            FollowPlayhead();
+            if (_centred) ScrollTo(Playhead - VisibleDuration / 2);
+            else FollowPlayhead();
         }
         else if (_following)
         {
             // It stopped on its own: paused (by the user or the system), or played to the end.
             _following = false;
             _smoother?.Reset();
-            Playhead = state == AudioPlayerState.Paused ? player.Position : AudioDuration;
+            Playhead = state == AudioPlayerState.Paused ? Playhead : AudioDuration;   // paused: where it was drawn, not what the player says
         }
         // The view calls this many times a second; only a real change is worth a redraw. Compared with what the
         // last call saw, not with the start of this one: the sound can change state between two calls.
@@ -213,7 +239,12 @@ public sealed class TimelineEditor
         if (Playhead < Scroll || Playhead > right) ScrollTo(Playhead - VisibleDuration * 0.1);
     }
 
-    public void ScrollBy(double pixels) => ScrollTo(Scroll + TimeSpan.FromSeconds(pixels / PixelsPerSecond));
+    /// <summary>Panning by hand lets go of the playhead that a zoom pinned to the centre.</summary>
+    public void ScrollBy(double pixels)
+    {
+        _centred = false;
+        ScrollTo(Scroll + TimeSpan.FromSeconds(pixels / PixelsPerSecond));
+    }
 
     public void ScrollTo(TimeSpan time)
     {
@@ -236,8 +267,28 @@ public sealed class TimelineEditor
         Changed?.Invoke(this, EventArgs.Empty);
     }
 
+    // After a zoom the view keeps the playhead in the middle while it plays, for as long as it can (not at the very start or end).
+    private bool _centred;
+
+    /// <summary>
+    /// Zooms by a factor around the playhead: the playhead ends up in the middle of the time area when the view can be scrolled that far,
+    /// else (near the start) it stays where it was on screen. While the sound plays the view then keeps it in the middle.
+    /// </summary>
+    public void ZoomOnPlayhead(double factor)
+    {
+        double before = Math.Clamp(TimeToX(Playhead), HeaderWidth, Math.Max(HeaderWidth, ViewWidth));
+        PixelsPerSecond = Math.Clamp(PixelsPerSecond * factor, MinZoom, MaxZoom);
+        var middle = Playhead - VisibleDuration / 2;
+        // Scroll is set directly and then clamped by ScrollTo: it is the only place that knows the end of the content.
+        Scroll = middle >= TimeSpan.Zero ? middle : Playhead - TimeSpan.FromSeconds((before - HeaderWidth) / PixelsPerSecond);
+        _centred = true;
+        ScrollTo(Scroll);
+        Changed?.Invoke(this, EventArgs.Empty);
+    }
+
     public void ZoomToFit()
     {
+        _centred = false;
         var end = ContentEnd - TimeSpan.FromSeconds(10);
         if (end < TimeSpan.FromSeconds(1)) end = TimeSpan.FromSeconds(10);
         PixelsPerSecond = Math.Clamp(TimeAreaWidth / end.TotalSeconds * 0.96, MinZoom, MaxZoom);
@@ -358,6 +409,20 @@ public sealed class TimelineEditor
 
     // ---- hit testing
 
+    /// <summary>Where a corner button is: x, y, width, height.</summary>
+    public static (double X, double Y, double Width, double Height) CornerButtonBounds(HeaderButton button) =>
+        (CornerButtonGap + (int)button * (CornerButtonWidth + CornerButtonGap), CornerButtonGap, CornerButtonWidth, CornerButtonHeight);
+
+    public static HeaderButton? CornerButtonAt(double x, double y)
+    {
+        foreach (var button in Enum.GetValues<HeaderButton>())
+        {
+            var (bx, by, w, h) = CornerButtonBounds(button);
+            if (x >= bx && x < bx + w && y >= by && y < by + h) return button;
+        }
+        return null;
+    }
+
     public static bool IsOnSoundtrackButton(double x, double y) =>
         x >= SoundtrackButtonInset && x < HeaderWidth - SoundtrackButtonInset
         && y >= SoundtrackButtonTop && y < SoundtrackButtonTop + SoundtrackButtonHeight;
@@ -379,6 +444,7 @@ public sealed class TimelineEditor
             if (x >= HeaderWidth)
                 foreach (var marker in Project.Markers)
                     if (Math.Abs(TimeToX(marker.Position) - x) <= EdgeGrab) return new Hit(HitKind.Marker, Marker: marker);
+            if (x < HeaderWidth && CornerButtonAt(x, y) is { } corner) return new Hit(HitKind.CornerButton, Button: corner);
             return new Hit(HitKind.Ruler);
         }
 
@@ -684,6 +750,38 @@ public sealed class TimelineEditor
     // ---- commands on the selection
 
     public bool CanDelete => Selected is not null;
+
+    private int SelectedTimelineIndex => Selected is Timeline t ? Project.Timelines.IndexOf(t) : -1;
+
+    public bool CanMoveUp => SelectedTimelineIndex > 0;
+
+    public bool CanMoveDown => SelectedTimelineIndex is var n && n >= 0 && n < Project.Timelines.Count - 1;
+
+    /// <summary>Moves the selected timeline up (-1) or down (1) one place.</summary>
+    public void MoveSelectedTimeline(int by)
+    {
+        if (Selected is not Timeline timeline) return;
+        _document.Execute(Edits.MoveTimeline(Project, timeline, Project.Timelines.IndexOf(timeline) + by));
+    }
+
+    public bool IsEnabled(HeaderButton button) => button switch
+    {
+        HeaderButton.Delete => CanDelete,
+        HeaderButton.MoveUp => CanMoveUp,
+        _ => CanMoveDown,
+    };
+
+    /// <summary>Does what a corner button says, if it is enabled.</summary>
+    public void Press(HeaderButton button)
+    {
+        if (!IsEnabled(button)) return;
+        switch (button)
+        {
+            case HeaderButton.Delete: DeleteSelected(); break;
+            case HeaderButton.MoveUp: MoveSelectedTimeline(-1); break;
+            default: MoveSelectedTimeline(1); break;
+        }
+    }
 
     public void DeleteSelected()
     {

@@ -61,12 +61,18 @@ dotnet build src/Heads/PixelTuner.Stage.Android -t:Run          # на подк�
 dotnet build src/Heads/PixelTuner.Stage.iOS -r iossimulator-arm64  # только на Mac с Xcode
 ```
 
-Решение целиком: `PixelTunerStudio.slnx` (Visual Studio 2022 17.13+, Rider 2024.3+).
+Решение по умолчанию: `PixelTunerStudio.slnx` (Visual Studio 2022 17.13+, Rider 2024.3+) — Pixel Tuner Studio
+для Windows и macOS с тестами. Собирается обычным .NET SDK, без workload'ов: `dotnet build` в корне
+репозитория. Приложения для телефонов (Android и iOS, им нужны workload'ы) вынесены в `src/Heads/PixelTunerStage.slnx`.
+
+Windows: `scripts\windows\build.cmd` публикует Studio в `out\win-x64` (папка с `PixelTunerStudio.exe`, .NET на
+машине не нужен). `scripts\windows\build.cmd win-arm64` — другая платформа, `scripts\windows\build.cmd win-x64 test` —
+сначала тесты.
 
 macOS-приложение: `dotnet publish src/Heads/PixelTuner.Studio.Desktop -c Release -r osx-arm64 --self-contained -o out/osx`,
 затем `scripts/macos/make-app.sh out/osx out/app`.
 
-PixelTuner 2 по-прежнему собирается из `legacy/PixelTuner2` (см. `legacy/README.md`).
+PixelTuner 2 не входит в решение по умолчанию и собирается отдельно: `scripts\legacy\build-pixeltuner2.cmd` (приложение, нужна Visual Studio) или, как раньше, из `legacy/PixelTuner2` (`PixelTuner.sln`, установщик — `make.bat`). См. `legacy/README.md`.
 
 ## Формат проекта .pxpkg
 

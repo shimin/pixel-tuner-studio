@@ -1,4 +1,6 @@
 <Solution>
+  <!-- The default solution: Pixel Tuner Studio (Windows and macOS) with its tests. It builds with the plain .NET SDK, no workloads.
+       The phone apps are in src/Heads/PixelTunerStage.slnx; PixelTuner 2 builds on its own (scripts/legacy). -->
   <Folder Name="/src/">
     <Project Path="src/PixelTuner.Audio/PixelTuner.Audio.csproj" />
     <Project Path="src/PixelTuner.Audio.Vlc/PixelTuner.Audio.Vlc.csproj" />
@@ -9,8 +11,6 @@
     <Project Path="src/PixelTuner.UI/PixelTuner.UI.csproj" />
   </Folder>
   <Folder Name="/src/Heads/">
-    <Project Path="src/Heads/PixelTuner.Stage.Android/PixelTuner.Stage.Android.csproj" />
-    <Project Path="src/Heads/PixelTuner.Stage.iOS/PixelTuner.Stage.iOS.csproj" />
     <Project Path="src/Heads/PixelTuner.Studio.Desktop/PixelTuner.Studio.Desktop.csproj" />
   </Folder>
   <Folder Name="/tests/">

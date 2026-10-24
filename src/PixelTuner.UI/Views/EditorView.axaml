@@ -12,35 +12,32 @@
              x:DataType="vm:EditorViewModel"
              Background="{DynamicResource PtSurfaceBrush}">
   <!-- Studio's editor: a toolbar, the timelines, and an inspector for the selection. -->
-  <Grid RowDefinitions="Auto,Auto,*,Auto" ColumnDefinitions="*,280">
-    <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="8" Margin="12,8">
-      <Button Content="{x:Static res:Strings.Toolbar_AddTimeline}">
-        <Button.Flyout>
-          <!-- Opens under the button, along its left edge (the default centres it, and it sticks out of the window). -->
-          <MenuFlyout Placement="BottomEdgeAlignedLeft">
-            <MenuItem Header="{x:Static res:Strings.Toolbar_AddPixel}" Command="{Binding AddPixelTimelineCommand}" />
-            <MenuItem Header="{x:Static res:Strings.Toolbar_AddVideo}" Command="{Binding AddVideoTimelineCommand}" />
-            <MenuItem Header="{x:Static res:Strings.Toolbar_AddEpic}" Command="{Binding AddEpicTimelineCommand}" />
-            <MenuItem Header="{x:Static res:Strings.Toolbar_AddLight}" Command="{Binding AddLightTimelineCommand}" />
-          </MenuFlyout>
-        </Button.Flyout>
-      </Button>
-      <Button Content="⚑" Command="{Binding AddMarkerCommand}" ToolTip.Tip="{x:Static res:Strings.Command_AddMarker}" />
-      <Button Content="{x:Static res:Strings.Command_AddItem}" Command="{Binding AddItemCommand}" />
-      <Button Content="{x:Static res:Strings.Command_AddColor}" Command="{Binding AddColorCommand}" />
-      <Button Content="{x:Static res:Strings.Command_AddEffect}" Command="{Binding AddEffectCommand}" />
-      <Button Content="✕" Command="{Binding DeleteSelectedCommand}" ToolTip.Tip="{x:Static res:Strings.Command_Delete}" />
-      <Button Content="↑" Command="{Binding MoveTimelineUpCommand}" ToolTip.Tip="{x:Static res:Strings.Command_MoveUp}" />
-      <Button Content="↓" Command="{Binding MoveTimelineDownCommand}" ToolTip.Tip="{x:Static res:Strings.Command_MoveDown}" />
-      <Rectangle Width="1" Fill="{DynamicResource PtMutedTextBrush}" Opacity="0.4" Margin="4,2" />
-      <Button Content="−" Command="{Binding ZoomOutCommand}" ToolTip.Tip="{x:Static res:Strings.Command_ZoomOut}" />
-      <Button Content="+" Command="{Binding ZoomInCommand}" ToolTip.Tip="{x:Static res:Strings.Command_ZoomIn}" />
-      <Button Content="↔" Command="{Binding ZoomFitCommand}" ToolTip.Tip="{x:Static res:Strings.Command_ZoomFit}" />
-      <Rectangle Width="1" Fill="{DynamicResource PtMutedTextBrush}" Opacity="0.4" Margin="4,2" />
-      <Button Content="{Binding PlayPauseGlyph}" Command="{Binding PlayPauseCommand}" ToolTip.Tip="{x:Static res:Strings.Command_PlayPause}" MinWidth="40" />
-      <Button Content="■" Command="{Binding StopCommand}" ToolTip.Tip="{x:Static res:Strings.Command_Stop}" />
-      <TextBlock Text="{Binding TimeText}" VerticalAlignment="Center" FontFamily="Consolas,Menlo,monospace" Margin="4,0,0,0" />
-    </StackPanel>
+  <!-- Row 4 is the bottom panel: its height is the user's (the splitter above it) and does not follow the tab. -->
+  <Grid x:Name="Root" RowDefinitions="Auto,Auto,*,Auto,320" ColumnDefinitions="*,Auto">
+    <!-- The left margin is the corner buttons' space (TimelineEditor.CornerButtonGap): "Add timeline" fills the name column, and the marker button starts at its divider. -->
+    <DockPanel Grid.ColumnSpan="2" Margin="6,8,12,8">
+      <!-- Zoom is this slider, the wheel over the ruler, or Ctrl/Cmd and the wheel anywhere; the button fits the whole show. -->
+      <Button DockPanel.Dock="Right" Content="↔" Command="{Binding ZoomFitCommand}" ToolTip.Tip="{x:Static res:Strings.Command_ZoomFit}" />
+      <Slider DockPanel.Dock="Right" Minimum="0" Maximum="1" Width="140" Margin="0,0,8,0" VerticalAlignment="Center" Value="{Binding ZoomSlider}" ToolTip.Tip="{x:Static res:Strings.Command_Zoom}" />
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <Button Content="{x:Static res:Strings.Toolbar_AddTimeline}" Width="{x:Static tl:TimelineEditor.AddTimelineButtonWidth}" Height="40" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+          <Button.Flyout>
+            <!-- Opens under the button, along its left edge (the default centres it, and it sticks out of the window). -->
+            <MenuFlyout Placement="BottomEdgeAlignedLeft">
+              <MenuItem Header="{x:Static res:Strings.Toolbar_AddPixel}" Command="{Binding AddPixelTimelineCommand}" />
+              <MenuItem Header="{x:Static res:Strings.Toolbar_AddVideo}" Command="{Binding AddVideoTimelineCommand}" />
+              <MenuItem Header="{x:Static res:Strings.Toolbar_AddEpic}" Command="{Binding AddEpicTimelineCommand}" />
+              <MenuItem Header="{x:Static res:Strings.Toolbar_AddLight}" Command="{Binding AddLightTimelineCommand}" />
+            </MenuFlyout>
+          </Button.Flyout>
+        </Button>
+        <!-- Marker, play/pause and stop are squares of one size. -->
+        <Button Content="⚑" Command="{Binding AddMarkerCommand}" ToolTip.Tip="{x:Static res:Strings.Command_AddMarker}" Width="40" Height="40" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+        <Button Content="{Binding PlayPauseGlyph}" Command="{Binding PlayPauseCommand}" ToolTip.Tip="{x:Static res:Strings.Command_PlayPause}" Width="40" Height="40" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+        <Button Content="■" Command="{Binding StopCommand}" ToolTip.Tip="{x:Static res:Strings.Command_Stop}" Width="40" Height="40" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+        <TextBlock Text="{Binding TimeText}" VerticalAlignment="Center" FontFamily="Consolas,Menlo,monospace" Margin="4,0,0,0" />
+      </StackPanel>
+    </DockPanel>
 
     <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Margin="14,0,12,6" TextWrapping="Wrap"
                Foreground="{DynamicResource SystemFillColorCautionBrush}"
@@ -51,9 +48,28 @@
     </ScrollViewer>
 
     <!-- The inspector is longer than the room beside the timelines when the library is open: it scrolls. -->
-    <ScrollViewer Grid.Row="2" Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-    <Border Classes="card" Margin="8,0,12,12" VerticalAlignment="Top">
+    <DockPanel Grid.Row="2" Grid.Column="1" Margin="0,0,12,0">
+    <!-- The name of the panel is the button that folds it: open, a bar across the top of the panel; folded, the whole narrow strip. -->
+    <Button DockPanel.Dock="Left" Width="28" Margin="8,0,0,12" Padding="0,8" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Top"
+            IsVisible="{Binding !IsInspectorVisible}" Command="{Binding ToggleInspectorCommand}" ToolTip.Tip="{Binding InspectorToggleTip}">
+      <StackPanel Spacing="10">
+        <TextBlock Text="{Binding InspectorToggleGlyph}" HorizontalAlignment="Center" />
+        <LayoutTransformControl HorizontalAlignment="Center">
+          <LayoutTransformControl.LayoutTransform><RotateTransform Angle="90" /></LayoutTransformControl.LayoutTransform>
+          <TextBlock Text="{x:Static res:Strings.Inspector_Heading}" />
+        </LayoutTransformControl>
+      </StackPanel>
+    </Button>
+    <ScrollViewer Width="272" IsVisible="{Binding IsInspectorVisible}" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <Border Classes="card" Margin="8,0,0,12" VerticalAlignment="Top">
       <StackPanel Spacing="8">
+        <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" MinHeight="28" Padding="10,2"
+                Command="{Binding ToggleInspectorCommand}" ToolTip.Tip="{Binding InspectorToggleTip}">
+          <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Text="{x:Static res:Strings.Inspector_Heading}" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="1" Text="{Binding InspectorToggleGlyph}" VerticalAlignment="Center" />
+          </Grid>
+        </Button>
         <TextBlock Classes="muted" TextWrapping="Wrap" Text="{x:Static res:Strings.Inspector_Nothing}"
                    IsVisible="{Binding !HasSelection}" />
         <StackPanel Spacing="8" IsVisible="{Binding HasSelection}">
@@ -173,28 +189,51 @@
       </StackPanel>
     </Border>
     </ScrollViewer>
+    </DockPanel>
 
-    <!-- The library: what the project has to put on timelines, narrowed to what the selected timeline can play.
-         While a picture is imported, the import panel takes its place. -->
-    <Border Grid.Row="3" Grid.ColumnSpan="2" Classes="card" Margin="12,0,12,12" MaxHeight="440">
-     <TabControl Padding="0,8,0,0">
+    <!-- A bar between the timelines and the bottom panel: the splitter that sets the panel's height, and over its left end the button
+         that folds the panel away (the bar then stays, to bring it back). -->
+    <!-- (The splitter must be a child of the grid whose rows it resizes.) -->
+    <GridSplitter Grid.Row="3" Grid.ColumnSpan="2" Height="28" Margin="12,0" Background="Transparent" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext"
+                  IsEnabled="{Binding IsBottomPanelVisible}" />
+    <Button Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" MinHeight="24" Height="24" Padding="10,0" Margin="12,0,0,0" FontSize="12"
+            Command="{Binding ToggleBottomPanelCommand}" ToolTip.Tip="{Binding BottomPanelToggleTip}">
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <TextBlock Text="{x:Static res:Strings.Panels_Heading}" VerticalAlignment="Center" />
+        <TextBlock Text="{Binding BottomPanelToggleGlyph}" VerticalAlignment="Center" />
+      </StackPanel>
+    </Button>
+
+    <!-- The bottom panel: the tabs stand in a column on the left, the tools of a tab in a column of its own, and the rest is the content,
+         so nothing takes the height from it. While a picture is imported, the import panel takes the place of the library's list. -->
+    <Border Grid.Row="4" Grid.ColumnSpan="2" Classes="card" Margin="12,0,12,12" Padding="8">
+     <TabControl Classes="rail" TabStripPlacement="Left" Padding="12,0,0,0">
       <TabItem Header="{x:Static res:Strings.Library_Title}">
-      <Grid RowDefinitions="Auto,*" RowSpacing="8">
-        <WrapPanel Orientation="Horizontal">
-          <TextBlock Text="{x:Static res:Strings.Library_Title}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,12,0" />
-          <Button Content="{x:Static res:Strings.Library_Import}" Command="{Binding Gallery.ImportCommand}" Margin="0,0,8,0" />
-          <Button Content="{x:Static res:Strings.Library_Place}" Command="{Binding Gallery.PlaceCommand}" Margin="0,0,8,0" />
-          <Button Content="{x:Static res:Strings.Library_Remove}" Command="{Binding Gallery.RemoveCommand}" Margin="0,0,8,0" />
-          <CheckBox Content="{x:Static res:Strings.Library_ShowAll}" IsChecked="{Binding Gallery.ShowAll}" Margin="0,0,12,0" />
-          <TextBox Text="{Binding Gallery.NewColor}" Width="90" IsUndoEnabled="False" Margin="0,0,4,0" />
-          <Button Content="{x:Static res:Strings.Library_AddColor}" Command="{Binding Gallery.AddColorCommand}" Margin="0,0,8,0" />
-          <Button Content="{x:Static res:Strings.Library_SaveItem}" Command="{Binding Gallery.SaveSelectedItemCommand}" Margin="0,0,8,0" />
-          <TextBox Text="{Binding Gallery.SelectedName}" IsVisible="{Binding Gallery.HasSelected}" Width="140" IsUndoEnabled="False" Margin="0,0,8,0" />
+      <Grid ColumnDefinitions="190,*" ColumnSpacing="12">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Spacing="6" Margin="0,0,6,0">
+          <!-- A section for each kind of timeline, as PixelTuner 2 had a pane for each. -->
+          <ListBox Classes="sections" ItemsSource="{x:Static lib:LibraryViewModel.Sections}" SelectedIndex="{Binding Gallery.SectionIndex}" Background="Transparent">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="lib:LibrarySection"><TextBlock Text="{Binding Title}" /></DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+          <!-- One button for every kind of file: a GIF goes to Video, a picture to Pixel poi/hoop (or E-pic poi). -->
+          <Button Classes="tool" Content="{x:Static res:Strings.Library_Import}" Command="{Binding Gallery.ImportCommand}" />
+          <Button Classes="tool" Content="{x:Static res:Strings.Library_Place}" Command="{Binding Gallery.PlaceCommand}" />
+          <Button Classes="tool" Content="{x:Static res:Strings.Library_Remove}" Command="{Binding Gallery.RemoveCommand}" IsVisible="{Binding !Gallery.IsFixedSection}" />
+          <StackPanel Spacing="2" IsVisible="{Binding Gallery.HasHeightFilter}">
+            <TextBlock Classes="muted" Text="{x:Static res:Strings.Library_HeightFilter}" />
+            <ComboBox ItemsSource="{Binding Gallery.HeightFilterItems}" SelectedIndex="{Binding Gallery.HeightFilterIndex}" HorizontalAlignment="Stretch" />
+          </StackPanel>
+          <TextBox Text="{Binding Gallery.SelectedName}" IsVisible="{Binding Gallery.CanRename}" IsUndoEnabled="False" />
+          <TextBlock Classes="muted" TextWrapping="Wrap" Text="{x:Static res:Strings.Library_LightHint}" IsVisible="{Binding Gallery.IsFixedSection}" />
           <TextBlock Text="{Binding Gallery.Message}" IsVisible="{Binding Gallery.Message, Converter={x:Static ObjectConverters.IsNotNull}}"
-                     Foreground="{DynamicResource SystemFillColorCautionBrush}" VerticalAlignment="Center" TextWrapping="Wrap" />
-        </WrapPanel>
+                     Foreground="{DynamicResource SystemFillColorCautionBrush}" TextWrapping="Wrap" />
+        </StackPanel>
+        </ScrollViewer>
 
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" IsVisible="{Binding !Gallery.IsImporting}">
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" IsVisible="{Binding !Gallery.IsImporting}">
           <StackPanel Spacing="8">
             <ListBox ItemsSource="{Binding Gallery.Entries}" SelectedItem="{Binding Gallery.Selected}" Background="Transparent" DoubleTapped="OnEntryDoubleTapped">
               <ListBox.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ListBox.ItemsPanel>
@@ -230,7 +269,7 @@
 
         <!-- Import, in the steps of PixelTuner 2's window: cut, squeeze in perspective (optional), trim and scale to the
              height of the device and correct the colour. -->
-        <Panel Grid.Row="1" IsVisible="{Binding Gallery.IsImporting}">
+        <Panel Grid.Column="1" IsVisible="{Binding Gallery.IsImporting}">
         <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid x:DataType="lib:ImportViewModel" DataContext="{Binding Gallery.Import}" RowDefinitions="Auto,*" RowSpacing="8">
           <StackPanel Orientation="Horizontal" Spacing="6">
@@ -325,21 +364,21 @@
       </TabItem>
       <!-- What the selected timeline plays at the playhead, as its device would light it. -->
       <TabItem Header="{x:Static res:Strings.Preview_Title}">
-        <pv:PreviewPanelView DataContext="{Binding Preview}" MinHeight="260" />
+        <pv:PreviewPanelView DataContext="{Binding Preview}" />
       </TabItem>
       <!-- The drawing of the props, with the markup state of each outline. -->
       <TabItem Header="{x:Static res:Strings.Canvas_Title}">
-        <led:CanvasPanelView DataContext="{Binding Canvas}" MinHeight="260" />
+        <led:CanvasPanelView DataContext="{Binding Canvas}" />
       </TabItem>
       <!-- The devices of the project, what the files are built with, and the connected devices. -->
       <TabItem Header="{x:Static res:Strings.Devices_Title}">
-        <dv:DevicesPanelView DataContext="{Binding Devices}" MinHeight="300" />
+        <dv:DevicesPanelView DataContext="{Binding Devices}" />
       </TabItem>
      </TabControl>
     </Border>
 
     <!-- The LED markup window takes the place of the whole editor while it is open. -->
-    <Panel Grid.RowSpan="4" Grid.ColumnSpan="2" IsVisible="{Binding IsEditingMarkup}" Background="{DynamicResource PtSurfaceBrush}">
+    <Panel Grid.RowSpan="5" Grid.ColumnSpan="2" IsVisible="{Binding IsEditingMarkup}" Background="{DynamicResource PtSurfaceBrush}">
       <led:LedMarkupView DataContext="{Binding MarkupEditor}" />
     </Panel>
   </Grid>

@@ -32,6 +32,9 @@ public sealed class LibraryEntryViewModel(LibraryEntry entry, PlacementProblem p
     public double Dim => CanPlace ? 1 : 0.45;
     public bool IsMissing => Library.HasMedia(Entry.Kind) && Entry.ResourceId is null;
 
+    /// <summary>LightMaster colours and effects are a fixed list: they are not in the project, so they cannot be renamed or removed.</summary>
+    public bool IsFixed => !Library.HasMedia(Entry.Kind);
+
     /// <summary>Size, frames or values: "40 × 36", "12 frames", "#FF0000".</summary>
     public string Detail => Entry.Kind switch
     {
@@ -95,9 +98,19 @@ public sealed class LibraryEntryViewModel(LibraryEntry entry, PlacementProblem p
     private static IBrush Brush(string? text) => new SolidColorBrush(Color(text));
 }
 
+/// <summary>One part of the library: the things one kind of timeline plays (PixelTuner 2 had a pane for each).</summary>
+/// <param name="Kind">The <see cref="LibraryKind"/> of its entries; <see cref="LibraryKind.Effect"/> for the LightMaster's fixed list.</param>
+/// <param name="TimelineKind">The kind of timeline that plays them.</param>
+public sealed record LibrarySection(string Kind, string TimelineKind, string Title)
+{
+    /// <summary>Files come in by import; the LightMaster's colours and effects are given and cannot be added or removed.</summary>
+    public bool IsFixed => !Library.HasMedia(Kind);
+}
+
 /// <summary>
-/// The library panel of the editor: what the project has to put on timelines, narrowed to what the selected timeline
-/// can play. A thing is offered only where it can be played, so what goes on a timeline always builds into the .bin.
+/// The library panel of the editor: what the project has to put on timelines, in a section for each kind of timeline. Things are
+/// imported into their section and from there put on a timeline; a thing the selected timeline cannot play is shown dimmed with the
+/// reason, so what goes on a timeline always builds into the .bin.
 /// </summary>
 public sealed partial class LibraryViewModel : ObservableObject
 {
@@ -116,6 +129,86 @@ public sealed partial class LibraryViewModel : ObservableObject
 
     private ProjectDocument Document => _editor.Document;
 
+    public static IReadOnlyList<LibrarySection> Sections { get; } =
+    [
+        new(LibraryKind.Image, TimelineKind.Pixel, Strings.Library_SectionPixel),
+        new(LibraryKind.Video, TimelineKind.Video, Strings.Library_SectionVideo),
+        new(LibraryKind.Gradient, TimelineKind.EpicPoi, Strings.Library_SectionEpic),
+        new(LibraryKind.Effect, TimelineKind.Light, Strings.Library_SectionLight),
+    ];
+
+    /// <summary>
+    /// The LightMaster's colour and effects as PixelTuner 2's effects pane had them (solid colour, linear transition, sine, square and
+    /// saw-tooth wave) with the defaults a new light item gets. Fixed: not in the project.
+    /// </summary>
+    public static IReadOnlyList<LibraryEntry> LightEntries { get; } =
+    [
+        new() { Name = Strings.Effect_Solid, Kind = LibraryKind.Color, Color = "#FFFFFF" },
+        Effect(Strings.Effect_LinearTransition, LightEffectKind.LinearTransition),
+        Effect(Strings.Effect_SineWave, LightEffectKind.SineWave),
+        Effect(Strings.Effect_SquareWave, LightEffectKind.SquareWave),
+        Effect(Strings.Effect_SawToothWave, LightEffectKind.SawToothWave),
+    ];
+
+    private static LibraryEntry Effect(string name, string effect) =>
+        new() { Name = name, Kind = LibraryKind.Effect, Color = "#000000", ColorLast = "#FFFFFF", Effect = effect, T1 = 1000, T2 = 1000 };
+
+    private int _sectionIndex;
+
+    /// <summary>The section shown. It follows the selected timeline when that is of another kind, and can be changed by hand after.</summary>
+    public int SectionIndex
+    {
+        get => _sectionIndex;
+        set
+        {
+            if (value < 0 || value >= Sections.Count || value == _sectionIndex) return;
+            _sectionIndex = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(Section));
+            OnPropertyChanged(nameof(IsFixedSection));
+            OnPropertyChanged(nameof(HasHeightFilter));
+            Selected = null;
+            Rebuild();
+        }
+    }
+
+    public LibrarySection Section => Sections[_sectionIndex];
+
+    public bool IsFixedSection => Section.IsFixed;
+
+    // ---- height filter (pixel pictures)
+
+    private int _heightFilter;   // 0: every height
+    private int[] _heights = [];
+    private string[]? _heightItems;
+    private bool _notifying;
+
+    /// <summary>The pixel section can be narrowed to the pictures of one height (the number of LEDs).</summary>
+    public bool HasHeightFilter => Section.Kind == LibraryKind.Image;
+
+    /// <summary>"All", then each height there is a picture of. The same list until the heights change (see <see cref="EditorViewModel.LayoutNames"/>).</summary>
+    public IReadOnlyList<string> HeightFilterItems
+    {
+        get
+        {
+            string[] items = [Strings.Library_AllHeights, .. _heights.Select(h => h.ToString())];
+            return _heightItems is not null && _heightItems.AsSpan().SequenceEqual(items) ? _heightItems : _heightItems = items;
+        }
+    }
+
+    public int HeightFilterIndex
+    {
+        get => _heightFilter == 0 ? 0 : Math.Max(0, Array.IndexOf(_heights, _heightFilter) + 1);
+        set
+        {
+            if (_notifying || value < 0 || value > _heights.Length) return;
+            int height = value == 0 ? 0 : _heights[value - 1];
+            if (height == _heightFilter) return;
+            _heightFilter = height;
+            Rebuild();
+        }
+    }
+
     /// <summary>What the panel lists now.</summary>
     public ObservableCollection<LibraryEntryViewModel> Entries { get; } = [];
 
@@ -123,15 +216,12 @@ public sealed partial class LibraryViewModel : ObservableObject
     public ObservableCollection<LibraryEntryViewModel> Missing { get; } = [];
 
     [ObservableProperty] private LibraryEntryViewModel? _selected;
-    [ObservableProperty] private bool _showAll;
-    [ObservableProperty] private string _newColor = "#FFFFFF";
     [ObservableProperty] private string? _message;
-
-    partial void OnShowAllChanged(bool value) => Rebuild();
 
     partial void OnSelectedChanged(LibraryEntryViewModel? value)
     {
         OnPropertyChanged(nameof(HasSelected));
+        OnPropertyChanged(nameof(CanRename));
         OnPropertyChanged(nameof(SelectedName));
         PlaceCommand.NotifyCanExecuteChanged();
         RemoveCommand.NotifyCanExecuteChanged();
@@ -139,37 +229,60 @@ public sealed partial class LibraryViewModel : ObservableObject
 
     public bool HasSelected => Selected is not null;
 
+    /// <summary>The name box is for things of the project; the LightMaster's list keeps its names.</summary>
+    public bool CanRename => Selected is { IsFixed: false };
+
     public string SelectedName
     {
         get => Selected?.Name ?? "";
         set
         {
-            if (Selected is { } s && s.Entry.Name != value) Document.Execute(Edits.RenameLibraryEntry(s.Entry, value));
+            if (Selected is { IsFixed: false } s && s.Entry.Name != value) Document.Execute(Edits.RenameLibraryEntry(s.Entry, value));
         }
     }
 
     /// <summary>The timeline new things go to: the selected one, or the one the selected item is on.</summary>
     public Timeline? Target => _editor.Timelines.TimelineOf(_editor.Timelines.Selected);
 
-    /// <summary>True when entries are narrowed to a timeline.</summary>
-    public bool IsFiltered => Target is not null && !ShowAll;
+    private Timeline? _lastTarget;
+
+    // Choosing another timeline brings its section forward; a section picked by hand stays while the same timeline is worked on.
+    private void FollowTarget()
+    {
+        var target = Target;
+        if (ReferenceEquals(target, _lastTarget)) return;
+        _lastTarget = target;
+        if (target is null) return;
+        int index = Sections.ToList().FindIndex(x => x.TimelineKind == target.Kind);
+        if (index >= 0) SectionIndex = index;
+    }
 
     private void Rebuild()
     {
+        FollowTarget();
         var selected = Selected?.Entry;
         var target = Target;
         Entries.Clear();
         Missing.Clear();
-        foreach (var entry in Document.Project.Library)
+        _heights = [.. Document.Project.Library.Where(e => e.Kind == LibraryKind.Image && e.Height > 0).Select(e => e.Height).Distinct().Order()];
+        if (_heightFilter != 0 && Array.IndexOf(_heights, _heightFilter) < 0) _heightFilter = 0;
+        var shown = Section.IsFixed ? LightEntries : Document.Project.Library.Where(e => e.Kind == Section.Kind);
+        if (Section.Kind == LibraryKind.Image && _heightFilter != 0) shown = shown.Where(e => e.Height == _heightFilter);
+        foreach (var entry in shown)
         {
             var problem = target is null ? PlacementProblem.None : Library.CanPlace(entry, target);
             var vm = new LibraryEntryViewModel(entry, problem, Thumbnail);
             if (vm.IsMissing) Missing.Add(vm);
-            // Narrowed: only what the timeline can play. "Show all" lists the rest too, greyed with the reason.
-            if (ShowAll || target is null || problem == PlacementProblem.None) Entries.Add(vm);
+            Entries.Add(vm);
         }
-        Selected = Entries.Concat(Missing).FirstOrDefault(e => ReferenceEquals(e.Entry, selected));
-        OnPropertyChanged(nameof(IsFiltered));
+        Selected = Entries.FirstOrDefault(e => ReferenceEquals(e.Entry, selected));
+        _notifying = true;
+        try
+        {
+            OnPropertyChanged(nameof(HeightFilterItems));
+            OnPropertyChanged(nameof(HeightFilterIndex));
+        }
+        finally { _notifying = false; }
         OnPropertyChanged(nameof(Target));
         OnPropertyChanged(nameof(IsEmpty));
         PlaceCommand.NotifyCanExecuteChanged();
@@ -220,7 +333,7 @@ public sealed partial class LibraryViewModel : ObservableObject
 
     // ---- removing
 
-    private bool CanRemoveSelected => Selected is not null;
+    private bool CanRemoveSelected => Selected is { IsFixed: false };
 
     [RelayCommand(CanExecute = nameof(CanRemoveSelected))]
     private void Remove()
@@ -237,47 +350,6 @@ public sealed partial class LibraryViewModel : ObservableObject
         }
     }
 
-    // ---- colours and effects
-
-    /// <summary>Adds the colour typed in the panel to the library (for light timelines).</summary>
-    [RelayCommand]
-    private void AddColor()
-    {
-        Message = null;
-        try
-        {
-            var c = ColorText.ParseRgb(NewColor);
-            string hex = $"#{c.R:X2}{c.G:X2}{c.B:X2}";
-            Document.Execute(Edits.AddLibraryEntry(Document.Project, new LibraryEntry { Name = hex, Kind = LibraryKind.Color, Color = hex }));
-        }
-        catch (InvalidDataException)
-        {
-            Message = string.Format(Strings.Inspector_BadValue, NewColor);
-        }
-    }
-
-    /// <summary>Keeps the selected colour or effect item of a light timeline in the library to use again.</summary>
-    [RelayCommand]
-    private void SaveSelectedItem()
-    {
-        Message = null;
-        if (_editor.Timelines.Selected is not TimelineItem { Kind: ItemKind.Solid or ItemKind.Effect } item) return;
-        var entry = item.Kind == ItemKind.Solid
-            ? new LibraryEntry { Name = item.Color ?? "", Kind = LibraryKind.Color, Color = item.Color }
-            : new LibraryEntry
-            {
-                Name = item.Effect ?? "", Kind = LibraryKind.Effect, Color = item.Color, ColorLast = item.ColorLast, Effect = item.Effect, T1 = item.T1, T2 = item.T2,
-            };
-        try
-        {
-            Document.Execute(Edits.AddLibraryEntry(Document.Project, entry));
-        }
-        catch (Exception ex) when (ex is ArgumentException or InvalidDataException)
-        {
-            Message = string.Format(Strings.Inspector_BadValue, entry.Name);
-        }
-    }
-
     // ---- importing
 
     /// <summary>The import panel while a picture is being cut and scaled; null otherwise.</summary>
@@ -288,34 +360,39 @@ public sealed partial class LibraryViewModel : ObservableObject
     partial void OnImportChanged(ImportViewModel? value) => OnPropertyChanged(nameof(IsImporting));
 
     /// <summary>
-    /// Asks for a file for the selected timeline's kind and brings it into the library: a picture through the import panel
-    /// (scaled to the timeline's height), a GIF or a gradient as it is.
+    /// Asks for a file and brings it into the section it belongs to by what it is, whichever section is shown: a GIF is a video; a
+    /// picture is a pixel picture (through the import panel, scaled to the height of the selected pixel timeline, if there is one), or a
+    /// gradient when an E-pic timeline is selected. The section is shown and the new entry selected.
     /// </summary>
     [RelayCommand]
     private async Task ImportAsync()
     {
         Message = null;
         if (_picker() is not { } picker) return;
-        var timeline = Target;
-        string kind = timeline?.Kind switch
-        {
-            TimelineKind.Video => LibraryKind.Video,
-            TimelineKind.EpicPoi => LibraryKind.Gradient,
-            _ => LibraryKind.Image,
-        };
-        if (timeline is { Kind: TimelineKind.Light }) return;
-
-        string? path = kind == LibraryKind.Video ? await picker.PickGifPathAsync() : await picker.PickImagePathAsync();
+        string? path = await picker.PickImagePathAsync();
         if (path is null) return;
+        string kind = KindOf(path);
         try
         {
-            if (kind == LibraryKind.Image) OpenImport(path, timeline);
+            ShowSection(kind);
+            if (kind == LibraryKind.Image) OpenImport(path, Target is { Kind: TimelineKind.Pixel } pixel ? pixel : null);
             else AddFile(path, kind);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
         {
             Message = string.Format(Strings.Item_AddFailed, Path.GetFileName(path), ex.Message);
         }
+    }
+
+    private string KindOf(string path) =>
+        path.EndsWith(".gif", StringComparison.OrdinalIgnoreCase) ? LibraryKind.Video
+        : Target is { Kind: TimelineKind.EpicPoi } ? LibraryKind.Gradient
+        : LibraryKind.Image;
+
+    private void ShowSection(string kind)
+    {
+        int index = Sections.ToList().FindIndex(x => x.Kind == kind);
+        if (index >= 0) SectionIndex = index;
     }
 
     /// <summary>Opens the import panel for a picture; the height comes from the timeline it is for, if any.</summary>
@@ -347,7 +424,11 @@ public sealed partial class LibraryViewModel : ObservableObject
         }
         string id = Document.AddMedia(path);
         var existing = Document.Project.Library.FirstOrDefault(e => e.ResourceId == id && e.Kind == kind);
-        if (existing is not null) return existing;
+        if (existing is not null)
+        {
+            Select(existing);
+            return existing;
+        }
         var entry = new LibraryEntry
         {
             Name = Path.GetFileNameWithoutExtension(path), Kind = kind, ResourceId = id, SourcePath = path, Width = width, Height = height, Frames = frames,
@@ -357,8 +438,17 @@ public sealed partial class LibraryViewModel : ObservableObject
         return entry;
     }
 
-    private void Select(LibraryEntry entry) =>
-        Selected = Entries.Concat(Missing).FirstOrDefault(e => ReferenceEquals(e.Entry, entry));
+    private void Select(LibraryEntry entry)
+    {
+        ShowSection(entry.Kind);
+        // A picture the height filter hides would not show: the filter gives way.
+        if (entry.Kind == LibraryKind.Image && _heightFilter != 0 && entry.Height != _heightFilter)
+        {
+            _heightFilter = 0;
+            Rebuild();
+        }
+        Selected = Entries.FirstOrDefault(e => ReferenceEquals(e.Entry, entry));
+    }
 
     // ---- missing files
 

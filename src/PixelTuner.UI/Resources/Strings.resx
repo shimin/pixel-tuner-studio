@@ -84,6 +84,12 @@
   <data name="Kind_Light" xml:space="preserve"><value>LightMaster</value></data>
   <data name="Timeline_DefaultName" xml:space="preserve"><value>Timeline {0}</value></data>
   <data name="Marker_DefaultName" xml:space="preserve"><value>Marker {0}</value></data>
+  <data name="Inspector_Heading" xml:space="preserve"><value>Inspector</value></data>
+  <data name="Inspector_Hide" xml:space="preserve"><value>Hide the inspector</value></data>
+  <data name="Inspector_Show" xml:space="preserve"><value>Show the inspector</value></data>
+  <data name="Panels_Heading" xml:space="preserve"><value>Panels</value></data>
+  <data name="Panels_Hide" xml:space="preserve"><value>Hide the panels</value></data>
+  <data name="Panels_Show" xml:space="preserve"><value>Show the panels</value></data>
   <data name="Inspector_Nothing" xml:space="preserve"><value>Select a timeline, item or marker.</value></data>
   <data name="Inspector_Name" xml:space="preserve"><value>Name</value></data>
   <data name="Inspector_Start" xml:space="preserve"><value>Start</value></data>
@@ -131,7 +137,6 @@
   <data name="Edit_ReplaceLibraryMedia" xml:space="preserve"><value>Replace file in library</value></data>
   <data name="Edit_ApplySettings" xml:space="preserve"><value>Apply settings to all</value></data>
   <data name="Edit_RemoveItems" xml:space="preserve"><value>Remove items</value></data>
-  <data name="Command_AddItem" xml:space="preserve"><value>Add file…</value></data>
   <data name="FileType_Image" xml:space="preserve"><value>Images</value></data>
   <data name="Item_AddFailed" xml:space="preserve"><value>Cannot add {0}: {1}</value></data>
   <data name="Item_NoTimeline" xml:space="preserve"><value>Select a timeline first: a pixel, video or E-Pic timeline takes files, a LightMaster timeline takes colours and effects.</value></data>
@@ -141,8 +146,6 @@
   <data name="Inspector_Stretching" xml:space="preserve"><value>Stretching</value></data>
   <data name="Inspector_Laser" xml:space="preserve"><value>Laser</value></data>
   <data name="Inspector_Preview" xml:space="preserve"><value>Image</value></data>
-  <data name="Command_AddColor" xml:space="preserve"><value>Add colour</value></data>
-  <data name="Command_AddEffect" xml:space="preserve"><value>Add effect</value></data>
   <data name="FileType_Gif" xml:space="preserve"><value>Animations (GIF)</value></data>
   <data name="Inspector_Color" xml:space="preserve"><value>Colour</value></data>
   <data name="Inspector_ColorTo" xml:space="preserve"><value>Goes to</value></data>
@@ -209,13 +212,19 @@
   <data name="Library_WrongHeight" xml:space="preserve"><value>{0} LEDs high: the timeline plays another height.</value></data>
   <data name="Library_WrongKind" xml:space="preserve"><value>This timeline does not play it.</value></data>
   <data name="Library_VideoDetail" xml:space="preserve"><value>{0} × {1}, {2} frames</value></data>
-  <data name="Library_Empty" xml:space="preserve"><value>Nothing here for this timeline yet. Import a file.</value></data>
-  <data name="Library_SaveItem" xml:space="preserve"><value>Keep in library</value></data>
-  <data name="Library_AddColor" xml:space="preserve"><value>Add colour</value></data>
-  <data name="Library_ShowAll" xml:space="preserve"><value>Show everything</value></data>
+  <data name="Library_Empty" xml:space="preserve"><value>Nothing here yet. Import a file.</value></data>
   <data name="Library_Remove" xml:space="preserve"><value>Remove</value></data>
   <data name="Library_Place" xml:space="preserve"><value>Put on timeline</value></data>
   <data name="Library_Import" xml:space="preserve"><value>Import…</value></data>
+  <data name="Library_SectionPixel" xml:space="preserve"><value>Pixel poi/hoop</value></data>
+  <data name="Library_SectionVideo" xml:space="preserve"><value>Video</value></data>
+  <data name="Library_SectionEpic" xml:space="preserve"><value>E-pic poi</value></data>
+  <data name="Library_SectionLight" xml:space="preserve"><value>LightMaster</value></data>
+  <data name="Library_LightHint" xml:space="preserve"><value>Colours and effects of the LightMaster are a fixed list: pick one and put it on a LightMaster timeline.</value></data>
+  <data name="Effect_Solid" xml:space="preserve"><value>Solid colour</value></data>
+  <data name="Library_HeightFilter" xml:space="preserve"><value>Height:</value></data>
+  <data name="Library_AllHeights" xml:space="preserve"><value>All</value></data>
+  <data name="Command_Zoom" xml:space="preserve"><value>Zoom</value></data>
   <data name="Library_Title" xml:space="preserve"><value>Library</value></data>
   <data name="Drop_NoRoom" xml:space="preserve"><value>There is no room for the item here at that time.</value></data>
   <data name="Drop_WrongHeight" xml:space="preserve"><value>This timeline plays pictures {0} LEDs high; this one is {1}.</value></data>

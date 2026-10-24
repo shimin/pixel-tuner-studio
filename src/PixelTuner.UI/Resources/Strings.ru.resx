@@ -84,6 +84,12 @@
   <data name="Kind_Light" xml:space="preserve"><value>LightMaster</value></data>
   <data name="Timeline_DefaultName" xml:space="preserve"><value>Дорожка {0}</value></data>
   <data name="Marker_DefaultName" xml:space="preserve"><value>Маркер {0}</value></data>
+  <data name="Inspector_Heading" xml:space="preserve"><value>Инспектор</value></data>
+  <data name="Inspector_Hide" xml:space="preserve"><value>Скрыть инспектор</value></data>
+  <data name="Inspector_Show" xml:space="preserve"><value>Показать инспектор</value></data>
+  <data name="Panels_Heading" xml:space="preserve"><value>Панели</value></data>
+  <data name="Panels_Hide" xml:space="preserve"><value>Скрыть панели</value></data>
+  <data name="Panels_Show" xml:space="preserve"><value>Показать панели</value></data>
   <data name="Inspector_Nothing" xml:space="preserve"><value>Выберите дорожку, элемент или маркер.</value></data>
   <data name="Inspector_Name" xml:space="preserve"><value>Название</value></data>
   <data name="Inspector_Start" xml:space="preserve"><value>Начало</value></data>
@@ -131,7 +137,6 @@
   <data name="Edit_ReplaceLibraryMedia" xml:space="preserve"><value>Замена файла в библиотеке</value></data>
   <data name="Edit_ApplySettings" xml:space="preserve"><value>Применение настроек ко всем</value></data>
   <data name="Edit_RemoveItems" xml:space="preserve"><value>Удаление элементов</value></data>
-  <data name="Command_AddItem" xml:space="preserve"><value>Добавить файл…</value></data>
   <data name="FileType_Image" xml:space="preserve"><value>Картинки</value></data>
   <data name="Item_AddFailed" xml:space="preserve"><value>Не удалось добавить {0}: {1}</value></data>
   <data name="Item_NoTimeline" xml:space="preserve"><value>Сначала выберите дорожку: файлы принимают дорожки пикселей, видео и E-Pic, а цвета и эффекты — дорожка LightMaster.</value></data>
@@ -141,8 +146,6 @@
   <data name="Inspector_Stretching" xml:space="preserve"><value>Растяжение</value></data>
   <data name="Inspector_Laser" xml:space="preserve"><value>Лазер</value></data>
   <data name="Inspector_Preview" xml:space="preserve"><value>Картинка</value></data>
-  <data name="Command_AddColor" xml:space="preserve"><value>Добавить цвет</value></data>
-  <data name="Command_AddEffect" xml:space="preserve"><value>Добавить эффект</value></data>
   <data name="FileType_Gif" xml:space="preserve"><value>Анимации (GIF)</value></data>
   <data name="Inspector_Color" xml:space="preserve"><value>Цвет</value></data>
   <data name="Inspector_ColorTo" xml:space="preserve"><value>Переходит в</value></data>
@@ -209,13 +212,19 @@
   <data name="Library_WrongHeight" xml:space="preserve"><value>Высота {0} светодиодов: дорожка играет другую высоту.</value></data>
   <data name="Library_WrongKind" xml:space="preserve"><value>Эта дорожка это не играет.</value></data>
   <data name="Library_VideoDetail" xml:space="preserve"><value>{0} × {1}, кадров: {2}</value></data>
-  <data name="Library_Empty" xml:space="preserve"><value>Для этой дорожки пока ничего нет. Импортируйте файл.</value></data>
-  <data name="Library_SaveItem" xml:space="preserve"><value>В библиотеку</value></data>
-  <data name="Library_AddColor" xml:space="preserve"><value>Добавить цвет</value></data>
-  <data name="Library_ShowAll" xml:space="preserve"><value>Показать всё</value></data>
+  <data name="Library_Empty" xml:space="preserve"><value>Здесь пока ничего нет. Импортируйте файл.</value></data>
   <data name="Library_Remove" xml:space="preserve"><value>Удалить</value></data>
   <data name="Library_Place" xml:space="preserve"><value>Положить на дорожку</value></data>
   <data name="Library_Import" xml:space="preserve"><value>Импорт…</value></data>
+  <data name="Library_SectionPixel" xml:space="preserve"><value>Пиксельные пои/обруч</value></data>
+  <data name="Library_SectionVideo" xml:space="preserve"><value>Видео</value></data>
+  <data name="Library_SectionEpic" xml:space="preserve"><value>E-pic poi</value></data>
+  <data name="Library_SectionLight" xml:space="preserve"><value>LightMaster</value></data>
+  <data name="Library_LightHint" xml:space="preserve"><value>Цвета и эффекты LightMaster — фиксированный список: выберите и положите на дорожку LightMaster.</value></data>
+  <data name="Effect_Solid" xml:space="preserve"><value>Сплошной цвет</value></data>
+  <data name="Library_HeightFilter" xml:space="preserve"><value>Высота:</value></data>
+  <data name="Library_AllHeights" xml:space="preserve"><value>Все</value></data>
+  <data name="Command_Zoom" xml:space="preserve"><value>Масштаб</value></data>
   <data name="Library_Title" xml:space="preserve"><value>Библиотека</value></data>
   <data name="Drop_NoRoom" xml:space="preserve"><value>Здесь в это время нет места для элемента.</value></data>
   <data name="Drop_WrongHeight" xml:space="preserve"><value>Эта дорожка играет картинки высотой {0} светодиодов, а эта — {1}.</value></data>

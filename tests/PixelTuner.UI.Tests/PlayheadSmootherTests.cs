@@ -70,11 +70,12 @@ public class PlayheadSmootherTests
         private readonly long _start = time.GetTimestamp();
         public AudioPlayerState State { get; private set; } = AudioPlayerState.Playing;
         public TimeSpan Duration => TimeSpan.FromMinutes(1);
-        public TimeSpan Position => TimeSpan.FromTicks(time.GetElapsedTime(_start, time.GetTimestamp()).Ticks / step.Ticks * step.Ticks);
+        private TimeSpan? _frozen;
+        public TimeSpan Position => _frozen ?? TimeSpan.FromTicks(time.GetElapsedTime(_start, time.GetTimestamp()).Ticks / step.Ticks * step.Ticks);
         public double Volume { get; set; }
         public TimeSpan OutputLatency => TimeSpan.Zero;
         public void Play() { }
-        public void Pause() => State = AudioPlayerState.Paused;
+        public void Pause() { _frozen = Position; State = AudioPlayerState.Paused; }
         public void Stop() => State = AudioPlayerState.Stopped;
         public void Seek(TimeSpan position) { }
         public event EventHandler<AudioPlayerState>? StateChanged { add { } remove { } }
@@ -104,6 +105,35 @@ public class PlayheadSmootherTests
         player.Pause();
         _time.Advance(Ms(33));
         editor.Tick();
-        Assert.Equal(Ms(1000), editor.Playhead);                      // what the paused player says (1023 ms in steps of 250)
+        Assert.Equal(seen[^1], editor.Playhead);                      // where it was drawn, not the 1000 the paused player says
+    }
+
+    [Fact]
+    public void Pausing_stops_the_playhead_at_that_moment_not_at_the_last_report_of_the_player()
+    {
+        using var doc = Package.ProjectDocument.CreateNew("Show");
+        var player = new SteppedPlayer(_time, Ms(250));
+        var editor = new TimelineEditor(doc) { ViewWidth = 1170, Player = player, AudioDuration = TimeSpan.FromMinutes(1), Time = _time };
+        for (int i = 0; i < 30; i++)
+        {
+            _time.Advance(Ms(33));
+            editor.Tick();
+        }
+        var drawn = editor.Playhead;
+        _time.Advance(Ms(5));
+
+        editor.PlayPause();
+
+        // 995 ms have passed; the player last reported 750 and, paused, says 750. The playhead is where the clock puts it.
+        Assert.Equal(drawn + Ms(5), editor.Playhead);
+        Assert.Equal(Ms(750), player.Position);
+        var stopped = editor.Playhead;
+        for (int i = 0; i < 5; i++)
+        {
+            _time.Advance(Ms(33));
+            editor.Tick();
+        }
+        Assert.False(editor.IsPlaying);
+        Assert.Equal(stopped, editor.Playhead);                       // and it stays there
     }
 }

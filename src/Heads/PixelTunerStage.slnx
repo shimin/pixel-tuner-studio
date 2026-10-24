@@ -1,0 +1,16 @@
+<Solution>
+  <!-- Pixel Tuner Stage (Android, iOS): needs the android / ios workloads (dotnet workload install android ios), iOS also a Mac with Xcode.
+       Not part of the default solution, so a plain "dotnet build" on Windows does not ask for them. -->
+  <Folder Name="/src/">
+    <Project Path="../PixelTuner.Audio/PixelTuner.Audio.csproj" />
+    <Project Path="../PixelTuner.Core/PixelTuner.Core.csproj" />
+    <Project Path="../PixelTuner.Devices/PixelTuner.Devices.csproj" />
+    <Project Path="../PixelTuner.Package/PixelTuner.Package.csproj" />
+    <Project Path="../PixelTuner.Sync/PixelTuner.Sync.csproj" />
+    <Project Path="../PixelTuner.UI/PixelTuner.UI.csproj" />
+  </Folder>
+  <Folder Name="/src/Heads/">
+    <Project Path="PixelTuner.Stage.Android/PixelTuner.Stage.Android.csproj" />
+    <Project Path="PixelTuner.Stage.iOS/PixelTuner.Stage.iOS.csproj" />
+  </Folder>
+</Solution>

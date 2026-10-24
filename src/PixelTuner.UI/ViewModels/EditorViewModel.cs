@@ -161,6 +161,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     private void Refresh()
     {
+        OnPropertyChanged(nameof(ZoomSlider));
         OnPropertyChanged(nameof(HasSelection));
         OnPropertyChanged(nameof(InspectorTitle));
         OnPropertyChanged(nameof(CanRename));
@@ -274,12 +275,22 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     private bool CanDelete => Timelines.CanDelete;
 
-    // The view is the centre of the time area when a command zooms.
-    private double Centre => TimelineEditor.HeaderWidth + Timelines.TimeAreaWidth / 2;
-
-    [RelayCommand] void ZoomIn() => Timelines.ZoomAt(1.5, Centre);
-    [RelayCommand] void ZoomOut() => Timelines.ZoomAt(1 / 1.5, Centre);
+    [RelayCommand] void ZoomIn() => Timelines.ZoomOnPlayhead(1.5);
+    [RelayCommand] void ZoomOut() => Timelines.ZoomOnPlayhead(1 / 1.5);
     [RelayCommand] void ZoomFit() => Timelines.ZoomToFit();
+
+    /// <summary>The zoom as a slider position, 0 to 1 on a logarithmic scale between the least and the most pixels a second.</summary>
+    public double ZoomSlider
+    {
+        get => Math.Log(Timelines.PixelsPerSecond / TimelineEditor.MinZoom) / Math.Log(TimelineEditor.MaxZoom / TimelineEditor.MinZoom);
+        set
+        {
+            double pixelsPerSecond = TimelineEditor.MinZoom * Math.Pow(TimelineEditor.MaxZoom / TimelineEditor.MinZoom, Math.Clamp(value, 0, 1));
+            double factor = pixelsPerSecond / Timelines.PixelsPerSecond;
+            if (Math.Abs(factor - 1) < 1e-6) return;   // the slider echoing what the wheel or Fit just did
+            Timelines.ZoomOnPlayhead(factor);
+        }
+    }
 
     // ---- soundtrack and playback
 

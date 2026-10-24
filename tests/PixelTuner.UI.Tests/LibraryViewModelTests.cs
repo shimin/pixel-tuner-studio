@@ -80,34 +80,36 @@ public sealed class LibraryViewModelTests : IDisposable
     }
 
     [Fact]
-    public void The_panel_offers_only_what_the_selected_timeline_can_play()
+    public void Each_kind_of_timeline_has_its_section_and_what_the_selected_timeline_cannot_play_is_dimmed_with_the_reason()
     {
         var pixel = Add(TimelineKind.Pixel);
-        var tall = Image("tall.png", 10, 80);
-        var short1 = Image("short.png", 10, 36);
+        Image("tall.png", 10, 80);
+        Image("short.png", 10, 36);
         _editor.Gallery.AddFile(Gif(), LibraryKind.Video);
+        // A colour kept by an older build is not a section's business: the LightMaster has a fixed list.
         _doc.Execute(Edits.AddLibraryEntry(_doc.Project, new LibraryEntry { Name = "red", Kind = LibraryKind.Color, Color = "#FF0000" }));
+        var gallery = _editor.Gallery;
 
-        // No timeline selected: everything.
+        // No timeline selected: the section picked by hand lists its own kind, all of it.
         _editor.Timelines.Select(null);
-        Assert.Equal(4, _editor.Gallery.Entries.Count);
+        gallery.SectionIndex = 0;
+        Assert.Equal(["short", "tall"], gallery.Entries.Select(e => e.Name).Order());
+        gallery.SectionIndex = 1;
+        Assert.Equal(["glasses"], gallery.Entries.Select(e => e.Name));
 
-        // A pixel timeline that plays 36-LED pictures: only those.
+        // A pixel timeline that plays 36-LED pictures brings the pixel section forward; the tall picture stays, greyed.
         _doc.Execute(Edits.SetTimelineHeight(pixel, 36));
         _editor.Timelines.Select(pixel);
-        Assert.Equal(["short"], _editor.Gallery.Entries.Select(e => e.Name));
-        Assert.True(_editor.Gallery.IsFiltered);
-
-        // "Show everything" lists the rest greyed, with the reason.
-        _editor.Gallery.ShowAll = true;
-        Assert.Equal(4, _editor.Gallery.Entries.Count);
-        var greyed = _editor.Gallery.Entries.Single(e => e.Name == "tall");
+        Assert.Equal(0, gallery.SectionIndex);
+        Assert.Equal(2, gallery.Entries.Count);
+        var greyed = gallery.Entries.Single(e => e.Name == "tall");
         Assert.Equal((PlacementProblem.WrongHeight, false), (greyed.Problem, greyed.CanPlace));
         Assert.Contains("80", greyed.Reason);
-        Assert.Equal(PlacementProblem.WrongKind, _editor.Gallery.Entries.Single(e => e.Name == "red").Problem);
-        Assert.True(_editor.Gallery.Entries.Single(e => e.Name == "short").CanPlace);
-        Assert.NotNull(short1);
-        Assert.NotNull(tall);
+        Assert.True(gallery.Entries.Single(e => e.Name == "short").CanPlace);
+
+        // Another section shows its things too, with the reason they do not go on this timeline.
+        gallery.SectionIndex = 1;
+        Assert.Equal(PlacementProblem.WrongKind, gallery.Entries.Single().Problem);
     }
 
     [Fact]
@@ -174,27 +176,33 @@ public sealed class LibraryViewModelTests : IDisposable
     }
 
     [Fact]
-    public void Colours_and_effects_are_added_and_kept_from_light_items()
+    public void The_LightMaster_section_is_a_fixed_list_that_cannot_be_added_to_or_removed_from()
     {
         var light = Add(TimelineKind.Light);
-        _editor.Gallery.NewColor = "#336699";
-        _editor.Gallery.AddColorCommand.Execute(null);
-        Assert.Equal("#336699", _doc.Project.Library.Single().Color);
+        _editor.Timelines.Select(light);
+        var gallery = _editor.Gallery;
 
-        _editor.Gallery.NewColor = "blue-ish";
-        _editor.Gallery.AddColorCommand.Execute(null);
-        Assert.Single(_doc.Project.Library);
-        Assert.NotNull(_editor.Gallery.Message);
+        Assert.True(gallery.IsFixedSection);
+        Assert.Equal(5, gallery.Entries.Count);
+        Assert.Equal([LibraryKind.Color, LibraryKind.Effect, LibraryKind.Effect, LibraryKind.Effect, LibraryKind.Effect], gallery.Entries.Select(e => e.Entry.Kind));
+        Assert.Equal([LightEffectKind.LinearTransition, LightEffectKind.SineWave, LightEffectKind.SquareWave, LightEffectKind.SawToothWave],
+            gallery.Entries.Skip(1).Select(e => e.Entry.Effect));
+        Assert.All(gallery.Entries, e => Assert.True(e.CanPlace && e.IsFixed));
 
-        // An effect set up on the timeline is kept for later.
-        _editor.AddEffectCommand.Execute(null);
-        _editor.Gallery.SaveSelectedItemCommand.Execute(null);
-        var effect = _doc.Project.Library.Single(e => e.Kind == LibraryKind.Effect);
-        Assert.Equal((LightEffectKind.LinearTransition, "#FFFFFF"), (effect.Effect, effect.ColorLast));
+        // Nothing of the list is in the project, and nothing of it can be removed or renamed.
+        gallery.Selected = gallery.Entries[1];
+        Assert.False(gallery.RemoveCommand.CanExecute(null));
+        Assert.False(gallery.CanRename);
+        gallery.SelectedName = "mine";
+        Assert.Empty(_doc.Project.Library);
+        Assert.NotEqual("mine", gallery.Entries[1].Name);
 
-        // From the library onto the timeline again, as the same kind of item.
-        var placed = _editor.Gallery.Place(effect, light)!;
-        Assert.Equal((ItemKind.Effect, LightEffectKind.LinearTransition), (placed.Kind, placed.Effect));
+        // From the list onto the timeline: a colour as a solid item, an effect with its defaults.
+        var solid = gallery.Place(gallery.Entries[0].Entry, light)!;
+        Assert.Equal((ItemKind.Solid, "#FFFFFF"), (solid.Kind, solid.Color));
+        var effect = gallery.Place(gallery.Entries[2].Entry, light)!;
+        Assert.Equal((ItemKind.Effect, LightEffectKind.SineWave, "#000000", "#FFFFFF"), (effect.Kind, effect.Effect, effect.Color, effect.ColorLast));
+        Assert.Empty(_doc.Project.Library);
     }
 
     [Fact]
@@ -232,20 +240,74 @@ public sealed class LibraryViewModelTests : IDisposable
         Assert.False(_editor.Gallery.IsImporting);
         var entry = Assert.Single(_doc.Project.Library);
         Assert.Equal((LibraryKind.Gradient, 60), (entry.Kind, entry.Width));
+        Assert.Equal(LibraryKind.Gradient, _editor.Gallery.Section.Kind);
         Assert.NotNull(_editor.Gallery.Place(entry, epic));
     }
 
     [Fact]
-    public async Task A_light_timeline_imports_nothing()
+    public async Task Import_sorts_files_by_what_they_are_whatever_section_or_timeline_is_shown_and_selects_the_new_entry()
     {
-        var light = Add(TimelineKind.Light);
-        _editor.Timelines.Select(light);
-        _picker.ImagePath = Picture("a.png", 4, 4);
+        Add(TimelineKind.Light);   // selected: the LightMaster section is shown
+        var gallery = _editor.Gallery;
+        Assert.True(gallery.IsFixedSection);
 
-        await _editor.Gallery.ImportCommand.ExecuteAsync(null);
+        // A GIF is a video.
+        _picker.ImagePath = Gif();
+        await gallery.ImportCommand.ExecuteAsync(null);
+        var video = Assert.Single(_doc.Project.Library);
+        Assert.Equal(LibraryKind.Video, video.Kind);
+        Assert.Equal(LibraryKind.Video, gallery.Section.Kind);
+        Assert.Same(video, gallery.Selected!.Entry);
+        Assert.Contains(gallery.Entries, e => ReferenceEquals(e.Entry, video));
 
-        Assert.Empty(_doc.Project.Library);
-        Assert.False(_editor.Gallery.IsImporting);
+        // A picture is a pixel picture, through the import panel.
+        _picker.ImagePath = Picture("photo.png", 40, 20);
+        await gallery.ImportCommand.ExecuteAsync(null);
+        Assert.True(gallery.IsImporting);
+        Assert.Equal(LibraryKind.Image, gallery.Section.Kind);
+        gallery.Import!.ApplyCommand.Execute(null);
+        var picture = _doc.Project.Library.Single(e => e.Kind == LibraryKind.Image);
+        Assert.Same(picture, gallery.Selected!.Entry);
+
+        // The same GIF again finds its entry and selects it.
+        _picker.ImagePath = Gif();
+        await gallery.ImportCommand.ExecuteAsync(null);
+        Assert.Equal(2, _doc.Project.Library.Count);
+        Assert.Equal(LibraryKind.Video, gallery.Section.Kind);
+        Assert.Same(video, gallery.Selected!.Entry);
+    }
+
+    [Fact]
+    public void The_pixel_section_can_be_narrowed_to_one_height_and_a_new_picture_is_never_hidden_by_it()
+    {
+        var gallery = _editor.Gallery;
+        Image("a.png", 10, 36);
+        Image("b.png", 10, 36);
+        Image("c.png", 10, 72);
+        Assert.True(gallery.HasHeightFilter);
+        Assert.Equal(["All", "36", "72"], gallery.HeightFilterItems);
+        Assert.Equal(3, gallery.Entries.Count);
+
+        gallery.HeightFilterIndex = 1;
+        Assert.Equal(["a", "b"], gallery.Entries.Select(e => e.Name).Order());
+        gallery.HeightFilterIndex = 2;
+        Assert.Equal(["c"], gallery.Entries.Select(e => e.Name));
+
+        // A picture of another height is selected after import: the filter gives way so it shows.
+        var tall = Image("d.png", 10, 80);
+        Assert.Equal(0, gallery.HeightFilterIndex);
+        Assert.Same(tall, gallery.Selected!.Entry);
+        Assert.Equal(4, gallery.Entries.Count);
+
+        // A height that no picture has any more is dropped from the filter.
+        gallery.HeightFilterIndex = 3;   // 80, the tall picture only
+        gallery.Selected = gallery.Entries.Single();
+        gallery.RemoveCommand.Execute(null);
+        Assert.Equal(["All", "36", "72"], gallery.HeightFilterItems);
+        Assert.Equal(0, gallery.HeightFilterIndex);
+
+        gallery.SectionIndex = 1;
+        Assert.False(gallery.HasHeightFilter);
     }
 
     [Fact]

@@ -84,6 +84,12 @@
   <data name="Kind_Light" xml:space="preserve"><value>LightMaster</value></data>
   <data name="Timeline_DefaultName" xml:space="preserve"><value>Zeitleiste {0}</value></data>
   <data name="Marker_DefaultName" xml:space="preserve"><value>Marker {0}</value></data>
+  <data name="Inspector_Heading" xml:space="preserve"><value>Inspektor</value></data>
+  <data name="Inspector_Hide" xml:space="preserve"><value>Inspektor ausblenden</value></data>
+  <data name="Inspector_Show" xml:space="preserve"><value>Inspektor einblenden</value></data>
+  <data name="Panels_Heading" xml:space="preserve"><value>Bereiche</value></data>
+  <data name="Panels_Hide" xml:space="preserve"><value>Bereiche ausblenden</value></data>
+  <data name="Panels_Show" xml:space="preserve"><value>Bereiche einblenden</value></data>
   <data name="Inspector_Nothing" xml:space="preserve"><value>Wählen Sie eine Zeitleiste, ein Element oder einen Marker.</value></data>
   <data name="Inspector_Name" xml:space="preserve"><value>Name</value></data>
   <data name="Inspector_Start" xml:space="preserve"><value>Beginn</value></data>
@@ -131,7 +137,6 @@
   <data name="Edit_ReplaceLibraryMedia" xml:space="preserve"><value>Datei in der Bibliothek ersetzen</value></data>
   <data name="Edit_ApplySettings" xml:space="preserve"><value>Einstellungen auf alle anwenden</value></data>
   <data name="Edit_RemoveItems" xml:space="preserve"><value>Elemente entfernen</value></data>
-  <data name="Command_AddItem" xml:space="preserve"><value>Datei hinzufügen…</value></data>
   <data name="FileType_Image" xml:space="preserve"><value>Bilder</value></data>
   <data name="Item_AddFailed" xml:space="preserve"><value>{0} kann nicht hinzugefügt werden: {1}</value></data>
   <data name="Item_NoTimeline" xml:space="preserve"><value>Wähle zuerst eine Spur: Pixel-, Video- und E-Pic-Spuren nehmen Dateien, die LightMaster-Spur nimmt Farben und Effekte.</value></data>
@@ -141,8 +146,6 @@
   <data name="Inspector_Stretching" xml:space="preserve"><value>Dehnung</value></data>
   <data name="Inspector_Laser" xml:space="preserve"><value>Laser</value></data>
   <data name="Inspector_Preview" xml:space="preserve"><value>Bild</value></data>
-  <data name="Command_AddColor" xml:space="preserve"><value>Farbe hinzufügen</value></data>
-  <data name="Command_AddEffect" xml:space="preserve"><value>Effekt hinzufügen</value></data>
   <data name="FileType_Gif" xml:space="preserve"><value>Animationen (GIF)</value></data>
   <data name="Inspector_Color" xml:space="preserve"><value>Farbe</value></data>
   <data name="Inspector_ColorTo" xml:space="preserve"><value>Geht über zu</value></data>
@@ -209,13 +212,19 @@
   <data name="Library_WrongHeight" xml:space="preserve"><value>{0} LEDs hoch: die Spur spielt eine andere Höhe.</value></data>
   <data name="Library_WrongKind" xml:space="preserve"><value>Diese Spur spielt das nicht.</value></data>
   <data name="Library_VideoDetail" xml:space="preserve"><value>{0} × {1}, {2} Bilder</value></data>
-  <data name="Library_Empty" xml:space="preserve"><value>Für diese Spur gibt es noch nichts. Importiere eine Datei.</value></data>
-  <data name="Library_SaveItem" xml:space="preserve"><value>In die Bibliothek</value></data>
-  <data name="Library_AddColor" xml:space="preserve"><value>Farbe hinzufügen</value></data>
-  <data name="Library_ShowAll" xml:space="preserve"><value>Alles zeigen</value></data>
+  <data name="Library_Empty" xml:space="preserve"><value>Hier ist noch nichts. Importiere eine Datei.</value></data>
   <data name="Library_Remove" xml:space="preserve"><value>Entfernen</value></data>
   <data name="Library_Place" xml:space="preserve"><value>Auf die Spur legen</value></data>
   <data name="Library_Import" xml:space="preserve"><value>Importieren…</value></data>
+  <data name="Library_SectionPixel" xml:space="preserve"><value>Pixel Poi/Hoop</value></data>
+  <data name="Library_SectionVideo" xml:space="preserve"><value>Video</value></data>
+  <data name="Library_SectionEpic" xml:space="preserve"><value>E-pic poi</value></data>
+  <data name="Library_SectionLight" xml:space="preserve"><value>LightMaster</value></data>
+  <data name="Library_LightHint" xml:space="preserve"><value>Farben und Effekte des LightMaster sind eine feste Liste: wähle einen und lege ihn auf eine LightMaster-Spur.</value></data>
+  <data name="Effect_Solid" xml:space="preserve"><value>Einfarbig</value></data>
+  <data name="Library_HeightFilter" xml:space="preserve"><value>Höhe:</value></data>
+  <data name="Library_AllHeights" xml:space="preserve"><value>Alle</value></data>
+  <data name="Command_Zoom" xml:space="preserve"><value>Zoom</value></data>
   <data name="Library_Title" xml:space="preserve"><value>Bibliothek</value></data>
   <data name="Drop_NoRoom" xml:space="preserve"><value>Hier ist zu dieser Zeit kein Platz für das Element.</value></data>
   <data name="Drop_WrongHeight" xml:space="preserve"><value>Diese Spur spielt Bilder mit {0} LEDs; dieses hat {1}.</value></data>

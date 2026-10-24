@@ -8,6 +8,9 @@
   in its head and where the text is about the running app (`PixelTuner.UI.Product.Current`).
   Versions: `StudioVersion` and `StageVersion` in `Directory.Build.props`. Icons come from
   `scripts/icons/make-icons.py`. Repository: shimin/pixel-tuner-studio.
+- Builds: the default solution `PixelTunerStudio.slnx` is Studio (Windows, macOS) with the tests and builds with the plain SDK; the phone apps
+  are in `src/Heads/PixelTunerStage.slnx` (they need workloads). Windows: `scripts/windows/build.cmd` publishes Studio to `out/win-x64`.
+  PixelTuner 2 is not in the default solution: `scripts/legacy/build-pixeltuner2.cmd` (Visual Studio MSBuild, untested here: no Windows).
 - Project package extension is `.pxpkg` (not .pixpkg, not .ptpkg).
 - Stack: .NET 10 + Avalonia 12. Shared code in `src/PixelTuner.*`; platform code only in `src/Heads/*`.
 - Follow each platform's guidelines: Fluent on Windows, macOS menu bar and Cmd shortcuts,
@@ -53,7 +56,7 @@
   `TimelineControl` only draws it and forwards the pointer. Do not put model rules into the control. An item dragged over another timeline moves there only if
   `Edits.Accepts` (same kind of item), `Edits.FitsHeight` and `Edits.Fits` say so (else the drag shows a `DropDenial`); item edges and the
   playhead/marker pull points land on a 50 ms grid (`TimelineEditor.OnGrid`); a lane draws the item's `ItemThumbnails` picture repeated by
-  `TileLayout` (one pass = the device's time for the picture) and the pauses between items as black stretches; items are added by `EditorViewModel.AddItemCommand` (files), `AddColorCommand` and `AddEffectCommand`. To try the
+  `TileLayout` (one pass = the device's time for the picture) and the pauses between items as black stretches; items are put on timelines from the library (`LibraryViewModel.Place`; see the library below). Rows have no border lines: their backgrounds alternate by place and are tinted by kind as in PixelTuner 2 (`TimelineRows`). The corner left of the ruler holds delete / move up / move down (`HeaderButton`, `TimelineEditor.Press`); zoom is a slider in the toolbar (`EditorViewModel.ZoomSlider`, logarithmic), the wheel over the ruler, or Ctrl/Cmd and the wheel; "fit the whole show" sits beside the slider at the right. Every zoom (slider, wheel, menu) goes through `TimelineEditor.ZoomOnPlayhead`: the playhead ends in the middle of the time area, or stays where it is on screen near the start, and while the sound plays the view keeps it in the middle until the view is panned by hand. `EditorViewModel.AddItemCommand`, `AddColorCommand` and `AddEffectCommand` have no button any more (tests use them). To try the
   window with the mouse in the sandbox: `xvfb-run`, then `python-xlib` (`pip install python-xlib`) with XTest.
 - Stretching of an item is a speed, not a position; the item's time span only says how long it plays. Pixel devices
   and hoops (same .bin, PixelTuner 2 has no separate hoop semantics) hold each image column for k x 50 us, so one pass of a
@@ -66,8 +69,9 @@
   item plays cannot be removed; old projects get entries from their items on open (`AddMissingEntries`). Pictures come in through
   `ImportViewModel` (the steps of PixelTuner 2's import window: cut, `PerspectiveWarp` (its mesh warp, ported and checked against the legacy
   `WarpGrid` in `WarpOracleTests`), trim, `ImageImport` scale to the device height and colour), the panel's logic is
-  `LibraryViewModel` (`EditorViewModel.Gallery`; namespace `PixelTuner.UI.LibraryPanel`, because `Library` is the Core class).
-- The inspector (`EditorViewModel`, partials `.TimelineInspector.cs` and `.BinInfo.cs`): several items can be selected (`TimelineEditor.SelectedItems`;
+  `LibraryViewModel` (`EditorViewModel.Gallery`; namespace `PixelTuner.UI.LibraryPanel`, because `Library` is the Core class). The panel has a section for each kind of timeline (pixel poi/hoop, video, E-pic poi, LightMaster, as PixelTuner 2 had a pane for each): one Import button sorts a file by what it is (a GIF is a video; a picture is a pixel picture, or an E-pic gradient while an E-pic timeline is selected), shows its section and selects the new entry; the pixel section has a filter by picture height (`HeightFilterIndex`); from there a thing is put on a timeline; the section follows the selected timeline, and what that timeline cannot play is dimmed with the reason. The LightMaster section is the fixed `LibraryViewModel.LightEntries` (solid colour and the four effects, PixelTuner 2's effects pane): nothing is added to or removed from it, and it is not in the project.
+- The bottom panel of the editor (Library, Preview, Canvas, Devices) is a `TabControl` with its tabs in a column on the left (`Classes="rail"`); each tab keeps its buttons in a column of its own beside the content (`Button.tool`), so nothing takes the height from the content. Its height is the user's: a `GridSplitter` above it moves a fixed-height grid row, and switching tabs does not change it. A bar over it (the splitter, with the "Panels" button on it) folds the panel away (`IsBottomPanelVisible`); `EditorView.axaml.cs` keeps the height the user set and gives it back. A `GridSplitter` must be a direct child of the grid whose rows it resizes.
+- The inspector (`EditorViewModel`, partials `.TimelineInspector.cs` and `.BinInfo.cs`): its name at the top is the button that folds it into a narrow strip (the whole strip brings it back, `IsInspectorVisible`); several items can be selected (`TimelineEditor.SelectedItems`;
   Ctrl/Cmd click toggles, Shift click selects a run) and "apply to the others" is one `Edits.ApplySettings` step; the ".bin" line and the
   warnings come from `BinInfo.Of` (it builds the file of the device that plays the timeline with `ShowBuilder` and reads it back with
   `BinReader`, so they are what the device will get); `BuildIssue` codes get their words in `EditorViewModel.IssueText`.

@@ -31,6 +31,69 @@ public class TimelineEditorTests
     private static double RowY(int row) => TimelineEditor.TracksTop + row * TimelineEditor.TrackHeight + 10;
 
     [Fact]
+    public void The_corner_buttons_are_in_the_ruler_row_left_of_the_time_and_the_rest_of_the_corner_is_still_the_ruler()
+    {
+        foreach (var button in Enum.GetValues<HeaderButton>())
+        {
+            var (x, y, w, h) = TimelineEditor.CornerButtonBounds(button);
+            Assert.True(x + w <= TimelineEditor.HeaderWidth && y >= 0 && y + h <= TimelineEditor.RulerHeight);
+            var hit = _editor.HitTest(x + w / 2, y + h / 2);
+            Assert.Equal((HitKind.CornerButton, button), (hit.Kind, hit.Button!.Value));
+        }
+        var (lx, _, lw, _) = TimelineEditor.CornerButtonBounds(HeaderButton.MoveDown);
+        Assert.Equal(HitKind.Ruler, _editor.HitTest(lx + lw + 2, 2).Kind);
+        Assert.Equal(HitKind.Ruler, _editor.HitTest(TimelineEditor.HeaderWidth + 5, 2).Kind);
+    }
+
+    [Fact]
+    public void The_corner_buttons_act_on_the_selected_timeline_and_are_off_when_they_cannot()
+    {
+        var first = Track();
+        var second = Track();
+        var third = Track();
+
+        Assert.All(Enum.GetValues<HeaderButton>(), b => Assert.False(_editor.IsEnabled(b)));   // nothing selected
+
+        _editor.Select(first);
+        Assert.Equal([true, false, true], Enum.GetValues<HeaderButton>().Select(_editor.IsEnabled));   // delete, up, down
+
+        _editor.Press(HeaderButton.MoveDown);
+        Assert.Equal([second, first, third], _doc.Project.Timelines);
+        _editor.Press(HeaderButton.MoveDown);
+        Assert.False(_editor.IsEnabled(HeaderButton.MoveDown));
+        _editor.Press(HeaderButton.MoveDown);   // refused quietly at the end
+        Assert.Equal([second, third, first], _doc.Project.Timelines);
+
+        _editor.Press(HeaderButton.MoveUp);
+        Assert.Equal([second, first, third], _doc.Project.Timelines);
+
+        _editor.Press(HeaderButton.Delete);
+        Assert.Equal([second, third], _doc.Project.Timelines);
+        Assert.False(_editor.IsEnabled(HeaderButton.Delete));
+    }
+
+    [Fact]
+    public void The_background_of_a_row_alternates_by_place_so_it_follows_a_timeline_that_moves()
+    {
+        foreach (string kind in new[] { TimelineKind.Pixel, TimelineKind.Video, TimelineKind.EpicPoi, TimelineKind.Light })
+            foreach (bool dark in new[] { true, false })
+            {
+                var even = TimelineRows.Background(kind, 0, dark);
+                var odd = TimelineRows.Background(kind, 1, dark);
+                Assert.NotEqual(even, odd);
+                Assert.Equal(even, TimelineRows.Background(kind, 2, dark));
+                // a few levels apart, not a stripe
+                Assert.InRange(Math.Abs(even.R + even.G + even.B - odd.R - odd.G - odd.B), 1, 60);
+            }
+
+        // PixelTuner 2's own values in the dark theme.
+        Assert.Equal(Avalonia.Media.Color.FromRgb(70, 70, 70), TimelineRows.Background(TimelineKind.Pixel, 0, true));
+        Assert.Equal(Avalonia.Media.Color.FromRgb(70, 50, 70), TimelineRows.Background(TimelineKind.Video, 1, true));
+        Assert.Equal(Avalonia.Media.Color.FromRgb(80, 60, 60), TimelineRows.Background(TimelineKind.EpicPoi, 0, true));
+        Assert.Equal(Avalonia.Media.Color.FromRgb(50, 50, 70), TimelineRows.Background(TimelineKind.Light, 1, true));
+    }
+
+    [Fact]
     public void Time_and_x_are_inverse_and_follow_zoom_and_scroll()
     {
         Assert.Equal(TimelineEditor.HeaderWidth + 200, X(2), 6);

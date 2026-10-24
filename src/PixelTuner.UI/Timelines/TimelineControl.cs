@@ -14,8 +14,8 @@ namespace PixelTuner.UI.Timelines;
 
 /// <summary>
 /// Draws a <see cref="TimelineEditor"/> and forwards the pointer to it: the ruler with markers and
-/// the playhead, one row per timeline with its items. Ctrl and the wheel zoom, Shift and the
-/// wheel (or a sideways wheel) scroll in time, the plain wheel scrolls the rows.
+/// the playhead, one row per timeline with its items. Ctrl (Cmd) and the wheel zoom, and so does the plain wheel over the ruler
+/// or the sound lane; Shift and the wheel (or a sideways wheel) scroll in time, the plain wheel elsewhere scrolls the rows.
 /// </summary>
 public sealed class TimelineControl : Control
 {
@@ -25,6 +25,7 @@ public sealed class TimelineControl : Control
     private int _rows = -1;
     private DispatcherTimer? _timer;
     private bool _soundtrackHovered;
+    private HeaderButton? _hoveredButton;
 
     public TimelineControl()
     {
@@ -154,6 +155,13 @@ public sealed class TimelineControl : Control
             e.Handled = true;
             return;
         }
+        if (hit is { Kind: HitKind.CornerButton, Button: { } button })
+        {
+            editor.Press(button);
+            e.Pointer.Capture(null);
+            e.Handled = true;
+            return;
+        }
         var mode = e.KeyModifiers.HasFlag(KeyModifiers.Control) || e.KeyModifiers.HasFlag(KeyModifiers.Meta) ? SelectionMode.Toggle
             : e.KeyModifiers.HasFlag(KeyModifiers.Shift) ? SelectionMode.Range : SelectionMode.Replace;
         editor.PointerDown(p.X, p.Y, mode);
@@ -178,6 +186,12 @@ public sealed class TimelineControl : Control
             _soundtrackHovered = hovered;
             InvalidateVisual();
         }
+        if (hit.Button != _hoveredButton)
+        {
+            _hoveredButton = hit.Button;
+            ToolTip.SetTip(this, _hoveredButton is { } over ? ButtonTip(over) : null);
+            InvalidateVisual();
+        }
         Cursor = hit.Kind switch
         {
             HitKind.ItemStart or HitKind.ItemEnd => new Cursor(StandardCursorType.SizeWestEast),
@@ -185,9 +199,27 @@ public sealed class TimelineControl : Control
             HitKind.Item => new Cursor(StandardCursorType.Hand),
             HitKind.Ruler or HitKind.Wave => new Cursor(StandardCursorType.Ibeam),
             HitKind.SoundtrackButton => new Cursor(StandardCursorType.Hand),
+            HitKind.CornerButton => editor.IsEnabled(hit.Button!.Value) ? new Cursor(StandardCursorType.Hand) : Cursor.Default,
             _ => Cursor.Default,
         };
     }
+
+    protected override void OnPointerExited(PointerEventArgs e)
+    {
+        base.OnPointerExited(e);
+        if (_hoveredButton is null && !_soundtrackHovered) return;
+        _hoveredButton = null;
+        _soundtrackHovered = false;
+        ToolTip.SetTip(this, null);
+        InvalidateVisual();
+    }
+
+    private static string ButtonTip(HeaderButton button) => button switch
+    {
+        HeaderButton.Delete => Strings.Command_Delete,
+        HeaderButton.MoveUp => Strings.Command_MoveUp,
+        _ => Strings.Command_MoveDown,
+    };
 
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
@@ -209,9 +241,13 @@ public sealed class TimelineControl : Control
     {
         base.OnPointerWheelChanged(e);
         if (Editor is not { } editor) return;
-        if (e.KeyModifiers.HasFlag(KeyModifiers.Control) || e.KeyModifiers.HasFlag(KeyModifiers.Meta))
+        var at = e.GetPosition(this);   // zoom is around the playhead, wherever the pointer is
+        bool zoomKey = e.KeyModifiers.HasFlag(KeyModifiers.Control) || e.KeyModifiers.HasFlag(KeyModifiers.Meta);
+        // The plain wheel over the ruler or the sound lane zooms: the rows below scroll with it, and they are not there.
+        bool overTime = at.Y < TimelineEditor.TracksTop && e.KeyModifiers == KeyModifiers.None && e.Delta.X == 0;
+        if (zoomKey || overTime)
         {
-            editor.ZoomAt(Math.Exp(e.Delta.Y * 0.15), e.GetPosition(this).X);
+            editor.ZoomOnPlayhead(Math.Exp(e.Delta.Y * 0.15));
             e.Handled = true;
         }
         else if (e.KeyModifiers.HasFlag(KeyModifiers.Shift) || e.Delta.X != 0)
@@ -256,9 +292,9 @@ public sealed class TimelineControl : Control
         {
             var timeline = editor.Project.Timelines[i];
             double top = editor.TrackTop(i);
+            // No line between rows: two shades that alternate by place (so they follow a timeline that is moved), tinted by kind.
             var row = new Rect(0, top, width, TimelineEditor.TrackHeight);
-            context.FillRectangle(i % 2 == 0 ? card : surface, row);
-            context.DrawLine(faint, new Point(0, top + TimelineEditor.TrackHeight), new Point(width, top + TimelineEditor.TrackHeight));
+            context.FillRectangle(new SolidColorBrush(TimelineRows.Background(timeline.Kind, i, ActualThemeVariant == Avalonia.Styling.ThemeVariant.Dark)), row);
 
             var color = ParseColor(timeline.Color, Colors.DodgerBlue);
             context.FillRectangle(new SolidColorBrush(color), new Rect(0, top, 4, TimelineEditor.TrackHeight));
@@ -292,8 +328,27 @@ public sealed class TimelineControl : Control
             DrawLayoutDrop(context, editor, timeArea);
         }
 
-        context.DrawLine(new Pen(muted, 1), new Point(0, TimelineEditor.RulerHeight), new Point(width, TimelineEditor.RulerHeight));
-        context.DrawLine(faint, new Point(TimelineEditor.HeaderWidth, 0), new Point(TimelineEditor.HeaderWidth, Bounds.Height));
+        context.DrawLine(new Pen(new SolidColorBrush(((ISolidColorBrush)muted).Color, 0.15), 1), new Point(0, TimelineEditor.RulerHeight), new Point(width, TimelineEditor.RulerHeight));
+        // The divider of the name column stops where the timelines begin: the rows tell themselves apart by colour.
+        context.DrawLine(faint, new Point(TimelineEditor.HeaderWidth, 0), new Point(TimelineEditor.HeaderWidth, TimelineEditor.TracksTop));
+        DrawCornerButtons(context, editor, muted, text, accent);
+    }
+
+    /// <summary>Delete, move up and move down: small buttons in the corner left of the ruler, acting on the selection.</summary>
+    private void DrawCornerButtons(DrawingContext context, TimelineEditor editor, IBrush muted, IBrush text, IBrush accent)
+    {
+        var mutedColour = ((ISolidColorBrush)muted).Color;
+        foreach (var button in Enum.GetValues<HeaderButton>())
+        {
+            var (x, y, w, h) = TimelineEditor.CornerButtonBounds(button);
+            bool enabled = editor.IsEnabled(button), hovered = enabled && _hoveredButton == button;
+            var fill = new SolidColorBrush(mutedColour, hovered ? 0.24 : 0.1);
+            var border = new Pen(hovered ? accent : new SolidColorBrush(mutedColour, 0.45), 1);
+            context.DrawRectangle(fill, border, new Rect(x, y, w, h), 6, 6);
+            string glyph = button switch { HeaderButton.Delete => "✕", HeaderButton.MoveUp => "↑", _ => "↓" };
+            var caption = Text(glyph, 14, enabled ? (hovered ? accent : text) : new SolidColorBrush(mutedColour, 0.45), FontWeight.SemiBold);
+            context.DrawText(caption, new Point(x + (w - caption.Width) / 2, y + (h - caption.Height) / 2));
+        }
     }
 
     /// <summary>A timeline that will not take the dragged item is tinted red and says why.</summary>
@@ -610,5 +665,35 @@ public sealed class TimelineControl : Control
             g.EndFigure(true);
         }
         context.DrawGeometry(accent, null, cap);
+    }
+}
+
+/// <summary>
+/// The background of a timeline's row, as PixelTuner 2 had it (<c>TimeLineViewModel.Background</c> and <c>SetBackgrounds</c>): two shades a
+/// few levels apart that alternate with the place of the timeline, and a tint for each kind of device. PixelTuner 2 was dark only; the
+/// light theme keeps the same differences on a light ground.
+/// </summary>
+public static class TimelineRows
+{
+    // PixelTuner 2's pairs (even place, odd place) in the dark theme.
+    private static (Color Even, Color Odd) Dark(string kind) => kind switch
+    {
+        TimelineKind.Video => (Color.FromRgb(80, 60, 80), Color.FromRgb(70, 50, 70)),
+        TimelineKind.EpicPoi => (Color.FromRgb(80, 60, 60), Color.FromRgb(70, 50, 50)),
+        TimelineKind.Light => (Color.FromRgb(60, 60, 80), Color.FromRgb(50, 50, 70)),
+        _ => (Color.FromRgb(70, 70, 70), Color.FromRgb(64, 64, 64)),
+    };
+
+    public static Color Background(string kind, int place, bool darkTheme)
+    {
+        var (even, odd) = Dark(kind);
+        var dark = place % 2 == 0 ? even : odd;
+        if (darkTheme) return dark;
+
+        // Light theme: the same offsets from grey, on a light base.
+        var (grey, _) = Dark(TimelineKind.Pixel);
+        byte Lift(byte value, byte reference, int baseLevel) => (byte)Math.Clamp(baseLevel + (value - reference) / 2, 0, 255);
+        int level = place % 2 == 0 ? 244 : 236;
+        return Color.FromRgb(Lift(dark.R, grey.R, level), Lift(dark.G, grey.G, level), Lift(dark.B, grey.B, level));
     }
 }

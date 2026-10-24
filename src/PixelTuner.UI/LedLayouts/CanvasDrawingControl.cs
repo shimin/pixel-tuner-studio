@@ -16,7 +16,8 @@ public sealed class CanvasDrawingControl : Control
     public static readonly StyledProperty<CanvasPanelViewModel?> PanelProperty =
         AvaloniaProperty.Register<CanvasDrawingControl, CanvasPanelViewModel?>(nameof(Panel));
 
-    private static readonly IBrush Page = new SolidColorBrush(Color.FromRgb(0x2B, 0x2B, 0x2B));
+    // Transparent: the page shows the window behind it. (Only its outline is drawn; the fill stays so the colour is one edit away.)
+    private static readonly IBrush Page = new SolidColorBrush(Color.FromArgb(0, 0x2B, 0x2B, 0x2B));
     private static readonly IBrush Unmarked = new SolidColorBrush(Colors.White, 0.16);
     private static readonly IBrush Marked = new SolidColorBrush(Color.FromRgb(0x33, 0xAA, 0xFF), 0.34);
     private static readonly IBrush Stroke = new SolidColorBrush(Colors.White, 0.7);

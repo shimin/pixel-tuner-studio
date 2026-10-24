@@ -4,7 +4,7 @@
 
 | Папка | Что это | Откуда |
 | --- | --- | --- |
-| `PixelTuner2/` | PixelTuner 2.x (WPF, .NET Framework 4.0). Собирается как раньше: `PixelTuner2/PixelTuner.sln`, `make.bat` / `make64.bat` | `shimin/pixel-tuner2` |
+| `PixelTuner2/` | PixelTuner 2.x (WPF, .NET Framework 4.0). Собирается как раньше: `PixelTuner2/PixelTuner.sln`, `make.bat` / `make64.bat`; приложение отдельно — `scripts\legacy\build-pixeltuner2.cmd` | `shimin/pixel-tuner2` |
 | `PixelTuner2/Common/` | Бывший подмодуль Common | `shimin/Common` |
 | `PixelTuner2/Communication/` | Бывший подмодуль Communication | `shimin/Communication` |
 | `PixelTuner2/WpfTools/` | Бывший подмодуль WpfTools (NAudio, Workspace, Toolkit) | `shimin/WpfTools` |

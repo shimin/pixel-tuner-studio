@@ -43,6 +43,65 @@ public class TimelinePlaybackTests
         Assert.Equal(12.5, _editor.Playhead.TotalSeconds, 2);
     }
 
+    private double Middle => TimelineEditor.HeaderWidth + _editor.TimeAreaWidth / 2;
+
+    [Fact]
+    public void Zoom_puts_the_playhead_in_the_middle_when_the_view_can_scroll_that_far()
+    {
+        _editor.SetPlayhead(S(30));
+        _editor.ZoomOnPlayhead(2);
+        Assert.Equal(Middle, X(30), 1);
+
+        _editor.ZoomOnPlayhead(0.25);
+        Assert.Equal(Middle, X(30), 1);
+    }
+
+    [Fact]
+    public void Zoom_near_the_start_keeps_the_playhead_where_it_is_on_screen()
+    {
+        _editor.SetPlayhead(S(1));
+        double before = X(1);
+        _editor.ZoomOnPlayhead(2);
+        Assert.Equal(before, X(1), 1);
+
+        _editor.ZoomOnPlayhead(0.5);
+        Assert.Equal(before, X(1), 1);
+    }
+
+    [Fact]
+    public void After_a_zoom_the_playing_playhead_stays_in_the_middle_until_the_view_is_panned_by_hand()
+    {
+        _editor.SetPlayhead(S(30));
+        _editor.ZoomOnPlayhead(2);
+        _editor.PlayPause();
+
+        for (int i = 0; i < 90; i++)
+        {
+            _time.Advance(S(0.033));
+            _editor.Tick();
+            Assert.Equal(Middle, X(_editor.Playhead.TotalSeconds), 1);
+        }
+        Assert.True(_editor.Playhead > S(32.9));
+
+        _editor.ScrollBy(10);
+        _time.Advance(S(0.5));
+        _editor.Tick();
+        Assert.NotEqual(Middle, X(_editor.Playhead.TotalSeconds), 1);   // it drifts off the middle again, as it did before the zoom
+    }
+
+    [Fact]
+    public void Pausing_after_a_zoom_leaves_the_playhead_in_the_middle()
+    {
+        _editor.SetPlayhead(S(30));
+        _editor.ZoomOnPlayhead(2);
+        _editor.PlayPause();
+        _time.Advance(S(2));
+        _editor.Tick();
+        _editor.PlayPause();
+        _editor.Tick();
+        Assert.Equal(Middle, X(_editor.Playhead.TotalSeconds), 1);
+    }
+
     [Fact]
     public void Pause_holds_the_playhead_and_the_next_play_continues_there()
     {
