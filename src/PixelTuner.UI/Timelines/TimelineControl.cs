@@ -233,35 +233,6 @@ public sealed class TimelineControl : Control
         new(text, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight,
             new Typeface(FontFamily.Default, FontStyle.Normal, weight), size, brush);
 
-    private static IReadOnlyList<FormattedText> WrapTextLines(string text, double size, IBrush brush, FontWeight weight, double maxWidth)
-    {
-        var lines = new List<FormattedText>();
-        var typeface = new Typeface(FontFamily.Default, FontStyle.Normal, weight);
-        string[] words = text.Split(' ');
-        string currentLine = "";
-        foreach (string word in words)
-        {
-            string testLine = string.IsNullOrEmpty(currentLine) ? word : currentLine + " " + word;
-            var testText = new FormattedText(testLine, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, size, brush);
-            if (testText.Width > maxWidth && !string.IsNullOrEmpty(currentLine))
-            {
-                var line = new FormattedText(currentLine, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, size, brush);
-                lines.Add(line);
-                currentLine = word;
-            }
-            else
-            {
-                currentLine = testLine;
-            }
-        }
-        if (!string.IsNullOrEmpty(currentLine))
-        {
-            var lastLine = new FormattedText(currentLine, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, size, brush);
-            lines.Add(lastLine);
-        }
-        return lines;
-    }
-
     public override void Render(DrawingContext context)
     {
         base.Render(context);
@@ -367,19 +338,29 @@ public sealed class TimelineControl : Control
         context.FillRectangle(card, new Rect(0, top, Bounds.Width, TimelineEditor.WaveHeight));
         context.DrawLine(faint, new Point(0, top + TimelineEditor.WaveHeight), new Point(Bounds.Width, top + TimelineEditor.WaveHeight));
 
-        // The whole name column of the wave lane is the button: nothing is drawn but the text,
-        // so the click area is as big as the header and the name reads as a caption.
-        string buttonText = editor.Project.AudioResourceId is null
-            ? Strings.Soundtrack_Import
-            : System.IO.Path.GetFileName((editor.Project.AudioSourcePath ?? "").Replace('\\', '/'));
+        // A button, drawn like the ones of the toolbar: without a sound it asks for one (accent), with one it names it and
+        // replaces it on a click. The click area is the button, nothing else of the header.
+        bool empty = editor.Project.AudioResourceId is null;
+        var button = new Rect(TimelineEditor.SoundtrackButtonInset, TimelineEditor.SoundtrackButtonTop,
+            TimelineEditor.HeaderWidth - 2 * TimelineEditor.SoundtrackButtonInset, TimelineEditor.SoundtrackButtonHeight);
+        var accentColour = ((ISolidColorBrush)accent).Color;
+        var mutedColour = ((ISolidColorBrush)muted).Color;
+        var fill = new SolidColorBrush(empty ? accentColour : mutedColour, _soundtrackHovered ? (empty ? 0.28 : 0.2) : (empty ? 0.16 : 0.1));
+        var border = new Pen(_soundtrackHovered || empty ? accent : new SolidColorBrush(mutedColour, 0.45), 1);
+        context.DrawRectangle(fill, border, button, 8, 8);
 
-        double textLeft = 12;
-        double textMaxWidth = TimelineEditor.HeaderWidth - 24;
-        var lines = WrapTextLines(buttonText, 12, _soundtrackHovered ? accent : text, FontWeight.SemiBold, textMaxWidth);
-        double lineHeight = 14;
-        double startY = top + (TimelineEditor.WaveHeight - lines.Count * lineHeight) / 2;
-        for (int i = 0; i < lines.Count; i++)
-            context.DrawText(lines[i], new Point(textLeft, startY + i * lineHeight));
+        string label = "♪  " + (empty
+            ? Strings.Soundtrack_Import
+            : System.IO.Path.GetFileName((editor.Project.AudioSourcePath ?? "").Replace('\\', '/')));
+        var caption = new FormattedText(label, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight,
+            new Typeface(FontFamily.Default, FontStyle.Normal, FontWeight.SemiBold), 13, _soundtrackHovered && !empty ? accent : text)
+        {
+            MaxTextWidth = button.Width - 16,
+            MaxLineCount = 2,
+            Trimming = TextTrimming.CharacterEllipsis,
+            TextAlignment = TextAlignment.Center,
+        };
+        context.DrawText(caption, new Point(button.X + 8, button.Y + (button.Height - caption.Height) / 2));
     }
 
     private void DrawWave(DrawingContext context, TimelineEditor editor, Rect timeArea, IBrush card, IBrush accent, Pen faint)

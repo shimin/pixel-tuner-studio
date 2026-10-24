@@ -13,6 +13,14 @@ namespace PixelTuner.UI.ViewModels;
 
 public sealed partial class MainViewModel : ObservableObject, IDisposable
 {
+    /// <param name="recent">The projects opened last; without it the list lives in memory only.</param>
+    public MainViewModel(RecentProjects? recent = null)
+    {
+        _recent = recent ?? new RecentProjects();
+        _recent.Changed += (_, _) => OnUi(RefreshRecent);
+        RefreshRecent();
+    }
+
     /// <summary>Set by the view: file dialogs need the window or view that hosts them.</summary>
     public IFilePicker? FilePicker { get; set; }
 
@@ -42,6 +50,31 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     string? _status;
 
     public bool HasProject => Document is not null;
+
+    // ---- recent projects
+
+    private readonly RecentProjects _recent;
+
+    /// <summary>The projects opened or saved last, for the start screen (Studio opens by path; phones have none).</summary>
+    public ObservableCollection<RecentProjectItem> Recent { get; } = [];
+
+    public bool HasRecent => Recent.Count > 0 && CanEdit;
+
+    private void RefreshRecent()
+    {
+        Recent.Clear();
+        foreach (string path in _recent.Paths) Recent.Add(new RecentProjectItem(path, OpenRecentAsync));
+        OnPropertyChanged(nameof(HasRecent));
+    }
+
+    [RelayCommand]
+    void ClearRecent() => _recent.Clear();
+
+    private async Task OpenRecentAsync(string path)
+    {
+        if (!await ConfirmDiscardAsync()) return;
+        await OpenCoreAsync(path);
+    }
 
     /// <summary>Studio edits and saves; Stage only opens.</summary>
     public bool CanEdit => Product.Current.CanEdit;
@@ -105,6 +138,12 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
 
     // Saving runs on a pool thread and reports from there; bindings may only be touched on the UI thread.
     private readonly SynchronizationContext? _ui = SynchronizationContext.Current;
+
+    private void OnUi(Action action)
+    {
+        if (_ui is null || SynchronizationContext.Current == _ui) action();
+        else _ui.Post(_ => action(), null);
+    }
 
     private void DocumentEdited(object? sender, EventArgs e)
     {
@@ -182,10 +221,12 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
         try
         {
             SetDocument(await Task.Run(() => ProjectDocument.Open(path)));
+            _recent.Add(path);
         }
         catch (Exception ex) when (IsFileProblem(ex))
         {
             Error = string.Format(Strings.Error_OpenFailed, ex.Message);
+            if (ex is FileNotFoundException or DirectoryNotFoundException) _recent.Remove(path);
         }
     }
 
@@ -219,6 +260,7 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
 
             var result = await Task.Run(() => PtpImporter.Import(ptp, target));
             SetDocument(await Task.Run(() => ProjectDocument.OpenImported(target)));
+            _recent.Add(target);
             Status = result.MissingMedia.Count == 0
                 ? Strings.Import_Done
                 : string.Format(Strings.Import_DoneMissing, result.MissingMedia.Count,
@@ -278,7 +320,9 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
         if (Document is not { } doc || FilePicker is null) return false;
         string suggested = (string.IsNullOrWhiteSpace(DocumentName) ? Strings.Document_Untitled : DocumentName) + PxPackageFormat.Extension;
         string? path = await FilePicker.PickPackageSavePathAsync(suggested);
-        return path is not null && await RunSaveAsync(d => d.SaveAs(path));
+        if (path is null || !await RunSaveAsync(d => d.SaveAs(path))) return false;
+        _recent.Add(path);
+        return true;
     }
 
     private async Task<bool> RunSaveAsync(Action<ProjectDocument> save)
@@ -308,6 +352,20 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
         ex is InvalidDataException or PackageTooNewException or IOException or UnauthorizedAccessException or JsonException;
 
     public void Dispose() => SetDocument(null);
+}
+
+/// <summary>One line of the list of recent projects on the start screen.</summary>
+public sealed class RecentProjectItem(string path, Func<string, Task> open)
+{
+    public string Path { get; } = path;
+
+    /// <summary>The file name without the extension.</summary>
+    public string Name { get; } = System.IO.Path.GetFileNameWithoutExtension(path);
+
+    /// <summary>The folder the project is in.</summary>
+    public string Folder { get; } = System.IO.Path.GetDirectoryName(path) ?? "";
+
+    public IAsyncRelayCommand OpenCommand { get; } = new AsyncRelayCommand(() => open(path));
 }
 
 /// <summary>What the start screen shows about an opened package.</summary>

@@ -19,7 +19,7 @@ public static class ItemPreview
         TimeSpan.FromTicks(StretchingUnit.Ticks * Math.Max(0, width) * Math.Max(1, stretching));
 
     /// <summary>
-    /// How long a gradient picture takes to play once on an E-Pic poi. Copied from PixelTuner 2's "Repeat" window
+    /// How long a gradient picture takes to play once on an E-pic poi. Copied from PixelTuner 2's "Repeat" window
     /// (<c>RepeatItemWindow</c>): <c>K = milliseconds per column * 5</c>, so a column is held for k / 5 ms.
     /// (PixelTuner 2 writes k * 5 into the .bin for E-Pic, and that is what the device receives.)
     /// </summary>

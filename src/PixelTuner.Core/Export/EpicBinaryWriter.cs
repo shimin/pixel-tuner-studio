@@ -4,7 +4,7 @@ using PixelTuner.Core.Imaging;
 
 namespace PixelTuner.Core.Export;
 
-/// <summary>One timeline of an E-Pic poi: a gap-free run of colour gradients from time 0.</summary>
+/// <summary>One timeline of an E-pic poi: a gap-free run of colour gradients from time 0.</summary>
 public sealed class EpicExportTimeline
 {
     /// <summary>Menu colour of the timeline, written twice (normal and selected), not scaled down.</summary>
@@ -36,7 +36,7 @@ public sealed class EpicExportItem
 }
 
 /// <summary>
-/// Writes the .bin of the E-Pic poi: the "PPOI" version 1 layout of pixel devices with a
+/// Writes the .bin of the E-pic poi: the "PPOI" version 1 layout of pixel devices with a
 /// height of 1 and one colour per column. A port of PixelTuner 2 (Communication/Gradient),
 /// byte for byte, because the poi in the field read exactly this.
 /// </summary>

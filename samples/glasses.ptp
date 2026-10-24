@@ -1,0 +1,686 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FileViewModel xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" UnitSize="11.3">
+  <Canvas>
+    <Elements>
+      <CanvasElementViewModel TilesMargin="4" RowsCount="8" ColumnsCount="37" Path="path2996">
+        <LedTiles>
+          <LedTile LedNumber="0" Index="0" Selected="false" />
+          <LedTile LedNumber="0" Index="1" Selected="false" />
+          <LedTile LedNumber="0" Index="2" Selected="false" />
+          <LedTile LedNumber="129" Index="3" Selected="true" />
+          <LedTile LedNumber="128" Index="4" Selected="true" />
+          <LedTile LedNumber="127" Index="5" Selected="true" />
+          <LedTile LedNumber="126" Index="6" Selected="true" />
+          <LedTile LedNumber="125" Index="7" Selected="true" />
+          <LedTile LedNumber="124" Index="8" Selected="true" />
+          <LedTile LedNumber="123" Index="9" Selected="true" />
+          <LedTile LedNumber="122" Index="10" Selected="true" />
+          <LedTile LedNumber="121" Index="11" Selected="true" />
+          <LedTile LedNumber="120" Index="12" Selected="true" />
+          <LedTile LedNumber="119" Index="13" Selected="true" />
+          <LedTile LedNumber="118" Index="14" Selected="true" />
+          <LedTile LedNumber="117" Index="15" Selected="true" />
+          <LedTile LedNumber="116" Index="16" Selected="true" />
+          <LedTile LedNumber="115" Index="17" Selected="true" />
+          <LedTile LedNumber="114" Index="18" Selected="true" />
+          <LedTile LedNumber="113" Index="19" Selected="true" />
+          <LedTile LedNumber="112" Index="20" Selected="true" />
+          <LedTile LedNumber="111" Index="21" Selected="true" />
+          <LedTile LedNumber="110" Index="22" Selected="true" />
+          <LedTile LedNumber="109" Index="23" Selected="true" />
+          <LedTile LedNumber="108" Index="24" Selected="true" />
+          <LedTile LedNumber="107" Index="25" Selected="true" />
+          <LedTile LedNumber="106" Index="26" Selected="true" />
+          <LedTile LedNumber="105" Index="27" Selected="true" />
+          <LedTile LedNumber="104" Index="28" Selected="true" />
+          <LedTile LedNumber="103" Index="29" Selected="true" />
+          <LedTile LedNumber="102" Index="30" Selected="true" />
+          <LedTile LedNumber="101" Index="31" Selected="true" />
+          <LedTile LedNumber="100" Index="32" Selected="true" />
+          <LedTile LedNumber="99" Index="33" Selected="true" />
+          <LedTile LedNumber="0" Index="34" Selected="false" />
+          <LedTile LedNumber="0" Index="35" Selected="false" />
+          <LedTile LedNumber="0" Index="36" Selected="false" />
+          <LedTile LedNumber="0" Index="37" Selected="false" />
+          <LedTile LedNumber="130" Index="38" Selected="true" />
+          <LedTile LedNumber="131" Index="39" Selected="true" />
+          <LedTile LedNumber="132" Index="40" Selected="true" />
+          <LedTile LedNumber="133" Index="41" Selected="true" />
+          <LedTile LedNumber="134" Index="42" Selected="true" />
+          <LedTile LedNumber="135" Index="43" Selected="true" />
+          <LedTile LedNumber="136" Index="44" Selected="true" />
+          <LedTile LedNumber="137" Index="45" Selected="true" />
+          <LedTile LedNumber="138" Index="46" Selected="true" />
+          <LedTile LedNumber="139" Index="47" Selected="true" />
+          <LedTile LedNumber="140" Index="48" Selected="true" />
+          <LedTile LedNumber="141" Index="49" Selected="true" />
+          <LedTile LedNumber="142" Index="50" Selected="true" />
+          <LedTile LedNumber="143" Index="51" Selected="true" />
+          <LedTile LedNumber="144" Index="52" Selected="true" />
+          <LedTile LedNumber="145" Index="53" Selected="true" />
+          <LedTile LedNumber="146" Index="54" Selected="true" />
+          <LedTile LedNumber="147" Index="55" Selected="true" />
+          <LedTile LedNumber="82" Index="56" Selected="true" />
+          <LedTile LedNumber="83" Index="57" Selected="true" />
+          <LedTile LedNumber="84" Index="58" Selected="true" />
+          <LedTile LedNumber="85" Index="59" Selected="true" />
+          <LedTile LedNumber="86" Index="60" Selected="true" />
+          <LedTile LedNumber="87" Index="61" Selected="true" />
+          <LedTile LedNumber="88" Index="62" Selected="true" />
+          <LedTile LedNumber="89" Index="63" Selected="true" />
+          <LedTile LedNumber="90" Index="64" Selected="true" />
+          <LedTile LedNumber="91" Index="65" Selected="true" />
+          <LedTile LedNumber="92" Index="66" Selected="true" />
+          <LedTile LedNumber="93" Index="67" Selected="true" />
+          <LedTile LedNumber="94" Index="68" Selected="true" />
+          <LedTile LedNumber="95" Index="69" Selected="true" />
+          <LedTile LedNumber="96" Index="70" Selected="true" />
+          <LedTile LedNumber="97" Index="71" Selected="true" />
+          <LedTile LedNumber="98" Index="72" Selected="true" />
+          <LedTile LedNumber="0" Index="73" Selected="false" />
+          <LedTile LedNumber="166" Index="74" Selected="true" />
+          <LedTile LedNumber="165" Index="75" Selected="true" />
+          <LedTile LedNumber="164" Index="76" Selected="true" />
+          <LedTile LedNumber="163" Index="77" Selected="true" />
+          <LedTile LedNumber="162" Index="78" Selected="true" />
+          <LedTile LedNumber="161" Index="79" Selected="true" />
+          <LedTile LedNumber="160" Index="80" Selected="true" />
+          <LedTile LedNumber="159" Index="81" Selected="true" />
+          <LedTile LedNumber="158" Index="82" Selected="true" />
+          <LedTile LedNumber="157" Index="83" Selected="true" />
+          <LedTile LedNumber="156" Index="84" Selected="true" />
+          <LedTile LedNumber="155" Index="85" Selected="true" />
+          <LedTile LedNumber="154" Index="86" Selected="true" />
+          <LedTile LedNumber="153" Index="87" Selected="true" />
+          <LedTile LedNumber="152" Index="88" Selected="true" />
+          <LedTile LedNumber="151" Index="89" Selected="true" />
+          <LedTile LedNumber="150" Index="90" Selected="true" />
+          <LedTile LedNumber="149" Index="91" Selected="true" />
+          <LedTile LedNumber="148" Index="92" Selected="true" />
+          <LedTile LedNumber="81" Index="93" Selected="true" />
+          <LedTile LedNumber="80" Index="94" Selected="true" />
+          <LedTile LedNumber="79" Index="95" Selected="true" />
+          <LedTile LedNumber="78" Index="96" Selected="true" />
+          <LedTile LedNumber="77" Index="97" Selected="true" />
+          <LedTile LedNumber="76" Index="98" Selected="true" />
+          <LedTile LedNumber="75" Index="99" Selected="true" />
+          <LedTile LedNumber="74" Index="100" Selected="true" />
+          <LedTile LedNumber="73" Index="101" Selected="true" />
+          <LedTile LedNumber="72" Index="102" Selected="true" />
+          <LedTile LedNumber="71" Index="103" Selected="true" />
+          <LedTile LedNumber="70" Index="104" Selected="true" />
+          <LedTile LedNumber="69" Index="105" Selected="true" />
+          <LedTile LedNumber="68" Index="106" Selected="true" />
+          <LedTile LedNumber="67" Index="107" Selected="true" />
+          <LedTile LedNumber="66" Index="108" Selected="true" />
+          <LedTile LedNumber="65" Index="109" Selected="true" />
+          <LedTile LedNumber="64" Index="110" Selected="true" />
+          <LedTile LedNumber="167" Index="111" Selected="true" />
+          <LedTile LedNumber="168" Index="112" Selected="true" />
+          <LedTile LedNumber="169" Index="113" Selected="true" />
+          <LedTile LedNumber="170" Index="114" Selected="true" />
+          <LedTile LedNumber="171" Index="115" Selected="true" />
+          <LedTile LedNumber="172" Index="116" Selected="true" />
+          <LedTile LedNumber="173" Index="117" Selected="true" />
+          <LedTile LedNumber="174" Index="118" Selected="true" />
+          <LedTile LedNumber="175" Index="119" Selected="true" />
+          <LedTile LedNumber="176" Index="120" Selected="true" />
+          <LedTile LedNumber="177" Index="121" Selected="true" />
+          <LedTile LedNumber="178" Index="122" Selected="true" />
+          <LedTile LedNumber="179" Index="123" Selected="true" />
+          <LedTile LedNumber="180" Index="124" Selected="true" />
+          <LedTile LedNumber="181" Index="125" Selected="true" />
+          <LedTile LedNumber="182" Index="126" Selected="true" />
+          <LedTile LedNumber="183" Index="127" Selected="true" />
+          <LedTile LedNumber="0" Index="128" Selected="false" />
+          <LedTile LedNumber="0" Index="129" Selected="false" />
+          <LedTile LedNumber="0" Index="130" Selected="false" />
+          <LedTile LedNumber="47" Index="131" Selected="true" />
+          <LedTile LedNumber="48" Index="132" Selected="true" />
+          <LedTile LedNumber="49" Index="133" Selected="true" />
+          <LedTile LedNumber="50" Index="134" Selected="true" />
+          <LedTile LedNumber="51" Index="135" Selected="true" />
+          <LedTile LedNumber="52" Index="136" Selected="true" />
+          <LedTile LedNumber="53" Index="137" Selected="true" />
+          <LedTile LedNumber="54" Index="138" Selected="true" />
+          <LedTile LedNumber="55" Index="139" Selected="true" />
+          <LedTile LedNumber="56" Index="140" Selected="true" />
+          <LedTile LedNumber="57" Index="141" Selected="true" />
+          <LedTile LedNumber="58" Index="142" Selected="true" />
+          <LedTile LedNumber="59" Index="143" Selected="true" />
+          <LedTile LedNumber="60" Index="144" Selected="true" />
+          <LedTile LedNumber="61" Index="145" Selected="true" />
+          <LedTile LedNumber="62" Index="146" Selected="true" />
+          <LedTile LedNumber="63" Index="147" Selected="true" />
+          <LedTile LedNumber="0" Index="148" Selected="false" />
+          <LedTile LedNumber="198" Index="149" Selected="true" />
+          <LedTile LedNumber="197" Index="150" Selected="true" />
+          <LedTile LedNumber="196" Index="151" Selected="true" />
+          <LedTile LedNumber="195" Index="152" Selected="true" />
+          <LedTile LedNumber="194" Index="153" Selected="true" />
+          <LedTile LedNumber="193" Index="154" Selected="true" />
+          <LedTile LedNumber="192" Index="155" Selected="true" />
+          <LedTile LedNumber="191" Index="156" Selected="true" />
+          <LedTile LedNumber="190" Index="157" Selected="true" />
+          <LedTile LedNumber="189" Index="158" Selected="true" />
+          <LedTile LedNumber="188" Index="159" Selected="true" />
+          <LedTile LedNumber="187" Index="160" Selected="true" />
+          <LedTile LedNumber="186" Index="161" Selected="true" />
+          <LedTile LedNumber="185" Index="162" Selected="true" />
+          <LedTile LedNumber="184" Index="163" Selected="true" />
+          <LedTile LedNumber="0" Index="164" Selected="false" />
+          <LedTile LedNumber="0" Index="165" Selected="false" />
+          <LedTile LedNumber="0" Index="166" Selected="false" />
+          <LedTile LedNumber="0" Index="167" Selected="false" />
+          <LedTile LedNumber="0" Index="168" Selected="false" />
+          <LedTile LedNumber="46" Index="169" Selected="true" />
+          <LedTile LedNumber="45" Index="170" Selected="true" />
+          <LedTile LedNumber="44" Index="171" Selected="true" />
+          <LedTile LedNumber="43" Index="172" Selected="true" />
+          <LedTile LedNumber="42" Index="173" Selected="true" />
+          <LedTile LedNumber="41" Index="174" Selected="true" />
+          <LedTile LedNumber="40" Index="175" Selected="true" />
+          <LedTile LedNumber="39" Index="176" Selected="true" />
+          <LedTile LedNumber="38" Index="177" Selected="true" />
+          <LedTile LedNumber="37" Index="178" Selected="true" />
+          <LedTile LedNumber="36" Index="179" Selected="true" />
+          <LedTile LedNumber="35" Index="180" Selected="true" />
+          <LedTile LedNumber="34" Index="181" Selected="true" />
+          <LedTile LedNumber="33" Index="182" Selected="true" />
+          <LedTile LedNumber="32" Index="183" Selected="true" />
+          <LedTile LedNumber="0" Index="184" Selected="false" />
+          <LedTile LedNumber="0" Index="185" Selected="false" />
+          <LedTile LedNumber="199" Index="186" Selected="true" />
+          <LedTile LedNumber="200" Index="187" Selected="true" />
+          <LedTile LedNumber="201" Index="188" Selected="true" />
+          <LedTile LedNumber="202" Index="189" Selected="true" />
+          <LedTile LedNumber="203" Index="190" Selected="true" />
+          <LedTile LedNumber="204" Index="191" Selected="true" />
+          <LedTile LedNumber="205" Index="192" Selected="true" />
+          <LedTile LedNumber="206" Index="193" Selected="true" />
+          <LedTile LedNumber="207" Index="194" Selected="true" />
+          <LedTile LedNumber="208" Index="195" Selected="true" />
+          <LedTile LedNumber="209" Index="196" Selected="true" />
+          <LedTile LedNumber="210" Index="197" Selected="true" />
+          <LedTile LedNumber="211" Index="198" Selected="true" />
+          <LedTile LedNumber="212" Index="199" Selected="true" />
+          <LedTile LedNumber="0" Index="200" Selected="false" />
+          <LedTile LedNumber="0" Index="201" Selected="false" />
+          <LedTile LedNumber="0" Index="202" Selected="false" />
+          <LedTile LedNumber="0" Index="203" Selected="false" />
+          <LedTile LedNumber="0" Index="204" Selected="false" />
+          <LedTile LedNumber="0" Index="205" Selected="false" />
+          <LedTile LedNumber="0" Index="206" Selected="false" />
+          <LedTile LedNumber="18" Index="207" Selected="true" />
+          <LedTile LedNumber="19" Index="208" Selected="true" />
+          <LedTile LedNumber="20" Index="209" Selected="true" />
+          <LedTile LedNumber="21" Index="210" Selected="true" />
+          <LedTile LedNumber="22" Index="211" Selected="true" />
+          <LedTile LedNumber="23" Index="212" Selected="true" />
+          <LedTile LedNumber="24" Index="213" Selected="true" />
+          <LedTile LedNumber="25" Index="214" Selected="true" />
+          <LedTile LedNumber="26" Index="215" Selected="true" />
+          <LedTile LedNumber="27" Index="216" Selected="true" />
+          <LedTile LedNumber="28" Index="217" Selected="true" />
+          <LedTile LedNumber="29" Index="218" Selected="true" />
+          <LedTile LedNumber="30" Index="219" Selected="true" />
+          <LedTile LedNumber="31" Index="220" Selected="true" />
+          <LedTile LedNumber="0" Index="221" Selected="false" />
+          <LedTile LedNumber="0" Index="222" Selected="false" />
+          <LedTile LedNumber="0" Index="223" Selected="false" />
+          <LedTile LedNumber="224" Index="224" Selected="true" />
+          <LedTile LedNumber="223" Index="225" Selected="true" />
+          <LedTile LedNumber="222" Index="226" Selected="true" />
+          <LedTile LedNumber="221" Index="227" Selected="true" />
+          <LedTile LedNumber="220" Index="228" Selected="true" />
+          <LedTile LedNumber="219" Index="229" Selected="true" />
+          <LedTile LedNumber="218" Index="230" Selected="true" />
+          <LedTile LedNumber="217" Index="231" Selected="true" />
+          <LedTile LedNumber="216" Index="232" Selected="true" />
+          <LedTile LedNumber="215" Index="233" Selected="true" />
+          <LedTile LedNumber="214" Index="234" Selected="true" />
+          <LedTile LedNumber="213" Index="235" Selected="true" />
+          <LedTile LedNumber="0" Index="236" Selected="false" />
+          <LedTile LedNumber="0" Index="237" Selected="false" />
+          <LedTile LedNumber="0" Index="238" Selected="false" />
+          <LedTile LedNumber="0" Index="239" Selected="false" />
+          <LedTile LedNumber="0" Index="240" Selected="false" />
+          <LedTile LedNumber="0" Index="241" Selected="false" />
+          <LedTile LedNumber="0" Index="242" Selected="false" />
+          <LedTile LedNumber="0" Index="243" Selected="false" />
+          <LedTile LedNumber="0" Index="244" Selected="false" />
+          <LedTile LedNumber="17" Index="245" Selected="true" />
+          <LedTile LedNumber="16" Index="246" Selected="true" />
+          <LedTile LedNumber="15" Index="247" Selected="true" />
+          <LedTile LedNumber="14" Index="248" Selected="true" />
+          <LedTile LedNumber="13" Index="249" Selected="true" />
+          <LedTile LedNumber="12" Index="250" Selected="true" />
+          <LedTile LedNumber="11" Index="251" Selected="true" />
+          <LedTile LedNumber="10" Index="252" Selected="true" />
+          <LedTile LedNumber="9" Index="253" Selected="true" />
+          <LedTile LedNumber="8" Index="254" Selected="true" />
+          <LedTile LedNumber="7" Index="255" Selected="true" />
+          <LedTile LedNumber="6" Index="256" Selected="true" />
+          <LedTile LedNumber="0" Index="257" Selected="false" />
+          <LedTile LedNumber="0" Index="258" Selected="false" />
+          <LedTile LedNumber="0" Index="259" Selected="false" />
+          <LedTile LedNumber="0" Index="260" Selected="false" />
+          <LedTile LedNumber="0" Index="261" Selected="false" />
+          <LedTile LedNumber="0" Index="262" Selected="false" />
+          <LedTile LedNumber="0" Index="263" Selected="false" />
+          <LedTile LedNumber="225" Index="264" Selected="true" />
+          <LedTile LedNumber="226" Index="265" Selected="true" />
+          <LedTile LedNumber="227" Index="266" Selected="true" />
+          <LedTile LedNumber="228" Index="267" Selected="true" />
+          <LedTile LedNumber="229" Index="268" Selected="true" />
+          <LedTile LedNumber="0" Index="269" Selected="false" />
+          <LedTile LedNumber="0" Index="270" Selected="false" />
+          <LedTile LedNumber="0" Index="271" Selected="false" />
+          <LedTile LedNumber="0" Index="272" Selected="false" />
+          <LedTile LedNumber="0" Index="273" Selected="false" />
+          <LedTile LedNumber="0" Index="274" Selected="false" />
+          <LedTile LedNumber="0" Index="275" Selected="false" />
+          <LedTile LedNumber="0" Index="276" Selected="false" />
+          <LedTile LedNumber="0" Index="277" Selected="false" />
+          <LedTile LedNumber="0" Index="278" Selected="false" />
+          <LedTile LedNumber="0" Index="279" Selected="false" />
+          <LedTile LedNumber="0" Index="280" Selected="false" />
+          <LedTile LedNumber="0" Index="281" Selected="false" />
+          <LedTile LedNumber="0" Index="282" Selected="false" />
+          <LedTile LedNumber="0" Index="283" Selected="false" />
+          <LedTile LedNumber="0" Index="284" Selected="false" />
+          <LedTile LedNumber="0" Index="285" Selected="false" />
+          <LedTile LedNumber="1" Index="286" Selected="true" />
+          <LedTile LedNumber="2" Index="287" Selected="true" />
+          <LedTile LedNumber="3" Index="288" Selected="true" />
+          <LedTile LedNumber="4" Index="289" Selected="true" />
+          <LedTile LedNumber="5" Index="290" Selected="true" />
+          <LedTile LedNumber="0" Index="291" Selected="false" />
+          <LedTile LedNumber="0" Index="292" Selected="false" />
+          <LedTile LedNumber="0" Index="293" Selected="false" />
+          <LedTile LedNumber="0" Index="294" Selected="false" />
+          <LedTile LedNumber="0" Index="295" Selected="false" />
+        </LedTiles>
+      </CanvasElementViewModel>
+      <CanvasElementViewModel TilesMargin="4" RowsCount="8" ColumnsCount="37" Path="path2998">
+        <LedTiles>
+          <LedTile LedNumber="0" Index="0" Selected="false" />
+          <LedTile LedNumber="0" Index="1" Selected="false" />
+          <LedTile LedNumber="0" Index="2" Selected="false" />
+          <LedTile LedNumber="129" Index="3" Selected="true" />
+          <LedTile LedNumber="128" Index="4" Selected="true" />
+          <LedTile LedNumber="127" Index="5" Selected="true" />
+          <LedTile LedNumber="126" Index="6" Selected="true" />
+          <LedTile LedNumber="125" Index="7" Selected="true" />
+          <LedTile LedNumber="124" Index="8" Selected="true" />
+          <LedTile LedNumber="123" Index="9" Selected="true" />
+          <LedTile LedNumber="122" Index="10" Selected="true" />
+          <LedTile LedNumber="121" Index="11" Selected="true" />
+          <LedTile LedNumber="120" Index="12" Selected="true" />
+          <LedTile LedNumber="119" Index="13" Selected="true" />
+          <LedTile LedNumber="118" Index="14" Selected="true" />
+          <LedTile LedNumber="117" Index="15" Selected="true" />
+          <LedTile LedNumber="116" Index="16" Selected="true" />
+          <LedTile LedNumber="115" Index="17" Selected="true" />
+          <LedTile LedNumber="114" Index="18" Selected="true" />
+          <LedTile LedNumber="113" Index="19" Selected="true" />
+          <LedTile LedNumber="112" Index="20" Selected="true" />
+          <LedTile LedNumber="111" Index="21" Selected="true" />
+          <LedTile LedNumber="110" Index="22" Selected="true" />
+          <LedTile LedNumber="109" Index="23" Selected="true" />
+          <LedTile LedNumber="108" Index="24" Selected="true" />
+          <LedTile LedNumber="107" Index="25" Selected="true" />
+          <LedTile LedNumber="106" Index="26" Selected="true" />
+          <LedTile LedNumber="105" Index="27" Selected="true" />
+          <LedTile LedNumber="104" Index="28" Selected="true" />
+          <LedTile LedNumber="103" Index="29" Selected="true" />
+          <LedTile LedNumber="102" Index="30" Selected="true" />
+          <LedTile LedNumber="101" Index="31" Selected="true" />
+          <LedTile LedNumber="100" Index="32" Selected="true" />
+          <LedTile LedNumber="99" Index="33" Selected="true" />
+          <LedTile LedNumber="0" Index="34" Selected="false" />
+          <LedTile LedNumber="0" Index="35" Selected="false" />
+          <LedTile LedNumber="0" Index="36" Selected="false" />
+          <LedTile LedNumber="0" Index="37" Selected="false" />
+          <LedTile LedNumber="130" Index="38" Selected="true" />
+          <LedTile LedNumber="131" Index="39" Selected="true" />
+          <LedTile LedNumber="132" Index="40" Selected="true" />
+          <LedTile LedNumber="133" Index="41" Selected="true" />
+          <LedTile LedNumber="134" Index="42" Selected="true" />
+          <LedTile LedNumber="135" Index="43" Selected="true" />
+          <LedTile LedNumber="136" Index="44" Selected="true" />
+          <LedTile LedNumber="137" Index="45" Selected="true" />
+          <LedTile LedNumber="138" Index="46" Selected="true" />
+          <LedTile LedNumber="139" Index="47" Selected="true" />
+          <LedTile LedNumber="140" Index="48" Selected="true" />
+          <LedTile LedNumber="141" Index="49" Selected="true" />
+          <LedTile LedNumber="142" Index="50" Selected="true" />
+          <LedTile LedNumber="143" Index="51" Selected="true" />
+          <LedTile LedNumber="144" Index="52" Selected="true" />
+          <LedTile LedNumber="145" Index="53" Selected="true" />
+          <LedTile LedNumber="146" Index="54" Selected="true" />
+          <LedTile LedNumber="147" Index="55" Selected="true" />
+          <LedTile LedNumber="82" Index="56" Selected="true" />
+          <LedTile LedNumber="83" Index="57" Selected="true" />
+          <LedTile LedNumber="84" Index="58" Selected="true" />
+          <LedTile LedNumber="85" Index="59" Selected="true" />
+          <LedTile LedNumber="86" Index="60" Selected="true" />
+          <LedTile LedNumber="87" Index="61" Selected="true" />
+          <LedTile LedNumber="88" Index="62" Selected="true" />
+          <LedTile LedNumber="89" Index="63" Selected="true" />
+          <LedTile LedNumber="90" Index="64" Selected="true" />
+          <LedTile LedNumber="91" Index="65" Selected="true" />
+          <LedTile LedNumber="92" Index="66" Selected="true" />
+          <LedTile LedNumber="93" Index="67" Selected="true" />
+          <LedTile LedNumber="94" Index="68" Selected="true" />
+          <LedTile LedNumber="95" Index="69" Selected="true" />
+          <LedTile LedNumber="96" Index="70" Selected="true" />
+          <LedTile LedNumber="97" Index="71" Selected="true" />
+          <LedTile LedNumber="98" Index="72" Selected="true" />
+          <LedTile LedNumber="0" Index="73" Selected="false" />
+          <LedTile LedNumber="166" Index="74" Selected="true" />
+          <LedTile LedNumber="165" Index="75" Selected="true" />
+          <LedTile LedNumber="164" Index="76" Selected="true" />
+          <LedTile LedNumber="163" Index="77" Selected="true" />
+          <LedTile LedNumber="162" Index="78" Selected="true" />
+          <LedTile LedNumber="161" Index="79" Selected="true" />
+          <LedTile LedNumber="160" Index="80" Selected="true" />
+          <LedTile LedNumber="159" Index="81" Selected="true" />
+          <LedTile LedNumber="158" Index="82" Selected="true" />
+          <LedTile LedNumber="157" Index="83" Selected="true" />
+          <LedTile LedNumber="156" Index="84" Selected="true" />
+          <LedTile LedNumber="155" Index="85" Selected="true" />
+          <LedTile LedNumber="154" Index="86" Selected="true" />
+          <LedTile LedNumber="153" Index="87" Selected="true" />
+          <LedTile LedNumber="152" Index="88" Selected="true" />
+          <LedTile LedNumber="151" Index="89" Selected="true" />
+          <LedTile LedNumber="150" Index="90" Selected="true" />
+          <LedTile LedNumber="149" Index="91" Selected="true" />
+          <LedTile LedNumber="148" Index="92" Selected="true" />
+          <LedTile LedNumber="81" Index="93" Selected="true" />
+          <LedTile LedNumber="80" Index="94" Selected="true" />
+          <LedTile LedNumber="79" Index="95" Selected="true" />
+          <LedTile LedNumber="78" Index="96" Selected="true" />
+          <LedTile LedNumber="77" Index="97" Selected="true" />
+          <LedTile LedNumber="76" Index="98" Selected="true" />
+          <LedTile LedNumber="75" Index="99" Selected="true" />
+          <LedTile LedNumber="74" Index="100" Selected="true" />
+          <LedTile LedNumber="73" Index="101" Selected="true" />
+          <LedTile LedNumber="72" Index="102" Selected="true" />
+          <LedTile LedNumber="71" Index="103" Selected="true" />
+          <LedTile LedNumber="70" Index="104" Selected="true" />
+          <LedTile LedNumber="69" Index="105" Selected="true" />
+          <LedTile LedNumber="68" Index="106" Selected="true" />
+          <LedTile LedNumber="67" Index="107" Selected="true" />
+          <LedTile LedNumber="66" Index="108" Selected="true" />
+          <LedTile LedNumber="65" Index="109" Selected="true" />
+          <LedTile LedNumber="64" Index="110" Selected="true" />
+          <LedTile LedNumber="167" Index="111" Selected="true" />
+          <LedTile LedNumber="168" Index="112" Selected="true" />
+          <LedTile LedNumber="169" Index="113" Selected="true" />
+          <LedTile LedNumber="170" Index="114" Selected="true" />
+          <LedTile LedNumber="171" Index="115" Selected="true" />
+          <LedTile LedNumber="172" Index="116" Selected="true" />
+          <LedTile LedNumber="173" Index="117" Selected="true" />
+          <LedTile LedNumber="174" Index="118" Selected="true" />
+          <LedTile LedNumber="175" Index="119" Selected="true" />
+          <LedTile LedNumber="176" Index="120" Selected="true" />
+          <LedTile LedNumber="177" Index="121" Selected="true" />
+          <LedTile LedNumber="178" Index="122" Selected="true" />
+          <LedTile LedNumber="179" Index="123" Selected="true" />
+          <LedTile LedNumber="180" Index="124" Selected="true" />
+          <LedTile LedNumber="181" Index="125" Selected="true" />
+          <LedTile LedNumber="182" Index="126" Selected="true" />
+          <LedTile LedNumber="183" Index="127" Selected="true" />
+          <LedTile LedNumber="0" Index="128" Selected="false" />
+          <LedTile LedNumber="0" Index="129" Selected="false" />
+          <LedTile LedNumber="0" Index="130" Selected="false" />
+          <LedTile LedNumber="47" Index="131" Selected="true" />
+          <LedTile LedNumber="48" Index="132" Selected="true" />
+          <LedTile LedNumber="49" Index="133" Selected="true" />
+          <LedTile LedNumber="50" Index="134" Selected="true" />
+          <LedTile LedNumber="51" Index="135" Selected="true" />
+          <LedTile LedNumber="52" Index="136" Selected="true" />
+          <LedTile LedNumber="53" Index="137" Selected="true" />
+          <LedTile LedNumber="54" Index="138" Selected="true" />
+          <LedTile LedNumber="55" Index="139" Selected="true" />
+          <LedTile LedNumber="56" Index="140" Selected="true" />
+          <LedTile LedNumber="57" Index="141" Selected="true" />
+          <LedTile LedNumber="58" Index="142" Selected="true" />
+          <LedTile LedNumber="59" Index="143" Selected="true" />
+          <LedTile LedNumber="60" Index="144" Selected="true" />
+          <LedTile LedNumber="61" Index="145" Selected="true" />
+          <LedTile LedNumber="62" Index="146" Selected="true" />
+          <LedTile LedNumber="63" Index="147" Selected="true" />
+          <LedTile LedNumber="0" Index="148" Selected="false" />
+          <LedTile LedNumber="198" Index="149" Selected="true" />
+          <LedTile LedNumber="197" Index="150" Selected="true" />
+          <LedTile LedNumber="196" Index="151" Selected="true" />
+          <LedTile LedNumber="195" Index="152" Selected="true" />
+          <LedTile LedNumber="194" Index="153" Selected="true" />
+          <LedTile LedNumber="193" Index="154" Selected="true" />
+          <LedTile LedNumber="192" Index="155" Selected="true" />
+          <LedTile LedNumber="191" Index="156" Selected="true" />
+          <LedTile LedNumber="190" Index="157" Selected="true" />
+          <LedTile LedNumber="189" Index="158" Selected="true" />
+          <LedTile LedNumber="188" Index="159" Selected="true" />
+          <LedTile LedNumber="187" Index="160" Selected="true" />
+          <LedTile LedNumber="186" Index="161" Selected="true" />
+          <LedTile LedNumber="185" Index="162" Selected="true" />
+          <LedTile LedNumber="184" Index="163" Selected="true" />
+          <LedTile LedNumber="0" Index="164" Selected="false" />
+          <LedTile LedNumber="0" Index="165" Selected="false" />
+          <LedTile LedNumber="0" Index="166" Selected="false" />
+          <LedTile LedNumber="0" Index="167" Selected="false" />
+          <LedTile LedNumber="0" Index="168" Selected="false" />
+          <LedTile LedNumber="46" Index="169" Selected="true" />
+          <LedTile LedNumber="45" Index="170" Selected="true" />
+          <LedTile LedNumber="44" Index="171" Selected="true" />
+          <LedTile LedNumber="43" Index="172" Selected="true" />
+          <LedTile LedNumber="42" Index="173" Selected="true" />
+          <LedTile LedNumber="41" Index="174" Selected="true" />
+          <LedTile LedNumber="40" Index="175" Selected="true" />
+          <LedTile LedNumber="39" Index="176" Selected="true" />
+          <LedTile LedNumber="38" Index="177" Selected="true" />
+          <LedTile LedNumber="37" Index="178" Selected="true" />
+          <LedTile LedNumber="36" Index="179" Selected="true" />
+          <LedTile LedNumber="35" Index="180" Selected="true" />
+          <LedTile LedNumber="34" Index="181" Selected="true" />
+          <LedTile LedNumber="33" Index="182" Selected="true" />
+          <LedTile LedNumber="32" Index="183" Selected="true" />
+          <LedTile LedNumber="0" Index="184" Selected="false" />
+          <LedTile LedNumber="0" Index="185" Selected="false" />
+          <LedTile LedNumber="199" Index="186" Selected="true" />
+          <LedTile LedNumber="200" Index="187" Selected="true" />
+          <LedTile LedNumber="201" Index="188" Selected="true" />
+          <LedTile LedNumber="202" Index="189" Selected="true" />
+          <LedTile LedNumber="203" Index="190" Selected="true" />
+          <LedTile LedNumber="204" Index="191" Selected="true" />
+          <LedTile LedNumber="205" Index="192" Selected="true" />
+          <LedTile LedNumber="206" Index="193" Selected="true" />
+          <LedTile LedNumber="207" Index="194" Selected="true" />
+          <LedTile LedNumber="208" Index="195" Selected="true" />
+          <LedTile LedNumber="209" Index="196" Selected="true" />
+          <LedTile LedNumber="210" Index="197" Selected="true" />
+          <LedTile LedNumber="211" Index="198" Selected="true" />
+          <LedTile LedNumber="212" Index="199" Selected="true" />
+          <LedTile LedNumber="0" Index="200" Selected="false" />
+          <LedTile LedNumber="0" Index="201" Selected="false" />
+          <LedTile LedNumber="0" Index="202" Selected="false" />
+          <LedTile LedNumber="0" Index="203" Selected="false" />
+          <LedTile LedNumber="0" Index="204" Selected="false" />
+          <LedTile LedNumber="0" Index="205" Selected="false" />
+          <LedTile LedNumber="0" Index="206" Selected="false" />
+          <LedTile LedNumber="18" Index="207" Selected="true" />
+          <LedTile LedNumber="19" Index="208" Selected="true" />
+          <LedTile LedNumber="20" Index="209" Selected="true" />
+          <LedTile LedNumber="21" Index="210" Selected="true" />
+          <LedTile LedNumber="22" Index="211" Selected="true" />
+          <LedTile LedNumber="23" Index="212" Selected="true" />
+          <LedTile LedNumber="24" Index="213" Selected="true" />
+          <LedTile LedNumber="25" Index="214" Selected="true" />
+          <LedTile LedNumber="26" Index="215" Selected="true" />
+          <LedTile LedNumber="27" Index="216" Selected="true" />
+          <LedTile LedNumber="28" Index="217" Selected="true" />
+          <LedTile LedNumber="29" Index="218" Selected="true" />
+          <LedTile LedNumber="30" Index="219" Selected="true" />
+          <LedTile LedNumber="31" Index="220" Selected="true" />
+          <LedTile LedNumber="0" Index="221" Selected="false" />
+          <LedTile LedNumber="0" Index="222" Selected="false" />
+          <LedTile LedNumber="0" Index="223" Selected="false" />
+          <LedTile LedNumber="224" Index="224" Selected="true" />
+          <LedTile LedNumber="223" Index="225" Selected="true" />
+          <LedTile LedNumber="222" Index="226" Selected="true" />
+          <LedTile LedNumber="221" Index="227" Selected="true" />
+          <LedTile LedNumber="220" Index="228" Selected="true" />
+          <LedTile LedNumber="219" Index="229" Selected="true" />
+          <LedTile LedNumber="218" Index="230" Selected="true" />
+          <LedTile LedNumber="217" Index="231" Selected="true" />
+          <LedTile LedNumber="216" Index="232" Selected="true" />
+          <LedTile LedNumber="215" Index="233" Selected="true" />
+          <LedTile LedNumber="214" Index="234" Selected="true" />
+          <LedTile LedNumber="213" Index="235" Selected="true" />
+          <LedTile LedNumber="0" Index="236" Selected="false" />
+          <LedTile LedNumber="0" Index="237" Selected="false" />
+          <LedTile LedNumber="0" Index="238" Selected="false" />
+          <LedTile LedNumber="0" Index="239" Selected="false" />
+          <LedTile LedNumber="0" Index="240" Selected="false" />
+          <LedTile LedNumber="0" Index="241" Selected="false" />
+          <LedTile LedNumber="0" Index="242" Selected="false" />
+          <LedTile LedNumber="0" Index="243" Selected="false" />
+          <LedTile LedNumber="0" Index="244" Selected="false" />
+          <LedTile LedNumber="17" Index="245" Selected="true" />
+          <LedTile LedNumber="16" Index="246" Selected="true" />
+          <LedTile LedNumber="15" Index="247" Selected="true" />
+          <LedTile LedNumber="14" Index="248" Selected="true" />
+          <LedTile LedNumber="13" Index="249" Selected="true" />
+          <LedTile LedNumber="12" Index="250" Selected="true" />
+          <LedTile LedNumber="11" Index="251" Selected="true" />
+          <LedTile LedNumber="10" Index="252" Selected="true" />
+          <LedTile LedNumber="9" Index="253" Selected="true" />
+          <LedTile LedNumber="8" Index="254" Selected="true" />
+          <LedTile LedNumber="7" Index="255" Selected="true" />
+          <LedTile LedNumber="6" Index="256" Selected="true" />
+          <LedTile LedNumber="0" Index="257" Selected="false" />
+          <LedTile LedNumber="0" Index="258" Selected="false" />
+          <LedTile LedNumber="0" Index="259" Selected="false" />
+          <LedTile LedNumber="0" Index="260" Selected="false" />
+          <LedTile LedNumber="0" Index="261" Selected="false" />
+          <LedTile LedNumber="0" Index="262" Selected="false" />
+          <LedTile LedNumber="0" Index="263" Selected="false" />
+          <LedTile LedNumber="225" Index="264" Selected="true" />
+          <LedTile LedNumber="226" Index="265" Selected="true" />
+          <LedTile LedNumber="227" Index="266" Selected="true" />
+          <LedTile LedNumber="228" Index="267" Selected="true" />
+          <LedTile LedNumber="229" Index="268" Selected="true" />
+          <LedTile LedNumber="0" Index="269" Selected="false" />
+          <LedTile LedNumber="0" Index="270" Selected="false" />
+          <LedTile LedNumber="0" Index="271" Selected="false" />
+          <LedTile LedNumber="0" Index="272" Selected="false" />
+          <LedTile LedNumber="0" Index="273" Selected="false" />
+          <LedTile LedNumber="0" Index="274" Selected="false" />
+          <LedTile LedNumber="0" Index="275" Selected="false" />
+          <LedTile LedNumber="0" Index="276" Selected="false" />
+          <LedTile LedNumber="0" Index="277" Selected="false" />
+          <LedTile LedNumber="0" Index="278" Selected="false" />
+          <LedTile LedNumber="0" Index="279" Selected="false" />
+          <LedTile LedNumber="0" Index="280" Selected="false" />
+          <LedTile LedNumber="0" Index="281" Selected="false" />
+          <LedTile LedNumber="0" Index="282" Selected="false" />
+          <LedTile LedNumber="0" Index="283" Selected="false" />
+          <LedTile LedNumber="0" Index="284" Selected="false" />
+          <LedTile LedNumber="0" Index="285" Selected="false" />
+          <LedTile LedNumber="1" Index="286" Selected="true" />
+          <LedTile LedNumber="2" Index="287" Selected="true" />
+          <LedTile LedNumber="3" Index="288" Selected="true" />
+          <LedTile LedNumber="4" Index="289" Selected="true" />
+          <LedTile LedNumber="5" Index="290" Selected="true" />
+          <LedTile LedNumber="0" Index="291" Selected="false" />
+          <LedTile LedNumber="0" Index="292" Selected="false" />
+          <LedTile LedNumber="0" Index="293" Selected="false" />
+          <LedTile LedNumber="0" Index="294" Selected="false" />
+          <LedTile LedNumber="0" Index="295" Selected="false" />
+        </LedTiles>
+      </CanvasElementViewModel>
+    </Elements>
+    <Content>&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;
+&lt;!-- Created with Inkscape (http://www.inkscape.org/) --&gt;
+
+&lt;svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="New document 1"&gt;
+  &lt;defs
+     id="defs4" /&gt;
+  &lt;sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.35"
+     inkscape:cx="375"
+     inkscape:cy="748.57143"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1018"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" /&gt;
+  &lt;metadata
+     id="metadata7"&gt;
+    &lt;rdf:RDF&gt;
+      &lt;cc:Work
+         rdf:about=""&gt;
+        &lt;dc:format&gt;image/svg+xml&lt;/dc:format&gt;
+        &lt;dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /&gt;
+        &lt;dc:title&gt;&lt;/dc:title&gt;
+      &lt;/cc:Work&gt;
+    &lt;/rdf:RDF&gt;
+  &lt;/metadata&gt;
+  &lt;g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"&gt;
+    &lt;path
+       style="fill:#000000"
+       d="M 171.1891,340.95345 C 149.85376,340.10739 132.10368,336.05543 116.65268,328.50394 96.953159,318.87603 82.787684,304.65272 71.847648,283.51598 62.618006,265.6838 56.497185,244.14249 54.414457,222.16249 c -0.421273,-4.44588 -0.347949,-21.22662 0.116367,-26.63895 0.720519,-8.39827 1.444626,-13.08649 2.878644,-18.63753 4.700595,-18.19595 13.5222,-32.66481 25.996925,-42.63923 9.568095,-7.65038 21.367877,-12.65947 37.258957,-15.81672 l 3.65303,-0.72578 240.16034,0 240.16031,0 3.65304,0.72578 c 26.30978,5.22723 42.93512,16.21905 54.25573,35.87108 6.22179,10.80076 10.86028,25.90292 12.40448,40.38698 0.36392,3.41363 0.36627,17.7581 0.004,22.33536 -0.9859,12.44414 -2.40319,21.49466 -4.99284,31.88284 -6.6922,26.84533 -18.91136,49.48974 -34.42079,63.78813 -18.06227,16.65192 -41.94452,25.89741 -72.26708,27.97665 -20.55612,1.40956 -45.88297,-1.09539 -68.96965,-6.82141 -22.25423,-5.51945 -40.96076,-13.20085 -55.15439,-22.64764 -4.97045,-3.30816 -8.72563,-6.32938 -12.77129,-10.27504 -10.44996,-10.19171 -17.50152,-22.0489 -22.95352,-38.59635 -0.76022,-2.3073 -2.70703,-8.89455 -4.32631,-14.63833 -3.37818,-11.98296 -4.9645,-17.29426 -6.61166,-22.13712 -3.73658,-10.98604 -7.72768,-18.04752 -13.09533,-23.16971 -8.90704,-8.49971 -20.92263,-8.49971 -29.82966,0 -5.36764,5.12219 -9.35874,12.18367 -13.09532,23.16971 -1.64718,4.84286 -3.23349,10.15416 -6.61166,22.13712 -1.61928,5.74378 -3.56611,12.33103 -4.32632,14.63833 -4.44677,13.49641 -9.87629,23.68149 -17.44359,32.72186 -2.90011,3.46464 -7.92491,8.37019 -11.56905,11.29448 -16.29865,13.07908 -42.53444,23.8645 -72.78515,29.92163 -18.00624,3.60542 -37.01791,5.3005 -52.54374,4.68482 z"
+       id="path2996"
+       inkscape:connector-curvature="0" /&gt;
+    &lt;path
+       inkscape:connector-curvature="0"
+       id="path2998"
+       d="m 171.1891,646.81795 c -21.33534,-0.84607 -39.08542,-4.89802 -54.53642,-12.44951 -19.699521,-9.62792 -33.864996,-23.85123 -44.805032,-44.98797 -9.229642,-17.83218 -15.350463,-39.37349 -17.433191,-61.35348 -0.421273,-4.44588 -0.347949,-21.22662 0.116367,-26.63895 0.720519,-8.39827 1.444626,-13.0865 2.878644,-18.63753 4.700595,-18.19595 13.5222,-32.66482 25.996925,-42.63924 9.568095,-7.65038 21.367877,-12.65947 37.258957,-15.81671 l 3.65303,-0.72579 240.16034,0 240.16031,0 3.65304,0.72579 c 26.30978,5.22722 42.93512,16.21905 54.25573,35.87108 6.22179,10.80076 10.86028,25.90291 12.40448,40.38697 0.36392,3.41363 0.36627,17.75811 0.004,22.33537 -0.9859,12.44414 -2.40319,21.49465 -4.99284,31.88284 -6.6922,26.84532 -18.91136,49.48974 -34.42079,63.78812 -18.06227,16.65192 -41.94452,25.89741 -72.26708,27.97665 -20.55612,1.40956 -45.88297,-1.09538 -68.96965,-6.8214 -22.25423,-5.51945 -40.96076,-13.20085 -55.15439,-22.64764 -4.97045,-3.30816 -8.72563,-6.32938 -12.77129,-10.27505 -10.44996,-10.19171 -17.50152,-22.04889 -22.95352,-38.59634 -0.76022,-2.30731 -2.70703,-8.89456 -4.32631,-14.63833 -3.37818,-11.98296 -4.9645,-17.29426 -6.61166,-22.13712 -3.73658,-10.98604 -7.72768,-18.04752 -13.09533,-23.16971 -8.90704,-8.49971 -20.92263,-8.49971 -29.82966,0 -5.36764,5.12219 -9.35874,12.18367 -13.09532,23.16971 -1.64718,4.84286 -3.23349,10.15416 -6.61166,22.13712 -1.61928,5.74377 -3.56611,12.33102 -4.32632,14.63833 -4.44677,13.49641 -9.87629,23.68149 -17.44359,32.72185 -2.90011,3.46464 -7.92491,8.37019 -11.56905,11.29448 -16.29865,13.07909 -42.53444,23.86451 -72.78515,29.92164 -18.00624,3.60542 -37.01791,5.30049 -52.54374,4.68482 z"
+       style="fill:#000000" /&gt;
+  &lt;/g&gt;
+&lt;/svg&gt;
+</Content>
+  </Canvas>
+  <Line xsi:type="VideoTimeLineViewModel" LineTag="Timeline" TimelineHeightPx="0" IsFlippedVertical="false" MetaDataPath="path2996" LineHeight="229" LineColorTagXml="#FF0000FF">
+    <PreviewVisible>true</PreviewVisible>
+    <Item xsi:type="TimeLineItemVideo" LaserOn="false" Start="00:00:00.000" End="00:00:12.000" TimelineViewExpanded="false" FullName="./glassesHearts5.gif" Stretching="40" Brightness="80" XOffset="0" YOffset="0" />
+    <Item xsi:type="TimeLineItemVideo" LaserOn="false" Start="00:00:12.000" End="00:00:24.000" TimelineViewExpanded="false" FullName="./glassesArrows2.gif" Stretching="40" Brightness="60" XOffset="0" YOffset="0" />
+    <Item xsi:type="TimeLineItemVideo" LaserOn="false" Start="00:00:24.000" End="00:00:36.000" TimelineViewExpanded="false" FullName="./002 glasses spectrum.gif" Stretching="40" Brightness="60" XOffset="0" YOffset="3" />
+  </Line>
+  <Line xsi:type="VideoTimeLineViewModel" LineTag="Timeline" TimelineHeightPx="0" IsFlippedVertical="false" MetaDataPath="path2998" LineHeight="229" LineColorTagXml="#FF0000FF">
+    <PreviewVisible>true</PreviewVisible>
+    <Item xsi:type="TimeLineItemVideo" LaserOn="false" Start="00:00:00.000" End="00:00:10.000" TimelineViewExpanded="false" FullName="./glasses-fade.gif" Stretching="40" Brightness="60" XOffset="0" YOffset="0" />
+    <Item xsi:type="TimeLineItemVideo" LaserOn="false" Start="00:00:10.000" End="00:00:20.000" TimelineViewExpanded="false" FullName="./glasses.gif" Stretching="50" Brightness="80" XOffset="0" YOffset="0" />
+    <Item xsi:type="TimeLineItemVideo" LaserOn="false" Start="00:00:20.000" End="00:00:30.000" TimelineViewExpanded="false" FullName="./glassesHearts5.gif" Stretching="40" Brightness="65" XOffset="0" YOffset="0" />
+    <Item xsi:type="TimeLineItemVideo" LaserOn="false" Start="00:00:30.000" End="00:00:40.000" TimelineViewExpanded="false" FullName="./glassesArrows2.gif" Stretching="40" Brightness="60" XOffset="0" YOffset="0" />
+  </Line>
+</FileViewModel>

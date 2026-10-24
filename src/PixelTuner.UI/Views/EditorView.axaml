@@ -14,13 +14,14 @@
   <!-- Studio's editor: a toolbar, the timelines, and an inspector for the selection. -->
   <Grid RowDefinitions="Auto,Auto,*,Auto" ColumnDefinitions="*,280">
     <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="8" Margin="12,8">
-      <Button Content="{x:Static res:Strings.Menu_Timeline}">
+      <Button Content="{x:Static res:Strings.Toolbar_AddTimeline}">
         <Button.Flyout>
-          <MenuFlyout>
-            <MenuItem Header="{x:Static res:Strings.Command_AddPixelTimeline}" Command="{Binding AddPixelTimelineCommand}" />
-            <MenuItem Header="{x:Static res:Strings.Command_AddVideoTimeline}" Command="{Binding AddVideoTimelineCommand}" />
-            <MenuItem Header="{x:Static res:Strings.Command_AddEpicTimeline}" Command="{Binding AddEpicTimelineCommand}" />
-            <MenuItem Header="{x:Static res:Strings.Command_AddLightTimeline}" Command="{Binding AddLightTimelineCommand}" />
+          <!-- Opens under the button, along its left edge (the default centres it, and it sticks out of the window). -->
+          <MenuFlyout Placement="BottomEdgeAlignedLeft">
+            <MenuItem Header="{x:Static res:Strings.Toolbar_AddPixel}" Command="{Binding AddPixelTimelineCommand}" />
+            <MenuItem Header="{x:Static res:Strings.Toolbar_AddVideo}" Command="{Binding AddVideoTimelineCommand}" />
+            <MenuItem Header="{x:Static res:Strings.Toolbar_AddEpic}" Command="{Binding AddEpicTimelineCommand}" />
+            <MenuItem Header="{x:Static res:Strings.Toolbar_AddLight}" Command="{Binding AddLightTimelineCommand}" />
           </MenuFlyout>
         </Button.Flyout>
       </Button>

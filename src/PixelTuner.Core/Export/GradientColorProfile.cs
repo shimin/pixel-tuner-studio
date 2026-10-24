@@ -1,7 +1,7 @@
 namespace PixelTuner.Core.Export;
 
 /// <summary>
-/// 8-bit to 12-bit tables of the E-Pic poi (36-bit colour depth), copied from PixelTuner 2
+/// 8-bit to 12-bit tables of the E-pic poi (36-bit colour depth), copied from PixelTuner 2
 /// (Communication/Gradient/ColorProfile.cs). Index = 8-bit value.
 /// </summary>
 internal static class GradientColorProfile

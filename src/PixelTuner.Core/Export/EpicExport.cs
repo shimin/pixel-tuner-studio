@@ -5,7 +5,7 @@ using static PixelTuner.Core.Export.ShowMedia;
 namespace PixelTuner.Core.Export;
 
 /// <summary>
-/// Builds the E-Pic poi .bin the way PixelTuner 2's FileViewModel.GetEpicBinaryPresentation
+/// Builds the E-pic poi .bin the way PixelTuner 2's FileViewModel.GetEpicBinaryPresentation
 /// did. Each item is a gradient picture of which the poi plays the top row, one colour per column.
 /// </summary>
 /// <remarks>

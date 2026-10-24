@@ -40,6 +40,11 @@ public sealed class TimelineEditor
     /// <summary>The soundtrack lane under the ruler; always there, so loading a sound does not shift the rows.</summary>
     public const double WaveHeight = 84;
     public const double TrackHeight = 64;
+
+    /// <summary>The soundtrack button in the header of the sound lane: inset from the sides of the header, centred in the lane.</summary>
+    public const double SoundtrackButtonInset = 12;
+    public const double SoundtrackButtonHeight = 40;
+    public const double SoundtrackButtonTop = RulerHeight + (WaveHeight - SoundtrackButtonHeight) / 2;
     public const double MinZoom = 4;
     public const double MaxZoom = 2000;
 
@@ -135,6 +140,7 @@ public sealed class TimelineEditor
     public void SetPlayhead(TimeSpan time)
     {
         Playhead = Clamp(time, TimeSpan.Zero, AudioDuration > TimeSpan.Zero ? AudioDuration : TimeSpan.MaxValue);
+        _smoother?.Reset();
         Player?.Seek(Playhead);
         Changed?.Invoke(this, EventArgs.Empty);
     }
@@ -149,6 +155,7 @@ public sealed class TimelineEditor
         }
         // At the end a second Play starts over; otherwise play from where the playhead stands.
         if (AudioDuration > TimeSpan.Zero && Playhead >= AudioDuration) Playhead = TimeSpan.Zero;
+        _smoother?.Reset();
         player.Seek(Playhead);
         player.Play();
     }
@@ -158,6 +165,7 @@ public sealed class TimelineEditor
     {
         _following = false;
         Player?.Stop();
+        _smoother?.Reset();
         Playhead = TimeSpan.Zero;
         ScrollTo(TimeSpan.Zero);
         Changed?.Invoke(this, EventArgs.Empty);
@@ -174,13 +182,14 @@ public sealed class TimelineEditor
         if (state == AudioPlayerState.Playing)
         {
             _following = true;
-            Playhead = player.Position;
+            Playhead = (_smoother ??= new PlayheadSmoother(Time)).Next(player.Position);
             FollowPlayhead();
         }
         else if (_following)
         {
             // It stopped on its own: paused (by the user or the system), or played to the end.
             _following = false;
+            _smoother?.Reset();
             Playhead = state == AudioPlayerState.Paused ? player.Position : AudioDuration;
         }
         // The view calls this many times a second; only a real change is worth a redraw. Compared with what the
@@ -192,6 +201,10 @@ public sealed class TimelineEditor
     }
 
     private bool _following;
+    private PlayheadSmoother? _smoother;
+
+    /// <summary>The clock that fills the gaps between the positions the player reports.</summary>
+    public TimeProvider Time { get; set; } = TimeProvider.System;
     private (TimeSpan Playhead, TimeSpan Scroll, AudioPlayerState State) _lastTick;
 
     private void FollowPlayhead()
@@ -345,6 +358,10 @@ public sealed class TimelineEditor
 
     // ---- hit testing
 
+    public static bool IsOnSoundtrackButton(double x, double y) =>
+        x >= SoundtrackButtonInset && x < HeaderWidth - SoundtrackButtonInset
+        && y >= SoundtrackButtonTop && y < SoundtrackButtonTop + SoundtrackButtonHeight;
+
     /// <summary>The timeline whose track lies at this height; null above or below the tracks.</summary>
     public Timeline? TimelineAt(double y)
     {
@@ -366,10 +383,10 @@ public sealed class TimelineEditor
         }
 
         if (y < TracksTop)
-                {
-                    if (x < HeaderWidth) return new Hit(HitKind.SoundtrackButton);
-                    return new Hit(HitKind.Wave);
-                }
+        {
+            if (x >= HeaderWidth) return new Hit(HitKind.Wave);
+            return IsOnSoundtrackButton(x, y) ? new Hit(HitKind.SoundtrackButton) : default;
+        }
 
         int row = (int)((y - TracksTop) / TrackHeight);
         if (row < 0 || row >= Project.Timelines.Count) return default;

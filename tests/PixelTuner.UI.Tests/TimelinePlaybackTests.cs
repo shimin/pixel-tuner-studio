@@ -25,7 +25,7 @@ public class TimelinePlaybackTests
     public TimelinePlaybackTests()
     {
         _player = new ClockAudioPlayer(S(60), _time);
-        _editor = new TimelineEditor(_doc) { ViewWidth = 1170, Player = _player, AudioDuration = S(60) };
+        _editor = new TimelineEditor(_doc) { ViewWidth = 1170, Player = _player, AudioDuration = S(60), Time = _time };
     }
 
     private double X(double seconds) => _editor.TimeToX(S(seconds));
@@ -172,7 +172,10 @@ public class TimelinePlaybackTests
         _doc.Project.Timelines.Add(new Timeline { Name = "T" });
         Assert.Equal(TimelineEditor.RulerHeight + TimelineEditor.WaveHeight, _editor.TrackTop(0));
         Assert.Equal(HitKind.Header, _editor.HitTest(20, _editor.TrackTop(0) + 5).Kind);
-        Assert.Equal(HitKind.SoundtrackButton, _editor.HitTest(20, TimelineEditor.RulerHeight + 5).Kind);   // the soundtrack button in the sound lane header
+        Assert.Equal(HitKind.SoundtrackButton, _editor.HitTest(20, TimelineEditor.RulerHeight + TimelineEditor.WaveHeight / 2).Kind);   // the soundtrack button in the sound lane header
+        Assert.Equal(HitKind.None, _editor.HitTest(20, TimelineEditor.RulerHeight + 5).Kind);                                              // the rest of that header is not part of it
+        Assert.Equal(HitKind.None, _editor.HitTest(5, TimelineEditor.RulerHeight + TimelineEditor.WaveHeight / 2).Kind);
+        Assert.Equal(HitKind.Wave, _editor.HitTest(TimelineEditor.HeaderWidth + 5, TimelineEditor.RulerHeight + 5).Kind);
         Assert.Equal(_editor.TrackTop(0) + TimelineEditor.TrackHeight, _editor.TotalHeight);
     }
 }

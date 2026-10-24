@@ -5,6 +5,8 @@
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <data name="Start_Heading" xml:space="preserve"><value>Шоу и реквизит в одном месте</value></data>
+  <data name="Start_Recent" xml:space="preserve"><value>Недавние проекты</value></data>
+  <data name="Start_RecentClear" xml:space="preserve"><value>Очистить список</value></data>
   <data name="Start_Subheading" xml:space="preserve"><value>Откройте пакет проекта (.pxpkg), чтобы посмотреть его и синхронизировать устройства по звуку.</value></data>
   <data name="Command_OpenProject" xml:space="preserve"><value>Открыть проект…</value></data>
   <data name="Project_Timelines" xml:space="preserve"><value>Таймлайны</value></data>
@@ -64,8 +66,13 @@
   <data name="Menu_Timeline" xml:space="preserve"><value>Дорожка</value></data>
   <data name="Command_AddPixelTimeline" xml:space="preserve"><value>Добавить дорожку для пикселей</value></data>
   <data name="Command_AddVideoTimeline" xml:space="preserve"><value>Добавить видеодорожку</value></data>
-  <data name="Command_AddEpicTimeline" xml:space="preserve"><value>Добавить дорожку E-Pic poi</value></data>
+  <data name="Command_AddEpicTimeline" xml:space="preserve"><value>Добавить дорожку E-pic poi</value></data>
   <data name="Command_AddLightTimeline" xml:space="preserve"><value>Добавить дорожку LightMaster</value></data>
+  <data name="Toolbar_AddTimeline" xml:space="preserve"><value>Добавить дорожку</value></data>
+  <data name="Toolbar_AddPixel" xml:space="preserve"><value>Пиксельные пои/обруч</value></data>
+  <data name="Toolbar_AddVideo" xml:space="preserve"><value>Видео модуль</value></data>
+  <data name="Toolbar_AddEpic" xml:space="preserve"><value>E-pic poi</value></data>
+  <data name="Toolbar_AddLight" xml:space="preserve"><value>LightMaster</value></data>
   <data name="Command_AddMarker" xml:space="preserve"><value>Поставить маркер на курсоре</value></data>
   <data name="Command_Delete" xml:space="preserve"><value>Удалить</value></data>
   <data name="Command_ZoomIn" xml:space="preserve"><value>Приблизить</value></data>
@@ -73,7 +80,7 @@
   <data name="Command_ZoomFit" xml:space="preserve"><value>Показать всё шоу</value></data>
   <data name="Kind_Pixel" xml:space="preserve"><value>Пиксели: пои, посох, обруч</value></data>
   <data name="Kind_Video" xml:space="preserve"><value>Видео: матрица, щит</value></data>
-  <data name="Kind_EpicPoi" xml:space="preserve"><value>E-Pic poi</value></data>
+  <data name="Kind_EpicPoi" xml:space="preserve"><value>E-pic poi</value></data>
   <data name="Kind_Light" xml:space="preserve"><value>LightMaster</value></data>
   <data name="Timeline_DefaultName" xml:space="preserve"><value>Дорожка {0}</value></data>
   <data name="Marker_DefaultName" xml:space="preserve"><value>Маркер {0}</value></data>

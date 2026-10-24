@@ -27,7 +27,7 @@
   WPF changed some pixels of small-palette frames, and Studio keeps the exact palette colours
   (Ivan: where Windows and the cleaner result differ, prefer quality over parity).
   `tests/PixelTuner.Legacy.OracleTests` compiles PixelTuner 2's own `Communication/Pixelate`, `Gradient`
-  and `Binarize` (with the `FileViewModel` glue) and compares on random shows: pixel, fan, video, E-Pic poi
+  and `Binarize` (with the `FileViewModel` glue) and compares on random shows: pixel, fan, video, E-pic poi
   and LightMaster (the last two have no reference shows). The format, field by field: `docs/binary-format.md`;
   a change to the export updates it. `ShowBuilder` (project + device → .bin, with errors and warnings) is the one
   entry for file export and upload; `BinReader` reads a .bin back. `EditorRulesTests` and `ShowBuilderTests` in
@@ -58,7 +58,7 @@
 - Stretching of an item is a speed, not a position; the item's time span only says how long it plays. Pixel devices
   and hoops (same .bin, PixelTuner 2 has no separate hoop semantics) hold each image column for k x 50 us, so one pass of a
   W-column picture takes W x k x 50 us (`ItemPreview.PassDuration`; Ivan: 100 columns, k=100, 1000 ms gives 2 passes).
-  Video devices take milliseconds per frame (`VideoPassDuration`; 40 is 25 frames a second). E-Pic is copied from
+  Video module devices take milliseconds per frame (`VideoPassDuration`; 40 is 25 frames a second). E-Pic is copied from
   PixelTuner 2's Repeat window: k / 5 ms per column (`EpicPassDuration`). The units are unchecked on devices: see
   `docs/before-release.md`. PixelTuner 2 defaults: 4 for pictures, 40 for video; its item windows allowed 1-400 and 20-800.
 - The library (`ShowProject.Library`, `PixelTuner.Core/Model/Library.cs`): what can be put on timelines (pictures, GIFs, gradients,

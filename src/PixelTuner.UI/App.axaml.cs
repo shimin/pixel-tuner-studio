@@ -4,6 +4,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using PixelTuner.Package;
+using PixelTuner.UI.Services;
 using PixelTuner.UI.ViewModels;
 using PixelTuner.UI.Views;
 
@@ -23,7 +24,8 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        var vm = new MainViewModel();
+        // Studio opens projects by path and remembers them; Stage opens a stream, which has no path to come back to.
+        var vm = new MainViewModel(Product.Current.CanEdit ? new RecentProjects(RecentProjects.DefaultFile(Product.Current.Name)) : null);
         DataContext = vm;   // the macOS app menu binds to it
 
         switch (ApplicationLifetime)

@@ -128,7 +128,7 @@ public static class TimelineKind
     /// <summary>LED matrices, shields and suits: GIF frames sampled at the LED layout.</summary>
     public const string Video = "video";
 
-    /// <summary>E-Pic poi: the top row of a gradient picture.</summary>
+    /// <summary>E-pic poi: the top row of a gradient picture.</summary>
     public const string EpicPoi = "epic-poi";
 
     /// <summary>LightMaster: solid colours and light effects.</summary>
@@ -145,7 +145,7 @@ public sealed class Timeline
 
     /// <summary>
     /// Colour tag as #AARRGGBB. Devices show it in their menu (pixel devices get it / 10,
-    /// E-Pic poi as is).
+    /// E-pic poi as is).
     /// </summary>
     public string Color { get; set; } = "#FF0000FF";
 
@@ -176,7 +176,7 @@ public static class ItemKind
     /// <summary>A GIF whose frames are sampled at the LED layout (video timelines).</summary>
     public const string Video = "video";
 
-    /// <summary>A gradient picture whose top row is played (E-Pic poi).</summary>
+    /// <summary>A gradient picture whose top row is played (E-pic poi).</summary>
     public const string Gradient = "gradient";
 
     /// <summary>One colour (light timelines).</summary>
@@ -303,7 +303,7 @@ public static class DeviceKind
     /// <summary>Video module: video timelines (one, or a pair of LED chains).</summary>
     public const string Video = "video";
 
-    /// <summary>E-Pic poi: E-Pic timelines.</summary>
+    /// <summary>E-pic poi: E-Pic timelines.</summary>
     public const string EpicPoi = "epic-poi";
 
     /// <summary>LightMaster: light timelines, one per channel.</summary>

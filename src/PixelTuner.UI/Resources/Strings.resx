@@ -5,6 +5,8 @@
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <data name="Start_Heading" xml:space="preserve"><value>Shows and props in one place</value></data>
+  <data name="Start_Recent" xml:space="preserve"><value>Recent projects</value></data>
+  <data name="Start_RecentClear" xml:space="preserve"><value>Clear list</value></data>
   <data name="Start_Subheading" xml:space="preserve"><value>Open a project package (.pxpkg) to view it and sync devices to the soundtrack.</value></data>
   <data name="Command_OpenProject" xml:space="preserve"><value>Open project…</value></data>
   <data name="Project_Timelines" xml:space="preserve"><value>Timelines</value></data>
@@ -64,8 +66,13 @@
   <data name="Menu_Timeline" xml:space="preserve"><value>Timeline</value></data>
   <data name="Command_AddPixelTimeline" xml:space="preserve"><value>Add pixel timeline</value></data>
   <data name="Command_AddVideoTimeline" xml:space="preserve"><value>Add video timeline</value></data>
-  <data name="Command_AddEpicTimeline" xml:space="preserve"><value>Add E-Pic poi timeline</value></data>
+  <data name="Command_AddEpicTimeline" xml:space="preserve"><value>Add E-pic poi timeline</value></data>
   <data name="Command_AddLightTimeline" xml:space="preserve"><value>Add LightMaster timeline</value></data>
+  <data name="Toolbar_AddTimeline" xml:space="preserve"><value>Add timeline</value></data>
+  <data name="Toolbar_AddPixel" xml:space="preserve"><value>Pixel poi/hoop</value></data>
+  <data name="Toolbar_AddVideo" xml:space="preserve"><value>Video module</value></data>
+  <data name="Toolbar_AddEpic" xml:space="preserve"><value>E-pic poi</value></data>
+  <data name="Toolbar_AddLight" xml:space="preserve"><value>LightMaster</value></data>
   <data name="Command_AddMarker" xml:space="preserve"><value>Add marker at playhead</value></data>
   <data name="Command_Delete" xml:space="preserve"><value>Delete</value></data>
   <data name="Command_ZoomIn" xml:space="preserve"><value>Zoom in</value></data>
@@ -73,7 +80,7 @@
   <data name="Command_ZoomFit" xml:space="preserve"><value>Fit the whole show</value></data>
   <data name="Kind_Pixel" xml:space="preserve"><value>Pixel: poi, staff, hoop</value></data>
   <data name="Kind_Video" xml:space="preserve"><value>Video: matrix, shield</value></data>
-  <data name="Kind_EpicPoi" xml:space="preserve"><value>E-Pic poi</value></data>
+  <data name="Kind_EpicPoi" xml:space="preserve"><value>E-pic poi</value></data>
   <data name="Kind_Light" xml:space="preserve"><value>LightMaster</value></data>
   <data name="Timeline_DefaultName" xml:space="preserve"><value>Timeline {0}</value></data>
   <data name="Marker_DefaultName" xml:space="preserve"><value>Marker {0}</value></data>
@@ -345,7 +352,7 @@
   <data name="Devices_KindHoop" xml:space="preserve"><value>Pixel hoop</value></data>
   <data name="Devices_KindFan" xml:space="preserve"><value>Fan (video module, pixel timeline)</value></data>
   <data name="Devices_KindVideo" xml:space="preserve"><value>Video module</value></data>
-  <data name="Devices_KindEpic" xml:space="preserve"><value>E-Pic poi</value></data>
+  <data name="Devices_KindEpic" xml:space="preserve"><value>E-pic poi</value></data>
   <data name="Devices_KindLight" xml:space="preserve"><value>LightMaster</value></data>
   <data name="Devices_Settings" xml:space="preserve"><value>Build settings</value></data>
   <data name="Devices_Depth" xml:space="preserve"><value>Colour depth</value></data>

@@ -13,7 +13,7 @@ using StudioDepth = PixelTuner.Core.Export.ColorDepth;
 namespace PixelTuner.Legacy.OracleTests;
 
 /// <summary>
-/// E-Pic poi .bin: Studio's port against PixelTuner 2's Communication/Gradient on random shows.
+/// E-pic poi .bin: Studio's port against PixelTuner 2's Communication/Gradient on random shows.
 /// The glue of FileViewModel.GetEpicBinaryPresentation (CreateEpicProjectFile, FillGabs,
 /// CreateBlankGradientItem) is repeated here as it was.
 /// </summary>

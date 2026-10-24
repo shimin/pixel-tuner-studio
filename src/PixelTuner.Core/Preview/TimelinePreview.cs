@@ -46,7 +46,7 @@ public sealed record PreviewFrame(TimeSpan Time, int Entry, int Column, TimeSpan
 /// <summary>
 /// What a device plays from one timeline, read back from the .bin the build makes for it (the preview shows what the device will get,
 /// pixel for byte, after brightness and colour correction), at any time of the show and at the device's own speed: a pixel poi holds a column
-/// for k × 50 µs, a video or fan module for k ms, an E-Pic poi for k / 5 ms, and a picture plays again from its first column until the next entry.
+/// for k × 50 µs, a video or fan module for k ms, an E-pic poi for k / 5 ms, and a picture plays again from its first column until the next entry.
 /// </summary>
 public sealed class TimelinePreview
 {

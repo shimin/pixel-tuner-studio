@@ -538,7 +538,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     /// <summary>
     /// How long one pass of the picture (pixel items) or of the animation (video items) takes at this stretching, and
-    /// how often it plays in the item. E-Pic poi use PixelTuner 2's formula from its Repeat window.
+    /// how often it plays in the item. E-pic poi use PixelTuner 2's formula from its Repeat window.
     /// </summary>
     public string PlaybackText
     {

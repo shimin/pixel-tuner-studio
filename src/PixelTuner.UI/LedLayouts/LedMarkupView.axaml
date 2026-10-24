@@ -15,7 +15,7 @@
         <Button Content="{x:Static res:Strings.Markup_Cancel}" Command="{Binding CancelCommand}" />
       </StackPanel>
       <TextBlock DockPanel.Dock="Left" Text="{x:Static res:Strings.Markup_Title}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,12,0" />
-      <TextBox Text="{Binding Name}" IsEnabled="{Binding CanRename}" IsUndoEnabled="False" MaxWidth="260" HorizontalAlignment="Left" Watermark="{x:Static res:Strings.Markup_Name}" />
+      <TextBox Text="{Binding Name}" IsEnabled="{Binding CanRename}" IsUndoEnabled="False" MaxWidth="260" HorizontalAlignment="Left" PlaceholderText="{x:Static res:Strings.Markup_Name}" />
     </DockPanel>
 
     <Border Grid.Row="1" Margin="12,0,8,0" CornerRadius="6" ClipToBounds="True" Background="{DynamicResource PtCardBrush}">

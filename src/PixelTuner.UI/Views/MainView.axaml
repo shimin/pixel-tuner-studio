@@ -27,6 +27,25 @@
                 Content="{x:Static res:Strings.Command_ImportLegacy}"
                 Command="{Binding ImportLegacyProjectCommand}" />
       </WrapPanel>
+      <!-- The projects opened last: a click opens one. -->
+      <StackPanel Spacing="4" IsVisible="{Binding HasRecent}">
+        <Grid ColumnDefinitions="*,Auto">
+          <TextBlock Classes="muted" Text="{x:Static res:Strings.Start_Recent}" VerticalAlignment="Center" />
+          <Button Grid.Column="1" Background="Transparent" Content="{x:Static res:Strings.Start_RecentClear}" Command="{Binding ClearRecentCommand}" />
+        </Grid>
+        <ItemsControl ItemsSource="{Binding Recent}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:RecentProjectItem">
+              <Button Command="{Binding OpenCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Margin="0,0,0,4" ToolTip.Tip="{Binding Path}">
+                <StackPanel>
+                  <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                  <TextBlock Classes="muted" Text="{Binding Folder}" TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+              </Button>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </StackPanel>
       <TextBlock Classes="muted" TextWrapping="Wrap" Text="{Binding Status}"
                  IsVisible="{Binding Status, Converter={x:Static ObjectConverters.IsNotNull}}" />
 

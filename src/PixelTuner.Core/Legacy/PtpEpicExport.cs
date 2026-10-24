@@ -3,7 +3,7 @@ using PixelTuner.Core.Export;
 namespace PixelTuner.Core.Legacy;
 
 /// <summary>
-/// The E-Pic poi .bin of a PixelTuner 2 project, straight from its files, through
+/// The E-pic poi .bin of a PixelTuner 2 project, straight from its files, through
 /// <see cref="PtpConverter"/> and <see cref="EpicExport"/>.
 /// </summary>
 public sealed class PtpEpicExport
