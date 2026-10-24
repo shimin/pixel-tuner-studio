@@ -1,10 +1,11 @@
-using PixelTuner.Core.Export;
 using PixelTuner.Core.Imaging;
+using PixelTuner.Core.Media;
+using PixelTuner.Core.Model;
 
-namespace PixelTuner.Core.Legacy;
+namespace PixelTuner.Core.Export;
 
 /// <summary>
-/// Builds the video-device .bin (LED matrices, shields, suits) from a PixelTuner 2 project
+/// Builds the video-device .bin (LED matrices, shields, suits) of video timelines
 /// the way PixelTuner 2's FileViewModel.GetVideoBinaryPresentation did. The file is the same
 /// "PPOI" layout as for pixel devices; the "image" of an item is its GIF turned into one
 /// column per frame, with one row per LED in wiring order.
@@ -23,22 +24,21 @@ namespace PixelTuner.Core.Legacy;
 /// first channel's file alone.</item>
 /// </list>
 /// </remarks>
-public sealed class PtpVideoExport
+public sealed class VideoExport
 {
     /// <summary>A missing file became a 5-column black bitmap in PixelTuner 2.</summary>
     private const int MissingFileWidth = 5;
 
     private const ushort LaserMask = 1;
 
-    private readonly PtpDocument _document;
-    private readonly Func<string, string?> _resolveMedia;
-    private readonly Dictionary<string, IReadOnlyList<PixelImage>?> _frames = new(StringComparer.OrdinalIgnoreCase);
+    private readonly ShowProject _show;
+    private readonly IMediaSource _media;
+    private readonly Dictionary<string, IReadOnlyList<PixelImage>> _frames = new(StringComparer.Ordinal);
 
-    /// <param name="resolveMedia">Readable path of an item's file, or null when the file is missing.</param>
-    public PtpVideoExport(PtpDocument document, Func<string, string?> resolveMedia)
+    public VideoExport(ShowProject show, IMediaSource media)
     {
-        _document = document;
-        _resolveMedia = resolveMedia;
+        _show = show;
+        _media = media;
     }
 
     /// <summary>Stretching of the gap fillers: PixelTuner 2's "default stretching" setting.</summary>
@@ -46,29 +46,30 @@ public sealed class PtpVideoExport
 
     public ColorDepth Depth { get; init; } = ColorDepth.Bit24;
 
-    /// <summary>Video timelines of the project, in project order.</summary>
-    public static IReadOnlyList<PtpTimeline> VideoTimelines(PtpDocument document) =>
-        document.Timelines.Where(t => t.Type == PtpTimeline.VideoType).ToList();
+    /// <summary>Video timelines of the show, in show order.</summary>
+    public static IReadOnlyList<Timeline> VideoTimelines(ShowProject show) =>
+        show.Timelines.Where(t => t.Kind == TimelineKind.Video).ToList();
 
-    /// <summary>LED positions of a timeline's canvas element in wiring order; empty without markup.</summary>
-    public IReadOnlyList<(int X, int Y)> Leds(PtpTimeline timeline) =>
-        timeline.Attributes.TryGetValue("MetaDataPath", out var path)
-        && _document.CanvasElements.TryGetValue(path, out var element)
-            ? element.OrderedLeds()
+    /// <summary>LED positions of a timeline's layout in wiring order; empty without markup.</summary>
+    public IReadOnlyList<(int X, int Y)> Leds(Timeline timeline) =>
+        timeline.LayoutId is { } id
+        // PixelTuner 2 kept the last outline when an id repeated.
+        && _show.Canvas?.Layouts.LastOrDefault(l => l.Id == id) is { } layout
+            ? layout.OrderedLeds()
             : [];
 
     /// <summary>
     /// The .bin for the selected timelines: one timeline alone, or the first two as a pair.
     /// Empty when PixelTuner 2 wrote an empty file (no LED markup or no items).
     /// </summary>
-    public byte[] Export(IReadOnlyList<PtpTimeline> timelines)
+    public byte[] Export(IReadOnlyList<Timeline> timelines)
     {
         if (timelines.Count == 0) return [];
         var result = timelines.Count > 1 ? Pair(timelines[0], timelines[1]) : Single(timelines[0]);
         return result is null ? [] : PixelBinaryWriter.Write([result.Value.Line], result.Value.Height, Depth);
     }
 
-    private (PixelExportTimeline Line, ushort Height)? Single(PtpTimeline timeline)
+    private (PixelExportTimeline Line, ushort Height)? Single(Timeline timeline)
     {
         var leds = Leds(timeline);
         if (leds.Count == 0 || timeline.Items.Count == 0) return null;
@@ -84,14 +85,14 @@ public sealed class PtpVideoExport
                 var frames = Frames(item);
                 image = frames is null
                     ? PixelImage.Black(MissingFileWidth, leds.Count)
-                    : Sample(frames.Count, [(frames, leds, Offset(item))], item.Brightness);
+                    : Sample(frames.Count, [(frames, leds, Offset(item))], (byte)item.Brightness);
             }
             line.Items.Add(Entry(segment, image));
         }
         return (line, checked((ushort)leds.Count));
     }
 
-    private (PixelExportTimeline Line, ushort Height)? Pair(PtpTimeline first, PtpTimeline second)
+    private (PixelExportTimeline Line, ushort Height)? Pair(Timeline first, Timeline second)
     {
         var leds1 = Leds(first);
         var leds2 = Leds(second);
@@ -119,7 +120,7 @@ public sealed class PtpVideoExport
                 ? PixelImage.Black(MissingFileWidth, height)
                 : Sample(Math.Max(frames1.Count, frames2.Count),
                     [(frames1, leds1, Offset(a.Item)), (frames2, leds2, Offset(b.Item))],
-                    b.Item?.Brightness ?? 100);
+                    (byte)(b.Item?.Brightness ?? 100));
             line.Items.Add(Entry(a, image));
         }
         return (line, checked((ushort)height));
@@ -160,40 +161,32 @@ public sealed class PtpVideoExport
 
     private PixelExportItem Entry(Segment segment, PixelImage image) => new()
     {
-        // PixelTuner 2 matched images by lower-cased path; its gap fillers were unique temp files.
-        ImageKey = segment.Item?.FullName.ToLowerInvariant(),
+        // Gap fillers were unique temp files in PixelTuner 2.
+        ImageKey = segment.Item is { } item ? PixelExport.ImageKey(item) : null,
         Image = image,
         StartMs = Milliseconds(segment.Start),
         DurationMs = Milliseconds(segment.End - segment.Start),
         Stretching = segment.Item is null ? GapStretching : (ushort)segment.Item.Stretching,
-        Brightness = segment.Item?.Brightness ?? 100,
+        Brightness = (byte)(segment.Item?.Brightness ?? 100),
         LaserOn = segment.Item?.LaserOn ?? false,
         LaserMask = LaserMask,
     };
 
-    private IReadOnlyList<PixelImage>? Frames(PtpItem item)
+    private IReadOnlyList<PixelImage>? Frames(TimelineItem item)
     {
-        if (!_frames.TryGetValue(item.FullName, out var frames))
-        {
-            string? path = _resolveMedia(item.FullName);
-            _frames[item.FullName] = frames = path is null ? null : GifFrames.DecodeFile(path);
-        }
+        if (item.ResourceId is not { } id) return null;
+        if (!_frames.TryGetValue(id, out var frames))
+            _frames[id] = frames = GifFrames.Decode(_media.ReadAll(id));
         return frames;
     }
 
-    private static (int X, int Y) Offset(PtpItem? item) =>
-        item is null ? (0, 0) : (IntAttribute(item, "XOffset"), IntAttribute(item, "YOffset"));
+    private static (int X, int Y) Offset(TimelineItem? item) =>
+        item is null ? (0, 0) : (item.OffsetX ?? 0, item.OffsetY ?? 0);
 
-    private static int IntAttribute(PtpItem item, string name) =>
-        item.Attributes.TryGetValue(name, out var value)
-        && int.TryParse(value, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out int v)
-            ? v
-            : 0;
-
-    private readonly record struct Segment(PtpItem? Item, TimeSpan Start, TimeSpan End);
+    private readonly record struct Segment(TimelineItem? Item, TimeSpan Start, TimeSpan End);
 
     /// <summary>Items with black gap fillers before the first one and between them.</summary>
-    private static List<Segment> FillGaps(IReadOnlyList<PtpItem> items)
+    private static List<Segment> FillGaps(IReadOnlyList<TimelineItem> items)
     {
         var result = new List<Segment>();
         if (items[0].Start != TimeSpan.Zero) result.Add(new Segment(null, TimeSpan.Zero, items[0].Start));
@@ -226,5 +219,5 @@ public sealed class PtpVideoExport
         return pieces;
     }
 
-    private static uint Milliseconds(TimeSpan t) => checked((uint)Math.Round(t.TotalMilliseconds));
+    private static uint Milliseconds(TimeSpan t) => PixelExport.Milliseconds(t);
 }

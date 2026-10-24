@@ -1,5 +1,6 @@
 using System.Buffers.Binary;
-using PixelTuner.Core.Legacy;
+using PixelTuner.Core.Export;
+using PixelTuner.Core.Model;
 using Xunit.Abstractions;
 
 namespace PixelTuner.Core.Tests;
@@ -8,7 +9,8 @@ namespace PixelTuner.Core.Tests;
 /// The whole reference set (about 500 MB, release "samples-v1"), when it is unpacked
 /// and PIXELTUNER_SAMPLES points at it. Every pixel-device .bin in it must match.
 /// Naming in the set: "N.bin" is pixel timeline N alone, any other name is all
-/// pixel timelines of the .bin's height. Video-device .bin files are not covered yet.
+/// pixel timelines of the .bin's height. Each project goes through Studio's import first, so
+/// this also checks that the imported show keeps everything the devices need.
 /// </summary>
 public class FullSampleExportTests(ITestOutputHelper output)
 {
@@ -28,7 +30,7 @@ public class FullSampleExportTests(ITestOutputHelper output)
         {
             string binDir = Path.Combine(dir, "bin");
             if (!Directory.Exists(binDir)) continue;
-            var projects = Directory.EnumerateFiles(dir, "*.ptp").Order().ToList();
+            var projects = Directory.EnumerateFiles(dir, "*.ptp").Order().Select(p => (Path: p, Show: Shows.Import(p))).ToList();
 
             foreach (string binPath in Directory.EnumerateFiles(binDir, "*.bin").Order())
             {
@@ -40,12 +42,11 @@ public class FullSampleExportTests(ITestOutputHelper output)
                 string? result = null;
                 string? missing = null;
                 bool any = false;
-                foreach (string project in projects)
+                foreach (var (project, show) in projects)
                 {
-                    var document = PtpDocument.Load(project);
-                    var export = new PtpPixelExport(new PtpMediaResolver(dir).Resolve);
-                    var lines = PtpPixelExport.PixelTimelines(document);
-                    List<PtpTimeline> selected;
+                    var export = new PixelExport(show.Media);
+                    var lines = PixelExport.PixelTimelines(show.Project);
+                    List<Timeline> selected;
                     try
                     {
                         selected = int.TryParse(name, out int index)
@@ -53,7 +54,7 @@ public class FullSampleExportTests(ITestOutputHelper output)
                             : lines.ToList();
                         selected = selected.Where(l => l.Items.Count > 0 && export.TimelineHeight(l) == height).ToList();
                     }
-                    catch (FileNotFoundException e)
+                    catch (MissingMediaException e)
                     {
                         missing = e.Message;
                         continue;
@@ -63,7 +64,7 @@ public class FullSampleExportTests(ITestOutputHelper output)
 
                     byte[] actual;
                     try { actual = export.Export(selected, height); }
-                    catch (FileNotFoundException e) { missing = e.Message; any = false; continue; }
+                    catch (MissingMediaException e) { missing = e.Message; any = false; continue; }
                     try
                     {
                         LegacyBinaryAssert.Equal(expected, actual, LegacyExportTests.JpegImages(expected, selected));
@@ -78,8 +79,7 @@ public class FullSampleExportTests(ITestOutputHelper output)
 
                 if (!any || (result is not null && missing is not null))
                 {
-                    // Not an export bug: media missing from the set, or a device type not ported yet
-                    // (video devices, PixelHoop, fan).
+                    // Not an export bug: media missing from the set, or a .bin of another device type.
                     output.WriteLine($"skip {Rel(root, binPath)}: " + (missing ?? $"no pixel timelines of height {height}"));
                     continue;
                 }

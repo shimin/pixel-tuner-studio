@@ -1,10 +1,12 @@
-using PixelTuner.Core.Legacy;
+using PixelTuner.Core.Export;
+using PixelTuner.Core.Model;
 
 namespace PixelTuner.Core.Tests;
 
 /// <summary>
 /// The .bin from a PixelTuner 2 project must match what PixelTuner 2 wrote to the device.
-/// Fixtures are real shows from Fixtures/LegacyProjects: project, media and bin/*.bin.
+/// Fixtures are real shows from Fixtures/LegacyProjects: project, media and bin/*.bin. Each
+/// project goes through Studio's import, then the export runs on the imported show.
 /// </summary>
 public class LegacyExportTests
 {
@@ -24,9 +26,9 @@ public class LegacyExportTests
     public void Pixel_export_matches_PixelTuner_2(string folder, string project, string bin, int height, int[] timelines)
     {
         string dir = Fixture(folder);
-        var document = PtpDocument.Load(Path.Combine(dir, project));
-        var export = new PtpPixelExport(new PtpMediaResolver(dir).Resolve);
-        var lines = PtpPixelExport.PixelTimelines(document);
+        var show = Shows.Import(Path.Combine(dir, project));
+        var export = new PixelExport(show.Media);
+        var lines = PixelExport.PixelTimelines(show.Project);
         var selected = timelines.Length == 0 ? lines : timelines.Select(i => lines[i]).ToList();
 
         byte[] actual = export.Export(selected, (ushort)height);
@@ -41,10 +43,9 @@ public class LegacyExportTests
     public void Video_export_matches_PixelTuner_2(string folder, string project, string bin, int[] timelines)
     {
         string dir = Fixture(folder);
-        var document = PtpDocument.Load(Path.Combine(dir, project));
-        var resolver = new PtpMediaResolver(dir);
-        var export = new PtpVideoExport(document, resolver.Resolve);
-        var lines = PtpVideoExport.VideoTimelines(document);
+        var show = Shows.Import(Path.Combine(dir, project));
+        var export = new VideoExport(show.Project, show.Media);
+        var lines = VideoExport.VideoTimelines(show.Project);
         var selected = timelines.Select(i => lines[i]).ToList();
 
         byte[] actual = export.Export(selected);
@@ -62,9 +63,9 @@ public class LegacyExportTests
     public void Fan_export_is_the_pixel_export_with_the_default_timeline_colour()
     {
         string dir = Fixture("36_fan");
-        var document = PtpDocument.Load(Path.Combine(dir, "36_fans.ptp"));
-        var export = new PtpPixelExport(new PtpMediaResolver(dir).Resolve);
-        var line = PtpPixelExport.PixelTimelines(document)[0];
+        var show = Shows.Import(Path.Combine(dir, "36_fans.ptp"));
+        var export = new PixelExport(show.Media);
+        var line = PixelExport.PixelTimelines(show.Project)[0];
 
         byte[] actual = export.ExportFan(line);
         byte[] expected = File.ReadAllBytes(Path.Combine(dir, "bin", "0.bin"));
@@ -76,7 +77,7 @@ public class LegacyExportTests
     }
 
     /// <summary>Addresses of image blocks decoded from JPEG files (gaps shift item indexes).</summary>
-    internal static HashSet<uint> JpegImages(byte[] bin, IReadOnlyList<PtpTimeline> lines)
+    internal static HashSet<uint> JpegImages(byte[] bin, IReadOnlyList<Timeline> lines)
     {
         var result = new HashSet<uint>();
         var entries = LegacyBinaryAssert.ImageEntries(bin).ToList();
@@ -88,8 +89,9 @@ public class LegacyExportTests
             int a = items.Count > 0 && items[0].Start != TimeSpan.Zero ? 1 : 0;
             for (int i = 0; i < items.Count && a < addresses.Count; i++)
             {
-                if (items[i].FullName.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase)
-                    || items[i].FullName.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase))
+                string source = items[i].SourceName ?? "";
+                if (source.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase)
+                    || source.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase))
                     result.Add(addresses[a]);
                 a++;
                 if (i + 1 < items.Count && items[i].End != items[i + 1].Start) a++;

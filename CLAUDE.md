@@ -13,7 +13,8 @@
   from `legacy/PixelTuner2` exactly as before (root props are blocked by `legacy/Directory.Build.props`).
 - Device protocol changes must update the JSON vectors in
   `legacy/EpicPlayer/epicplayer-mac/Tests/Fixtures/` and pass `tests/PixelTuner.Sync.Tests`.
-- Device .bin export (`src/PixelTuner.Core/Export`) must stay byte for byte what PixelTuner 2 wrote:
+- Device .bin export (`src/PixelTuner.Core/Export`, on `ShowProject`) must stay byte for byte what PixelTuner 2 wrote.
+  Tests import each .ptp with `PtpImport` first, so they check the import too:
   `tests/PixelTuner.Core.Tests` checks it against real shows in `Fixtures/LegacyProjects`, and the
   CI job "Export against the reference set" checks the whole set from the draft release `samples-v1`
   (locally: unpack it and set `PIXELTUNER_SAMPLES`). Only JPEG sources may differ, by one level,

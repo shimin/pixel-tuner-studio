@@ -16,6 +16,15 @@ public sealed partial class PtpDocument
 
     public List<PtpTimeline> Timelines { get; } = [];
 
+    /// <summary>Attributes of the root element (AudioPath, UnitSize).</summary>
+    public IReadOnlyDictionary<string, string> Attributes { get; private set; } = new Dictionary<string, string>();
+
+    /// <summary>Soundtrack as PixelTuner 2 stored it (usually an absolute Windows path), or null.</summary>
+    public string? AudioPath => Attributes.GetValueOrDefault("AudioPath") is { Length: > 0 } p ? p : null;
+
+    /// <summary>The SVG drawing of the device outlines on the canvas, or null.</summary>
+    public string? CanvasDrawing { get; private set; }
+
     /// <summary>Canvas elements (device outlines with their LED markup), by their Path id.</summary>
     public Dictionary<string, PtpCanvasElement> CanvasElements { get; } = new(StringComparer.Ordinal);
 
@@ -34,7 +43,12 @@ public sealed partial class PtpDocument
         if (root.Name.LocalName != "FileViewModel")
             throw new InvalidDataException("This is not a PixelTuner 2 project.");
 
-        var document = new PtpDocument();
+        var document = new PtpDocument
+        {
+            Attributes = root.Attributes().Where(a => !a.IsNamespaceDeclaration)
+                .ToDictionary(a => a.Name.LocalName, a => a.Value),
+            CanvasDrawing = root.Element("Canvas")?.Element("Content")?.Value is { Length: > 0 } svg ? svg : null,
+        };
         foreach (var element in root.Element("Canvas")?.Element("Elements")?.Elements("CanvasElementViewModel") ?? [])
         {
             var canvasElement = new PtpCanvasElement
@@ -42,6 +56,7 @@ public sealed partial class PtpDocument
                 Path = (string?)element.Attribute("Path") ?? "",
                 Columns = ParseInt((string?)element.Attribute("ColumnsCount"), 0),
                 Rows = ParseInt((string?)element.Attribute("RowsCount"), 0),
+                TilesMargin = ParseInt((string?)element.Attribute("TilesMargin"), 0),
             };
             foreach (var tile in element.Element("LedTiles")?.Elements("LedTile") ?? [])
             {
@@ -60,6 +75,7 @@ public sealed partial class PtpDocument
                 Type = (string?)line.Attribute(Xsi + "type") ?? "",
                 Color = ParseArgb((string?)line.Attribute("LineColorTagXml")),
                 IsFlippedVertical = ParseBool((string?)line.Attribute("IsFlippedVertical")),
+                PreviewVisible = (string?)line.Element("PreviewVisible") is not { } preview || ParseBool(preview),
                 Attributes = line.Attributes().Where(a => !a.IsNamespaceDeclaration)
                     .ToDictionary(a => a.Name.LocalName, a => a.Value),
             };
@@ -130,6 +146,8 @@ public sealed class PtpTimeline
 
     public bool IsFlippedVertical { get; init; }
 
+    public bool PreviewVisible { get; init; } = true;
+
     public IReadOnlyDictionary<string, string> Attributes { get; init; } = new Dictionary<string, string>();
 
     public List<PtpItem> Items { get; } = [];
@@ -144,6 +162,7 @@ public sealed class PtpCanvasElement
     public string Path { get; init; } = "";
     public int Columns { get; init; }
     public int Rows { get; init; }
+    public int TilesMargin { get; init; }
     public List<PtpLedTile> Tiles { get; } = [];
 
     /// <summary>

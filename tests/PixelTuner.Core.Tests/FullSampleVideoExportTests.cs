@@ -1,5 +1,6 @@
 using System.Buffers.Binary;
-using PixelTuner.Core.Legacy;
+using PixelTuner.Core.Export;
+using PixelTuner.Core.Model;
 using Xunit.Abstractions;
 
 namespace PixelTuner.Core.Tests;
@@ -28,11 +29,10 @@ public class FullSampleVideoExportTests(ITestOutputHelper output)
             string binDir = Path.Combine(dir, "bin");
             if (!Directory.Exists(binDir)) continue;
             var projects = Directory.EnumerateFiles(dir, "*.ptp").Order()
-                .Select(p => (Path: p, Document: PtpDocument.Load(p)))
-                .Where(p => PtpVideoExport.VideoTimelines(p.Document).Count > 0)
+                .Select(p => (Path: p, Show: Shows.Import(p)))
+                .Where(p => VideoExport.VideoTimelines(p.Show.Project).Count > 0)
                 .ToList();
             if (projects.Count == 0) continue;
-            var resolver = new PtpMediaResolver(dir);
 
             foreach (string binPath in Directory.EnumerateFiles(binDir, "*.bin").Order())
             {
@@ -44,19 +44,17 @@ public class FullSampleVideoExportTests(ITestOutputHelper output)
 
                 string? result = "no matching project";
                 string? missing = null;
-                foreach (var (project, document) in projects)
+                foreach (var (project, show) in projects)
                 {
-                    var lines = PtpVideoExport.VideoTimelines(document);
-                    IReadOnlyList<PtpTimeline> selected = int.TryParse(name, out int index)
+                    var lines = VideoExport.VideoTimelines(show.Project);
+                    IReadOnlyList<Timeline> selected = int.TryParse(name, out int index)
                         ? (index < lines.Count ? [lines[index]] : [])
                         : lines;
                     if (selected.Count == 0) continue;
 
-                    var export = new PtpVideoExport(document, file =>
-                    {
-                        try { return resolver.Resolve(file); }
-                        catch (FileNotFoundException) { missing ??= file; return null; }
-                    });
+                    var export = new VideoExport(show.Project, show.Media);
+                    missing ??= selected.Take(2).SelectMany(t => t.Items)
+                        .FirstOrDefault(i => i.ResourceId is null)?.SourceName;
                     try
                     {
                         byte[] actual = export.Export(selected);
@@ -107,7 +105,7 @@ public class FullSampleVideoExportTests(ITestOutputHelper output)
     /// Start addresses of the images whose item (on either channel of a pair) uses one of
     /// <paramref name="files"/>, found by the item's start time.
     /// </summary>
-    internal static HashSet<uint> ImagesFrom(byte[] bin, IReadOnlyList<PtpTimeline> selected, HashSet<string> files)
+    internal static HashSet<uint> ImagesFrom(byte[] bin, IReadOnlyList<Timeline> selected, HashSet<string> files)
     {
         var result = new HashSet<uint>();
         if (bin.Length < 12) return result;
@@ -120,21 +118,21 @@ public class FullSampleVideoExportTests(ITestOutputHelper output)
             var start = TimeSpan.FromMilliseconds(BinaryPrimitives.ReadUInt32LittleEndian(entry[8..]));
             bool uses = selected.Take(2).SelectMany(t => t.Items)
                 .Any(item => item.Start <= start && start < item.End
-                    && files.Contains(Path.GetFileName(item.FullName.Replace('\\', '/'))));
+                    && files.Contains(Path.GetFileName((item.SourceName ?? "").Replace('\\', '/'))));
             if (uses) result.Add(address);
         }
         return result;
     }
 
     /// <summary>True when the project also has pixel timelines and the .bin is not of a video height.</summary>
-    private static bool IsPixelHeight(List<(string Path, PtpDocument Document)> projects, ushort height) =>
+    private static bool IsPixelHeight(List<(string Path, Legacy.PtpImportResult Show)> projects, ushort height) =>
         projects.All(p =>
         {
-            var lines = PtpVideoExport.VideoTimelines(p.Document);
-            var export = new PtpVideoExport(p.Document, _ => null);
+            var lines = VideoExport.VideoTimelines(p.Show.Project);
+            var export = new VideoExport(p.Show.Project, p.Show.Media);
             var heights = lines.Select(l => export.Leds(l).Count).ToList();
             bool video = heights.Contains(height) || (heights.Count > 1 && heights[0] + heights[1] == height);
-            return !video && p.Document.Timelines.Any(t => t.Type == PtpTimeline.PixelType);
+            return !video && p.Show.Project.Timelines.Any(t => t.Kind == TimelineKind.Pixel);
         });
 
     private static string Rel(string root, string path) => Path.GetRelativePath(root, path);

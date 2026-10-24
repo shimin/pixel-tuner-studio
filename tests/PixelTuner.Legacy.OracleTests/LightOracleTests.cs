@@ -37,7 +37,8 @@ public class LightOracleTests
         var lines = Enumerable.Range(0, random.Next(1, 7)).Select(_ => RandomLine(random)).ToList();
 
         var document = PtpDocument.Load(new MemoryStream(Encoding.UTF8.GetBytes(ToPtp(lines))));
-        byte[] actual = PtpLightExport.Export(PtpLightExport.LightTimelines(document), rate);
+        var show = PtpImport.Import(document, "show", _ => null);
+        byte[] actual = LightExport.Export(LightExport.LightTimelines(show.Project), rate);
 
         byte[] expected = Legacy(lines, rate);
         Assert.Equal(expected, actual);
@@ -45,7 +46,7 @@ public class LightOracleTests
 
     [Fact]
     public void Empty_project_matches_PixelTuner_2() =>
-        Assert.Equal(Legacy([], 5), PtpLightExport.Export([], 5));
+        Assert.Equal(Legacy([], 5), LightExport.Export([], 5));
 
     private sealed record LineSpec(bool Monochrome, List<ItemSpec> Items);
 

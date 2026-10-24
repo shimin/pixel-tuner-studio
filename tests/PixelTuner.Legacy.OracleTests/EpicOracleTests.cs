@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Communication.Gradient;
+using PixelTuner.Core.Export;
 using PixelTuner.Core.Legacy;
 using Xunit;
 using LegacyDepth = Communication.ColorDepth;
@@ -43,8 +44,7 @@ public sealed class EpicOracleTests : IDisposable
 
         var lines = Enumerable.Range(0, random.Next(1, 5)).Select(_ => RandomLine(random, files)).ToList();
         var document = PtpDocument.Load(new MemoryStream(Encoding.UTF8.GetBytes(ToPtp(lines))));
-        var export = new PtpEpicExport(path => File.Exists(path) ? path : null) { Depth = depth };
-        byte[] actual = export.Export(PtpEpicExport.EpicTimelines(document));
+        byte[] actual = Studio(document, depth);
 
         byte[] expected = Legacy(lines, (LegacyDepth)Enum.Parse(typeof(LegacyDepth), depth.ToString()));
         Assert.Equal(expected, actual);
@@ -66,9 +66,8 @@ public sealed class EpicOracleTests : IDisposable
         files.Add(Path.Combine(_folder, "missing.bmp"));
         var lines = Enumerable.Range(0, random.Next(1, 5)).Select(_ => RandomLine(random, files)).ToList();
         var document = PtpDocument.Load(new MemoryStream(Encoding.UTF8.GetBytes(ToPtp(lines))));
-        var timelines = PtpEpicExport.EpicTimelines(document);
-        byte[] bin24 = new PtpEpicExport(path => File.Exists(path) ? path : null) { Depth = StudioDepth.Bit24 }.Export(timelines);
-        byte[] bin12 = new PtpEpicExport(path => File.Exists(path) ? path : null) { Depth = StudioDepth.Bit12 }.Export(timelines);
+        byte[] bin24 = Studio(document, StudioDepth.Bit24);
+        byte[] bin12 = Studio(document, StudioDepth.Bit12);
 
         Assert.Equal(bin24.AsSpan(0, 7).ToArray(), bin12.AsSpan(0, 7).ToArray());
         Assert.Equal((uint)bin12.Length, System.BitConverter.ToUInt32(bin12, 7));
@@ -133,13 +132,19 @@ public sealed class EpicOracleTests : IDisposable
         File.WriteAllBytes(bmp, bytes);
         var lines = new List<LineSpec> { new((0, 0, 255), [new ItemSpec(bmp, 0, 1000, 1, 100, false)]) };
         var document = PtpDocument.Load(new MemoryStream(Encoding.UTF8.GetBytes(ToPtp(lines))));
-        byte[] bin = new PtpEpicExport(path => File.Exists(path) ? path : null) { Depth = StudioDepth.Bit36 }
-            .Export(PtpEpicExport.EpicTimelines(document));
+        byte[] bin = Studio(document, StudioDepth.Bit36);
         int image = (int)System.BitConverter.ToUInt32(bin, 12 + 4 + 12);
         Assert.Equal(12, bin[image]);
         Assert.Equal(0, System.BitConverter.ToUInt16(bin, image + 5));
         Assert.Equal(0, System.BitConverter.ToUInt16(bin, image + 7));
         Assert.Equal(3850, System.BitConverter.ToUInt16(bin, image + 9));
+    }
+
+    /// <summary>The show through Studio's import and E-Pic export.</summary>
+    private static byte[] Studio(PtpDocument document, StudioDepth depth)
+    {
+        var show = PtpImport.Import(document, "show", path => File.Exists(path) ? path : null);
+        return new EpicExport(show.Media) { Depth = depth }.Export(EpicExport.EpicTimelines(show.Project));
     }
 
     private sealed record LineSpec((byte R, byte G, byte B) Color, List<ItemSpec> Items);

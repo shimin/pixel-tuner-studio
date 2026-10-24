@@ -2,12 +2,13 @@ using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using PixelTuner.Core.Media;
 using PixelTuner.Core.Model;
 
 namespace PixelTuner.Package;
 
 /// <summary>An opened .pxpkg. Media is read on demand straight from the archive.</summary>
-public sealed class PxPackage : IDisposable
+public sealed class PxPackage : IDisposable, IMediaSource
 {
     readonly ZipArchive _zip;
     readonly Dictionary<string, ResourceEntry> _byId;
@@ -64,6 +65,8 @@ public sealed class PxPackage : IDisposable
             ?? throw new InvalidDataException($"Resource {id} is listed in the manifest but missing from the archive.");
         return entry.Open();
     }
+
+    Stream IMediaSource.Open(string resourceId) => OpenResource(resourceId);
 
     public byte[] ReadResource(string id)
     {

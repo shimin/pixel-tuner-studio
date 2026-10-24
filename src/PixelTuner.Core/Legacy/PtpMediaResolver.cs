@@ -8,7 +8,11 @@ namespace PixelTuner.Core.Legacy;
 /// </summary>
 public sealed class PtpMediaResolver(string projectDirectory)
 {
-    public string Resolve(string fullName)
+    public string Resolve(string fullName) =>
+        TryResolve(fullName) ?? throw new FileNotFoundException($"Media file '{fullName}' of the project was not found.", fullName);
+
+    /// <summary>The file on disk, or null when it is not found.</summary>
+    public string? TryResolve(string fullName)
     {
         string normalized = fullName.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
         bool windowsAbsolute = fullName.Length > 2 && fullName[1] == ':';
@@ -24,9 +28,7 @@ public sealed class PtpMediaResolver(string projectDirectory)
         }
 
         string fileName = Path.GetFileName(normalized);
-        if (FindIgnoringCase(Path.Combine(projectDirectory, fileName)) is { } nearby) return nearby;
-
-        throw new FileNotFoundException($"Media file '{fullName}' of the project was not found.", fullName);
+        return FindIgnoringCase(Path.Combine(projectDirectory, fileName));
     }
 
     /// <summary>
