@@ -24,7 +24,7 @@ public class ShowDeviceTests
         Assert.Equal([(byte)DeviceCommand.WhoIsIt, (byte)DeviceCommand.Info], fake.Requests.Select(r => r[0]));
         var info = device.Info;
         Assert.Equal((5, 3, 17, 150, 87), (info.PlatformVersion, info.BootVersion, info.FirmwareVersion, info.LedCount, info.Battery));
-        Assert.Equal(2_000_000, info.MaxMemory);
+        Assert.Equal(2_000_000, info.MaxMemory);   // kilobytes
         Assert.Equal("Шоу 1", info.Tag);
         Assert.Equal(new byte[] { 0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7 }, info.Mac);
         Assert.Equal(0xB0, info.RemoteMac![0]);
@@ -32,12 +32,23 @@ public class ShowDeviceTests
     }
 
     [Fact]
+    public void A_real_video_module_with_a_4_GB_card_reports_kilobytes_that_are_not_cut()
+    {
+        // The answer to "info" of a PLR_v2FW (firmware 2.4.2, 229 LEDs) read from a device on a cable.
+        byte[] answer = Convert.FromHexString("02040200e50009003b2e596c75636b790000000000000074656869626f6f6d0000000000000000c0a858d74d01676c61737365730000000000000000");
+        var info = DeviceInfo.Parse(DeviceModel.FromId("PLR_v2FW"), answer);
+
+        Assert.Equal((2, 4, 2, 229), (info.PlatformVersion, info.BootVersion, info.FirmwareVersion, info.LedCount));
+        Assert.Equal(3_878_489, info.MaxMemory);          // kilobytes: 3.7 GB, as the card is
+    }
+
+    [Fact]
     public void Info_layouts_follow_each_family()
     {
-        // Video module: LEDs, memory capped and in KB on platform 2, tag always.
+        // Video module: LEDs, memory in KB (also on platform 2, and not cut), tag always.
         var video = DeviceInfo.Parse(DeviceModel.FromId("PLR_v2FW"), FakeDevice.SampleInfo);
         Assert.Equal((2, 4, 2, 24, 0), (video.PlatformVersion, video.BootVersion, video.FirmwareVersion, video.LedCount, video.Battery));
-        Assert.Equal(3_800_000 / 1024, video.MaxMemory);
+        Assert.Equal(0x39FF98, video.MaxMemory);
         Assert.Equal("spin", video.Tag);
         Assert.Null(video.Mac);
 
@@ -46,7 +57,7 @@ public class ShowDeviceTests
         Assert.Null(pixel.Tag);
         Assert.Equal("lucky"u8.ToArray(), pixel.Mac![..5]);
         Assert.Equal(4, DeviceInfo.Parse(DeviceModel.FromId("E-PIC_v4FW"), FakeDevice.SampleInfo).PlatformVersion);
-        Assert.Equal(3_800_000, DeviceInfo.Parse(DeviceModel.FromId("E-PIC_v4FW"), FakeDevice.SampleInfo).MaxMemory);
+        Assert.Equal(0x39FF98, DeviceInfo.Parse(DeviceModel.FromId("E-PIC_v4FW"), FakeDevice.SampleInfo).MaxMemory);   // platform 4: kilobytes
 
         // E-pic poi: battery and memory one byte earlier, no LEDs.
         var epic = DeviceInfo.Parse(DeviceModel.FromId("E-PIC_SFW"), FakeDevice.SampleInfo);
@@ -93,6 +104,37 @@ public class ShowDeviceTests
         Assert.All(fake.TimeoutsDuringUpload, t => Assert.Equal(DeviceProtocol.UploadTimeout, t));
         Assert.Equal(DeviceProtocol.DefaultTimeout, fake.ReadTimeout);
         Assert.False(device.IsBusy);
+    }
+
+    [Fact]
+    public void An_answer_is_read_in_one_call_not_byte_by_byte_because_each_call_costs_a_millisecond_on_a_serial_port()
+    {
+        var fake = new FakeDevice("E-PIC_v5FW", FakeDevice.SampleInfo);
+        using var device = ShowDevice.Connect(fake);
+        int before = fake.Reads;
+
+        device.ReadInfo();
+        Assert.Equal(1, fake.Reads - before);
+
+        before = fake.Reads;
+        device.UploadShow(new byte[2500]);                          // 10 blocks of 250, the announcement and the end
+        Assert.Equal(10 + 2, fake.Reads - before);
+    }
+
+    [Fact]
+    public void An_answer_that_comes_in_pieces_is_put_together_and_one_without_the_closing_byte_is_still_taken()
+    {
+        var split = new FakeDevice("E-PIC_v5FW", FakeDevice.SampleInfo) { ChunkSize = 7 };
+        using (var device = ShowDevice.Connect(split))
+            Assert.Equal(2, device.ReadInfo().PlatformVersion);
+
+        var bare = new FakeDevice("E-PIC_v5FW", FakeDevice.SampleInfo) { NoTerminator = true };
+        using (var device = ShowDevice.Connect(bare))
+        {
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            device.UploadShow(new byte[500]);
+            Assert.True(sw.Elapsed < TimeSpan.FromSeconds(1));     // a missing 0x0D costs a few milliseconds, not the timeout
+        }
     }
 
     [Fact]

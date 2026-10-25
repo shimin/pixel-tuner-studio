@@ -132,7 +132,7 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     {
         if (value is not null) value.Changed += DocumentEdited;
         var old = Editor;
-        Editor = value is not null && CanEdit ? new EditorViewModel(value, AudioEngine.Current, () => FilePicker, DeviceHub.Current) : null;
+        Editor = value is not null && CanEdit ? new EditorViewModel(value, AudioEngine.Current, () => FilePicker, DeviceHub.Current, () => Dialogs, DeviceHub.Current is null ? null : DeviceSettingsStore.DefaultFile(Product.Current.Name)) : null;
         old?.Dispose();
     }
 

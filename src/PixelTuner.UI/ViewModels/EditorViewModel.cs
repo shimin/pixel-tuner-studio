@@ -32,7 +32,9 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     /// <param name="engine">Plays and reads sound; null on a computer without one (the editor works, silently).</param>
     /// <param name="picker">Asks the user for the soundtrack file.</param>
-    public EditorViewModel(ProjectDocument document, IAudioEngine? engine = null, Func<IFilePicker?>? picker = null, IDeviceHub? devices = null)
+    /// <param name="deviceSettingsFile">Where what was last written to the devices is kept; null keeps it in memory.</param>
+    /// <param name="dialogs">Asks the user to confirm what cannot be undone (writing firmware to a device).</param>
+    public EditorViewModel(ProjectDocument document, IAudioEngine? engine = null, Func<IFilePicker?>? picker = null, IDeviceHub? devices = null, Func<IDialogService?>? dialogs = null, string? deviceSettingsFile = null)
     {
         Document = document;
         _engine = engine;
@@ -44,7 +46,8 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         Gallery = new LibraryViewModel(this, () => _picker?.Invoke());
         Canvas = new CanvasPanelViewModel(this, () => _picker?.Invoke());
         Preview = new PreviewViewModel(this);
-        Devices = new DevicesPanelViewModel(this, devices, () => _picker?.Invoke());
+        Devices = new DevicesPanelViewModel(this, devices, () => _picker?.Invoke(), () => dialogs?.Invoke());
+        DeviceSettings = new DeviceSettingsViewModel(Devices, new DeviceSettingsStore(deviceSettingsFile));
         Preview.Changed += (_, _) => Canvas.PlayheadMoved();
         BuildPalette();
         if (engine is not null)
@@ -71,6 +74,9 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     /// <summary>The devices of the project, the settings the files are built with, and the connected devices.</summary>
     public DevicesPanelViewModel Devices { get; }
+
+    /// <summary>The settings of the connected devices (name, Wi-Fi, LED strip, menu), apart from the project.</summary>
+    public DeviceSettingsViewModel DeviceSettings { get; }
 
     private void DocumentChanged(object? sender, EventArgs e) =>
         OnUi(() =>

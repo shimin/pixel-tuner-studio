@@ -37,6 +37,24 @@ public sealed class WindowDialogService(Window owner) : IDialogService
         return choice;
     }
 
+    public async Task<bool> ConfirmAsync(string heading, string detail, string action)
+    {
+        bool accepted = false;
+        var dialog = CreateDialog(heading, out var body, out var buttons);
+        body.Children.Add(new TextBlock { Text = detail, TextWrapping = TextWrapping.Wrap, Opacity = 0.75 });
+
+        var accept = new Button { Content = action, MinWidth = 96, IsDefault = true };
+        accept.Classes.Add("accent");
+        accept.Click += (_, _) => { accepted = true; dialog.Close(); };
+        var cancel = new Button { Content = Strings.Dialog_Cancel, MinWidth = 96, IsCancel = true };
+        cancel.Click += (_, _) => dialog.Close();
+        foreach (var button in OperatingSystem.IsMacOS() ? new[] { cancel, accept } : [accept, cancel])
+            buttons.Children.Add(button);
+
+        await dialog.ShowDialog(owner);
+        return accepted;
+    }
+
     public async Task ShowAboutAsync(string appName, string version)
     {
         var dialog = CreateDialog(appName, out var body, out var buttons);

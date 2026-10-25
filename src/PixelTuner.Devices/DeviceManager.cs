@@ -43,15 +43,27 @@ public sealed class DeviceManager : IAsyncDisposable
     /// <summary>The TCP port devices connect to, once listening (useful when the options asked for 0).</summary>
     public int? ListeningPort => (_listener?.LocalEndpoint as IPEndPoint)?.Port;
 
+    /// <summary>Why devices on Wi-Fi cannot connect (the port could not be taken); null when they can.</summary>
+    public string? ListenError { get; private set; }
+
     public void Start()
     {
         if (_loops.Count > 0) throw new InvalidOperationException("The device manager is already running.");
         if (_options.ScanSerialPorts) _loops.Add(Task.Run(() => ScanLoopAsync(_stop.Token)));
         if (_options.ListenPort is { } port)
         {
-            _listener = new TcpListener(IPAddress.Any, port);
-            _listener.Start();
-            _loops.Add(Task.Run(() => AcceptLoopAsync(_listener, _stop.Token)));
+            // The port may be taken (another PixelTuner, PixelTuner 2): the cable still works, and the reason is told.
+            try
+            {
+                var listener = new TcpListener(IPAddress.Any, port);
+                listener.Start();
+                _listener = listener;
+                _loops.Add(Task.Run(() => AcceptLoopAsync(listener, _stop.Token)));
+            }
+            catch (SocketException e)
+            {
+                ListenError = e.Message;
+            }
         }
         _loops.Add(Task.Run(() => MonitorLoopAsync(_stop.Token)));
     }

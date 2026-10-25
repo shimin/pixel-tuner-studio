@@ -379,6 +379,10 @@
       <TabItem Header="{x:Static res:Strings.Devices_Title}">
         <dv:DevicesPanelView DataContext="{Binding Devices}" />
       </TabItem>
+
+      <TabItem Header="{x:Static res:Strings.DevSet_Title}" IsVisible="{Binding Devices.HasDevices}">
+        <dv:DeviceSettingsView DataContext="{Binding DeviceSettings}" />
+      </TabItem>
      </TabControl>
     </Border>
 

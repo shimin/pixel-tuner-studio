@@ -29,14 +29,13 @@ public static class DeviceMapping
     };
 
     /// <summary>
-    /// What the device can hold, in bytes; 0 when it does not say. PixelTuner 2 read it as the device reported it (capped at 3,800,000,
-    /// in kilobytes on platform 2, see <see cref="DeviceInfo.MaxMemory"/>); the LightMaster reports kilobytes that are free.
+    /// What the device can hold, in bytes; 0 when it does not say. The devices report kilobytes (<see cref="DeviceInfo.MaxMemory"/>), and
+    /// the LightMaster the kilobytes that are free.
     /// </summary>
-    // TODO(release): the units of the reported memory are unchecked on devices (docs/before-release.md).
+    // TODO(release): the units are measured on one video module only (docs/before-release.md).
     public static long MemoryBytes(DeviceModel model, DeviceInfo info) => model.Family switch
     {
         DeviceFamily.LightMaster => (info.MemoryAvailable ?? 0) * 1024,
-        _ when info.PlatformVersion == 2 => (info.MaxMemory ?? 0) * 1024,
-        _ => info.MaxMemory ?? 0,
+        _ => (info.MaxMemory ?? 0) * 1024,
     };
 }

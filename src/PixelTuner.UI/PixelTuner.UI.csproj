@@ -38,4 +38,8 @@
     <ProjectReference Include="..\PixelTuner.Package\PixelTuner.Package.csproj" />
     <ProjectReference Include="..\PixelTuner.Sync\PixelTuner.Sync.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="PixelTuner.UI.Tests" />
+  </ItemGroup>
 </Project>

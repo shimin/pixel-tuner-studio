@@ -20,8 +20,9 @@ public sealed record DeviceInfo
     public int? Battery { get; init; }
 
     /// <summary>
-    /// Memory for shows, as PixelTuner 2 showed it: capped at 3,800,000, and in kilobytes on
-    /// platform 2 (the device reports bytes everywhere).
+    /// Memory for shows, in kilobytes. Devices report kilobytes (a video module with a 4 GB card reports 3,878,489), except the old
+    /// pixel and E-pic poi of platform 2, which reported bytes. PixelTuner 2 did the same, but cut the value at 3,800,000, which
+    /// is less than that card holds; there is no cut here.
     /// </summary>
     public long? MaxMemory { get; init; }
 
@@ -60,8 +61,8 @@ public sealed record DeviceInfo
             return model.Family switch
             {
                 DeviceFamily.PixelPoi => Pixel(model, data),
-                DeviceFamily.PixelHoop or DeviceFamily.Video => Hoop(data),
-                DeviceFamily.EpicPoi => EpicPoi(data),
+                DeviceFamily.PixelHoop or DeviceFamily.Video => Hoop(model, data),
+                DeviceFamily.EpicPoi => EpicPoi(model, data),
                 DeviceFamily.LightMaster => LightMaster(data),
                 DeviceFamily.Illuminator => Illuminator(data),
                 _ => Versions(data),
@@ -86,7 +87,7 @@ public sealed record DeviceInfo
             PlatformVersion = platform,
             LedCount = BinaryPrimitives.ReadUInt16BigEndian(d[3..]),
             Battery = BinaryPrimitives.ReadUInt16BigEndian(d[5..]),
-            MaxMemory = Memory(BinaryPrimitives.ReadUInt32BigEndian(d[7..]), platform),
+            MaxMemory = Memory(BinaryPrimitives.ReadUInt32BigEndian(d[7..]), model.Family, platform),
             Mac = d.Slice(11, 8).ToArray(),
             RemoteMac = d.Slice(22, 8).ToArray(),
             Tag = platform >= 5 ? ReadTag(d) : null,
@@ -94,19 +95,19 @@ public sealed record DeviceInfo
     }
 
     /// <summary>PixelHoop.GetInfo and VideoDevice.GetInfo: the pixel layout without radio addresses.</summary>
-    private static DeviceInfo Hoop(ReadOnlySpan<byte> d) => Versions(d) with
+    private static DeviceInfo Hoop(DeviceModel model, ReadOnlySpan<byte> d) => Versions(d) with
     {
         LedCount = BinaryPrimitives.ReadUInt16BigEndian(d[3..]),
         Battery = BinaryPrimitives.ReadUInt16BigEndian(d[5..]),
-        MaxMemory = Memory(BinaryPrimitives.ReadUInt32BigEndian(d[7..]), d[0]),
+        MaxMemory = Memory(BinaryPrimitives.ReadUInt32BigEndian(d[7..]), model.Family, d[0]),
         Tag = ReadTag(d),
     };
 
     /// <summary>SimplePoiDevice.GetInfo.</summary>
-    private static DeviceInfo EpicPoi(ReadOnlySpan<byte> d) => Versions(d) with
+    private static DeviceInfo EpicPoi(DeviceModel model, ReadOnlySpan<byte> d) => Versions(d) with
     {
         Battery = BinaryPrimitives.ReadUInt16BigEndian(d[4..]),
-        MaxMemory = Memory(BinaryPrimitives.ReadUInt32BigEndian(d[6..]), d[0]),
+        MaxMemory = Memory(BinaryPrimitives.ReadUInt32BigEndian(d[6..]), model.Family, d[0]),
     };
 
     /// <summary>LightMasterDevice.GetInfo. Battery and memory are little endian here.</summary>
@@ -130,11 +131,8 @@ public sealed record DeviceInfo
         RadioChannel = d[20],
     };
 
-    private static long Memory(uint reported, int platform)
-    {
-        long memory = Math.Min(reported, 3_800_000L);
-        return platform == 2 ? memory / 1024 : memory;
-    }
+    private static long Memory(uint reported, DeviceFamily family, int platform) =>
+        platform == 2 && family is DeviceFamily.PixelPoi or DeviceFamily.EpicPoi ? reported / 1024 : reported;
 
     /// <summary>12 bytes of Windows-1251 at offset 45, padded with zeros.</summary>
     private static string ReadTag(ReadOnlySpan<byte> d) => Cp1251.GetString(d.Slice(45, 12)).TrimEnd('\0');

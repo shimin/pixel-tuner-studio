@@ -28,8 +28,14 @@ internal sealed class FakeDevice(string name, byte[] info, string channel = "COM
     /// <summary>Answer with another command than asked.</summary>
     public byte? WrongAnswer { get; set; }
 
+    /// <summary>Hand out the answer in pieces of at most this many bytes (0 = all at once).</summary>
+    public int ChunkSize { get; set; }
+
     /// <summary>Leave out the closing 0x0D of answers.</summary>
     public bool NoTerminator { get; set; }
+
+    /// <summary>While set to wait, a written block is not answered (an upload that takes its time).</summary>
+    public ManualResetEventSlim? HoldBlocks { get; set; }
 
     /// <summary>Stop answering, as an unplugged cable.</summary>
     public bool Silent { get; set; }
@@ -41,6 +47,11 @@ internal sealed class FakeDevice(string name, byte[] info, string channel = "COM
     public TimeSpan ReadTimeout { get; set; }
     public TimeSpan WriteTimeout { get; set; }
     public List<TimeSpan> TimeoutsDuringUpload { get; } = [];
+
+    /// <summary>Calls of <see cref="Read"/>: on a real serial port each costs about a millisecond.</summary>
+    public int Reads { get; private set; }
+
+    public int BytesAvailable => _output.Count;
 
     public void DiscardInput() => _output.Clear();
 
@@ -63,6 +74,7 @@ internal sealed class FakeDevice(string name, byte[] info, string channel = "COM
                 Answer(request[0], [AcceptShow]);
                 break;
             case DeviceCommand.WriteBlock:
+                HoldBlocks?.Wait();
                 int block = Requests.Count(r => r[0] == (byte)DeviceCommand.WriteBlock) - 1;
                 if (block == RejectBlock) { Answer(request[0], [0x00]); break; }
                 TimeoutsDuringUpload.Add(ReadTimeout);
@@ -89,10 +101,11 @@ internal sealed class FakeDevice(string name, byte[] info, string channel = "COM
 
     public int Read(Span<byte> buffer)
     {
+        Reads++;
         if (Closed) throw new IOException("closed");
         if (_output.Count == 0) throw new TimeoutException();
         int n = 0;
-        while (n < buffer.Length && _output.Count > 0) buffer[n++] = _output.Dequeue();
+        while (n < buffer.Length && _output.Count > 0 && (ChunkSize == 0 || n < ChunkSize)) buffer[n++] = _output.Dequeue();
         return n;
     }
 

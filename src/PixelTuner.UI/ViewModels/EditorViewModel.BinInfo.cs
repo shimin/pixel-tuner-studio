@@ -117,11 +117,12 @@ public sealed partial class EditorViewModel
         ? (time.TotalMilliseconds * 1000).ToString("0.##", CultureInfo.CurrentCulture) + " µs"
         : $"{time.TotalMilliseconds.ToString("0.##", CultureInfo.CurrentCulture)} ms";
 
-    /// <summary>"512 B", "1.2 KB", "3.6 MB".</summary>
+    /// <summary>"512 B", "1.2 KB", "3.6 MB", "3.7 GB".</summary>
     public static string Size(long bytes) => bytes switch
     {
         < 1024 => $"{bytes} B",
         < 1024 * 1024 => (bytes / 1024.0).ToString("0.#", CultureInfo.CurrentCulture) + " KB",
-        _ => (bytes / 1024.0 / 1024.0).ToString("0.#", CultureInfo.CurrentCulture) + " MB",
+        < 1024L * 1024 * 1024 => (bytes / 1024.0 / 1024.0).ToString("0.#", CultureInfo.CurrentCulture) + " MB",
+        _ => (bytes / 1024.0 / 1024.0 / 1024.0).ToString("0.##", CultureInfo.CurrentCulture) + " GB",
     };
 }

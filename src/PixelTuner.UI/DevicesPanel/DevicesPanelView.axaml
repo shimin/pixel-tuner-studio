@@ -4,68 +4,55 @@
              xmlns:dv="using:PixelTuner.UI.DevicesPanel"
              x:Class="PixelTuner.UI.DevicesPanel.DevicesPanelView"
              x:DataType="dv:DevicesPanelViewModel">
-  <!-- The devices of the project and the timelines each plays, the build settings, and the connected devices. -->
-  <Grid RowDefinitions="*,Auto" RowSpacing="6">
-    <Grid ColumnDefinitions="220,*,300" ColumnSpacing="14">
-      <!-- The devices of the project -->
-      <DockPanel>
-        <TextBlock DockPanel.Dock="Top" Text="{x:Static res:Strings.Devices_Project}" FontWeight="SemiBold" Margin="0,0,0,6" />
-        <WrapPanel DockPanel.Dock="Bottom" Margin="0,6,0,0">
-          <Button Content="{x:Static res:Strings.Devices_Add}" Margin="0,0,6,6">
-            <Button.Flyout>
-              <MenuFlyout>
-                <MenuItem Header="{x:Static res:Strings.Devices_KindPoi}" Command="{Binding AddDeviceCommand}" CommandParameter="poi" />
-                <MenuItem Header="{x:Static res:Strings.Devices_KindHoop}" Command="{Binding AddDeviceCommand}" CommandParameter="hoop" />
-                <MenuItem Header="{x:Static res:Strings.Devices_KindFan}" Command="{Binding AddDeviceCommand}" CommandParameter="fan" />
-                <MenuItem Header="{x:Static res:Strings.Devices_KindVideo}" Command="{Binding AddDeviceCommand}" CommandParameter="video" />
-                <MenuItem Header="{x:Static res:Strings.Devices_KindEpic}" Command="{Binding AddDeviceCommand}" CommandParameter="epic-poi" />
-                <MenuItem Header="{x:Static res:Strings.Devices_KindLight}" Command="{Binding AddDeviceCommand}" CommandParameter="light" />
-              </MenuFlyout>
-            </Button.Flyout>
-          </Button>
-          <Button Content="{x:Static res:Strings.Devices_Remove}" Command="{Binding RemoveDeviceCommand}" Margin="0,0,6,6" />
-        </WrapPanel>
-        <ListBox ItemsSource="{Binding Rows}" SelectedItem="{Binding Selected}" Background="Transparent">
-          <ListBox.ItemTemplate>
-            <DataTemplate x:DataType="dv:DeviceRowViewModel">
-              <StackPanel Spacing="1">
-                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
-                <TextBlock Text="{Binding KindText}" Classes="muted" FontSize="11" TextTrimming="CharacterEllipsis" />
-              </StackPanel>
-            </DataTemplate>
-          </ListBox.ItemTemplate>
-        </ListBox>
-      </DockPanel>
-
-      <!-- The selected device, and what is done with its file -->
-      <DockPanel Grid.Column="1">
-        <StackPanel DockPanel.Dock="Bottom" Spacing="6" Margin="0,6,0,0" IsVisible="{Binding HasSelected}">
-          <StackPanel Orientation="Horizontal" Spacing="8">
-            <Button Content="{x:Static res:Strings.Devices_Export}" Command="{Binding ExportBinCommand}" />
-            <Button Classes="accent" Content="{x:Static res:Strings.Devices_Upload}" Command="{Binding UploadCommand}" IsVisible="{Binding HasDevices}" />
-            <Button Content="{x:Static res:Strings.Devices_Cancel}" Command="{Binding CancelUploadCommand}" IsVisible="{Binding IsUploading}" />
-          </StackPanel>
-          <ProgressBar Minimum="0" Maximum="1" Value="{Binding Progress}" IsVisible="{Binding IsUploading}" />
-        </StackPanel>
+  <!-- The devices that are connected, what is sent to the selected one (set up here, sent by the Upload button), and the settings the files are built with. -->
+  <Grid RowDefinitions="*,Auto,Auto" RowSpacing="6">
+    <Grid ColumnDefinitions="360,*,260" ColumnSpacing="14">
+      <!-- The connected devices and their firmware -->
       <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Spacing="6" IsVisible="{Binding HasSelected}">
-          <StackPanel DataContext="{Binding Selected}" x:DataType="dv:DeviceRowViewModel" Spacing="6">
-            <Grid ColumnDefinitions="*,*,120,140" ColumnSpacing="8">
-              <StackPanel><TextBlock Classes="muted" Text="{x:Static res:Strings.Devices_Name}" /><TextBox Text="{Binding Name}" IsUndoEnabled="False" /></StackPanel>
-              <StackPanel Grid.Column="1"><TextBlock Classes="muted" Text="{x:Static res:Strings.Devices_Kind}" /><ComboBox ItemsSource="{Binding KindTitles}" SelectedIndex="{Binding KindIndex}" HorizontalAlignment="Stretch" /></StackPanel>
-              <StackPanel Grid.Column="2" IsVisible="{Binding HasLedCount}"><TextBlock Classes="muted" Text="{x:Static res:Strings.Devices_Leds}" /><NumericUpDown Minimum="0" Maximum="65535" FormatString="0" Value="{Binding LedCount}" /></StackPanel>
-              <StackPanel Grid.Column="3"><TextBlock Classes="muted" Text="{x:Static res:Strings.Devices_Memory}" /><NumericUpDown Minimum="0" Maximum="100000" FormatString="0" Value="{Binding MemoryKb}" /></StackPanel>
-            </Grid>
-            <StackPanel><TextBlock Classes="muted" Text="{x:Static res:Strings.Devices_Tag}" /><TextBox Text="{Binding Tag}" IsUndoEnabled="False" MaxLength="12" /></StackPanel>
+        <StackPanel Spacing="8" Margin="0,0,14,0">
+          <TextBlock Text="{x:Static res:Strings.Devices_Connected}" FontWeight="SemiBold" IsVisible="{Binding HasDevices}" />
+          <StackPanel Spacing="6" IsVisible="{Binding HasDevices}">
+            <TextBlock Classes="muted" TextWrapping="Wrap" Text="{x:Static res:Strings.Devices_NoneFound}" IsVisible="{Binding !HasConnected}" />
+            <TextBlock TextWrapping="Wrap" FontSize="11" Text="{Binding SearchProblem}" IsVisible="{Binding HasSearchProblem}" Foreground="{DynamicResource SystemFillColorCautionBrush}" />
+            <ListBox ItemsSource="{Binding Connected}" SelectedItem="{Binding SelectedConnected}" Background="Transparent" IsVisible="{Binding HasConnected}">
+              <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="dv:ConnectedDeviceViewModel">
+                  <StackPanel Spacing="1">
+                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding Detail}" Classes="muted" FontSize="11" TextWrapping="Wrap" />
+                  </StackPanel>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+            <TextBlock Text="{Binding SelectedConnected.FirmwareNote}" IsVisible="{Binding SelectedConnected.HasFirmwareNote}"
+                       TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource SystemFillColorCautionBrush}" />
+            <WrapPanel IsVisible="{Binding HasConnected}">
+              <Button Content="{Binding SelectedConnected.FirmwareButtonText}" Command="{Binding UpdateFirmwareCommand}" Margin="0,0,6,6" />
+              <Button Content="{x:Static res:Strings.Devices_FirmwareFile}" Command="{Binding UpdateFirmwareFromFileCommand}" Margin="0,0,6,6" />
+            </WrapPanel>
+          </StackPanel>
+        </StackPanel>
+      </ScrollViewer>
+
+      <!-- What is sent to the selected device: the timelines and their order, what the build says, and the button that sends it -->
+      <Grid Grid.Column="1" RowDefinitions="*,Auto" IsVisible="{Binding HasPlan}">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+          <StackPanel DataContext="{Binding SelectedPlan}" x:DataType="dv:UploadPlanViewModel" Spacing="6" Margin="0,0,14,0">
+            <TextBlock Text="{Binding Heading}" FontWeight="SemiBold" />
+            <StackPanel IsVisible="{Binding HasKindChoice}">
+              <TextBlock Classes="muted" Text="{x:Static res:Strings.Devices_PlanKind}" />
+              <ComboBox ItemsSource="{Binding KindTitles}" SelectedIndex="{Binding KindIndex}" MinWidth="240" />
+            </StackPanel>
             <TextBlock Classes="muted" Text="{x:Static res:Strings.Devices_Timelines}" />
+            <TextBlock Classes="muted" Text="{x:Static res:Strings.Devices_NoTimelines}" IsVisible="{Binding !Choices.Count}" />
             <ItemsControl ItemsSource="{Binding Choices}">
               <ItemsControl.ItemTemplate>
-                <DataTemplate x:DataType="dv:TimelineChoiceViewModel">
+                <DataTemplate x:DataType="dv:UploadChoiceViewModel">
                   <DockPanel Margin="0,0,0,2">
                     <TextBlock DockPanel.Dock="Left" Text="{Binding Order}" Width="22" VerticalAlignment="Center" Classes="muted" />
                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="4">
-                      <Button Content="↑" Command="{Binding $parent[ItemsControl].((dv:DeviceRowViewModel)DataContext).MoveUpCommand}" CommandParameter="{Binding}" ToolTip.Tip="{x:Static res:Strings.Devices_Up}" Padding="8,2" />
-                      <Button Content="↓" Command="{Binding $parent[ItemsControl].((dv:DeviceRowViewModel)DataContext).MoveDownCommand}" CommandParameter="{Binding}" ToolTip.Tip="{x:Static res:Strings.Devices_Down}" Padding="8,2" />
+                      <Button Content="↑" Command="{Binding $parent[ItemsControl].((dv:UploadPlanViewModel)DataContext).MoveUpCommand}" CommandParameter="{Binding}" ToolTip.Tip="{x:Static res:Strings.Devices_Up}" Padding="8,2" />
+                      <Button Content="↓" Command="{Binding $parent[ItemsControl].((dv:UploadPlanViewModel)DataContext).MoveDownCommand}" CommandParameter="{Binding}" ToolTip.Tip="{x:Static res:Strings.Devices_Down}" Padding="8,2" />
                     </StackPanel>
                     <CheckBox IsChecked="{Binding IsChecked}" IsEnabled="{Binding CanCheck}">
                       <StackPanel>
@@ -84,47 +71,31 @@
               </ItemsControl.ItemTemplate>
             </ItemsControl>
           </StackPanel>
-        </StackPanel>
-      </ScrollViewer>
-      </DockPanel>
+        </ScrollViewer>
+        <Button Grid.Row="1" Classes="accent" HorizontalAlignment="Left" Margin="0,6,0,0" Content="{x:Static res:Strings.Devices_Upload}" Command="{Binding UploadCommand}" />
+      </Grid>
+      <TextBlock Grid.Column="1" Classes="muted" TextWrapping="Wrap" Text="{x:Static res:Strings.Devices_NoShowHere}" IsVisible="{Binding HasNoShowDevice}" />
 
-      <!-- Build settings and the connected devices -->
+      <!-- The settings the files are built with -->
       <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto">
-        <StackPanel Spacing="8">
-          <TextBlock Text="{x:Static res:Strings.Devices_Connected}" FontWeight="SemiBold" IsVisible="{Binding HasDevices}" />
-          <StackPanel Spacing="6" IsVisible="{Binding HasDevices}">
-            <Button Content="{Binding SearchText}" Command="{Binding ToggleSearchCommand}" HorizontalAlignment="Left" />
-            <TextBlock Classes="muted" TextWrapping="Wrap" Text="{x:Static res:Strings.Devices_NoneFound}" IsVisible="{Binding !HasConnected}" />
-            <ListBox ItemsSource="{Binding Connected}" SelectedItem="{Binding SelectedConnected}" Background="Transparent" IsVisible="{Binding HasConnected}">
-              <ListBox.ItemTemplate>
-                <DataTemplate x:DataType="dv:ConnectedDeviceViewModel">
-                  <StackPanel Spacing="1">
-                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
-                    <TextBlock Text="{Binding Detail}" Classes="muted" FontSize="11" TextWrapping="Wrap" />
-                  </StackPanel>
-                </DataTemplate>
-              </ListBox.ItemTemplate>
-            </ListBox>
-            <WrapPanel>
-              <Button Content="{x:Static res:Strings.Devices_AddFromConnected}" Command="{Binding AddFromConnectedCommand}" Margin="0,0,6,6" />
-              <Button Content="{x:Static res:Strings.Devices_Take}" Command="{Binding TakeFromConnectedCommand}" Margin="0,0,6,6" />
-            </WrapPanel>
-          </StackPanel>
-          <TextBlock Text="{x:Static res:Strings.Devices_Settings}" FontWeight="SemiBold" Margin="0,6,0,0" />
-          <StackPanel Spacing="2">
-            <TextBlock Classes="muted" Text="{x:Static res:Strings.Devices_Depth}" />
-            <ComboBox ItemsSource="{Binding Depths}" SelectedIndex="{Binding DepthIndex}" HorizontalAlignment="Stretch" />
-            <TextBlock Classes="muted" Text="{x:Static res:Strings.Devices_GapStretching}" />
-            <NumericUpDown Minimum="2" Maximum="13107" FormatString="0" Value="{Binding GapStretching}" />
-            <TextBlock Classes="muted" Text="{x:Static res:Strings.Devices_LightRate}" />
-            <NumericUpDown Minimum="1" Maximum="1000" FormatString="0" Value="{Binding LightRate}" />
-          </StackPanel>
-
+        <StackPanel Spacing="2" Margin="0,0,14,0">
+          <TextBlock Text="{x:Static res:Strings.Devices_Settings}" FontWeight="SemiBold" />
+          <TextBlock Classes="muted" Text="{x:Static res:Strings.Devices_Depth}" />
+          <ComboBox ItemsSource="{Binding Depths}" SelectedIndex="{Binding DepthIndex}" HorizontalAlignment="Stretch" />
+          <TextBlock Classes="muted" Text="{x:Static res:Strings.Devices_GapStretching}" />
+          <NumericUpDown Minimum="2" Maximum="13107" FormatString="0" Value="{Binding GapStretching}" />
+          <TextBlock Classes="muted" Text="{x:Static res:Strings.Devices_LightRate}" />
+          <NumericUpDown Minimum="1" Maximum="1000" FormatString="0" Value="{Binding LightRate}" />
         </StackPanel>
       </ScrollViewer>
     </Grid>
 
-    <TextBlock Grid.Row="1" Text="{Binding Message}" TextWrapping="Wrap" Foreground="{DynamicResource SystemFillColorCautionBrush}"
+    <!-- A transfer in progress (a show or firmware) and what became of it -->
+    <DockPanel Grid.Row="1" IsVisible="{Binding IsUploading}">
+      <Button DockPanel.Dock="Right" Margin="8,0,0,0" Content="{x:Static res:Strings.Devices_Cancel}" Command="{Binding CancelUploadCommand}" IsVisible="{Binding CanCancel}" />
+      <ProgressBar Minimum="0" Maximum="1" Value="{Binding Progress}" VerticalAlignment="Center" />
+    </DockPanel>
+    <TextBlock Grid.Row="2" Text="{Binding Message}" TextWrapping="Wrap" Foreground="{DynamicResource SystemFillColorCautionBrush}"
                IsVisible="{Binding HasMessage}" />
   </Grid>
 </UserControl>

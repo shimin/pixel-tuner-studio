@@ -367,26 +367,12 @@
   <data name="Devices_Depth" xml:space="preserve"><value>Farbtiefe</value></data>
   <data name="Devices_GapStretching" xml:space="preserve"><value>Dehnung der Pausen</value></data>
   <data name="Devices_LightRate" xml:space="preserve"><value>Lichtschritt, ms</value></data>
-  <data name="Devices_Project" xml:space="preserve"><value>Geräte des Projekts</value></data>
-  <data name="Devices_Add" xml:space="preserve"><value>Hinzufügen</value></data>
-  <data name="Devices_AddFromConnected" xml:space="preserve"><value>Vom verbundenen Gerät</value></data>
-  <data name="Devices_Remove" xml:space="preserve"><value>Entfernen</value></data>
-  <data name="Devices_Name" xml:space="preserve"><value>Name</value></data>
-  <data name="Devices_Kind" xml:space="preserve"><value>Typ</value></data>
-  <data name="Devices_Leds" xml:space="preserve"><value>LEDs</value></data>
-  <data name="Devices_Memory" xml:space="preserve"><value>Speicher, KB</value></data>
-  <data name="Devices_Tag" xml:space="preserve"><value>Name im Netzwerk</value></data>
-  <data name="Devices_Timelines" xml:space="preserve"><value>Gespielte Spuren in der Reihenfolge der Datei</value></data>
+  <data name="Devices_Timelines" xml:space="preserve"><value>Zu sendende Timelines, in der Reihenfolge der Datei</value></data>
   <data name="Devices_Up" xml:space="preserve"><value>Früher</value></data>
   <data name="Devices_Down" xml:space="preserve"><value>Später</value></data>
-  <data name="Devices_Export" xml:space="preserve"><value>.bin exportieren…</value></data>
-  <data name="Devices_Upload" xml:space="preserve"><value>Aufs Gerät laden</value></data>
   <data name="Devices_Cancel" xml:space="preserve"><value>Abbrechen</value></data>
-  <data name="Devices_Take" xml:space="preserve"><value>LEDs und Speicher vom Gerät übernehmen</value></data>
   <data name="Devices_Connected" xml:space="preserve"><value>Verbundene Geräte</value></data>
-  <data name="Devices_Search" xml:space="preserve"><value>Geräte suchen</value></data>
-  <data name="Devices_Stop" xml:space="preserve"><value>Suche beenden</value></data>
-  <data name="Devices_NoneFound" xml:space="preserve"><value>Keine Geräte gefunden. Kabel anschließen oder Gerät per WLAN einschalten, dann suchen.</value></data>
+  <data name="Devices_NoneFound" xml:space="preserve"><value>Keine Geräte gefunden. Verbinde ein Kabel oder schalte das Gerät per WLAN ein: Geräte erscheinen hier von selbst.</value></data>
   <data name="Devices_FileInfo" xml:space="preserve"><value>Datei: {0}</value></data>
   <data name="Devices_FileInfoOf" xml:space="preserve"><value>Datei: {0} von {1}</value></data>
   <data name="Devices_NotBuilt" xml:space="preserve"><value>Für dieses Gerät gibt es noch nichts zu bauen.</value></data>
@@ -399,17 +385,66 @@
   <data name="Devices_Busy" xml:space="preserve"><value>beschäftigt</value></data>
   <data name="Devices_BootMode" xml:space="preserve"><value>Boot-Modus</value></data>
   <data name="Devices_Uploading" xml:space="preserve"><value>Hochladen… {0}%</value></data>
-  <data name="Devices_Uploaded" xml:space="preserve"><value>{0} auf {1} geladen.</value></data>
+  <data name="Devices_Uploaded" xml:space="preserve"><value>{0} auf {1} geladen: {2}.</value></data>
   <data name="Devices_UploadCancelled" xml:space="preserve"><value>Hochladen abgebrochen.</value></data>
   <data name="Devices_UploadFailed" xml:space="preserve"><value>Hochladen fehlgeschlagen: {0}</value></data>
   <data name="Devices_NoConnected" xml:space="preserve"><value>Wähle zuerst ein verbundenes Gerät.</value></data>
-  <data name="Devices_NoProjectDevice" xml:space="preserve"><value>Wähle zuerst ein Gerät des Projekts.</value></data>
   <data name="Devices_Unsupported" xml:space="preserve"><value>{0} wird nicht unterstützt.</value></data>
   <data name="Devices_BootModeOnly" xml:space="preserve"><value>{0} ist im Boot-Modus: nur Firmware kann geschrieben werden.</value></data>
   <data name="Devices_WrongFamily" xml:space="preserve"><value>{0} kann die Datei dieses Gerätetyps nicht spielen ({1}).</value></data>
-  <data name="Devices_WrongLeds" xml:space="preserve"><value>Das Gerät hat {0} LEDs, das Projektgerät {1}. Übernimm zuerst die LEDs vom Gerät.</value></data>
-  <data name="Devices_Exported" xml:space="preserve"><value>{0} gespeichert.</value></data>
-  <data name="Devices_ExportFailed" xml:space="preserve"><value>Datei konnte nicht gespeichert werden: {0}</value></data>
   <data name="Devices_OutOfRange" xml:space="preserve"><value>Gib eine Zahl von {0} bis {1} ein.</value></data>
-  <data name="FileType_Bin" xml:space="preserve"><value>Showdatei für ein Gerät</value></data>
+  <data name="Devices_UpdateFirmware" xml:space="preserve"><value>Firmware aktualisieren</value></data>
+  <data name="Devices_InstallFirmware" xml:space="preserve"><value>Firmware installieren</value></data>
+  <data name="Devices_FirmwareFile" xml:space="preserve"><value>Firmware aus Datei…</value></data>
+  <data name="Devices_FirmwareHeading" xml:space="preserve"><value>Firmware-Update</value></data>
+  <data name="Devices_FirmwareAvailable" xml:space="preserve"><value>Eine neuere Firmware ist verfügbar: {1} (das Gerät hat {0}).</value></data>
+  <data name="Devices_FirmwareBootNote" xml:space="preserve"><value>Das Gerät ist im Bootloader und nimmt nur Firmware an. Installiere sie, um das Gerät zu starten.</value></data>
+  <data name="Devices_FirmwareConfirm" xml:space="preserve"><value>Firmware {0} auf {1} schreiben (aktuell {2})? Das Gerät startet im Bootloader neu und wird neu beschrieben. Trenne es nicht und schalte es nicht aus, bis die Zeile unten meldet, dass alles fertig ist.</value></data>
+  <data name="Devices_FirmwareInstallConfirm" xml:space="preserve"><value>Firmware {0} auf {1} schreiben? Trenne das Gerät nicht und schalte es nicht aus, bis die Zeile unten meldet, dass alles fertig ist.</value></data>
+  <data name="Devices_FirmwareFileConfirm" xml:space="preserve"><value>Die Datei „{0}“ auf {1} schreiben? Die App kann nicht prüfen, ob es die Firmware dieses Geräts ist; eine falsche Datei lässt das Gerät im Bootloader, bis die richtige geschrieben wird. Trenne es nicht und schalte es nicht aus, bis die Zeile unten meldet, dass alles fertig ist.</value></data>
+  <data name="Devices_RestartingToBoot" xml:space="preserve"><value>{0} wird im Bootloader neu gestartet…</value></data>
+  <data name="Devices_BootTimeout" xml:space="preserve"><value>Das Gerät ist nicht im Bootloader zurückgekehrt. Verbinde es neu, wähle es aus und drücke „Firmware installieren“.</value></data>
+  <data name="Devices_WritingFirmware" xml:space="preserve"><value>Firmware wird geschrieben… {0}%</value></data>
+  <data name="Devices_FirmwareWritten" xml:space="preserve"><value>Firmware auf {0} geschrieben. Das Gerät startet neu.</value></data>
+  <data name="Devices_FirmwareFailed" xml:space="preserve"><value>Firmware-Update fehlgeschlagen: {0}</value></data>
+  <data name="Devices_NoFirmware" xml:space="preserve"><value>Die App hat keine Firmware für {0}. Nutze „Firmware aus Datei“.</value></data>
+  <data name="Devices_FirmwareBadFile" xml:space="preserve"><value>„{0}“ ist keine Firmware-Datei.</value></data>
+  <data name="FileType_Firmware" xml:space="preserve"><value>Firmware für ein Gerät</value></data>
+  <data name="DevSet_Title" xml:space="preserve"><value>Geräteeinstellungen</value></data>
+  <data name="DevSet_Device" xml:space="preserve"><value>Gerät</value></data>
+  <data name="DevSet_None" xml:space="preserve"><value>Kein Gerät verbunden. Verbinde eines per Kabel oder schalte es per WLAN ein; es erscheint von selbst im Tab „Devices“. Einstellungen gehen direkt ins Gerät und gehören nicht zum Projekt.</value></data>
+  <data name="DevSet_TakesNothingHere" xml:space="preserve"><value>Dieses Gerät hat keine Einstellungen, die PixelTuner schreiben kann (ein Gerät im Bootloader nimmt nur Firmware).</value></data>
+  <data name="DevSet_NameGroup" xml:space="preserve"><value>Name im Netzwerk</value></data>
+  <data name="DevSet_Name" xml:space="preserve"><value>Name</value></data>
+  <data name="DevSet_WifiGroup" xml:space="preserve"><value>WLAN</value></data>
+  <data name="DevSet_Ssid" xml:space="preserve"><value>Netzwerk (SSID)</value></data>
+  <data name="DevSet_Password" xml:space="preserve"><value>Passwort</value></data>
+  <data name="DevSet_Address" xml:space="preserve"><value>Adresse dieses Computers</value></data>
+  <data name="DevSet_Port" xml:space="preserve"><value>Port</value></data>
+  <data name="DevSet_StripGroup" xml:space="preserve"><value>LED-Streifen</value></data>
+  <data name="DevSet_LedType" xml:space="preserve"><value>Streifentyp</value></data>
+  <data name="DevSet_Channel1" xml:space="preserve"><value>LEDs, Kanal 1</value></data>
+  <data name="DevSet_Channel2" xml:space="preserve"><value>LEDs, Kanal 2</value></data>
+  <data name="DevSet_Order" xml:space="preserve"><value>Farbreihenfolge</value></data>
+  <data name="DevSet_MenuGroup" xml:space="preserve"><value>Menü des Geräts</value></data>
+  <data name="DevSet_ExitOnDouble" xml:space="preserve"><value>Wiedergabe mit Doppelklick beenden</value></data>
+  <data name="DevSet_MenuNever" xml:space="preserve"><value>Gerätemenü nicht ausschalten</value></data>
+  <data name="DevSet_MenuAfter" xml:space="preserve"><value>Gerätemenü nach {0} s ausschalten</value></data>
+  <data name="DevSet_LeaderGroup" xml:space="preserve"><value>Synchronisation</value></data>
+  <data name="DevSet_Leader" xml:space="preserve"><value>Dieses Gerät steuert alle anderen</value></data>
+  <data name="DevSet_Write" xml:space="preserve"><value>Aufs Gerät schreiben</value></data>
+  <data name="DevSet_Writing" xml:space="preserve"><value>Schreibe auf {0}…</value></data>
+  <data name="DevSet_Written" xml:space="preserve"><value>Auf {0} geschrieben.</value></data>
+  <data name="DevSet_Failed" xml:space="preserve"><value>Einstellungen konnten nicht geschrieben werden: {0}</value></data>
+  <data name="DevSet_TooLong" xml:space="preserve"><value>{0}: höchstens {1} Zeichen.</value></data>
+  <data name="DevSet_NotPlain" xml:space="preserve"><value>{0}: höchstens {1} Zeichen, Buchstaben ohne Akzente, Ziffern und Zeichen.</value></data>
+  <data name="DevSet_NoAddress" xml:space="preserve"><value>Dieser Computer hat keine Netzwerkadresse für das Gerät. Verbinde dich zuerst mit einem Netzwerk.</value></data>
+  <data name="DevSet_TakesNothing" xml:space="preserve"><value>{0} hat keine Einstellungen, die PixelTuner schreiben kann.</value></data>
+  <data name="Devices_WifiPortBusy" xml:space="preserve"><value>Geräte per WLAN können sich nicht verbinden: Port {0} wird von einem anderen Programm benutzt (PixelTuner 2?). Geräte am Kabel funktionieren.</value></data>
+  <data name="Devices_Upload" xml:space="preserve"><value>Aufs Gerät laden</value></data>
+  <data name="Devices_UploadHeading" xml:space="preserve"><value>Auf {0} laden</value></data>
+  <data name="Devices_PlanKind" xml:space="preserve"><value>Art der Datei</value></data>
+  <data name="Devices_NoTimelines" xml:space="preserve"><value>Das Projekt hat keine Timelines, die dieses Gerät abspielen kann.</value></data>
+  <data name="Devices_NoShowHere" xml:space="preserve"><value>Dieses Gerät nimmt keine Show an (ein Gerät im Bootloader nimmt nur Firmware).</value></data>
+  <data name="Devices_TooMany" xml:space="preserve"><value>{0}: höchstens {1} Timelines.</value></data>
 </root>

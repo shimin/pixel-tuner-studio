@@ -9,8 +9,15 @@ namespace PixelTuner.UI.Tests;
 internal sealed class FakeShowTransport(string name, byte[] info, string channel = "COM7") : IDeviceTransport
 {
     private readonly Queue<byte> _output = new();
+    private bool _flashing;
 
     public List<byte> Show { get; } = [];
+    public List<byte> Firmware { get; } = [];
+
+    /// <summary>The settings written, by id (a packet may carry several: id, length, value, as the device reads them).</summary>
+    public Dictionary<int, byte[]> Settings { get; } = [];
+    public bool FirmwareClosed { get; private set; }
+    public bool SwitchedToBoot { get; private set; }
     public int AnnouncedSize { get; private set; } = -1;
     public bool ShowClosed { get; private set; }
     public int Blocks { get; private set; }
@@ -21,11 +28,16 @@ internal sealed class FakeShowTransport(string name, byte[] info, string channel
     /// <summary>Called after each block is stored (to cancel an upload in the middle).</summary>
     public Action<int>? AfterBlock { get; set; }
 
+    /// <summary>The device now reports another memory (kilobytes), as the card in it changed.</summary>
+    public void SetMemory(uint kilobytes) => BinaryPrimitives.WriteUInt32BigEndian(info.AsSpan(7), kilobytes);
+
     public bool Closed { get; private set; }
     public string ChannelId => channel;
     public bool IsOpen => !Closed;
     public TimeSpan ReadTimeout { get; set; }
     public TimeSpan WriteTimeout { get; set; }
+
+    public int BytesAvailable => _output.Count;
 
     public void DiscardInput() => _output.Clear();
 
@@ -41,8 +53,20 @@ internal sealed class FakeShowTransport(string name, byte[] info, string channel
                 AnnouncedSize = BinaryPrimitives.ReadInt32LittleEndian(payload);
                 Answer(request[0], [AcceptShow]);
                 break;
+            case DeviceCommand.WriteSettings:
+                for (int at = 0; at + 4 <= payload.Length;)
+                {
+                    int id = BinaryPrimitives.ReadUInt16LittleEndian(payload[at..]), length = BinaryPrimitives.ReadUInt16LittleEndian(payload[(at + 2)..]);
+                    Settings[id] = payload.Slice(at + 4, length).ToArray();
+                    at += 4 + length;
+                }
+                Answer(request[0], []);
+                break;
+            case DeviceCommand.WriteFlashMode: _flashing = true; Answer(request[0], []); break;
+            case DeviceCommand.EndWriteFlash: FirmwareClosed = true; _flashing = false; break;
+            case DeviceCommand.SwitchToBoot: SwitchedToBoot = true; Answer(request[0], []); break;
             case DeviceCommand.WriteBlock:
-                Show.AddRange(payload.ToArray());
+                (_flashing ? Firmware : Show).AddRange(payload.ToArray());
                 Blocks++;
                 Answer(request[0], [0xff]);
                 AfterBlock?.Invoke(Blocks);
@@ -126,6 +150,7 @@ internal sealed class FakeDeviceHub : IDeviceHub
 
     public IReadOnlyList<ShowDevice> Devices => _devices;
     public bool IsSearching { get; private set; }
+    public string? Problem { get; set; }
 
     public event EventHandler<ShowDevice>? DeviceFound;
     public event EventHandler<ShowDevice>? DeviceLost;

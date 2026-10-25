@@ -103,17 +103,37 @@ compared with devices.
 
 **Where:** `src/PixelTuner.UI/DevicesPanel` (`DeviceMapping.MemoryBytes`, `DevicesPanelViewModel.Upload`). Marked `TODO(release)` in the code.
 
-**Memory units are unverified.** The memory a device reports is capped at 3,800,000 and is in kilobytes on platform 2 (`DeviceInfo.MaxMemory`), in
-bytes on the others; a LightMaster reports free kilobytes. `DeviceMapping.MemoryBytes` turns all of them to bytes and the build refuses a file that is
-bigger (`TooBig`). PixelTuner 2 compared its pixel files with the memory in a way that mixed kilobytes and `MaxMemory * 1024`, and had the video check
-switched off, so its numbers cannot settle this. The panel also shows the file against the memory ("12.7 KB of 1.91 MB").
+**Memory units: measured on one device.** A video module (PLR_v2FW, firmware 2.4.2) with a 4 GB card reports 3,878,489, so the number is kilobytes (3.7 GB), and
+PixelTuner 2 cut it at 3,800,000 and, for platform 2, divided it by 1024 (right for the old pixel poi that reported bytes, wrong for this module). Studio keeps
+the value in kilobytes (`DeviceInfo.MaxMemory`; no cut) and divides by 1024 only for a pixel or E-pic poi of platform 2, as PixelTuner 2 did; `DeviceMapping.MemoryBytes`
+turns it to bytes and the build refuses a file that is bigger (`TooBig`). Not measured: the other families (a pixel poi or hoop of platform 4-6, an E-pic poi, which
+PixelTuner 2's progress bar also read as kilobytes) and the poi of platform 2. The LightMaster reports free kilobytes. PixelTuner 2 compared its files with the memory in
+a way that mixed units, and had the video check switched off, so its numbers cannot settle this. The panel shows the file against the memory ("12.7 KB of 3.7 GB").
 
-**Stricter than PixelTuner 2.** PixelTuner 2 asked "send anyway?" when a picture was not as high as the device. Studio refuses (`WrongHeight`, and a project
-device whose LEDs differ from the connected one), a video pair that ends at different times (`VideoPairEndsDiffer`), and a family that cannot play the file
-(a video module plays a fan's file; nothing else crosses). If real devices take such files, loosen the refusal into a warning.
+**Stricter than PixelTuner 2.** PixelTuner 2 asked "send anyway?" when a picture was not as high as the device. Studio refuses (`WrongHeight`: a picture that is not as high as the LEDs the device reports, which the plan also shows by not letting such a timeline be ticked),
+a video pair that ends at different times (`VideoPairEndsDiffer`), and a family that cannot play the file (a video module plays a fan's file; nothing else crosses). If real devices take such files, loosen the refusal into a warning.
 
 **A cancelled upload leaves the device half written.** Cancelling stops between blocks and does not close the transfer (as PixelTuner 2's cancel did); the
 device keeps its old show until a new upload completes, or is left in write mode until it is switched off. Check on real devices and, if needed, send
 `EndWriteData` or reconnect on cancel.
 
-**Not ported yet:** firmware update (`Flash_*.bin`, the boot-mode switch and its offer), Wi-Fi settings windows, Illuminator, SetAsMaster, WriteMac.
+**Upload speed.** The protocol is stop-and-wait (a block of 250 bytes, then its answer), so a 16 MB show is some 67,000 round trips. .NET's `SerialPort` costs
+about 1.2 ms per call on macOS and Linux, and the write is a call too: measured on a video module with `info` requests, 1.0 ms in the operating system, 5.9 ms with PixelTuner 2's
+four reads per answer, 2.3 ms with one read (now). The rest is the cost of `SerialPort.Write` and `Read` themselves; talking to the port through `read`/`write`/`poll` of libc
+(a transport of its own on macOS and Linux) would bring it near 1 ms, but needs the port set up without `SerialPort`. Not measured: a real upload, because the flash of the
+device may take longer per block than the cable does.
+
+**Firmware update is untested on a real device.** `FirmwareCatalog` ships PixelTuner 2's `Flash_*.bin` (one per family and platform; the version is the byte at offset 52) and the
+panel offers "Update firmware" / "Install firmware" (a device in its bootloader) / "Firmware from a file…". The flow is PixelTuner 2's: `SwitchToBoot`, wait up to a minute
+(`DevicesPanelViewModel.BootWait`) for the same family to appear in its bootloader (on macOS the port may be renamed), then `UploadFirmware`; it cannot be cancelled, and the
+device is left in its bootloader if it fails half way (press "Install firmware" again). Check on each family: that the bootloader answers "who is it" at once, that the port comes
+back, and that the end of the write needs no wait. The Illuminator has a file in PixelTuner 2 but never had an update path, so it has none here either.
+
+**Device settings are untested on a real device.** The "Device settings" tab writes what PixelTuner 2's `DefaultsWindow` wrote (`DeviceSettingsCatalog`, `DeviceSetting`), but to the one
+device chosen, and each group on its own (PixelTuner 2 wrote the name together with the Wi-Fi network, to every device of a class). Guesses to check on devices: which devices take which
+group (`SupportFor`: Wi-Fi and a name from platform 5 on a Pixel Poi, as only those report a name; the leader flag on poi platforms 5-6 and hoop platforms 1-2; the menu on poi and hoop only,
+though PixelTuner 2's "all batons" also matched video modules), the limits of 10 characters for the name and the network and 14 for the password (the boxes of PixelTuner 2; the info
+answer holds 12 bytes of name), that a Wi-Fi write without the name is accepted, and the port (PixelTuner 2's box began on 333 while it listened on 3331; here 3331, the port of
+`DeviceManager`). The idle shutdown (30) is written with the menu without a box, as before. The Wi-Fi password is kept as typed in `device-settings.txt`, as PixelTuner 2 kept it.
+
+**Not ported yet:** Illuminator, the master address of a Pixel Poi 4 (`SetAsMaster`, `WriteMac`: they need an Illuminator), and the "PixelTuner settings" tab of that window (the app's own defaults).

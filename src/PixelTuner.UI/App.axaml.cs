@@ -4,6 +4,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using PixelTuner.Package;
+using PixelTuner.UI.DevicesPanel;
 using PixelTuner.UI.Services;
 using PixelTuner.UI.ViewModels;
 using PixelTuner.UI.Views;
@@ -33,7 +34,13 @@ public partial class App : Application
             // Windows and macOS: a full window.
             case IClassicDesktopStyleApplicationLifetime desktop:
                 desktop.MainWindow = new MainWindow { DataContext = vm };
-                desktop.Exit += (_, _) => vm.Dispose();
+                // The search for devices runs as long as the app does, whatever is open in it: a transfer to a device is not in its way.
+                DeviceHub.Current?.StartSearching();
+                desktop.Exit += (_, _) =>
+                {
+                    vm.Dispose();
+                    DeviceHub.Current?.StopSearchingAsync().Wait(TimeSpan.FromSeconds(5));
+                };
                 OpenFilesFromLaunch(vm, desktop.Args);
                 break;
             // Android: the activity hosts a single view.

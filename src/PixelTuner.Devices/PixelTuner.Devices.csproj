@@ -11,6 +11,10 @@
     <PackageReference Include="System.IO.Ports" />
   </ItemGroup>
   <ItemGroup>
+    <!-- PixelTuner 2's Files/Flash_*.bin, byte for byte (FirmwareCatalogTests checks them against legacy/). -->
+    <EmbeddedResource Include="Firmware\*.bin" LogicalName="PixelTuner.Devices.Firmware.%(Filename)%(Extension)" />
+  </ItemGroup>
+  <ItemGroup>
     <InternalsVisibleTo Include="PixelTuner.Devices.Tests" />
   </ItemGroup>
 </Project>

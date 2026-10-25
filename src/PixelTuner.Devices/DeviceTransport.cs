@@ -17,6 +17,9 @@ public interface IDeviceTransport : IDisposable
     TimeSpan ReadTimeout { get; set; }
     TimeSpan WriteTimeout { get; set; }
 
+    /// <summary>Bytes that have arrived and can be read without waiting.</summary>
+    int BytesAvailable { get; }
+
     /// <summary>Drops whatever the device sent that nobody read yet.</summary>
     void DiscardInput();
 
@@ -55,6 +58,8 @@ public sealed class SerialPortTransport : IDeviceTransport
         get => TimeSpan.FromMilliseconds(_port.WriteTimeout);
         set => _port.WriteTimeout = (int)value.TotalMilliseconds;
     }
+
+    public int BytesAvailable => _port.BytesToRead;
 
     public void DiscardInput()
     {
@@ -102,6 +107,8 @@ public sealed class TcpDeviceTransport(Socket socket) : IDeviceTransport
         get => TimeSpan.FromMilliseconds(socket.SendTimeout);
         set => socket.SendTimeout = (int)value.TotalMilliseconds;
     }
+
+    public int BytesAvailable => socket.Available;
 
     public void DiscardInput()
     {

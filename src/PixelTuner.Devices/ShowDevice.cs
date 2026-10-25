@@ -1,4 +1,5 @@
 using System.Buffers.Binary;
+using System.Diagnostics;
 using System.Text;
 
 namespace PixelTuner.Devices;
@@ -258,49 +259,55 @@ public sealed class ShowDevice : IDisposable
     /// request's command, then the data length and the data; the closing 0x0D is read but
     /// not required. A written block is confirmed with 0xFF.
     /// </summary>
+    /// <remarks>
+    /// The answer is read with as few calls as there are packets from the device, not byte by byte as PixelTuner 2 did: a call on a serial port
+    /// costs about a millisecond on macOS and Linux (.NET's SerialPort), and a show of 16 MB is some 67,000 blocks, one answer each.
+    /// </remarks>
     private static byte[] Session(IDeviceTransport transport, byte[] request, TimeSpan writeReadDelay)
     {
         transport.DiscardInput();
         transport.Write(request);
         if (writeReadDelay > TimeSpan.Zero) Thread.Sleep(writeReadDelay);
 
-        Span<byte> header = stackalloc byte[2];
-        ReadExactly(transport, header[..1], "Packet ID reading timeout.");
-        if (header[0] != request[0])
-            throw new DeviceProtocolException($"Wrong answer {header[0]:X2} on request {request[0]:X2}.");
-        ReadExactly(transport, header[1..], "Packet length reading timeout.");
-
-        var data = new byte[header[1]];
+        Span<byte> answer = stackalloc byte[2 + byte.MaxValue + 1];
+        int filled = 0, needed = 2;   // the command and the length first, then the data
         var started = DateTime.UtcNow;
-        int read = 0;
-        while (read < data.Length)
+        while (filled < needed)
         {
-            if (DateTime.UtcNow - started > DeviceProtocol.AnswerDataLimit)
-                throw new TimeoutException($"Incorrect packet length {read} (expected {data.Length}).");
-            try { read += transport.Read(data.AsSpan(read)); }
-            catch (TimeoutException) { throw new TimeoutException($"Incorrect packet length {read} (expected {data.Length})."); }
+            try { filled += transport.Read(answer[filled..]); }
+            catch (TimeoutException e)
+            {
+                throw new TimeoutException(filled == 0 ? "Packet ID reading timeout."
+                    : filled == 1 ? "Packet length reading timeout."
+                    : $"Incorrect packet length {filled - 2} (expected {needed - 2}).", e);
+            }
+            if (filled >= 1 && answer[0] != request[0])
+                throw new DeviceProtocolException($"Wrong answer {answer[0]:X2} on request {request[0]:X2}.");
+            if (filled >= 2) needed = 2 + answer[1];
+            if (filled < needed && DateTime.UtcNow - started > DeviceProtocol.AnswerDataLimit)
+                throw new TimeoutException($"Incorrect packet length {Math.Max(filled - 2, 0)} (expected {Math.Max(needed - 2, 0)}).");
         }
 
-        // PixelTuner 2 did not insist on the closing byte.
-        try { transport.Read(header[..1]); }
-        catch (TimeoutException) { }
+        // PixelTuner 2 did not insist on the closing byte. It comes in the packet of the answer; if not, it is given a moment, not the whole timeout.
+        if (filled == needed)
+        {
+            var wait = Stopwatch.StartNew();
+            while (transport.BytesAvailable == 0 && wait.Elapsed < TerminatorWait) Thread.Yield();
+            if (transport.BytesAvailable > 0)
+            {
+                try { transport.Read(answer.Slice(filled, 1)); }
+                catch (TimeoutException) { }
+            }
+        }
 
+        byte[] data = answer.Slice(2, answer[1]).ToArray();
         if (request[0] == (byte)DeviceCommand.WriteBlock && (data.Length == 0 || data[0] != 0xff))
             throw new DeviceProtocolException("Data block write error.");
         return data;
     }
 
-    private static void ReadExactly(IDeviceTransport transport, Span<byte> buffer, string timeoutMessage)
-    {
-        try
-        {
-            while (!buffer.IsEmpty) buffer = buffer[transport.Read(buffer)..];
-        }
-        catch (TimeoutException e)
-        {
-            throw new TimeoutException(timeoutMessage, e);
-        }
-    }
+    /// <summary>How long the closing 0x0D of an answer is waited for after the data.</summary>
+    private static readonly TimeSpan TerminatorWait = TimeSpan.FromMilliseconds(5);
 
     private BusyScope Busy(TimeSpan timeout)
     {

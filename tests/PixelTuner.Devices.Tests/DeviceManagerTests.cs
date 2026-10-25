@@ -65,6 +65,59 @@ public class DeviceManagerTests
     }
 
     [Fact]
+    public async Task A_port_that_is_taken_leaves_the_cable_working_and_says_why()
+    {
+        using var taken = new TcpListener(IPAddress.Any, 0);
+        taken.Start();
+        int port = ((IPEndPoint)taken.LocalEndpoint).Port;
+        var found = new TaskCompletionSource<ShowDevice>(TaskCreationOptions.RunContinuationsAsynchronously);
+        await using var manager = new DeviceManager(new DeviceManagerOptions
+        {
+            ListenPort = port,
+            ScanInterval = Fast,
+            MonitorInterval = TimeSpan.FromHours(1),
+            ListPorts = () => ["COM3"],
+            OpenPort = p => new FakeDevice("E-PIC_v6FW", FakeDevice.PixelPoi5Info(), p),
+        });
+        manager.DeviceFound += (_, d) => found.TrySetResult(d);
+        manager.Start();
+
+        Assert.Equal("COM3", (await found.Task.WaitAsync(Wait)).ChannelId);
+        Assert.NotNull(manager.ListenError);
+    }
+
+    [Fact]
+    public async Task The_search_goes_on_during_an_upload_without_asking_the_busy_device_or_dropping_it()
+    {
+        var hold = new ManualResetEventSlim(false);
+        var fake = new FakeDevice("E-PIC_v6FW", FakeDevice.PixelPoi5Info(), "COM3") { HoldBlocks = hold };
+        var found = new TaskCompletionSource<ShowDevice>(TaskCreationOptions.RunContinuationsAsynchronously);
+        await using var manager = new DeviceManager(new DeviceManagerOptions
+        {
+            ListenPort = null,
+            ScanInterval = Fast,
+            MonitorInterval = Fast,
+            ListPorts = () => ["COM3"],
+            OpenPort = _ => fake,
+        });
+        manager.DeviceFound += (_, d) => found.TrySetResult(d);
+        manager.Start();
+        var device = await found.Task.WaitAsync(Wait);
+
+        var upload = Task.Run(() => device.UploadShow(new byte[1000]));
+        while (!fake.Requests.Any(r => r[0] == (byte)DeviceCommand.WriteBlock)) await Task.Delay(Fast);
+        int infoBefore = fake.Requests.Count(r => r[0] == (byte)DeviceCommand.Info);
+        await Task.Delay(Fast * 15);                                // many scans and monitor rounds while the block waits
+
+        Assert.Equal(infoBefore, fake.Requests.Count(r => r[0] == (byte)DeviceCommand.Info));   // the busy device is not asked
+        Assert.Single(manager.Devices);                                                          // and not dropped
+
+        hold.Set();
+        await upload.WaitAsync(Wait);
+        Assert.Single(manager.Devices);
+    }
+
+    [Fact]
     public async Task A_device_that_stops_answering_is_dropped()
     {
         FakeDevice? fake = null;

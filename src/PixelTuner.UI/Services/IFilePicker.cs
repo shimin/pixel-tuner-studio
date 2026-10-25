@@ -31,8 +31,8 @@ public interface IFilePicker
     /// <summary>Desktop: asks for the SVG drawing of the props. Returns its path, or null if cancelled.</summary>
     Task<string?> PickSvgPathAsync();
 
-    /// <summary>Desktop: asks where to save a show file for a device (.bin). Returns the path, or null if cancelled.</summary>
-    Task<string?> PickBinSavePathAsync(string suggestedName);
+    /// <summary>Desktop: asks for a firmware file (.bin) to write to a device. Returns its path, or null if cancelled.</summary>
+    Task<string?> PickFirmwarePathAsync();
 }
 
 /// <summary>
@@ -80,22 +80,20 @@ public sealed class StorageFilePicker(TopLevel topLevel) : IFilePicker
         MimeTypes = ["image/svg+xml"],
     };
 
-    static readonly FilePickerFileType BinType = new(Strings.FileType_Bin)
+    static readonly FilePickerFileType FirmwareType = new(Strings.FileType_Firmware)
     {
         Patterns = ["*.bin"],
         MimeTypes = ["application/octet-stream"],
     };
 
-    public async Task<string?> PickBinSavePathAsync(string suggestedName)
+    public async Task<string?> PickFirmwarePathAsync()
     {
-        var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            SuggestedFileName = suggestedName,
-            DefaultExtension = "bin",
-            FileTypeChoices = [BinType],
-            ShowOverwritePrompt = true,
+            AllowMultiple = false,
+            FileTypeFilter = [FirmwareType, FilePickerFileTypes.All],
         });
-        return file?.TryGetLocalPath();
+        return files.Count == 0 ? null : files[0].TryGetLocalPath();
     }
 
     public async Task<string?> PickSvgPathAsync()

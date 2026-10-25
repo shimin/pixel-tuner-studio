@@ -101,13 +101,22 @@
   (the sound's position). `TimelinePreview.Trail` gives the afterglow snapshots. `PreviewViewModel` rebuilds per timeline when the project changes
   and gives `ColoursOn(layout)`, with which the canvas fills the outline a video plays on; `TimelinePreviewControl` only draws (poi tiled
   as swung, hoop ring on an orbit, video on the markup over its outline, colours). How a swing looks is a guess: `docs/before-release.md`.
-- The devices tab (`PixelTuner.UI/DevicesPanel`, `EditorViewModel.Devices`; Studio only talks to hardware: `DeviceHub.Current` is set by the head,
-  `DeviceManagerHub`, and is null on phones): the project's devices (`ShowProject.Devices`, edits `Edits.AddDevice`, `SetDeviceKind`,
-  `SetDeviceTimelines`, `SetDeviceLedCount`, `SetDeviceMemory`, `RenameDevice`, `SetDeviceTag`; the factories throw when a rule is broken, so
-  `DevicesPanelViewModel.Do` takes a lambda and turns the refusal into a line), the timelines each plays with ticks and file order, the build
-  settings (colour depth, pause stretching, light step) and the connected devices. The file is `ShowBuilder`'s (cached per row), "Export .bin" saves
-  it, "Upload" sends it block by block with progress and cancel and refuses before sending what the device cannot take (family, bootloader, LEDs,
-  memory, `BuildIssue`s). Memory units and the cancel behaviour: `docs/before-release.md`. `tests/PixelTuner.UI.Tests/FakeDevices.cs` is a firmware in memory.
+- The devices tab (`PixelTuner.UI/DevicesPanel`, `EditorViewModel.Devices`; Studio only talks to hardware: `DeviceHub.Current` is set by the head and the search for devices is started by `App` when the app starts and stopped when it exits (`desktop.Exit`): there is no button, and a transfer is not in its way (the monitor skips a busy device, `DeviceManagerTests`); a Wi-Fi port that is taken is told by `IDeviceHub.Problem`,
+  `DeviceManagerHub`, and is null on phones) works with physical devices only: there are no "devices of the project" in the UI (the model keeps `ShowProject.Devices` and the `Edits` for them for the
+  .ptp import, the export and the tests, and the inspector's ".bin" line reads one if the project has it). What is sent to a connected device is set up in its `UploadPlanViewModel`
+  (`DevicesPanelViewModel.SelectedPlan`, one per connected device, kept while it is connected, not part of the project): the timelines with ticks and file order (a video module takes a video's
+  file or a fan's), built by `ShowBuilder` for the device as it reports itself (its LEDs and memory), with the size against the memory and what the build says; the build settings (colour depth, pause
+  stretching, light step) are the project's, in the panel. Nothing is sent until the user presses Upload (`UploadCommand`), which sends block by block with progress and cancel and refuses before
+  sending what the device cannot take (bootloader, `BuildIssue`s, memory); the line afterwards names the timelines sent. The panel has no way to save the file of a show: Studio does not hand out
+  device binaries (`DevicesPanelViewModelTests` checks that no export command or file-picker method exists).
+  The connected devices are `ConnectedDeviceViewModel`s that live as long as the device does: the hub's state (battery, busy) is read into the same object
+  (`Refresh`, once a second from `Poll`; only a changed line raises anything), so the list keeps its selection and focus. Device settings (`DeviceSettingsViewModel`, the "Device settings" tab of the bottom panel, Studio only, apart from the project): PixelTuner 2's `DefaultsWindow` for the connected device that is
+  chosen in the tab: the name on the network, Wi-Fi (network, password, this computer's address and port), the LED strip (LEDs on each channel, chip, colour order) and the menu and leader flag
+  of a baton; `DeviceSettingsCatalog` (`PixelTuner.Devices`) holds its lists, limits and which device takes which group, `DeviceSetting` the bytes, `DeviceSettingsStore` what was written last
+  (devices report only their name). Firmware: `PixelTuner.Devices/FirmwareCatalog` (PixelTuner 2's `Flash_*.bin` in `Firmware/`, embedded, checked
+  byte for byte in `FirmwareCatalogTests`); `UpdateFirmwareCommand` confirms (`IDialogService.ConfirmAsync`), switches a device in its firmware to the bootloader and
+  writes when the same family comes up there (`_afterBoot`), a device already in its bootloader is written at once, `UpdateFirmwareFromFileCommand` takes a .bin of the
+  user's. Firmware cannot be cancelled. See `docs/before-release.md`. Memory units and the cancel behaviour: `docs/before-release.md`. `tests/PixelTuner.UI.Tests/FakeDevices.cs` is a firmware in memory.
 - `src/PixelTuner.Audio` holds the player and decoder contracts only; implementations go per
   platform. `src/PixelTuner.Audio.Vlc` (LibVLC, LGPL, dynamic) serves Windows and macOS: the VideoLAN NuGet
   packages carry LibVLC under `libvlc/<rid>`, Linux uses the system one (`apt install libvlc5 vlc-plugin-base`).

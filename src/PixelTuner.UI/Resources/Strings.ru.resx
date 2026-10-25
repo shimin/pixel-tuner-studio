@@ -367,26 +367,12 @@
   <data name="Devices_Depth" xml:space="preserve"><value>Глубина цвета</value></data>
   <data name="Devices_GapStretching" xml:space="preserve"><value>Растяжение пауз</value></data>
   <data name="Devices_LightRate" xml:space="preserve"><value>Шаг света, мс</value></data>
-  <data name="Devices_Project" xml:space="preserve"><value>Устройства проекта</value></data>
-  <data name="Devices_Add" xml:space="preserve"><value>Добавить</value></data>
-  <data name="Devices_AddFromConnected" xml:space="preserve"><value>По подключённому</value></data>
-  <data name="Devices_Remove" xml:space="preserve"><value>Удалить</value></data>
-  <data name="Devices_Name" xml:space="preserve"><value>Название</value></data>
-  <data name="Devices_Kind" xml:space="preserve"><value>Тип</value></data>
-  <data name="Devices_Leds" xml:space="preserve"><value>Светодиодов</value></data>
-  <data name="Devices_Memory" xml:space="preserve"><value>Память, КБ</value></data>
-  <data name="Devices_Tag" xml:space="preserve"><value>Имя в сети</value></data>
-  <data name="Devices_Timelines" xml:space="preserve"><value>Какие таймлайны играет, в порядке файла</value></data>
+  <data name="Devices_Timelines" xml:space="preserve"><value>Таймлайны для заливки, в порядке файла</value></data>
   <data name="Devices_Up" xml:space="preserve"><value>Раньше</value></data>
   <data name="Devices_Down" xml:space="preserve"><value>Позже</value></data>
-  <data name="Devices_Export" xml:space="preserve"><value>Экспорт .bin…</value></data>
-  <data name="Devices_Upload" xml:space="preserve"><value>Залить в устройство</value></data>
   <data name="Devices_Cancel" xml:space="preserve"><value>Отмена</value></data>
-  <data name="Devices_Take" xml:space="preserve"><value>Взять светодиоды и память с устройства</value></data>
   <data name="Devices_Connected" xml:space="preserve"><value>Подключённые устройства</value></data>
-  <data name="Devices_Search" xml:space="preserve"><value>Искать устройства</value></data>
-  <data name="Devices_Stop" xml:space="preserve"><value>Остановить поиск</value></data>
-  <data name="Devices_NoneFound" xml:space="preserve"><value>Устройств нет. Подключите кабель или включите устройство по Wi-Fi и начните поиск.</value></data>
+  <data name="Devices_NoneFound" xml:space="preserve"><value>Устройств нет. Подключите кабель или включите устройство по Wi-Fi: оно появится здесь само.</value></data>
   <data name="Devices_FileInfo" xml:space="preserve"><value>Файл: {0}</value></data>
   <data name="Devices_FileInfoOf" xml:space="preserve"><value>Файл: {0} из {1}</value></data>
   <data name="Devices_NotBuilt" xml:space="preserve"><value>Для этого устройства пока нечего собирать.</value></data>
@@ -399,17 +385,66 @@
   <data name="Devices_Busy" xml:space="preserve"><value>занято</value></data>
   <data name="Devices_BootMode" xml:space="preserve"><value>режим загрузчика</value></data>
   <data name="Devices_Uploading" xml:space="preserve"><value>Заливка… {0}%</value></data>
-  <data name="Devices_Uploaded" xml:space="preserve"><value>Залито {0} в {1}.</value></data>
+  <data name="Devices_Uploaded" xml:space="preserve"><value>Залито {0} в {1}: {2}.</value></data>
   <data name="Devices_UploadCancelled" xml:space="preserve"><value>Заливка отменена.</value></data>
   <data name="Devices_UploadFailed" xml:space="preserve"><value>Заливка не удалась: {0}</value></data>
   <data name="Devices_NoConnected" xml:space="preserve"><value>Сначала выберите подключённое устройство.</value></data>
-  <data name="Devices_NoProjectDevice" xml:space="preserve"><value>Сначала выберите устройство проекта.</value></data>
   <data name="Devices_Unsupported" xml:space="preserve"><value>{0} не поддерживается.</value></data>
   <data name="Devices_BootModeOnly" xml:space="preserve"><value>{0} в режиме загрузчика: можно записать только прошивку.</value></data>
   <data name="Devices_WrongFamily" xml:space="preserve"><value>{0} не сможет играть файл для этого типа устройства ({1}).</value></data>
-  <data name="Devices_WrongLeds" xml:space="preserve"><value>У устройства светодиодов: {0}, у устройства проекта: {1}. Сначала возьмите число светодиодов с устройства.</value></data>
-  <data name="Devices_Exported" xml:space="preserve"><value>Сохранено: {0}.</value></data>
-  <data name="Devices_ExportFailed" xml:space="preserve"><value>Не удалось сохранить файл: {0}</value></data>
   <data name="Devices_OutOfRange" xml:space="preserve"><value>Введите число от {0} до {1}.</value></data>
-  <data name="FileType_Bin" xml:space="preserve"><value>Файл шоу для устройства</value></data>
+  <data name="Devices_UpdateFirmware" xml:space="preserve"><value>Обновить прошивку</value></data>
+  <data name="Devices_InstallFirmware" xml:space="preserve"><value>Установить прошивку</value></data>
+  <data name="Devices_FirmwareFile" xml:space="preserve"><value>Прошивка из файла…</value></data>
+  <data name="Devices_FirmwareHeading" xml:space="preserve"><value>Обновление прошивки</value></data>
+  <data name="Devices_FirmwareAvailable" xml:space="preserve"><value>Есть новая прошивка: {1} (в устройстве {0}).</value></data>
+  <data name="Devices_FirmwareBootNote" xml:space="preserve"><value>Устройство в режиме загрузчика и принимает только прошивку. Установите её, чтобы устройство заработало.</value></data>
+  <data name="Devices_FirmwareConfirm" xml:space="preserve"><value>Записать прошивку {0} в {1} (сейчас {2})? Устройство перезапустится в загрузчик и будет записано заново. Не отключайте его и не выключайте, пока строка внизу не сообщит, что всё готово.</value></data>
+  <data name="Devices_FirmwareInstallConfirm" xml:space="preserve"><value>Записать прошивку {0} в {1}? Не отключайте устройство и не выключайте, пока строка внизу не сообщит, что всё готово.</value></data>
+  <data name="Devices_FirmwareFileConfirm" xml:space="preserve"><value>Записать файл «{0}» в {1}? Приложение не может проверить, что это прошивка именно этого устройства; с неверным файлом устройство останется в загрузчике, пока не запишут правильный. Не отключайте его и не выключайте, пока строка внизу не сообщит, что всё готово.</value></data>
+  <data name="Devices_RestartingToBoot" xml:space="preserve"><value>Перезапуск {0} в загрузчик…</value></data>
+  <data name="Devices_BootTimeout" xml:space="preserve"><value>Устройство не вернулось в режиме загрузчика. Подключите его заново, выберите и нажмите «Установить прошивку».</value></data>
+  <data name="Devices_WritingFirmware" xml:space="preserve"><value>Запись прошивки… {0}%</value></data>
+  <data name="Devices_FirmwareWritten" xml:space="preserve"><value>Прошивка записана в {0}. Устройство перезапускается.</value></data>
+  <data name="Devices_FirmwareFailed" xml:space="preserve"><value>Не удалось обновить прошивку: {0}</value></data>
+  <data name="Devices_NoFirmware" xml:space="preserve"><value>В приложении нет прошивки для {0}. Выберите «Прошивка из файла».</value></data>
+  <data name="Devices_FirmwareBadFile" xml:space="preserve"><value>«{0}» не похож на файл прошивки.</value></data>
+  <data name="FileType_Firmware" xml:space="preserve"><value>Прошивка для устройства</value></data>
+  <data name="DevSet_Title" xml:space="preserve"><value>Настройки устройств</value></data>
+  <data name="DevSet_Device" xml:space="preserve"><value>Устройство</value></data>
+  <data name="DevSet_None" xml:space="preserve"><value>Нет подключённых устройств. Подключите устройство кабелем или включите по Wi-Fi: оно само появится на вкладке «Devices». Настройки записываются прямо в устройство и не относятся к проекту.</value></data>
+  <data name="DevSet_TakesNothingHere" xml:space="preserve"><value>У этого устройства нет настроек, которые PixelTuner умеет записывать (устройство в загрузчике принимает только прошивку).</value></data>
+  <data name="DevSet_NameGroup" xml:space="preserve"><value>Имя в сети</value></data>
+  <data name="DevSet_Name" xml:space="preserve"><value>Имя</value></data>
+  <data name="DevSet_WifiGroup" xml:space="preserve"><value>Wi-Fi</value></data>
+  <data name="DevSet_Ssid" xml:space="preserve"><value>Сеть (SSID)</value></data>
+  <data name="DevSet_Password" xml:space="preserve"><value>Пароль</value></data>
+  <data name="DevSet_Address" xml:space="preserve"><value>Адрес этого компьютера</value></data>
+  <data name="DevSet_Port" xml:space="preserve"><value>Порт</value></data>
+  <data name="DevSet_StripGroup" xml:space="preserve"><value>Светодиодная лента</value></data>
+  <data name="DevSet_LedType" xml:space="preserve"><value>Тип ленты</value></data>
+  <data name="DevSet_Channel1" xml:space="preserve"><value>Светодиодов, канал 1</value></data>
+  <data name="DevSet_Channel2" xml:space="preserve"><value>Светодиодов, канал 2</value></data>
+  <data name="DevSet_Order" xml:space="preserve"><value>Порядок цветов</value></data>
+  <data name="DevSet_MenuGroup" xml:space="preserve"><value>Меню устройства</value></data>
+  <data name="DevSet_ExitOnDouble" xml:space="preserve"><value>Выходить из воспроизведения по двойному нажатию</value></data>
+  <data name="DevSet_MenuNever" xml:space="preserve"><value>Не выключать меню устройства</value></data>
+  <data name="DevSet_MenuAfter" xml:space="preserve"><value>Выключать меню устройства через {0} с</value></data>
+  <data name="DevSet_LeaderGroup" xml:space="preserve"><value>Синхронизация</value></data>
+  <data name="DevSet_Leader" xml:space="preserve"><value>Это устройство управляет всеми остальными</value></data>
+  <data name="DevSet_Write" xml:space="preserve"><value>Записать в устройство</value></data>
+  <data name="DevSet_Writing" xml:space="preserve"><value>Запись в {0}…</value></data>
+  <data name="DevSet_Written" xml:space="preserve"><value>Записано в {0}.</value></data>
+  <data name="DevSet_Failed" xml:space="preserve"><value>Не удалось записать настройки: {0}</value></data>
+  <data name="DevSet_TooLong" xml:space="preserve"><value>{0}: не больше {1} символов.</value></data>
+  <data name="DevSet_NotPlain" xml:space="preserve"><value>{0}: не больше {1} символов, латиница, цифры и знаки.</value></data>
+  <data name="DevSet_NoAddress" xml:space="preserve"><value>У этого компьютера нет сетевого адреса, который можно дать устройству. Сначала подключитесь к сети.</value></data>
+  <data name="DevSet_TakesNothing" xml:space="preserve"><value>У {0} нет настроек, которые PixelTuner умеет записывать.</value></data>
+  <data name="Devices_WifiPortBusy" xml:space="preserve"><value>Устройства по Wi-Fi не смогут подключиться: порт {0} занят другой программой (PixelTuner 2?). Устройства по кабелю работают.</value></data>
+  <data name="Devices_Upload" xml:space="preserve"><value>Залить в устройство</value></data>
+  <data name="Devices_UploadHeading" xml:space="preserve"><value>Заливка в {0}</value></data>
+  <data name="Devices_PlanKind" xml:space="preserve"><value>Вид файла</value></data>
+  <data name="Devices_NoTimelines" xml:space="preserve"><value>В проекте нет таймлайнов, которые это устройство может играть.</value></data>
+  <data name="Devices_NoShowHere" xml:space="preserve"><value>Это устройство не принимает шоу (устройство в загрузчике принимает только прошивку).</value></data>
+  <data name="Devices_TooMany" xml:space="preserve"><value>{0}: не больше {1} таймлайнов.</value></data>
 </root>

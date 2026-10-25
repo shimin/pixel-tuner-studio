@@ -1,0 +1,87 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:res="using:PixelTuner.UI.Resources"
+             xmlns:dv="using:PixelTuner.UI.DevicesPanel"
+             x:Class="PixelTuner.UI.DevicesPanel.DeviceSettingsView"
+             x:DataType="dv:DeviceSettingsViewModel">
+  <!-- PixelTuner 2's settings window for the connected devices, as a tab: the device, then a group for each kind of setting it takes. -->
+  <Grid RowDefinitions="Auto,*,Auto" RowSpacing="6">
+    <DockPanel>
+      <TextBlock DockPanel.Dock="Left" Text="{x:Static res:Strings.DevSet_Device}" Classes="muted" VerticalAlignment="Center" Margin="0,0,8,0" />
+      <ComboBox ItemsSource="{Binding Panel.Connected}" SelectedItem="{Binding Panel.SelectedConnected}" MinWidth="320" HorizontalAlignment="Left">
+        <ComboBox.ItemTemplate>
+          <DataTemplate x:DataType="dv:ConnectedDeviceViewModel"><TextBlock Text="{Binding Label}" /></DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+    </DockPanel>
+
+    <Grid Grid.Row="1">
+      <TextBlock Classes="muted" TextWrapping="Wrap" Text="{x:Static res:Strings.DevSet_None}" IsVisible="{Binding !HasConnected}" />
+      <TextBlock Classes="muted" TextWrapping="Wrap" Text="{x:Static res:Strings.DevSet_TakesNothingHere}" IsVisible="{Binding TakesNothing}" />
+      <ScrollViewer VerticalScrollBarVisibility="Auto" IsVisible="{Binding HasConnected}">
+        <WrapPanel Margin="0,0,14,0">
+          <!-- The name on the network -->
+          <StackPanel Width="300" Spacing="4" Margin="0,0,16,12" IsVisible="{Binding HasName}">
+            <TextBlock Text="{x:Static res:Strings.DevSet_NameGroup}" FontWeight="SemiBold" />
+            <TextBlock Classes="muted" Text="{x:Static res:Strings.DevSet_Name}" />
+            <TextBox Text="{Binding Name}" MaxLength="{Binding MaxNameLength}" IsUndoEnabled="False" />
+            <Button Content="{x:Static res:Strings.DevSet_Write}" Command="{Binding WriteNameCommand}" />
+          </StackPanel>
+
+          <!-- Wi-Fi: the network the device joins and where it finds this computer -->
+          <StackPanel Width="300" Spacing="4" Margin="0,0,16,12" IsVisible="{Binding HasWifi}">
+            <TextBlock Text="{x:Static res:Strings.DevSet_WifiGroup}" FontWeight="SemiBold" />
+            <TextBlock Classes="muted" Text="{x:Static res:Strings.DevSet_Ssid}" />
+            <TextBox Text="{Binding Ssid}" MaxLength="{Binding MaxSsidLength}" IsUndoEnabled="False" />
+            <TextBlock Classes="muted" Text="{x:Static res:Strings.DevSet_Password}" />
+            <TextBox Text="{Binding Password}" MaxLength="{Binding MaxPasswordLength}" IsUndoEnabled="False" />
+            <TextBlock Classes="muted" Text="{x:Static res:Strings.DevSet_Address}" />
+            <ComboBox ItemsSource="{Binding Networks}" SelectedIndex="{Binding NetworkIndex}" HorizontalAlignment="Stretch" />
+            <TextBlock Classes="muted" Text="{x:Static res:Strings.DevSet_Port}" />
+            <NumericUpDown Minimum="1" Maximum="65535" FormatString="0" Value="{Binding Port}" HorizontalAlignment="Left" Width="140" />
+            <Button Content="{x:Static res:Strings.DevSet_Write}" Command="{Binding WriteWifiCommand}" />
+          </StackPanel>
+
+          <!-- The LED strip -->
+          <StackPanel Width="300" Spacing="4" Margin="0,0,16,12" IsVisible="{Binding HasStrip}">
+            <TextBlock Text="{x:Static res:Strings.DevSet_StripGroup}" FontWeight="SemiBold" />
+            <TextBlock Classes="muted" Text="{x:Static res:Strings.DevSet_LedType}" />
+            <ComboBox ItemsSource="{Binding LedTypes}" SelectedIndex="{Binding TypeIndex}" Width="140" />
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+              <StackPanel>
+                <TextBlock Classes="muted" Text="{x:Static res:Strings.DevSet_Channel1}" />
+                <NumericUpDown Minimum="0" Maximum="{Binding MaxChannel1}" FormatString="0" Value="{Binding Channel1}" />
+              </StackPanel>
+              <StackPanel Grid.Column="1" IsVisible="{Binding HasChannel2}">
+                <TextBlock Classes="muted" Text="{x:Static res:Strings.DevSet_Channel2}" />
+                <NumericUpDown Minimum="0" Maximum="{Binding MaxChannel2}" FormatString="0" Value="{Binding Channel2}" />
+              </StackPanel>
+            </Grid>
+            <Button Content="{x:Static res:Strings.DevSet_Write}" Command="{Binding WriteStripCommand}" />
+            <TextBlock Classes="muted" Text="{x:Static res:Strings.DevSet_Order}" Margin="0,8,0,0" />
+            <ComboBox ItemsSource="{Binding ColourOrders}" SelectedIndex="{Binding OrderIndex}" Width="140" />
+            <Button Content="{x:Static res:Strings.DevSet_Write}" Command="{Binding WriteOrderCommand}" />
+          </StackPanel>
+
+          <!-- The menu of a baton -->
+          <StackPanel Width="300" Spacing="4" Margin="0,0,16,12" IsVisible="{Binding HasMenu}">
+            <TextBlock Text="{x:Static res:Strings.DevSet_MenuGroup}" FontWeight="SemiBold" />
+            <CheckBox Content="{x:Static res:Strings.DevSet_ExitOnDouble}" IsChecked="{Binding ExitOnDoubleClick}" />
+            <TextBlock Classes="muted" Text="{Binding MenuSecondsText}" TextWrapping="Wrap" />
+            <Slider Minimum="0" Maximum="{Binding MaxMenuSeconds}" Value="{Binding MenuSeconds}" SmallChange="1" LargeChange="5" />
+            <Button Content="{x:Static res:Strings.DevSet_Write}" Command="{Binding WriteMenuCommand}" />
+          </StackPanel>
+
+          <!-- Which device leads the others -->
+          <StackPanel Width="300" Spacing="4" Margin="0,0,16,12" IsVisible="{Binding HasLeader}">
+            <TextBlock Text="{x:Static res:Strings.DevSet_LeaderGroup}" FontWeight="SemiBold" />
+            <CheckBox Content="{x:Static res:Strings.DevSet_Leader}" IsChecked="{Binding Leader}" />
+            <Button Content="{x:Static res:Strings.DevSet_Write}" Command="{Binding WriteLeaderCommand}" />
+          </StackPanel>
+        </WrapPanel>
+      </ScrollViewer>
+    </Grid>
+
+    <TextBlock Grid.Row="2" Text="{Binding Message}" TextWrapping="Wrap" Foreground="{DynamicResource SystemFillColorCautionBrush}" IsVisible="{Binding HasMessage}" />
+  </Grid>
+</UserControl>

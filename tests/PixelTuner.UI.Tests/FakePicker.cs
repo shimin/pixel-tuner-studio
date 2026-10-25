@@ -13,8 +13,7 @@ internal sealed class FakePicker : IFilePicker
     public string? ImagePath { get; set; }
     public string? GifPath { get; set; }
     public string? SvgPath { get; set; }
-    public string? BinPath { get; set; }
-    public string? SuggestedBinName { get; private set; }
+    public string? FirmwarePath { get; set; }
     public string? SuggestedName { get; private set; }
     public int SaveDialogs { get; private set; }
 
@@ -25,12 +24,7 @@ internal sealed class FakePicker : IFilePicker
     public Task<string?> PickImagePathAsync() => Task.FromResult(ImagePath);
     public Task<string?> PickGifPathAsync() => Task.FromResult(GifPath);
     public Task<string?> PickSvgPathAsync() => Task.FromResult(SvgPath);
-
-    public Task<string?> PickBinSavePathAsync(string suggestedName)
-    {
-        SuggestedBinName = suggestedName;
-        return Task.FromResult(BinPath);
-    }
+    public Task<string?> PickFirmwarePathAsync() => Task.FromResult(FirmwarePath);
 
     public Task<string?> PickPackageSavePathAsync(string suggestedName)
     {
@@ -40,9 +34,17 @@ internal sealed class FakePicker : IFilePicker
     }
 }
 
-internal sealed class FakeDialogs(SaveChoice answer) : IDialogService
+internal sealed class FakeDialogs(SaveChoice answer, bool confirm = true) : IDialogService
 {
     public int Asked { get; private set; }
+    public List<(string Heading, string Detail, string Action)> Confirmed { get; } = [];
+
+    public Task<bool> ConfirmAsync(string heading, string detail, string action)
+    {
+        Confirmed.Add((heading, detail, action));
+        return Task.FromResult(confirm);
+    }
+
     public string? AskedAbout { get; private set; }
 
     public Task<SaveChoice> AskSaveChangesAsync(string documentName)

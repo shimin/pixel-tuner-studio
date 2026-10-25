@@ -14,10 +14,13 @@ public interface IDeviceHub
 
     bool IsSearching { get; }
 
+    /// <summary>What keeps part of the search from working (Wi-Fi devices cannot connect while another program holds the port); null when nothing does.</summary>
+    string? Problem { get; }
+
     event EventHandler<ShowDevice>? DeviceFound;
     event EventHandler<ShowDevice>? DeviceLost;
 
-    /// <summary>Starts looking for devices on the serial ports and listening for devices on Wi-Fi.</summary>
+    /// <summary>Starts looking for devices on the serial ports and listening for devices on Wi-Fi. The app does it once, when it starts, and stops when it closes.</summary>
     void StartSearching();
 
     /// <summary>Stops looking and lets go of the devices that were found.</summary>
@@ -39,6 +42,8 @@ public sealed class DeviceManagerHub(Func<DeviceManagerOptions>? options = null)
     public IReadOnlyList<ShowDevice> Devices => _manager?.Devices ?? [];
 
     public bool IsSearching => _manager is not null;
+
+    public string? Problem => _manager?.ListenError;
 
     public event EventHandler<ShowDevice>? DeviceFound;
     public event EventHandler<ShowDevice>? DeviceLost;
