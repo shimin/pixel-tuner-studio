@@ -18,6 +18,23 @@ public class VlcAudioDecoderTests
     }
 
     [Fact]
+    public async Task The_two_channels_of_a_stereo_sound_are_kept_apart_and_a_mono_sound_is_in_both()
+    {
+        if (VlcFixture.Get() is not { } library) return;
+        var decoder = new VlcAudioDecoder(library);
+
+        var stereo = await decoder.ReadWaveformAsync(new MemoryStream(VlcFixture.Wav(2, amplitude: 0.8, rightAmplitude: 0.2)), "stereo.wav");
+        var (left, right) = stereo.Peaks(TimeSpan.Zero, stereo.Duration);
+        Assert.InRange(left, 0.7, 0.9);
+        Assert.InRange(right, 0.15, 0.3);
+
+        var mono = await decoder.ReadWaveformAsync(new MemoryStream(VlcFixture.Wav(2, amplitude: 0.5)), "mono.wav");
+        var (monoLeft, monoRight) = mono.Peaks(TimeSpan.Zero, mono.Duration);
+        Assert.InRange(monoLeft, 0.4, 0.6);
+        Assert.InRange(monoRight, 0.4, 0.6);
+    }
+
+    [Fact]
     public async Task Silence_then_sound_is_quiet_first_and_loud_after()
     {
         if (VlcFixture.Get() is not { } library) return;

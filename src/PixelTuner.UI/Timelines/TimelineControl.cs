@@ -332,7 +332,7 @@ public sealed class TimelineControl : Control
         {
             DrawRulerAndGrid(context, editor, timeArea, card, muted, text, line, faint);
 
-            DrawWave(context, editor, timeArea, card, accent, faint);
+            DrawWave(context, editor, timeArea, card, faint);
 
             for (int i = 0; i < editor.Project.Timelines.Count; i++)
                 DrawPauses(context, editor, editor.Project.Timelines[i], editor.TrackTop(i), faint);
@@ -445,23 +445,74 @@ public sealed class TimelineControl : Control
         context.DrawText(caption, new Point(button.X + 8, button.Y + (button.Height - caption.Height) / 2));
     }
 
-    private void DrawWave(DrawingContext context, TimelineEditor editor, Rect timeArea, IBrush card, IBrush accent, Pen faint)
+    private void DrawWave(DrawingContext context, TimelineEditor editor, Rect timeArea, IBrush card, Pen faint)
     {
         double top = TimelineEditor.RulerHeight, height = TimelineEditor.WaveHeight;
-        context.FillRectangle(card, new Rect(timeArea.X, top, timeArea.Width, height));
-        double middle = top + height / 2, amplitude = height / 2 - 6;
+        var lane = new Rect(timeArea.X, top, timeArea.Width, height);
+        context.FillRectangle(card, lane);
+        double middle = top + height / 2, amplitude = height / 2 - WaveStyle.Margin;
         context.DrawLine(faint, new Point(timeArea.X, middle), new Point(timeArea.Right, middle));
         if (editor.Wave is not { } wave) return;
 
-        var pen = new Pen(new SolidColorBrush(((ISolidColorBrush)accent).Color, 0.75), 1);
-        double endX = editor.TimeToX(wave.Duration);
-        // One column of pixels at a time: the lowest and highest sample under it, at any zoom.
-        for (double x = Math.Max(timeArea.X, editor.TimeToX(TimeSpan.Zero)); x < Math.Min(timeArea.Right, endX); x++)
+        bool dark = ActualThemeVariant == Avalonia.Styling.ThemeVariant.Dark;
+        double startX = Math.Max(timeArea.X, editor.TimeToX(TimeSpan.Zero)), endX = Math.Min(timeArea.Right, editor.TimeToX(wave.Duration));
+        if (endX <= startX) return;
+
+        // Where the outline bends: every pixel column (the loudest sample under it, at any zoom), or, zoomed in past a point a pixel, every point of the waveform.
+        var left = new List<(double X, float Peak)>();
+        var right = new List<(double X, float Peak)>();
+        double pixelsPerPoint = editor.PixelsPerSecond / wave.PointsPerSecond;
+        if (pixelsPerPoint >= 2)
         {
-            var (min, max) = wave.Range(editor.XToTime(x), editor.XToTime(x + 1));
-            double y1 = middle - Math.Clamp(max, -1, 1) * amplitude, y2 = middle - Math.Clamp(min, -1, 1) * amplitude;
-            context.DrawLine(pen, new Point(x + 0.5, y1), new Point(x + 0.5, Math.Max(y2, y1 + 1)));
+            int first = Math.Max(0, (int)Math.Floor(editor.XToTime(startX).TotalSeconds * wave.PointsPerSecond));
+            int last = Math.Min(wave.Count - 1, (int)Math.Ceiling(editor.XToTime(endX).TotalSeconds * wave.PointsPerSecond));
+            for (int i = first; i <= last; i++)
+            {
+                double x = editor.TimeToX(TimeSpan.FromSeconds((i + 0.5) / wave.PointsPerSecond));
+                left.Add((x, wave.Left[i]));
+                right.Add((x, wave.Right[i]));
+            }
         }
+        else
+        {
+            for (double x = startX; x < endX; x++)
+            {
+                var (l, r) = wave.Peaks(editor.XToTime(x), editor.XToTime(x + 1));
+                left.Add((x + 0.5, l));
+                right.Add((x + 0.5, r));
+            }
+        }
+
+        using (context.PushClip(lane))
+        {
+            DrawChannel(context, left, startX, endX, middle, -amplitude, WaveStyle.Left(dark), up: true);
+            DrawChannel(context, right, startX, endX, middle, amplitude, WaveStyle.Right(dark), up: false);
+        }
+    }
+
+    // One channel: the area between the centre line and the outline, filled with the gradient of the whole half of the lane, and the outline on it.
+    private static void DrawChannel(DrawingContext context, List<(double X, float Peak)> peaks, double startX, double endX, double middle, double reach, Color colour, bool up)
+    {
+        if (peaks.Count == 0) return;
+        var area = new StreamGeometry();
+        var outline = new StreamGeometry();
+        using (var g = area.Open())
+        {
+            g.BeginFigure(new Point(startX, middle), isFilled: true);
+            foreach (var (x, peak) in peaks) g.LineTo(new Point(x, middle + Math.Clamp(peak, 0, 1) * reach));
+            g.LineTo(new Point(endX, middle));
+            g.EndFigure(isClosed: true);
+        }
+        using (var g = outline.Open())
+        {
+            g.BeginFigure(new Point(startX, middle), isFilled: false);
+            foreach (var (x, peak) in peaks) g.LineTo(new Point(x, middle + Math.Clamp(peak, 0, 1) * reach));
+            g.LineTo(new Point(endX, middle));
+            g.EndFigure(isClosed: false);
+        }
+        var half = up ? new Rect(startX, middle + reach, endX - startX, -reach) : new Rect(startX, middle, endX - startX, reach);
+        using (context.PushGeometryClip(area)) context.FillRectangle(WaveStyle.Fill(colour, up), half);
+        context.DrawGeometry(null, WaveStyle.Outline(colour), outline);
     }
 
     private static void DrawClipped(DrawingContext context, Rect clip, Action draw)

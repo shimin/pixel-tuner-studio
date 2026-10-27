@@ -64,15 +64,22 @@
 
 ### Дорожка звука (волна)
 
+Два контура самого громкого отсчёта каждого канала: **левый** поднимается над средней линией (синий), **правый** опускается под неё (красный); каждый залит лёгким градиентом
+от средней линии (слабее) к пикам (сильнее). Все числа и цвета — константы в
+[WaveStyle.cs](../src/PixelTuner.UI/Timelines/WaveStyle.cs); рисуют `DrawWave` и `DrawChannel` в
+[TimelineControl.cs#L448](../src/PixelTuner.UI/Timelines/TimelineControl.cs#L448).
+
 | Хочу изменить | Поиск | Что это |
 | --- | --- | --- |
-| **Цвет волны** | `var pen = new Pen(new SolidColorBrush(((ISolidColorBrush)accent)` в `DrawWave` | `accent` с 75 % непрозрачности: меняйте кисть или `0.75` |
-| **Высота** волны | `amplitude = height / 2 - 6` | `6` — отступ; высота дорожки — `WaveHeight` в `TimelineEditor.cs` |
-| **Фон** дорожки и средняя линия | `FillRectangle(card, new Rect(timeArea.X, top, timeArea.Width, height))` и `DrawLine(faint` под ней | |
+| **Цвета каналов** (левый синий, правый красный; своя пара для каждой темы) | [WaveStyle.cs#L15](../src/PixelTuner.UI/Timelines/WaveStyle.cs#L15): `LeftDark`, `RightDark`, `LeftLight`, `RightLight` | значения RGB; тему `DrawWave` читает сам (`dark`) |
+| **Толщина и прозрачность контура** | [WaveStyle.cs#L21](../src/PixelTuner.UI/Timelines/WaveStyle.cs#L21): `LineWidth`, `LineOpacity`; перо — `WaveStyle.Outline` | пиксели; от 0 до 1 |
+| **Градиент** заливки | [WaveStyle.cs#L27](../src/PixelTuner.UI/Timelines/WaveStyle.cs#L27): `FillOpacityAtCentre`, `FillOpacityAtFullScale`; кисть — `WaveStyle.Fill` | непрозрачность на средней линии и на пике полной громкости; градиент идёт по всей половине дорожки, поэтому более высокий пик залит сильнее. Чтобы изменить направление или добавить остановку, правьте `Fill` |
+| **Высота** волны и поля сверху и снизу | `WaveHeight` в `TimelineEditor.cs`; поле — `WaveStyle.Margin` | самый громкий отсчёт стоит на `WaveHeight / 2 - Margin` от средней линии |
+| **Фон** дорожки и средняя линия | `FillRectangle(card, lane)` и `DrawLine(faint` под ней в `DrawWave` | цвет карточки и тонкое серое перо остальных линий |
+| Где контур **ломается** | две ветки в `DrawWave` | каждый пиксельный столбец (самый громкий отсчёт под ним), а при увеличении больше двух пикселей на точку — каждая точка волны |
 
-**Левого и правого канала нет.** Волна — один контур, где оба канала смешаны (`src/PixelTuner.Audio/Waveform.cs`,
-«all channels mixed»), поэтому цвет один. Два цвета для левого и правого — это не задача про оформление: сначала декодер
-(`src/PixelTuner.Audio.Vlc/VlcAudioDecoder.cs`), `Waveform` и формат его кэша должны научиться хранить два контура. Не имитируйте это в рисовалке.
+Каналы приходят из декодера: `src/PixelTuner.Audio.Vlc/VlcAudioDecoder.cs` делает стерео-WAV (моно удваивается, поэтому контуры одинаковы),
+`WaveformBuilder` хранит самый громкий отсчёт первого (левого) и второго (правого) канала на точку (`Waveform.Left`, `Waveform.Right`, `Waveform.Peaks`).
 
 ### Элементы на дорожке (картинки, GIF, цвета, эффекты)
 

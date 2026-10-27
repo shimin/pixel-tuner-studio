@@ -19,27 +19,29 @@ internal static class VlcFixture
     }
 
     /// <summary>A 16-bit mono WAV: silence for <paramref name="silence"/> seconds, then a sine of the given amplitude.</summary>
-    public static byte[] Wav(double seconds, double amplitude = 0.5, double silence = 0, int rate = 44100)
+    public static byte[] Wav(double seconds, double amplitude = 0.5, double silence = 0, int rate = 44100, double? rightAmplitude = null)
     {
+        int channels = rightAmplitude is null ? 1 : 2;
         int frames = (int)(seconds * rate);
-        var data = new byte[44 + frames * 2];
+        var data = new byte[44 + frames * 2 * channels];
         "RIFF"u8.CopyTo(data);
         BinaryPrimitives.WriteInt32LittleEndian(data.AsSpan(4), data.Length - 8);
         "WAVEfmt "u8.CopyTo(data.AsSpan(8));
         BinaryPrimitives.WriteInt32LittleEndian(data.AsSpan(16), 16);
         BinaryPrimitives.WriteInt16LittleEndian(data.AsSpan(20), 1);       // PCM
-        BinaryPrimitives.WriteInt16LittleEndian(data.AsSpan(22), 1);       // mono
+        BinaryPrimitives.WriteInt16LittleEndian(data.AsSpan(22), (short)channels);
         BinaryPrimitives.WriteInt32LittleEndian(data.AsSpan(24), rate);
-        BinaryPrimitives.WriteInt32LittleEndian(data.AsSpan(28), rate * 2);
-        BinaryPrimitives.WriteInt16LittleEndian(data.AsSpan(32), 2);
+        BinaryPrimitives.WriteInt32LittleEndian(data.AsSpan(28), rate * 2 * channels);
+        BinaryPrimitives.WriteInt16LittleEndian(data.AsSpan(32), (short)(2 * channels));
         BinaryPrimitives.WriteInt16LittleEndian(data.AsSpan(34), 16);
         "data"u8.CopyTo(data.AsSpan(36));
-        BinaryPrimitives.WriteInt32LittleEndian(data.AsSpan(40), frames * 2);
+        BinaryPrimitives.WriteInt32LittleEndian(data.AsSpan(40), frames * 2 * channels);
         for (int i = 0; i < frames; i++)
         {
             double t = (double)i / rate;
-            double value = t < silence ? 0 : amplitude * Math.Sin(2 * Math.PI * 440 * t);
-            BinaryPrimitives.WriteInt16LittleEndian(data.AsSpan(44 + i * 2), (short)(value * 32767));
+            double tone = t < silence ? 0 : Math.Sin(2 * Math.PI * 440 * t);
+            BinaryPrimitives.WriteInt16LittleEndian(data.AsSpan(44 + i * 2 * channels), (short)(amplitude * tone * 32767));
+            if (rightAmplitude is { } right) BinaryPrimitives.WriteInt16LittleEndian(data.AsSpan(46 + i * 4), (short)(right * tone * 32767));
         }
         return data;
     }

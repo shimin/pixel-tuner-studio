@@ -5,7 +5,7 @@ namespace PixelTuner.Audio.Vlc;
 
 /// <summary>
 /// Reads a soundtrack into a <see cref="Waveform"/>. LibVLC decodes any format it plays to a temporary
-/// mono WAV, faster than real time, and the samples are then folded into the waveform. The same engine
+/// stereo WAV (a mono sound is doubled), faster than real time, and the samples are then folded into the waveform. The same engine
 /// plays the sound, so what the timelines are drawn over is what is heard.
 /// </summary>
 public sealed class VlcAudioDecoder : IAudioDecoder
@@ -39,7 +39,7 @@ public sealed class VlcAudioDecoder : IAudioDecoder
         using var media = new Media(_library.Engine, new StreamMediaInput(data));
         // The chain quotes the path: a Windows path has a colon and backslashes.
         string quoted = "\"" + wavPath.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
-        media.AddOption($":sout=#transcode{{acodec=s16l,channels=1,samplerate={SampleRate}}}:std{{access=file,mux=wav,dst={quoted}}}");
+        media.AddOption($":sout=#transcode{{acodec=s16l,channels=2,samplerate={SampleRate}}}:std{{access=file,mux=wav,dst={quoted}}}");
         media.AddOption(":no-sout-all");
         media.AddOption(":sout-keep");
 

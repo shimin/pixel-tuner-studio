@@ -29,6 +29,40 @@ public class WaveformTests
     }
 
     [Fact]
+    public void The_loudest_sample_of_each_channel_is_kept_per_point()
+    {
+        var builder = new WaveformBuilder(1000, 2, 100);
+        var samples = new float[2 * 20];
+        for (int frame = 0; frame < 20; frame++)
+        {
+            samples[2 * frame] = frame == 3 ? -0.5f : 0.1f;      // left: one loud (negative) sample in the first point
+            samples[2 * frame + 1] = frame == 15 ? 0.8f : 0.2f;  // right: one loud sample in the second
+        }
+        builder.Add(samples);
+        var waveform = builder.Build();
+
+        Assert.Equal([0.5f, 0.1f], waveform.Left);
+        Assert.Equal([0.2f, 0.8f], waveform.Right);
+        Assert.Equal((0.5f, 0.8f), waveform.Peaks(TimeSpan.Zero, TimeSpan.FromMilliseconds(20)));
+        Assert.Equal((0.1f, 0.8f), waveform.Peaks(TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(20)));
+        Assert.Equal((0f, 0f), waveform.Peaks(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(6)));
+    }
+
+    [Fact]
+    public void A_mono_sound_is_the_same_in_both_channels_and_an_outline_without_channels_is_taken_for_both()
+    {
+        var builder = new WaveformBuilder(1000, 1, 100);
+        builder.Add(new float[] { 0.1f, -0.7f, 0.2f, 0f, 0f, 0f, 0f, 0f, 0f, 0f });
+        var mono = builder.Build();
+        Assert.Equal([0.7f], mono.Left);
+        Assert.Equal(mono.Left, mono.Right);
+
+        var plain = new Waveform(100, TimeSpan.FromSeconds(1), [-0.4f, -0.1f], [0.3f, 0.2f]);
+        Assert.Equal([0.4f, 0.2f], plain.Left);
+        Assert.Same(plain.Left, plain.Right);
+    }
+
+    [Fact]
     public void Pcm16_is_scaled_to_minus_one_to_one()
     {
         var builder = new WaveformBuilder(8000, 1, 8000);

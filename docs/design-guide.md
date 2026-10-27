@@ -64,15 +64,22 @@ Replace the whole line with a brush: `var accent = new SolidColorBrush(Color.Par
 
 ### Sound lane (waveform)
 
+Two outlines of the loudest sample of each channel: the **left** one rises above the centre line (blue), the **right** one falls below it (red), each filled with a light gradient
+from the centre line (faint) to the peaks (stronger). Every number and colour is one constant in
+[WaveStyle.cs](../src/PixelTuner.UI/Timelines/WaveStyle.cs); the drawing is `DrawWave` and `DrawChannel` in
+[TimelineControl.cs#L448](../src/PixelTuner.UI/Timelines/TimelineControl.cs#L448).
+
 | I want to change | Search | What it is |
 | --- | --- | --- |
-| **Waveform colour** | `var pen = new Pen(new SolidColorBrush(((ISolidColorBrush)accent)` in `DrawWave` | `accent` at 75 %: change the brush or the `0.75` |
-| Waveform **height** | `amplitude = height / 2 - 6` | the `6` is the margin; the lane height is `WaveHeight` in `TimelineEditor.cs` |
-| Lane **background** and centre line | `FillRectangle(card, new Rect(timeArea.X, top, timeArea.Width, height))` and the `DrawLine(faint` under it | |
+| **Colour of the channels** (left blue, right red; one pair for each theme) | [WaveStyle.cs#L15](../src/PixelTuner.UI/Timelines/WaveStyle.cs#L15): `LeftDark`, `RightDark`, `LeftLight`, `RightLight` | RGB values; the theme is read in `DrawWave` (`dark`) |
+| **Thickness and opacity of the outline** | [WaveStyle.cs#L21](../src/PixelTuner.UI/Timelines/WaveStyle.cs#L21): `LineWidth`, `LineOpacity`; the pen is `WaveStyle.Outline` | pixels; 0 to 1 |
+| **Gradient** of the fill | [WaveStyle.cs#L27](../src/PixelTuner.UI/Timelines/WaveStyle.cs#L27): `FillOpacityAtCentre`, `FillOpacityAtFullScale`; the brush is `WaveStyle.Fill` | opacity on the centre line and at a full-scale peak; the gradient runs over the whole half of the lane, so a taller peak is a stronger fill. To change its direction or add a stop, edit `Fill` |
+| Waveform **height** and the space above and below | `WaveHeight` in `TimelineEditor.cs`; the margin is `WaveStyle.Margin` | the largest sample is `WaveHeight / 2 - Margin` from the centre line |
+| Lane **background** and centre line | `FillRectangle(card, lane)` and the `DrawLine(faint` under it in `DrawWave` | the card colour and the thin grey pen of the rest of the lines |
+| Where the outline **bends** | the two branches in `DrawWave` | every pixel column (the loudest sample under it) and, zoomed in past two pixels a point, every point of the waveform |
 
-**There is no left and right channel.** The waveform is one outline of both channels mixed together (`src/PixelTuner.Audio/Waveform.cs`,
-"all channels mixed"), so there is one colour only. Two colours for L and R is not a styling task: the decoder
-(`src/PixelTuner.Audio.Vlc/VlcAudioDecoder.cs`), `Waveform` and its cache format must carry two outlines first. Do not fake it in the control.
+The two channels come from the decoder: `src/PixelTuner.Audio.Vlc/VlcAudioDecoder.cs` makes a stereo WAV (a mono sound is doubled, so both outlines are alike),
+`WaveformBuilder` keeps the loudest sample of channel one (left) and two (right) per point (`Waveform.Left`, `Waveform.Right`, `Waveform.Peaks`).
 
 ### Items on a lane (pictures, GIFs, colours, effects)
 
